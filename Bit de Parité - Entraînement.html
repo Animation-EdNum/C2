@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit de Parité - Entraînement</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #f0f4ff;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .instructions strong {
+            color: #667eea;
+        }
+
+        .grid-container {
+            display: flex;
+            gap: 40px;
+            margin: 30px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .grid-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .grid-label {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: inline-grid;
+            grid-template-columns: repeat(6, 50px);
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 5px;
+            border: 2px solid #ddd;
+            cursor: default;
+            background: white;
+        }
+
+        .cell.data {
+            background: #e3f2fd;
+            border-color: #667eea;
+            color: #333;
+        }
+
+        .cell.parity-line {
+            background: #fff3e0;
+            border-color: #ff9800;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cell.parity-line:hover {
+            background: #ffe0b2;
+            border-color: #ff6f00;
+        }
+
+        .cell.parity-line.filled {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .cell.parity-col {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cell.parity-col:hover {
+            background: #f3e5f5;
+            border-color: #6a1b9a;
+        }
+
+        .cell.parity-col.filled {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .cell.corner {
+            background: #f0f0f0;
+            border-color: #bbb;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cell.corner:hover {
+            background: #e0e0e0;
+        }
+
+        .cell.corner.filled {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-check {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .feedback {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .feedback.error {
+            background: #f8d7da;
+            border: 2px solid #f44336;
+            color: #721c24;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .feedback-detail {
+            margin: 5px 0;
+            padding-left: 10px;
+            border-left: 3px solid currentColor;
+        }
+
+        .stats {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .legend {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border: 2px solid;
+            border-radius: 3px;
+        }
+
+        .legend-box.data-box {
+            background: #e3f2fd;
+            border-color: #667eea;
+        }
+
+        .legend-box.parity-line-box {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
+        .legend-box.parity-col-box {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+        }
+
+        .legend-box.corner-box {
+            background: #f0f0f0;
+            border-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Bit de Parité - Entraînement</h1>
+        <p class="subtitle">Complète les bits de parité pour chaque ligne et colonne</p>
+
+        <div class="instructions">
+            <strong>Objectif :</strong> Chaque ligne et chaque colonne doit contenir un nombre <strong>pair</strong> de "1". 
+            Clique sur les cellules orange (lignes) et violettes (colonnes) pour entrer le bit de parité (0 ou 1). 
+            La cellule grise en bas à droite doit aussi assurer la parité de sa ligne et colonne.
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box data-box"></div>
+                <span>Données (lecture seule)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box parity-line-box"></div>
+                <span>Parité ligne</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box parity-col-box"></div>
+                <span>Parité colonne</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box corner-box"></div>
+                <span>Coin (double parité)</span>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div class="grid-section">
+                <div class="grid-label">Grille 5×5 + Parité</div>
+                <div class="grid" id="mainGrid"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-check" onclick="checkAnswer()">✓ Vérifier</button>
+            <button class="btn-next" onclick="nextGrid()">→ Nouvelle Grille</button>
+            <button class="btn-reset" onclick="resetGrid()">↻ Réinitialiser</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="stats">
+            <p>Grille n° <span id="gridNumber">1</span></p>
+        </div>
+    </div>
+
+    <script>
+        let currentGrid = [];
+        let userAnswers = [];
+        let gridCount = 0;
+
+        function generateRandomGrid() {
+            const grid = [];
+            for (let i = 0; i < 5; i++) {
+                const row = [];
+                for (let j = 0; j < 5; j++) {
+                    row.push(Math.random() < 0.5 ? 0 : 1);
+                }
+                grid.push(row);
+            }
+            return grid;
+        }
+
+        function calculateParityBit(values) {
+            const count = values.reduce((sum, val) => sum + val, 0);
+            return count % 2; // 0 si pair, 1 si impair
+        }
+
+        function initializeGrid() {
+            currentGrid = generateRandomGrid();
+            userAnswers = Array(6).fill(null).map(() => Array(6).fill(null));
+            gridCount++;
+            document.getElementById('gridNumber').textContent = gridCount;
+            renderGrid();
+            clearFeedback();
+        }
+
+        function renderGrid() {
+            const gridElement = document.getElementById('mainGrid');
+            gridElement.innerHTML = '';
+
+            // Afficher grille 6x6 (5x5 + parité)
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 6; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+
+                    if (i < 5 && j < 5) {
+                        // Données 5x5
+                        cell.classList.add('data');
+                        cell.textContent = currentGrid[i][j];
+                    } else if (i < 5 && j === 5) {
+                        // Parité ligne
+                        cell.classList.add('parity-line');
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        if (userAnswers[i][j] !== null) {
+                            cell.textContent = userAnswers[i][j];
+                            cell.classList.add('filled');
+                        }
+                        cell.onclick = () => toggleBit(i, j, cell);
+                    } else if (i === 5 && j < 5) {
+                        // Parité colonne
+                        cell.classList.add('parity-col');
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        if (userAnswers[i][j] !== null) {
+                            cell.textContent = userAnswers[i][j];
+                            cell.classList.add('filled');
+                        }
+                        cell.onclick = () => toggleBit(i, j, cell);
+                    } else {
+                        // Coin
+                        cell.classList.add('corner');
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        if (userAnswers[i][j] !== null) {
+                            cell.textContent = userAnswers[i][j];
+                            cell.classList.add('filled');
+                        }
+                        cell.onclick = () => toggleBit(i, j, cell);
+                    }
+
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+
+        function toggleBit(row, col, cellElement) {
+            if (userAnswers[row][col] === null) {
+                userAnswers[row][col] = 0;
+            } else if (userAnswers[row][col] === 0) {
+                userAnswers[row][col] = 1;
+            } else {
+                userAnswers[row][col] = null;
+            }
+            cellElement.textContent = userAnswers[row][col] !== null ? userAnswers[row][col] : '';
+            cellElement.classList.toggle('filled', userAnswers[row][col] !== null);
+        }
+
+        function checkAnswer() {
+            // Vérifier tous les bits de parité
+            const errors = [];
+
+            // Vérifier parité lignes (i < 5, j === 5)
+            for (let i = 0; i < 5; i++) {
+                if (userAnswers[i][5] === null) {
+                    errors.push(`Ligne ${i + 1} : bit de parité manquant`);
+                    continue;
+                }
+
+                const lineValues = [...currentGrid[i], userAnswers[i][5]];
+                const count = lineValues.reduce((sum, val) => sum + val, 0);
+                
+                if (count % 2 !== 0) {
+                    errors.push(`Ligne ${i + 1} : incorrect (total de 1 = ${count}, doit être pair)`);
+                }
+            }
+
+            // Vérifier parité colonnes (i === 5, j < 5)
+            for (let j = 0; j < 5; j++) {
+                if (userAnswers[5][j] === null) {
+                    errors.push(`Colonne ${j + 1} : bit de parité manquant`);
+                    continue;
+                }
+
+                const colValues = [];
+                for (let i = 0; i < 5; i++) {
+                    colValues.push(currentGrid[i][j]);
+                }
+                colValues.push(userAnswers[5][j]);
+                
+                const count = colValues.reduce((sum, val) => sum + val, 0);
+                
+                if (count % 2 !== 0) {
+                    errors.push(`Colonne ${j + 1} : incorrect (total de 1 = ${count}, doit être pair)`);
+                }
+            }
+
+            // Vérifier coin (5, 5)
+            if (userAnswers[5][5] === null) {
+                errors.push(`Coin (double parité) : bit manquant`);
+            } else {
+                // Le coin doit assurer la parité de la ligne de parité ET colonne de parité
+                // Ligne 5 = [bits de parité des colonnes 0-4, coin]
+                const parityRowValues = [];
+                for (let j = 0; j < 5; j++) {
+                    parityRowValues.push(userAnswers[5][j]);
+                }
+                parityRowValues.push(userAnswers[5][5]);
+
+                // Colonne 5 = [bits de parité des lignes 0-4, coin]
+                const parityColValues = [];
+                for (let i = 0; i < 5; i++) {
+                    parityColValues.push(userAnswers[i][5]);
+                }
+                parityColValues.push(userAnswers[5][5]);
+
+                const rowCount = parityRowValues.reduce((sum, val) => sum + val, 0);
+                const colCount = parityColValues.reduce((sum, val) => sum + val, 0);
+
+                if (rowCount % 2 !== 0 || colCount % 2 !== 0) {
+                    errors.push(`Coin : incorrect (doit assurer la parité de sa ligne ET colonne)`);
+                }
+            }
+
+            if (errors.length === 0) {
+                showSuccessFeedback();
+            } else {
+                showErrorFeedback(errors);
+            }
+        }
+
+        function showSuccessFeedback() {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show success';
+            feedback.innerHTML = '<div class="feedback-title">✓ Excellent ! Tous les bits de parité sont corrects !</div>';
+        }
+
+        function showErrorFeedback(errors) {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show error';
+            let html = '<div class="feedback-title">✗ Erreur(s) détectée(s) :</div>';
+            errors.forEach(error => {
+                html += `<div class="feedback-detail">• ${error}</div>`;
+            });
+            feedback.innerHTML = html;
+        }
+
+        function clearFeedback() {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback';
+            feedback.innerHTML = '';
+        }
+
+        function resetGrid() {
+            userAnswers = Array(6).fill(null).map(() => Array(6).fill(null));
+            renderGrid();
+            clearFeedback();
+        }
+
+        function nextGrid() {
+            initializeGrid();
+        }
+
+        // Initialisation au chargement
+        initializeGrid();
+    </script>
+</body>
+</html>
