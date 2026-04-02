@@ -1,0 +1,1039 @@
+<!DOCTYPE html> 
+<html lang="fr"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>🎨 Pixel Binaire Pro — Studio de Codage</title> 
+    <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap'); 
+ 
+        :root { 
+            --bg-start: #667eea; --bg-end: #764ba2; 
+            --accent: #6366f1; --accent-hover: #4f46e5; 
+            --success: #10b981; --error: #ef4444; 
+            --cell-on: #1e293b; --cell-off: #ffffff; 
+            --text-main: #1e293b; --text-muted: #64748b; 
+        } 
+         
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; } 
+         
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end)); 
+            min-height: 100vh; padding: 15px; color: var(--text-main); 
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center; 
+        } 
+ 
+        .container { 
+            width: 100%; max-width: 800px; background: #f8fafc; 
+            padding: 24px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+            margin-top: 20px; position: relative; overflow: hidden; 
+        } 
+ 
+        header { text-align: center; margin-bottom: 24px; } 
+        h1 { color: var(--accent); font-size: 26px; font-weight: 700; letter-spacing: -0.5px; } 
+        .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-weight: 600; } 
+         
+        /* NAVIGATION */ 
+        .nav-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; } 
+        .nav-btn { 
+            padding: 10px 18px; border-radius: 12px; border: 2px solid #e2e8f0; 
+            background: white; color: var(--text-muted); font-size: 14px; font-weight: 600; 
+            cursor: pointer; transition: all 0.2s; 
+        } 
+        .nav-btn:hover { border-color: #cbd5e1; } 
+        .nav-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); } 
+ 
+        /* GRID SYSTEM */ 
+        .play-area { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 20px 0; flex-wrap: wrap; } 
+        .grid-wrapper { display: flex; flex-direction: column; touch-action: none; border: 2px solid #cbd5e1; border-radius: 4px; overflow: hidden; } 
+        .grid-row { display: flex; } 
+        .grid-cell { 
+            width: 36px; height: 36px; border: 1px solid #e2e8f0; 
+            background: var(--cell-off); cursor: crosshair; transition: transform 0.05s; 
+        } 
+        .grid-cell:active { transform: scale(0.9); } 
+        .grid-cell.on { background: var(--cell-on); border-color: #0f172a; } 
+        .grid-cell.locked { cursor: default; } 
+ 
+        /* LABELS & INPUTS */ 
+        .row-labels { display: flex; flex-direction: column; justify-content: center; gap: 0; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent); font-weight: 700; text-align: right; } 
+        .row-label { height: 36px; display: flex; align-items: center; justify-content: flex-end; } 
+ 
+        .binary-input-group { display: flex; flex-direction: column; gap: 6px; margin: 0 auto; width: fit-content;} 
+        .binary-row-field { display: flex; align-items: center; gap: 12px; } 
+        .binary-row-field span { font-weight: 600; color: var(--text-muted); font-size: 14px; width: 20px; text-align: right; } 
+        .binary-row-field input { 
+            font-family: 'JetBrains Mono', monospace; font-size: 18px; padding: 6px 12px; 
+            border: 2px solid #e2e8f0; border-radius: 8px; width: 140px; letter-spacing: 6px; 
+            text-align: left; outline: none; transition: 0.2s; color: var(--text-main); 
+        } 
+        .binary-row-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); } 
+        .binary-row-field input.correct { border-color: var(--success); background: #f0fdf4; color: #065f46; pointer-events: none; } 
+ 
+        /* GALERIE */ 
+        .gallery-container { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 15px; } 
+        .gallery-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; } 
+        .gallery { display: flex; gap: 12px; overflow-x: auto; padding: 10px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; min-height: 80px; align-items: center; } 
+        .gallery-item { 
+            flex: 0 0 50px; height: 50px; background: white; border-radius: 6px; 
+            border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; padding: 2px; 
+        } 
+        .gallery-item canvas { width: 100%; height: 100%; image-rendering: pixelated; } 
+        .empty-gallery { font-size: 12px; color: #94a3b8; width: 100%; text-align: center; } 
+ 
+        /* EDITOR OUTPUT */ 
+        #editor-output { 
+            width: 100%; height: 120px; font-family: 'JetBrains Mono', monospace;  
+            background: #1e293b; color: #34d399; padding: 12px; border-radius: 10px;  
+            margin-top: 15px; font-size: 14px; border: none; outline: none; resize: none; 
+            -webkit-user-select: text; user-select: text; line-height: 1.5; 
+        } 
+ 
+        /* UTILS & TOAST */ 
+        .card { display: none; animation: fadeIn 0.3s ease; } 
+        .card.active { display: block; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+         
+        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; } 
+        .btn { padding: 10px 20px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; display: flex; align-items: center; gap: 6px; } 
+        .btn:active { transform: scale(0.96); } 
+        .btn-primary { background: var(--accent); color: white; } 
+        .btn-primary:hover { background: var(--accent-hover); } 
+        .btn-success { background: var(--success); color: white; } 
+        .btn-success:hover { background: #059669; } 
+        .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: var(--text-muted); } 
+        .btn-outline:hover { background: #f1f5f9; color: var(--text-main); } 
+        .btn-small { padding: 6px 12px; font-size: 12px; } 
+ 
+        #toast { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); 
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 30px; 
+            font-weight: 600; font-size: 14px; opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+            z-index: 1000; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+        } 
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; } 
+ 
+        @media (max-width: 600px) { 
+            .grid-cell { width: 28px; height: 28px; } 
+            .row-label { height: 28px; font-size: 12px; } 
+            .binary-row-field input { width: 120px; font-size: 16px; letter-spacing: 4px; } 
+        } 
+ 
+        /* FOOTER */ 
+        footer { 
+            margin-top: auto; 
+            padding: 20px 0 10px 0; 
+            text-align: center; 
+            font-size: 13px; 
+            color: rgba(255, 255, 255, 0.8); 
+            width: 100%; 
+        } 
+        footer a { 
+            color: #ffffff; 
+            text-decoration: none; 
+            font-weight: 600; 
+            border-bottom: 1px dotted rgba(255,255,255,0.5); 
+            transition: all 0.2s; 
+        } 
+        footer a:hover { 
+            color: #34d399; 
+            border-bottom-color: #34d399; 
+        } 
+ 
+        @media print { 
+            .no-print { display: none !important; } 
+            body { background: white; color: black; } 
+            .container { box-shadow: none; border: 1px solid #ccc; } 
+        } 
+    </style> 
+</head> 
+<body> 
+ 
+<div class="container"> 
+    <header> 
+        <h1>🎨 Pixel Binaire Studio</h1> 
+        <div class="subtitle">Convention : ⬛ Noir = 0 &nbsp;|&nbsp; ⬜ Blanc = 1</div> 
+    </header> 
+ 
+    <div class="nav-bar"> 
+        <button class="nav-btn active" onclick="switchMode('decode')">🔍 Décoder</button> 
+        <button class="nav-btn" onclick="switchMode('encode')">✏️ Encoder</button> 
+        <button class="nav-btn" onclick="switchMode('editor')">🏗️ Éditeur Libre</button> 
+    </div> 
+ 
+    <!-- MODE DÉCODER --> 
+    <div id="mode-decode" class="card active"> 
+        <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 5px;"> 
+            Dessine sur la grille pour reproduire le code binaire. 
+        </div> 
+        <div class="play-area"> 
+            <div class="row-labels" id="decode-hints"></div> 
+            <div class="grid-wrapper" id="grid-decode"></div> 
+        </div> 
+        <div class="controls"> 
+            <button class="btn btn-success" onclick="checkDecode()">✅ Vérifier</button> 
+            <button class="btn btn-outline" onclick="initDecode()">🔄 Nouvelle Image</button> 
+        </div> 
+    </div> 
+ 
+    <!-- MODE ENCODER --> 
+    <div id="mode-encode" class="card"> 
+        <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 5px;"> 
+            Trouve le code binaire correspondant à cette image. 
+        </div> 
+        <div class="play-area"> 
+            <div class="grid-wrapper" id="grid-encode-static"></div> 
+            <div class="binary-input-group" id="encode-inputs"></div> 
+        </div> 
+        <div class="controls"> 
+            <button class="btn btn-outline" onclick="initEncode()">🔄 Nouvelle Image</button> 
+        </div> 
+    </div> 
+ 
+    <!-- MODE ÉDITEUR --> 
+    <div id="mode-editor" class="card"> 
+        <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 15px;"> 
+            Dessine librement. Le code binaire se génère en temps réel. 
+        </div> 
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;"> 
+            <button class="btn btn-outline btn-small" onclick="initEditor(5)">5x5</button> 
+            <button class="btn btn-outline btn-small" onclick="initEditor(8)">8x8</button> 
+            <button class="btn btn-outline btn-small" onclick="initEditor(10)">10x10</button> 
+        </div> 
+        <div class="play-area"> 
+            <div class="grid-wrapper" id="grid-editor"></div> 
+        </div> 
+        <textarea id="editor-output" readonly placeholder="Code binaire généré ici..."></textarea> 
+        <div class="controls"> 
+            <button class="btn btn-outline" onclick="clearEditor()">🧹 Effacer</button> 
+            <button class="btn btn-primary" onclick="exportImage()">💾 Exporter PNG</button> 
+        </div> 
+    </div> 
+ 
+    <!-- GALERIE --> 
+    <div class="gallery-container"> 
+        <div class="gallery-title">🏆 Ma Collection</div> 
+        <div class="gallery" id="success-gallery"> 
+            <div class="empty-gallery">Tes images décodées apparaîtront ici...</div> 
+        </div> 
+    </div> 
+</div> 
+ 
+<footer class="no-print">
+    <p>
+        Webapp disponible sous licence 
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">CC BY-SA</a>
+        — Animation Education Numérique · 
+        <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
+    </p>
+</footer>
+
+<div id="toast"></div> 
+ 
+<script> 
+    // --- CONFIGURATION & DATA --- 
+    const patterns = [ 
+        { name: "Cœur", data: [[1,0,1,0,1],[0,0,0,0,0],[0,0,0,0,0],[1,0,0,0,1],[1,1,0,1,1]] }, 
+        { name: "Smiley", data: [[1,1,1,1,1],[1,0,1,0,1],[1,1,1,1,1],[0,1,1,1,0],[1,0,0,0,1]] }, 
+        { name: "Croix", data: [[1,1,0,1,1],[1,1,0,1,1],[0,0,0,0,0],[1,1,0,1,1],[1,1,0,1,1]] }, 
+        { name: "Invader", data: [[0,1,1,1,0],[1,0,1,0,1],[1,1,1,1,1],[1,0,1,0,1],[0,1,0,1,0]] }, 
+        { name: "Note", data: [[1,1,1,0,0],[1,1,1,0,1],[1,1,1,0,1],[0,0,1,1,1],[0,0,1,1,1]] }, 
+        { name: "Bateau", data: [[1,1,0,1,1],[1,1,0,1,1],[1,0,0,0,1],[0,0,0,0,0],[1,1,1,1,1]] } 
+    ]; 
+ 
+    let currentMode = 'decode'; 
+    let isDrawing = false; 
+    let drawMode = 0; // 0 pour noir, 1 pour blanc 
+    let currentPattern = null; 
+    let userGrid =[]; 
+    let editorSize = 8; 
+     
+    let audioCtx = null; 
+ 
+    // --- AUDIO ENGINE --- 
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); } 
+    function playTone(freq, type, duration) { 
+        if (!audioCtx) return; 
+        try { 
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain(); 
+            osc.type = type; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime); 
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration); 
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.start(); osc.stop(audioCtx.currentTime + duration); 
+        } catch(e) {} 
+    } 
+ 
+    // --- TOAST NOTIFICATIONS --- 
+    function showToast(msg, isSuccess = true) { 
+        const toast = document.getElementById('toast'); 
+        toast.innerHTML = isSuccess ? `✅ ${msg}` : `❌ ${msg}`; 
+        toast.style.background = isSuccess ? '#10b981' : '#ef4444'; 
+        toast.classList.add('show'); 
+        setTimeout(() => toast.classList.remove('show'), 3000); 
+    } 
+ 
+    // --- GRID LOGIC --- 
+    function createGrid(containerId, size, clickable = true, data = null) { 
+        const container = document.getElementById(containerId); 
+        container.innerHTML = ''; 
+        userGrid =[]; 
+         
+        for (let r = 0; r < size; r++) { 
+            const rowArr =[]; 
+            const rowDiv = document.createElement('div'); 
+            rowDiv.className = 'grid-row'; 
+            for (let c = 0; c < size; c++) { 
+                const cell = document.createElement('div'); 
+                cell.className = 'grid-cell' + (!clickable ? ' locked' : ''); 
+                const val = data ? data[r][c] : 1; 
+                if (val === 0) cell.classList.add('on'); 
+                cell.dataset.r = r; cell.dataset.c = c; 
+                rowArr.push(val); 
+                rowDiv.appendChild(cell); 
+            } 
+            userGrid.push(rowArr); 
+            container.appendChild(rowDiv); 
+        } 
+ 
+        if (clickable) { 
+            setupGridEvents(container); 
+        } 
+    } 
+ 
+    // --- DRAWING HANDLERS (MOUSE & TOUCH) --- 
+    function setupGridEvents(container) { 
+        // Prevent default touch actions (like scrolling) on the grid 
+        container.addEventListener('touchstart', (e) => { e.preventDefault(); handleDrawStart(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false}); 
+        container.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false}); 
+        container.addEventListener('touchend', stopDrawing); 
+ 
+        container.addEventListener('mousedown', (e) => { handleDrawStart(e.clientX, e.clientY); }); 
+        container.addEventListener('mousemove', (e) => { handleDrawMove(e.clientX, e.clientY); }); 
+    } 
+ 
+    window.addEventListener('mouseup', stopDrawing); 
+ 
+    function getCellFromCoordinates(x, y) { 
+        const el = document.elementFromPoint(x, y); 
+        return (el && el.classList.contains('grid-cell') && !el.classList.contains('locked')) ? el : null; 
+    } 
+ 
+    function handleDrawStart(x, y) { 
+        initAudio(); // Initialize audio on first user interaction 
+        const cell = getCellFromCoordinates(x, y); 
+        if (cell) { 
+            isDrawing = true; 
+            drawMode = cell.classList.contains('on') ? 1 : 0; // Toggle logic 
+            applyPaint(cell); 
+        } 
+    } 
+ 
+    function handleDrawMove(x, y) { 
+        if (!isDrawing) return; 
+        const cell = getCellFromCoordinates(x, y); 
+        if (cell) applyPaint(cell); 
+    } 
+ 
+    function stopDrawing() { isDrawing = false; } 
+ 
+    function applyPaint(cell) { 
+        const r = cell.dataset.r; 
+        const c = cell.dataset.c; 
+        if (drawMode === 0 && userGrid[r][c] !== 0) { 
+            cell.classList.add('on'); 
+            userGrid[r][c] = 0; 
+            playTone(440, 'sine', 0.03); 
+            if (currentMode === 'editor') updateEditorOutput(); 
+        } else if (drawMode === 1 && userGrid[r][c] !== 1) { 
+            cell.classList.remove('on'); 
+            userGrid[r][c] = 1; 
+            playTone(440, 'sine', 0.03); 
+            if (currentMode === 'editor') updateEditorOutput(); 
+        } 
+    } 
+ 
+    // --- MODES MANAGEMENT --- 
+    function switchMode(m) { 
+        initAudio(); 
+        currentMode = m; 
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(m))); 
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active')); 
+        document.getElementById(`mode-${m}`).classList.add('active'); 
+         
+        if (m === 'decode') initDecode(); 
+        if (m === 'encode') initEncode(); 
+        if (m === 'editor') initEditor(editorSize); 
+    } 
+ 
+    function initDecode() { 
+        currentPattern = patterns[Math.floor(Math.random() * patterns.length)]; 
+        createGrid('grid-decode', 5); 
+         
+        // Setup labels 
+        const hintsContainer = document.getElementById('decode-hints'); 
+        hintsContainer.innerHTML = ''; 
+        currentPattern.data.forEach((row) => { 
+            const div = document.createElement('div'); 
+            div.className = 'row-label'; 
+            div.innerText = row.join(''); 
+            hintsContainer.appendChild(div); 
+        }); 
+    } 
+ 
+    function checkDecode() { 
+        initAudio(); 
+        const isCorrect = JSON.stringify(userGrid) === JSON.stringify(currentPattern.data); 
+        if (isCorrect) { 
+            playTone(523.25, 'square', 0.1); setTimeout(() => playTone(659.25, 'square', 0.1), 100); setTimeout(() => playTone(783.99, 'square', 0.3), 200); 
+            addToGallery(currentPattern); 
+            showToast("Bravo ! Image décodée avec succès."); 
+            setTimeout(initDecode, 1500); 
+        } else { 
+            playTone(200, 'sawtooth', 0.3); 
+            showToast("Ce n'est pas tout à fait ça. Cherche l'erreur !", false); 
+        } 
+    } 
+ 
+    function initEncode() { 
+        currentPattern = patterns[Math.floor(Math.random() * patterns.length)]; 
+        createGrid('grid-encode-static', 5, false, currentPattern.data); 
+         
+        const inputContainer = document.getElementById('encode-inputs'); 
+        inputContainer.innerHTML = ''; 
+        for (let r = 0; r < 5; r++) { 
+            const div = document.createElement('div'); 
+            div.className = 'binary-row-field'; 
+            div.innerHTML = `<span>L${r+1}</span><input type="text" inputmode="numeric" maxlength="5" id="enc-${r}" placeholder=".....">`; 
+            const input = div.querySelector('input'); 
+             
+            // Input Validation and Auto-advance 
+            input.addEventListener('input', (e) => { 
+                initAudio(); 
+                // Filter non-binary characters 
+                let val = e.target.value.replace(/[^01]/g, ''); 
+                e.target.value = val; 
+ 
+                if (val === currentPattern.data[r].join('')) { 
+                    e.target.classList.add('correct'); 
+                    playTone(600, 'sine', 0.1); 
+                    if (r < 4) document.getElementById(`enc-${r+1}`).focus(); 
+                    checkEncodeAll(); 
+                } else if (val.length === 5) { 
+                    e.target.classList.remove('correct'); 
+                    playTone(200, 'sine', 0.1); 
+                } else { 
+                    e.target.classList.remove('correct'); 
+                } 
+            }); 
+ 
+            // Handle Backspace for navigation 
+            input.addEventListener('keydown', (e) => { 
+                if (e.key === 'Backspace' && e.target.value === '' && r > 0) { 
+                    document.getElementById(`enc-${r-1}`).focus(); 
+                } 
+            }); 
+ 
+            inputContainer.appendChild(div); 
+        } 
+    } 
+ 
+    function checkEncodeAll() { 
+        const allCorrect = Array.from(document.querySelectorAll('.binary-row-field input')) 
+                                .every(i => i.classList.contains('correct')); 
+        if (allCorrect) { 
+            playTone(523.25, 'square', 0.1); setTimeout(() => playTone(783.99, 'square', 0.3), 150); 
+            showToast("Parfait ! Encodage terminé."); 
+            setTimeout(initEncode, 2000); 
+        } 
+    } 
+ 
+    function initEditor(size) { 
+        editorSize = size; 
+        createGrid('grid-editor', size); 
+        updateEditorOutput(); 
+    } 
+ 
+    function clearEditor() {  
+        createGrid('grid-editor', editorSize);  
+        updateEditorOutput();  
+        showToast("Grille effacée."); 
+    } 
+ 
+    function updateEditorOutput() { 
+        const out = userGrid.map(row => row.join('')).join('\n'); 
+        document.getElementById('editor-output').value = out; 
+    } 
+ 
+    // --- GALLERY & EXPORT --- 
+    function addToGallery(pattern) { 
+        const gallery = document.getElementById('success-gallery'); 
+        const emptyMsg = gallery.querySelector('.empty-gallery'); 
+        if (emptyMsg) emptyMsg.remove(); 
+         
+        const item = document.createElement('div'); 
+        item.className = 'gallery-item'; 
+        const canvas = document.createElement('canvas'); 
+        canvas.width = 5; canvas.height = 5; 
+        const ctx = canvas.getContext('2d'); 
+        pattern.data.forEach((row, r) => { 
+            row.forEach((val, c) => { 
+                ctx.fillStyle = val === 0 ? '#1e293b' : '#ffffff'; 
+                ctx.fillRect(c, r, 1, 1); 
+            }); 
+        }); 
+        item.appendChild(canvas); 
+        item.title = pattern.name; 
+        gallery.prepend(item); 
+    } 
+ 
+    function exportImage() { 
+        const canvas = document.createElement('canvas'); 
+        const scale = 10; // 10px per pixel 
+        canvas.width = editorSize * scale;  
+        canvas.height = editorSize * scale; 
+        const ctx = canvas.getContext('2d'); 
+         
+        userGrid.forEach((row, r) => { 
+            row.forEach((val, c) => { 
+                ctx.fillStyle = val === 0 ? '#000000' : '#ffffff'; 
+                ctx.fillRect(c * scale, r * scale, scale, scale); 
+            }); 
+        }); 
+         
+        const link = document.createElement('a'); 
+        link.download = `pixel-art-${editorSize}x${editorSize}.png`; 
+        link.href = canvas.toDataURL('image/png'); 
+        link.click(); 
+        showToast("Image téléchargée !"); 
+    } 
+ 
+    // Init au démarrage 
+    initDecode(); 
+</script> 
+</body> 
+</html>
+Today 00:30
+<!DOCTYPE html> 
+<html lang="fr"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>🎨 Pixel Binaire Pro — Studio de Codage</title> 
+    <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap'); 
+ 
+        :root { 
+            --bg-start: #667eea; --bg-end: #764ba2; 
+            --accent: #6366f1; --accent-hover: #4f46e5; 
+            --success: #10b981; --error: #ef4444; 
+            --cell-on: #1e293b; --cell-off: #ffffff; 
+            --text-main: #1e293b; --text-muted: #64748b; 
+        } 
+         
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; } 
+         
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end)); 
+            min-height: 100vh; padding: 15px; color: var(--text-main); 
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center; 
+        } 
+ 
+        .container { 
+            width: 100%; max-width: 800px; background: #f8fafc; 
+            padding: 24px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); 
+            margin-top: 20px; position: relative; overflow: hidden; 
+        } 
+ 
+        header { text-align: center; margin-bottom: 24px; } 
+        h1 { color: var(--accent); font-size: 26px; font-weight: 700; letter-spacing: -0.5px; } 
+        .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-weight: 600; } 
+         
+        /* NAVIGATION */ 
+        .nav-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; } 
+        .nav-btn { 
+            padding: 10px 18px; border-radius: 12px; border: 2px solid #e2e8f0; 
+            background: white; color: var(--text-muted); font-size: 14px; font-weight: 600; 
+            cursor: pointer; transition: all 0.2s; 
+        } 
+        .nav-btn:hover { border-color: #cbd5e1; } 
+        .nav-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); } 
+ 
+        /* GRID SYSTEM */ 
+        .play-area { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 20px 0; flex-wrap: wrap; } 
+        .grid-wrapper { display: flex; flex-direction: column; touch-action: none; border: 2px solid #cbd5e1; border-radius: 4px; overflow: hidden; } 
+        .grid-row { display: flex; } 
+        .grid-cell { 
+            width: 36px; height: 36px; border: 1px solid #e2e8f0; 
+            background: var(--cell-off); cursor: crosshair; transition: transform 0.05s; 
+        } 
+        .grid-cell:active { transform: scale(0.9); } 
+        .grid-cell.on { background: var(--cell-on); border-color: #0f172a; } 
+        .grid-cell.locked { cursor: default; } 
+ 
+        /* LABELS & INPUTS */ 
+        .row-labels { display: flex; flex-direction: column; justify-content: center; gap: 0; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent); font-weight: 700; text-align: right; } 
+        .row-label { height: 36px; display: flex; align-items: center; justify-content: flex-end; } 
+ 
+        .binary-input-group { display: flex; flex-direction: column; gap: 6px; margin: 0 auto; width: fit-content;} 
+        .binary-row-field { display: flex; align-items: center; gap: 12px; } 
+        .binary-row-field span { font-weight: 600; color: var(--text-muted); font-size: 14px; width: 20px; text-align: right; } 
+        .binary-row-field input { 
+            font-family: 'JetBrains Mono', monospace; font-size: 18px; padding: 6px 12px; 
+            border: 2px solid #e2e8f0; border-radius: 8px; width: 140px; letter-spacing: 6px; 
+            text-align: left; outline: none; transition: 0.2s; color: var(--text-main); 
+        } 
+        .binary-row-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); } 
+        .binary-row-field input.correct { border-color: var(--success); background: #f0fdf4; color: #065f46; pointer-events: none; } 
+ 
+        /* GALERIE */ 
+        .gallery-container { margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 15px; } 
+        .gallery-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; } 
+        .gallery { display: flex; gap: 12px; overflow-x: auto; padding: 10px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; min-height: 80px; align-items: center; } 
+        .gallery-item { 
+            flex: 0 0 50px; height: 50px; background: white; border-radius: 6px; 
+            border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; 
+            overflow: hidden; padding: 2px; 
+        } 
+        .gallery-item canvas { width: 100%; height: 100%; image-rendering: pixelated; } 
+        .empty-gallery { font-size: 12px; color: #94a3b8; width: 100%; text-align: center; } 
+ 
+        /* EDITOR OUTPUT */ 
+        #editor-output { 
+            width: 100%; height: 120px; font-family: 'JetBrains Mono', monospace;  
+            background: #1e293b; color: #34d399; padding: 12px; border-radius: 10px;  
+            margin-top: 15px; font-size: 14px; border: none; outline: none; resize: none; 
+            -webkit-user-select: text; user-select: text; line-height: 1.5; 
+        } 
+ 
+        /* UTILS & TOAST */ 
+        .card { display: none; animation: fadeIn 0.3s ease; } 
+        .card.active { display: block; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+         
+        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; } 
+        .btn { padding: 10px 20px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; display: flex; align-items: center; gap: 6px; } 
+        .btn:active { transform: scale(0.96); } 
+        .btn-primary { background: var(--accent); color: white; } 
+        .btn-primary:hover { background: var(--accent-hover); } 
+        .btn-success { background: var(--success); color: white; } 
+        .btn-success:hover { background: #059669; } 
+        .btn-outline { background: transparent; border: 2px solid #e2e8f0; color: var(--text-muted); } 
+        .btn-outline:hover { background: #f1f5f9; color: var(--text-main); } 
+        .btn-small { padding: 6px 12px; font-size: 12px; } 
+ 
+        #toast { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); 
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 30px; 
+            font-weight: 600; font-size: 14px; opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+            z-index: 1000; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+        } 
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; } 
+ 
+        @media (max-width: 600px) { 
+            .grid-cell { width: 28px; height: 28px; } 
+            .row-label { height: 28px; font-size: 12px; } 
+            .binary-row-field input { width: 120px; font-size: 16px; letter-spacing: 4px; } 
+        } 
+ 
+        /* FOOTER */ 
+        footer { 
+            margin-top: auto; 
+            padding: 20px 0 10px 0; 
+            text-align: center; 
+            font-size: 13px; 
+            color: rgba(255, 255, 255, 0.8); 
+            width: 100%; 
+        } 
+        footer a { 
+            color: #ffffff; 
+            text-decoration: none; 
+            font-weight: 600; 
+            border-bottom: 1px dotted rgba(255,255,255,0.5); 
+            transition: all 0.2s; 
+        } 
+        footer a:hover { 
+            color: #34d399; 
+            border-bottom-color: #34d399; 
+        } 
+ 
+        @media print { 
+            .no-print { display: none !important; } 
+            body { background: white; color: black; } 
+            .container { box-shadow: none; border: 1px solid #ccc; } 
+        } 
+    </style> 
+</head> 
+<body> 
+ 
+<div class="container"> 
+    <header> 
+        <h1>🎨 Pixel Binaire Studio</h1> 
+        <div class="subtitle">Convention : ⬛ Noir = 0 &nbsp;|&nbsp; ⬜ Blanc = 1</div> 
+    </header> 
+ 
+    <div class="nav-bar"> 
+        <button class="nav-btn active" onclick="switchMode('decode')">🔍 Décoder</button> 
+        <button class="nav-btn" onclick="switchMode('encode')">✏️ Encoder</button> 
+        <button class="nav-btn" onclick="switchMode('editor')">🏗️ Éditeur Libre</button> 
+    </div> 
+ 
+    <!-- MODE DÉCODER --> 
+    <div id="mode-decode" class="card active"> 
+        <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 5px;"> 
+            Dessine sur la grille pour reproduire le code binaire. 
+        </div> 
+        <div class="play-area"> 
+            <div class="row-labels" id="decode-hints"></div> 
+            <div class="grid-wrapper" id="grid-decode"></div> 
+        </div> 
+        <div class="controls"> 
+            <button class="btn btn-success" onclick="checkDecode()">✅ Vérifier</button> 
+            <button class="btn btn-outline" onclick="initDecode()">🔄 Nouvelle Image</button> 
+        </div> 
+    </div> 
+ 
+    <!-- MODE ENCODER --> 
+    <div id="mode-encode" class="card"> 
+        <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 5px;"> 
+            Trouve le code binaire correspondant à cette image. 
+        </div> 
+        <div class="play-area"> 
+            <div class="grid-wrapper" id="grid-encode-static"></div> 
+            <div class="binary-input-group" id="encode-inputs"></div> 
+        </div> 
+        <div class="controls"> 
+            <button class="btn btn-outline" onclick="initEncode()">🔄 Nouvelle Image</button> 
+        </div> 
+    </div> 
+ 
+    <!-- MODE ÉDITEUR --> 
+    <div id="mode-editor" class="card"> 
+        <div style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 15px;"> 
+            Dessine librement. Le code binaire se génère en temps réel. 
+        </div> 
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;"> 
+            <button class="btn btn-outline btn-small" onclick="initEditor(5)">5x5</button> 
+            <button class="btn btn-outline btn-small" onclick="initEditor(8)">8x8</button> 
+            <button class="btn btn-outline btn-small" onclick="initEditor(10)">10x10</button> 
+        </div> 
+        <div class="play-area"> 
+            <div class="grid-wrapper" id="grid-editor"></div> 
+        </div> 
+        <textarea id="editor-output" readonly placeholder="Code binaire généré ici..."></textarea> 
+        <div class="controls"> 
+            <button class="btn btn-outline" onclick="clearEditor()">🧹 Effacer</button> 
+            <button class="btn btn-primary" onclick="exportImage()">💾 Exporter PNG</button> 
+        </div> 
+    </div> 
+ 
+    <!-- GALERIE --> 
+    <div class="gallery-container"> 
+        <div class="gallery-title">🏆 Ma Collection</div> 
+        <div class="gallery" id="success-gallery"> 
+            <div class="empty-gallery">Tes images décodées apparaîtront ici...</div> 
+        </div> 
+    </div> 
+</div> 
+ 
+<footer class="no-print">
+    <p>
+        Webapp disponible sous licence 
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">CC BY-SA</a>
+        — Animation Education Numérique · 
+        <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
+    </p>
+</footer>
+
+<div id="toast"></div> 
+ 
+<script> 
+    // --- CONFIGURATION & DATA --- 
+    const patterns = [ 
+        { name: "Cœur", data: [[1,0,1,0,1],[0,0,0,0,0],[0,0,0,0,0],[1,0,0,0,1],[1,1,0,1,1]] }, 
+        { name: "Smiley", data: [[1,1,1,1,1],[1,0,1,0,1],[1,1,1,1,1],[0,1,1,1,0],[1,0,0,0,1]] }, 
+        { name: "Croix", data: [[1,1,0,1,1],[1,1,0,1,1],[0,0,0,0,0],[1,1,0,1,1],[1,1,0,1,1]] }, 
+        { name: "Invader", data: [[0,1,1,1,0],[1,0,1,0,1],[1,1,1,1,1],[1,0,1,0,1],[0,1,0,1,0]] }, 
+        { name: "Note", data: [[1,1,1,0,0],[1,1,1,0,1],[1,1,1,0,1],[0,0,1,1,1],[0,0,1,1,1]] }, 
+        { name: "Bateau", data: [[1,1,0,1,1],[1,1,0,1,1],[1,0,0,0,1],[0,0,0,0,0],[1,1,1,1,1]] } 
+    ]; 
+ 
+    let currentMode = 'decode'; 
+    let isDrawing = false; 
+    let drawMode = 0; // 0 pour noir, 1 pour blanc 
+    let currentPattern = null; 
+    let userGrid =[]; 
+    let editorSize = 8; 
+     
+    let audioCtx = null; 
+ 
+    // --- AUDIO ENGINE --- 
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); } 
+    function playTone(freq, type, duration) { 
+        if (!audioCtx) return; 
+        try { 
+            const osc = audioCtx.createOscillator(); 
+            const gain = audioCtx.createGain(); 
+            osc.type = type; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime); 
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration); 
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.start(); osc.stop(audioCtx.currentTime + duration); 
+        } catch(e) {} 
+    } 
+ 
+    // --- TOAST NOTIFICATIONS --- 
+    function showToast(msg, isSuccess = true) { 
+        const toast = document.getElementById('toast'); 
+        toast.innerHTML = isSuccess ? `✅ ${msg}` : `❌ ${msg}`; 
+        toast.style.background = isSuccess ? '#10b981' : '#ef4444'; 
+        toast.classList.add('show'); 
+        setTimeout(() => toast.classList.remove('show'), 3000); 
+    } 
+ 
+    // --- GRID LOGIC --- 
+    function createGrid(containerId, size, clickable = true, data = null) { 
+        const container = document.getElementById(containerId); 
+        container.innerHTML = ''; 
+        userGrid =[]; 
+         
+        for (let r = 0; r < size; r++) { 
+            const rowArr =[]; 
+            const rowDiv = document.createElement('div'); 
+            rowDiv.className = 'grid-row'; 
+            for (let c = 0; c < size; c++) { 
+                const cell = document.createElement('div'); 
+                cell.className = 'grid-cell' + (!clickable ? ' locked' : ''); 
+                const val = data ? data[r][c] : 1; 
+                if (val === 0) cell.classList.add('on'); 
+                cell.dataset.r = r; cell.dataset.c = c; 
+                rowArr.push(val); 
+                rowDiv.appendChild(cell); 
+            } 
+            userGrid.push(rowArr); 
+            container.appendChild(rowDiv); 
+        } 
+ 
+        if (clickable) { 
+            setupGridEvents(container); 
+        } 
+    } 
+ 
+    // --- DRAWING HANDLERS (MOUSE & TOUCH) --- 
+    function setupGridEvents(container) { 
+        // Prevent default touch actions (like scrolling) on the grid 
+        container.addEventListener('touchstart', (e) => { e.preventDefault(); handleDrawStart(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false}); 
+        container.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false}); 
+        container.addEventListener('touchend', stopDrawing); 
+ 
+        container.addEventListener('mousedown', (e) => { handleDrawStart(e.clientX, e.clientY); }); 
+        container.addEventListener('mousemove', (e) => { handleDrawMove(e.clientX, e.clientY); }); 
+    } 
+ 
+    window.addEventListener('mouseup', stopDrawing); 
+ 
+    function getCellFromCoordinates(x, y) { 
+        const el = document.elementFromPoint(x, y); 
+        return (el && el.classList.contains('grid-cell') && !el.classList.contains('locked')) ? el : null; 
+    } 
+ 
+    function handleDrawStart(x, y) { 
+        initAudio(); // Initialize audio on first user interaction 
+        const cell = getCellFromCoordinates(x, y); 
+        if (cell) { 
+            isDrawing = true; 
+            drawMode = cell.classList.contains('on') ? 1 : 0; // Toggle logic 
+            applyPaint(cell); 
+        } 
+    } 
+ 
+    function handleDrawMove(x, y) { 
+        if (!isDrawing) return; 
+        const cell = getCellFromCoordinates(x, y); 
+        if (cell) applyPaint(cell); 
+    } 
+ 
+    function stopDrawing() { isDrawing = false; } 
+ 
+    function applyPaint(cell) { 
+        const r = cell.dataset.r; 
+        const c = cell.dataset.c; 
+        if (drawMode === 0 && userGrid[r][c] !== 0) { 
+            cell.classList.add('on'); 
+            userGrid[r][c] = 0; 
+            playTone(440, 'sine', 0.03); 
+            if (currentMode === 'editor') updateEditorOutput(); 
+        } else if (drawMode === 1 && userGrid[r][c] !== 1) { 
+            cell.classList.remove('on'); 
+            userGrid[r][c] = 1; 
+            playTone(440, 'sine', 0.03); 
+            if (currentMode === 'editor') updateEditorOutput(); 
+        } 
+    } 
+ 
+    // --- MODES MANAGEMENT --- 
+    function switchMode(m) { 
+        initAudio(); 
+        currentMode = m; 
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(m))); 
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active')); 
+        document.getElementById(`mode-${m}`).classList.add('active'); 
+         
+        if (m === 'decode') initDecode(); 
+        if (m === 'encode') initEncode(); 
+        if (m === 'editor') initEditor(editorSize); 
+    } 
+ 
+    function initDecode() { 
+        currentPattern = patterns[Math.floor(Math.random() * patterns.length)]; 
+        createGrid('grid-decode', 5); 
+         
+        // Setup labels 
+        const hintsContainer = document.getElementById('decode-hints'); 
+        hintsContainer.innerHTML = ''; 
+        currentPattern.data.forEach((row) => { 
+            const div = document.createElement('div'); 
+            div.className = 'row-label'; 
+            div.innerText = row.join(''); 
+            hintsContainer.appendChild(div); 
+        }); 
+    } 
+ 
+    function checkDecode() { 
+        initAudio(); 
+        const isCorrect = JSON.stringify(userGrid) === JSON.stringify(currentPattern.data); 
+        if (isCorrect) { 
+            playTone(523.25, 'square', 0.1); setTimeout(() => playTone(659.25, 'square', 0.1), 100); setTimeout(() => playTone(783.99, 'square', 0.3), 200); 
+            addToGallery(currentPattern); 
+            showToast("Bravo ! Image décodée avec succès."); 
+            setTimeout(initDecode, 1500); 
+        } else { 
+            playTone(200, 'sawtooth', 0.3); 
+            showToast("Ce n'est pas tout à fait ça. Cherche l'erreur !", false); 
+        } 
+    } 
+ 
+    function initEncode() { 
+        currentPattern = patterns[Math.floor(Math.random() * patterns.length)]; 
+        createGrid('grid-encode-static', 5, false, currentPattern.data); 
+         
+        const inputContainer = document.getElementById('encode-inputs'); 
+        inputContainer.innerHTML = ''; 
+        for (let r = 0; r < 5; r++) { 
+            const div = document.createElement('div'); 
+            div.className = 'binary-row-field'; 
+            div.innerHTML = `<span>L${r+1}</span><input type="text" inputmode="numeric" maxlength="5" id="enc-${r}" placeholder=".....">`; 
+            const input = div.querySelector('input'); 
+             
+            // Input Validation and Auto-advance 
+            input.addEventListener('input', (e) => { 
+                initAudio(); 
+                // Filter non-binary characters 
+                let val = e.target.value.replace(/[^01]/g, ''); 
+                e.target.value = val; 
+ 
+                if (val === currentPattern.data[r].join('')) { 
+                    e.target.classList.add('correct'); 
+                    playTone(600, 'sine', 0.1); 
+                    if (r < 4) document.getElementById(`enc-${r+1}`).focus(); 
+                    checkEncodeAll(); 
+                } else if (val.length === 5) { 
+                    e.target.classList.remove('correct'); 
+                    playTone(200, 'sine', 0.1); 
+                } else { 
+                    e.target.classList.remove('correct'); 
+                } 
+            }); 
+ 
+            // Handle Backspace for navigation 
+            input.addEventListener('keydown', (e) => { 
+                if (e.key === 'Backspace' && e.target.value === '' && r > 0) { 
+                    document.getElementById(`enc-${r-1}`).focus(); 
+                } 
+            }); 
+ 
+            inputContainer.appendChild(div); 
+        } 
+    } 
+ 
+    function checkEncodeAll() { 
+        const allCorrect = Array.from(document.querySelectorAll('.binary-row-field input')) 
+                                .every(i => i.classList.contains('correct')); 
+        if (allCorrect) { 
+            playTone(523.25, 'square', 0.1); setTimeout(() => playTone(783.99, 'square', 0.3), 150); 
+            showToast("Parfait ! Encodage terminé."); 
+            setTimeout(initEncode, 2000); 
+        } 
+    } 
+ 
+    function initEditor(size) { 
+        editorSize = size; 
+        createGrid('grid-editor', size); 
+        updateEditorOutput(); 
+    } 
+ 
+    function clearEditor() {  
+        createGrid('grid-editor', editorSize);  
+        updateEditorOutput();  
+        showToast("Grille effacée."); 
+    } 
+ 
+    function updateEditorOutput() { 
+        const out = userGrid.map(row => row.join('')).join('\n'); 
+        document.getElementById('editor-output').value = out; 
+    } 
+ 
+    // --- GALLERY & EXPORT --- 
+    function addToGallery(pattern) { 
+        const gallery = document.getElementById('success-gallery'); 
+        const emptyMsg = gallery.querySelector('.empty-gallery'); 
+        if (emptyMsg) emptyMsg.remove(); 
+         
+        const item = document.createElement('div'); 
+        item.className = 'gallery-item'; 
+        const canvas = document.createElement('canvas'); 
+        canvas.width = 5; canvas.height = 5; 
+        const ctx = canvas.getContext('2d'); 
+        pattern.data.forEach((row, r) => { 
+            row.forEach((val, c) => { 
+                ctx.fillStyle = val === 0 ? '#1e293b' : '#ffffff'; 
+                ctx.fillRect(c, r, 1, 1); 
+            }); 
+        }); 
+        item.appendChild(canvas); 
+        item.title = pattern.name; 
+        gallery.prepend(item); 
+    } 
+ 
+    function exportImage() { 
+        const canvas = document.createElement('canvas'); 
+        const scale = 10; // 10px per pixel 
+        canvas.width = editorSize * scale;  
+        canvas.height = editorSize * scale; 
+        const ctx = canvas.getContext('2d'); 
+         
+        userGrid.forEach((row, r) => { 
+            row.forEach((val, c) => { 
+                ctx.fillStyle = val === 0 ? '#000000' : '#ffffff'; 
+                ctx.fillRect(c * scale, r * scale, scale, scale); 
+            }); 
+        }); 
+         
+        const link = document.createElement('a'); 
+        link.download = `pixel-art-${editorSize}x${editorSize}.png`; 
+        link.href = canvas.toDataURL('image/png'); 
+        link.click(); 
+        showToast("Image téléchargée !"); 
+    } 
+ 
+    // Init au démarrage 
+    initDecode(); 
+</script> 
+</body> 
+</html>
