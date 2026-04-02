@@ -1,0 +1,456 @@
+<!DOCTYPE html> 
+<html lang="fr"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Routage réseau - Temps et UTI</title> 
+    <style> 
+        :root { 
+            --bg-gradient-start: #667eea; --bg-gradient-end: #764ba2; 
+            --card-bg: #f9fafc; --card-border: #e0e7ff; 
+            --container-bg: #ffffff; 
+            --text-main: #333; --text-secondary: #666; --text-muted: #777; 
+            --accent: #667eea; --accent-dark: #5568d3; 
+            --badge-bg: #ede9fe; --badge-color: #6d28d9; 
+            --success: #166534; --success-bg: #d4edda; --success-border: #28a745; 
+            --error: #b91c1c; --error-bg: #f8d7da; --error-border: #f44336; 
+            --warn: #e65100; --warn-bg: #fff3e0; --warn-border: #ff9800; 
+            --shadow-color: rgba(0, 0, 0, 0.3); 
+        } 
+ 
+        * { margin: 0; padding: 0; box-sizing: border-box; } 
+ 
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%); 
+            min-height: 100vh; padding: 20px; color: var(--text-main); 
+        } 
+ 
+        .container { 
+            max-width: 950px; margin: 0 auto; background: var(--container-bg); 
+            padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px var(--shadow-color); 
+        } 
+ 
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; } 
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; } 
+ 
+        .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; } 
+        .diff-btn { 
+            padding: 6px 16px; border-radius: 20px; border: 2px solid var(--accent); 
+            background: transparent; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; 
+        } 
+        .diff-btn.active { background: var(--accent); color: #fff; } 
+        .diff-btn:hover:not(.active) { background: #eef2ff; } 
+ 
+        .instructions { 
+            background: #f0f4ff; padding: 15px; border-left: 4px solid var(--accent); 
+            border-radius: 5px; font-size: 14px; line-height: 1.6; margin-bottom: 25px; cursor: pointer; 
+        } 
+        .instructions strong { color: var(--accent); } 
+ 
+        .exercise-card { 
+            background: var(--card-bg); border-radius: 12px; padding: 22px 18px; 
+            border: 1px solid var(--card-border); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15); margin-bottom: 20px; 
+        } 
+ 
+        .card-badge { 
+            display: inline-block; background: var(--badge-bg); color: var(--badge-color); 
+            border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; 
+        } 
+        .card-title { font-weight: 600; color: #4c51bf; margin-bottom: 4px; font-size: 16px; } 
+        .card-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; } 
+ 
+        /* ========== RÉSEAU ========== */ 
+        .network-container { 
+            position: relative; width: 100%; height: 380px; 
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); 
+            border-radius: 12px; border: 1px solid var(--card-border); margin: 12px 0 16px; overflow: hidden; 
+        } 
+ 
+        .network-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; } 
+         
+        /* Node Styling */ 
+        .node { 
+            position: absolute; transform: translate(-50%, -50%); z-index: 2; 
+            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            cursor: pointer; transition: 0.2s; font-weight: 700; user-select: none; 
+        } 
+        .node-source { width: 58px; height: 58px; background: #d4edda; border: 3px solid #28a745; color: #155724; } 
+        .node-dest { width: 58px; height: 58px; background: #f8d7da; border: 3px solid #dc3545; color: #721c24; } 
+        .node-router { width: 48px; height: 48px; background: #e8eaf6; border: 3px solid #7986cb; color: #3949ab; } 
+        .node-icon { font-size: 18px; line-height: 1; } 
+        .node-label { font-size: 10px; line-height: 1; margin-top: 1px; } 
+ 
+        .node.in-path { border-color: #ff9800 !important; background: #fff3e0 !important; color: #e65100 !important; box-shadow: 0 0 14px rgba(255, 152, 0, 0.45); } 
+        .node.in-path.node-source { border-color: #28a745 !important; background: #c8e6c9 !important; color: #1b5e20 !important; } 
+        .node.in-path.node-dest { border-color: #dc3545 !important; background: #ffcdd2 !important; color: #b71c1c !important; } 
+        .node.clickable-next { animation: nodePulse 1.2s infinite; cursor: pointer; } 
+         
+        @keyframes nodePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.6); } 50% { box-shadow: 0 0 0 12px rgba(102, 126, 234, 0); } } 
+        .node.clickable-next:hover { transform: translate(-50%, -50%) scale(1.15); } 
+        .node.locked { cursor: not-allowed !important; opacity: 0.6; animation: none !important; } 
+ 
+        /* ========== CHEMIN ========== */ 
+        .path-display { 
+            background: #fff; border: 1px solid var(--card-border); border-radius: 8px; 
+            padding: 10px 14px; margin-bottom: 14px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; 
+        } 
+        .path-display .path-text { font-family: "Consolas", monospace; margin-top: 4px; color: var(--text-main); } 
+        .path-arrow { color: #ff9800; font-weight: 700; margin: 0 4px; } 
+        .path-current { color: #ff9800; font-weight: 700; } 
+        .path-waiting { color: #ccc; } 
+         
+        .time-box { background: #eef2ff; padding: 8px 12px; border-radius: 6px; border: 2px solid var(--accent); color: var(--accent-dark); font-weight: bold; font-family: "Consolas", monospace; font-size: 16px; } 
+ 
+        /* ========== CONTRÔLES ========== */ 
+        .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; } 
+        .btn { border: none; border-radius: 6px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; } 
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; } 
+        .btn-check { background: #4caf50; color: #fff; } .btn-check:hover:not(:disabled) { background: #43a047; transform: translateY(-1px); } 
+        .btn-new { background: var(--accent); color: #fff; } .btn-new:hover:not(:disabled) { background: var(--accent-dark); transform: translateY(-1px); } 
+        .btn-undo { background: #ff9800; color: #fff; } .btn-undo:hover:not(:disabled) { background: #f57c00; transform: translateY(-1px); } 
+ 
+        /* ========== FEEDBACK ========== */ 
+        .feedback { margin-top: 16px; padding: 14px; border-radius: 8px; display: none; font-size: 14px; line-height: 1.6; } 
+        .feedback.show { display: block; animation: fadeIn 0.3s; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } } 
+        .feedback.success { background: var(--success-bg); border: 2px solid var(--success-border); color: #155724; } 
+        .feedback.error { background: var(--error-bg); border: 2px solid var(--error-border); color: #721c24; } 
+        .feedback.warn { background: var(--warn-bg); border: 2px solid var(--warn-border); color: #e65100; } 
+ 
+        .score-bar { display: flex; justify-content: center; gap: 24px; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--card-border); flex-wrap: wrap; } 
+        .score-item { text-align: center; } 
+        .score-item .score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; } 
+        .score-item .score-value { font-size: 22px; font-weight: 700; color: var(--accent); } 
+ 
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; } 
+
+        /* ========== FOOTER ========== */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+        }
+        footer a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        footer a:hover {
+            color: #e0e7ff;
+        }
+        @media print {
+            .no-print { display: none !important; }
+        }
+    </style> 
+</head> 
+<body> 
+<canvas id="confetti-canvas"></canvas> 
+<div class="container"> 
+    <h1>🌐 Routage réseau – Trouve le chemin !</h1> 
+    <p class="subtitle">Trouve le chemin <strong>le plus rapide</strong> pour acheminer le paquet de A vers B.</p> 
+ 
+    <div class="difficulty-bar"> 
+        <button class="diff-btn active" onclick="setDifficulty('easy')">🟢 Facile</button> 
+        <button class="diff-btn" onclick="setDifficulty('medium')">🟡 Moyen</button> 
+        <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile</button> 
+    </div> 
+ 
+    <details class="instructions"> 
+        <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary> 
+        <div style="margin-top:10px;"> 
+            <strong>Objectif :</strong> Trouver le chemin le plus rapide entre l'ordinateur <strong style="color:#28a745;">A</strong> et l'ordinateur <strong style="color:#dc3545;">B</strong>.<br> 
+            <ul style="margin-left:18px; margin-top:6px;"> 
+                <li>Les nombres dans les cercles orange représentent le <strong>temps de parcours en UTI</strong> (Unité de Temps Imaginaire).</li> 
+                <li>Le meilleur chemin n'est pas forcément celui qui a le moins de routeurs, mais celui dont <strong>la somme des temps est la plus petite</strong> !</li> 
+                <li><strong>Clique</strong> sur un routeur clignotant pour avancer. Reviens en arrière avec « ↩ Annuler ».</li> 
+                <li>Quand tu atteins B, clique sur <strong>« ✅ Vérifier »</strong>.</li> 
+            </ul> 
+        </div> 
+    </details> 
+ 
+    <div class="exercise-card" id="exercise-card"> 
+        <div class="card-badge">Réseau n° <span id="netNumber">1</span></div> 
+        <div class="card-title">Achemine le paquet de 💻 A vers 🖥️ B</div> 
+        <div class="card-subtitle" id="card-subtitle">Réseau facile</div> 
+ 
+        <div class="network-container" id="network-container"> 
+            <svg class="network-svg" id="network-svg" width="100%" height="100%"></svg> 
+        </div> 
+ 
+        <div class="path-display"> 
+            <div> 
+                <div style="font-weight: bold; color: var(--accent); font-size: 12px; text-transform: uppercase;">📍 Chemin actuel</div> 
+                <div class="path-text" id="path-text"></div> 
+            </div> 
+            <div class="time-box">⏱️ <span id="path-time">0</span> UTI</div> 
+        </div> 
+ 
+        <div class="controls"> 
+            <button class="btn btn-check" id="btn-check" onclick="checkPath()">✅ Vérifier</button> 
+            <button class="btn btn-undo" id="btn-undo" onclick="undoStep()">↩ Annuler</button> 
+            <button class="btn btn-new" id="btn-new" onclick="newNetwork()">➡ Nouveau réseau</button> 
+        </div> 
+ 
+        <div class="feedback" id="feedback"></div> 
+    </div> 
+ 
+    <div class="score-bar"> 
+        <div class="score-item"><div class="score-label">Victoires</div><div class="score-value" id="global-correct">0</div></div> 
+        <div class="score-item"><div class="score-label">Série 🔥</div><div class="score-value" id="global-streak">0</div></div> 
+        <div class="score-item"><div class="score-label">Meilleure</div><div class="score-value" id="global-best">0</div></div> 
+    </div> 
+</div> 
+
+<footer class="no-print">
+    <p>
+        Webapp disponible sous licence 
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noopener noreferrer">CC BY-SA</a>
+        — Animation Education Numérique · 
+        <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
+    </p>
+</footer>
+ 
+<script> 
+// ========================================== 
+//  RÉSEAUX AVEC POIDS (Temps en UTI) 
+// ========================================== 
+//[id1, id2, UTI (temps)] 
+const networkPool = { 
+    easy:[ 
+        { // Diamant : Le chemin avec le moins de sauts n'est pas forcément le plus rapide 
+            nodes: [['src',8,50,'s'],['R1',34,22,'r'],['R2',34,78,'r'],['R3',66,50,'r'],['dst',92,50,'d']], 
+            edges: [['src','R1',4], ['src','R2',2], ['R1','R3',2], ['R2','R3',6], ['R3','dst',3]] 
+        }, 
+        { // Fourche 
+            nodes: [['src',8,50,'s'],['R1',36,50,'r'],['R2',64,25,'r'],['R3',64,75,'r'],['dst',92,50,'d']], 
+            edges: [['src','R1',2], ['R1','R2',5], ['R1','R3',2],['R2','dst',2], ['R3','dst',6]] 
+        }, 
+        { // Zigzag 
+            nodes: [['src',8,35,'s'],['R1',32,75,'r'],['R2',58,25,'r'],['R3',78,70,'r'],['dst',92,40,'d']], 
+            edges: [['src','R1',2],['src','R2',8], ['R1','R2',3], ['R2','R3',2],['R3','dst',4]] 
+        } 
+    ], 
+    medium:[ 
+        { // Double diamant 
+            nodes: [['src',7,50,'s'],['R1',24,22,'r'],['R2',24,78,'r'],['R3',48,50,'r'],['R4',72,25,'r'],['R5',72,75,'r'],['dst',93,50,'d']], 
+            edges: [['src','R1',3],['src','R2',5],['R1','R3',4],['R2','R3',2],['R1','R4',8],['R2','R5',7],['R3','R4',2],['R3','R5',5],['R4','dst',4],['R5','dst',2]] 
+        }, 
+        { // Grille 
+            nodes: [['src',7,50,'s'],['R1',25,22,'r'],['R2',25,78,'r'],['R3',50,22,'r'],['R4',50,78,'r'],['R5',75,50,'r'],['dst',93,50,'d']], 
+            edges: [['src','R1',4],['src','R2',2],['R1','R2',2],['R1','R3',6],['R2','R4',3],['R3','R4',2],['R3','R5',3],['R4','R5',5],['R5','dst',2]] 
+        } 
+    ], 
+    hard:[ 
+        { // Maillage complexe 
+            nodes: [['src',5,50,'s'],['R1',18,18,'r'],['R2',18,82,'r'],['R3',36,50,'r'],['R4',54,18,'r'],['R5',54,50,'r'],['R6',54,82,'r'],['R7',76,35,'r'],['R8',76,70,'r'],['dst',95,50,'d']], 
+            edges: [['src','R1',2],['src','R2',3],['R1','R3',4],['R2','R3',2],['R1','R4',6],['R3','R5',3],['R3','R6',5],['R2','R6',7],['R4','R5',1],['R4','R7',4],['R5','R7',2],['R5','R8',5],['R6','R8',3],['R7','dst',3],['R8','dst',4]] 
+        }, 
+        { // Large mesh 
+            nodes: [['src',5,50,'s'],['R1',16,25,'r'],['R2',16,75,'r'],['R3',32,50,'r'],['R4',48,20,'r'],['R5',48,80,'r'],['R6',64,50,'r'],['R7',80,25,'r'],['R8',80,75,'r'],['dst',95,50,'d']], 
+            edges: [['src','R1',4],['src','R2',2],['R1','R3',2],['R2','R3',5],['R3','R4',3],['R3','R5',6],['R4','R6',2],['R5','R6',1],['R6','R7',4],['R6','R8',3],['R7','dst',2],['R8','dst',5],['R4','R7',7],['R5','R8',2],['R1','R4',8]] 
+        } 
+    ] 
+}; 
+ 
+// ========================================== 
+//  MOTEUR DU JEU 
+// ========================================== 
+let parsedNodes = [], parsedEdges = [], adjacency = {}; 
+let currentPath =[], isLocked = false, difficulty = 'easy'; 
+let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0; 
+ 
+function parseNetwork(raw) { 
+    parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] })); 
+    parsedEdges = raw.edges.map(e => ({ from: e[0], to: e[1], weight: e[2] })); 
+     
+    adjacency = {}; 
+    parsedNodes.forEach(n => adjacency[n.id] = []); 
+    parsedEdges.forEach(e => { 
+        adjacency[e.from].push({ to: e.to, weight: e.weight }); 
+        adjacency[e.to].push({ to: e.from, weight: e.weight }); 
+    }); 
+} 
+ 
+function getNode(id) { return parsedNodes.find(n => n.id === id); } 
+function setDifficulty(lvl) { 
+    difficulty = lvl; 
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl === 'easy' ? 'facile' : (lvl === 'medium' ? 'moyen' : 'difficile')))); 
+    newNetwork(); 
+} 
+ 
+// Algorithme de Dijkstra pour trouver le VRAI chemin le plus rapide 
+function getFastestPath() { 
+    let dist = {}, prev = {}, unvisited = []; 
+    parsedNodes.forEach(n => { dist[n.id] = Infinity; prev[n.id] = null; unvisited.push(n.id); }); 
+    dist['src'] = 0; 
+ 
+    while (unvisited.length > 0) { 
+        let minNode = null, minDist = Infinity; 
+        unvisited.forEach(u => { if (dist[u] < minDist) { minDist = dist[u]; minNode = u; } }); 
+        if (minNode === null || minNode === 'dst') break; 
+         
+        unvisited.splice(unvisited.indexOf(minNode), 1); 
+         
+        adjacency[minNode].forEach(edge => { 
+            if (unvisited.includes(edge.to)) { 
+                let alt = dist[minNode] + edge.weight; 
+                if (alt < dist[edge.to]) { dist[edge.to] = alt; prev[edge.to] = minNode; } 
+            } 
+        }); 
+    } 
+    return dist['dst']; // Retourne le temps optimal minimum 
+} 
+ 
+function calculateCurrentTime() { 
+    let time = 0; 
+    for (let i = 0; i < currentPath.length - 1; i++) { 
+        let edge = parsedEdges.find(e => (e.from === currentPath[i] && e.to === currentPath[i+1]) || (e.from === currentPath[i+1] && e.to === currentPath[i])); 
+        if (edge) time += edge.weight; 
+    } 
+    return time; 
+} 
+ 
+function newNetwork() { 
+    const pool = networkPool[difficulty]; 
+    parseNetwork(pool[Math.floor(Math.random() * pool.length)]); 
+    currentPath = ['src']; 
+    isLocked = false; netCount++; 
+    document.getElementById('netNumber').textContent = netCount; 
+    document.getElementById('card-subtitle').textContent = `Réseau ${difficulty === 'easy'?'facile':difficulty==='medium'?'moyen':'difficile'}`; 
+    document.getElementById('feedback').className = 'feedback'; // Hide feedback 
+    render(); 
+} 
+ 
+function render() { 
+    renderEdges(); renderNodes(); renderPathDisplay(); 
+    document.getElementById('btn-check').disabled = isLocked; 
+    document.getElementById('btn-undo').disabled = isLocked || currentPath.length <= 1; 
+    document.getElementById('btn-new').disabled = isLocked; 
+} 
+ 
+function renderEdges() { 
+    const svg = document.getElementById('network-svg'); svg.innerHTML = ''; 
+     
+    parsedEdges.forEach(e => { 
+        const n1 = getNode(e.from), n2 = getNode(e.to); 
+        const isPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1; 
+         
+        // Ligne 
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line'); 
+        line.setAttribute('x1', `${n1.x}%`); line.setAttribute('y1', `${n1.y}%`); 
+        line.setAttribute('x2', `${n2.x}%`); line.setAttribute('y2', `${n2.y}%`); 
+        line.setAttribute('stroke', isPath ? '#ff9800' : '#c5cbe9'); 
+        line.setAttribute('stroke-width', isPath ? '5' : '2.5'); 
+        svg.appendChild(line); 
+ 
+        // Cercle UTI (Poids) 
+        const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2; 
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); 
+        circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`); 
+        circle.setAttribute('r', '11'); 
+        circle.setAttribute('fill', isPath ? '#e65100' : '#9fa8da'); 
+        svg.appendChild(circle); 
+ 
+        // Texte UTI 
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text'); 
+        text.setAttribute('x', `${cx}%`); text.setAttribute('y', `${cy}%`); 
+        text.setAttribute('fill', '#ffffff'); text.setAttribute('font-size', '11'); 
+        text.setAttribute('font-weight', 'bold'); text.setAttribute('text-anchor', 'middle'); 
+        text.setAttribute('dominant-baseline', 'central'); 
+        text.textContent = e.weight; 
+        svg.appendChild(text); 
+    }); 
+} 
+ 
+function renderNodes() { 
+    const container = document.getElementById('network-container'); 
+    container.querySelectorAll('.node').forEach(n => n.remove()); 
+ 
+    const last = currentPath[currentPath.length - 1]; 
+    const clickable = isLocked ? [] : adjacency[last].map(e => e.to).filter(id => !currentPath.includes(id)); 
+ 
+    parsedNodes.forEach(n => { 
+        const div = document.createElement('div'); 
+        div.className = `node ${n.type === 's' ? 'node-source' : n.type === 'd' ? 'node-dest' : 'node-router'}`; 
+        div.style.left = `${n.x}%`; div.style.top = `${n.y}%`; 
+         
+        if (currentPath.includes(n.id)) div.classList.add('in-path'); 
+        if (clickable.includes(n.id)) div.classList.add('clickable-next'); 
+        if (isLocked) div.classList.add('locked'); 
+ 
+        div.innerHTML = `<span class="node-icon">${n.type==='s'?'💻':n.type==='d'?'🖥️':'📡'}</span><span class="node-label">${n.type==='s'?'A':n.type==='d'?'B':n.id}</span>`; 
+        div.onclick = () => onNodeClick(n.id, clickable, last); 
+        container.appendChild(div); 
+    }); 
+} 
+ 
+function renderPathDisplay() { 
+    const text = currentPath.map(id => { 
+        const n = getNode(id); return `<span class="path-current">${n.type==='s'?'💻 A':n.type==='d'?'🖥️ B':'📡 '+n.id}</span>`; 
+    }).join('<span class="path-arrow"> → </span>') + (currentPath[currentPath.length-1] !== 'dst' ? '<span class="path-waiting"> → ❓</span>' : ''); 
+     
+    document.getElementById('path-text').innerHTML = text; 
+    document.getElementById('path-time').textContent = calculateCurrentTime(); 
+} 
+ 
+function onNodeClick(id, clickable, last) { 
+    if (isLocked) return; 
+    if (id === last && id !== 'src') undoStep(); // Clic sur le dernier = annuler 
+    else if (clickable.includes(id)) { currentPath.push(id); render(); } 
+} 
+ 
+function undoStep() { if (!isLocked && currentPath.length > 1) { currentPath.pop(); render(); } } 
+ 
+function checkPath() { 
+    if (isLocked) return; 
+    const last = currentPath[currentPath.length - 1]; 
+    const fb = document.getElementById('feedback'); 
+ 
+    if (last !== 'dst') { 
+        fb.className = 'feedback show error'; 
+        fb.innerHTML = `<strong>❌ Le paquet n'est pas arrivé !</strong><br>Tu dois atteindre l'ordinateur B. Continue à cliquer sur les routeurs.`; 
+        return; 
+    } 
+ 
+    const userTime = calculateCurrentTime(); 
+    const optimalTime = getFastestPath(); 
+ 
+    if (userTime === optimalTime) { 
+        // SUCCÈS TOTAL 
+        fb.className = 'feedback show success'; 
+        fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`; 
+        isLocked = true; globalCorrect++; globalStreak++; if(globalStreak > globalBest) globalBest = globalStreak; 
+        if(globalStreak >= 2) launchConfetti(); 
+        render(); setTimeout(newNetwork, 3000); 
+    } else { 
+        // ARRIVÉ MAIS TROP LENT 
+        fb.className = 'feedback show warn'; 
+        fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais...</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Annuler" pour chercher une meilleure route.</em>`; 
+        globalStreak = 0; 
+    } 
+     
+    document.getElementById('global-correct').textContent = globalCorrect; 
+    document.getElementById('global-streak').textContent = globalStreak; 
+    document.getElementById('global-best').textContent = globalBest; 
+} 
+ 
+// Confetti Engine 
+function launchConfetti() { 
+    const cvs = document.getElementById('confetti-canvas'), ctx = cvs.getContext('2d'); 
+    cvs.width = window.innerWidth; cvs.height = window.innerHeight; 
+    let parts =[], cols =['#667eea','#4caf50','#ff9800','#e91e63']; 
+    for (let i=0; i<80; i++) parts.push({x:Math.random()*cvs.width, y:-50, vx:(Math.random()-0.5)*6, vy:Math.random()*4+2, c:cols[Math.floor(Math.random()*cols.length)], s:Math.random()*6+3}); 
+    function anim() { 
+        ctx.clearRect(0,0,cvs.width,cvs.height); let alive=false; 
+        parts.forEach(p => { if(p.y > cvs.height) return; alive=true; p.x+=p.vx; p.vy+=0.1; p.y+=p.vy; ctx.fillStyle=p.c; ctx.fillRect(p.x, p.y, p.s, p.s); }); 
+        if(alive) requestAnimationFrame(anim); 
+    } 
+    anim(); 
+} 
+ 
+newNetwork(); 
+</script> 
+</body> 
+</html>
