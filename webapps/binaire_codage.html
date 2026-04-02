@@ -244,9 +244,13 @@ const powers =[128, 64, 32, 16, 8, 4, 2, 1];
  
 let currentBits = 7; // Medium default 
 let calcState =[0,0,0,0,0,0,0,0]; // 0=MSB(128), 7=LSB(1) 
-let decBinLocked = false, binDecLocked = false; 
-let currentDecNumber = null, currentBinString = null; 
-let globalCorrect = 0, globalStreak = 0, globalBest = 0; 
+let decBinLocked = false;
+let binDecLocked = false;
+let currentDecNumber = null;
+let currentBinString = null;
+let globalCorrect = 0;
+let globalStreak = 0;
+let globalBest = 0;
 let helpTimer = null; 
  
 // ========================================== 
@@ -254,7 +258,9 @@ let helpTimer = null;
 // ========================================== 
 function buildUI() { 
     // Calc Table 
-    let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>'; 
+    let trBits = '<th>Bits</th>';
+    let trPow = '<th>Puissances</th>';
+    let trVals = '<th>Valeurs</th>';
     let togglesHtml = ''; 
      
     for(let i=0; i<8; i++) { 
@@ -320,7 +326,8 @@ function toggleBitIndex(i) {
 function resetCalc() { calcState =[0,0,0,0,0,0,0,0]; for(let i=0; i<8; i++) { calcState[i]=1; toggleBitIndex(i); } } // Trick to reset clean 
  
 function updateCalcResult() { 
-    let sum = 0, parts =[]; 
+    let sum = 0;
+    let parts =[];
     for(let i=0; i<8; i++) { if(calcState[i] && (8-i)<=currentBits) { sum += powers[i]; parts.push(powers[i]); } } 
      
     if(parts.length === 0) { 
@@ -334,7 +341,9 @@ function updateCalcResult() {
 // EXPLICATIONS DETAILLEES 
 // ========================================== 
 function explainBinary(binStr) { 
-    let sum = 0, parts =[], val = 1 << (binStr.length - 1); 
+    let sum = 0;
+    let parts =[];
+    let val = 1 << (binStr.length - 1);
     for (let char of binStr) { 
         if (char === '1') { parts.push(val); sum += val; } 
         val >>= 1; 
@@ -437,9 +446,11 @@ function updateGlobalScore(correct) {
 } 
  
 function launchConfetti() { 
-    const cvs = document.getElementById('confetti-canvas'), ctx = cvs.getContext('2d'); 
+    const cvs = document.getElementById('confetti-canvas');
+    const ctx = cvs.getContext('2d');
     cvs.width = window.innerWidth; cvs.height = window.innerHeight; 
-    let parts =[], cols =['#667eea','#4caf50','#ff9800','#e91e63']; 
+    let parts =[];
+    let cols =['#667eea','#4caf50','#ff9800','#e91e63'];
     for (let i=0; i<80; i++) parts.push({x:Math.random()*cvs.width, y:-50, vx:(Math.random()-0.5)*6, vy:Math.random()*4+2, c:cols[Math.floor(Math.random()*cols.length)], s:Math.random()*6+3, rot:0, rotSpeed:(Math.random()-0.5)*10}); 
     function anim() { 
         ctx.clearRect(0,0,cvs.width,cvs.height); let alive=false; 
