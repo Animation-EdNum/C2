@@ -1,680 +1,685 @@
-<!DOCTYPE html> 
-<html lang="fr"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Tirage au Sort</title> 
-    <style> 
-        :root { 
-            --color-background: #f1f5f9; 
-            --color-surface: #ffffff; 
-            --color-text: #0f172a; 
-            --color-text-secondary: #64748b; 
-            --color-primary: #0d9488; 
-            --color-primary-hover: #0f766e; 
-            --color-primary-light: #ccfbf1; 
-            --color-border: #e2e8f0; 
-            --color-success: #10b981; 
-            --color-btn-text: #ffffff; 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Barème</title>
+    <!-- Librairie pour les icônes -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Librairie pour l'export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --color-background: #f1f5f9;
+            --color-surface: #ffffff;
+            --color-text: #0f172a;
+            --color-text-secondary: #64748b;
+            --color-primary: #0d9488;
+            --color-primary-hover: #0f766e;
+            --color-primary-light: #ccfbf1;
+            --color-border: #e2e8f0;
+            --color-success: #10b981;
+            --color-fail: #ef4444;
+            --color-highlight: #fef08a;
+            --color-highlight-text: #854d0e;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --color-table-header: #f8fafc;
+            --color-table-hover: #f1f5f9;
             --color-input-bg: #f8fafc;
-            --color-cell-bg: #ffffff;
-            --color-cell-hover: #f1f5f9;
-            --color-cell-drawn: #f1f5f9;
-            --color-cell-drawn-text: #94a3b8;
-            --color-cell-excluded: #fee2e2;
-            --color-cell-excluded-text: #ef4444;
-            --color-finished-bg: #ecfdf5;
-            --color-finished-text: #059669;
-            --color-finished-border: #a7f3d0;
-            --color-btn-secondary-bg: #f1f5f9;
-            --color-btn-secondary-hover: #e2e8f0;
-             
-            --radius-base: 12px; 
-            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+            --color-passing-row: #f8fafc;
         }
 
-        [data-theme="dark"] {
+        body.dark {
             --color-background: #0f172a;
             --color-surface: #1e293b;
             --color-text: #f8fafc;
             --color-text-secondary: #94a3b8;
-            --color-primary: #2dd4bf;
-            --color-primary-hover: #14b8a6;
-            --color-primary-light: #115e59;
+            --color-primary: #14b8a6;
+            --color-primary-hover: #2dd4bf;
+            --color-primary-light: #0f766e;
             --color-border: #334155;
-            --color-success: #10b981;
-            --color-btn-text: #0f172a;
+            --color-success: #34d399;
+            --color-fail: #f87171;
+            --color-highlight: #b45309;
+            --color-highlight-text: #fef3c7;
+            --color-table-header: #0f172a;
+            --color-table-hover: #334155;
             --color-input-bg: #0f172a;
-            --color-cell-bg: #1e293b;
-            --color-cell-hover: #334155;
-            --color-cell-drawn: #0f172a;
-            --color-cell-drawn-text: #475569;
-            --color-cell-excluded: #7f1d1d;
-            --color-cell-excluded-text: #fca5a5;
-            --color-finished-bg: #064e3b;
-            --color-finished-text: #34d399;
-            --color-finished-border: #047857;
-            --color-btn-secondary-bg: #334155;
-            --color-btn-secondary-hover: #475569;
+            --color-passing-row: #1e293b;
+            --shadow: 0 1px 3px rgba(255,255,255,0.05);
         }
- 
-        * { box-sizing: border-box; margin: 0; padding: 0; } 
- 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background-color: var(--color-background); 
-            color: var(--color-text); 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; padding: 20px; line-height: 1.5; 
-        } 
- 
-        .container { width: 100%; max-width: 550px; position: relative; } 
- 
-        .card { 
-            background-color: var(--color-surface); border-radius: var(--radius-base); 
-            border: 1px solid var(--color-border); padding: 32px; box-shadow: var(--shadow-card); 
-            position: relative; 
-        } 
- 
-        /* En-tête */ 
-        h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; text-align: center; letter-spacing: -0.025em; } 
-        .subtitle { text-align: center; color: var(--color-text-secondary); margin-bottom: 32px; font-size: 14px; } 
- 
-        /* Action buttons (Audio/Theme) */ 
-        .action-buttons {
-            position: absolute; top: 20px; right: 20px; display: flex; gap: 8px;
-        }
-        .icon-action-btn { 
-            background: none; border: none; 
-            color: var(--color-text-secondary); cursor: pointer; padding: 8px; 
-            border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center; 
-        } 
-        .icon-action-btn:hover { background-color: var(--color-btn-secondary-bg); color: var(--color-text); } 
- 
-        /* Setup & Onglets */ 
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: var(--color-input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--color-border); } 
-        .tab-btn { 
-            flex: 1; padding: 10px; border: none; background: transparent; color: var(--color-text-secondary); 
-            font-weight: 600; font-size: 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; 
-        } 
-        .tab-btn.active { background: var(--color-surface); color: var(--color-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); } 
- 
-        .form-group { margin-bottom: 24px; } 
-        input[type="number"], textarea { 
-            width: 100%; padding: 14px; font-size: 16px; border: 2px solid var(--color-border); 
-            border-radius: 8px; background-color: var(--color-input-bg); color: var(--color-text); transition: all 0.2s; 
-            font-family: inherit; resize: vertical; 
-        } 
-        input[type="number"] { text-align: center; font-size: 18px; } 
-        textarea { min-height: 120px; } 
-        input[type="number"]:focus, textarea:focus { outline: none; border-color: var(--color-primary); background-color: var(--color-surface); box-shadow: 0 0 0 3px var(--color-primary-light); } 
- 
-  footer { 
-            margin-top: 3rem; 
-            text-align: center; 
-            font-size: 0.75rem; 
-            color: var(--color-text-secondary); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 0.5rem; 
-        } 
- 
-        footer a { color: inherit; text-decoration: underline; transition: color 0.2s; } 
-        footer a:hover { color: var(--color-primary); }     
-       
-        /* Boutons */ 
-        .controls { display: flex; gap: 12px; margin-top: 24px; } 
-        .btn { 
-            padding: 12px 20px; font-size: 15px; font-weight: 600; border: none; border-radius: 8px; 
-            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; 
-        } 
-        .btn-primary { background-color: var(--color-primary); color: var(--color-btn-text); box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2); } 
-        .btn-primary:hover:not(:disabled) { background-color: var(--color-primary-hover); transform: translateY(-1px); box-shadow: 0 6px 8px -1px rgba(13, 148, 136, 0.3); } 
-        .btn-primary:active:not(:disabled) { transform: translateY(0); } 
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; } 
-         
-        .btn-secondary { background-color: var(--color-btn-secondary-bg); color: var(--color-text-secondary); border: 1px solid var(--color-border); } 
-        .btn-secondary:hover:not(:disabled) { background-color: var(--color-btn-secondary-hover); color: var(--color-text); } 
- 
-        .icon-btn { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; transition: 0.2s; color: var(--color-text-secondary); display: inline-flex; } 
-        .icon-btn:hover { background: var(--color-btn-secondary-hover); color: var(--color-text); } 
- 
-        /* Zone de Résultat */ 
-        .result-area { 
-            text-align: center; margin: 24px 0; padding: 32px 24px; background-color: var(--color-input-bg); 
-            border-radius: var(--radius-base); border: 1px solid var(--color-border); 
-            min-height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-        } 
-        .result-number { font-size: 56px; font-weight: 800; color: var(--color-primary); line-height: 1.1; margin-bottom: 8px; word-break: break-word; } 
-        .result-number.is-number { font-size: 72px; font-variant-numeric: tabular-nums; } 
-        .result-label { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; } 
-         
-        .pulse { animation: pulseEffect 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); } 
-        @keyframes pulseEffect { 0% { transform: scale(1); } 50% { transform: scale(1.15); text-shadow: 0 0 20px var(--color-primary-light); } 100% { transform: scale(1); } } 
-         
-        .rolling { opacity: 0.7; transform: scale(0.95); transition: 0.1s; } 
- 
-        .finished-message { 
-            background-color: var(--color-finished-bg); color: var(--color-finished-text); border: 1px solid var(--color-finished-border); 
-            padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; 
-            margin-top: 16px; text-align: center; display: none; animation: fadeIn 0.3s ease-in; 
-        } 
- 
-        /* Grille Participants */ 
-        .participants-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--color-border); } 
-        .section-header { font-size: 11px; font-weight: 700; margin-bottom: 8px; color: var(--color-text-secondary); text-align: center; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        .legend-container { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-bottom: 16px; }
-        .legend-item { display: inline-flex; align-items: center; margin: 0 6px; }
-        .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; border: 1px solid transparent; }
-        .legend-dot.available { background-color: var(--color-cell-bg); border-color: var(--color-border); }
-        .legend-dot.excluded { background-color: var(--color-cell-excluded); border-color: var(--color-cell-excluded-text); }
-        .legend-dot.drawn { background-color: var(--color-cell-drawn); border-color: var(--color-cell-drawn-text); }
-         
-        .grid-wrapper { max-height: 220px; overflow-y: auto; padding: 4px; margin: -4px; } 
-        /* Style scrollbar */ 
-        .grid-wrapper::-webkit-scrollbar { width: 6px; } 
-        .grid-wrapper::-webkit-scrollbar-track { background: var(--color-input-bg); border-radius: 4px; } 
-        .grid-wrapper::-webkit-scrollbar-thumb { background: var(--color-text-secondary); border-radius: 4px; } 
-        .grid-wrapper::-webkit-scrollbar-thumb:hover { background: var(--color-text); } 
- 
-        .grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; } 
-         
-        .cell { 
-            min-width: 42px; height: 42px; padding: 0 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            background-color: var(--color-cell-bg); border: 1px solid var(--color-border); 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 8px; font-size: 15px; font-weight: 600; 
-            color: var(--color-text); cursor: pointer; transition: all 0.15s ease; user-select: none; 
-        } 
-        .cell:hover { border-color: var(--color-primary); background-color: var(--color-cell-hover); transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); color: var(--color-primary); } 
-        .cell:active { transform: translateY(0) scale(0.95); } 
-         
-        /* Distinction Exclu vs Tiré */ 
-        .cell.drawn { opacity: 0.5; background-color: var(--color-cell-drawn); border-color: transparent; text-decoration: line-through; color: var(--color-cell-drawn-text); transform: none; box-shadow: none; } 
-        .cell.excluded { opacity: 0.6; background-color: var(--color-cell-excluded); border-color: transparent; text-decoration: line-through; color: var(--color-cell-excluded-text); transform: none; box-shadow: none; } 
- 
-        /* Historique */ 
-        .history-section { margin-top: 24px; text-align: center; display: none; } 
-        .history-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; } 
-        .history-badge { background-color: var(--color-primary); color: #ffffff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; animation: fadeIn 0.3s ease-out; box-shadow: 0 2px 4px rgba(13, 148, 136, 0.2); } 
-         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } } 
-         
-        /* Toast Notification */ 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 10px 20px; border-radius: 30px; font-weight: 600; font-size: 13px; opacity: 0; transition: 0.3s; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); } 
-        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; } 
-        #toast.toast-error { background: #dc2626; }
-        #toast.toast-success { background: #10b981; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Media Queries pour Responsive Design */
-        @media (max-width: 600px) {
-            .card {
-                padding: 24px 16px;
-            }
-            .action-buttons {
-                top: 12px;
-                right: 12px;
-            }
-            h1 {
-                font-size: 20px;
-                margin-top: 10px;
-            }
-            .result-area {
-                padding: 24px 16px;
-                min-height: 120px;
-            }
-            .result-number {
-                font-size: 40px;
-            }
-            .result-number.is-number {
-                font-size: 56px;
-            }
-            .controls {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
             }
         }
-    </style> 
-</head> 
-<body> 
-    <div class="container"> 
-        <div class="card"> 
-            <div class="action-buttons">
-                <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
-                    <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+
+        h1 { font-size: 1.5rem; font-weight: 700; color: var(--color-text); }
+
+        .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+        .btn-secondary { background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow); border: 1px solid var(--color-border); }
+        .btn-secondary:hover:not(:disabled) { background: var(--color-border); }
+        .btn-primary { background: var(--color-primary); color: white; box-shadow: var(--shadow); }
+        .btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+        .btn:disabled { opacity: 0.7; cursor: wait; }
+
+        .main-grid { display: grid; gap: 2rem; }
+        @media (min-width: 1024px) { .main-grid { grid-template-columns: 320px 1fr; } }
+
+        /* Controls */
+        .controls { background: var(--color-surface); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 1.5rem; height: fit-content; }
+        .control-header { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-secondary); letter-spacing: 0.05em; }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+        label { font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 0.5rem 0.75rem; border-radius: 8px; border: 2px solid var(--color-border);
+            background: var(--color-input-bg); color: var(--color-text); font-size: 0.875rem; transition: border-color 0.2s;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--color-primary); background: #fff; box-shadow: 0 0 0 3px var(--color-primary-light); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 480px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* Checkbox */
+        .checkbox-group { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 0.5rem; padding: 0.75rem; background: var(--color-background); border-radius: 8px; border: 1px solid var(--color-border); cursor: pointer; }
+        .checkbox-group:hover { border-color: var(--color-primary-light); }
+        .checkbox-label { text-transform: none; font-size: 0.875rem; cursor: pointer; margin: 0; color: var(--color-text); font-weight: 500; }
+
+        /* Table Area */
+        .table-area { display: flex; flex-direction: column; gap: 1rem; }
+        .table-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; font-weight: 600; color: var(--color-text-secondary); }
+        .result-container { background: var(--color-surface); border-radius: var(--radius); border: 1px solid var(--color-border); overflow: hidden; box-shadow: var(--shadow); }
+
+        .table-header { padding: 1rem; background: var(--color-table-header); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+        .table-header .title { font-weight: 700; font-size: 0.875rem; color: var(--color-text); }
+        .table-header .formula { font-family: monospace; font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .scroll-container { overflow-x: auto; max-height: 70vh; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; position: relative; }
+        th { background: var(--color-table-header); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--color-border); border-right: 1px solid var(--color-border); color: var(--color-text-secondary); position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 var(--color-border); }
+        td { padding: 0.5rem 0.4rem; text-align: center; border-bottom: 1px solid var(--color-border); border-right: 1px solid var(--color-border); transition: background-color 0.1s; }
+        td:hover { background-color: var(--color-table-hover); }
+
+        /* Thick borders for pairs */
+        th.col-end, td.col-end { border-right: 2px solid var(--color-border); }
+        th.col-end:last-child, td.col-end:last-child { border-right: none; }
+
+        .grade { font-weight: 700; }
+        .grade.failing { color: var(--color-fail); }
+        .grade.passing { color: var(--color-success); }
+        .mistake { color: var(--color-fail); opacity: 0.8; font-family: monospace; }
+        .passing-row { background-color: var(--color-passing-row); }
+
+        .hidden { display: none !important; }
+        .settings-panel { border-top: 1px solid var(--color-border); padding-top: 1.5rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+        .mobile-warning { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--color-surface); color: var(--color-text-secondary); border: 1px solid var(--color-border); font-size: 0.75rem; border-radius: 8px; margin-top: 1rem; }
+        @media (min-width: 768px) { .mobile-warning { display: none; } }
+
+        footer { margin-top: 3rem; text-align: center; font-size: 0.75rem; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 0.5rem; }
+        footer p { margin-bottom: 0.5rem; }
+        footer a { color: var(--color-primary); text-decoration: none; font-weight: 600; }
+        footer a:hover { text-decoration: underline; }
+
+        /* Print & Export Styles */
+        .print-only { display: none; }
+
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            .no-print { display: none !important; }
+            .container { max-width: 100%; margin: 0; }
+            .result-container { box-shadow: none; border: none; }
+            .print-only { display: block !important; text-align: center; margin-bottom: 2rem; }
+            .print-title { font-size: 2rem; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+            .print-meta { display: flex; justify-content: center; gap: 2rem; font-weight: 600; font-size: 0.875rem; }
+            table { border: 2px solid #000; }
+            th { border-bottom: 2px solid #000; background: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+            td, th { border-right: 1px solid #ccc; color: black !important; }
+            th.col-end, td.col-end { border-right: 3px solid #000; }
+            th.col-end:last-child, td.col-end:last-child { border-right: none; }
+            .passing-row { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+        }
+
+        /* Classe de forçage pour l'export PDF (identique à @media print) */
+        body.exporting-pdf { background: white; color: black; padding: 0; }
+        body.exporting-pdf .no-print { display: none !important; }
+        body.exporting-pdf .container { max-width: 100%; margin: 0; }
+        body.exporting-pdf .result-container { box-shadow: none; border: none; }
+        body.exporting-pdf .print-only { display: block !important; text-align: center; margin-bottom: 2rem; }
+        body.exporting-pdf .print-title { font-size: 2rem; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+        body.exporting-pdf .print-meta { display: flex; justify-content: center; gap: 2rem; font-weight: 600; font-size: 0.875rem; }
+        body.exporting-pdf table { border: 2px solid #000; }
+        body.exporting-pdf th { border-bottom: 2px solid #000; background: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+        body.exporting-pdf td, body.exporting-pdf th { border-right: 1px solid #ccc; color: black !important; }
+        body.exporting-pdf th.col-end, body.exporting-pdf td.col-end { border-right: 3px solid #000; }
+        body.exporting-pdf th.col-end:last-child, body.exporting-pdf td.col-end:last-child { border-right: none; }
+        body.exporting-pdf .passing-row { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+
+        /* Toast Container */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="pdf-container">
+    <header class="no-print">
+        <h1>Générateur de Barème</h1>
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="toggleDarkMode()" aria-label="Changer de thème" title="Changer de thème">
+                <i data-lucide="moon" id="themeIcon" style="width: 16px; height: 16px;"></i>
+            </button>
+            <button class="btn btn-secondary" onclick="copyTable()" aria-label="Copier le tableau">
+                <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                <span id="copyText">Copier</span>
+            </button>
+            <button class="btn btn-secondary" id="btnPdf" onclick="exportPDF()" aria-label="Télécharger en PDF">
+                <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                <span id="pdfText">PDF</span>
+            </button>
+            <button class="btn btn-primary" onclick="handlePrint()" aria-label="Imprimer le tableau">
+                <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+                Imprimer
+            </button>
+        </div>
+    </header>
+
+    <div class="print-only">
+        <div class="print-title" id="printTitleDisplay">Barème de Notation</div>
+        <div class="print-meta">
+            <span id="printTotal">Total: 20 pts</span>
+            <span id="printPass">Note 4 à 12 pts</span>
+            <span id="printFormula">Formule: Double barème linéaire</span>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <aside class="no-print">
+            <div class="controls">
+                <div class="control-header">
+                    <i data-lucide="settings-2" style="width: 16px; height: 16px;"></i>
+                    Configuration
+                </div>
+
+                <div class="control-group">
+                    <label for="totalPoints">Total des points</label>
+                    <input type="number" id="totalPoints" value="20" min="1" step="0.5" oninput="updateAll()">
+                </div>
+
+                <button class="btn btn-secondary" onclick="toggleSettings()" style="width: 100%; margin-top: 0.5rem;">
+                    <i data-lucide="sliders" style="width: 16px; height: 16px;"></i>
+                    Paramètres
                 </button>
-                <button class="icon-action-btn" id="audioToggleBtn" title="Activer/Désactiver le son"> 
-                    <svg id="icon-vol-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> 
-                    <svg id="icon-vol-off" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg> 
-                </button> 
-            </div>
- 
-            <h1>🎲 Tirage au Sort</h1> 
-            <p class="subtitle" id="subtitle">Générez un gagnant au hasard</p> 
- 
-            <!-- Écran de Configuration --> 
-            <div id="setupForm"> 
-                <div class="tabs"> 
-                    <button class="tab-btn active" data-target="mode-number">Nombres</button> 
-                    <button class="tab-btn" data-target="mode-names">Liste de Noms</button> 
-                </div> 
-                 
-                <div id="mode-number" class="form-group"> 
-                    <input type="number" id="totalParticipants" min="1" placeholder="Nombre de participants (ex: 20)" autofocus> 
-                </div> 
-                 
-                <div id="mode-names" class="form-group" style="display:none;"> 
-                    <textarea id="namesList" placeholder="Collez votre liste ici...&#10;Jean, Marie, Paul&#10;Ou un prénom par ligne"></textarea> 
-                </div> 
- 
-                <button class="btn btn-primary" id="initBtn"> 
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 
-                    Démarrer (Entrée) 
-                </button> 
-            </div> 
- 
-            <!-- Écran de Tirage --> 
-            <div id="drawInterface" style="display: none;"> 
-                <div class="subtitle" id="statsDisplay" style="margin-bottom: 20px;" aria-live="polite"></div> 
- 
-                <div class="result-area" aria-live="polite"> 
-                    <div class="result-number" id="drawnNumber">?</div> 
-                    <div class="result-label">Numéro gagnant</div> 
-                </div> 
- 
-                <div class="finished-message" id="finishedMsg" aria-live="polite"> 
-                    <svg style="vertical-align: bottom; margin-right: 5px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> 
-                    Tirage terminé ! 
-                </div> 
- 
-                <div class="controls"> 
-                    <button class="btn btn-secondary" id="resetBtn" style="flex: 1;"> 
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg> 
-                        Reset 
-                    </button> 
-                    <button class="btn btn-primary" id="drawBtn" style="flex: 2;"> 
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 8h.01"></path><path d="M8 8h.01"></path><path d="M8 16h.01"></path><path d="M16 16h.01"></path><path d="M12 12h.01"></path></svg> 
-                        Tirer (Entrée) 
-                    </button> 
-                </div> 
- 
-                <div class="history-section" id="historySection"> 
-                    <div class="section-header" style="display: flex; justify-content: center; align-items: center; gap: 6px;"> 
-                        Historique 
-                        <button class="icon-btn" id="copyBtn" title="Copier l'historique"> 
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> 
-                        </button> 
-                    </div> 
-                    <div class="history-badges" id="historyBadges"></div> 
-                </div> 
- 
-                <div class="participants-section"> 
-                    <div class="section-header">Participants restants</div> 
-                    <div class="legend-container">
-                        Cycle de clic :
-                        <span class="legend-item"><span class="legend-dot available"></span>Disponible</span> ➔
-                        <span class="legend-item"><span class="legend-dot excluded"></span>Absent</span> ➔
-                        <span class="legend-item"><span class="legend-dot drawn"></span>Tiré manuellement</span>
+
+                <div id="settingsPanel" class="settings-panel hidden">
+                    <div class="control-group">
+                        <label for="titleInput">Titre de l'évaluation</label>
+                        <input type="text" id="titleInput" placeholder="Ex: Vocabulaire - 8P" oninput="updateAll()">
                     </div>
-                    <div class="grid-wrapper"> 
-                        <div class="grid" id="participantItems"></div> 
-                    </div> 
-                </div> 
-            </div> 
-              <footer class="no-print"> 
-        <p> 
-            Webapp disponible sous licence  
-            <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
-            — Animation Education Numérique ·  
-            <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a> 
-        </p> 
-    </footer> 
-        </div> 
-    </div> 
-    <div id="toast">Copié dans le presse-papier !</div> 
- 
-    <script> 
-        // ========================================== 
-        // ETAT & CONFIGURATION 
-        // ========================================== 
-        const STATE_KEY = 'tirage_sort_v2'; 
-        let state = { 
-            mode: 'number', // 'number' ou 'names' 
-            allParticipants: [], 
-            availableParticipants: [], 
-            drawnParticipants:[], 
-            excludedParticipants: [], 
-            drawHistory:[] 
-        }; 
-        let isDrawing = false; 
-         
-        // ========================================== 
-        // AUDIO (Web Audio API) 
-        // ========================================== 
-        let audioCtx = null; 
-        let isMuted = false; 
-         
-        function initAudio() { 
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-            if (audioCtx.state === 'suspended') audioCtx.resume(); 
-        } 
-        function playTick() { 
-            if (isMuted || !audioCtx) return; 
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); 
-            osc.connect(gain); gain.connect(audioCtx.destination); 
-            osc.type = 'square'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); 
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05); 
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05); 
-        } 
-        function playDing() { 
-            if (isMuted || !audioCtx) return; 
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); 
-            osc.connect(gain); gain.connect(audioCtx.destination); 
-            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8); 
-            osc.start(); osc.stop(audioCtx.currentTime + 0.8); 
-        } 
- 
-        // ========================================== 
-        // ÉLÉMENTS DOM 
-        // ========================================== 
-        const totalInput = document.getElementById('totalParticipants'); 
-        const namesInput = document.getElementById('namesList'); 
-        const initBtn = document.getElementById('initBtn'); 
-        const drawBtn = document.getElementById('drawBtn'); 
-        const resetBtn = document.getElementById('resetBtn'); 
-        const copyBtn = document.getElementById('copyBtn'); 
-        const drawnNumber = document.getElementById('drawnNumber'); 
-        const participantItems = document.getElementById('participantItems'); 
-        const drawInterface = document.getElementById('drawInterface'); 
-        const setupForm = document.getElementById('setupForm'); 
-        const subtitle = document.getElementById('subtitle'); 
-        const statsDisplay = document.getElementById('statsDisplay'); 
-        const finishedMsg = document.getElementById('finishedMsg'); 
-        const historySection = document.getElementById('historySection'); 
-        const historyBadges = document.getElementById('historyBadges'); 
-         
-        // Onglets 
-        document.querySelectorAll('.tab-btn').forEach(btn => { 
-            btn.addEventListener('click', (e) => { 
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
-                e.target.classList.add('active'); 
-                state.mode = e.target.dataset.target === 'mode-number' ? 'number' : 'names'; 
-                document.getElementById('mode-number').style.display = state.mode === 'number' ? 'block' : 'none'; 
-                document.getElementById('mode-names').style.display = state.mode === 'names' ? 'block' : 'none'; 
-            }); 
-        }); 
- 
-        // Toggle Audio 
-        document.getElementById('audioToggleBtn').addEventListener('click', () => { 
-            isMuted = !isMuted; 
-            document.getElementById('icon-vol-on').style.display = isMuted ? 'none' : 'block'; 
-            document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none'; 
-        }); 
 
-        // Toggle Theme
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+                    <div class="control-group">
+                        <label for="pointsFor4">Points pour la note 4</label>
+                        <input type="number" id="pointsFor4" placeholder="Ex: 12" step="0.5" oninput="updateAll()">
+                    </div>
 
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            if (theme === 'dark') {
-                iconSun.style.display = 'block';
-                iconMoon.style.display = 'none';
+                    <div class="control-group">
+                        <label for="increment">Fractions à afficher</label>
+                        <select id="increment" onchange="updateAll()">
+                            <option value="1">1 point</option>
+                            <option value="0.5" selected>0.5 point</option>
+                            <option value="0.25">0.25 point</option>
+                            <option value="0.1">0.1 point</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="rounding">Arrondi de la note</label>
+                        <select id="rounding" onchange="updateAll()">
+                            <option value="0.1" selected>Au 0.1 (Ex: 4.3)</option>
+                            <option value="0.25">Au 0.25 (Ex: 4.25)</option>
+                            <option value="0.5">Au 0.5 (Ex: 4.5)</option>
+                            <option value="1">À l'entier (Ex: 4)</option>
+                        </select>
+                    </div>
+
+                    <label class="checkbox-group" for="showMistakes">
+                        <input type="checkbox" id="showMistakes" onchange="updateAll()">
+                        <span class="checkbox-label">Mode "Points perdus" (-Fautes)</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <main class="table-area">
+            <div class="table-meta no-print">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="layout-grid" style="width: 16px; height: 16px;"></i>
+                    Aperçu du barème
+                </div>
+                <span id="entryCount" style="font-style: italic; font-weight: 400; font-size: 0.75rem;"></span>
+            </div>
+
+            <div class="result-container" id="tableContainer">
+                <div class="table-header no-print">
+                    <span class="title" id="displayTitle">Barème / 20 pts</span>
+                    <span class="formula" id="displayFormula">Note = 5 * (Pts / 20) + 1</span>
+                </div>
+                <div class="scroll-container">
+                    <table id="gradeTable">
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mobile-warning no-print">
+                <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
+                Sur mobile, faites défiler le tableau horizontalement.
+            </div>
+
+            <footer class="no-print"> 
+                <p> 
+                    Webapp disponible sous licence  
+                    <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
+                    — Animation Education Numérique ·  
+                    <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a> 
+                </p> 
+            </footer>
+
+            <div id="toast-container" class="no-print"></div>
+        </main>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    const STORAGE_KEY = 'bareme_preferences_v1';
+
+    // ==========================================
+    // UI TOGGLES
+    // ==========================================
+    function toggleSettings() {
+        const panel = document.getElementById('settingsPanel');
+        panel.classList.toggle('hidden');
+    }
+
+    // ==========================================
+    // DARK MODE
+    // ==========================================
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark');
+        const isDark = document.body.classList.contains('dark');
+        localStorage.setItem('bareme_theme', isDark ? 'dark' : 'light');
+
+        const themeIcon = document.getElementById('themeIcon');
+        if (isDark) {
+            themeIcon.setAttribute('data-lucide', 'sun');
+        } else {
+            themeIcon.setAttribute('data-lucide', 'moon');
+        }
+        lucide.createIcons();
+    }
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('bareme_theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark');
+            document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
+        }
+        lucide.createIcons();
+    }
+
+    // ==========================================
+    // SAUVEGARDE ET CHARGEMENT DES PRÉFÉRENCES
+    // ==========================================
+    function savePreferences() {
+        const prefs = {
+            totalPoints: document.getElementById('totalPoints').value,
+            pointsFor4: document.getElementById('pointsFor4').value,
+            increment: document.getElementById('increment').value,
+            rounding: document.getElementById('rounding').value,
+            showMistakes: document.getElementById('showMistakes').checked
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    }
+
+    function loadPreferences() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const prefs = JSON.parse(saved);
+                if (prefs.totalPoints) document.getElementById('totalPoints').value = prefs.totalPoints;
+                if (prefs.pointsFor4) document.getElementById('pointsFor4').value = prefs.pointsFor4;
+                if (prefs.increment) document.getElementById('increment').value = prefs.increment;
+                if (prefs.rounding) document.getElementById('rounding').value = prefs.rounding;
+                if (prefs.showMistakes !== undefined) document.getElementById('showMistakes').checked = prefs.showMistakes;
+            } catch (e) {
+                console.error("Erreur de chargement des préférences", e);
+            }
+        }
+    }
+
+    // ==========================================
+    // LOGIQUE DE CALCUL ET D'AFFICHAGE
+    // ==========================================
+    function updateAll() {
+        const title = document.getElementById('titleInput').value;
+        const totalPoints = parseFloat(document.getElementById('totalPoints').value) || 20;
+        const pointsFor4 = parseFloat(document.getElementById('pointsFor4').value) || null;
+        const increment = parseFloat(document.getElementById('increment').value);
+        const rounding = parseFloat(document.getElementById('rounding').value);
+        const showMistakes = document.getElementById('showMistakes').checked;
+
+        document.getElementById('displayTitle').textContent = (title || 'Barème') + ' / ' + totalPoints + ' pts';
+        
+        let formulaText = "";
+        if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints) {
+            formulaText = `Double barème (Note 4 à ${pointsFor4} pts)`;
+        } else {
+            formulaText = 'Note = 5 * (Pts / ' + totalPoints + ') + 1';
+        }
+        document.getElementById('displayFormula').textContent = formulaText;
+
+        document.getElementById('printTitleDisplay').textContent = title || 'Barème de Notation';
+        document.getElementById('printTotal').textContent = 'Total: ' + totalPoints + ' pts';
+        document.getElementById('printPass').textContent = pointsFor4 ? `Note 4 à ${pointsFor4} pts` : 'Suffisance: 4';
+        document.getElementById('printFormula').textContent = 'Formule: ' + formulaText;
+
+        generateTable(totalPoints, pointsFor4, increment, rounding, showMistakes);
+
+        savePreferences();
+    }
+
+    function generateTable(total, pointsFor4, step, round, showMistakes) {
+        const data = [];
+        const totalSteps = Math.floor(total / step);
+        const passGrade = 4; // La suffisance est fixée à 4
+
+        for (let i = totalSteps; i >= 0; i--) {
+            const points = i * step;
+            const cleanPoints = Math.round(points * 100) / 100;
+
+            let rawGrade;
+            if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < total) {
+                // Double barème linéaire
+                if (cleanPoints <= pointsFor4) {
+                    // De 0 à pointsFor4 -> Note de 1 à 4
+                    rawGrade = 1 + 3 * (cleanPoints / pointsFor4);
+                } else {
+                    // De pointsFor4 à total -> Note de 4 à 6
+                    rawGrade = 4 + 2 * ((cleanPoints - pointsFor4) / (total - pointsFor4));
+                }
             } else {
-                iconSun.style.display = 'none';
-                iconMoon.style.display = 'block';
+                // Barème linéaire classique
+                rawGrade = (5 * cleanPoints / total) + 1;
             }
-        }
 
-        // Initialize Theme
-        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        setTheme(savedTheme);
+            let roundedGrade = Math.round(rawGrade / round) * round;
 
-        themeToggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-        });
- 
-        // Feedback Toasts
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = ''; // Reset classes
-            if (type === 'error') {
-                toast.classList.add('toast-error');
-            } else if (type === 'success') {
-                toast.classList.add('toast-success');
-            }
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
+            if (roundedGrade > 6) roundedGrade = 6;
+            if (roundedGrade < 1) roundedGrade = 1;
 
-        // Copy Historique 
-        copyBtn.addEventListener('click', () => { 
-            if(state.drawHistory.length === 0) return; 
-            navigator.clipboard.writeText(state.drawHistory.join('\n')).then(() => { 
-                showToast("Copié dans le presse-papier !", "success");
-            }).catch(err => {
-                showToast("Erreur lors de la copie", "error");
+            data.push({
+                points: cleanPoints,
+                grade: roundedGrade,
+                isPassing: roundedGrade >= passGrade
             });
-        }); 
- 
-        // ========================================== 
-        // LOGIQUE PRINCIPALE 
-        // ========================================== 
-        initBtn.addEventListener('click', initializeDraw); 
-        drawBtn.addEventListener('click', triggerRoulette); 
-        resetBtn.addEventListener('click', resetDraw); 
- 
-        document.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter') { 
-                if (drawInterface.style.display === 'none' && document.activeElement !== namesInput) initializeDraw(); 
-                else if (drawInterface.style.display === 'block' && !drawBtn.disabled) triggerRoulette(); 
-            } 
-        }); 
- 
-        function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } 
-        function loadState() { 
-            const saved = localStorage.getItem(STATE_KEY); 
-            if (saved) { 
-                state = JSON.parse(saved); 
-                document.querySelector('.result-label').textContent = state.mode === 'names' ? 'Gagnant' : 'Numéro gagnant'; 
-                drawnNumber.classList.toggle('is-number', state.mode === 'number'); 
-                setupForm.style.display = 'none'; subtitle.style.display = 'none'; 
-                drawInterface.style.display = 'block'; 
-                updateUI(); 
-            } 
-        } 
- 
-        function initializeDraw() { 
-            initAudio(); 
-            let parsedList =[]; 
-             
-            if (state.mode === 'number') { 
-                const max = parseInt(totalInput.value); 
-                if (!max || max < 1) return showToast('Veuillez entrer un nombre valide.', 'error'); 
-                parsedList = Array.from({ length: max }, (_, i) => String(i + 1)); 
-            } else { 
-                const text = namesInput.value; 
-                parsedList = text.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0); 
-                if (parsedList.length === 0) return showToast('Veuillez entrer au moins un nom.', 'error'); 
-            } 
- 
-            state.allParticipants = [...parsedList]; 
-            state.availableParticipants = [...parsedList]; 
-            state.drawnParticipants = []; 
-            state.excludedParticipants = []; 
-            state.drawHistory =[]; 
-             
-            document.querySelector('.result-label').textContent = state.mode === 'names' ? 'Gagnant' : 'Numéro gagnant'; 
-            drawnNumber.classList.toggle('is-number', state.mode === 'number'); 
-            drawnNumber.textContent = '?'; 
-            drawnNumber.classList.remove('pulse'); 
- 
-            saveState(); 
-            setupForm.style.display = 'none'; subtitle.style.display = 'none'; 
-            drawInterface.style.display = 'block'; 
-            updateUI(); 
-        } 
- 
-        function triggerRoulette() { 
-            if (isDrawing || state.availableParticipants.length === 0) return; 
-            isDrawing = true; drawBtn.disabled = true; initAudio(); 
- 
-            let elapsed = 0; const duration = 1500; const interval = 60; 
-            drawnNumber.classList.add('rolling'); 
- 
-            const timer = setInterval(() => { 
-                elapsed += interval; 
-                drawnNumber.textContent = state.availableParticipants[Math.floor(Math.random() * state.availableParticipants.length)]; 
-                playTick(); 
- 
-                if (elapsed >= duration) { 
-                    clearInterval(timer); 
-                    finalizeDraw(); 
-                } 
-            }, interval); 
-        } 
- 
-        function finalizeDraw() { 
-            const randomIndex = Math.floor(Math.random() * state.availableParticipants.length); 
-            const winner = state.availableParticipants[randomIndex]; 
- 
-            state.drawnParticipants.push(winner); 
-            state.drawHistory.push(winner); 
-            state.availableParticipants.splice(randomIndex, 1); 
- 
-            drawnNumber.classList.remove('rolling'); 
-            drawnNumber.textContent = winner; 
-             
-            drawnNumber.classList.remove('pulse'); 
-            void drawnNumber.offsetWidth;  
-            drawnNumber.classList.add('pulse'); 
- 
-            playDing(); 
-            isDrawing = false; 
-            saveState(); 
-            updateUI(); 
-        } 
- 
-        function toggleParticipantState(itemStr) { 
-            // Available -> Excluded -> Drawn -> Available
-            let idxAvailable = state.availableParticipants.indexOf(itemStr);
-            let idxExcluded = state.excludedParticipants.indexOf(itemStr);
-            let idxDrawn = state.drawnParticipants.indexOf(itemStr);
+        }
 
-            if (idxAvailable > -1) {
-                // State 1: Available -> go to Excluded (Absent)
-                state.availableParticipants.splice(idxAvailable, 1);
-                state.excludedParticipants.push(itemStr); 
-            } else if (idxExcluded > -1) {
-                // State 2: Excluded -> go to Drawn (Tiré manuellement)
-                state.excludedParticipants.splice(idxExcluded, 1);
-                state.drawnParticipants.push(itemStr);
-                state.drawHistory.push(itemStr);
-            } else if (idxDrawn > -1) {
-                // State 3: Drawn -> go back to Available
-                state.drawnParticipants.splice(idxDrawn, 1);
-                state.availableParticipants.push(itemStr);
+        document.getElementById('entryCount').textContent = data.length + ' lignes générées';
+        renderTable(data, total, showMistakes);
+    }
 
-                // Remove from history but maintain history order for others
-                const historyIdx = state.drawHistory.lastIndexOf(itemStr);
-                if (historyIdx > -1) {
-                    state.drawHistory.splice(historyIdx, 1);
-                }
+    // ==========================================
+    // RENDU DU TABLEAU (manipulation DOM)
+    // ==========================================
+    function renderTable(data, totalPoints, showMistakes) {
+        const tbody = document.getElementById('tableBody');
+        const thead = document.getElementById('tableHead');
 
-                // Clear drawn number display if it was the currently shown one
-                if(drawnNumber.textContent === itemStr) {
-                    drawnNumber.textContent = '?';
+        tbody.innerHTML = '';
+        thead.innerHTML = '';
+
+        let groupsPerRow = 2;
+        if (data.length > 20) groupsPerRow = 3;
+        if (data.length > 45 && !showMistakes) groupsPerRow = 4;
+
+        const rowsCount = Math.ceil(data.length / groupsPerRow);
+
+        // Construction du header
+        let headerRow = '<tr>';
+        for (let k = 0; k < groupsPerRow; k++) {
+            if (showMistakes) headerRow += `<th>-Pts</th>`;
+            headerRow += `<th>Pts</th><th class="col-end">Note</th>`;
+        }
+        headerRow += '</tr>';
+        thead.innerHTML = headerRow;
+
+        // Construction du body par manipulation DOM
+        for (let i = 0; i < rowsCount; i++) {
+            const tr = document.createElement('tr');
+
+            for (let col = 0; col < groupsPerRow; col++) {
+                const index = col * rowsCount + i;
+
+                if (index < data.length) {
+                    const item = data[index];
+                    const passingClass = item.isPassing ? 'passing-row' : '';
+                    const gradeColor = item.isPassing ? 'passing' : 'failing';
+                    const gradeDisplay = parseFloat(item.grade.toFixed(1));
+                    const lost = Math.round((totalPoints - item.points) * 100) / 100;
+                    const lostDisplay = lost === 0 ? "0" : `-${lost}`;
+
+                    let html = '';
+                    if (showMistakes) html += `<td class="${passingClass} mistake">${lostDisplay}</td>`;
+
+                    html += `
+                        <td class="${passingClass}">${item.points}</td>
+                        <td class="grade ${gradeColor} ${passingClass} col-end">${gradeDisplay}</td>
+                    `;
+                    tr.innerHTML += html;
+                } else {
+                    if (showMistakes) tr.innerHTML += `<td></td>`;
+                    tr.innerHTML += `<td></td><td class="col-end"></td>`;
                 }
             }
+            tbody.appendChild(tr);
+        }
+    }
 
-            // Sort available 
-            if(state.mode === 'number') {
-                state.availableParticipants.sort((a,b) => parseInt(a)-parseInt(b));
-            } else {
-                state.availableParticipants.sort();
+    // ==========================================
+    // TOAST NOTIFICATIONS
+    // ==========================================
+    function showToast(message, icon = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+
+        let iconColor = 'var(--color-primary)';
+        if (icon === 'check-circle') iconColor = 'var(--color-success)';
+        if (icon === 'alert-circle') iconColor = 'var(--color-fail)';
+
+        toast.innerHTML = `
+            <i data-lucide="${icon}" style="width: 20px; height: 20px; color: ${iconColor};"></i>
+            <span>${message}</span>
+        `;
+
+        container.appendChild(toast);
+        lucide.createIcons();
+
+        setTimeout(() => {
+            if (container.contains(toast)) {
+                container.removeChild(toast);
             }
-             
-            saveState(); updateUI(); 
-        } 
- 
-        function resetDraw() { 
-            if(confirm("Voulez-vous réinitialiser et retourner à la configuration ?")) { 
-                localStorage.removeItem(STATE_KEY); 
-                setupForm.style.display = 'block'; subtitle.style.display = 'block'; 
-                drawInterface.style.display = 'none'; 
-            } 
-        } 
- 
-        function updateUI() { 
-            statsDisplay.textContent = `Restants : ${state.availableParticipants.length} / ${state.allParticipants.length}`; 
- 
-            if (state.availableParticipants.length === 0) { 
-                drawBtn.disabled = true; drawBtn.innerHTML = `Terminé`; 
-                finishedMsg.style.display = 'block'; 
-            } else { 
-                drawBtn.disabled = false; 
-                drawBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 8h.01"></path><path d="M8 8h.01"></path><path d="M8 16h.01"></path><path d="M16 16h.01"></path><path d="M12 12h.01"></path></svg> Tirer (Entrée)`; 
-                finishedMsg.style.display = 'none'; 
-            } 
- 
-            if (state.drawHistory.length > 0) { 
-                historySection.style.display = 'block'; 
-                historyBadges.textContent = '';
-                state.drawHistory.forEach(num => {
-                    const badge = document.createElement('span');
-                    badge.className = 'history-badge';
-                    badge.textContent = num;
-                    historyBadges.appendChild(badge);
-                });
-            } else { historySection.style.display = 'none'; } 
- 
-            renderGrid(); 
-        } 
- 
-        function renderGrid() { 
-            participantItems.innerHTML = ''; 
-            state.allParticipants.forEach(itemStr => { 
-                const div = document.createElement('div'); 
-                div.className = 'cell'; div.textContent = itemStr; 
-                div.setAttribute('role', 'button');
-                div.setAttribute('tabindex', '0');
-                 
-                if (state.drawnParticipants.includes(itemStr)) { 
-                    div.classList.add('drawn'); div.title = "A été tiré. Cliquer pour remettre en jeu."; 
-                    div.setAttribute('aria-label', `${itemStr}. A été tiré. Appuyez sur Entrée pour remettre en jeu.`);
-                } else if (state.excludedParticipants.includes(itemStr)) { 
-                    div.classList.add('excluded'); div.title = "Absent/Exclu. Cliquer pour marquer comme tiré manuellement.";
-                    div.setAttribute('aria-label', `${itemStr}. Exclu. Appuyez sur Entrée pour marquer comme tiré manuellement.`);
-                } else { 
-                    div.title = "Disponible. Cliquer pour marquer comme absent.";
-                    div.setAttribute('aria-label', `${itemStr}. Disponible. Appuyez sur Entrée pour marquer comme absent.`);
-                } 
-                 
-                div.addEventListener('click', () => toggleParticipantState(itemStr)); 
-                div.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleParticipantState(itemStr);
-                    }
-                });
-                participantItems.appendChild(div); 
-            }); 
-        } 
- 
-        // Démarrage 
-        loadState(); 
-    </script> 
-</body> 
+        }, 3000);
+    }
+
+    // ==========================================
+    // EXPORTS & IMPRESSION
+    // ==========================================
+    async function copyTable() {
+        const table = document.getElementById('gradeTable');
+
+        let text = "";
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(r => {
+            const cols = Array.from(r.querySelectorAll('td, th'));
+            text += cols.map(c => c.innerText.trim()).join('\t') + '\n';
+        });
+
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast('Tableau copié dans le presse-papier', 'check-circle');
+        } catch (err) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Tableau copié dans le presse-papier', 'check-circle');
+            } catch (e) {
+                showToast('Erreur lors de la copie', 'alert-circle');
+            }
+            document.body.removeChild(textarea);
+        }
+    }
+
+    // Export PDF via html2pdf
+    async function exportPDF() {
+        const btn = document.getElementById('btnPdf');
+        const textSpan = document.getElementById('pdfText');
+        const originalText = textSpan.textContent;
+
+        textSpan.textContent = 'Génération...';
+        btn.disabled = true;
+
+        document.body.classList.add('exporting-pdf');
+
+        await new Promise(resolve => setTimeout(resolve, 150));
+
+        const element = document.getElementById('pdf-container');
+        const title = document.getElementById('titleInput').value || 'Bareme';
+        const filename = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+
+        const opt = {
+            margin: 15,
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.body.classList.remove('exporting-pdf');
+            textSpan.textContent = originalText;
+            btn.disabled = false;
+            showToast('PDF généré avec succès', 'check-circle');
+        }).catch(err => {
+            console.error(err);
+            document.body.classList.remove('exporting-pdf');
+            textSpan.textContent = originalText;
+            btn.disabled = false;
+            showToast('Erreur lors de la génération du PDF', 'alert-circle');
+        });
+    }
+
+    function handlePrint() {
+        window.focus();
+        window.print();
+    }
+
+    // Initialisation
+    initTheme();
+    loadPreferences();
+    updateAll();
+</script>
+</body>
 </html>
