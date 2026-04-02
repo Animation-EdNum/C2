@@ -162,7 +162,14 @@
  
         /* Grille Participants */ 
         .participants-section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--color-border); } 
-        .section-header { font-size: 11px; font-weight: 700; margin-bottom: 16px; color: var(--color-text-secondary); text-align: center; text-transform: uppercase; letter-spacing: 0.05em; } 
+        .section-header { font-size: 11px; font-weight: 700; margin-bottom: 8px; color: var(--color-text-secondary); text-align: center; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .legend-container { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-bottom: 16px; }
+        .legend-item { display: inline-flex; align-items: center; margin: 0 6px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; border: 1px solid transparent; }
+        .legend-dot.available { background-color: var(--color-cell-bg); border-color: var(--color-border); }
+        .legend-dot.excluded { background-color: var(--color-cell-excluded); border-color: var(--color-cell-excluded-text); }
+        .legend-dot.drawn { background-color: var(--color-cell-drawn); border-color: var(--color-cell-drawn-text); }
          
         .grid-wrapper { max-height: 220px; overflow-y: auto; padding: 4px; margin: -4px; } 
         /* Style scrollbar */ 
@@ -307,6 +314,12 @@
  
                 <div class="participants-section"> 
                     <div class="section-header">Participants restants</div> 
+                    <div class="legend-container">
+                        Cycle de clic :
+                        <span class="legend-item"><span class="legend-dot available"></span>Disponible</span> ➔
+                        <span class="legend-item"><span class="legend-dot excluded"></span>Absent</span> ➔
+                        <span class="legend-item"><span class="legend-dot drawn"></span>Tiré manuellement</span>
+                    </div>
                     <div class="grid-wrapper"> 
                         <div class="grid" id="participantItems"></div> 
                     </div> 
@@ -555,34 +568,43 @@
         } 
  
         function toggleParticipantState(itemStr) { 
-            // Check if available 
-            let idx = state.availableParticipants.indexOf(itemStr); 
-            if (idx > -1) { 
-                // Remove -> Exclude 
-                state.availableParticipants.splice(idx, 1); 
+            // Available -> Excluded -> Drawn -> Available
+            let idxAvailable = state.availableParticipants.indexOf(itemStr);
+            let idxExcluded = state.excludedParticipants.indexOf(itemStr);
+            let idxDrawn = state.drawnParticipants.indexOf(itemStr);
+
+            if (idxAvailable > -1) {
+                // State 1: Available -> go to Excluded (Absent)
+                state.availableParticipants.splice(idxAvailable, 1);
                 state.excludedParticipants.push(itemStr); 
-            } else { 
-                // Check if Excluded 
-                idx = state.excludedParticipants.indexOf(itemStr); 
-                if (idx > -1) { 
-                    // Restore from Excluded 
-                    state.excludedParticipants.splice(idx, 1); 
-                    state.availableParticipants.push(itemStr); 
-                } else { 
-                    // Check if Drawn 
-                    idx = state.drawnParticipants.indexOf(itemStr); 
-                    if (idx > -1) { 
-                        // Restore from Drawn 
-                        state.drawnParticipants.splice(idx, 1); 
-                        state.availableParticipants.push(itemStr); 
-                        state.drawHistory = state.drawHistory.filter(n => n !== itemStr); 
-                        if(drawnNumber.textContent === itemStr) drawnNumber.textContent = '?'; 
-                    } 
-                } 
-            } 
+            } else if (idxExcluded > -1) {
+                // State 2: Excluded -> go to Drawn (Tiré manuellement)
+                state.excludedParticipants.splice(idxExcluded, 1);
+                state.drawnParticipants.push(itemStr);
+                state.drawHistory.push(itemStr);
+            } else if (idxDrawn > -1) {
+                // State 3: Drawn -> go back to Available
+                state.drawnParticipants.splice(idxDrawn, 1);
+                state.availableParticipants.push(itemStr);
+
+                // Remove from history but maintain history order for others
+                const historyIdx = state.drawHistory.lastIndexOf(itemStr);
+                if (historyIdx > -1) {
+                    state.drawHistory.splice(historyIdx, 1);
+                }
+
+                // Clear drawn number display if it was the currently shown one
+                if(drawnNumber.textContent === itemStr) {
+                    drawnNumber.textContent = '?';
+                }
+            }
+
             // Sort available 
-            if(state.mode === 'number') state.availableParticipants.sort((a,b) => parseInt(a)-parseInt(b)); 
-            else state.availableParticipants.sort(); 
+            if(state.mode === 'number') {
+                state.availableParticipants.sort((a,b) => parseInt(a)-parseInt(b));
+            } else {
+                state.availableParticipants.sort();
+            }
              
             saveState(); updateUI(); 
         } 
@@ -633,11 +655,11 @@
                     div.classList.add('drawn'); div.title = "A été tiré. Cliquer pour remettre en jeu."; 
                     div.setAttribute('aria-label', `${itemStr}. A été tiré. Appuyez sur Entrée pour remettre en jeu.`);
                 } else if (state.excludedParticipants.includes(itemStr)) { 
-                    div.classList.add('excluded'); div.title = "Exclu manuellement. Cliquer pour réintégrer."; 
-                    div.setAttribute('aria-label', `${itemStr}. Exclu manuellement. Appuyez sur Entrée pour réintégrer.`);
+                    div.classList.add('excluded'); div.title = "Absent/Exclu. Cliquer pour marquer comme tiré manuellement.";
+                    div.setAttribute('aria-label', `${itemStr}. Exclu. Appuyez sur Entrée pour marquer comme tiré manuellement.`);
                 } else { 
-                    div.title = "Cliquer pour exclure (Absent, etc.)"; 
-                    div.setAttribute('aria-label', `${itemStr}. Appuyez sur Entrée pour exclure.`);
+                    div.title = "Disponible. Cliquer pour marquer comme absent.";
+                    div.setAttribute('aria-label', `${itemStr}. Disponible. Appuyez sur Entrée pour marquer comme absent.`);
                 } 
                  
                 div.addEventListener('click', () => toggleParticipantState(itemStr)); 
