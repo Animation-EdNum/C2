@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur de Barème</title>
-    <!-- Librairie pour les icônes -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Librairie pour l'export PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
@@ -64,18 +61,10 @@
         .container { max-width: 1050px; margin: 0 auto; }
 
         header {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;
         }
-
         @media (min-width: 768px) {
-            header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
+            header { flex-direction: row; align-items: center; justify-content: space-between; }
         }
 
         h1 { font-size: 1.5rem; font-weight: 700; color: var(--color-text); }
@@ -83,20 +72,11 @@
         .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
         .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem;
+            font-weight: 600; cursor: pointer; transition: all 0.2s; border: none;
         }
         .btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
-
         .btn-secondary { background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow); border: 1px solid var(--color-border); }
         .btn-secondary:hover:not(:disabled) { background: var(--color-border); }
         .btn-primary { background: var(--color-primary); color: white; box-shadow: var(--shadow); }
@@ -106,7 +86,6 @@
         .main-grid { display: grid; gap: 2rem; }
         @media (min-width: 1024px) { .main-grid { grid-template-columns: 320px 1fr; } }
 
-        /* Controls */
         .controls { background: var(--color-surface); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 1.5rem; height: fit-content; }
         .control-header { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-secondary); letter-spacing: 0.05em; }
         .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -120,16 +99,12 @@
         input:focus, select:focus { outline: none; border-color: var(--color-primary); background: #fff; box-shadow: 0 0 0 3px var(--color-primary-light); }
 
         .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media (min-width: 480px) {
-            .grid-2 { grid-template-columns: 1fr 1fr; }
-        }
+        @media (min-width: 480px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
 
-        /* Checkbox */
         .checkbox-group { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 0.5rem; padding: 0.75rem; background: var(--color-background); border-radius: 8px; border: 1px solid var(--color-border); cursor: pointer; }
         .checkbox-group:hover { border-color: var(--color-primary-light); }
         .checkbox-label { text-transform: none; font-size: 0.875rem; cursor: pointer; margin: 0; color: var(--color-text); font-weight: 500; }
 
-        /* Table Area */
         .table-area { display: flex; flex-direction: column; gap: 1rem; }
         .table-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; font-weight: 600; color: var(--color-text-secondary); }
         .result-container { background: var(--color-surface); border-radius: var(--radius); border: 1px solid var(--color-border); overflow: hidden; box-shadow: var(--shadow); }
@@ -144,7 +119,6 @@
         td { padding: 0.5rem 0.4rem; text-align: center; border-bottom: 1px solid var(--color-border); border-right: 1px solid var(--color-border); transition: background-color 0.1s; }
         td:hover { background-color: var(--color-table-hover); }
 
-        /* Thick borders for pairs */
         th.col-end, td.col-end { border-right: 2px solid var(--color-border); }
         th.col-end:last-child, td.col-end:last-child { border-right: none; }
 
@@ -165,81 +139,111 @@
         footer a { color: var(--color-primary); text-decoration: none; font-weight: 600; }
         footer a:hover { text-decoration: underline; }
 
-        /* Print & Export Styles */
+        /* ===== Print-only elements ===== */
         .print-only { display: none; }
 
+        /* ===== PRINT — une seule page A4 ===== */
         @media print {
-            body { background: white; color: black; padding: 0; }
-            .no-print { display: none !important; }
-            .container { max-width: 100%; margin: 0; }
-            .result-container { box-shadow: none; border: none; }
-            .print-only { display: block !important; text-align: center; margin-bottom: 2rem; }
-            .print-title { font-size: 2rem; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 0.5rem; margin-bottom: 1rem; }
-            .print-meta { display: flex; justify-content: center; gap: 2rem; font-weight: 600; font-size: 0.875rem; }
-            table { border: 2px solid #000; }
-            th { border-bottom: 2px solid #000; background: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
-            td, th { border-right: 1px solid #ccc; color: black !important; }
-            th.col-end, td.col-end { border-right: 3px solid #000; }
-            th.col-end:last-child, td.col-end:last-child { border-right: none; }
-            .passing-row { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
-        }
+            @page { size: A4 portrait; margin: 15mm; }
 
-        /* Classe de forçage pour l'export PDF (identique à @media print) */
-        body.exporting-pdf { background: white; color: black; padding: 0; }
-        body.exporting-pdf .no-print { display: none !important; }
-        body.exporting-pdf .container { max-width: 100%; margin: 0; }
-        body.exporting-pdf .result-container { box-shadow: none; border: none; }
-        body.exporting-pdf .print-only { display: block !important; text-align: center; margin-bottom: 2rem; }
-        body.exporting-pdf .print-title { font-size: 2rem; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        body.exporting-pdf .print-meta { display: flex; justify-content: center; gap: 2rem; font-weight: 600; font-size: 0.875rem; }
-        body.exporting-pdf table { border: 2px solid #000; }
-        body.exporting-pdf th { border-bottom: 2px solid #000; background: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
-        body.exporting-pdf td, body.exporting-pdf th { border-right: 1px solid #ccc; color: black !important; }
-        body.exporting-pdf th.col-end, body.exporting-pdf td.col-end { border-right: 3px solid #000; }
-        body.exporting-pdf th.col-end:last-child, body.exporting-pdf td.col-end:last-child { border-right: none; }
-        body.exporting-pdf .passing-row { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0; margin: 0;
+                line-height: 1.2;
+            }
+
+            .no-print { display: none !important; }
+
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            .main-grid  { display: block; }
+
+            .result-container { box-shadow: none; border: none; }
+
+            .scroll-container {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+
+            /* En-tête imprimé */
+            .print-only {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 6px;
+            }
+            .print-title {
+                font-size: 14px; font-weight: 800;
+                text-transform: uppercase;
+                border-bottom: 2px solid black;
+                padding-bottom: 3px; margin-bottom: 4px;
+            }
+            .print-meta {
+                display: flex; justify-content: center; gap: 2rem;
+                font-weight: 600; font-size: 9px;
+            }
+
+            /* Tableau compact */
+            table {
+                width: 100%;
+                border: 2px solid #000;
+                font-size: 10.5px;
+                line-height: 1.15;
+            }
+
+            th {
+                position: static;
+                box-shadow: none;
+                border-bottom: 2px solid #000;
+                background: #eef2f7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 2px 3px;
+                font-size: 6.5px;
+                letter-spacing: 0.03em;
+            }
+
+            td {
+                padding: 1.5px 3px;
+                border-right: 1px solid #bbb;
+                border-bottom: 1px solid #ddd;
+                color: black !important;
+            }
+
+            th.col-end, td.col-end { border-right: 2.5px solid #000; }
+            th.col-end:last-child, td.col-end:last-child { border-right: none; }
+
+            .passing-row {
+                background-color: #eef2f7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .grade.failing { color: #c00 !important; }
+            .grade.passing { color: #060 !important; }
+
+            /* Zoom dynamique injecté par JS — sécurité si trop de lignes */
+            body.printing #pdf-container {
+                zoom: var(--print-zoom, 1);
+            }
+        }
 
         /* Toast Container */
         #toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 9999;
+            position: fixed; bottom: 20px; right: 20px;
+            display: flex; flex-direction: column; gap: 10px; z-index: 9999;
         }
-
         .toast {
-            background-color: var(--color-surface);
-            color: var(--color-text);
-            border: 1px solid var(--color-border);
-            padding: 12px 20px;
+            background-color: var(--color-surface); color: var(--color-text);
+            border: 1px solid var(--color-border); padding: 12px 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            opacity: 0;
-            transform: translateY(20px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            display: flex; align-items: center; gap: 12px;
+            font-size: 0.875rem; font-weight: 500;
+            opacity: 0; transform: translateY(20px);
             animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
         }
-
-        @keyframes slideIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-        }
+        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
     </style>
 </head>
 <body>
@@ -249,18 +253,14 @@
         <h1>Générateur de Barème</h1>
         <div class="actions">
             <button class="btn btn-secondary" onclick="toggleDarkMode()" aria-label="Changer de thème" title="Changer de thème">
-                <i data-lucide="moon" id="themeIcon" style="width: 16px; height: 16px;"></i>
+                <i data-lucide="moon" id="themeIcon" style="width:16px;height:16px;"></i>
             </button>
             <button class="btn btn-secondary" onclick="copyTable()" aria-label="Copier le tableau">
-                <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                <i data-lucide="copy" style="width:16px;height:16px;"></i>
                 <span id="copyText">Copier</span>
             </button>
-            <button class="btn btn-secondary" id="btnPdf" onclick="exportPDF()" aria-label="Télécharger en PDF">
-                <i data-lucide="download" style="width: 16px; height: 16px;"></i>
-                <span id="pdfText">PDF</span>
-            </button>
             <button class="btn btn-primary" onclick="handlePrint()" aria-label="Imprimer le tableau">
-                <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+                <i data-lucide="printer" style="width:16px;height:16px;"></i>
                 Imprimer
             </button>
         </div>
@@ -279,7 +279,7 @@
         <aside class="no-print">
             <div class="controls">
                 <div class="control-header">
-                    <i data-lucide="settings-2" style="width: 16px; height: 16px;"></i>
+                    <i data-lucide="settings-2" style="width:16px;height:16px;"></i>
                     Configuration
                 </div>
 
@@ -288,8 +288,8 @@
                     <input type="number" id="totalPoints" value="20" min="1" step="0.5" oninput="updateAll()">
                 </div>
 
-                <button class="btn btn-secondary" onclick="toggleSettings()" style="width: 100%; margin-top: 0.5rem;">
-                    <i data-lucide="sliders" style="width: 16px; height: 16px;"></i>
+                <button class="btn btn-secondary" onclick="toggleSettings()" style="width:100%;margin-top:0.5rem;">
+                    <i data-lucide="sliders" style="width:16px;height:16px;"></i>
                     Paramètres
                 </button>
 
@@ -298,12 +298,10 @@
                         <label for="titleInput">Titre de l'évaluation</label>
                         <input type="text" id="titleInput" placeholder="Ex: Vocabulaire - 8P" oninput="updateAll()">
                     </div>
-
                     <div class="control-group">
                         <label for="pointsFor4">Points pour la note 4</label>
                         <input type="number" id="pointsFor4" placeholder="Ex: 12" step="0.5" oninput="updateAll()">
                     </div>
-
                     <div class="control-group">
                         <label for="increment">Fractions à afficher</label>
                         <select id="increment" onchange="updateAll()">
@@ -313,7 +311,6 @@
                             <option value="0.1">0.1 point</option>
                         </select>
                     </div>
-
                     <div class="control-group">
                         <label for="rounding">Arrondi de la note</label>
                         <select id="rounding" onchange="updateAll()">
@@ -323,7 +320,6 @@
                             <option value="1">À l'entier (Ex: 4)</option>
                         </select>
                     </div>
-
                     <label class="checkbox-group" for="showMistakes">
                         <input type="checkbox" id="showMistakes" onchange="updateAll()">
                         <span class="checkbox-label">Mode "Points perdus" (-Fautes)</span>
@@ -334,11 +330,10 @@
 
         <main class="table-area">
             <div class="table-meta no-print">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <i data-lucide="layout-grid" style="width: 16px; height: 16px;"></i>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <i data-lucide="layout-grid" style="width:16px;height:16px;"></i>
                     Aperçu du barème
                 </div>
-                <span id="entryCount" style="font-style: italic; font-weight: 400; font-size: 0.75rem;"></span>
             </div>
 
             <div class="result-container" id="tableContainer">
@@ -355,17 +350,17 @@
             </div>
 
             <div class="mobile-warning no-print">
-                <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
+                <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
                 Sur mobile, faites défiler le tableau horizontalement.
             </div>
 
-            <footer class="no-print"> 
-                <p> 
-                    Webapp disponible sous licence  
+            <footer class="no-print">
+                <p>
+                    Webapp disponible sous licence
                     <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
-                    — Animation Education Numérique ·  
-                    <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a> 
-                </p> 
+                    — Animation Education Numérique ·
+                    <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
+                </p>
             </footer>
 
             <div id="toast-container" class="no-print"></div>
@@ -382,8 +377,7 @@
     // UI TOGGLES
     // ==========================================
     function toggleSettings() {
-        const panel = document.getElementById('settingsPanel');
-        panel.classList.toggle('hidden');
+        document.getElementById('settingsPanel').classList.toggle('hidden');
     }
 
     // ==========================================
@@ -393,20 +387,14 @@
         document.body.classList.toggle('dark');
         const isDark = document.body.classList.contains('dark');
         localStorage.setItem('bareme_theme', isDark ? 'dark' : 'light');
-
         const themeIcon = document.getElementById('themeIcon');
-        if (isDark) {
-            themeIcon.setAttribute('data-lucide', 'sun');
-        } else {
-            themeIcon.setAttribute('data-lucide', 'moon');
-        }
+        themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
         lucide.createIcons();
     }
 
     function initTheme() {
         const savedTheme = localStorage.getItem('bareme_theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
         if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
             document.body.classList.add('dark');
             document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
@@ -415,14 +403,14 @@
     }
 
     // ==========================================
-    // SAUVEGARDE ET CHARGEMENT DES PRÉFÉRENCES
+    // SAUVEGARDE / CHARGEMENT DES PRÉFÉRENCES
     // ==========================================
     function savePreferences() {
         const prefs = {
             totalPoints: document.getElementById('totalPoints').value,
-            pointsFor4: document.getElementById('pointsFor4').value,
-            increment: document.getElementById('increment').value,
-            rounding: document.getElementById('rounding').value,
+            pointsFor4:  document.getElementById('pointsFor4').value,
+            increment:   document.getElementById('increment').value,
+            rounding:    document.getElementById('rounding').value,
             showMistakes: document.getElementById('showMistakes').checked
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
@@ -430,34 +418,64 @@
 
     function loadPreferences() {
         const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                const prefs = JSON.parse(saved);
-                if (prefs.totalPoints) document.getElementById('totalPoints').value = prefs.totalPoints;
-                if (prefs.pointsFor4) document.getElementById('pointsFor4').value = prefs.pointsFor4;
-                if (prefs.increment) document.getElementById('increment').value = prefs.increment;
-                if (prefs.rounding) document.getElementById('rounding').value = prefs.rounding;
-                if (prefs.showMistakes !== undefined) document.getElementById('showMistakes').checked = prefs.showMistakes;
-            } catch (e) {
-                console.error("Erreur de chargement des préférences", e);
-            }
-        }
+        if (!saved) return;
+        try {
+            const p = JSON.parse(saved);
+            if (p.totalPoints)  document.getElementById('totalPoints').value  = p.totalPoints;
+            if (p.pointsFor4)   document.getElementById('pointsFor4').value   = p.pointsFor4;
+            if (p.increment)    document.getElementById('increment').value    = p.increment;
+            if (p.rounding)     document.getElementById('rounding').value     = p.rounding;
+            if (p.showMistakes !== undefined) document.getElementById('showMistakes').checked = p.showMistakes;
+        } catch (e) { console.error("Erreur de chargement des préférences", e); }
     }
 
     // ==========================================
-    // LOGIQUE DE CALCUL ET D'AFFICHAGE
+    // GÉNÉRATION DES DONNÉES (pure, sans DOM)
+    // ==========================================
+    function generateData(total, pointsFor4, step, round) {
+        const data = [];
+        const totalSteps = Math.floor(total / step);
+        const passGrade = 4;
+
+        for (let i = totalSteps; i >= 0; i--) {
+            const points = Math.round(i * step * 100) / 100;
+
+            let rawGrade;
+            if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < total) {
+                if (points <= pointsFor4) {
+                    rawGrade = 1 + 3 * (points / pointsFor4);
+                } else {
+                    rawGrade = 4 + 2 * ((points - pointsFor4) / (total - pointsFor4));
+                }
+            } else {
+                rawGrade = (5 * points / total) + 1;
+            }
+
+            let roundedGrade = Math.round(rawGrade / round) * round;
+            if (roundedGrade > 6) roundedGrade = 6;
+            if (roundedGrade < 1) roundedGrade = 1;
+
+            data.push({ points, grade: roundedGrade, isPassing: roundedGrade >= passGrade });
+        }
+        return data;
+    }
+
+    // ==========================================
+    // ORCHESTRATEUR (lecture des inputs → table)
     // ==========================================
     function updateAll() {
-        const title = document.getElementById('titleInput').value;
+        const title       = document.getElementById('titleInput').value;
         const totalPoints = parseFloat(document.getElementById('totalPoints').value) || 20;
-        const pointsFor4 = parseFloat(document.getElementById('pointsFor4').value) || null;
-        const increment = parseFloat(document.getElementById('increment').value);
-        const rounding = parseFloat(document.getElementById('rounding').value);
+        const ptFor4Val   = document.getElementById('pointsFor4').value;
+        const pointsFor4  = ptFor4Val ? parseFloat(ptFor4Val) : null;
+        const increment   = parseFloat(document.getElementById('increment').value);
+        const rounding    = parseFloat(document.getElementById('rounding').value);
         const showMistakes = document.getElementById('showMistakes').checked;
 
+        // Mise à jour des libellés
         document.getElementById('displayTitle').textContent = (title || 'Barème') + ' / ' + totalPoints + ' pts';
-        
-        let formulaText = "";
+
+        let formulaText;
         if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints) {
             formulaText = `Double barème (Note 4 à ${pointsFor4} pts)`;
         } else {
@@ -466,81 +484,49 @@
         document.getElementById('displayFormula').textContent = formulaText;
 
         document.getElementById('printTitleDisplay').textContent = title || 'Barème de Notation';
-        document.getElementById('printTotal').textContent = 'Total: ' + totalPoints + ' pts';
-        document.getElementById('printPass').textContent = pointsFor4 ? `Note 4 à ${pointsFor4} pts` : 'Suffisance: 4';
+        document.getElementById('printTotal').textContent   = 'Total: ' + totalPoints + ' pts';
+        document.getElementById('printPass').textContent    = pointsFor4 ? `Suffisance: ${pointsFor4} pts` : 'Suffisance: 4';
         document.getElementById('printFormula').textContent = 'Formule: ' + formulaText;
 
-        generateTable(totalPoints, pointsFor4, increment, rounding, showMistakes);
+        // Génération + rendu
+        const data = generateData(totalPoints, pointsFor4, increment, rounding);
+        renderTable(data, totalPoints, showMistakes);
 
         savePreferences();
     }
 
-    function generateTable(total, pointsFor4, step, round, showMistakes) {
-        const data = [];
-        const totalSteps = Math.floor(total / step);
-        const passGrade = 4; // La suffisance est fixée à 4
-
-        for (let i = totalSteps; i >= 0; i--) {
-            const points = i * step;
-            const cleanPoints = Math.round(points * 100) / 100;
-
-            let rawGrade;
-            if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < total) {
-                // Double barème linéaire
-                if (cleanPoints <= pointsFor4) {
-                    // De 0 à pointsFor4 -> Note de 1 à 4
-                    rawGrade = 1 + 3 * (cleanPoints / pointsFor4);
-                } else {
-                    // De pointsFor4 à total -> Note de 4 à 6
-                    rawGrade = 4 + 2 * ((cleanPoints - pointsFor4) / (total - pointsFor4));
-                }
-            } else {
-                // Barème linéaire classique
-                rawGrade = (5 * cleanPoints / total) + 1;
-            }
-
-            let roundedGrade = Math.round(rawGrade / round) * round;
-
-            if (roundedGrade > 6) roundedGrade = 6;
-            if (roundedGrade < 1) roundedGrade = 1;
-
-            data.push({
-                points: cleanPoints,
-                grade: roundedGrade,
-                isPassing: roundedGrade >= passGrade
-            });
-        }
-
-        document.getElementById('entryCount').textContent = data.length + ' lignes générées';
-        renderTable(data, total, showMistakes);
-    }
-
     // ==========================================
-    // RENDU DU TABLEAU (manipulation DOM)
+    // RENDU DU TABLEAU
+    //   forceGroups : nombre de colonnes imposé
+    //                 (utilisé par handlePrint)
     // ==========================================
-    function renderTable(data, totalPoints, showMistakes) {
+    function renderTable(data, totalPoints, showMistakes, forceGroups) {
         const tbody = document.getElementById('tableBody');
         const thead = document.getElementById('tableHead');
-
         tbody.innerHTML = '';
         thead.innerHTML = '';
 
-        let groupsPerRow = 2;
-        if (data.length > 20) groupsPerRow = 3;
-        if (data.length > 45 && !showMistakes) groupsPerRow = 4;
+        let groupsPerRow;
+        if (forceGroups) {
+            groupsPerRow = forceGroups;
+        } else {
+            groupsPerRow = 2;
+            if (data.length > 20) groupsPerRow = 3;
+            if (data.length > 45 && !showMistakes) groupsPerRow = 4;
+        }
 
         const rowsCount = Math.ceil(data.length / groupsPerRow);
 
-        // Construction du header
+        // Header
         let headerRow = '<tr>';
         for (let k = 0; k < groupsPerRow; k++) {
-            if (showMistakes) headerRow += `<th>-Pts</th>`;
-            headerRow += `<th>Pts</th><th class="col-end">Note</th>`;
+            if (showMistakes) headerRow += '<th>-Pts</th>';
+            headerRow += '<th>Pts</th><th class="col-end">Note</th>';
         }
         headerRow += '</tr>';
         thead.innerHTML = headerRow;
 
-        // Construction du body par manipulation DOM
+        // Body
         for (let i = 0; i < rowsCount; i++) {
             const tr = document.createElement('tr');
 
@@ -549,23 +535,20 @@
 
                 if (index < data.length) {
                     const item = data[index];
-                    const passingClass = item.isPassing ? 'passing-row' : '';
-                    const gradeColor = item.isPassing ? 'passing' : 'failing';
-                    const gradeDisplay = parseFloat(item.grade.toFixed(1));
+                    const pc  = item.isPassing ? 'passing-row' : '';
+                    const gc  = item.isPassing ? 'passing' : 'failing';
+                    const gd  = parseFloat(item.grade.toFixed(2));
                     const lost = Math.round((totalPoints - item.points) * 100) / 100;
-                    const lostDisplay = lost === 0 ? "0" : `-${lost}`;
+                    const ld   = lost === 0 ? '0' : `-${lost}`;
 
                     let html = '';
-                    if (showMistakes) html += `<td class="${passingClass} mistake">${lostDisplay}</td>`;
-
-                    html += `
-                        <td class="${passingClass}">${item.points}</td>
-                        <td class="grade ${gradeColor} ${passingClass} col-end">${gradeDisplay}</td>
-                    `;
+                    if (showMistakes) html += `<td class="${pc} mistake">${ld}</td>`;
+                    html += `<td class="${pc}">${item.points}</td>`;
+                    html += `<td class="grade ${gc} ${pc} col-end">${gd}</td>`;
                     tr.innerHTML += html;
                 } else {
-                    if (showMistakes) tr.innerHTML += `<td></td>`;
-                    tr.innerHTML += `<td></td><td class="col-end"></td>`;
+                    if (showMistakes) tr.innerHTML += '<td></td>';
+                    tr.innerHTML += '<td></td><td class="col-end"></td>';
                 }
             }
             tbody.appendChild(tr);
@@ -585,29 +568,21 @@
         if (icon === 'alert-circle') iconColor = 'var(--color-fail)';
 
         toast.innerHTML = `
-            <i data-lucide="${icon}" style="width: 20px; height: 20px; color: ${iconColor};"></i>
-            <span>${message}</span>
-        `;
-
+            <i data-lucide="${icon}" style="width:20px;height:20px;color:${iconColor};"></i>
+            <span>${message}</span>`;
         container.appendChild(toast);
         lucide.createIcons();
 
-        setTimeout(() => {
-            if (container.contains(toast)) {
-                container.removeChild(toast);
-            }
-        }, 3000);
+        setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 3000);
     }
 
     // ==========================================
-    // EXPORTS & IMPRESSION
+    // COPIER LE TABLEAU
     // ==========================================
     async function copyTable() {
         const table = document.getElementById('gradeTable');
-
-        let text = "";
-        const rows = table.querySelectorAll('tr');
-        rows.forEach(r => {
+        let text = '';
+        table.querySelectorAll('tr').forEach(r => {
             const cols = Array.from(r.querySelectorAll('td, th'));
             text += cols.map(c => c.innerText.trim()).join('\t') + '\n';
         });
@@ -615,68 +590,75 @@
         try {
             await navigator.clipboard.writeText(text);
             showToast('Tableau copié dans le presse-papier', 'check-circle');
-        } catch (err) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showToast('Tableau copié dans le presse-papier', 'check-circle');
-            } catch (e) {
-                showToast('Erreur lors de la copie', 'alert-circle');
-            }
-            document.body.removeChild(textarea);
+        } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); showToast('Tableau copié dans le presse-papier', 'check-circle'); }
+            catch { showToast('Erreur lors de la copie', 'alert-circle'); }
+            document.body.removeChild(ta);
         }
     }
 
-    // Export PDF via html2pdf
-    async function exportPDF() {
-        const btn = document.getElementById('btnPdf');
-        const textSpan = document.getElementById('pdfText');
-        const originalText = textSpan.textContent;
-
-        textSpan.textContent = 'Génération...';
-        btn.disabled = true;
-
-        document.body.classList.add('exporting-pdf');
-
-        await new Promise(resolve => setTimeout(resolve, 150));
-
-        const element = document.getElementById('pdf-container');
-        const title = document.getElementById('titleInput').value || 'Bareme';
-        const filename = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-
-        const opt = {
-            margin: 15,
-            filename: filename,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.body.classList.remove('exporting-pdf');
-            textSpan.textContent = originalText;
-            btn.disabled = false;
-            showToast('PDF généré avec succès', 'check-circle');
-        }).catch(err => {
-            console.error(err);
-            document.body.classList.remove('exporting-pdf');
-            textSpan.textContent = originalText;
-            btn.disabled = false;
-            showToast('Erreur lors de la génération du PDF', 'alert-circle');
-        });
-    }
-
+    // ==========================================
+    // IMPRESSION — 1 seule page A4
+    // ==========================================
     function handlePrint() {
-        window.focus();
-        window.print();
+        // 1. Lire les paramètres actuels
+        const totalPoints  = parseFloat(document.getElementById('totalPoints').value) || 20;
+        const ptFor4Val    = document.getElementById('pointsFor4').value;
+        const pointsFor4   = ptFor4Val ? parseFloat(ptFor4Val) : null;
+        const increment    = parseFloat(document.getElementById('increment').value);
+        const rounding     = parseFloat(document.getElementById('rounding').value);
+        const showMistakes = document.getElementById('showMistakes').checked;
+
+        // 2. Générer les données
+        const data = generateData(totalPoints, pointsFor4, increment, rounding);
+
+        // 3. Sauvegarder le tableau actuel (affiché à l'écran)
+        const savedBody = document.getElementById('tableBody').innerHTML;
+        const savedHead = document.getElementById('tableHead').innerHTML;
+
+        // 4. Calculer le nombre optimal de groupes de colonnes
+        //    pour tenir en ≤ 65 lignes sur une page A4 portrait
+        //    (police 7.5 px, padding 1.5 px → ~3.5 mm/ligne → ~65 lignes max)
+        const maxRows   = 65;
+        const maxGroups = showMistakes ? 5 : 6;
+        const groups    = Math.max(2, Math.min(maxGroups, Math.ceil(data.length / maxRows)));
+        const actualRows = Math.ceil(data.length / groups);
+
+        // 5. Facteur de zoom de sécurité si ça dépasse quand même
+        let zoom = 1;
+        if (actualRows > maxRows) {
+            zoom = maxRows / actualRows;
+            zoom = Math.max(0.45, zoom);           // plancher 45 %
+            zoom = Math.round(zoom * 100) / 100;   // arrondir
+        }
+
+        // 6. Re-rendre le tableau avec le bon nombre de colonnes
+        renderTable(data, totalPoints, showMistakes, groups);
+
+        // 7. Appliquer les classes/variables CSS pour l'impression
+        document.documentElement.style.setProperty('--print-zoom', zoom);
+        document.body.classList.add('printing');
+
+        // 8. Restaurer après impression
+        const restore = () => {
+            document.body.classList.remove('printing');
+            document.documentElement.style.removeProperty('--print-zoom');
+            document.getElementById('tableBody').innerHTML = savedBody;
+            document.getElementById('tableHead').innerHTML = savedHead;
+            window.removeEventListener('afterprint', restore);
+        };
+        window.addEventListener('afterprint', restore);
+
+        // 9. Petit délai pour laisser le DOM se mettre à jour, puis imprimer
+        setTimeout(() => { window.focus(); window.print(); }, 120);
     }
 
-    // Initialisation
+    // ==========================================
+    // INITIALISATION
+    // ==========================================
     initTheme();
     loadPreferences();
     updateAll();
