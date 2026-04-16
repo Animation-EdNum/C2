@@ -464,7 +464,7 @@
         let correct = true;
 
         for (let r = 0; r < size && correct; r++) {
-            const cells = rows[r].querySelectorAll('.grid-cell');
+            const cells = rows[r].children;
             for (let c = 0; c < size; c++) {
                 const cellIsOn = cells[c].classList.contains('on');
                 const shouldBeOn = currentPattern.data[r][c] === 0;
@@ -602,9 +602,9 @@
 
         rows.forEach((row, r) => {
             let binary = '';
-            row.querySelectorAll('.grid-cell').forEach(cell => {
-                binary += cell.classList.contains('on') ? '0' : '1';
-            });
+            for (let i = 0; i < row.children.length; i++) {
+                binary += row.children[i].classList.contains('on') ? '0' : '1';
+            }
             output += binary + '\n';
         });
 
@@ -649,10 +649,11 @@
         const ctx = canvas.getContext('2d');
 
         rows.forEach((row, r) => {
-            row.querySelectorAll('.grid-cell').forEach((cell, c) => {
-                ctx.fillStyle = cell.classList.contains('on') ? '#1e293b' : '#ffffff';
+            const cells = row.children;
+            for (let c = 0; c < cells.length; c++) {
+                ctx.fillStyle = cells[c].classList.contains('on') ? '#1e293b' : '#ffffff';
                 ctx.fillRect(c * scale, r * scale, scale, scale);
-            });
+            }
         });
 
         // Lignes de grille
