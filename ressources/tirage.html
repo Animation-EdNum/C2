@@ -5,9 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tirage au Sort</title>
     <style>
+        /* Typographie locale (hors ligne) */
+        @font-face {
+            font-family: 'Outfit';
+            src: url('../fonts/outfit.woff2') format('woff2');
+            font-weight: 400 700;
+            font-display: swap;
+        }
+
+        /* Animations & Glassmorphism */
+        @keyframes fadeInCascade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        body > .action-buttons, body > .container {
+            animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         :root {
             --color-background: #f1f5f9;
-            --color-surface: #ffffff;
+            --color-surface: rgba(255, 255, 255, 0.85);
             --color-text: #0f172a;
             --color-text-secondary: #64748b;
             --color-primary: #0d9488;
@@ -34,7 +51,7 @@
 
         [data-theme="dark"] {
             --color-background: #0f172a;
-            --color-surface: #1e293b;
+            --color-surface: rgba(30, 41, 59, 0.75);
             --color-text: #f8fafc;
             --color-text-secondary: #94a3b8;
             --color-primary: #2dd4bf;
@@ -60,7 +77,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--color-background);
             color: var(--color-text);
             display: flex; justify-content: center; align-items: center;
@@ -73,6 +90,7 @@
             background-color: var(--color-surface); border-radius: var(--radius-base);
             border: 1px solid var(--color-border); padding: 32px; box-shadow: var(--shadow-card);
             position: relative;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
         }
 
         h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; text-align: center; letter-spacing: -0.025em; }
@@ -89,13 +107,14 @@
         .back-btn:hover { background-color: var(--color-btn-secondary-bg); color: var(--color-text); }
 
         /* Boutons action (thème / son) — haut droite */
-        .action-buttons { position: absolute; top: 20px; right: 20px; display: flex; gap: 8px; }
+        .action-buttons { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; z-index: 100; }
         .icon-action-btn {
-            background: none; border: none;
+            background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.1);
             color: var(--color-text-secondary); cursor: pointer; padding: 8px;
             border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center;
         }
-        .icon-action-btn:hover { background-color: var(--color-btn-secondary-bg); color: var(--color-text); }
+        body.dark .icon-action-btn { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.1); color: var(--color-text); }
+        .icon-action-btn:hover { background-color: var(--color-btn-secondary-bg); color: var(--color-text); transform: scale(1.05); }
 
         /* Onglets */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: var(--color-input-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--color-border); }
@@ -253,6 +272,20 @@
     </style>
 </head>
 <body>
+    <div class="action-buttons">
+        <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" style="color: inherit;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </a>
+        <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
+            <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <button class="icon-action-btn" id="audioToggleBtn" title="Activer/Désactiver le son">
+            <svg id="icon-vol-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <svg id="icon-vol-off" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
+    </div>
+
     <div class="container">
         <div class="card">
             <!-- NOUVEAU : Bouton retour (haut gauche) — revient à la configuration -->
@@ -262,20 +295,6 @@
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
             </button>
-
-            <div class="action-buttons">
-                <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" style="color: inherit;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                </a>
-                <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
-                    <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
-                <button class="icon-action-btn" id="audioToggleBtn" title="Activer/Désactiver le son">
-                    <svg id="icon-vol-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                    <svg id="icon-vol-off" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-                </button>
-            </div>
 
             <h1>🎲 Tirage au Sort</h1>
             <p class="subtitle" id="subtitle">Générez un résultat au hasard</p>
