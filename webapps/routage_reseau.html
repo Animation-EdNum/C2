@@ -176,6 +176,9 @@
 </head> 
 <body> 
 <div class="action-buttons">
+    <button class="icon-action-btn" id="homeBtn" title="Retour à l'accueil" onclick="window.location.href='../index.html'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    </button>
     <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
         <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
         <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -295,6 +298,7 @@ const networkPool = {
 let parsedNodes = [], parsedEdges = [], adjacency = {}; 
 let currentPath =[], isLocked = false, difficulty = 'easy'; 
 let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0; 
+let lastNetworkIndex = -1; // Anti-répétition 
  
 function parseNetwork(raw) { 
     parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] })); 
@@ -349,7 +353,15 @@ function calculateCurrentTime() {
  
 function newNetwork() { 
     const pool = networkPool[difficulty]; 
-    parseNetwork(pool[Math.floor(Math.random() * pool.length)]); 
+    // Anti-répétition : choisir un index différent du dernier
+    let idx;
+    if (pool.length > 1) {
+        do { idx = Math.floor(Math.random() * pool.length); } while (idx === lastNetworkIndex);
+    } else {
+        idx = 0;
+    }
+    lastNetworkIndex = idx;
+    parseNetwork(pool[idx]); 
     currentPath = ['src']; 
     isLocked = false; netCount++; 
     document.getElementById('netNumber').textContent = netCount; 
@@ -367,6 +379,9 @@ function render() {
  
 function renderEdges() { 
     const svg = document.getElementById('network-svg'); svg.innerHTML = ''; 
+    const isDark = document.body.classList.contains('dark');
+    const edgeColor = isDark ? '#475569' : '#c5cbe9';
+    const weightColor = isDark ? '#334155' : '#9fa8da';
      
     parsedEdges.forEach(e => { 
         const n1 = getNode(e.from), n2 = getNode(e.to); 
@@ -376,7 +391,7 @@ function renderEdges() {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line'); 
         line.setAttribute('x1', `${n1.x}%`); line.setAttribute('y1', `${n1.y}%`); 
         line.setAttribute('x2', `${n2.x}%`); line.setAttribute('y2', `${n2.y}%`); 
-        line.setAttribute('stroke', isPath ? '#ff9800' : '#c5cbe9'); 
+        line.setAttribute('stroke', isPath ? '#ff9800' : edgeColor); 
         line.setAttribute('stroke-width', isPath ? '5' : '2.5'); 
         svg.appendChild(line); 
  
@@ -385,7 +400,7 @@ function renderEdges() {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); 
         circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`); 
         circle.setAttribute('r', '11'); 
-        circle.setAttribute('fill', isPath ? '#e65100' : '#9fa8da'); 
+        circle.setAttribute('fill', isPath ? '#e65100' : weightColor); 
         svg.appendChild(circle); 
  
         // Texte UTI 
@@ -510,23 +525,6 @@ themeToggleBtn.addEventListener('click', () => {
     setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
 });
 
-// Update renderEdges for dark mode
-const originalRenderEdges = renderEdges;
-renderEdges = function() {
-    originalRenderEdges();
-    const isDark = document.body.classList.contains('dark');
-    const svg = document.getElementById('network-svg');
-    svg.querySelectorAll('line').forEach(line => {
-        if (line.getAttribute('stroke') === '#c5cbe9') {
-            line.setAttribute('stroke', isDark ? '#475569' : '#c5cbe9');
-        }
-    });
-    svg.querySelectorAll('circle').forEach(circle => {
-        if (circle.getAttribute('fill') === '#9fa8da') {
-            circle.setAttribute('fill', isDark ? '#334155' : '#9fa8da');
-        }
-    });
-}
 // Render immediately with correct style
 renderEdges();
 </script> 

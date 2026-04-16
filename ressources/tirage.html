@@ -21,8 +21,8 @@
             --color-cell-hover: #f1f5f9;
             --color-cell-drawn: #f1f5f9;
             --color-cell-drawn-text: #94a3b8;
-            --color-cell-excluded: #fee2e2;
-            --color-cell-excluded-text: #ef4444;
+            --color-cell-absent: #fee2e2;
+            --color-cell-absent-text: #ef4444;
             --color-finished-bg: #ecfdf5;
             --color-finished-text: #059669;
             --color-finished-border: #a7f3d0;
@@ -48,8 +48,8 @@
             --color-cell-hover: #334155;
             --color-cell-drawn: #0f172a;
             --color-cell-drawn-text: #475569;
-            --color-cell-excluded: #7f1d1d;
-            --color-cell-excluded-text: #fca5a5;
+            --color-cell-absent: #7f1d1d;
+            --color-cell-absent-text: #fca5a5;
             --color-finished-bg: #064e3b;
             --color-finished-text: #34d399;
             --color-finished-border: #047857;
@@ -166,6 +166,8 @@
             border-radius: 8px;
             padding: 12px;
             min-height: 80px;
+            min-width: 0; /* Prévient le débordement dans la grille CSS */
+            overflow: hidden;
         }
 
         .column-panel .section-header {
@@ -194,16 +196,16 @@
         .cell:hover { border-color: var(--color-primary); background-color: var(--color-cell-hover); transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); color: var(--color-primary); }
         .cell:active { transform: translateY(0) scale(0.95); }
         .cell.drawn { opacity: 0.5; background-color: var(--color-cell-drawn); border-color: transparent; text-decoration: line-through; color: var(--color-cell-drawn-text); transform: none; box-shadow: none; }
-        .cell.excluded { opacity: 0.6; background-color: var(--color-cell-excluded); border-color: transparent; text-decoration: line-through; color: var(--color-cell-excluded-text); transform: none; box-shadow: none; }
+        .cell.absent { opacity: 0.6; background-color: var(--color-cell-absent); border-color: transparent; text-decoration: line-through; color: var(--color-cell-absent-text); transform: none; box-shadow: none; }
 
         /* Historique */
-        .history-scroll { max-height: 250px; overflow-y: auto; }
+        .history-scroll { max-height: 250px; overflow-y: auto; overflow-x: hidden; }
         .history-scroll::-webkit-scrollbar { width: 6px; }
         .history-scroll::-webkit-scrollbar-track { background: var(--color-input-bg); border-radius: 4px; }
         .history-scroll::-webkit-scrollbar-thumb { background: var(--color-text-secondary); border-radius: 4px; }
 
         .history-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-        .history-badge { background-color: var(--color-primary); color: #ffffff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; animation: fadeIn 0.3s ease-out; box-shadow: 0 2px 4px rgba(13,148,136,0.2); }
+        .history-badge { background-color: var(--color-primary); color: #ffffff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; animation: fadeIn 0.3s ease-out; box-shadow: 0 2px 4px rgba(13,148,136,0.2); word-break: break-word; max-width: 100%; }
         .history-placeholder { color: var(--color-text-secondary); font-size: 12px; font-style: italic; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
@@ -213,7 +215,7 @@
         .legend-item { display: inline-flex; align-items: center; margin: 0 6px; }
         .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; border: 1px solid transparent; }
         .legend-dot.available { background-color: var(--color-cell-bg); border-color: var(--color-border); }
-        .legend-dot.excluded { background-color: var(--color-cell-excluded); border-color: var(--color-cell-excluded-text); }
+        .legend-dot.absent { background-color: var(--color-cell-absent); border-color: var(--color-cell-absent-text); }
         .legend-dot.drawn { background-color: var(--color-cell-drawn); border-color: var(--color-cell-drawn-text); }
 
         /* Footer */
@@ -262,6 +264,9 @@
             </button>
 
             <div class="action-buttons">
+                <button class="icon-action-btn" onclick="window.location.href='../index.html'" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </button>
                 <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
                     <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                     <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -348,7 +353,7 @@
                 <div class="legend-container">
                     Cycle de clic :
                     <span class="legend-item"><span class="legend-dot available"></span>Disponible</span> →
-                    <span class="legend-item"><span class="legend-dot excluded"></span>Absent</span> →
+                    <span class="legend-item"><span class="legend-dot absent"></span>Absent</span> →
                     <span class="legend-item"><span class="legend-dot drawn"></span>Tiré</span>
                 </div>
             </div>
@@ -375,7 +380,7 @@
             allParticipants: [],
             availableParticipants: [],
             drawnParticipants: [],
-            excludedParticipants: [],
+            absentParticipants: [],
             drawHistory: []
         };
         let isDrawing = false;
@@ -461,12 +466,12 @@
 
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
+            localStorage.setItem('global_theme', theme);
             iconSun.style.display = theme === 'dark' ? 'block' : 'none';
             iconMoon.style.display = theme === 'dark' ? 'none' : 'block';
         }
 
-        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const savedTheme = localStorage.getItem('global_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         setTheme(savedTheme);
 
         themeToggleBtn.addEventListener('click', () => {
@@ -555,7 +560,7 @@
             state.allParticipants = [...parsedList];
             state.availableParticipants = [...parsedList];
             state.drawnParticipants = [];
-            state.excludedParticipants = [];
+            state.absentParticipants = [];
             state.drawHistory = [];
 
             drawnNumber.classList.toggle('is-number', state.mode === 'number');
@@ -605,35 +610,42 @@
         // NOUVEAU : Remet le tirage à zéro (sans revenir à la config)
         function softReset() {
             state.availableParticipants = state.allParticipants.filter(
-                p => !state.excludedParticipants.includes(p)
+                p => !state.absentParticipants.includes(p)
             );
             state.drawnParticipants = [];
             state.drawHistory = [];
 
             drawnNumber.textContent = '?';
             drawnNumber.classList.remove('pulse');
-            finishedMsg.style.display = 'none';
-            drawBtn.disabled = false;
 
             saveState();
-            updateUI();
+            updateUI(); // gère drawBtn.disabled et finishedMsg
             showToast('Tirage réinitialisé', 'success');
         }
 
         // NOUVEAU : Retour à la configuration (bouton flèche ←)
         function goBack() {
+            const previousMode = state.mode; // Mémoriser le mode actif avant réinitialisation
             localStorage.removeItem(STATE_KEY);
             state = {
-                mode: 'number',
+                mode: previousMode,
                 allParticipants: [],
                 availableParticipants: [],
                 drawnParticipants: [],
-                excludedParticipants: [],
+                absentParticipants: [],
                 drawHistory: []
             };
             drawnNumber.textContent = '?';
             drawnNumber.classList.remove('pulse');
             finishedMsg.style.display = 'none';
+
+            // Restaurer l'onglet actif selon le mode mémorisé
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.target === `mode-${previousMode}`);
+            });
+            document.getElementById('mode-number').style.display = previousMode === 'number' ? 'block' : 'none';
+            document.getElementById('mode-names').style.display = previousMode === 'names' ? 'block' : 'none';
+
             showSetupMode();
         }
 
@@ -643,10 +655,10 @@
         function updateUI() {
             const total = state.allParticipants.length;
             const drawn = state.drawnParticipants.length;
-            const excluded = state.excludedParticipants.length;
+            const absent = state.absentParticipants.length;
             const available = state.availableParticipants.length;
 
-            statsDisplay.textContent = `${available} disponible${available > 1 ? 's' : ''} · ${drawn} tiré${drawn > 1 ? 's' : ''} · ${excluded} absent${excluded > 1 ? 's' : ''}`;
+            statsDisplay.textContent = `${available} disponible${available > 1 ? 's' : ''} · ${drawn} tiré${drawn > 1 ? 's' : ''} · ${absent} absent${absent > 1 ? 's' : ''}`;
 
             // Grille des participants
             participantItems.innerHTML = '';
@@ -657,17 +669,17 @@
 
                 if (state.drawnParticipants.includes(p)) {
                     cell.classList.add('drawn');
-                } else if (state.excludedParticipants.includes(p)) {
-                    cell.classList.add('excluded');
+                } else if (state.absentParticipants.includes(p)) {
+                    cell.classList.add('absent');
                 }
 
-                // Cycle de clic : Disponible → Exclu → Tiré → Disponible
+                // Cycle de clic : Disponible → Absent → Tiré → Disponible
                 cell.addEventListener('click', () => {
                     if (isDrawing) return;
 
-                    if (state.excludedParticipants.includes(p)) {
-                        // Exclu → Tiré manuellement
-                        state.excludedParticipants = state.excludedParticipants.filter(x => x !== p);
+                    if (state.absentParticipants.includes(p)) {
+                        // Absent → Tiré manuellement
+                        state.absentParticipants = state.absentParticipants.filter(x => x !== p);
                         state.availableParticipants = state.availableParticipants.filter(x => x !== p);
                         if (!state.drawnParticipants.includes(p)) state.drawnParticipants.push(p);
                     } else if (state.drawnParticipants.includes(p)) {
@@ -675,19 +687,13 @@
                         state.drawnParticipants = state.drawnParticipants.filter(x => x !== p);
                         if (!state.availableParticipants.includes(p)) state.availableParticipants.push(p);
                     } else {
-                        // Disponible → Exclu
+                        // Disponible → Absent
                         state.availableParticipants = state.availableParticipants.filter(x => x !== p);
-                        if (!state.excludedParticipants.includes(p)) state.excludedParticipants.push(p);
-                    }
-
-                    // Remettre le bouton actif si on a libéré un participant
-                    if (state.availableParticipants.length > 0) {
-                        finishedMsg.style.display = 'none';
-                        drawBtn.disabled = false;
+                        if (!state.absentParticipants.includes(p)) state.absentParticipants.push(p);
                     }
 
                     saveState();
-                    updateUI();
+                    updateUI(); // centralise drawBtn.disabled et finishedMsg
                 });
 
                 participantItems.appendChild(cell);
@@ -696,7 +702,7 @@
             // Historique (badges)
             historyBadges.innerHTML = '';
             if (state.drawHistory.length > 0) {
-                state.drawHistory.forEach((item, index) => {
+                state.drawHistory.forEach((item) => {
                     const badge = document.createElement('span');
                     badge.className = 'history-badge';
                     badge.textContent = item;
@@ -706,14 +712,10 @@
                 historyBadges.innerHTML = '<span class="history-placeholder">Aucun tirage</span>';
             }
 
-			// Vérifier si terminé
-            if (state.availableParticipants.length === 0 && state.drawnParticipants.length > 0) {
-                finishedMsg.style.display = 'block';
-                drawBtn.disabled = true;
-            } else {
-                finishedMsg.style.display = 'none';
-                drawBtn.disabled = false;
-            }
+            // Centralisation : état du bouton Tirer et message de fin
+            const isDone = state.availableParticipants.length === 0 && state.drawnParticipants.length > 0;
+            drawBtn.disabled = state.availableParticipants.length === 0;
+            finishedMsg.style.display = isDone ? 'block' : 'none';
         }
 
         // ==========================================

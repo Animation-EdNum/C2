@@ -76,5 +76,35 @@ Les ressources disponibles sont :
   - Gestion fine de la liste : exclusion temporaire (élèves absents) et remise en jeu des élèves déjà tirés par simple clic.
   - Génération et copie dans le presse-papiers d'un historique complet du tirage.
 
+## Développement & Tests
+
+Les tests automatiques utilisent [Playwright](https://playwright.dev/python/) et [pytest](https://pytest.org/).
+
+### Lancer les tests (Windows)
+
+Double-cliquez sur `run_tests.bat` ou, depuis un terminal :
+
+```bat
+run_tests.bat
+```
+
+Le script installe automatiquement les dépendances et lance les tests.
+
+### Lancer manuellement
+
+```bash
+# Depuis la racine du repo
+pip install playwright pytest
+python -m playwright install chromium
+python -m pytest tests/ -v
+```
+
+### Dépendances (`requirements.txt`)
+
+```
+playwright
+pytest
+```
+
 ## Licence
 Toutes les webapps et ressources sont sous licence [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html).
