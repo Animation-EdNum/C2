@@ -11,7 +11,7 @@ Les webapps disponibles sont :
 
 ### 1. Pixel Studio (`webapps/binaire_studio.html`)
 - **À quoi sert l'outil :** Un studio de codage interactif permettant de faire le lien entre des images matricielles (pixels) en noir et blanc et leur représentation binaire (0 pour le noir, 1 pour le blanc).
-- **Lien avec les activités Décodage :** Représentation de l'information (images, pixels).
+- **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire**
 - **Demi-cycle concerné :** 5-6H
 - **Fonctionnalités :**
   - 3 modes de jeu : *Décoder* (dessiner à partir du code binaire), *Encoder* (trouver le code à partir d'une image) et *Éditeur Libre* (création pure).
@@ -21,7 +21,7 @@ Les webapps disponibles sont :
 
 ### 2. Mots secrets (`webapps/binaire_message.html`)
 - **À quoi sert l'outil :** Un jeu interactif en deux parties pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire avec un camarade.
-- **Lien avec les activités Décodage :** Représentation de l'information (texte).
+- **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)**
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - **Partie en deux étapes :** création d'un mot secret codé en binaire (max 4 lettres) que l'on transmet à un camarade, puis décodage d'un message reçu caractère par caractère.
@@ -30,7 +30,7 @@ Les webapps disponibles sont :
 
 ### 3. Routage Réseau (`webapps/routage_reseau.html`)
 - **À quoi sert l'outil :** Une simulation visuelle qui demande aux élèves de trouver le chemin le plus rapide pour acheminer un "paquet" d'un point A (ordinateur) à un point B (serveur) au travers d'un graphe.
-- **Lien avec les activités Décodage :** Réseaux et communication (cheminement, algorithme de routage, Internet).
+- **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 8 — Les réseaux, Niveau 2**
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - 3 niveaux de difficulté modifiant la taille et la complexité du réseau (génération dynamique).
@@ -40,7 +40,7 @@ Les webapps disponibles sont :
 
 ### 4. Codage binaire (`webapps/binaire_codage.html`)
 - **À quoi sert l'outil :** Une plateforme d'entraînement intensif au passage des nombres entiers (décimal) vers leur écriture en binaire, et inversément.
-- **Lien avec les activités Décodage :** Représentation de l'information (nombres).
+- **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 1)**
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - Exercices générés aléatoirement (conversion dans les deux sens).
@@ -49,12 +49,14 @@ Les webapps disponibles sont :
 
 ### 5. Bit de Parité (`webapps/bit_de_parite.html`)
 - **À quoi sert l'outil :** Un exercice ludique abordant la notion de parité afin de comprendre comment un ordinateur peut s'assurer qu'un message n'a pas été altéré lors d'une transmission.
-- **Lien avec les activités Décodage :** Représentation de l'information et détection d'erreurs (intégrité des données).
+- **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs lors de la transmission de données ?**
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - Mode entraînement dynamique demandant de garantir la "parité paire" sur des grilles de bits.
   - 3 tailles de grilles pour adapter la complexité cognitive : 4x4, 5x5, ou 6x6.
+  - Mode "Tour de Magie" : simulation du tour de détection d'une cellule retournée (Activité 10 — Cartes magiques).
   - Système de suivi des scores (victoires globales, etc.).
+
 
 ## Ressources (Outils pour les enseignant·e·s)
 Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, conçus spécifiquement pour les enseignant·e·s.
