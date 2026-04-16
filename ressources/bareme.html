@@ -529,6 +529,7 @@
         // Body
         for (let i = 0; i < rowsCount; i++) {
             const tr = document.createElement('tr');
+            let rowHtml = '';
 
             for (let col = 0; col < groupsPerRow; col++) {
                 const index = col * rowsCount + i;
@@ -541,16 +542,15 @@
                     const lost = Math.round((totalPoints - item.points) * 100) / 100;
                     const ld   = lost === 0 ? '0' : `-${lost}`;
 
-                    let html = '';
-                    if (showMistakes) html += `<td class="${pc} mistake">${ld}</td>`;
-                    html += `<td class="${pc}">${item.points}</td>`;
-                    html += `<td class="grade ${gc} ${pc} col-end">${gd}</td>`;
-                    tr.innerHTML += html;
+                    if (showMistakes) rowHtml += `<td class="${pc} mistake">${ld}</td>`;
+                    rowHtml += `<td class="${pc}">${item.points}</td>`;
+                    rowHtml += `<td class="grade ${gc} ${pc} col-end">${gd}</td>`;
                 } else {
-                    if (showMistakes) tr.innerHTML += '<td></td>';
-                    tr.innerHTML += '<td></td><td class="col-end"></td>';
+                    if (showMistakes) rowHtml += '<td></td>';
+                    rowHtml += '<td></td><td class="col-end"></td>';
                 }
             }
+            tr.innerHTML = rowHtml;
             tbody.appendChild(tr);
         }
     }

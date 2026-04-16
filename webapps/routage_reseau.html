@@ -257,9 +257,16 @@ const networkPool = {
 // ========================================== 
 //  MOTEUR DU JEU 
 // ========================================== 
-let parsedNodes = [], parsedEdges = [], adjacency = {}; 
-let currentPath =[], isLocked = false, difficulty = 'easy'; 
-let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0; 
+let parsedNodes = [];
+let parsedEdges = [];
+let adjacency = {};
+let currentPath = [];
+let isLocked = false;
+let difficulty = 'easy';
+let globalCorrect = 0;
+let globalStreak = 0;
+let globalBest = 0;
+let netCount = 0;
  
 function parseNetwork(raw) { 
     parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] })); 
@@ -282,12 +289,15 @@ function setDifficulty(lvl) {
  
 // Algorithme de Dijkstra pour trouver le VRAI chemin le plus rapide 
 function getFastestPath() { 
-    let dist = {}, prev = {}, unvisited = []; 
+    let dist = {};
+    let prev = {};
+    let unvisited = [];
     parsedNodes.forEach(n => { dist[n.id] = Infinity; prev[n.id] = null; unvisited.push(n.id); }); 
     dist['src'] = 0; 
  
     while (unvisited.length > 0) { 
-        let minNode = null, minDist = Infinity; 
+        let minNode = null;
+        let minDist = Infinity;
         unvisited.forEach(u => { if (dist[u] < minDist) { minDist = dist[u]; minNode = u; } }); 
         if (minNode === null || minNode === 'dst') break; 
          
@@ -334,7 +344,8 @@ function renderEdges() {
     const svg = document.getElementById('network-svg'); svg.innerHTML = ''; 
      
     parsedEdges.forEach(e => { 
-        const n1 = getNode(e.from), n2 = getNode(e.to); 
+        const n1 = getNode(e.from);
+        const n2 = getNode(e.to);
         const isPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1; 
          
         // Ligne 
@@ -346,7 +357,8 @@ function renderEdges() {
         svg.appendChild(line); 
  
         // Cercle UTI (Poids) 
-        const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2; 
+        const cx = (n1.x + n2.x) / 2;
+        const cy = (n1.y + n2.y) / 2;
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); 
         circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`); 
         circle.setAttribute('r', '11'); 
@@ -438,9 +450,11 @@ function checkPath() {
  
 // Confetti Engine 
 function launchConfetti() { 
-    const cvs = document.getElementById('confetti-canvas'), ctx = cvs.getContext('2d'); 
+    const cvs = document.getElementById('confetti-canvas');
+    const ctx = cvs.getContext('2d');
     cvs.width = window.innerWidth; cvs.height = window.innerHeight; 
-    let parts =[], cols =['#667eea','#4caf50','#ff9800','#e91e63']; 
+    let parts = [];
+    let cols = ['#667eea','#4caf50','#ff9800','#e91e63'];
     for (let i=0; i<80; i++) parts.push({x:Math.random()*cvs.width, y:-50, vx:(Math.random()-0.5)*6, vy:Math.random()*4+2, c:cols[Math.floor(Math.random()*cols.length)], s:Math.random()*6+3}); 
     function anim() { 
         ctx.clearRect(0,0,cvs.width,cvs.height); let alive=false; 

@@ -279,7 +279,8 @@
 
     function playClick() {
         if (!audioCtx) return;
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
         o.connect(g); g.connect(audioCtx.destination);
         o.type = 'square';
         o.frequency.setValueAtTime(600, audioCtx.currentTime);
@@ -292,7 +293,8 @@
         if (!audioCtx) return;
         const t = audioCtx.currentTime;
         [523.25, 659.25, 783.99].forEach((f, i) => {
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
             o.connect(g); g.connect(audioCtx.destination);
             o.type = 'sine'; o.frequency.value = f;
             g.gain.setValueAtTime(0.15, t + i * 0.12);
@@ -303,7 +305,8 @@
 
     function playError() {
         if (!audioCtx) return;
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
         o.connect(g); g.connect(audioCtx.destination);
         o.type = 'sawtooth';
         o.frequency.setValueAtTime(300, audioCtx.currentTime);
@@ -339,29 +342,29 @@
     // ==========================================
     function buildGrid(containerId, size, data, locked) {
         const wrapper = document.getElementById(containerId);
-        wrapper.innerHTML = '';
+        let gridHtml = '';
 
         for (let r = 0; r < size; r++) {
-            const row = document.createElement('div');
-            row.className = 'grid-row';
-
+            gridHtml += '<div class="grid-row">';
             for (let c = 0; c < size; c++) {
-                const cell = document.createElement('div');
-                cell.className = 'grid-cell';
-                cell.dataset.r = r;
-                cell.dataset.c = c;
-
-                if (locked) cell.classList.add('locked');
-                if (data && data[r][c] === 0) cell.classList.add('on');
-
-                if (!locked) {
-                    cell.addEventListener('mousedown', e => { e.preventDefault(); startDraw(cell); });
-                    cell.addEventListener('mouseenter', () => { if (isDrawing) applyDraw(cell); });
-                    cell.addEventListener('touchstart', e => { e.preventDefault(); startDraw(cell); }, { passive: false });
-                }
-                row.appendChild(cell);
+                let cellClass = 'grid-cell';
+                if (locked) cellClass += ' locked';
+                if (data && data[r][c] === 0) cellClass += ' on';
+                gridHtml += `<div class="${cellClass}" data-r="${r}" data-c="${c}"></div>`;
             }
-            wrapper.appendChild(row);
+            gridHtml += '</div>';
+        }
+
+        wrapper.innerHTML = gridHtml;
+
+        // Re-attach event listeners after setting innerHTML
+        if (!locked) {
+            const cells = wrapper.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                cell.addEventListener('mousedown', e => { e.preventDefault(); startDraw(cell); });
+                cell.addEventListener('mouseenter', () => { if (isDrawing) applyDraw(cell); });
+                cell.addEventListener('touchstart', e => { e.preventDefault(); startDraw(cell); }, { passive: false });
+            });
         }
 
         if (!locked) {
