@@ -489,6 +489,7 @@ function checkTrainAnswer() {
 // MODE TOUR DE MAGIE 
 // ========================================== 
 let isMagicDone = false; 
+let magicDomNodes = { data: [], rowParity: [], colParity: [], corner: null };
  
 function initMagicMode() { 
     isMagicDone = false; magicData = []; magicParityRow = []; magicParityCol =[]; magicCorner = 0; 
@@ -522,8 +523,11 @@ function renderMagicGrid() {
     const grid = document.getElementById('magic-grid'); 
     grid.innerHTML = ''; const mgSize = 5; 
     grid.style.gridTemplateColumns = `repeat(${mgSize + 1}, 50px)`; 
+
+    magicDomNodes.data = []; magicDomNodes.rowParity = []; magicDomNodes.colParity = [];
  
     for (let i = 0; i <= mgSize; i++) { 
+        let dataRow = [];
         for (let j = 0; j <= mgSize; j++) { 
             const cell = document.createElement('div'); 
              
@@ -532,15 +536,20 @@ function renderMagicGrid() {
                 cell.textContent = magicData[i][j]; 
                 if (!isMagicDone) cell.onclick = () => flipMagicBit(i, j); 
                 cell.id = `m-${i}-${j}`; 
+                dataRow.push(cell);
             } else if (i < mgSize && j === mgSize) { 
                 cell.className = 'cell parity-line locked filled'; cell.textContent = magicParityRow[i]; cell.id = `mr-${i}`; 
+                magicDomNodes.rowParity.push(cell);
             } else if (i === mgSize && j < mgSize) { 
                 cell.className = 'cell parity-col locked filled'; cell.textContent = magicParityCol[j]; cell.id = `mc-${j}`; 
+                magicDomNodes.colParity.push(cell);
             } else { 
                 cell.className = 'cell corner locked filled'; cell.textContent = magicCorner; cell.id = `m-corner`; 
+                magicDomNodes.corner = cell;
             } 
             grid.appendChild(cell); 
         } 
+        if (i < mgSize) magicDomNodes.data.push(dataRow);
     } 
 } 
  
@@ -558,18 +567,18 @@ function flipMagicBit(r, c) {
  
     setTimeout(() => { 
         // Highlight the row and col that are now WRONG 
-        document.getElementById(`mr-${r}`).classList.add('magic-error-row'); 
-        document.getElementById(`mc-${c}`).classList.add('magic-error-col'); 
+        magicDomNodes.rowParity[r].classList.add('magic-error-row');
+        magicDomNodes.colParity[c].classList.add('magic-error-col');
          
         // Highlight all data in that row/col for dramatic effect 
         for(let i=0; i<5; i++) { 
-            document.getElementById(`m-${r}-${i}`).classList.add('magic-error-row'); 
-            document.getElementById(`m-${i}-${c}`).classList.add('magic-error-col'); 
+            magicDomNodes.data[r][i].classList.add('magic-error-row');
+            magicDomNodes.data[i][c].classList.add('magic-error-col');
         } 
  
         setTimeout(() => { 
             // Target the intersection! 
-            document.getElementById(`m-${r}-${c}`).className = 'cell magic-target'; 
+            magicDomNodes.data[r][c].className = 'cell magic-target';
             playSound('success'); 
             showToast("✨ Erreur localisée par intersection !"); 
         }, 1500); 
