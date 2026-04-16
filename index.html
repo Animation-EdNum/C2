@@ -260,10 +260,6 @@
             color: var(--primary-hover);
             text-decoration: underline;
         }
-        footer a:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
-        }
 
         .filter-bar {
             display: flex;
@@ -288,6 +284,20 @@
         .filter-btn.active {
             background-color: var(--primary);
             color: #fff;
+        }
+
+        /* Animation filtre */
+        .card.student-app {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.25s ease,
+                        transform 0.25s ease;
+        }
+        .card.student-app.filter-hidden {
+            opacity: 0;
+            transform: scale(0.93) translateY(6px);
+            pointer-events: none;
+            position: absolute;
+            visibility: hidden;
         }
     </style>
 </head>
@@ -436,10 +446,11 @@
             });
 
             document.querySelectorAll('.student-app').forEach(app => {
-                if (level === 'all' || app.getAttribute('data-level') === level) {
-                    app.style.display = 'flex';
+                const visible = level === 'all' || app.getAttribute('data-level') === level;
+                if (visible) {
+                    app.classList.remove('filter-hidden');
                 } else {
-                    app.style.display = 'none';
+                    app.classList.add('filter-hidden');
                 }
             });
         }
