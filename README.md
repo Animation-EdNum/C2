@@ -19,15 +19,26 @@ Ce dépôt regroupe des applications web interactives (webapps) et des ressource
 
 ## Démarrer / Utilisation
 
-Nos outils sont conçus pour être le plus simple possible à utiliser :
-- **Utilisation locale :** Chaque outil est un fichier HTML autonome. Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
-- **Essayez en ligne :** Vous pouvez tester directement l'ensemble des applications ici : [www.zooom.top].
-- **Pour les enseignant·e·s :** Vous pouvez distribuer ces fichiers directement sur les ordinateurs de votre classe, ou les héberger facilement sur le site de votre école ou intranet. Il suffit d'ouvrir le fichier ou de le copier-coller.
+Nos outils sont conçus pour être le plus simple possible à utiliser et s'adaptent à vos besoins de déploiement :
+
+### 📂 Structure du projet
+Le dépôt est organisé en deux modes d'utilisation :
+
+1.  **Utilisation Web (Standard) :** Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagées (CSS, JS, Fonts) situées dans les dossiers racines. C'est le mode idéal pour un hébergement sur un serveur web.
+2.  **Utilisation Autonome (Dossier `/standalone/`) :** Ce répertoire contient des versions **100% indépendantes**. Chaque fichier HTML inclut son propre code CSS et JavaScript. C'est la solution parfaite pour une distribution simple (un seul fichier à copier) ou pour un usage sur des ordinateurs sans accès réseau fiable.
+
+### 🚀 Points forts
+- **Utilisation locale :** Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
+- **Essayez en ligne :** Vous pouvez tester directement l'ensemble des applications ici : [www.zooom.top](https://www.zooom.top).
+- **Pour les enseignant·e·s :** Vous pouvez distribuer ces fichiers directement sur les ordinateurs de votre classe, ou les héberger facilement sur le site de votre école ou intranet. 
 
 ## Webapps (Applications pour les élèves)
 Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui travaillent avec les manuels scolaires *Décodage*. Vous pouvez trouver plus d'informations sur les manuels sur [https://decodage.edu-vd.ch/](https://decodage.edu-vd.ch/).
 
-Les webapps partagent une interface unifiée, une esthétique moderne et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre.
+Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles utilisent la typographie **Outfit** pour une lisibilité optimale et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre.
+
+> [!NOTE]
+> La suite a subi un audit complet pour garantir des contrastes élevés et une navigation fluide pour tous.
 
 Les webapps disponibles sont :
 
@@ -99,11 +110,13 @@ Les ressources disponibles sont :
   - Gestion fine de la liste : exclusion temporaire (élèves absents) et remise en jeu des élèves déjà tirés par simple clic.
   - Génération et copie dans le presse-papiers d'un historique complet du tirage.
 
-## Accessibilité
+## Accessibilité & Qualité
 
-L'accessibilité est une priorité de ce projet pour répondre aux besoins de tous les utilisateurs (élèves et enseignants) :
-- **Contraste visuel :** Tous les outils bénéficient d'un mode clair et d'un mode sombre pour s'adapter à la sensibilité de chacun et réduire la fatigue visuelle.
-- **Navigation au clavier :** L'interface a été conçue pour permettre une navigation rapide et fluide au clavier (touche Tab, validation avec Entrée, etc.), ce qui est essentiel en classe.
+L'accessibilité est une priorité absolue de ce projet pour répondre aux besoins de tous les élèves et enseignant·e·s :
+- **Audit WCAG AA :** Tous les composants ont été audités pour garantir des ratios de contraste supérieurs à 4.5:1, assurant une lisibilité parfaite en mode clair comme en mode sombre.
+- **Labels ARIA :** Chaque interaction (boutons de navigation, toggle de thème, contrôles audio) dispose d'un `aria-label` descriptif pour une compatibilité totale avec les lecteurs d'écran.
+- **Navigation au clavier :** L'interface permet une navigation rapide et fluide (touche Tab, validation avec Entrée, etc.).
+- **Rigueur Typographique :** Utilisation systématique de l'ellipse typographique professionnelle (`…`) et de polices optimisées pour les écrans haute définition.
 
 ## Contribuer
 
