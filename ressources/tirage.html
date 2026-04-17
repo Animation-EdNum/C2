@@ -42,7 +42,7 @@
             --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        [data-theme="dark"] {
+        body.dark {
             --color-background: #0f172a;
             --color-surface: rgba(30, 41, 59, 0.75);
             --color-text: #f8fafc;
@@ -148,7 +148,7 @@
             color: var(--color-text-secondary);
         }
 
-        [data-theme="dark"] .icon-action-btn {
+        body.dark .icon-action-btn {
             background: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.1);
             color: var(--color-text);
@@ -679,14 +679,14 @@
 
 <body>
     <div class="action-buttons">
-        <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" style="color: inherit;">
+        <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" style="color: inherit;" aria-label="Retour à l'accueil">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
             </svg>
         </a>
-        <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
+        <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
             <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="5"></circle>
@@ -704,7 +704,7 @@
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
         </button>
-        <button class="icon-action-btn" id="audioToggleBtn" title="Activer/Désactiver le son">
+        <button class="icon-action-btn" id="audioToggleBtn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
             <svg id="icon-vol-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -722,7 +722,7 @@
     <div class="container">
         <div class="card">
             <!-- NOUVEAU : Bouton retour (haut gauche) — revient à la configuration -->
-            <button class="back-btn" id="backBtn" title="Retour à la configuration">
+            <button class="back-btn" id="backBtn" title="Retour à la configuration" aria-label="Retour à la configuration">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -747,7 +747,7 @@
 
                 <div id="mode-names" class="form-group" style="display:none;">
                     <textarea id="namesList"
-                        placeholder="Collez votre liste ici...&#10;Jean, Marie, Paul&#10;Ou un prénom par ligne"></textarea>
+                        placeholder="Collez votre liste ici…&#10;Jean, Marie, Paul&#10;Ou un prénom par ligne"></textarea>
                 </div>
 
                 <button class="btn btn-primary" id="initBtn">
@@ -940,25 +940,8 @@
             document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
         });
 
-        // Toggle Theme
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
-
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('global_theme', theme);
-            iconSun.style.display = theme === 'dark' ? 'block' : 'none';
-            iconMoon.style.display = theme === 'dark' ? 'none' : 'block';
-        }
-
-        const savedTheme = localStorage.getItem('global_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        setTheme(savedTheme);
-
-        themeToggleBtn.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            setTheme(current === 'dark' ? 'light' : 'dark');
-        });
+        // THEME — géré par ../js/theme.js
+        // (ID themeToggleBtn, icon-sun, icon-moon attendus)
 
         // Toast
         function showToast(message, type = 'success') {
@@ -1204,6 +1187,7 @@
         // ==========================================
         loadState();
     </script>
+    <script src="../js/theme.js"></script>
 </body>
 
 </html>

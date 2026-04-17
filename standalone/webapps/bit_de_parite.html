@@ -1,784 +1,1302 @@
-﻿<!DOCTYPE html> 
-<html lang="fr"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Bit de parité - Entraînement & Magie</title> 
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit de parité - Entraînement & Magie</title>
     <style>
-/* === shared.css inliné === */
-/* ============================================================
+        /* === shared.css inliné === */
+        /* ============================================================
    shared.css — Styles communs à toutes les pages du projet C2
    ============================================================ */
 
-/* --- Typographie locale (hors ligne) --- */
-@font-face {
-    font-family: 'Outfit';
-    src: url('../fonts/outfit.woff2') format('woff2');
-    font-weight: 400 700;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'JetBrains Mono';
-    src: url('../fonts/jetbrains-mono.woff2') format('woff2');
-    font-weight: 700;
-    font-display: swap;
-}
+        /* --- Typographie locale (hors ligne) --- */
+        @font-face {
+            font-family: 'Outfit';
+            src: url('../fonts/outfit.woff2') format('woff2');
+            font-weight: 400 700;
+            font-display: swap;
+        }
 
-/* --- Animation d'entrée principale --- */
-@keyframes fadeInCascade {
-    from { opacity: 0; transform: translateY(15px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('../fonts/jetbrains-mono.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
 
-/* --- Boutons d'action (haut droite) --- */
-.action-buttons {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    display: flex;
-    gap: 8px;
-    z-index: 100;
-}
+        /* --- Animation d'entrée principale --- */
+        @keyframes fadeInCascade {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
 
-.icon-action-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.icon-action-btn:hover {
-    background-color: rgba(255, 255, 255, 0.4);
-    transform: scale(1.05);
-}
+        /* --- Boutons d'action (haut droite) --- */
+        .action-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
 
-/* --- Footer commun --- */
-footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.8);
-}
+        .icon-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
 
-footer a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-}
+        .icon-action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
 
-footer a:hover {
-    text-decoration: underline;
-}
+        /* --- Footer commun --- */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
 
-/* --- Impression --- */
-@media print {
-    .no-print { display: none !important; }
-}
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-</style>
-    <style> 
-        body > header, body > .container {
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Impression --- */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+    <style>
+        body>header,
+        body>.container {
             animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        :root { 
-            --bg-gradient-start: #667eea; --bg-gradient-end: #764ba2; 
-            --card-bg: rgba(255, 255, 255, 0.85); --card-border: #e2e8f0; --container-bg: rgba(248, 250, 252, 0.85); 
-            --text-main: #1e293b; --text-secondary: #475569; --text-muted: #64748b; 
-            --accent: #6366f1; --accent-dark: #4f46e5; 
-            --badge-bg: #e0e7ff; --badge-color: #4338ca; 
-            --success: #10b981; --error: #ef4444; --warn: #f59e0b; 
-             
-            --data-bg: #f1f5f9; --data-border: #94a3b8; 
-            --parity-line-bg: #fff7ed; --parity-line-border: #fb923c; 
-            --parity-col-bg: #fdf4ff; --parity-col-border: #c084fc; 
-            --shadow-color: rgba(0, 0, 0, 0.4); 
-        } 
-        
-        body.dark { 
-            --bg-gradient-start: #0f172a; --bg-gradient-end: #1e1b4b; 
-            --card-bg: rgba(30, 41, 59, 0.75); --card-border: #334155; --container-bg: rgba(15, 23, 42, 0.75); 
-            --text-main: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b; 
-            --accent: #6366f1; --accent-dark: #4f46e5; 
-            --badge-bg: #312e81; --badge-color: #818cf8; 
-            --success: #34d399; --error: #f87171; --warn: #fbbf24;
-            --data-bg: #1e293b; --data-border: #475569; 
-            --parity-line-bg: #431407; --parity-line-border: #c2410c; 
-            --parity-col-bg: #3b0764; --parity-col-border: #7e22ce; 
-            --corner-bg: #0f172a; --corner-border: #334155; 
-            --shadow-color: rgba(0, 0, 0, 0.5); 
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: #e2e8f0;
+            --container-bg: rgba(248, 250, 252, 0.85);
+            --text-main: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-dark: #4f46e5;
+            --badge-bg: #e0e7ff;
+            --badge-color: #4338ca;
+            --success: #10b981;
+            --error: #ef4444;
+            --warn: #f59e0b;
+
+            --data-bg: #f1f5f9;
+            --data-border: #94a3b8;
+            --parity-line-bg: #fff7ed;
+            --parity-line-border: #fb923c;
+            --parity-col-bg: #fdf4ff;
+            --parity-col-border: #c084fc;
+            --shadow-color: rgba(0, 0, 0, 0.4);
         }
 
-        body.dark .icon-action-btn { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); }
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e1b4b;
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --card-border: #334155;
+            --container-bg: rgba(15, 23, 42, 0.75);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-dark: #4f46e5;
+            --badge-bg: #312e81;
+            --badge-color: #818cf8;
+            --success: #34d399;
+            --error: #f87171;
+            --warn: #fbbf24;
+            --data-bg: #1e293b;
+            --data-border: #475569;
+            --parity-line-bg: #431407;
+            --parity-line-border: #c2410c;
+            --parity-col-bg: #3b0764;
+            --parity-col-border: #7e22ce;
+            --corner-bg: #0f172a;
+            --corner-border: #334155;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
 
-        body.dark .tab-btn { background: #1e293b; border-color: #334155; color: #94a3b8; }
-        body.dark .tab-btn:hover { border-color: #475569; }
-        body.dark .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-        body.dark .grid { background: #0f172a; border-color: #334155; }
-        body.dark .cell { background: #1e293b; border-color: #475569; }
-        body.dark .cell.data { color: #f8fafc; }
-        body.dark .cell.parity-line { color: #fdba74; }
-        body.dark .cell.parity-col { color: #d8b4fe; }
-        body.dark .cell.corner { color: #94a3b8; }
-        body.dark .cell.cell-correct { background: #064e3b !important; color: #34d399 !important; border-color: #059669 !important; }
-        body.dark .cell.hover-highlight { background-color: #78350f !important; border-color: #b45309 !important; color: #fde68a !important; box-shadow: 0 0 8px rgba(217, 119, 6, 0.5); }
-        body.dark .magic-instructions { background: #1e293b; border-color: #334155; color: #cbd5e1; }
-        body.dark .cell.magic-error-row, body.dark .cell.magic-error-col { background-color: #7f1d1d !important; border-color: #991b1b !important; color: #fca5a5 !important; }
-        body.dark .cell.magic-target { background-color: #991b1b !important; color: #fef2f2 !important; border-color: #7f1d1d !important; }
+        body.dark .icon-action-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
 
-        body.dark .cell.cell-error { background: #7f1d1d !important; color: #fca5a5 !important; border-color: #991b1b !important; }
-        body.dark .card-title { color: #f8fafc; }
- 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; } 
- 
-        body { 
-            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif; 
-            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); 
-            min-height: 100vh; padding: 15px; color: var(--text-main); 
-        } 
- 
-        .container { 
-            max-width: 900px; margin: 0 auto; background: var(--container-bg); 
-            padding: 24px; border-radius: 20px; box-shadow: 0 25px 50px -12px var(--shadow-color); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
-        } 
- 
-        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 26px; } 
-        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; } 
- 
-        /* TABS NAVIGATION */ 
-        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; } 
-        .tab-btn { 
-            padding: 10px 20px; border-radius: 12px; border: 2px solid #e2e8f0; 
-            background: white; color: var(--text-muted); font-weight: 600; cursor: pointer; transition: 0.2s; 
-        } 
-        .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); } 
- 
-        .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; } 
-        .diff-btn { 
-            padding: 6px 16px; border-radius: 20px; border: 2px solid var(--accent); 
-            background: transparent; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; 
-        } 
-        .diff-btn.active { background: var(--accent); color: #fff; } 
-        .diff-btn:hover:not(.active) { background: #e0e7ff; } 
- 
-        /* LÉGENDE */ 
-        .legend { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; font-size: 12px; font-weight: 600; color: var(--text-secondary); } 
-        .legend-item { display: flex; align-items: center; gap: 6px; } 
-        .legend-box { width: 16px; height: 16px; border: 2px solid; border-radius: 4px; } 
-        .legend-box.data-box { background: var(--data-bg); border-color: var(--data-border); } 
-        .legend-box.parity-line-box { background: var(--parity-line-bg); border-color: var(--parity-line-border); } 
-        .legend-box.parity-col-box { background: var(--parity-col-bg); border-color: var(--parity-col-border); } 
- 
-        /* CARTES ET VUES */ 
-        .view { display: none; animation: fadeIn 0.3s ease; } 
-        .view.active { display: block; } 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
- 
-        .exercise-card { 
-            background: var(--card-bg); border-radius: 16px; padding: 24px; 
-            border: 1px solid var(--card-border); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 20px; 
-        } 
- 
-        .card-title { font-weight: 700; color: #334155; margin-bottom: 12px; font-size: 16px; text-align: center; } 
- 
-        /* GRILLE */ 
-        .grid-wrapper { display: flex; justify-content: center; margin: 20px 0; overflow-x: auto; padding: 10px; } 
-        .grid { display: inline-grid; gap: 6px; padding: 10px; background: #f8fafc; border-radius: 12px; border: 2px solid #e2e8f0; } 
-         
-        .cell { 
-            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 700; font-size: 20px; border-radius: 8px; border: 2px solid #ddd; 
-            background: white; font-family: "JetBrains Mono", "Consolas", monospace; transition: all 0.15s; 
-        } 
- 
-        .cell.data { background: var(--data-bg); border-color: var(--data-border); color: #0f172a; } 
-         
-        /* Interactive Parity Cells */ 
-        .cell.parity-line { background: var(--parity-line-bg); border-color: var(--parity-line-border); color: #cbd5e1; cursor: pointer; } 
-        .cell.parity-line:hover:not(.locked) { transform: scale(1.1); box-shadow: 0 4px 10px rgba(251, 146, 60, 0.3); color: #fb923c; } 
-        .cell.parity-line.filled { color: #c2410c; } 
- 
-        .cell.parity-col { background: var(--parity-col-bg); border-color: var(--parity-col-border); color: #cbd5e1; cursor: pointer; } 
-        .cell.parity-col:hover:not(.locked) { transform: scale(1.1); box-shadow: 0 4px 10px rgba(192, 132, 252, 0.3); color: #c084fc; } 
-        .cell.parity-col.filled { color: #7e22ce; } 
- 
-        .cell.corner { background: var(--corner-bg); border-color: var(--corner-border); color: #cbd5e1; cursor: pointer; } 
-        .cell.corner:hover:not(.locked) { transform: scale(1.1); box-shadow: 0 4px 10px rgba(148, 163, 184, 0.3); color: #94a3b8; } 
-        .cell.corner.filled { color: #475569; } 
- 
-        .cell.locked { cursor: default !important; transform: none !important; box-shadow: none !important; } 
- 
-        /* Hover Assistance */ 
-        .cell.hover-highlight { background-color: #fef08a !important; border-color: #eab308 !important; box-shadow: 0 0 8px rgba(234, 179, 8, 0.5); transform: scale(1.05); z-index: 10; } 
- 
-        /* Magic Trick Animations */ 
-        .cell.magic-clickable { cursor: pointer; transition: 0.2s; } 
-        .cell.magic-clickable:hover { transform: scale(1.1); background: #e0e7ff; border-color: var(--accent); color: var(--accent); } 
-        .cell.magic-error-row { background-color: #fee2e2 !important; border-color: #f87171 !important; color: #991b1b !important; } 
-        .cell.magic-error-col { background-color: #fee2e2 !important; border-color: #f87171 !important; color: #991b1b !important; } 
-        .cell.magic-target { animation: magicPulse 1s infinite alternate; background-color: #ef4444 !important; color: white !important; border-color: #991b1b !important; z-index: 20; } 
-         
-        @keyframes magicPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 100% { transform: scale(1.2); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } } 
- 
-        .magic-instructions { text-align: center; font-size: 15px; color: var(--text-main); margin-bottom: 15px; background: #eff6ff; padding: 15px; border-radius: 12px; border: 1px solid #bfdbfe; transition: all 0.2s; }
- 
-        /* Validation Colors */ 
-        .cell.cell-correct { border-color: var(--success) !important; background: #dcfce7 !important; color: #166534 !important; } 
-        .cell.cell-error { border-color: var(--error) !important; background: #fee2e2 !important; color: #991b1b !important; animation: shake 0.4s; } 
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} } 
- 
-        /* CONTRÔLES */ 
-        .controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; } 
-        .btn { border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; } 
-        .btn:active:not(:disabled) { transform: scale(0.95); } 
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; } 
-        .btn-check { background: var(--success); color: #fff; } .btn-check:hover:not(:disabled) { background: #059669; } 
-        .btn-new { background: var(--accent); color: #fff; } .btn-new:hover:not(:disabled) { background: var(--accent-dark); } 
-        .btn-magic { background: #d946ef; color: white; } .btn-magic:hover:not(:disabled) { background: #c026d3; } 
- 
-        /* TOAST */ 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; opacity: 0; transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; } 
-        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; } 
- 
-        /* SCORE */ 
-        .score-bar { display: flex; justify-content: center; gap: 30px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; } 
-        .score-item { text-align: center; } 
-        .score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; } 
-        .score-value { font-size: 24px; font-weight: 800; color: var(--accent); font-family: monospace; } 
- 
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; } 
- 
+        body.dark .tab-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        body.dark .tab-btn:hover {
+            border-color: #475569;
+        }
+
+        body.dark .tab-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        body.dark .grid {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        body.dark .cell {
+            background: #1e293b;
+            border-color: #475569;
+        }
+
+        body.dark .cell.data {
+            color: #f8fafc;
+        }
+
+        body.dark .cell.parity-line {
+            color: #fdba74;
+        }
+
+        body.dark .cell.parity-col {
+            color: #d8b4fe;
+        }
+
+        body.dark .cell.corner {
+            color: #94a3b8;
+        }
+
+        body.dark .cell.cell-correct {
+            background: #064e3b !important;
+            color: #34d399 !important;
+            border-color: #059669 !important;
+        }
+
+        body.dark .cell.hover-highlight {
+            background-color: #78350f !important;
+            border-color: #b45309 !important;
+            color: #fde68a !important;
+            box-shadow: 0 0 8px rgba(217, 119, 6, 0.5);
+        }
+
+        body.dark .magic-instructions {
+            background: #1e293b;
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+
+        body.dark .cell.magic-error-row,
+        body.dark .cell.magic-error-col {
+            background-color: #7f1d1d !important;
+            border-color: #991b1b !important;
+            color: #fca5a5 !important;
+        }
+
+        body.dark .cell.magic-target {
+            background-color: #991b1b !important;
+            color: #fef2f2 !important;
+            border-color: #7f1d1d !important;
+        }
+
+        body.dark .cell.cell-error {
+            background: #7f1d1d !important;
+            color: #fca5a5 !important;
+            border-color: #991b1b !important;
+        }
+
+        body.dark .card-title {
+            color: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            padding: 15px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* TABS NAVIGATION */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .difficulty-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .diff-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 2px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .diff-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .diff-btn:hover:not(.active) {
+            background: #e0e7ff;
+        }
+
+        /* LÉGENDE */
+        .legend {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-box {
+            width: 16px;
+            height: 16px;
+            border: 2px solid;
+            border-radius: 4px;
+        }
+
+        .legend-box.data-box {
+            background: var(--data-bg);
+            border-color: var(--data-border);
+        }
+
+        .legend-box.parity-line-box {
+            background: var(--parity-line-bg);
+            border-color: var(--parity-line-border);
+        }
+
+        .legend-box.parity-col-box {
+            background: var(--parity-col-bg);
+            border-color: var(--parity-col-border);
+        }
+
+        /* CARTES ET VUES */
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .exercise-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 12px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* GRILLE */
+        .grid-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            overflow-x: auto;
+            padding: 10px;
+        }
+
+        .grid {
+            display: inline-grid;
+            gap: 6px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            background: white;
+            font-family: "JetBrains Mono", "Consolas", monospace;
+            transition: all 0.15s;
+        }
+
+        .cell.data {
+            background: var(--data-bg);
+            border-color: var(--data-border);
+            color: #0f172a;
+        }
+
+        /* Interactive Parity Cells */
+        .cell.parity-line {
+            background: var(--parity-line-bg);
+            border-color: var(--parity-line-border);
+            color: #cbd5e1;
+            cursor: pointer;
+        }
+
+        .cell.parity-line:hover:not(.locked) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(251, 146, 60, 0.3);
+            color: #fb923c;
+        }
+
+        .cell.parity-line.filled {
+            color: #c2410c;
+        }
+
+        .cell.parity-col {
+            background: var(--parity-col-bg);
+            border-color: var(--parity-col-border);
+            color: #cbd5e1;
+            cursor: pointer;
+        }
+
+        .cell.parity-col:hover:not(.locked) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(192, 132, 252, 0.3);
+            color: #c084fc;
+        }
+
+        .cell.parity-col.filled {
+            color: #7e22ce;
+        }
+
+        .cell.corner {
+            background: var(--corner-bg);
+            border-color: var(--corner-border);
+            color: #cbd5e1;
+            cursor: pointer;
+        }
+
+        .cell.corner:hover:not(.locked) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(148, 163, 184, 0.3);
+            color: #94a3b8;
+        }
+
+        .cell.corner.filled {
+            color: #475569;
+        }
+
+        .cell.locked {
+            cursor: default !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Hover Assistance */
+        .cell.hover-highlight {
+            background-color: #fef08a !important;
+            border-color: #eab308 !important;
+            box-shadow: 0 0 8px rgba(234, 179, 8, 0.5);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        /* Magic Trick Animations */
+        .cell.magic-clickable {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .cell.magic-clickable:hover {
+            transform: scale(1.1);
+            background: #e0e7ff;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .cell.magic-error-row {
+            background-color: #fee2e2 !important;
+            border-color: #f87171 !important;
+            color: #991b1b !important;
+        }
+
+        .cell.magic-error-col {
+            background-color: #fee2e2 !important;
+            border-color: #f87171 !important;
+            color: #991b1b !important;
+        }
+
+        .cell.magic-target {
+            animation: magicPulse 1s infinite alternate;
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #991b1b !important;
+            z-index: 20;
+        }
+
+        @keyframes magicPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            100% {
+                transform: scale(1.2);
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .magic-instructions {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #bfdbfe;
+            transition: all 0.2s;
+        }
+
+        /* Validation Colors */
+        .cell.cell-correct {
+            border-color: var(--success) !important;
+            background: #dcfce7 !important;
+            color: #166534 !important;
+        }
+
+        .cell.cell-error {
+            border-color: var(--error) !important;
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0)
+            }
+
+            25% {
+                transform: translateX(-4px)
+            }
+
+            75% {
+                transform: translateX(4px)
+            }
+        }
+
+        /* CONTRÔLES */
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-check {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-check:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        .btn-new {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-new:hover:not(:disabled) {
+            background: var(--accent-dark);
+        }
+
+        .btn-magic {
+            background: #d946ef;
+            color: white;
+        }
+
+        .btn-magic:hover:not(:disabled) {
+            background: #c026d3;
+        }
+
+        /* TOAST */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* SCORE */
+        .score-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .score-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
         @media print {
-            .no-print { display: none !important; }
+            .no-print {
+                display: none !important;
+            }
         }
 
-        @media (max-width: 500px) { .cell { width: 36px; height: 36px; font-size: 16px; } .grid { gap: 4px; padding: 6px; } } 
-    </style> 
-</head> 
-<body> 
-<div class="action-buttons">
-    
-    <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
-        <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-    </button>
-</div>
-<canvas id="confetti-canvas"></canvas> 
- 
-<div class="container"> 
-    <h1>🔢 Le Bit de Parité</h1> 
-    <p class="subtitle">Comprends comment les ordinateurs vérifient l'intégrité des données.</p> 
- 
-    <!-- NAVIGATION --> 
-    <div class="tabs"> 
-        <button class="tab-btn active" onclick="switchTab(event, 'train')">📝 Entraînement</button> 
-        <button class="tab-btn" onclick="switchTab(event, 'magic')">🎩 Tour de Magie</button> 
-    </div> 
- 
-    <!-- MODE ENTRAÎNEMENT --> 
-    <div id="view-train" class="view active"> 
-        <div class="difficulty-bar"> 
-            <button class="diff-btn active" onclick="setDifficulty('easy')">🟢 Facile (4×4)</button> 
-            <button class="diff-btn" onclick="setDifficulty('medium')">🟡 Moyen (5×5)</button> 
-            <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile (6×6)</button> 
-        </div> 
- 
-        <div style="text-align: center; font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;"> 
-            💡 <strong>Astuce :</strong> Survole une case de parité (bordure) pour voir quelle ligne/colonne elle surveille.<br> 
-            Le but : chaque ligne et chaque colonne doit contenir un nombre <strong>pair</strong> de "1". 
-        </div> 
- 
-        <div class="legend"> 
-            <div class="legend-item"><div class="legend-box data-box"></div> Données</div> 
-            <div class="legend-item"><div class="legend-box parity-line-box"></div> Parité Ligne</div> 
-            <div class="legend-item"><div class="legend-box parity-col-box"></div> Parité Colonne</div> 
-        </div> 
- 
-        <div class="exercise-card"> 
-            <div class="card-title">Complète les bits manquants pour assurer la parité paire :</div> 
-            <div class="grid-wrapper"> 
-                <div class="grid" id="train-grid"></div> 
-            </div> 
-            <div class="controls"> 
-                <button class="btn btn-check" onclick="checkTrainAnswer()">✅ Vérifier</button> 
-                <button class="btn btn-new" onclick="initTrainMode()">🔄 Nouvelle grille</button> 
-            </div> 
-        </div> 
- 
-        <div class="score-bar"> 
-            <div class="score-item"><div class="score-label">Victoires</div><div class="score-value" id="global-correct">0</div></div> 
-            <div class="score-item"><div class="score-label">Série 🔥</div><div class="score-value" id="global-streak">0</div></div> 
-            <div class="score-item"><div class="score-label">Meilleure</div><div class="score-value" id="global-best">0</div></div> 
-        </div> 
-    </div> 
- 
-    <!-- MODE TOUR DE MAGIE --> 
-    <div id="view-magic" class="view"> 
-        <div class="magic-instructions"> 
-            🪄 L'ordinateur a généré un bloc de données avec ses bits de parité corrects.<br> 
-            <strong>Clique sur un bit de donnée (bleu) pour simuler un piratage !</strong> L'ordinateur le retrouvera. 
-        </div> 
- 
-        <div class="exercise-card"> 
-            <div class="grid-wrapper"> 
-                <div class="grid" id="magic-grid"></div> 
-            </div> 
-            <div class="controls"> 
-                <button class="btn btn-magic" onclick="initMagicMode()">🔄 Recommencer le tour</button> 
-            </div> 
-        </div> 
-    </div> 
- 
-</div> 
- 
-<div id="toast"></div> 
+        @media (max-width: 500px) {
+            .cell {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
 
-<footer class="no-print">
-    <p>
-        Webapp disponible sous licence 
-        <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
-        — Animation Education Numérique · 
-        <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
-    </p>
-</footer>
- 
-<script> 
-// ========================================== 
-// AUDIO ENGINE (Web Audio API) 
-// ========================================== 
-let audioCtx = null; 
-
-function playSound(type) { 
-    // Initialisation différée de l'AudioContext sur interaction utilisateur
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-
-    const t = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-     
-    if (type === 'click') { 
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-        osc.start();
-        osc.stop(t + 0.05);
-    } else if (type === 'success') { 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, t);
-        osc.frequency.setValueAtTime(659.25, t + 0.1);
-        osc.frequency.setValueAtTime(783.99, t + 0.2);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.4);
-        osc.start();
-        osc.stop(t + 0.4);
-    } else if (type === 'error') { 
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, t);
-        gain.gain.setValueAtTime(0.15, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.3);
-        osc.start();
-        osc.stop(t + 0.3);
-    } else if (type === 'magic') { 
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(220, t);
-        osc.frequency.exponentialRampToValueAtTime(880, t + 0.5);
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.2, t + 0.2);
-        gain.gain.linearRampToValueAtTime(0, t + 0.5);
-        osc.start();
-        osc.stop(t + 0.5);
-    } 
-} 
- 
-// ========================================== 
-// GLOBAL STATE & UTILS 
-// ========================================== 
-let currentMode = 'train'; 
-let gridSize = 4; 
-let trainData = [], trainAnswers = [], isTrainLocked = false; 
-let magicData = [], magicParityRow =[], magicParityCol =[], magicCorner = 0; 
-let globalCorrect = 0, globalStreak = 0, globalBest = 0; 
- 
-function switchTab(event, tab) { 
-    currentMode = tab; 
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
-    event.target.classList.add('active'); 
-    document.getElementById(`view-${tab}`).classList.add('active'); 
-    if (tab === 'train') initTrainMode(); 
-    else initMagicMode(); 
-} 
- 
-function showToast(msg, isSuccess = true) { 
-    const toast = document.getElementById('toast'); 
-    toast.textContent = (isSuccess ? '✅ ' : '❌ ') + msg;
-    toast.style.background = isSuccess ? '#10b981' : (msg.includes('Magie') ? '#d946ef' : '#ef4444'); 
-    toast.classList.add('show'); 
-    setTimeout(() => toast.classList.remove('show'), 3000); 
-} 
- 
-// ========================================== 
-// MODE ENTRAÎNEMENT 
-// ========================================== 
-function setDifficulty(lvl) { 
-    document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl==='easy'?'4×4':lvl==='medium'?'5×5':'6×6'))); 
-    gridSize = lvl === 'easy' ? 4 : (lvl === 'medium' ? 5 : 6); 
-    initTrainMode(); 
-} 
- 
-function initTrainMode() { 
-    isTrainLocked = false; trainData = []; trainAnswers =[]; 
-    const totalSize = gridSize + 1; 
-     
-    // Generate Random Data 
-    for(let i=0; i<gridSize; i++) { 
-        let row =[]; for(let j=0; j<gridSize; j++) row.push(Math.random() < 0.5 ? 0 : 1); 
-        trainData.push(row); 
-    } 
-    // Init empty answers 
-    for(let i=0; i<totalSize; i++) { 
-        let row =[]; for(let j=0; j<totalSize; j++) row.push(null); 
-        trainAnswers.push(row); 
-    } 
-    renderTrainGrid(); 
-} 
- 
-function renderTrainGrid() { 
-    const grid = document.getElementById('train-grid'); 
-    grid.innerHTML = ''; 
-    grid.style.gridTemplateColumns = `repeat(${gridSize + 1}, 50px)`; 
- 
-    for (let i = 0; i <= gridSize; i++) { 
-        for (let j = 0; j <= gridSize; j++) { 
-            const cell = document.createElement('div'); 
-             
-            if (i < gridSize && j < gridSize) { 
-                // Data Cell 
-                cell.className = 'cell data'; cell.textContent = trainData[i][j]; 
-                cell.dataset.r = i; cell.dataset.c = j; 
-            } else { 
-                // Parity Cell 
-                cell.className = `cell ${i===gridSize && j===gridSize ? 'corner' : (i===gridSize ? 'parity-col' : 'parity-line')}`; 
-                if (isTrainLocked) cell.classList.add('locked'); 
-                 
-                let val = trainAnswers[i][j]; 
-                if (val !== null) { cell.textContent = val; cell.classList.add('filled'); } 
-                else cell.textContent = ''; 
- 
-                // Interactions 
-                cell.onclick = () => toggleTrainBit(i, j); 
-                cell.onmouseenter = () => highlightLine(i, j); 
-                cell.onmouseleave = clearHighlights; 
-            } 
-            grid.appendChild(cell); 
-        } 
-    } 
-} 
- 
-function toggleTrainBit(r, c) { 
-    if (isTrainLocked) return; 
-    playSound('click');
-    let current = trainAnswers[r][c]; 
-    // Cycle: null -> 1 -> 0 -> null 
-    if (current === null) trainAnswers[r][c] = 1; 
-    else if (current === 1) trainAnswers[r][c] = 0; 
-    else trainAnswers[r][c] = null; 
-     
-    // Fast re-render of this cell only for performance 
-    renderTrainGrid();  
-} 
- 
-// Hover Assistance 
-function highlightLine(r, c) { 
-    if(isTrainLocked) return; 
-    const cells = document.getElementById('train-grid').children; 
-    for(let i=0; i<cells.length; i++) { 
-        let cr = cells[i].dataset.r;
-        let cc = cells[i].dataset.c;
-        if (cr !== undefined && cc !== undefined) { 
-            if (r < gridSize && cr == r) cells[i].classList.add('hover-highlight'); 
-            if (c < gridSize && cc == c) cells[i].classList.add('hover-highlight'); 
-        } 
-    } 
-} 
-function clearHighlights() { 
-    document.querySelectorAll('.hover-highlight').forEach(c => c.classList.remove('hover-highlight')); 
-} 
- 
-function checkTrainAnswer() { 
-    if (isTrainLocked) return; 
-    let hasError = false; 
-    const cells = document.getElementById('train-grid').children; 
- 
-    // Helper to find a specific cell div 
-    const getCell = (r, c) => cells[r * (gridSize + 1) + c]; 
- 
-    // Check Rows 
-    for (let i = 0; i < gridSize; i++) { 
-        let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0); 
-        if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) { 
-            hasError = true; getCell(i, gridSize).classList.add('cell-error'); 
-        } else { getCell(i, gridSize).classList.add('cell-correct'); } 
-    } 
- 
-    // Check Cols 
-    for (let j = 0; j < gridSize; j++) { 
-        let sum = trainAnswers[gridSize][j] || 0; 
-        for (let i = 0; i < gridSize; i++) sum += trainData[i][j]; 
-        if (trainAnswers[gridSize][j] === null || sum % 2 !== 0) { 
-            hasError = true; getCell(gridSize, j).classList.add('cell-error'); 
-        } else { getCell(gridSize, j).classList.add('cell-correct'); } 
-    } 
- 
-    // Check Corner 
-    let rowSum = 0;
-    let colSum = 0;
-    for(let i=0; i<gridSize; i++) rowSum += (trainAnswers[gridSize][i]||0); 
-    for(let i=0; i<gridSize; i++) colSum += (trainAnswers[i][gridSize]||0); 
-    let cornerVal = trainAnswers[gridSize][gridSize]; 
-     
-    if (cornerVal === null || (rowSum + cornerVal)%2 !== 0 || (colSum + cornerVal)%2 !== 0) { 
-        hasError = true; getCell(gridSize, gridSize).classList.add('cell-error'); 
-    } else { getCell(gridSize, gridSize).classList.add('cell-correct'); } 
- 
-    if (!hasError) { 
-        playSound('success'); isTrainLocked = true; 
-        globalCorrect++; globalStreak++; if(globalStreak > globalBest) globalBest = globalStreak; 
-        if(globalStreak%3===0) launchConfetti(); 
-        showToast("Parfait ! Tout est pair."); 
-        setTimeout(initTrainMode, 2000); 
-    } else { 
-        playSound('error'); globalStreak = 0; 
-        showToast("Il y a des erreurs en rouge.", false); 
-        // Remove error classes after animation 
-        setTimeout(() => { 
-            document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error')); 
-        }, 1000); 
-    } 
-     
-    document.getElementById('global-correct').textContent = globalCorrect; 
-    document.getElementById('global-streak').textContent = globalStreak; 
-    document.getElementById('global-best').textContent = globalBest; 
-} 
- 
- 
-// ========================================== 
-// MODE TOUR DE MAGIE 
-// ========================================== 
-let isMagicDone = false; 
-let magicDomNodes = { data: [], rowParity: [], colParity: [], corner: null };
- 
-function initMagicMode() { 
-    isMagicDone = false; magicData = []; magicParityRow = []; magicParityCol =[]; magicCorner = 0; 
-     
-    // Generate 5x5 for magic trick 
-    const mgSize = 5; 
-    let totalDataSum = 0; 
- 
-    for(let i=0; i<mgSize; i++) { 
-        let row =[]; let rowSum = 0; 
-        for(let j=0; j<mgSize; j++) { 
-            let val = Math.random() < 0.5 ? 0 : 1; 
-            row.push(val); rowSum += val; totalDataSum += val; 
-        } 
-        magicData.push(row); 
-        magicParityRow.push(rowSum % 2); // Pair -> 0, Impair -> 1 
-    } 
- 
-    for(let j=0; j<mgSize; j++) { 
-        let colSum = 0; 
-        for(let i=0; i<mgSize; i++) colSum += magicData[i][j]; 
-        magicParityCol.push(colSum % 2); 
-    } 
- 
-    magicCorner = magicParityRow.reduce((a,b)=>a+b,0) % 2; // Should match Col parity sum 
- 
-    renderMagicGrid(); 
-} 
- 
-function renderMagicGrid() { 
-    const grid = document.getElementById('magic-grid'); 
-    grid.innerHTML = ''; const mgSize = 5; 
-    grid.style.gridTemplateColumns = `repeat(${mgSize + 1}, 50px)`; 
-
-    magicDomNodes.data = []; magicDomNodes.rowParity = []; magicDomNodes.colParity = [];
- 
-    for (let i = 0; i <= mgSize; i++) { 
-        let dataRow = [];
-        for (let j = 0; j <= mgSize; j++) { 
-            const cell = document.createElement('div'); 
-             
-            if (i < mgSize && j < mgSize) { 
-                cell.className = `cell data ${!isMagicDone ? 'magic-clickable' : ''}`;  
-                cell.textContent = magicData[i][j]; 
-                if (!isMagicDone) cell.onclick = () => flipMagicBit(i, j); 
-                cell.id = `m-${i}-${j}`; 
-                dataRow.push(cell);
-            } else if (i < mgSize && j === mgSize) { 
-                cell.className = 'cell parity-line locked filled'; cell.textContent = magicParityRow[i]; cell.id = `mr-${i}`; 
-                magicDomNodes.rowParity.push(cell);
-            } else if (i === mgSize && j < mgSize) { 
-                cell.className = 'cell parity-col locked filled'; cell.textContent = magicParityCol[j]; cell.id = `mc-${j}`; 
-                magicDomNodes.colParity.push(cell);
-            } else { 
-                cell.className = 'cell corner locked filled'; cell.textContent = magicCorner; cell.id = `m-corner`; 
-                magicDomNodes.corner = cell;
-            } 
-            grid.appendChild(cell); 
-        } 
-        if (i < mgSize) magicDomNodes.data.push(dataRow);
-    } 
-} 
- 
-function flipMagicBit(r, c) { 
-    if (isMagicDone) return; 
-    isMagicDone = true;
-     
-    // Flip the bit visually 
-    magicData[r][c] = magicData[r][c] === 1 ? 0 : 1; 
-    renderMagicGrid(); // Re-render with new bit, locking interactions 
- 
-    // Magic Animation Sequence 
-    playSound('magic'); 
-    showToast("🔍 Analyse de la parité en cours...", false); 
- 
-    setTimeout(() => { 
-        // Highlight the row and col that are now WRONG 
-        magicDomNodes.rowParity[r].classList.add('magic-error-row');
-        magicDomNodes.colParity[c].classList.add('magic-error-col');
-         
-        // Highlight all data in that row/col for dramatic effect 
-        for(let i=0; i<5; i++) { 
-            magicDomNodes.data[r][i].classList.add('magic-error-row');
-            magicDomNodes.data[i][c].classList.add('magic-error-col');
-        } 
- 
-        setTimeout(() => { 
-            // Target the intersection! 
-            magicDomNodes.data[r][c].className = 'cell magic-target';
-            playSound('success'); 
-            showToast("✨ Erreur localisée par intersection !"); 
-        }, 1500); 
- 
-    }, 1000); 
-} 
- 
-// ========================================== 
-// CONFETTI 
-// ========================================== 
-function launchConfetti() { 
-    const cvs = document.getElementById('confetti-canvas');
-    const ctx = cvs.getContext('2d');
-    cvs.width = window.innerWidth;
-    cvs.height = window.innerHeight;
-    let parts = [];
-    let cols = ['#667eea','#4caf50','#ff9800','#e91e63','#d946ef'];
-    for (let i = 0; i < 80; i++) {
-        parts.push({
-            x: Math.random() * cvs.width,
-            y: -50,
-            vx: (Math.random() - 0.5) * 6,
-            vy: Math.random() * 4 + 2,
-            c: cols[Math.floor(Math.random() * cols.length)],
-            s: Math.random() * 6 + 3,
-            rot: 0,
-            rotSpeed: (Math.random() - 0.5) * 10
-        });
-    }
-    function anim() { 
-        ctx.clearRect(0, 0, cvs.width, cvs.height);
-        let alive = false;
-        parts.forEach(p => {
-            if (p.y > cvs.height) return;
-            alive = true;
-            p.x += p.vx;
-            p.vy += 0.1;
-            p.y += p.vy;
-            p.rot += p.rotSpeed;
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.rot * Math.PI / 180);
-            ctx.fillStyle = p.c;
-            ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
-            ctx.restore();
-        });
-        if (alive) requestAnimationFrame(anim);
-    } 
-    anim(); 
-} 
- 
-// INIT 
-initTrainMode(); 
-
-// THEME — géré par ../js/theme.js
-</script>
-<script>
-/* === theme.js inliné === */
-/**
- * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
- *
- * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
- * Prérequis dans le HTML :
- *   - Un bouton  id="themeToggleBtn"
- *   - Un svg     id="icon-sun"  (affiché en mode sombre)
- *   - Un svg     id="icon-moon" (affiché en mode clair)
- *
- * Persistance : localStorage('global_theme') = 'light' | 'dark'
- *
- * Note : certaines pages (routage_reseau) peuvent définir un callback
- * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
- */
-
-(function () {
-    const btn     = document.getElementById('themeToggleBtn');
-    const iconSun = document.getElementById('icon-sun');
-    const iconMoon= document.getElementById('icon-moon');
-
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            document.body.classList.add('dark');
-        } else {
-            document.body.classList.remove('dark');
+            .grid {
+                gap: 4px;
+                padding: 6px;
+            }
         }
-        localStorage.setItem('global_theme', theme);
+    </style>
+</head>
 
-        if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
-        if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
+<body>
+    <div class="action-buttons">
 
-        // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
-        if (typeof window.__onThemeChange === 'function') {
-            window.__onThemeChange(theme);
+        <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
+            <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+    </div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container">
+        <h1>🔢 Le Bit de Parité</h1>
+        <p class="subtitle">Comprends comment les ordinateurs vérifient l'intégrité des données.</p>
+
+        <!-- NAVIGATION -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'train')">📝 Entraînement</button>
+            <button class="tab-btn" onclick="switchTab(event, 'magic')">🎩 Tour de Magie</button>
+        </div>
+
+        <!-- MODE ENTRAÎNEMENT -->
+        <div id="view-train" class="view active">
+            <div class="difficulty-bar">
+                <button class="diff-btn active" onclick="setDifficulty('easy')">🟢 Facile (4×4)</button>
+                <button class="diff-btn" onclick="setDifficulty('medium')">🟡 Moyen (5×5)</button>
+                <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile (6×6)</button>
+            </div>
+
+            <div style="text-align: center; font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">
+                💡 <strong>Astuce :</strong> Survole une case de parité (bordure) pour voir quelle ligne/colonne elle
+                surveille.<br>
+                Le but : chaque ligne et chaque colonne doit contenir un nombre <strong>pair</strong> de "1".
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box data-box"></div> Données
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box parity-line-box"></div> Parité Ligne
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box parity-col-box"></div> Parité Colonne
+                </div>
+            </div>
+
+            <div class="exercise-card">
+                <div class="card-title">Complète les bits manquants pour assurer la parité paire :</div>
+                <div class="grid-wrapper">
+                    <div class="grid" id="train-grid"></div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-check" onclick="checkTrainAnswer()">✅ Vérifier</button>
+                    <button class="btn btn-new" onclick="initTrainMode()">🔄 Nouvelle grille</button>
+                </div>
+            </div>
+
+            <div class="score-bar">
+                <div class="score-item">
+                    <div class="score-label">Victoires</div>
+                    <div class="score-value" id="global-correct">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Série 🔥</div>
+                    <div class="score-value" id="global-streak">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Meilleure</div>
+                    <div class="score-value" id="global-best">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODE TOUR DE MAGIE -->
+        <div id="view-magic" class="view">
+            <div class="magic-instructions">
+                🪄 L'ordinateur a généré un bloc de données avec ses bits de parité corrects.<br>
+                <strong>Clique sur un bit de donnée (bleu) pour simuler un piratage !</strong> L'ordinateur le
+                retrouvera.
+            </div>
+
+            <div class="exercise-card">
+                <div class="grid-wrapper">
+                    <div class="grid" id="magic-grid"></div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-magic" onclick="initMagicMode()">🔄 Recommencer le tour</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast"></div>
+
+    <footer class="no-print">
+        <p>
+            Webapp disponible sous licence
+            <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
+            — Animation Education Numérique ·
+            <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">HEP-VS</a>
+        </p>
+    </footer>
+
+    <script>
+        // ========================================== 
+        // AUDIO ENGINE (Web Audio API) 
+        // ========================================== 
+        let audioCtx = null;
+
+        function playSound(type) {
+            // Initialisation différée de l'AudioContext sur interaction utilisateur
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const t = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
+                gain.gain.setValueAtTime(0.1, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+                osc.start();
+                osc.stop(t + 0.05);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, t);
+                osc.frequency.setValueAtTime(659.25, t + 0.1);
+                osc.frequency.setValueAtTime(783.99, t + 0.2);
+                gain.gain.setValueAtTime(0.1, t);
+                gain.gain.linearRampToValueAtTime(0, t + 0.4);
+                osc.start();
+                osc.stop(t + 0.4);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, t);
+                gain.gain.setValueAtTime(0.15, t);
+                gain.gain.linearRampToValueAtTime(0, t + 0.3);
+                osc.start();
+                osc.stop(t + 0.3);
+            } else if (type === 'magic') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, t);
+                osc.frequency.exponentialRampToValueAtTime(880, t + 0.5);
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.2, t + 0.2);
+                gain.gain.linearRampToValueAtTime(0, t + 0.5);
+                osc.start();
+                osc.stop(t + 0.5);
+            }
         }
-    }
 
-    // Lecture du thème sauvegardé (défaut : clair)
-    const saved = localStorage.getItem('global_theme') || 'light';
-    setTheme(saved);
+        // ========================================== 
+        // GLOBAL STATE & UTILS 
+        // ========================================== 
+        let currentMode = 'train';
+        let gridSize = 4;
+        let trainData = [], trainAnswers = [], isTrainLocked = false;
+        let magicData = [], magicParityRow = [], magicParityCol = [], magicCorner = 0;
+        let globalCorrect = 0, globalStreak = 0, globalBest = 0;
 
-    if (btn) {
-        btn.addEventListener('click', function () {
-            setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
-        });
-    }
-})();
+        function switchTab(event, tab) {
+            currentMode = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`view-${tab}`).classList.add('active');
+            if (tab === 'train') initTrainMode();
+            else initMagicMode();
+        }
 
-</script> 
-</body> 
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            toast.textContent = (isSuccess ? '✅ ' : '❌ ') + msg;
+            toast.style.background = isSuccess ? '#10b981' : (msg.includes('Magie') ? '#d946ef' : '#ef4444');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ========================================== 
+        // MODE ENTRAÎNEMENT 
+        // ========================================== 
+        function setDifficulty(lvl) {
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl === 'easy' ? '4×4' : lvl === 'medium' ? '5×5' : '6×6')));
+            gridSize = lvl === 'easy' ? 4 : (lvl === 'medium' ? 5 : 6);
+            initTrainMode();
+        }
+
+        function initTrainMode() {
+            isTrainLocked = false; trainData = []; trainAnswers = [];
+            const totalSize = gridSize + 1;
+
+            // Generate Random Data 
+            for (let i = 0; i < gridSize; i++) {
+                let row = []; for (let j = 0; j < gridSize; j++) row.push(Math.random() < 0.5 ? 0 : 1);
+                trainData.push(row);
+            }
+            // Init empty answers 
+            for (let i = 0; i < totalSize; i++) {
+                let row = []; for (let j = 0; j < totalSize; j++) row.push(null);
+                trainAnswers.push(row);
+            }
+            renderTrainGrid();
+        }
+
+        function renderTrainGrid() {
+            const grid = document.getElementById('train-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${gridSize + 1}, 50px)`;
+
+            for (let i = 0; i <= gridSize; i++) {
+                for (let j = 0; j <= gridSize; j++) {
+                    const cell = document.createElement('div');
+
+                    if (i < gridSize && j < gridSize) {
+                        // Data Cell 
+                        cell.className = 'cell data'; cell.textContent = trainData[i][j];
+                        cell.dataset.r = i; cell.dataset.c = j;
+                    } else {
+                        // Parity Cell 
+                        cell.className = `cell ${i === gridSize && j === gridSize ? 'corner' : (i === gridSize ? 'parity-col' : 'parity-line')}`;
+                        if (isTrainLocked) cell.classList.add('locked');
+
+                        let val = trainAnswers[i][j];
+                        if (val !== null) { cell.textContent = val; cell.classList.add('filled'); }
+                        else cell.textContent = '';
+
+                        // Interactions 
+                        cell.onclick = () => toggleTrainBit(i, j);
+                        cell.onmouseenter = () => highlightLine(i, j);
+                        cell.onmouseleave = clearHighlights;
+                    }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function toggleTrainBit(r, c) {
+            if (isTrainLocked) return;
+            playSound('click');
+            let current = trainAnswers[r][c];
+            // Cycle: null -> 1 -> 0 -> null 
+            if (current === null) trainAnswers[r][c] = 1;
+            else if (current === 1) trainAnswers[r][c] = 0;
+            else trainAnswers[r][c] = null;
+
+            // Fast re-render of this cell only for performance 
+            renderTrainGrid();
+        }
+
+        // Hover Assistance 
+        function highlightLine(r, c) {
+            if (isTrainLocked) return;
+            const cells = document.getElementById('train-grid').children;
+            for (let i = 0; i < cells.length; i++) {
+                let cr = cells[i].dataset.r;
+                let cc = cells[i].dataset.c;
+                if (cr !== undefined && cc !== undefined) {
+                    if (r < gridSize && cr == r) cells[i].classList.add('hover-highlight');
+                    if (c < gridSize && cc == c) cells[i].classList.add('hover-highlight');
+                }
+            }
+        }
+        function clearHighlights() {
+            document.querySelectorAll('.hover-highlight').forEach(c => c.classList.remove('hover-highlight'));
+        }
+
+        function checkTrainAnswer() {
+            if (isTrainLocked) return;
+            let hasError = false;
+            const cells = document.getElementById('train-grid').children;
+
+            // Helper to find a specific cell div 
+            const getCell = (r, c) => cells[r * (gridSize + 1) + c];
+
+            // Check Rows 
+            for (let i = 0; i < gridSize; i++) {
+                let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0);
+                if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) {
+                    hasError = true; getCell(i, gridSize).classList.add('cell-error');
+                } else { getCell(i, gridSize).classList.add('cell-correct'); }
+            }
+
+            // Check Cols 
+            for (let j = 0; j < gridSize; j++) {
+                let sum = trainAnswers[gridSize][j] || 0;
+                for (let i = 0; i < gridSize; i++) sum += trainData[i][j];
+                if (trainAnswers[gridSize][j] === null || sum % 2 !== 0) {
+                    hasError = true; getCell(gridSize, j).classList.add('cell-error');
+                } else { getCell(gridSize, j).classList.add('cell-correct'); }
+            }
+
+            // Check Corner 
+            let rowSum = 0;
+            let colSum = 0;
+            for (let i = 0; i < gridSize; i++) rowSum += (trainAnswers[gridSize][i] || 0);
+            for (let i = 0; i < gridSize; i++) colSum += (trainAnswers[i][gridSize] || 0);
+            let cornerVal = trainAnswers[gridSize][gridSize];
+
+            if (cornerVal === null || (rowSum + cornerVal) % 2 !== 0 || (colSum + cornerVal) % 2 !== 0) {
+                hasError = true; getCell(gridSize, gridSize).classList.add('cell-error');
+            } else { getCell(gridSize, gridSize).classList.add('cell-correct'); }
+
+            if (!hasError) {
+                playSound('success'); isTrainLocked = true;
+                globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
+                if (globalStreak % 3 === 0) launchConfetti();
+                showToast("Parfait ! Tout est pair.");
+                setTimeout(initTrainMode, 2000);
+            } else {
+                playSound('error'); globalStreak = 0;
+                showToast("Il y a des erreurs en rouge.", false);
+                // Remove error classes after animation 
+                setTimeout(() => {
+                    document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error'));
+                }, 1000);
+            }
+
+            document.getElementById('global-correct').textContent = globalCorrect;
+            document.getElementById('global-streak').textContent = globalStreak;
+            document.getElementById('global-best').textContent = globalBest;
+        }
+
+
+        // ========================================== 
+        // MODE TOUR DE MAGIE 
+        // ========================================== 
+        let isMagicDone = false;
+        let magicDomNodes = { data: [], rowParity: [], colParity: [], corner: null };
+
+        function initMagicMode() {
+            isMagicDone = false; magicData = []; magicParityRow = []; magicParityCol = []; magicCorner = 0;
+
+            // Generate 5x5 for magic trick 
+            const mgSize = 5;
+            let totalDataSum = 0;
+
+            for (let i = 0; i < mgSize; i++) {
+                let row = []; let rowSum = 0;
+                for (let j = 0; j < mgSize; j++) {
+                    let val = Math.random() < 0.5 ? 0 : 1;
+                    row.push(val); rowSum += val; totalDataSum += val;
+                }
+                magicData.push(row);
+                magicParityRow.push(rowSum % 2); // Pair -> 0, Impair -> 1 
+            }
+
+            for (let j = 0; j < mgSize; j++) {
+                let colSum = 0;
+                for (let i = 0; i < mgSize; i++) colSum += magicData[i][j];
+                magicParityCol.push(colSum % 2);
+            }
+
+            magicCorner = magicParityRow.reduce((a, b) => a + b, 0) % 2; // Should match Col parity sum 
+
+            renderMagicGrid();
+        }
+
+        function renderMagicGrid() {
+            const grid = document.getElementById('magic-grid');
+            grid.innerHTML = ''; const mgSize = 5;
+            grid.style.gridTemplateColumns = `repeat(${mgSize + 1}, 50px)`;
+
+            magicDomNodes.data = []; magicDomNodes.rowParity = []; magicDomNodes.colParity = [];
+
+            for (let i = 0; i <= mgSize; i++) {
+                let dataRow = [];
+                for (let j = 0; j <= mgSize; j++) {
+                    const cell = document.createElement('div');
+
+                    if (i < mgSize && j < mgSize) {
+                        cell.className = `cell data ${!isMagicDone ? 'magic-clickable' : ''}`;
+                        cell.textContent = magicData[i][j];
+                        if (!isMagicDone) cell.onclick = () => flipMagicBit(i, j);
+                        cell.id = `m-${i}-${j}`;
+                        dataRow.push(cell);
+                    } else if (i < mgSize && j === mgSize) {
+                        cell.className = 'cell parity-line locked filled'; cell.textContent = magicParityRow[i]; cell.id = `mr-${i}`;
+                        magicDomNodes.rowParity.push(cell);
+                    } else if (i === mgSize && j < mgSize) {
+                        cell.className = 'cell parity-col locked filled'; cell.textContent = magicParityCol[j]; cell.id = `mc-${j}`;
+                        magicDomNodes.colParity.push(cell);
+                    } else {
+                        cell.className = 'cell corner locked filled'; cell.textContent = magicCorner; cell.id = `m-corner`;
+                        magicDomNodes.corner = cell;
+                    }
+                    grid.appendChild(cell);
+                }
+                if (i < mgSize) magicDomNodes.data.push(dataRow);
+            }
+        }
+
+        function flipMagicBit(r, c) {
+            if (isMagicDone) return;
+            isMagicDone = true;
+
+            // Flip the bit visually 
+            magicData[r][c] = magicData[r][c] === 1 ? 0 : 1;
+            renderMagicGrid(); // Re-render with new bit, locking interactions 
+
+            // Magic Animation Sequence 
+            playSound('magic');
+            showToast("🔍 Analyse de la parité en cours…", false);
+
+            setTimeout(() => {
+                // Highlight the row and col that are now WRONG 
+                magicDomNodes.rowParity[r].classList.add('magic-error-row');
+                magicDomNodes.colParity[c].classList.add('magic-error-col');
+
+                // Highlight all data in that row/col for dramatic effect 
+                for (let i = 0; i < 5; i++) {
+                    magicDomNodes.data[r][i].classList.add('magic-error-row');
+                    magicDomNodes.data[i][c].classList.add('magic-error-col');
+                }
+
+                setTimeout(() => {
+                    // Target the intersection! 
+                    magicDomNodes.data[r][c].className = 'cell magic-target';
+                    playSound('success');
+                    showToast("✨ Erreur localisée par intersection !");
+                }, 1500);
+
+            }, 1000);
+        }
+
+        // ========================================== 
+        // CONFETTI 
+        // ========================================== 
+        function launchConfetti() {
+            const cvs = document.getElementById('confetti-canvas');
+            const ctx = cvs.getContext('2d');
+            cvs.width = window.innerWidth;
+            cvs.height = window.innerHeight;
+            let parts = [];
+            let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
+            for (let i = 0; i < 80; i++) {
+                parts.push({
+                    x: Math.random() * cvs.width,
+                    y: -50,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: Math.random() * 4 + 2,
+                    c: cols[Math.floor(Math.random() * cols.length)],
+                    s: Math.random() * 6 + 3,
+                    rot: 0,
+                    rotSpeed: (Math.random() - 0.5) * 10
+                });
+            }
+            function anim() {
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                let alive = false;
+                parts.forEach(p => {
+                    if (p.y > cvs.height) return;
+                    alive = true;
+                    p.x += p.vx;
+                    p.vy += 0.1;
+                    p.y += p.vy;
+                    p.rot += p.rotSpeed;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.c;
+                    ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+                    ctx.restore();
+                });
+                if (alive) requestAnimationFrame(anim);
+            }
+            anim();
+        }
+
+        // INIT 
+        initTrainMode();
+
+        // THEME — géré par ../js/theme.js
+    </script>
+    <script>
+        /* === theme.js inliné === */
+        /**
+         * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
+         *
+         * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
+         * Prérequis dans le HTML :
+         *   - Un bouton  id="themeToggleBtn"
+         *   - Un svg     id="icon-sun"  (affiché en mode sombre)
+         *   - Un svg     id="icon-moon" (affiché en mode clair)
+         *
+         * Persistance : localStorage('global_theme') = 'light' | 'dark'
+         *
+         * Note : certaines pages (routage_reseau) peuvent définir un callback
+         * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
+         */
+
+        (function () {
+            const btn = document.getElementById('themeToggleBtn');
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
+
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark');
+                } else {
+                    document.body.classList.remove('dark');
+                }
+                localStorage.setItem('global_theme', theme);
+
+                if (iconSun) iconSun.style.display = theme === 'dark' ? 'block' : 'none';
+                if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none' : 'block';
+
+                // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
+                if (typeof window.__onThemeChange === 'function') {
+                    window.__onThemeChange(theme);
+                }
+            }
+
+            // Lecture du thème sauvegardé (défaut : clair)
+            const saved = localStorage.getItem('global_theme') || 'light';
+            setTheme(saved);
+
+            if (btn) {
+                btn.addEventListener('click', function () {
+                    setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+                });
+            }
+        })();
+
+    </script>
+</body>
+
 </html>
