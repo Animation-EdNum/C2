@@ -1,6 +1,28 @@
 # Éducation Numérique Webapps & Ressources
 
-Ce dépôt contient deux sections principales : `webapps/` et `ressources/`.
+![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)
+![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
+
+## Présentation du projet
+Ce dépôt regroupe des applications web interactives (webapps) et des ressources pédagogiques gratuites et sans publicité. Notre mission est de fournir des outils numériques de qualité, autonomes et accessibles, pour accompagner l'enseignement de la science informatique à l'école primaire (en complément des manuels [Décodage](https://decodage.edu-vd.ch/)). La philosophie pédagogique repose sur des interfaces épurées, une progression adaptative, de la gamification et une utilisation simplifiée pour permettre aux élèves et aux enseignant·e·s de se concentrer sur l'apprentissage.
+
+## Sommaire
+- [Présentation du projet](#présentation-du-projet)
+- [Démarrer / Utilisation](#démarrer--utilisation)
+- [Webapps (Applications pour les élèves)](#webapps-applications-pour-les-élèves)
+- [Ressources (Outils pour les enseignant·e·s)](#ressources-outils-pour-les-enseignantes)
+- [Accessibilité](#accessibilité)
+- [Contribuer](#contribuer)
+- [Contact / Support](#contact--support)
+- [Licence](#licence)
+
+## Démarrer / Utilisation
+
+Nos outils sont conçus pour être le plus simple possible à utiliser :
+- **Utilisation locale :** Chaque outil est un fichier HTML autonome. Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
+- **Essayez en ligne :** Vous pouvez tester directement l'ensemble des applications ici : [www.zooom.top].
+- **Pour les enseignant·e·s :** Vous pouvez distribuer ces fichiers directement sur les ordinateurs de votre classe, ou les héberger facilement sur le site de votre école ou intranet. Il suffit d'ouvrir le fichier ou de le copier-coller.
 
 ## Webapps (Applications pour les élèves)
 Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui travaillent avec les manuels scolaires *Décodage*. Vous pouvez trouver plus d'informations sur les manuels sur [https://decodage.edu-vd.ch/](https://decodage.edu-vd.ch/).
@@ -57,7 +79,6 @@ Les webapps disponibles sont :
   - Mode "Tour de Magie" : simulation du tour de détection d'une cellule retournée (Activité 10 — Cartes magiques).
   - Système de suivi des scores (victoires globales, etc.).
 
-
 ## Ressources (Outils pour les enseignant·e·s)
 Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, conçus spécifiquement pour les enseignant·e·s.
 
@@ -78,35 +99,20 @@ Les ressources disponibles sont :
   - Gestion fine de la liste : exclusion temporaire (élèves absents) et remise en jeu des élèves déjà tirés par simple clic.
   - Génération et copie dans le presse-papiers d'un historique complet du tirage.
 
-## Développement & Tests
+## Accessibilité
 
-Les tests automatiques utilisent [Playwright](https://playwright.dev/python/) et [pytest](https://pytest.org/).
+L'accessibilité est une priorité de ce projet pour répondre aux besoins de tous les utilisateurs (élèves et enseignants) :
+- **Contraste visuel :** Tous les outils bénéficient d'un mode clair et d'un mode sombre pour s'adapter à la sensibilité de chacun et réduire la fatigue visuelle.
+- **Navigation au clavier :** L'interface a été conçue pour permettre une navigation rapide et fluide au clavier (touche Tab, validation avec Entrée, etc.), ce qui est essentiel en classe.
 
-### Lancer les tests (Windows)
+## Contribuer
 
-Double-cliquez sur `run_tests.bat` ou, depuis un terminal :
+Les contributions sont les bienvenues ! Que ce soit pour signaler un bug (Bug Reports), proposer de nouvelles fonctionnalités (Feature Requests) ou soumettre des améliorations (Pull Requests), n'hésitez pas à participer à ce projet éducatif.
 
-```bat
-run_tests.bat
-```
+## Contact / Support
 
-Le script installe automatiquement les dépendances et lance les tests.
-
-### Lancer manuellement
-
-```bash
-# Depuis la racine du repo
-pip install playwright pytest
-python -m playwright install chromium
-python -m pytest tests/ -v
-```
-
-### Dépendances (`requirements.txt`)
-
-```
-playwright
-pytest
-```
+Si vous avez des questions, besoin de support ou si vous rencontrez un problème lors de l'utilisation de ces outils, n'hésitez pas à me contacter :
+📧 **vivian.epiney [at] hepvs.ch**
 
 ## Licence
 Toutes les webapps et ressources sont sous licence [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html).
