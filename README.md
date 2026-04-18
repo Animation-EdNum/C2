@@ -12,7 +12,7 @@ Ce dépôt regroupe des applications web interactives (webapps) et des ressource
 - [Démarrer / Utilisation](#démarrer--utilisation)
 - [Webapps (Applications pour les élèves)](#webapps-applications-pour-les-élèves)
 - [Ressources (Outils pour les enseignant·e·s)](#ressources-outils-pour-les-enseignantes)
-- [Accessibilité](#accessibilité)
+- [Accessibilité & Qualité](#accessibilité--qualité)
 - [Contribuer](#contribuer)
 - [Contact / Support](#contact--support)
 - [Licence](#licence)
@@ -43,6 +43,7 @@ Les webapps partagent une interface unifiée basée sur un design **Glassmorphis
 Les webapps disponibles sont :
 
 ### 1. Pixel Studio (`webapps/binaire_studio.html`)
+![Pixel Studio](screenshots/binaire_studio.png)
 - **À quoi sert l'outil :** Un studio de codage interactif permettant de faire le lien entre des images matricielles (pixels) en noir et blanc et leur représentation binaire (0 pour le noir, 1 pour le blanc).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire**
 - **Demi-cycle concerné :** 5-6H
@@ -62,6 +63,7 @@ Les webapps disponibles sont :
   - Touche de validation rapide au clavier ("Entrée") et design épuré pour faciliter la concentration.
 
 ### 3. Routage Réseau (`webapps/routage_reseau.html`)
+![Routage Réseau](screenshots/routage_reseau.png)
 - **À quoi sert l'outil :** Une simulation visuelle qui demande aux élèves de trouver le chemin le plus rapide pour acheminer un "paquet" d'un point A (ordinateur) à un point B (serveur) au travers d'un graphe.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 8 — Les réseaux, Niveau 2**
 - **Demi-cycle concerné :** 7-8H
@@ -96,6 +98,7 @@ Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, co
 Les ressources disponibles sont :
 
 ### 6. Générateur de Barème (`ressources/bareme.html`)
+![Générateur de Barème](screenshots/bareme.png)
 - **À quoi sert l'outil :** Un petit utilitaire sans publicité permettant aux enseignants de générer instantanément un barème de points pour la correction de leurs évaluations.
 - **Fonctionnalités :**
   - Génération automatique des échelles de notes selon le total saisi.
@@ -103,6 +106,7 @@ Les ressources disponibles sont :
   - Formatage spécifique pour l'impression ou l'exportation en PDF (affichage propre, masquage des menus de configuration).
 
 ### 7. Tirage au Sort (`ressources/tirage.html`)
+![Tirage au Sort](screenshots/tirage.png)
 - **À quoi sert l'outil :** Un outil efficace et visuel pour désigner un·e élève au hasard lors d'activités en classe ou pour créer des dynamiques aléatoires.
 - **Fonctionnalités :**
   - Sauvegarde locale automatique (`localStorage`) : la liste d'élèves et l'état du tirage restent en mémoire même si l'onglet est fermé.
