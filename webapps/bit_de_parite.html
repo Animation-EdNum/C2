@@ -14,7 +14,7 @@
     <style>
         body>header,
         body>.container {
-            animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
         :root {
@@ -182,9 +182,9 @@
             padding: 24px;
             border-radius: 20px;
             box-shadow: 0 25px 50px -12px var(--shadow-color);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
         }
 
         h1 {
@@ -596,7 +596,7 @@
             border-radius: 30px;
             font-weight: 600;
             opacity: 0;
-            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: 0.3s var(--spring-easing);
             z-index: 1000;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             text-align: center;
@@ -1121,47 +1121,7 @@
 
         // ========================================== 
         // CONFETTI 
-        // ========================================== 
-        function launchConfetti() {
-            const cvs = document.getElementById('confetti-canvas');
-            const ctx = cvs.getContext('2d');
-            cvs.width = window.innerWidth;
-            cvs.height = window.innerHeight;
-            let parts = [];
-            let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
-            for (let i = 0; i < 80; i++) {
-                parts.push({
-                    x: Math.random() * cvs.width,
-                    y: -50,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: Math.random() * 4 + 2,
-                    c: cols[Math.floor(Math.random() * cols.length)],
-                    s: Math.random() * 6 + 3,
-                    rot: 0,
-                    rotSpeed: (Math.random() - 0.5) * 10
-                });
-            }
-            function anim() {
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
-                let alive = false;
-                parts.forEach(p => {
-                    if (p.y > cvs.height) return;
-                    alive = true;
-                    p.x += p.vx;
-                    p.vy += 0.1;
-                    p.y += p.vy;
-                    p.rot += p.rotSpeed;
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rot * Math.PI / 180);
-                    ctx.fillStyle = p.c;
-                    ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
-                    ctx.restore();
-                });
-                if (alive) requestAnimationFrame(anim);
-            }
-            anim();
-        }
+        // ==========================================
 
         // INIT 
         initTrainMode();
@@ -1169,6 +1129,7 @@
         // THEME — géré par ../js/theme.js
     </script>
     <script src="../js/theme.js"></script>
+<script src="../js/confetti.js"></script>
 </body>
 
 </html>

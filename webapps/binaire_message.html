@@ -14,7 +14,7 @@
     <style>
         body>header,
         body>.container {
-            animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
         :root {
@@ -198,9 +198,9 @@
             box-shadow: 0 20px 60px var(--shadow-color);
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
         }
 
         h1 {
@@ -1239,24 +1239,7 @@
 
         // ========================================== 
         // CONFETTIS 
-        // ========================================== 
-        function launchConfetti() {
-            const canvas = document.getElementById('confetti-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            let particles = []; const colors = ['#667eea', '#764ba2', '#4caf50', '#ff9800', '#e91e63'];
-            for (let i = 0; i < 80; i++) particles.push({ x: Math.random() * canvas.width, y: -50, vx: (Math.random() - 0.5) * 6, vy: Math.random() * 4 + 2, color: colors[Math.floor(Math.random() * colors.length)], size: Math.random() * 6 + 3, rot: 0, rotSpeed: (Math.random() - 0.5) * 10 });
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); let alive = false;
-                particles.forEach(p => {
-                    if (p.y > canvas.height) return; alive = true;
-                    p.x += p.vx; p.vy += 0.1; p.y += p.vy; p.rot += p.rotSpeed;
-                    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
-                    ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore();
-                });
-                if (alive) requestAnimationFrame(animate);
-            }
-            animate();
-        }
+        // ==========================================
 
         // INIT 
         generateAlphaGrid();
@@ -1265,6 +1248,7 @@
         // THEME — géré par ../js/theme.js
     </script>
     <script src="../js/theme.js"></script>
+<script src="../js/confetti.js"></script>
 </body>
 
 </html>
