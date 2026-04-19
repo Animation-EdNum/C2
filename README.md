@@ -35,7 +35,7 @@ Le dépôt est organisé en deux modes d'utilisation :
 ## Webapps (Applications pour les élèves)
 Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui travaillent avec les manuels scolaires *Décodage*. Vous pouvez trouver plus d'informations sur les manuels sur [https://decodage.edu-vd.ch/](https://decodage.edu-vd.ch/).
 
-Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles utilisent la typographie **Outfit** pour une lisibilité optimale et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre.
+Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles utilisent la typographie **Outfit** pour une lisibilité optimale et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre. La page d'accueil propose également un accès rapide aux **applications récemment consultées**.
 
 Les webapps disponibles sont :
 
@@ -70,6 +70,7 @@ Les webapps disponibles sont :
   - **Partie en deux étapes :** création d'un mot secret codé en binaire (max 4 lettres) que l'on transmet à un camarade, puis décodage d'un message reçu caractère par caractère.
   - **Progression adaptative :** mots de difficulté croissante (lettres A-G, puis A-O, puis A-Z) avec une assistance progressive au décodage (pas d'aide, puis la somme des bits, puis l'alphabet binaire complet).
   - Touche de validation rapide au clavier ("Entrée") et design épuré pour faciliter la concentration.
+  - **Mode Défi (Share) :** Un mode "(Dé)codeur" permet de créer un message secret, de copier le code binaire généré et de l'envoyer à un camarade pour qu'il le décode directement dans l'interface.
 
 ### 4. Routage Réseau (`webapps/routage_reseau.html`)
 ![Routage Réseau](screenshots/routage_reseau.png)
@@ -91,6 +92,10 @@ Les webapps disponibles sont :
   - Exercices générés aléatoirement (conversion dans les deux sens).
   - Intégration d'une aide sous forme de "Mini-calculatrice binaire" dépliable pour aider à visualiser les puissances de 2.
   - Validation ultra-rapide au clavier (touche "Entrée") pour favoriser l'automatisme.
+  - **Retour visuel dynamique :** Animations de succès (flash vert) ou d'erreur (secousse) pour un feedback immédiat.
+  - **Algorithme affiné :** Génération de nombres aléatoires excluant le zéro pour garantir la pertinence pédagogique de chaque exercice.
+  - **Aide proactive :** La mini-calculatrice "pulse" visuellement après quelques secondes d'inactivité pour guider l'élève sans l'interrompre.
+  - **Saisie optimisée :** Focus automatique sur le champ de réponse pour enchaîner les exercices sans utiliser la souris.
 
 ### 6. Bit de Parité (`webapps/bit_de_parite.html`)
 ![Bit de Parité](screenshots/bit_de_parite.png)
@@ -101,7 +106,8 @@ Les webapps disponibles sont :
   - Mode entraînement dynamique demandant de garantir la "parité paire" sur des grilles de bits.
   - 3 tailles de grilles pour adapter la complexité cognitive : 4x4, 5x5, ou 6x6.
   - Mode "Tour de Magie" : simulation du tour de détection d'une cellule retournée (Activité 10 — Cartes magiques).
-  - Système de suivi des scores (victoires globales, etc.).
+  - Système de suivi des scores (victoires globales, série de victoires 🔥, meilleur score).
+  - **Assistance au survol :** Survoler une case de parité met en surbrillance la ligne ou la colonne correspondante pour aider à la visualisation du contrôle d'intégrité.
 
 ## Ressources (Outils pour les enseignant·e·s)
 Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, conçus spécifiquement pour les enseignant·e·s.
