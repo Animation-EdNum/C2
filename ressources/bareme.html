@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Générateur de barèmes</title>
     <meta property="og:title" content="Générateur de barèmes">
-    <meta property="og:description" content="Générateur instantané de barème de points pour la correction d'évaluations.">
+    <meta property="og:description"
+        content="Générateur instantané de barème de points pour la correction d'évaluations.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <script src="../js/lucide.min.js"></script>
 
     <link rel="stylesheet" href="../css/shared.css">
     <style>
-        body > .action-buttons, body > .container {
+        body>.action-buttons,
+        body>.container {
             animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
@@ -30,7 +33,7 @@
             --color-highlight: #fef08a;
             --color-highlight-text: #854d0e;
             --radius: 12px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             --color-table-header: #f8fafc;
             --color-table-hover: #f1f5f9;
             --color-input-bg: #f8fafc;
@@ -54,10 +57,14 @@
             --color-table-hover: #334155;
             --color-input-bg: #0f172a;
             --color-passing-row: #1e293b;
-            --shadow: 0 1px 3px rgba(255,255,255,0.05);
+            --shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -67,14 +74,42 @@
             line-height: 1.5;
         }
 
-        .container { width: 100%; max-width: 850px; margin: 0 auto; position: relative; }
-        .card { background-color: var(--color-surface); border-radius: 12px; border: 1px solid var(--color-border); padding: 32px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); position: relative; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .card {
+            background-color: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            padding: 32px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
 
 
-        header { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 2rem; position: relative; }
-        
-        h1 { font-size: 24px; font-weight: 700; text-align: center; letter-spacing: -0.025em; color: var(--color-text); }
-        .subtitle { text-align: center; color: var(--color-text-secondary); margin-bottom: 32px; font-size: 14px; }
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: -0.025em;
+            color: var(--color-text);
+        }
 
         /* Override couleurs pour bareme (fond clair, pas gradient) */
         .icon-action-btn {
@@ -82,104 +117,404 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
             color: var(--color-text-secondary);
         }
-        body.dark .icon-action-btn { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.1); color: var(--color-text); }
-        .icon-action-btn:hover { background-color: var(--color-btn-secondary-bg); color: var(--color-text); transform: scale(1.05); }
 
-        .top-actions { display: flex; gap: 0.5rem; justify-content: center; margin-top: 5px; }
+        body.dark .icon-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--color-text);
+        }
+
+        .icon-action-btn:hover {
+            background-color: var(--color-btn-secondary-bg);
+            color: var(--color-text);
+            transform: scale(1.05);
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 5px;
+        }
 
         .btn {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem;
-            font-weight: 600; cursor: pointer; transition: all 0.2s; border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
         }
-        .btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
-        .btn-secondary { background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow); border: 1px solid var(--color-border); }
-        .btn-secondary:hover:not(:disabled) { background: var(--color-border); }
-        .btn-primary { background: var(--color-primary); color: white; box-shadow: var(--shadow); }
-        .btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); }
-        .btn:disabled { opacity: 0.7; cursor: wait; }
 
-        .main-grid { display: grid; gap: 2rem; }
-        @media (min-width: 1024px) { .main-grid { grid-template-columns: 320px 1fr; } }
-
-        .controls { background: transparent; padding: 0; border: none; box-shadow: none; display: flex; flex-direction: column; gap: 1.25rem; }
-        .control-header { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-secondary); letter-spacing: 0.05em; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem; margin-bottom: 0.5rem; }
-        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
-
-        label { font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; }
-
-        input[type="text"], input[type="number"], select {
-            width: 100%; padding: 12px 14px; border-radius: 8px; border: 2px solid var(--color-border);
-            background: var(--color-input-bg, #f8fafc); color: var(--color-text); font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s;
+        .btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
-        input:focus, select:focus { outline: none; border-color: var(--color-primary); background: var(--color-surface); box-shadow: 0 0 0 3px var(--color-primary-light); }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media (min-width: 480px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+        .btn-secondary {
+            background: var(--color-surface);
+            color: var(--color-text);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--color-border);
+        }
 
-        .checkbox-group { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; margin-top: 0.5rem; padding: 0.75rem; background: var(--color-background); border-radius: 8px; border: 1px solid var(--color-border); cursor: pointer; }
-        .checkbox-group:hover { border-color: var(--color-primary-light); }
-        .checkbox-label { text-transform: none; font-size: 0.875rem; cursor: pointer; margin: 0; color: var(--color-text); font-weight: 500; }
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--color-border);
+        }
 
-        .table-area { display: flex; flex-direction: column; gap: 1rem; }
-        .table-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; font-weight: 600; color: var(--color-text-secondary); }
-        .result-container { background: var(--color-surface); border-radius: var(--radius); border: 1px solid var(--color-border); overflow: hidden; box-shadow: var(--shadow); }
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
 
-        .table-header { padding: 1rem; background: var(--color-table-header); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
-        .table-header .title { font-weight: 700; font-size: 0.875rem; color: var(--color-text); }
-        .table-header .formula { font-family: monospace; font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--color-primary-hover);
+        }
 
-        .scroll-container { overflow-x: auto; max-height: 70vh; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; position: relative; }
-        th { background: var(--color-table-header); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--color-border); border-right: 1px solid var(--color-border); color: var(--color-text-secondary); position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 var(--color-border); }
-        td { padding: 0.5rem 0.4rem; text-align: center; border-bottom: 1px solid var(--color-border); border-right: 1px solid var(--color-border); transition: background-color 0.1s; }
-        td:hover { background-color: var(--color-table-hover); }
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
 
-        th.col-end, td.col-end { border-right: 2px solid var(--color-border); }
-        th.col-end:last-child, td.col-end:last-child { border-right: none; }
+        .main-grid {
+            display: grid;
+            gap: 2rem;
+        }
 
-        .grade { font-weight: 700; }
-        .grade.failing { color: var(--color-fail); }
-        .grade.passing { color: var(--color-success); }
-        .mistake { color: var(--color-fail); opacity: 0.8; font-family: monospace; }
-        .passing-row { background-color: var(--color-passing-row); }
+        @media (min-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 320px 1fr;
+            }
+        }
 
-        .hidden { display: none !important; }
-        .settings-panel { padding-top: 1rem; margin-top: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+        .controls {
+            background: transparent;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
 
-        .mobile-warning { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--color-input-bg, #f8fafc); color: var(--color-text-secondary); border: 1px solid var(--color-border); font-size: 0.75rem; border-radius: 8px; margin-top: 1rem; }
-        @media (min-width: 768px) { .mobile-warning { display: none; } }
+        .control-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
 
-        footer { margin-top: 3rem; text-align: center; font-size: 0.75rem; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 0.5rem; }
-        footer p { margin-bottom: 0.5rem; }
-        footer a { color: var(--color-primary); text-decoration: none; font-weight: 600; }
-        footer a:hover { text-decoration: underline; }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 2px solid var(--color-border);
+            background: var(--color-input-bg, #f8fafc);
+            color: var(--color-text);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: var(--color-surface);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: var(--color-background);
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            cursor: pointer;
+        }
+
+        .checkbox-group:hover {
+            border-color: var(--color-primary-light);
+        }
+
+        .checkbox-label {
+            text-transform: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+            margin: 0;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        .table-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .table-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .result-container {
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .table-header {
+            padding: 1rem;
+            background: var(--color-table-header);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header .title {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--color-text);
+        }
+
+        .table-header .formula {
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .scroll-container {
+            overflow-x: auto;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            position: relative;
+        }
+
+        th {
+            background: var(--color-table-header);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 0.4rem;
+            border-bottom: 1px solid var(--color-border);
+            border-right: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 0 var(--color-border);
+        }
+
+        td {
+            padding: 0.5rem 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+            border-right: 1px solid var(--color-border);
+            transition: background-color 0.1s;
+        }
+
+        td:hover {
+            background-color: var(--color-table-hover);
+        }
+
+        th.col-end,
+        td.col-end {
+            border-right: 2px solid var(--color-border);
+        }
+
+        th.col-end:last-child,
+        td.col-end:last-child {
+            border-right: none;
+        }
+
+        .grade {
+            font-weight: 700;
+        }
+
+        .grade.failing {
+            color: var(--color-fail);
+        }
+
+        .grade.passing {
+            color: var(--color-success);
+        }
+
+        .mistake {
+            color: var(--color-fail);
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        .passing-row {
+            background-color: var(--color-passing-row);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .settings-panel {
+            padding-top: 1rem;
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .mobile-warning {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--color-input-bg, #f8fafc);
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-border);
+            font-size: 0.75rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-warning {
+                display: none;
+            }
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
 
         /* ===== Print-only elements ===== */
-        .print-only { display: none; }
-        
+        .print-only {
+            display: none;
+        }
+
         @media print {
-            .card { box-shadow: none !important; border: none !important; padding: 0 !important; }
-            .action-buttons, .top-actions { display: none !important; }
+            .card {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+
+            .action-buttons,
+            .top-actions {
+                display: none !important;
+            }
         }
 
         /* ===== PRINT — une seule page A4 ===== */
         @media print {
-            @page { size: A4 portrait; margin: 15mm; }
+            @page {
+                size: A4 portrait;
+                margin: 15mm;
+            }
 
             body {
                 background: white !important;
                 color: black !important;
-                padding: 0; margin: 0;
+                padding: 0;
+                margin: 0;
                 line-height: 1.2;
             }
 
-            .no-print { display: none !important; }
+            .no-print {
+                display: none !important;
+            }
 
-            .container { max-width: 100%; margin: 0; padding: 0; }
-            .main-grid  { display: block; }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
 
-            .result-container { box-shadow: none; border: none; }
+            .main-grid {
+                display: block;
+            }
+
+            .result-container {
+                box-shadow: none;
+                border: none;
+            }
 
             .scroll-container {
                 max-height: none !important;
@@ -192,15 +527,22 @@
                 text-align: center;
                 margin-bottom: 6px;
             }
+
             .print-title {
-                font-size: 14px; font-weight: 800;
+                font-size: 14px;
+                font-weight: 800;
                 text-transform: uppercase;
                 border-bottom: 2px solid black;
-                padding-bottom: 3px; margin-bottom: 4px;
+                padding-bottom: 3px;
+                margin-bottom: 4px;
             }
+
             .print-meta {
-                display: flex; justify-content: center; gap: 2rem;
-                font-weight: 600; font-size: 9px;
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+                font-weight: 600;
+                font-size: 9px;
             }
 
             /* Tableau compact */
@@ -230,8 +572,15 @@
                 color: black !important;
             }
 
-            th.col-end, td.col-end { border-right: 2.5px solid #000; }
-            th.col-end:last-child, td.col-end:last-child { border-right: none; }
+            th.col-end,
+            td.col-end {
+                border-right: 2.5px solid #000;
+            }
+
+            th.col-end:last-child,
+            td.col-end:last-child {
+                border-right: none;
+            }
 
             .passing-row {
                 background-color: #eef2f7 !important;
@@ -239,8 +588,13 @@
                 print-color-adjust: exact;
             }
 
-            .grade.failing { color: #c00 !important; }
-            .grade.passing { color: #060 !important; }
+            .grade.failing {
+                color: #c00 !important;
+            }
+
+            .grade.passing {
+                color: #060 !important;
+            }
 
             /* Zoom dynamique injecté par JS — sécurité si trop de lignes */
             body.printing #pdf-container {
@@ -250,27 +604,56 @@
 
         /* Toast Container */
         #toast-container {
-            position: fixed; bottom: 20px; right: 20px;
-            display: flex; flex-direction: column; gap: 10px; z-index: 9999;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
         }
+
         .toast {
-            background-color: var(--color-surface); color: var(--color-text);
-            border: 1px solid var(--color-border); padding: 12px 20px;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            padding: 12px 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            display: flex; align-items: center; gap: 12px;
-            font-size: 0.875rem; font-weight: 500;
-            opacity: 0; transform: translateY(20px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(20px);
             animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
         }
-        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="action-buttons">
         <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
         </a>
         <button class="icon-action-btn" id="themeToggleBtn" aria-label="Changer de thème" title="Changer de thème">
             <i data-lucide="sun" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
@@ -278,411 +661,417 @@
         </button>
     </div>
 
-<div class="container" id="pdf-container">
-    <div class="card">
-    <header class="no-print">
-        
-        <h1>📏 Générateur de barèmes</h1>
-        <p class="subtitle">Créez et imprimez vos échelles de notation</p>
-        
-        <div class="top-actions">
-            <button class="btn btn-secondary" onclick="copyTable()" aria-label="Copier le tableau">
-                <i data-lucide="copy" style="width:16px;height:16px;"></i>
-                <span id="copyText">Copier</span>
-            </button>
-            <button class="btn btn-primary" onclick="handlePrint()" aria-label="Imprimer le tableau">
-                <i data-lucide="printer" style="width:16px;height:16px;"></i>
-                Imprimer
-            </button>
+    <div class="container" id="pdf-container">
+        <div class="card">
+            <header class="no-print">
+
+                <h1>📏 Générateur de barèmes</h1>
+
+                <div class="top-actions">
+                    <button class="btn btn-secondary" onclick="copyTable()" aria-label="Copier le tableau">
+                        <i data-lucide="copy" style="width:16px;height:16px;"></i>
+                        <span id="copyText">Copier</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="handlePrint()" aria-label="Imprimer le tableau">
+                        <i data-lucide="printer" style="width:16px;height:16px;"></i>
+                        Imprimer
+                    </button>
+                </div>
+            </header>
+
+            <div class="print-only">
+                <div class="print-title" id="printTitleDisplay">Barème de Notation</div>
+                <div class="print-meta">
+                    <span id="printTotal">Total: 20 pts</span>
+                    <span id="printPass">Note 4 à 12 pts</span>
+                    <span id="printFormula">Formule: Double barème linéaire</span>
+                </div>
+            </div>
+
+            <div class="main-grid">
+                <aside class="no-print">
+                    <div class="controls">
+                        <div class="control-header">
+                            <i data-lucide="settings-2" style="width:16px;height:16px;"></i>
+                            Configuration
+                        </div>
+
+                        <div class="control-group">
+                            <label for="totalPoints">Total des points</label>
+                            <input type="number" id="totalPoints" value="20" min="1" step="0.5" oninput="updateAll()">
+                        </div>
+
+                        <button class="btn btn-secondary" onclick="toggleSettings()"
+                            style="width:100%;margin-top:0.5rem;">
+                            <i data-lucide="sliders" style="width:16px;height:16px;"></i>
+                            Paramètres
+                        </button>
+
+                        <div id="settingsPanel" class="settings-panel hidden">
+                            <div class="control-group">
+                                <label for="titleInput">Titre de l'évaluation</label>
+                                <input type="text" id="titleInput" placeholder="Ex: Vocabulaire - 8P"
+                                    oninput="updateAll()">
+                            </div>
+                            <div class="control-group">
+                                <label for="pointsFor4">Points pour la note 4</label>
+                                <input type="number" id="pointsFor4" placeholder="Ex: 12" step="0.5"
+                                    oninput="updateAll()">
+                            </div>
+                            <div class="control-group">
+                                <label for="increment">Fractions à afficher</label>
+                                <select id="increment" onchange="updateAll()">
+                                    <option value="1">1 point</option>
+                                    <option value="0.5" selected>0.5 point</option>
+                                    <option value="0.25">0.25 point</option>
+                                    <option value="0.1">0.1 point</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label for="rounding">Arrondi de la note</label>
+                                <select id="rounding" onchange="updateAll()">
+                                    <option value="0.1" selected>Au 0.1 (Ex: 4.3)</option>
+                                    <option value="0.25">Au 0.25 (Ex: 4.25)</option>
+                                    <option value="0.5">Au 0.5 (Ex: 4.5)</option>
+                                    <option value="1">À l'entier (Ex: 4)</option>
+                                </select>
+                            </div>
+                            <label class="checkbox-group" for="showMistakes">
+                                <input type="checkbox" id="showMistakes" onchange="updateAll()">
+                                <span class="checkbox-label">Mode "Points perdus" (-Fautes)</span>
+                            </label>
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="table-area">
+                    <div class="table-meta no-print">
+                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                            <i data-lucide="layout-grid" style="width:16px;height:16px;"></i>
+                            Aperçu du barème
+                        </div>
+                    </div>
+
+                    <div class="result-container" id="tableContainer">
+                        <div class="table-header no-print">
+                            <span class="title" id="displayTitle">Barème / 20 pts</span>
+                            <span class="formula" id="displayFormula">Note = 5 * (Pts / 20) + 1</span>
+                        </div>
+                        <div class="scroll-container">
+                            <table id="gradeTable">
+                                <thead id="tableHead"></thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mobile-warning no-print">
+                        <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
+                        Sur mobile, faites défiler le tableau horizontalement.
+                    </div>
+
+                    <footer class="no-print">
+                        <p>
+                            Webapp disponible sous licence
+                            <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                                rel="noopener noreferrer">AGPL-3.0</a>
+                            — Vivian Epiney · Animation EdNum · <a
+                                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/"
+                                target="_blank" rel="noopener noreferrer">HEP-VS</a>
+                        </p>
+                    </footer>
+
+                    <div id="toast-container" class="no-print"></div>
+                </main>
+            </div>
         </div>
-    </header>
-
-    <div class="print-only">
-        <div class="print-title" id="printTitleDisplay">Barème de Notation</div>
-        <div class="print-meta">
-            <span id="printTotal">Total: 20 pts</span>
-            <span id="printPass">Note 4 à 12 pts</span>
-            <span id="printFormula">Formule: Double barème linéaire</span>
-        </div>
     </div>
 
-    <div class="main-grid">
-        <aside class="no-print">
-            <div class="controls">
-                <div class="control-header">
-                    <i data-lucide="settings-2" style="width:16px;height:16px;"></i>
-                    Configuration
-                </div>
-
-                <div class="control-group">
-                    <label for="totalPoints">Total des points</label>
-                    <input type="number" id="totalPoints" value="20" min="1" step="0.5" oninput="updateAll()">
-                </div>
-
-                <button class="btn btn-secondary" onclick="toggleSettings()" style="width:100%;margin-top:0.5rem;">
-                    <i data-lucide="sliders" style="width:16px;height:16px;"></i>
-                    Paramètres
-                </button>
-
-                <div id="settingsPanel" class="settings-panel hidden">
-                    <div class="control-group">
-                        <label for="titleInput">Titre de l'évaluation</label>
-                        <input type="text" id="titleInput" placeholder="Ex: Vocabulaire - 8P" oninput="updateAll()">
-                    </div>
-                    <div class="control-group">
-                        <label for="pointsFor4">Points pour la note 4</label>
-                        <input type="number" id="pointsFor4" placeholder="Ex: 12" step="0.5" oninput="updateAll()">
-                    </div>
-                    <div class="control-group">
-                        <label for="increment">Fractions à afficher</label>
-                        <select id="increment" onchange="updateAll()">
-                            <option value="1">1 point</option>
-                            <option value="0.5" selected>0.5 point</option>
-                            <option value="0.25">0.25 point</option>
-                            <option value="0.1">0.1 point</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label for="rounding">Arrondi de la note</label>
-                        <select id="rounding" onchange="updateAll()">
-                            <option value="0.1" selected>Au 0.1 (Ex: 4.3)</option>
-                            <option value="0.25">Au 0.25 (Ex: 4.25)</option>
-                            <option value="0.5">Au 0.5 (Ex: 4.5)</option>
-                            <option value="1">À l'entier (Ex: 4)</option>
-                        </select>
-                    </div>
-                    <label class="checkbox-group" for="showMistakes">
-                        <input type="checkbox" id="showMistakes" onchange="updateAll()">
-                        <span class="checkbox-label">Mode "Points perdus" (-Fautes)</span>
-                    </label>
-                </div>
-            </div>
-        </aside>
-
-        <main class="table-area">
-            <div class="table-meta no-print">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
-                    <i data-lucide="layout-grid" style="width:16px;height:16px;"></i>
-                    Aperçu du barème
-                </div>
-            </div>
-
-            <div class="result-container" id="tableContainer">
-                <div class="table-header no-print">
-                    <span class="title" id="displayTitle">Barème / 20 pts</span>
-                    <span class="formula" id="displayFormula">Note = 5 * (Pts / 20) + 1</span>
-                </div>
-                <div class="scroll-container">
-                    <table id="gradeTable">
-                        <thead id="tableHead"></thead>
-                        <tbody id="tableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="mobile-warning no-print">
-                <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
-                Sur mobile, faites défiler le tableau horizontalement.
-            </div>
-
-            <footer class="no-print">
-                <p>
-                    Webapp disponible sous licence 
-                    <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
-                    — Vivian Epiney · Animation EdNum · <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
-                </p>
-            </footer>
-
-            <div id="toast-container" class="no-print"></div>
-        </main>
-    </div>
-    </div>
-</div>
-
-<script>
-    lucide.createIcons();
-
-    const STORAGE_KEY = 'bareme_preferences_v1';
-
-    // ==========================================
-    // UI TOGGLES
-    // ==========================================
-    function toggleSettings() {
-        document.getElementById('settingsPanel').classList.toggle('hidden');
-    }
-
-    // THEME — géré par ../js/theme.js
-    // (ID themeToggleBtn, icon-sun, icon-moon attendus)
-
-    // ==========================================
-    // SAUVEGARDE / CHARGEMENT DES PRÉFÉRENCES
-    // ==========================================
-    function savePreferences() {
-        const prefs = {
-            totalPoints: document.getElementById('totalPoints').value,
-            pointsFor4:  document.getElementById('pointsFor4').value,
-            increment:   document.getElementById('increment').value,
-            rounding:    document.getElementById('rounding').value,
-            showMistakes: document.getElementById('showMistakes').checked
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-    }
-
-    function loadPreferences() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) return;
-        try {
-            const p = JSON.parse(saved);
-            if (p.totalPoints)  document.getElementById('totalPoints').value  = p.totalPoints;
-            if (p.pointsFor4)   document.getElementById('pointsFor4').value   = p.pointsFor4;
-            if (p.increment)    document.getElementById('increment').value    = p.increment;
-            if (p.rounding)     document.getElementById('rounding').value     = p.rounding;
-            if (p.showMistakes !== undefined) document.getElementById('showMistakes').checked = p.showMistakes;
-        } catch (e) { console.error("Erreur de chargement des préférences", e); }
-    }
-
-    // ==========================================
-    // GÉNÉRATION DES DONNÉES (pure, sans DOM)
-    // ==========================================
-    function generateData(total, pointsFor4, step, round) {
-        const data = [];
-        const totalSteps = Math.floor(total / step);
-        const passGrade = 4;
-
-        for (let i = totalSteps; i >= 0; i--) {
-            const points = Math.round(i * step * 100) / 100;
-
-            let rawGrade;
-            if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < total) {
-                if (points <= pointsFor4) {
-                    rawGrade = 1 + 3 * (points / pointsFor4);
-                } else {
-                    rawGrade = 4 + 2 * ((points - pointsFor4) / (total - pointsFor4));
-                }
-            } else {
-                rawGrade = (5 * points / total) + 1;
-            }
-
-            let roundedGrade = Math.round(rawGrade / round) * round;
-            if (roundedGrade > 6) roundedGrade = 6;
-            if (roundedGrade < 1) roundedGrade = 1;
-
-            data.push({ points, grade: roundedGrade, isPassing: roundedGrade >= passGrade });
-        }
-        return data;
-    }
-
-    // ==========================================
-    // ORCHESTRATEUR (lecture des inputs → table)
-    // ==========================================
-    function updateAll() {
-        const title       = document.getElementById('titleInput').value;
-        const totalPoints = parseFloat(document.getElementById('totalPoints').value) || 20;
-        const ptFor4Val   = document.getElementById('pointsFor4').value;
-        const pointsFor4  = ptFor4Val ? parseFloat(ptFor4Val) : null;
-        const increment   = parseFloat(document.getElementById('increment').value);
-        const rounding    = parseFloat(document.getElementById('rounding').value);
-        const showMistakes = document.getElementById('showMistakes').checked;
-
-        // Mise à jour des libellés
-        document.getElementById('displayTitle').textContent = (title || 'Barème') + ' / ' + totalPoints + ' pts';
-
-        let formulaText;
-        if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints) {
-            formulaText = `Double barème (Note 4 à ${pointsFor4} pts)`;
-        } else {
-            formulaText = 'Note = 5 * (Pts / ' + totalPoints + ') + 1';
-        }
-        document.getElementById('displayFormula').textContent = formulaText;
-
-        document.getElementById('printTitleDisplay').textContent = title || 'Barème de Notation';
-        document.getElementById('printTotal').textContent   = 'Total: ' + totalPoints + ' pts';
-        document.getElementById('printPass').textContent    = pointsFor4 ? `Suffisance: ${pointsFor4} pts` : 'Suffisance: 4';
-        document.getElementById('printFormula').textContent = 'Formule: ' + formulaText;
-
-        // Génération + rendu
-        const data = generateData(totalPoints, pointsFor4, increment, rounding);
-        renderTable(data, totalPoints, showMistakes);
-
-        savePreferences();
-    }
-
-    // ==========================================
-    // RENDU DU TABLEAU
-    //   forceGroups : nombre de colonnes imposé
-    //                 (utilisé par handlePrint)
-    // ==========================================
-    function renderTable(data, totalPoints, showMistakes, forceGroups) {
-        const tbody = document.getElementById('tableBody');
-        const thead = document.getElementById('tableHead');
-        tbody.innerHTML = '';
-        thead.innerHTML = '';
-
-        let groupsPerRow;
-        if (forceGroups) {
-            groupsPerRow = forceGroups;
-        } else {
-            groupsPerRow = 2;
-            if (data.length > 20) groupsPerRow = 3;
-            if (data.length > 45 && !showMistakes) groupsPerRow = 4;
-        }
-
-        const rowsCount = Math.ceil(data.length / groupsPerRow);
-
-        // Header
-        let headerRow = '<tr>';
-        for (let k = 0; k < groupsPerRow; k++) {
-            if (showMistakes) headerRow += '<th>-Pts</th>';
-            headerRow += '<th>Pts</th><th class="col-end">Note</th>';
-        }
-        headerRow += '</tr>';
-        thead.innerHTML = headerRow;
-
-        // Body
-        for (let i = 0; i < rowsCount; i++) {
-            const tr = document.createElement('tr');
-
-            for (let col = 0; col < groupsPerRow; col++) {
-                const index = col * rowsCount + i;
-
-                if (index < data.length) {
-                    const item = data[index];
-                    const pc  = item.isPassing ? 'passing-row' : '';
-                    const gc  = item.isPassing ? 'passing' : 'failing';
-                    const gd  = parseFloat(item.grade.toFixed(2));
-                    const lost = Math.round((totalPoints - item.points) * 100) / 100;
-                    const ld   = lost === 0 ? '0' : `-${lost}`;
-
-                    let html = '';
-                    if (showMistakes) html += `<td class="${pc} mistake">${ld}</td>`;
-                    html += `<td class="${pc}">${item.points}</td>`;
-                    html += `<td class="grade ${gc} ${pc} col-end">${gd}</td>`;
-                    tr.innerHTML += html;
-                } else {
-                    if (showMistakes) tr.innerHTML += '<td></td>';
-                    tr.innerHTML += '<td></td><td class="col-end"></td>';
-                }
-            }
-            tbody.appendChild(tr);
-        }
-    }
-
-    // ==========================================
-    // TOAST NOTIFICATIONS
-    // ==========================================
-    function showToast(message, icon = 'info') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-
-        let iconColor = 'var(--color-primary)';
-        if (icon === 'check-circle') iconColor = 'var(--color-success)';
-        if (icon === 'alert-circle') iconColor = 'var(--color-fail)';
-
-        const iconEl = document.createElement('i');
-        iconEl.setAttribute('data-lucide', icon);
-        iconEl.style.width = '20px';
-        iconEl.style.height = '20px';
-        iconEl.style.color = iconColor;
-
-        const spanEl = document.createElement('span');
-        spanEl.textContent = message;
-
-        toast.appendChild(iconEl);
-        toast.appendChild(document.createTextNode(' '));
-        toast.appendChild(spanEl);
-        container.appendChild(toast);
+    <script>
         lucide.createIcons();
 
-        setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 3000);
-    }
+        const STORAGE_KEY = 'bareme_preferences_v1';
 
-    // ==========================================
-    // COPIER LE TABLEAU
-    // ==========================================
-    async function copyTable() {
-        const table = document.getElementById('gradeTable');
-        let text = '';
-        table.querySelectorAll('tr').forEach(r => {
-            const cols = Array.from(r.querySelectorAll('td, th'));
-            text += cols.map(c => c.innerText.trim()).join('\t') + '\n';
-        });
-
-        try {
-            await navigator.clipboard.writeText(text);
-            showToast('Tableau copié dans le presse-papier', 'check-circle');
-        } catch {
-            const ta = document.createElement('textarea');
-            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-            document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); showToast('Tableau copié dans le presse-papier', 'check-circle'); }
-            catch { showToast('Erreur lors de la copie', 'alert-circle'); }
-            document.body.removeChild(ta);
-        }
-    }
-
-    // ==========================================
-    // IMPRESSION — 1 seule page A4
-    // ==========================================
-    function handlePrint() {
-        // 1. Lire les paramètres actuels
-        const totalPoints  = parseFloat(document.getElementById('totalPoints').value) || 20;
-        const ptFor4Val    = document.getElementById('pointsFor4').value;
-        const pointsFor4   = ptFor4Val ? parseFloat(ptFor4Val) : null;
-        const increment    = parseFloat(document.getElementById('increment').value);
-        const rounding     = parseFloat(document.getElementById('rounding').value);
-        const showMistakes = document.getElementById('showMistakes').checked;
-
-        // 2. Générer les données
-        const data = generateData(totalPoints, pointsFor4, increment, rounding);
-
-        // 3. Sauvegarder le tableau actuel (affiché à l'écran)
-        const savedBody = document.getElementById('tableBody').innerHTML;
-        const savedHead = document.getElementById('tableHead').innerHTML;
-
-        // 4. Calculer le nombre optimal de groupes de colonnes
-        //    pour tenir en ≤ 65 lignes sur une page A4 portrait
-        //    (police 7.5 px, padding 1.5 px → ~3.5 mm/ligne → ~65 lignes max)
-        const maxRows   = 65;
-        const maxGroups = showMistakes ? 5 : 6;
-        const groups    = Math.max(2, Math.min(maxGroups, Math.ceil(data.length / maxRows)));
-        const actualRows = Math.ceil(data.length / groups);
-
-        // 5. Facteur de zoom de sécurité si ça dépasse quand même
-        let zoom = 1;
-        if (actualRows > maxRows) {
-            zoom = maxRows / actualRows;
-            zoom = Math.max(0.45, zoom);           // plancher 45 %
-            zoom = Math.round(zoom * 100) / 100;   // arrondir
+        // ==========================================
+        // UI TOGGLES
+        // ==========================================
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('hidden');
         }
 
-        // 6. Re-rendre le tableau avec le bon nombre de colonnes
-        renderTable(data, totalPoints, showMistakes, groups);
+        // THEME — géré par ../js/theme.js
+        // (ID themeToggleBtn, icon-sun, icon-moon attendus)
 
-        // 7. Appliquer les classes/variables CSS pour l'impression
-        document.documentElement.style.setProperty('--print-zoom', zoom);
-        document.body.classList.add('printing');
+        // ==========================================
+        // SAUVEGARDE / CHARGEMENT DES PRÉFÉRENCES
+        // ==========================================
+        function savePreferences() {
+            const prefs = {
+                totalPoints: document.getElementById('totalPoints').value,
+                pointsFor4: document.getElementById('pointsFor4').value,
+                increment: document.getElementById('increment').value,
+                rounding: document.getElementById('rounding').value,
+                showMistakes: document.getElementById('showMistakes').checked
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+        }
 
-        // 8. Restaurer après impression
-        const restore = () => {
-            document.body.classList.remove('printing');
-            document.documentElement.style.removeProperty('--print-zoom');
-            document.getElementById('tableBody').innerHTML = savedBody;
-            document.getElementById('tableHead').innerHTML = savedHead;
-            window.removeEventListener('afterprint', restore);
-        };
-        window.addEventListener('afterprint', restore);
+        function loadPreferences() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+            try {
+                const p = JSON.parse(saved);
+                if (p.totalPoints) document.getElementById('totalPoints').value = p.totalPoints;
+                if (p.pointsFor4) document.getElementById('pointsFor4').value = p.pointsFor4;
+                if (p.increment) document.getElementById('increment').value = p.increment;
+                if (p.rounding) document.getElementById('rounding').value = p.rounding;
+                if (p.showMistakes !== undefined) document.getElementById('showMistakes').checked = p.showMistakes;
+            } catch (e) { console.error("Erreur de chargement des préférences", e); }
+        }
 
-        // 9. Petit délai pour laisser le DOM se mettre à jour, puis imprimer
-        setTimeout(() => { window.focus(); window.print(); }, 120);
-    }
+        // ==========================================
+        // GÉNÉRATION DES DONNÉES (pure, sans DOM)
+        // ==========================================
+        function generateData(total, pointsFor4, step, round) {
+            const data = [];
+            const totalSteps = Math.floor(total / step);
+            const passGrade = 4;
 
-    // ==========================================
-    // INITIALISATION
-    // ==========================================
-    loadPreferences();
-    updateAll();
-</script>
+            for (let i = totalSteps; i >= 0; i--) {
+                const points = Math.round(i * step * 100) / 100;
+
+                let rawGrade;
+                if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < total) {
+                    if (points <= pointsFor4) {
+                        rawGrade = 1 + 3 * (points / pointsFor4);
+                    } else {
+                        rawGrade = 4 + 2 * ((points - pointsFor4) / (total - pointsFor4));
+                    }
+                } else {
+                    rawGrade = (5 * points / total) + 1;
+                }
+
+                let roundedGrade = Math.round(rawGrade / round) * round;
+                if (roundedGrade > 6) roundedGrade = 6;
+                if (roundedGrade < 1) roundedGrade = 1;
+
+                data.push({ points, grade: roundedGrade, isPassing: roundedGrade >= passGrade });
+            }
+            return data;
+        }
+
+        // ==========================================
+        // ORCHESTRATEUR (lecture des inputs → table)
+        // ==========================================
+        function updateAll() {
+            const title = document.getElementById('titleInput').value;
+            const totalPoints = parseFloat(document.getElementById('totalPoints').value) || 20;
+            const ptFor4Val = document.getElementById('pointsFor4').value;
+            const pointsFor4 = ptFor4Val ? parseFloat(ptFor4Val) : null;
+            const increment = parseFloat(document.getElementById('increment').value);
+            const rounding = parseFloat(document.getElementById('rounding').value);
+            const showMistakes = document.getElementById('showMistakes').checked;
+
+            // Mise à jour des libellés
+            document.getElementById('displayTitle').textContent = (title || 'Barème') + ' / ' + totalPoints + ' pts';
+
+            let formulaText;
+            if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints) {
+                formulaText = `Double barème (Note 4 à ${pointsFor4} pts)`;
+            } else {
+                formulaText = 'Note = 5 * (Pts / ' + totalPoints + ') + 1';
+            }
+            document.getElementById('displayFormula').textContent = formulaText;
+
+            document.getElementById('printTitleDisplay').textContent = title || 'Barème de Notation';
+            document.getElementById('printTotal').textContent = 'Total: ' + totalPoints + ' pts';
+            document.getElementById('printPass').textContent = pointsFor4 ? `Suffisance: ${pointsFor4} pts` : 'Suffisance: 4';
+            document.getElementById('printFormula').textContent = 'Formule: ' + formulaText;
+
+            // Génération + rendu
+            const data = generateData(totalPoints, pointsFor4, increment, rounding);
+            renderTable(data, totalPoints, showMistakes);
+
+            savePreferences();
+        }
+
+        // ==========================================
+        // RENDU DU TABLEAU
+        //   forceGroups : nombre de colonnes imposé
+        //                 (utilisé par handlePrint)
+        // ==========================================
+        function renderTable(data, totalPoints, showMistakes, forceGroups) {
+            const tbody = document.getElementById('tableBody');
+            const thead = document.getElementById('tableHead');
+            tbody.innerHTML = '';
+            thead.innerHTML = '';
+
+            let groupsPerRow;
+            if (forceGroups) {
+                groupsPerRow = forceGroups;
+            } else {
+                groupsPerRow = 2;
+                if (data.length > 20) groupsPerRow = 3;
+                if (data.length > 45 && !showMistakes) groupsPerRow = 4;
+            }
+
+            const rowsCount = Math.ceil(data.length / groupsPerRow);
+
+            // Header
+            let headerRow = '<tr>';
+            for (let k = 0; k < groupsPerRow; k++) {
+                if (showMistakes) headerRow += '<th>-Pts</th>';
+                headerRow += '<th>Pts</th><th class="col-end">Note</th>';
+            }
+            headerRow += '</tr>';
+            thead.innerHTML = headerRow;
+
+            // Body
+            for (let i = 0; i < rowsCount; i++) {
+                const tr = document.createElement('tr');
+
+                for (let col = 0; col < groupsPerRow; col++) {
+                    const index = col * rowsCount + i;
+
+                    if (index < data.length) {
+                        const item = data[index];
+                        const pc = item.isPassing ? 'passing-row' : '';
+                        const gc = item.isPassing ? 'passing' : 'failing';
+                        const gd = parseFloat(item.grade.toFixed(2));
+                        const lost = Math.round((totalPoints - item.points) * 100) / 100;
+                        const ld = lost === 0 ? '0' : `-${lost}`;
+
+                        let html = '';
+                        if (showMistakes) html += `<td class="${pc} mistake">${ld}</td>`;
+                        html += `<td class="${pc}">${item.points}</td>`;
+                        html += `<td class="grade ${gc} ${pc} col-end">${gd}</td>`;
+                        tr.innerHTML += html;
+                    } else {
+                        if (showMistakes) tr.innerHTML += '<td></td>';
+                        tr.innerHTML += '<td></td><td class="col-end"></td>';
+                    }
+                }
+                tbody.appendChild(tr);
+            }
+        }
+
+        // ==========================================
+        // TOAST NOTIFICATIONS
+        // ==========================================
+        function showToast(message, icon = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+
+            let iconColor = 'var(--color-primary)';
+            if (icon === 'check-circle') iconColor = 'var(--color-success)';
+            if (icon === 'alert-circle') iconColor = 'var(--color-fail)';
+
+            const iconEl = document.createElement('i');
+            iconEl.setAttribute('data-lucide', icon);
+            iconEl.style.width = '20px';
+            iconEl.style.height = '20px';
+            iconEl.style.color = iconColor;
+
+            const spanEl = document.createElement('span');
+            spanEl.textContent = message;
+
+            toast.appendChild(iconEl);
+            toast.appendChild(document.createTextNode(' '));
+            toast.appendChild(spanEl);
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 3000);
+        }
+
+        // ==========================================
+        // COPIER LE TABLEAU
+        // ==========================================
+        async function copyTable() {
+            const table = document.getElementById('gradeTable');
+            let text = '';
+            table.querySelectorAll('tr').forEach(r => {
+                const cols = Array.from(r.querySelectorAll('td, th'));
+                text += cols.map(c => c.innerText.trim()).join('\t') + '\n';
+            });
+
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Tableau copié dans le presse-papier', 'check-circle');
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                try { document.execCommand('copy'); showToast('Tableau copié dans le presse-papier', 'check-circle'); }
+                catch { showToast('Erreur lors de la copie', 'alert-circle'); }
+                document.body.removeChild(ta);
+            }
+        }
+
+        // ==========================================
+        // IMPRESSION — 1 seule page A4
+        // ==========================================
+        function handlePrint() {
+            // 1. Lire les paramètres actuels
+            const totalPoints = parseFloat(document.getElementById('totalPoints').value) || 20;
+            const ptFor4Val = document.getElementById('pointsFor4').value;
+            const pointsFor4 = ptFor4Val ? parseFloat(ptFor4Val) : null;
+            const increment = parseFloat(document.getElementById('increment').value);
+            const rounding = parseFloat(document.getElementById('rounding').value);
+            const showMistakes = document.getElementById('showMistakes').checked;
+
+            // 2. Générer les données
+            const data = generateData(totalPoints, pointsFor4, increment, rounding);
+
+            // 3. Sauvegarder le tableau actuel (affiché à l'écran)
+            const savedBody = document.getElementById('tableBody').innerHTML;
+            const savedHead = document.getElementById('tableHead').innerHTML;
+
+            // 4. Calculer le nombre optimal de groupes de colonnes
+            //    pour tenir en ≤ 65 lignes sur une page A4 portrait
+            //    (police 7.5 px, padding 1.5 px → ~3.5 mm/ligne → ~65 lignes max)
+            const maxRows = 65;
+            const maxGroups = showMistakes ? 5 : 6;
+            const groups = Math.max(2, Math.min(maxGroups, Math.ceil(data.length / maxRows)));
+            const actualRows = Math.ceil(data.length / groups);
+
+            // 5. Facteur de zoom de sécurité si ça dépasse quand même
+            let zoom = 1;
+            if (actualRows > maxRows) {
+                zoom = maxRows / actualRows;
+                zoom = Math.max(0.45, zoom);           // plancher 45 %
+                zoom = Math.round(zoom * 100) / 100;   // arrondir
+            }
+
+            // 6. Re-rendre le tableau avec le bon nombre de colonnes
+            renderTable(data, totalPoints, showMistakes, groups);
+
+            // 7. Appliquer les classes/variables CSS pour l'impression
+            document.documentElement.style.setProperty('--print-zoom', zoom);
+            document.body.classList.add('printing');
+
+            // 8. Restaurer après impression
+            const restore = () => {
+                document.body.classList.remove('printing');
+                document.documentElement.style.removeProperty('--print-zoom');
+                document.getElementById('tableBody').innerHTML = savedBody;
+                document.getElementById('tableHead').innerHTML = savedHead;
+                window.removeEventListener('afterprint', restore);
+            };
+            window.addEventListener('afterprint', restore);
+
+            // 9. Petit délai pour laisser le DOM se mettre à jour, puis imprimer
+            setTimeout(() => { window.focus(); window.print(); }, 120);
+        }
+
+        // ==========================================
+        // INITIALISATION
+        // ==========================================
+        loadPreferences();
+        updateAll();
+    </script>
     <script src="../js/theme.js"></script>
 </body>
+
 </html>

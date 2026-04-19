@@ -39,7 +39,18 @@ Les webapps partagent une interface unifiée basée sur un design **Glassmorphis
 
 Les webapps disponibles sont :
 
-### 1. Pixel Studio (`webapps/binaire_studio.html`)
+### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
+![Simulateur Blue-Bot](screenshots/simulateur_bluebot.png)
+- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des défis de pathfinding.
+- **Lien DÉ&gt;CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot**
+- **Demi-cycle concerné :** 3-4H
+- **Fonctionnalités :**
+  - **Mode Simulateur :** Grille interactive avec placement de murs aléatoires pour tester des programmes.
+  - **Mode Défis :** 3 niveaux de difficulté (Facile, Moyen, Difficile) avec génération dynamique de puzzles de cheminement.
+  - **Système de série (Streak) :** Gamification pour encourager les bonnes réponses consécutives avec effets visuels (confettis).
+  - **Double vitesse :** Mode "Tortue" ou "Lièvre" pour accélérer l'exécution des programmes.
+
+### 2. Pixel Studio (`webapps/binaire_studio.html`)
 ![Pixel Studio](screenshots/binaire_studio.png)
 - **À quoi sert l'outil :** Un studio de codage interactif permettant de faire le lien entre des images matricielles (pixels) en noir et blanc et leur représentation binaire (0 pour le noir, 1 pour le blanc).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire**
@@ -50,7 +61,7 @@ Les webapps disponibles sont :
   - Sauvegarde locale d'une "Galerie" / "Collection" de ses créations.
   - Exportation technique de l'œuvre finale en format image PNG.
 
-### 2. Mots secrets (`webapps/binaire_message.html`)
+### 3. Mots secrets (`webapps/binaire_message.html`)
 ![Mots secrets](screenshots/binaire_message.png)
 - **À quoi sert l'outil :** Un jeu interactif en deux parties pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire avec un camarade.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)**
@@ -60,7 +71,7 @@ Les webapps disponibles sont :
   - **Progression adaptative :** mots de difficulté croissante (lettres A-G, puis A-O, puis A-Z) avec une assistance progressive au décodage (pas d'aide, puis la somme des bits, puis l'alphabet binaire complet).
   - Touche de validation rapide au clavier ("Entrée") et design épuré pour faciliter la concentration.
 
-### 3. Routage Réseau (`webapps/routage_reseau.html`)
+### 4. Routage Réseau (`webapps/routage_reseau.html`)
 ![Routage Réseau](screenshots/routage_reseau.png)
 - **À quoi sert l'outil :** Une simulation visuelle qui demande aux élèves de trouver le chemin le plus rapide pour acheminer un "paquet" d'un point A (ordinateur) à un point B (serveur) au travers d'un graphe.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 8 — Les réseaux, Niveau 2**
@@ -71,7 +82,7 @@ Les webapps disponibles sont :
   - Suivi en temps réel du coût du chemin (Unité de Temps/UTI).
   - Validateur d'optimalité qui compare le chemin de l'élève avec le chemin mathématiquement le plus court.
 
-### 4. Codage binaire (`webapps/binaire_codage.html`)
+### 5. Codage binaire (`webapps/binaire_codage.html`)
 ![Codage binaire](screenshots/binaire_codage.png)
 - **À quoi sert l'outil :** Une plateforme d'entraînement intensif au passage des nombres entiers (décimal) vers leur écriture en binaire, et inversément.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 1)**
@@ -81,7 +92,7 @@ Les webapps disponibles sont :
   - Intégration d'une aide sous forme de "Mini-calculatrice binaire" dépliable pour aider à visualiser les puissances de 2.
   - Validation ultra-rapide au clavier (touche "Entrée") pour favoriser l'automatisme.
 
-### 5. Bit de Parité (`webapps/bit_de_parite.html`)
+### 6. Bit de Parité (`webapps/bit_de_parite.html`)
 ![Bit de Parité](screenshots/bit_de_parite.png)
 - **À quoi sert l'outil :** Un exercice ludique abordant la notion de parité afin de comprendre comment un ordinateur peut s'assurer qu'un message n'a pas été altéré lors d'une transmission.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs lors de la transmission de données ?**
@@ -97,7 +108,7 @@ Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, co
 
 Les ressources disponibles sont :
 
-### 6. Générateur de Barème (`ressources/bareme.html`)
+### 7. Générateur de Barème (`ressources/bareme.html`)
 ![Générateur de Barème](screenshots/bareme.png)
 - **À quoi sert l'outil :** Un petit utilitaire sans publicité permettant aux enseignants de générer instantanément un barème de points pour la correction de leurs évaluations.
 - **Fonctionnalités :**
@@ -105,7 +116,7 @@ Les ressources disponibles sont :
   - Thème adaptable (Clair / Sombre) avec sauvegarde des préférences en `localStorage`.
   - Formatage spécifique pour l'impression ou l'exportation en PDF (affichage propre, masquage des menus de configuration).
 
-### 7. Tirage au Sort (`ressources/tirage.html`)
+### 8. Tirage au Sort (`ressources/tirage.html`)
 ![Tirage au Sort](screenshots/tirage.png)
 - **À quoi sert l'outil :** Un outil efficace et visuel pour désigner un·e élève au hasard lors d'activités en classe ou pour créer des dynamiques aléatoires.
 - **Fonctionnalités :**
