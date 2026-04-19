@@ -5,68 +5,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mots secrets</title>
+    <meta property="og:title" content="Mots secrets">
+    <meta property="og:description"
+        content="Un jeu interactif pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire.">
+    <meta property="og:type" content="website">
     <style>
         /* === shared.css inliné === */
-        /* ============================================================
+/* ============================================================
    shared.css — Styles communs à toutes les pages du projet C2
    ============================================================ */
 
-        /* --- Typographie locale (hors ligne) --- */
-        @font-face {
-            font-family: 'Outfit';
-            src: url('../fonts/outfit.woff2') format('woff2');
-            font-weight: 400 700;
-            font-display: swap;
-        }
+/* --- Typographie locale (hors ligne) --- */
+@font-face {
+    font-family: 'Outfit';
+    src: url('../fonts/outfit.woff2') format('woff2');
+    font-weight: 400 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../fonts/jetbrains-mono.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
 
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('../fonts/jetbrains-mono.woff2') format('woff2');
-            font-weight: 700;
-            font-display: swap;
-        }
+/* --- Animation d'entrée principale --- */
+@keyframes fadeInCascade {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
-        /* --- Animation d'entrée principale --- */
-        @keyframes fadeInCascade {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
+/* --- Boutons d'action (haut droite) --- */
+.action-buttons {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.icon-action-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
 
-        /* --- Boutons d'action (haut droite) --- */
-        .action-buttons {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-        }
+.icon-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
 
-        .icon-action-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-        }
+/* --- Footer commun --- */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
 
-        .icon-action-btn:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-            transform: scale(1.05);
-        }
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* --- Impression --- */
+@media print {
+    .no-print { display: none !important; }
+}
 
         /* --- Footer commun --- */
         footer {
@@ -765,7 +784,13 @@
 
 <body>
     <div class="action-buttons">
-
+        <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </a>
         <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
             <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -915,9 +940,7 @@
         <p>
             Webapp disponible sous licence
             <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
-            — Vivian Epiney · Animation EdNum · <a
-                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                rel="noopener noreferrer">HEP-VS</a>
+            — Vivian Epiney · Animation EdNum · <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
         </p>
     </footer>
 
@@ -1345,53 +1368,53 @@
     </script>
     <script>
         /* === theme.js inliné === */
-        /**
-         * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
-         *
-         * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
-         * Prérequis dans le HTML :
-         *   - Un bouton  id="themeToggleBtn"
-         *   - Un svg     id="icon-sun"  (affiché en mode sombre)
-         *   - Un svg     id="icon-moon" (affiché en mode clair)
-         *
-         * Persistance : localStorage('global_theme') = 'light' | 'dark'
-         *
-         * Note : certaines pages (routage_reseau) peuvent définir un callback
-         * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
-         */
+/**
+ * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
+ *
+ * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
+ * Prérequis dans le HTML :
+ *   - Un bouton  id="themeToggleBtn"
+ *   - Un svg     id="icon-sun"  (affiché en mode sombre)
+ *   - Un svg     id="icon-moon" (affiché en mode clair)
+ *
+ * Persistance : localStorage('global_theme') = 'light' | 'dark'
+ *
+ * Note : certaines pages (routage_reseau) peuvent définir un callback
+ * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
+ */
 
-        (function () {
-            const btn = document.getElementById('themeToggleBtn');
-            const iconSun = document.getElementById('icon-sun');
-            const iconMoon = document.getElementById('icon-moon');
+(function () {
+    const btn     = document.getElementById('themeToggleBtn');
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon= document.getElementById('icon-moon');
 
-            function setTheme(theme) {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark');
-                } else {
-                    document.body.classList.remove('dark');
-                }
-                localStorage.setItem('global_theme', theme);
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+        localStorage.setItem('global_theme', theme);
 
-                if (iconSun) iconSun.style.display = theme === 'dark' ? 'block' : 'none';
-                if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none' : 'block';
+        if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
+        if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
 
-                // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
-                if (typeof window.__onThemeChange === 'function') {
-                    window.__onThemeChange(theme);
-                }
-            }
+        // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
+        if (typeof window.__onThemeChange === 'function') {
+            window.__onThemeChange(theme);
+        }
+    }
 
-            // Lecture du thème sauvegardé (défaut : clair)
-            const saved = localStorage.getItem('global_theme') || 'light';
-            setTheme(saved);
+    // Lecture du thème sauvegardé (défaut : clair)
+    const saved = localStorage.getItem('global_theme') || 'light';
+    setTheme(saved);
 
-            if (btn) {
-                btn.addEventListener('click', function () {
-                    setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
-                });
-            }
-        })();
+    if (btn) {
+        btn.addEventListener('click', function () {
+            setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+        });
+    }
+})();
 
     </script>
 </body>
