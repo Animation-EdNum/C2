@@ -1080,13 +1080,19 @@
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
             grid.innerHTML = ''; grid.style.position = 'relative';
+            grid.setAttribute('role', 'grid');
+            grid.setAttribute('aria-label', `Grille ${rows}x${cols}`);
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
+                row.setAttribute('role', 'row');
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'bot-cell ' + ((r + c) % 2 === 0 ? 'cell-light' : 'cell-dark');
-                    if (obstacles.some(o => o.r === r && o.c === c)) cell.classList.add('obstacle');
+                    cell.setAttribute('role', 'gridcell');
+                    const isObstacle = obstacles.some(o => o.r === r && o.c === c);
+                    if (isObstacle) cell.classList.add('obstacle');
                     cell.dataset.row = r; cell.dataset.col = c;
+                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isObstacle ? 'Obstacle' : 'Vide'}`);
                     row.appendChild(cell);
                 }
                 grid.appendChild(row);
@@ -1095,7 +1101,7 @@
 
         function cellSize(containerId) { return document.querySelector('#' + containerId + ' .bot-cell')?.offsetWidth || 55; }
 
-        function placeOverlay(containerId, overlayId, row, col, content, extraClass) {
+        function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {
             let ov = document.getElementById(overlayId); const cs = cellSize(containerId);
             if (!ov) {
                 ov = document.createElement('div'); ov.id = overlayId; ov.className = extraClass || '';
@@ -1103,22 +1109,28 @@
             }
             ov.innerHTML = content; ov.style.width = cs + 'px'; ov.style.height = cs + 'px';
             ov.style.top = (row * cs) + 'px'; ov.style.left = (col * cs) + 'px';
+            ov.setAttribute('role', 'img');
+            if (ariaLabel) ov.setAttribute('aria-label', ariaLabel);
         }
 
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
             const deg = dirIndex * 90;
+            const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
+            const dirStr = directions[dirIndex % 4] || 'Haut';
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${ROBOT_BODY_SVG}</div>`;
-            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay');
+            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
         }
 
         function renderGhost(containerId, row, col, dirIndex) {
             const deg = dirIndex * 90;
+            const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
+            const dirStr = directions[dirIndex % 4] || 'Haut';
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg); box-shadow: none;">${ROBOT_BODY_SVG}</div>`;
-            placeOverlay(containerId, containerId + '-ghost', row, col, html, 'ghost-overlay');
+            placeOverlay(containerId, containerId + '-ghost', row, col, html, 'ghost-overlay', `Fantôme du robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
         }
 
         function renderTarget(containerId, overlayId, row, col) {
-            placeOverlay(containerId, overlayId, row, col, '⭐', 'target-overlay');
+            placeOverlay(containerId, overlayId, row, col, '⭐', 'target-overlay', `Cible en ligne ${row + 1}, colonne ${col + 1}`);
         }
 
         function markVisited(containerId, row, col) {
