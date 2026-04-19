@@ -756,7 +756,7 @@
 
         <!-- CALCULATRICE -->
         <div class="calc-section">
-            <div class="calc-header" tabindex="0" onclick="toggleCalc()" onkeydown="if(event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); this.click(); }">
+            <div class="calc-header" tabindex="0" onclick="toggleCalc()" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">
                 <span>🧮 Mini-calculatrice binaire (Aide)</span>
                 <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
             </div>
@@ -898,7 +898,7 @@
                 // Calc HTML 
                 trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" onclick="toggleBitIndex(${i})">0</button></td>`;
                 trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7 - i}</sup></td>`;
-                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0" onclick="toggleBitIndex(${i})" onkeydown="if(event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); this.click(); }">${powers[i]}</div></td>`;
+                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0" onclick="toggleBitIndex(${i})" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">${powers[i]}</div></td>`;
 
                 // Exercise HTML (Toggles only, no kb hints) 
                 if (!isHidden) {
@@ -952,8 +952,17 @@
             document.getElementById('decBin-feedback').textContent = '';
         }
 
-        function resetCalc() { calcState = [0, 0, 0, 0, 0, 0, 0, 0]; for (let i = 0; i < 8; i++) { calcState[i] = 1; toggleBitIndex(i); } } // Trick to reset clean 
-
+        function resetCalc() {
+            calcState = [0, 0, 0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 8; i++) {
+                const cBit = document.getElementById(`calc-bit-${i}`);
+                const cBox = document.getElementById(`calc-box-${i}`);
+                const tog = document.getElementById(`tog-${i}`);
+                if (cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); }
+                if (tog) { tog.textContent = '0'; tog.classList.remove('active'); }
+            }
+            updateCalcResult();
+        }
         function updateCalcResult() {
             let sum = 0;
             let parts = [];
@@ -985,7 +994,7 @@
         // ========================================== 
         function newDecToBin() {
             const max = Math.pow(2, currentBits) - 1;
-            currentDecNumber = Math.floor(Math.random() * (max + 1));
+            currentDecNumber = Math.floor(Math.random() * max) + 1;
             document.getElementById('decBin-number').textContent = currentDecNumber;
             resetCalc(); decBinLocked = false;
             document.getElementById('decBin-feedback').textContent = '';
@@ -1022,7 +1031,7 @@
 
         function newBinToDec() {
             const max = Math.pow(2, currentBits) - 1;
-            currentBinString = Math.floor(Math.random() * (max + 1)).toString(2).padStart(currentBits, '0');
+            currentBinString = (Math.floor(Math.random() * max) + 1).toString(2).padStart(currentBits, '0');
             document.getElementById('binDec-binary').textContent = currentBinString;
             document.getElementById('binDec-input').value = '';
             document.getElementById('binDec-feedback').textContent = '';
