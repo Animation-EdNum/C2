@@ -921,11 +921,14 @@ body.dark .icon-action-btn {
              showSetupMode();
         }
 
-        function updateUI() {
+        function updateStats() {
             const available = state.availableParticipants.length;
             const drawn = state.drawnParticipants.length;
             const absent = state.absentParticipants.length;
             statsDisplay.textContent = `${available} disponible${available > 1 ? 's' : ''} · ${drawn} tiré${drawn > 1 ? 's' : ''} · ${absent} absent${absent > 1 ? 's' : ''}`;
+        }
+
+        function renderParticipantGrid() {
             participantItems.innerHTML = '';
             state.allParticipants.forEach(p => {
                 const cell = document.createElement('div'); cell.className = 'cell'; cell.textContent = p;
@@ -948,6 +951,9 @@ body.dark .icon-action-btn {
                 });
                 participantItems.appendChild(cell);
             });
+        }
+
+        function renderHistory() {
             historyBadges.innerHTML = '';
             if (state.drawHistory.length > 0) {
                 state.drawHistory.forEach(item => {
@@ -955,9 +961,19 @@ body.dark .icon-action-btn {
                     historyBadges.appendChild(badge);
                 });
             } else historyBadges.innerHTML = '<span class="history-placeholder">Aucun tirage</span>';
+        }
+
+        function updateControls() {
             const isDone = state.availableParticipants.length === 0 && state.drawnParticipants.length > 0;
             drawBtn.disabled = state.availableParticipants.length === 0;
             finishedMsg.style.display = isDone ? 'block' : 'none';
+        }
+
+        function updateUI() {
+            updateStats();
+            renderParticipantGrid();
+            renderHistory();
+            updateControls();
         }
         loadState();
     </script>
