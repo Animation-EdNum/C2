@@ -37,9 +37,6 @@ Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui 
 
 Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles utilisent la typographie **Outfit** pour une lisibilité optimale et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre.
 
-> [!NOTE]
-> La suite a subi un audit complet pour garantir des contrastes élevés et une navigation fluide pour tous.
-
 Les webapps disponibles sont :
 
 ### 1. Pixel Studio (`webapps/binaire_studio.html`)
