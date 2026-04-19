@@ -94,7 +94,14 @@
                 display: none !important;
             }
         }
-        body {
+
+        /* --- Accessibilité : Focus Rings --- */
+        :focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+    body {
             touch-action: manipulation;
         }
     </style>
@@ -766,7 +773,7 @@
 
         <!-- CALCULATRICE -->
         <div class="calc-section">
-            <div class="calc-header" onclick="toggleCalc()">
+            <div class="calc-header" tabindex="0" onclick="toggleCalc()" onkeydown="if(event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); this.click(); }">
                 <span>🧮 Mini-calculatrice binaire (Aide)</span>
                 <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
             </div>
@@ -907,7 +914,7 @@
                 // Calc HTML 
                 trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" onclick="toggleBitIndex(${i})">0</button></td>`;
                 trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7 - i}</sup></td>`;
-                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" onclick="toggleBitIndex(${i})">${powers[i]}</div></td>`;
+                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0" onclick="toggleBitIndex(${i})" onkeydown="if(event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); this.click(); }">${powers[i]}</div></td>`;
 
                 // Exercise HTML (Toggles only, no kb hints) 
                 if (!isHidden) {
@@ -1215,6 +1222,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>

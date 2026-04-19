@@ -9,6 +9,8 @@
     <meta property="og:description" content="Webapps et ressources pour l'éducation numérique…">
     <meta property="og:type" content="website">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <link rel="stylesheet" href="css/shared.css">
     <style>
         body>header,
@@ -119,6 +121,10 @@
         .icon-action-btn:hover {
             background-color: rgba(255, 255, 255, 0.4);
             transform: scale(1.1);
+        }
+
+        #installBtn {
+            display: none; /* Hidden by default */
         }
 
         header {
@@ -472,6 +478,14 @@
 
     <header>
         <div class="action-buttons">
+            <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
+            <button class="icon-action-btn" id="installBtn" title="Installer l'application" aria-label="Installer l'application">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
             <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
                 <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -497,7 +511,7 @@
 
     <main>
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Rechercher une application, un thème..."
+            <input type="text" id="searchInput" placeholder="Rechercher une application, un thème…"
                 onkeyup="searchApps()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round">
@@ -792,8 +806,57 @@
 
         // Chargement au démarrage
         loadRecents();
-    </script>
 
+        /* =========================================
+           PWA - SERVICE WORKER ET INSTALLATION
+           ========================================= */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Empêche l'affichage automatique de l'invite d'installation par Chrome mini-infobar
+            e.preventDefault();
+            // Stash l'événement pour pouvoir le déclencher plus tard.
+            deferredPrompt = e;
+            // Affiche le bouton d'installation
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Affiche le prompt
+                deferredPrompt.prompt();
+                // Attend que l'utilisateur réponde au prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('L\'utilisateur a accepté l\'installation de la PWA');
+                } else {
+                    console.log('L\'utilisateur a refusé l\'installation de la PWA');
+                }
+                // L'événement ne peut être utilisé qu'une seule fois, on le réinitialise
+                deferredPrompt = null;
+                // On cache le bouton
+                installBtn.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            // L'application a été installée
+            console.log('PWA a été installée');
+            installBtn.style.display = 'none';
+            deferredPrompt = null;
+        });
+    </script>
 <script src="js/swipe.js"></script>
 </body>
 
