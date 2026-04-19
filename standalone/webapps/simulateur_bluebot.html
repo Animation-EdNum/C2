@@ -9,6 +9,7 @@
     <meta property="og:type" content="website">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <style>
+        /* === shared.css inliné === */
 /* ============================================================
    shared.css — Styles communs à toutes les pages du projet C2
    ============================================================ */
@@ -25,6 +26,16 @@
     src: url('../fonts/jetbrains-mono.woff2') format('woff2');
     font-weight: 700;
     font-display: swap;
+}
+
+/* --- Accessibilité et Touch (Tablet-First) --- */
+body {
+    touch-action: manipulation; /* Élimine le délai de 300ms sur mobile */
+}
+
+button {
+    min-width: 44px;
+    min-height: 44px;
 }
 
 /* --- Animation d'entrée principale --- */
@@ -55,6 +66,8 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .icon-action-btn:hover {
@@ -85,14 +98,18 @@ footer a:hover {
     .no-print { display: none !important; }
 }
 
+/* --- Accessibilité et ancres --- */
+:target { scroll-margin-top: 5rem; }
 
-        /* --- Accessibilité : Focus Rings --- */
-        :focus-visible {
-            outline: 3px solid #667eea;
-            outline-offset: 2px;
-            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
-        }
-</style>
+/* --- Accessibilité : Focus Rings --- */
+:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+}
+
+        /* === Fin shared.css === */
+    </style>
 
     <style>
         body>header,
@@ -1164,13 +1181,19 @@ footer a:hover {
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
             grid.innerHTML = ''; grid.style.position = 'relative';
+            grid.setAttribute('role', 'grid');
+            grid.setAttribute('aria-label', `Grille ${rows}x${cols}`);
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
+                row.setAttribute('role', 'row');
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'bot-cell ' + ((r + c) % 2 === 0 ? 'cell-light' : 'cell-dark');
-                    if (obstacles.some(o => o.r === r && o.c === c)) cell.classList.add('obstacle');
+                    cell.setAttribute('role', 'gridcell');
+                    const isObstacle = obstacles.some(o => o.r === r && o.c === c);
+                    if (isObstacle) cell.classList.add('obstacle');
                     cell.dataset.row = r; cell.dataset.col = c;
+                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isObstacle ? 'Obstacle' : 'Vide'}`);
                     row.appendChild(cell);
                 }
                 grid.appendChild(row);
@@ -1179,7 +1202,7 @@ footer a:hover {
 
         function cellSize(containerId) { return document.querySelector('#' + containerId + ' .bot-cell')?.offsetWidth || 55; }
 
-        function placeOverlay(containerId, overlayId, row, col, content, extraClass) {
+        function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {
             let ov = document.getElementById(overlayId); const cs = cellSize(containerId);
             if (!ov) {
                 ov = document.createElement('div'); ov.id = overlayId; ov.className = extraClass || '';
@@ -1187,22 +1210,28 @@ footer a:hover {
             }
             ov.innerHTML = content; ov.style.width = cs + 'px'; ov.style.height = cs + 'px';
             ov.style.top = (row * cs) + 'px'; ov.style.left = (col * cs) + 'px';
+            ov.setAttribute('role', 'img');
+            if (ariaLabel) ov.setAttribute('aria-label', ariaLabel);
         }
 
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
             const deg = dirIndex * 90;
+            const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
+            const dirStr = directions[dirIndex % 4] || 'Haut';
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${ROBOT_BODY_SVG}</div>`;
-            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay');
+            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
         }
 
         function renderGhost(containerId, row, col, dirIndex) {
             const deg = dirIndex * 90;
+            const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
+            const dirStr = directions[dirIndex % 4] || 'Haut';
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg); box-shadow: none;">${ROBOT_BODY_SVG}</div>`;
-            placeOverlay(containerId, containerId + '-ghost', row, col, html, 'ghost-overlay');
+            placeOverlay(containerId, containerId + '-ghost', row, col, html, 'ghost-overlay', `Fantôme du robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
         }
 
         function renderTarget(containerId, overlayId, row, col) {
-            placeOverlay(containerId, overlayId, row, col, '⭐', 'target-overlay');
+            placeOverlay(containerId, overlayId, row, col, '⭐', 'target-overlay', `Cible en ligne ${row + 1}, colonne ${col + 1}`);
         }
 
         function markVisited(containerId, row, col) {
@@ -1588,8 +1617,38 @@ footer a:hover {
         // Init
         buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
         resetSimulatorPosition();
+
+        // ==========================================
+        // SWIPE (TOUCH) POUR ONGLETS
+        // ==========================================
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.querySelector('.container').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.querySelector('.container').addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+                if (dx < 0 && document.getElementById('view-simulator').classList.contains('active')) {
+                    const fakeEvent = { target: document.querySelectorAll('.tab-btn')[1] };
+                    switchTab(fakeEvent, 'challenge');
+                } else if (dx > 0 && document.getElementById('view-challenge').classList.contains('active')) {
+                    const fakeEvent = { target: document.querySelectorAll('.tab-btn')[0] };
+                    switchTab(fakeEvent, 'simulator');
+                }
+            }
+        }, { passive: true });
+
     </script>
     <script>
+        /* === theme.js inliné === */
 /**
  * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
  *
@@ -1638,7 +1697,7 @@ footer a:hover {
     }
 })();
 
-</script>
+    </script>
 </body>
 
 </html>
