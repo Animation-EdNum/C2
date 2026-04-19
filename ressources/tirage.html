@@ -1113,15 +1113,14 @@
         // ==========================================
         // MISE À JOUR DE L'INTERFACE
         // ==========================================
-        function updateUI() {
-            const total = state.allParticipants.length;
+        function updateStats() {
             const drawn = state.drawnParticipants.length;
             const absent = state.absentParticipants.length;
             const available = state.availableParticipants.length;
-
             statsDisplay.textContent = `${available} disponible${available > 1 ? 's' : ''} · ${drawn} tiré${drawn > 1 ? 's' : ''} · ${absent} absent${absent > 1 ? 's' : ''}`;
+        }
 
-            // Grille des participants
+        function renderParticipantGrid() {
             participantItems.innerHTML = '';
             state.allParticipants.forEach(p => {
                 const cell = document.createElement('div');
@@ -1134,33 +1133,30 @@
                     cell.classList.add('absent');
                 }
 
-                // Cycle de clic : Disponible → Absent → Tiré → Disponible
                 cell.addEventListener('click', () => {
                     if (isDrawing) return;
 
                     if (state.absentParticipants.includes(p)) {
-                        // Absent → Tiré manuellement
                         state.absentParticipants = state.absentParticipants.filter(x => x !== p);
                         state.availableParticipants = state.availableParticipants.filter(x => x !== p);
                         if (!state.drawnParticipants.includes(p)) state.drawnParticipants.push(p);
                     } else if (state.drawnParticipants.includes(p)) {
-                        // Tiré → Disponible
                         state.drawnParticipants = state.drawnParticipants.filter(x => x !== p);
                         if (!state.availableParticipants.includes(p)) state.availableParticipants.push(p);
                     } else {
-                        // Disponible → Absent
                         state.availableParticipants = state.availableParticipants.filter(x => x !== p);
                         if (!state.absentParticipants.includes(p)) state.absentParticipants.push(p);
                     }
 
                     saveState();
-                    updateUI(); // centralise drawBtn.disabled et finishedMsg
+                    updateUI();
                 });
 
                 participantItems.appendChild(cell);
             });
+        }
 
-            // Historique (badges)
+        function renderHistory() {
             historyBadges.innerHTML = '';
             if (state.drawHistory.length > 0) {
                 state.drawHistory.forEach((item) => {
@@ -1172,11 +1168,19 @@
             } else {
                 historyBadges.innerHTML = '<span class="history-placeholder">Aucun tirage</span>';
             }
+        }
 
-            // Centralisation : état du bouton Tirer et message de fin
+        function updateControls() {
             const isDone = state.availableParticipants.length === 0 && state.drawnParticipants.length > 0;
             drawBtn.disabled = state.availableParticipants.length === 0;
             finishedMsg.style.display = isDone ? 'block' : 'none';
+        }
+
+        function updateUI() {
+            updateStats();
+            renderParticipantGrid();
+            renderHistory();
+            updateControls();
         }
 
         // ==========================================
