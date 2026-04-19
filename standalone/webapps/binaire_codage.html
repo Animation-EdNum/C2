@@ -784,7 +784,6 @@
                 </div>
                 <div class="btn-row">
                     <button class="btn btn-check" id="decBin-check-btn" onclick="checkDecToBin()">Vérifier</button>
-                    <button class="btn btn-new" id="decBin-new-btn" onclick="newDecToBin()">Nouveau</button>
                 </div>
                 <div id="decBin-feedback" class="feedback"></div>
             </div>
@@ -882,6 +881,8 @@
         let globalStreak = 0;
         let globalBest = 0;
         let helpTimer = null;
+            let decBinMistakes = 0;
+            let binDecMistakes = 0;
 
         // ========================================== 
         // UI GENERATION (Adaptative Bits) 
@@ -988,6 +989,7 @@
             document.getElementById('decBin-number').textContent = currentDecNumber;
             resetCalc(); decBinLocked = false;
             document.getElementById('decBin-feedback').textContent = '';
+            decBinMistakes = 0;
             resetHelpTimer();
         }
 
@@ -1006,9 +1008,14 @@
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
                 decBinLocked = true; setTimeout(newDecToBin, 1500);
             } else {
+                decBinMistakes++;
                 playSound('error'); updateGlobalScore(false);
                 fb.className = 'feedback error';
-                fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.<br>Il fallait faire : <strong>${explainBinary(expectedBin)}</strong>.`;
+                if (decBinMistakes === 1) {
+                    fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.`;
+                } else {
+                    fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.<br>Il fallait faire : <strong>${explainBinary(expectedBin)}</strong>.`;
+                }
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
             }
         }
@@ -1019,7 +1026,9 @@
             document.getElementById('binDec-binary').textContent = currentBinString;
             document.getElementById('binDec-input').value = '';
             document.getElementById('binDec-feedback').textContent = '';
-            binDecLocked = false; resetHelpTimer();
+            binDecLocked = false;
+            binDecMistakes = 0;
+            resetHelpTimer();
         }
 
         function checkBinToDec() {
@@ -1040,8 +1049,14 @@
                 binDecLocked = true;
                 setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500); // Auto-focus 
             } else {
+                binDecMistakes++;
                 playSound('error'); updateGlobalScore(false);
-                fb.className = 'feedback error'; fb.innerHTML = `❌ Faux. L'ordinateur lit : <strong>${explainBinary(currentBinString)}</strong>.`;
+                fb.className = 'feedback error';
+                if (binDecMistakes === 1) {
+                    fb.innerHTML = `❌ Faux. Essaie encore !`;
+                } else {
+                    fb.innerHTML = `❌ Faux. L'ordinateur lit : <strong>${explainBinary(currentBinString)}</strong>.`;
+                }
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
             }
         }
