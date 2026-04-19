@@ -85,7 +85,30 @@ footer a:hover {
     .no-print { display: none !important; }
 }
 
-    </style>
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Impression --- */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* --- Accessibilité : Focus Rings --- */
+        :focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+</style>
     <style>
         body > header, body > .container {
             animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -270,17 +293,21 @@ footer a:hover {
         <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile (8 bits)</button>
     </div>
 
-    <!-- CALCULATRICE -->
-    <div class="calc-section">
-        <div class="calc-header" onclick="toggleCalc()">
-            <span>🧮 Mini-calculatrice binaire (Aide)</span>
-            <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
-        </div>
-        <div class="calc-body" id="calc-body">
-            <div class="calc-table-wrapper">
-                <table class="calc-table" id="calc-table">
-                    <!-- Généré en JS -->
-                </table>
+        <!-- CALCULATRICE -->
+        <div class="calc-section">
+            <div class="calc-header" tabindex="0" onclick="toggleCalc()" onkeydown="if(event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); this.click(); }">
+                <span>🧮 Mini-calculatrice binaire (Aide)</span>
+                <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
+            </div>
+            <div class="calc-body" id="calc-body">
+                <div class="calc-table-wrapper">
+                    <table class="calc-table" id="calc-table">
+                        <!-- Généré en JS -->
+                    </table>
+                </div>
+                <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
+                <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;"
+                        onclick="resetCalc()">Remise à zéro</button></div>
             </div>
             <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
             <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;" onclick="resetCalc()">Remise à zéro</button></div>
@@ -319,95 +346,88 @@ footer a:hover {
         </div>
     </div>
 
-    <div class="score-bar">
-        <div class="score-item"><div class="score-label">Victoires</div><div class="score-value" id="global-correct">0</div></div>
-        <div class="score-item"><div class="score-label">Série 🔥</div><div class="score-value" id="global-streak">0</div></div>
-        <div class="score-item"><div class="score-label">Meilleure</div><div class="score-value" id="global-best">0</div></div>
-    </div>
-</div>
+    <script>
+        // ========================================== 
+        // AUDIO ENGINE (Web Audio API) 
+        // ========================================== 
+        let audioCtx = null;
 
-<script>
-// ==========================================
-// AUDIO ENGINE (Web Audio API)
-// ==========================================
-let audioCtx = null;
+        function playSound(type) {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
 
-function playSound(type) {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
+            const t = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
-    const t = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+            if (type === 'click') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
+                gain.gain.setValueAtTime(0.1, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+                osc.start();
+                osc.stop(t + 0.05);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, t);
+                osc.frequency.setValueAtTime(659.25, t + 0.1);
+                osc.frequency.setValueAtTime(783.99, t + 0.2);
+                gain.gain.setValueAtTime(0.1, t);
+                gain.gain.linearRampToValueAtTime(0, t + 0.4);
+                osc.start();
+                osc.stop(t + 0.4);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, t);
+                gain.gain.setValueAtTime(0.15, t);
+                gain.gain.linearRampToValueAtTime(0, t + 0.3);
+                osc.start();
+                osc.stop(t + 0.3);
+            }
+        }
 
-    if (type === 'click') {
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-        osc.start();
-        osc.stop(t + 0.05);
-    } else if (type === 'success') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, t);
-        osc.frequency.setValueAtTime(659.25, t + 0.1);
-        osc.frequency.setValueAtTime(783.99, t + 0.2);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.4);
-        osc.start();
-        osc.stop(t + 0.4);
-    } else if (type === 'error') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, t);
-        gain.gain.setValueAtTime(0.15, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.3);
-        osc.start();
-        osc.stop(t + 0.3);
-    }
-}
+        // ========================================== 
+        // ETAT & CONFIG 
+        // ========================================== 
+        const powers = [128, 64, 32, 16, 8, 4, 2, 1];
 
-// ==========================================
-// ETAT & CONFIG
-// ==========================================
-const powers =[128, 64, 32, 16, 8, 4, 2, 1];
+        let currentBits = 7; // Medium default 
+        let calcState = [0, 0, 0, 0, 0, 0, 0, 0]; // 0=MSB(128), 7=LSB(1) 
+        let decBinLocked = false;
+        let binDecLocked = false;
+        let currentDecNumber = null;
+        let currentBinString = null;
+        let globalCorrect = 0;
+        let globalStreak = 0;
+        let globalBest = 0;
+        let helpTimer = null;
 
-let currentBits = 7; // Medium default
-let calcState =[0,0,0,0,0,0,0,0]; // 0=MSB(128), 7=LSB(1)
-let decBinLocked = false;
-let binDecLocked = false;
-let currentDecNumber = null;
-let currentBinString = null;
-let globalCorrect = 0;
-let globalStreak = 0;
-let globalBest = 0;
-let helpTimer = null;
+        // ========================================== 
+        // UI GENERATION (Adaptative Bits) 
+        // ========================================== 
+        function buildUI() {
+            // Calc Table 
+            let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>';
+            let togglesHtml = '';
 
-// ==========================================
-// UI GENERATION (Adaptative Bits)
-// ==========================================
-function buildUI() {
-    // Calc Table
-    let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>';
-    let togglesHtml = '';
+            for (let i = 0; i < 8; i++) {
+                let isHidden = (8 - i) > currentBits ? 'hidden-col' : '';
 
-    for(let i=0; i<8; i++) {
-        let isHidden = (8 - i) > currentBits ? 'hidden-col' : '';
+                // Calc HTML 
+                trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" onclick="toggleBitIndex(${i})">0</button></td>`;
+                trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7 - i}</sup></td>`;
+                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0" onclick="toggleBitIndex(${i})" onkeydown="if(event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); this.click(); }">${powers[i]}</div></td>`;
 
-        // Calc HTML
-        trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" onclick="toggleBitIndex(${i})">0</button></td>`;
-        trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7-i}</sup></td>`;
-        trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" onclick="toggleBitIndex(${i})">${powers[i]}</div></td>`;
-
-        // Exercise HTML (Toggles only, no kb hints)
-        if(!isHidden) {
-            togglesHtml += `
+                // Exercise HTML (Toggles only, no kb hints) 
+                if (!isHidden) {
+                    togglesHtml += ` 
             <div class="bit-toggle-container"> 
                 <button class="bit-toggle" id="tog-${i}" onclick="toggleBitIndex(${i})">0</button> 
             </div>`;

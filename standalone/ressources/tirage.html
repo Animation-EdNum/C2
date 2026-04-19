@@ -86,7 +86,47 @@ footer a:hover {
     .no-print { display: none !important; }
 }
 
-    </style>
+        .action-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .icon-action-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #64748b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .icon-action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: scale(1.05);
+        }
+
+        body.dark .icon-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+
+        /* --- Accessibilité : Focus Rings --- */
+        :focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+</style>
     <style>
         body>.action-buttons,
         body>.container {
@@ -881,7 +921,7 @@ footer a:hover {
                     <div class="column-panel">
                         <div class="section-header">
                             Historique
-                            <button class="icon-btn" id="copyBtn" title="Copier l'historique">
+                            <button class="icon-btn" id="copyBtn" title="Copier l'historique" aria-label="Copier l'historique">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -1188,18 +1228,16 @@ footer a:hover {
             showSetupMode();
         }
 
-        // ==========================================
-        // MISE À JOUR DE L'INTERFACE
-        // ==========================================
-        function updateUI() {
-            const total = state.allParticipants.length;
+        function updateStats() {
+            const available = state.availableParticipants.length;
             const drawn = state.drawnParticipants.length;
             const absent = state.absentParticipants.length;
             const available = state.availableParticipants.length;
 
             statsDisplay.textContent = `${available} disponible${available > 1 ? 's' : ''} · ${drawn} tiré${drawn > 1 ? 's' : ''} · ${absent} absent${absent > 1 ? 's' : ''}`;
+        }
 
-            // Grille des participants
+        function renderParticipantGrid() {
             participantItems.innerHTML = '';
             state.allParticipants.forEach(p => {
                 const cell = document.createElement('div');
@@ -1237,8 +1275,9 @@ footer a:hover {
 
                 participantItems.appendChild(cell);
             });
+        }
 
-            // Historique (badges)
+        function renderHistory() {
             historyBadges.innerHTML = '';
             if (state.drawHistory.length > 0) {
                 state.drawHistory.forEach((item) => {
@@ -1247,19 +1286,21 @@ footer a:hover {
                     badge.textContent = item;
                     historyBadges.appendChild(badge);
                 });
-            } else {
-                historyBadges.innerHTML = '<span class="history-placeholder">Aucun tirage</span>';
-            }
+            } else historyBadges.innerHTML = '<span class="history-placeholder">Aucun tirage</span>';
+        }
 
-            // Centralisation : état du bouton Tirer et message de fin
+        function updateControls() {
             const isDone = state.availableParticipants.length === 0 && state.drawnParticipants.length > 0;
             drawBtn.disabled = state.availableParticipants.length === 0;
             finishedMsg.style.display = isDone ? 'block' : 'none';
         }
 
-        // ==========================================
-        // INITIALISATION AU CHARGEMENT
-        // ==========================================
+        function updateUI() {
+            updateStats();
+            renderParticipantGrid();
+            renderHistory();
+            updateControls();
+        }
         loadState();
     </script>
     <script>
