@@ -8,30 +8,89 @@
     <meta property="og:title" content="Simulateur Blue-Bot">
     <meta property="og:type" content="website">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <style>
+/* ============================================================
+   shared.css — Styles communs à toutes les pages du projet C2
+   ============================================================ */
+
+/* --- Typographie locale (hors ligne) --- */
+@font-face {
+    font-family: 'Outfit';
+    src: url('../fonts/outfit.woff2') format('woff2');
+    font-weight: 400 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../fonts/jetbrains-mono.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* --- Animation d'entrée principale --- */
+@keyframes fadeInCascade {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Boutons d'action (haut droite) --- */
+.action-buttons {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+.icon-action-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.icon-action-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+}
+
+/* --- Footer commun --- */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* --- Impression --- */
+@media print {
+    .no-print { display: none !important; }
+}
+
+</style>
 
     <style>
-        @font-face {
-            font-family: 'Outfit';
-            src: url('../fonts/outfit.woff2') format('woff2');
-            font-weight: 400 700;
-            font-display: swap;
-        }
-
         body>header,
         body>.container {
             animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes fadeInCascade {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         :root {
@@ -98,45 +157,6 @@
             min-height: 100vh;
             padding: 15px;
             color: var(--text-main);
-        }
-
-        .action-buttons {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .icon-action-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #fff;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 18px;
-        }
-
-        body.dark .icon-action-btn {
-            background: rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .icon-action-btn:hover {
-            background-color: rgba(255, 255, 255, 0.4);
-            transform: scale(1.1);
-        }
-
-        .icon-action-btn:active {
-            transform: scale(0.95);
         }
 
         .container {
@@ -816,29 +836,6 @@
             z-index: 9999;
         }
 
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        footer a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-        }
-
         @media (max-width: 600px) {
             .bot-cell {
                 width: 44px;
@@ -888,6 +885,13 @@
 
 <body>
     <div class="action-buttons">
+        <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </a>
         <button class="icon-action-btn" id="speedToggleBtn" title="Vitesse (Tortue/Lièvre)"
             aria-label="Changer la vitesse">
             <svg id="icon-speed-1x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1023,40 +1027,6 @@
     </footer>
 
     <script>
-        /**
-         * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
-         */
-        (function () {
-            const btn     = document.getElementById('themeToggleBtn');
-            const iconSun = document.getElementById('icon-sun');
-            const iconMoon= document.getElementById('icon-moon');
-
-            function setTheme(theme) {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark');
-                } else {
-                    document.body.classList.remove('dark');
-                }
-                localStorage.setItem('global_theme', theme);
-
-                if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
-                if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
-
-                if (typeof window.__onThemeChange === 'function') {
-                    window.__onThemeChange(theme);
-                }
-            }
-
-            const saved = localStorage.getItem('global_theme') || 'light';
-            setTheme(saved);
-
-            if (btn) {
-                btn.addEventListener('click', function () {
-                    setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
-                });
-            }
-        })();
-
         /* ========================================== 
            AUDIO ENGINE 
            ========================================== */
@@ -1262,6 +1232,7 @@
             simState.obstacles = [];
             for (let r = 0; r < GRID_ROWS; r++) {
                 for (let c = 0; c < GRID_COLS; c++) {
+                    // Jamais de mur sur la case de départ par défaut (5,0) ni sous le robot actuel
                     if (r === 5 && c === 0) continue;
                     if (r === simState.robotRow && c === simState.robotCol) continue;
                     if (Math.random() < 0.15) simState.obstacles.push({ r, c });
@@ -1331,11 +1302,12 @@
             if (simState.running || simState.program.length === 0) return;
             playSound('click'); simState.running = true; simState.failed = false; toggleCmdButtons(true);
 
+            // Nouvelle origine du ghost à l'endroit où le robot démarre
             simState.startRow = simState.robotRow; simState.startCol = simState.robotCol; simState.startDir = simState.robotDir;
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
 
             clearVisited('sim-grid');
-            markVisited('sim-grid', simState.robotRow, simState.robotCol); 
+            markVisited('sim-grid', simState.robotRow, simState.robotCol); // Colorie case de départ
 
             for (let i = 0; i < simState.program.length; i++) {
                 simState.stepIndex = i; renderProgram();
@@ -1387,7 +1359,7 @@
 
             while (queue.length > 0) {
                 const curr = queue.shift();
-                if (curr.r === targetR && curr.c === targetC) return curr.path; 
+                if (curr.r === targetR && curr.c === targetC) return curr.path; // Stop exactement sur l'étoile
 
                 for (let cmd of cmds) {
                     const res = moveRobot({ robotRow: curr.r, robotCol: curr.c, robotDir: curr.d, obstacles }, cmd);
@@ -1508,8 +1480,8 @@
 
             buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('chal-grid', 'chal-robot', chal.startR, chal.startC, chal.startD);
-            renderGhost('chal-grid', chal.startR, chal.startC, chal.startD); 
-            markVisited('chal-grid', chal.startR, chal.startC); 
+            renderGhost('chal-grid', chal.startR, chal.startC, chal.startD); // Fantôme position de départ
+            markVisited('chal-grid', chal.startR, chal.startC); // Colorie la case de départ
             renderTarget('chal-grid', 'chal-target', chal.targetR, chal.targetC);
             renderChallengeOptions();
         }
@@ -1532,6 +1504,7 @@
 
             const option = chalState.options[idx]; const el = opts[idx];
 
+            // Reset robot to start for this attempt
             let startR = chalState.robotRow, startC = chalState.robotCol, startD = chalState.robotDir;
             let r = startR, c = startC, d = startD;
 
@@ -1609,6 +1582,56 @@
         buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
         resetSimulatorPosition();
     </script>
+    <script>
+/**
+ * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
+ *
+ * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
+ * Prérequis dans le HTML :
+ *   - Un bouton  id="themeToggleBtn"
+ *   - Un svg     id="icon-sun"  (affiché en mode sombre)
+ *   - Un svg     id="icon-moon" (affiché en mode clair)
+ *
+ * Persistance : localStorage('global_theme') = 'light' | 'dark'
+ *
+ * Note : certaines pages (routage_reseau) peuvent définir un callback
+ * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
+ */
+
+(function () {
+    const btn     = document.getElementById('themeToggleBtn');
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon= document.getElementById('icon-moon');
+
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+        localStorage.setItem('global_theme', theme);
+
+        if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
+        if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
+
+        // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
+        if (typeof window.__onThemeChange === 'function') {
+            window.__onThemeChange(theme);
+        }
+    }
+
+    // Lecture du thème sauvegardé (défaut : clair)
+    const saved = localStorage.getItem('global_theme') || 'light';
+    setTheme(saved);
+
+    if (btn) {
+        btn.addEventListener('click', function () {
+            setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+        });
+    }
+})();
+
+</script>
 </body>
 
 </html>
