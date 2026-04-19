@@ -59,7 +59,14 @@
             border-color: rgba(255, 255, 255, 0.1);
             color: #f8fafc;
         }
-    </style>
+
+        /* --- Accessibilité : Focus Rings --- */
+        :focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+</style>
     <style>
         body>.action-buttons,
         body>.container {
@@ -797,7 +804,7 @@
                     <div class="column-panel">
                         <div class="section-header">
                             Historique
-                            <button class="icon-btn" id="copyBtn" title="Copier l'historique">
+                            <button class="icon-btn" id="copyBtn" title="Copier l'historique" aria-label="Copier l'historique">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -1030,11 +1037,14 @@
             showSetupMode();
         }
 
-        function updateUI() {
+        function updateStats() {
             const available = state.availableParticipants.length;
             const drawn = state.drawnParticipants.length;
             const absent = state.absentParticipants.length;
             statsDisplay.textContent = `${available} disponible${available > 1 ? 's' : ''} · ${drawn} tiré${drawn > 1 ? 's' : ''} · ${absent} absent${absent > 1 ? 's' : ''}`;
+        }
+
+        function renderParticipantGrid() {
             participantItems.innerHTML = '';
             state.allParticipants.forEach(p => {
                 const cell = document.createElement('div'); cell.className = 'cell'; cell.textContent = p;
@@ -1057,6 +1067,9 @@
                 });
                 participantItems.appendChild(cell);
             });
+        }
+
+        function renderHistory() {
             historyBadges.innerHTML = '';
             if (state.drawHistory.length > 0) {
                 state.drawHistory.forEach(item => {
@@ -1064,9 +1077,19 @@
                     historyBadges.appendChild(badge);
                 });
             } else historyBadges.innerHTML = '<span class="history-placeholder">Aucun tirage</span>';
+        }
+
+        function updateControls() {
             const isDone = state.availableParticipants.length === 0 && state.drawnParticipants.length > 0;
             drawBtn.disabled = state.availableParticipants.length === 0;
             finishedMsg.style.display = isDone ? 'block' : 'none';
+        }
+
+        function updateUI() {
+            updateStats();
+            renderParticipantGrid();
+            renderHistory();
+            updateControls();
         }
         loadState();
     </script>

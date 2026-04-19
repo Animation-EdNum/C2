@@ -56,7 +56,7 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 50%;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,7 +92,14 @@
                 display: none !important;
             }
         }
-    </style>
+
+        /* --- Accessibilité : Focus Rings --- */
+        :focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+</style>
     <style>
         body>header,
         body>.container {
@@ -264,7 +271,7 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .nav-btn:hover {
@@ -375,7 +382,7 @@
             letter-spacing: 6px;
             text-align: left;
             outline: none;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             color: var(--text-main);
         }
 
@@ -525,7 +532,7 @@
             border: none;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             font-size: 14px;
             display: flex;
             align-items: center;
@@ -654,7 +661,7 @@
 <body>
     <div class="action-buttons">
 
-        <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
+        <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
             <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="5"></circle>
@@ -957,6 +964,7 @@
                 playSound('success');
                 addToGallery(currentPattern.data, currentPattern.name);
                 showToast('🎉 Bravo ! « ' + currentPattern.name + ' » décodé !');
+                launchConfetti();
 
                 // Après 1.2 secondes, nouvelle image automatiquement
                 setTimeout(() => {
@@ -1042,6 +1050,7 @@
                         playSound('success');
                         addToGallery(currentPattern.data, currentPattern.name);
                         showToast('🎉 Bravo ! « ' + currentPattern.name + ' » encodé !');
+                        launchConfetti();
                         setTimeout(() => {
                             initEncode();
                         }, 1200);
@@ -1205,7 +1214,68 @@
         }
 
         // ==========================================
-        // INITIALISATION
+        /**
+ * confetti.js — Moteur de confettis partagé
+ *
+ * Usage : Appeler launchConfetti()
+ * Nécessite un <canvas id="confetti-canvas"></canvas> dans le HTML, ou il sera créé dynamiquement.
+ */
+function launchConfetti() {
+    let cvs = document.getElementById('confetti-canvas');
+    if (!cvs) {
+        cvs = document.createElement('canvas');
+        cvs.id = 'confetti-canvas';
+        cvs.style.position = 'fixed';
+        cvs.style.top = '0';
+        cvs.style.left = '0';
+        cvs.style.width = '100%';
+        cvs.style.height = '100%';
+        cvs.style.pointerEvents = 'none';
+        cvs.style.zIndex = '9999';
+        document.body.appendChild(cvs);
+    }
+    const ctx = cvs.getContext('2d');
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+    let parts = [];
+    let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
+    for (let i = 0; i < 80; i++) {
+        parts.push({
+            x: Math.random() * cvs.width,
+            y: -50,
+            vx: (Math.random() - 0.5) * 6,
+            vy: Math.random() * 4 + 2,
+            c: cols[Math.floor(Math.random() * cols.length)],
+            s: Math.random() * 6 + 3,
+            rot: 0,
+            rotSpeed: (Math.random() - 0.5) * 10
+        });
+    }
+    function anim() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        let alive = false;
+        parts.forEach(p => {
+            if (p.y > cvs.height) return;
+            alive = true;
+            p.x += p.vx;
+            p.vy += 0.1;
+            p.y += p.vy;
+            p.rot += p.rotSpeed;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.c;
+            ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+            ctx.restore();
+        });
+        if (alive) requestAnimationFrame(anim);
+        else ctx.clearRect(0, 0, cvs.width, cvs.height);
+    }
+    anim();
+}
+
+
+// INITIALISATION
         // ==========================================
         initDecode();
 

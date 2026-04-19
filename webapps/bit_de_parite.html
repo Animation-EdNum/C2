@@ -218,7 +218,7 @@
             color: var(--text-muted);
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .tab-btn.active {
@@ -245,7 +245,7 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .diff-btn.active {
@@ -445,7 +445,7 @@
         /* Magic Trick Animations */
         .cell.magic-clickable {
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .cell.magic-clickable:hover {
@@ -496,7 +496,7 @@
             padding: 15px;
             border-radius: 12px;
             border: 1px solid #bfdbfe;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         /* Validation Colors */
@@ -545,7 +545,7 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .btn:active:not(:disabled) {
@@ -635,17 +635,7 @@
             font-family: monospace;
         }
 
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        @media print {
+@media print {
             .no-print {
                 display: none !important;
             }
@@ -694,9 +684,7 @@
             </svg>
         </button>
     </div>
-    <canvas id="confetti-canvas"></canvas>
-
-    <div class="container">
+<div class="container">
         <h1>🔢 Le Bit de Parité</h1>
         <p class="subtitle">Comprends comment les ordinateurs vérifient l'intégrité des données.</p>
 
@@ -1122,52 +1110,12 @@
         // ========================================== 
         // CONFETTI 
         // ========================================== 
-        function launchConfetti() {
-            const cvs = document.getElementById('confetti-canvas');
-            const ctx = cvs.getContext('2d');
-            cvs.width = window.innerWidth;
-            cvs.height = window.innerHeight;
-            let parts = [];
-            let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
-            for (let i = 0; i < 80; i++) {
-                parts.push({
-                    x: Math.random() * cvs.width,
-                    y: -50,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: Math.random() * 4 + 2,
-                    c: cols[Math.floor(Math.random() * cols.length)],
-                    s: Math.random() * 6 + 3,
-                    rot: 0,
-                    rotSpeed: (Math.random() - 0.5) * 10
-                });
-            }
-            function anim() {
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
-                let alive = false;
-                parts.forEach(p => {
-                    if (p.y > cvs.height) return;
-                    alive = true;
-                    p.x += p.vx;
-                    p.vy += 0.1;
-                    p.y += p.vy;
-                    p.rot += p.rotSpeed;
-                    ctx.save();
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rot * Math.PI / 180);
-                    ctx.fillStyle = p.c;
-                    ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
-                    ctx.restore();
-                });
-                if (alive) requestAnimationFrame(anim);
-            }
-            anim();
-        }
-
-        // INIT 
+// INIT
         initTrainMode();
 
         // THEME — géré par ../js/theme.js
     </script>
+    <script src="../js/confetti.js"></script>
     <script src="../js/theme.js"></script>
 </body>
 
