@@ -1099,16 +1099,17 @@
             }
         }
 
-        function cellSize(containerId) { return document.querySelector('#' + containerId + ' .bot-cell')?.offsetWidth || 55; }
-
         function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {
-            let ov = document.getElementById(overlayId); const cs = cellSize(containerId);
+            let ov = document.getElementById(overlayId);
             if (!ov) {
                 ov = document.createElement('div'); ov.id = overlayId; ov.className = extraClass || '';
                 document.getElementById(containerId).appendChild(ov);
             }
-            ov.innerHTML = content; ov.style.width = cs + 'px'; ov.style.height = cs + 'px';
-            ov.style.top = (row * cs) + 'px'; ov.style.left = (col * cs) + 'px';
+            ov.innerHTML = content;
+            ov.style.width = (100 / GRID_COLS) + '%';
+            ov.style.height = (100 / GRID_ROWS) + '%';
+            ov.style.top = (row * (100 / GRID_ROWS)) + '%';
+            ov.style.left = (col * (100 / GRID_COLS)) + '%';
             ov.setAttribute('role', 'img');
             if (ariaLabel) ov.setAttribute('aria-label', ariaLabel);
         }
