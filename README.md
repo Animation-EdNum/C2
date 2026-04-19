@@ -51,6 +51,7 @@ Les webapps disponibles sont :
   - Exportation technique de l'œuvre finale en format image PNG.
 
 ### 2. Mots secrets (`webapps/binaire_message.html`)
+![Mots secrets](screenshots/binaire_message.png)
 - **À quoi sert l'outil :** Un jeu interactif en deux parties pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire avec un camarade.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)**
 - **Demi-cycle concerné :** 7-8H
@@ -71,6 +72,7 @@ Les webapps disponibles sont :
   - Validateur d'optimalité qui compare le chemin de l'élève avec le chemin mathématiquement le plus court.
 
 ### 4. Codage binaire (`webapps/binaire_codage.html`)
+![Codage binaire](screenshots/binaire_codage.png)
 - **À quoi sert l'outil :** Une plateforme d'entraînement intensif au passage des nombres entiers (décimal) vers leur écriture en binaire, et inversément.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 1)**
 - **Demi-cycle concerné :** 7-8H
@@ -80,6 +82,7 @@ Les webapps disponibles sont :
   - Validation ultra-rapide au clavier (touche "Entrée") pour favoriser l'automatisme.
 
 ### 5. Bit de Parité (`webapps/bit_de_parite.html`)
+![Bit de Parité](screenshots/bit_de_parite.png)
 - **À quoi sert l'outil :** Un exercice ludique abordant la notion de parité afin de comprendre comment un ordinateur peut s'assurer qu'un message n'a pas été altéré lors d'une transmission.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs lors de la transmission de données ?**
 - **Demi-cycle concerné :** 7-8H
