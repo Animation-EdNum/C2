@@ -860,7 +860,8 @@
 
             <div class="exercise-card">
 
-                <div style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px;">
+                <div style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-outline btn-small" onclick="placeRandomSimTarget()">⭐ Placer une étoile</button>
                     <button class="btn btn-outline btn-small" onclick="randomizeSimWalls()">🧱 Placer murs
                         aléatoires</button>
                     <button class="btn btn-outline btn-small" onclick="clearSimWalls()">🧹 Nettoyer grille</button>
@@ -1019,7 +1020,7 @@
 
         let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
-            running: false, stepIndex: -1, obstacles: [], failed: false
+            running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null
         };
 
         let chalState = {
@@ -1163,17 +1164,41 @@
             simState.obstacles = [];
             for (let r = 0; r < GRID_ROWS; r++) {
                 for (let c = 0; c < GRID_COLS; c++) {
-                    // Jamais de mur sur la case de départ par défaut (5,0) ni sous le robot actuel
+                    // Jamais de mur sur la case de départ par défaut (5,0) ni sous le robot actuel ni sur la cible
                     if (r === 5 && c === 0) continue;
                     if (r === simState.robotRow && c === simState.robotCol) continue;
+                    if (simState.targetRow !== null && r === simState.targetRow && c === simState.targetCol) continue;
                     if (Math.random() < 0.15) simState.obstacles.push({ r, c });
                 }
             }
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
+            if (simState.targetRow !== null && simState.targetCol !== null) {
+                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+            }
             clearVisited('sim-grid');
             markVisited('sim-grid', simState.robotRow, simState.robotCol);
+        }
+
+        function placeRandomSimTarget() {
+            if (simState.running) return;
+            playSound('click');
+
+            let attempts = 0;
+            let targetR, targetC;
+
+            do {
+                targetR = Math.floor(Math.random() * GRID_ROWS);
+                targetC = Math.floor(Math.random() * GRID_COLS);
+                attempts++;
+            } while (attempts < 100 && ((targetR === 5 && targetC === 0) || simState.obstacles.some(o => o.r === targetR && o.c === targetC)));
+
+            if (attempts < 100) {
+                simState.targetRow = targetR;
+                simState.targetCol = targetC;
+                renderTarget('sim-grid', 'sim-target', targetR, targetC);
+            }
         }
 
         function clearSimWalls() {
@@ -1183,6 +1208,9 @@
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
+            if (simState.targetRow !== null && simState.targetCol !== null) {
+                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+            }
         }
 
         function resetSimulatorPosition() {
@@ -1196,6 +1224,9 @@
             markVisited('sim-grid', simState.robotRow, simState.robotCol);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
+            if (simState.targetRow !== null && simState.targetCol !== null) {
+                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+            }
             renderProgram();
         }
 
@@ -1260,7 +1291,20 @@
             }
 
             if (!simState.failed) {
-                simState.stepIndex = -1; renderProgram(); showToast('Exécution terminée !', true);
+                simState.stepIndex = -1; renderProgram();
+
+                if (simState.targetRow !== null && simState.robotRow === simState.targetRow && simState.robotCol === simState.targetCol) {
+                    playSound('success');
+                    launchConfetti();
+                    showToast('Bravo ! Tu as atteint l\'étoile !', true);
+                    const target = document.getElementById('sim-target');
+                    if (target) {
+                        target.classList.add('pulse');
+                        setTimeout(() => target.classList.remove('pulse'), 500);
+                    }
+                } else {
+                    showToast('Exécution terminée !', true);
+                }
             }
             simState.running = false; toggleCmdButtons(false);
         }
