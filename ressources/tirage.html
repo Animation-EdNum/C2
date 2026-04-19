@@ -122,6 +122,11 @@
         .back-btn {
             position: absolute;
             top: 20px;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             left: 20px;
             background: none;
             border: none;
@@ -168,6 +173,8 @@
         .tab-btn {
             flex: 1;
             padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
             border: none;
             background: transparent;
             color: var(--color-text-secondary);
@@ -229,6 +236,8 @@
         .btn {
             padding: 12px 20px;
             font-size: 15px;
+            min-width: 44px;
+            min-height: 44px;
             font-weight: 600;
             border: none;
             border-radius: 8px;
@@ -284,6 +293,10 @@
         .icon-btn {
             background: none;
             border: none;
+            min-width: 44px;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             padding: 4px;
             border-radius: 4px;
@@ -1187,6 +1200,34 @@
         // INITIALISATION AU CHARGEMENT
         // ==========================================
         loadState();
+
+        // ==========================================
+        // SWIPE (TOUCH) POUR ONGLETS
+        // ==========================================
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.querySelector('.container').addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.querySelector('.container').addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+                const isNumberMode = document.getElementById('mode-number').classList.contains('active');
+                if (dx < 0 && isNumberMode) {
+                    document.querySelector('.tab-btn[data-target="mode-names"]').click();
+                } else if (dx > 0 && !isNumberMode) {
+                    document.querySelector('.tab-btn[data-target="mode-number"]').click();
+                }
+            }
+        }, { passive: true });
+
     </script>
     <script src="../js/theme.js"></script>
 </body>
