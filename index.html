@@ -16,6 +16,18 @@
             animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        @keyframes fadeInCascade {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
@@ -74,12 +86,38 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        .card {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        .action-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
         }
 
+        .icon-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
+        body.dark .icon-action-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .icon-action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
 
         header {
             text-align: center;
@@ -110,8 +148,103 @@
             padding: 2rem;
         }
 
-        .section-container {
-            margin-bottom: 4rem;
+        /* ONGLETS (TABS) */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* BARRE DE RECHERCHE */
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            border-radius: 99px;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        .search-bar svg {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            width: 20px;
+            height: 20px;
+            transition: color 0.2s;
+        }
+
+        .search-bar input:focus+svg {
+            color: var(--primary);
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .section-header {
@@ -144,6 +277,7 @@
             font-weight: 700;
         }
 
+        /* GRILLE & CARTES */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -163,6 +297,8 @@
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .card::before {
@@ -227,7 +363,6 @@
             font-weight: 600;
             color: var(--primary);
             opacity: 0.75;
-            letter-spacing: 0.01em;
         }
 
         .badges-wrapper {
@@ -244,7 +379,6 @@
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 700;
-            letter-spacing: 0.025em;
             text-transform: uppercase;
         }
 
@@ -253,26 +387,17 @@
             color: var(--badge-prof-text);
         }
 
-        footer {
-            margin-top: 2rem;
-            padding: 3rem 1rem;
-            text-align: center;
-            color: var(--text-light);
-            font-size: 0.875rem;
-            border-top: 1px solid var(--border);
-            background: var(--section-bg);
+        /* ANIMATION FILTRES ET RECHERCHE */
+        .card {
+            transition: all 0.3s ease, opacity 0.25s ease, transform 0.25s ease;
         }
 
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-
-        footer a:hover {
-            color: var(--primary-hover);
-            text-decoration: underline;
+        .card.filter-hidden {
+            opacity: 0;
+            transform: scale(0.93) translateY(6px);
+            pointer-events: none;
+            position: absolute;
+            visibility: hidden;
         }
 
         .filter-bar {
@@ -303,19 +428,33 @@
             color: #fff;
         }
 
-        /* Animation filtre */
-        .card.student-app {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.25s ease,
-                transform 0.25s ease;
+        /* SECTION RÉCENTS */
+        #recents-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px dashed var(--border);
         }
 
-        .card.student-app.filter-hidden {
-            opacity: 0;
-            transform: scale(0.93) translateY(6px);
-            pointer-events: none;
-            position: absolute;
-            visibility: hidden;
+        footer {
+            margin-top: 2rem;
+            padding: 3rem 1rem;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border);
+            background: var(--section-bg);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -324,7 +463,7 @@
 
     <header>
         <div class="action-buttons">
-            <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
+            <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair">
                 <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"></circle>
@@ -344,12 +483,33 @@
             </button>
         </div>
         <h1>Éducation Numérique</h1>
-        <p>Applications interactives et ressources pour les enseignant·e·s (Manuel Décodage)</p>
+        <p>Applications interactives et ressources pour le Manuel Décodage</p>
     </header>
 
     <main>
-        <!-- STUDENT WEBAPPS -->
-        <div class="section-container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Rechercher une application, un thème..."
+                onkeyup="searchApps()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'students')">🎒 Espace Élèves</button>
+            <button class="tab-btn" onclick="switchTab(event, 'teachers')">👩‍🏫 Espace Enseignant·e·s</button>
+        </div>
+
+        <div id="recents-section" style="display: none;">
+            <div class="section-header" style="border: none; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.25rem;">⏱️ Consultées récemment</h2>
+            </div>
+            <div class="grid" id="recents-grid"></div>
+        </div>
+
+        <div id="view-students" class="view active">
             <div class="section-header">
                 <div class="section-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -359,7 +519,7 @@
                         <line x1="12" y1="17" x2="12" y2="21"></line>
                     </svg>
                 </div>
-                <h2>Webapps pour élèves</h2>
+                <h2>Webapps interactives</h2>
             </div>
 
             <div class="filter-bar">
@@ -369,8 +529,9 @@
                 <button class="filter-btn" onclick="filterApps('7-8H')">7-8H</button>
             </div>
 
-            <div class="grid" id="student-apps-grid">
-                <a href="webapps/simulateur_bluebot.html" class="card student-app" data-level="3-4H">
+            <div class="grid searchable-grid">
+
+                <a href="webapps/simulateur_bluebot.html" class="card" data-level="3-4H" data-id="app-bluebot">
                     <div class="badges-wrapper">
                         <span class="badge">3-4H</span>
                     </div>
@@ -380,60 +541,50 @@
                     <div class="card-ref">📘 DÉ&gt;CODAGE 3-4 · Scénario 2 — Automates · Blue-Bot</div>
                 </a>
 
-                <a href="webapps/binaire_studio.html" class="card student-app" data-level="5-6H">
-                    <div class="badges-wrapper">
-                        <span class="badge">5-6H</span>
-                    </div>
+                <a href="webapps/binaire_studio.html" class="card" data-level="5-6H" data-id="app-pixel">
+                    <div class="badges-wrapper"><span class="badge">5-6H</span></div>
                     <div class="card-title">Pixel Studio</div>
                     <div class="card-desc">Studio de codage pour créer des dessins en coloriant des pixels et comprendre
                         leur représentation binaire.</div>
-                    <div class="card-ref">📘 DÉ&gt;CODAGE 5-6 · Scénario 4 — Codage de données, codage binaire</div>
+                    <div class="card-ref">📘 DÉ>CODAGE 5-6 · Scénario 4</div>
                 </a>
 
-                <a href="webapps/binaire_message.html" class="card student-app" data-level="7-8H">
-                    <div class="badges-wrapper">
-                        <span class="badge">7-8H</span>
-                    </div>
+                <a href="webapps/binaire_message.html" class="card" data-level="7-8H" data-id="app-mots">
+                    <div class="badges-wrapper"><span class="badge">7-8H</span></div>
                     <div class="card-title">Mots secrets</div>
                     <div class="card-desc">Jeu ludique pour encoder et décoder des messages secrets avec son camarade en
                         utilisant l'alphabet binaire.</div>
-                    <div class="card-ref">📘 DÉ&gt;CODAGE 7-8 · Activité 2 — Codages en folie (séance 2)</div>
+                    <div class="card-ref">📘 DÉ>CODAGE 7-8 · Codages en folie</div>
                 </a>
 
-                <a href="webapps/routage_reseau.html" class="card student-app" data-level="7-8H">
-                    <div class="badges-wrapper">
-                        <span class="badge">7-8H</span>
-                    </div>
+                <a href="webapps/routage_reseau.html" class="card" data-level="7-8H" data-id="app-routage">
+                    <div class="badges-wrapper"><span class="badge">7-8H</span></div>
                     <div class="card-title">Routage réseau</div>
                     <div class="card-desc">Activité interactive axée sur le routage de paquets dans un réseau pour
                         simuler le fonctionnement d'Internet.</div>
-                    <div class="card-ref">📘 DÉ&gt;CODAGE 7-8 · Activité 8 — Les réseaux, Niveau 2</div>
+                    <div class="card-ref">📘 DÉ>CODAGE 7-8 · Les réseaux</div>
                 </a>
 
-                <a href="webapps/binaire_codage.html" class="card student-app" data-level="7-8H">
-                    <div class="badges-wrapper">
-                        <span class="badge">7-8H</span>
-                    </div>
+                <a href="webapps/binaire_codage.html" class="card" data-level="7-8H" data-id="app-binaire">
+                    <div class="badges-wrapper"><span class="badge">7-8H</span></div>
                     <div class="card-title">Codage binaire</div>
                     <div class="card-desc">Outil interactif pour apprendre et s'entraîner à convertir des nombres
                         décimaux en binaire.</div>
-                    <div class="card-ref">📘 DÉ&gt;CODAGE 7-8 · Activité 2 — Codages en folie (séance 1)</div>
+                    <div class="card-ref">📘 DÉ>CODAGE 7-8 · Codages en folie</div>
                 </a>
 
-                <a href="webapps/bit_de_parite.html" class="card student-app" data-level="7-8H">
-                    <div class="badges-wrapper">
-                        <span class="badge">7-8H</span>
-                    </div>
+                <a href="webapps/bit_de_parite.html" class="card" data-level="7-8H" data-id="app-parite">
+                    <div class="badges-wrapper"><span class="badge">7-8H</span></div>
                     <div class="card-title">Bit de parité</div>
-                    <div class="card-desc">Jeu et entraînement pour découvrir la détection d'erreurs dans une
-                        transmission informatique.</div>
-                    <div class="card-ref">📘 DÉ&gt;CODAGE 7-8 · Enquête 5 — Peut-on détecter des erreurs ?</div>
+                    <div class="card-desc">Jeu, entraînement et tour de magie pour découvrir la détection d'erreurs dans
+                        une transmission informatique.</div>
+                    <div class="card-ref">📘 DÉ>CODAGE 7-8 · Enquête 5</div>
                 </a>
+
             </div>
         </div>
 
-        <!-- TEACHER RESOURCES -->
-        <div class="section-container">
+        <div id="view-teachers" class="view">
             <div class="section-header">
                 <div class="section-icon resources-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -441,26 +592,22 @@
                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                     </svg>
                 </div>
-                <h2>Ressources pour enseignant·e·s</h2>
+                <h2>Ressources & Outils</h2>
             </div>
 
-            <div class="grid">
-                <a href="ressources/bareme.html" class="card resource">
-                    <div class="badges-wrapper">
-                        <span class="badge prof">Évaluation</span>
-                    </div>
+            <div class="grid searchable-grid">
+                <a href="ressources/bareme.html" class="card resource" data-id="tool-bareme">
+                    <div class="badges-wrapper"><span class="badge prof">Évaluation</span></div>
                     <div class="card-title">Générateur de barèmes</div>
                     <div class="card-desc">Outil simple et sans publicité pour générer, imprimer et exporter des barèmes
-                        de notation.</div>
+                        de notation mathématiques.</div>
                 </a>
 
-                <a href="ressources/tirage.html" class="card resource">
-                    <div class="badges-wrapper">
-                        <span class="badge prof">Gestion de classe</span>
-                    </div>
+                <a href="ressources/tirage.html" class="card resource" data-id="tool-tirage">
+                    <div class="badges-wrapper"><span class="badge prof">Gestion de classe</span></div>
                     <div class="card-title">Tirage au sort</div>
-                    <div class="card-desc">Outil rapide et visuel avec mémorisation pour désigner un élève au hasard.
-                    </div>
+                    <div class="card-desc">Outil rapide et visuel avec mémorisation pour désigner un élève au hasard
+                        dans la classe.</div>
                 </a>
             </div>
         </div>
@@ -468,33 +615,174 @@
 
     <footer class="no-print">
         <p>
-            Webapp disponible sous licence
-            <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>
-            — Animation Éducation Numérique · <a
+            Webapp disponible sous licence <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                rel="noopener noreferrer">AGPL-3.0</a>
+            — Vivian Epiney · Animation EdNum · <a
                 href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
                 rel="noopener noreferrer">HEP-VS</a>
         </p>
     </footer>
 
-    <script src="js/theme.js"></script>
     <script>
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        function applyTheme(dark) {
+            document.body.classList.toggle('dark', dark);
+            iconSun.style.display = dark ? 'block' : 'none';
+            iconMoon.style.display = dark ? 'none' : 'block';
+            localStorage.setItem('ednum-theme', dark ? 'dark' : 'light');
+        }
+
+        themeBtn.addEventListener('click', () => {
+            applyTheme(!document.body.classList.contains('dark'));
+        });
+
+        // Init theme
+        if (localStorage.getItem('ednum-theme') === 'dark' || (!localStorage.getItem('ednum-theme') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            applyTheme(true);
+        }
+    </script>
+
+    <script>
+        /* =========================================
+           GESTION DES ONGLETS (TABS)
+           ========================================= */
+        function switchTab(event, tabId) {
+            // Cacher la recherche s'il y en avait une
+            document.getElementById('searchInput').value = '';
+            searchApps(); // Reset l'affichage
+
+            // UI Onglets
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // UI Vues
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${tabId}`).classList.add('active');
+        }
+
+        /* =========================================
+           GESTION DES FILTRES DE NIVEAU
+           ========================================= */
+        let currentFilter = 'all';
+
         function filterApps(level) {
+            currentFilter = level;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if ((level === 'all' && btn.innerText === 'Toutes') || btn.innerText === level) {
                     btn.classList.add('active');
                 }
             });
+            executeFilters();
+        }
 
-            document.querySelectorAll('.student-app').forEach(app => {
-                const visible = level === 'all' || app.getAttribute('data-level') === level;
-                if (visible) {
-                    app.classList.remove('filter-hidden');
+        /* =========================================
+           GESTION DE LA RECHERCHE & FILTRES CROISÉS
+           ========================================= */
+        function searchApps() {
+            executeFilters();
+        }
+
+        function executeFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const isSearching = query.length > 0;
+
+            // Si on recherche, on affiche tous les grids pour chercher partout. Sinon on respecte les onglets.
+            if (isSearching) {
+                document.querySelectorAll('.view').forEach(v => v.style.display = 'block');
+                document.querySelector('.tabs').style.display = 'none';
+            } else {
+                document.querySelectorAll('.view').forEach(v => v.style.display = ''); // Revient à la classe .active
+                document.querySelector('.tabs').style.display = 'flex';
+            }
+
+            // Filtrage des cartes
+            document.querySelectorAll('.searchable-grid .card').forEach(card => {
+                const textContent = card.innerText.toLowerCase();
+                const level = card.getAttribute('data-level');
+
+                // Vérifie la recherche texte
+                const matchesSearch = textContent.includes(query);
+
+                // Vérifie le filtre de niveau (seulement si on ne recherche pas globalement)
+                const matchesFilter = isSearching ? true : (currentFilter === 'all' || level === currentFilter);
+
+                if (matchesSearch && matchesFilter) {
+                    card.classList.remove('filter-hidden');
                 } else {
-                    app.classList.add('filter-hidden');
+                    card.classList.add('filter-hidden');
                 }
             });
         }
+
+        /* =========================================
+           GESTION DES APPLICATIONS RÉCENTES (Favoris)
+           ========================================= */
+        const MAX_RECENTS = 3;
+
+        function loadRecents() {
+            const recentsStr = localStorage.getItem('ednum_recent_apps');
+            if (!recentsStr) return;
+
+            let recentIds = [];
+            try { recentIds = JSON.parse(recentsStr); } catch (e) { }
+
+            if (recentIds.length === 0) return;
+
+            const recentsGrid = document.getElementById('recents-grid');
+            recentsGrid.innerHTML = ''; // Nettoyage
+
+            let addedCount = 0;
+
+            // On clone les cartes correspondantes aux IDs sauvegardés
+            recentIds.forEach(id => {
+                const originalCard = document.querySelector(`.card[data-id="${id}"]`);
+                if (originalCard && addedCount < MAX_RECENTS) {
+                    const clone = originalCard.cloneNode(true);
+                    // On garde la mécanique d'enregistrement sur le clone aussi
+                    clone.addEventListener('click', (e) => saveRecent(id));
+                    recentsGrid.appendChild(clone);
+                    addedCount++;
+                }
+            });
+
+            if (addedCount > 0) {
+                document.getElementById('recents-section').style.display = 'block';
+            }
+        }
+
+        function saveRecent(id) {
+            let recentIds = [];
+            try { recentIds = JSON.parse(localStorage.getItem('ednum_recent_apps')) || []; } catch (e) { }
+
+            // Supprime l'ID s'il existe déjà pour le remettre en haut (plus récent)
+            recentIds = recentIds.filter(existingId => existingId !== id);
+
+            // Ajoute en début de tableau
+            recentIds.unshift(id);
+
+            // Garde uniquement les N plus récents
+            if (recentIds.length > MAX_RECENTS) {
+                recentIds = recentIds.slice(0, MAX_RECENTS);
+            }
+
+            localStorage.setItem('ednum_recent_apps', JSON.stringify(recentIds));
+        }
+
+        // Initialisation des listeners sur les cartes d'origine
+        document.querySelectorAll('.card[data-id]').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // L'événement est déclenché juste avant la navigation du href
+                const id = card.getAttribute('data-id');
+                saveRecent(id);
+            });
+        });
+
+        // Chargement au démarrage
+        loadRecents();
     </script>
 </body>
 
