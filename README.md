@@ -29,6 +29,7 @@ Le dépôt est organisé en deux modes d'utilisation :
 
 ### 🚀 Points forts
 - **Utilisation locale :** Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
+- **Progressive Web App (PWA) :** Ce dépôt est conçu comme une application web progressive. Vous pouvez "Installer" le site entier sur votre appareil (tablette, Chromebook, smartphone) via l'icône d'installation dans la barre de navigation ou le menu de votre navigateur. Une fois installée, l'application complète, avec toutes ses webapps et ressources, est accessible **totalement hors-ligne**, sans aucun besoin de télécharger de fichiers au préalable.
 - **Essayez en ligne :** Vous pouvez tester directement l'ensemble des applications ici : [www.zooom.top](https://www.zooom.top).
 - **Pour les enseignant·e·s :** Vous pouvez distribuer ces fichiers directement sur les ordinateurs de votre classe, ou les héberger facilement sur le site de votre école ou intranet. 
 
