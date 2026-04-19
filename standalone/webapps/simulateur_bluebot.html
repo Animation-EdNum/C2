@@ -44,6 +44,8 @@
 }
 
 .icon-action-btn {
+            min-width: 44px;
+            min-height: 44px;
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
@@ -85,7 +87,10 @@ footer a:hover {
     .no-print { display: none !important; }
 }
 
-</style>
+    body {
+            touch-action: manipulation;
+        }
+    </style>
 
     <style>
         body>header,
@@ -189,6 +194,8 @@ footer a:hover {
         }
 
         .tab-btn {
+            min-width: 44px;
+            min-height: 44px;
             padding: 10px 20px;
             border-radius: 12px;
             border: 2px solid #e2e8f0;
@@ -231,6 +238,8 @@ footer a:hover {
         }
 
         .diff-btn {
+            min-width: 44px;
+            min-height: 44px;
             padding: 6px 16px;
             border-radius: 20px;
             border: 2px solid var(--accent);
@@ -708,6 +717,8 @@ footer a:hover {
         }
 
         .btn {
+            min-width: 44px;
+            min-height: 44px;
             border: none;
             border-radius: 8px;
             padding: 10px 20px;
@@ -730,6 +741,8 @@ footer a:hover {
         }
 
         .btn-check {
+            min-width: 44px;
+            min-height: 44px;
             background: var(--success);
             color: #fff;
         }
@@ -739,6 +752,8 @@ footer a:hover {
         }
 
         .btn-new {
+            min-width: 44px;
+            min-height: 44px;
             background: var(--accent);
             color: #fff;
         }
@@ -1632,6 +1647,53 @@ footer a:hover {
 })();
 
 </script>
+
+    <script>
+        // Tablet-First UI: Swipe to navigate tabs
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabsContainer = document.querySelector('.tabs, .nav-tabs'); // Also match common alternative tab containers if applicable
+            if (!tabsContainer) return;
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+            let touchStartY = 0;
+            let touchEndY = 0;
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }, {passive: true});
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            }, {passive: true});
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const dx = touchEndX - touchStartX;
+                const dy = touchEndY - touchStartY;
+
+                // Only trigger swipe if horizontal movement is greater than vertical movement
+                if (Math.abs(dx) > swipeThreshold && Math.abs(dx) > Math.abs(dy)) {
+                    const tabs = Array.from(document.querySelectorAll('.tab-btn, .nav-btn'));
+                    if (tabs.length === 0) return;
+
+                    const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));
+                    if (activeIndex === -1) return;
+
+                    if (dx < 0 && activeIndex < tabs.length - 1) {
+                        // Swipe left -> next tab
+                        tabs[activeIndex + 1].click();
+                    } else if (dx > 0 && activeIndex > 0) {
+                        // Swipe right -> previous tab
+                        tabs[activeIndex - 1].click();
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
