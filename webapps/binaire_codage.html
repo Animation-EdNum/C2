@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../css/shared.css">
     <style> 
         body > header, body > .container {
-            animation: fadeInCascade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
         :root { 
@@ -65,7 +65,7 @@
         .container { 
             max-width: 1050px; margin: 0 auto; background: var(--container-bg); 
             padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px var(--shadow-color); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border);
         } 
  
         h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; } 
@@ -529,22 +529,6 @@ function updateGlobalScore(correct) {
     document.getElementById('global-best').textContent = globalBest; 
 } 
  
-function launchConfetti() { 
-    const cvs = document.getElementById('confetti-canvas');
-    const ctx = cvs.getContext('2d');
-    cvs.width = window.innerWidth;
-    cvs.height = window.innerHeight;
-    let parts = [];
-    let cols = ['#667eea','#4caf50','#ff9800','#e91e63'];
-    for (let i=0; i<80; i++) parts.push({x:Math.random()*cvs.width, y:-50, vx:(Math.random()-0.5)*6, vy:Math.random()*4+2, c:cols[Math.floor(Math.random()*cols.length)], s:Math.random()*6+3, rot:0, rotSpeed:(Math.random()-0.5)*10}); 
-    function anim() { 
-        ctx.clearRect(0,0,cvs.width,cvs.height); let alive=false; 
-        parts.forEach(p => { if(p.y > cvs.height) return; alive=true; p.x+=p.vx; p.vy+=0.1; p.y+=p.vy; p.rot+=p.rotSpeed; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle=p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s); ctx.restore(); }); 
-        if(alive) requestAnimationFrame(anim); 
-    } 
-    anim(); 
-} 
- 
 // INIT 
 buildUI(); 
 setDifficulty('medium'); 
@@ -560,5 +544,6 @@ setDifficulty('medium');
             — Vivian Epiney · Animation EdNum · <a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">HEP-VS</a>
         </p>
     </footer>
+<script src="../js/confetti.js"></script>
 </body> 
 </html>
