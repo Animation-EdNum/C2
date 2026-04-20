@@ -879,6 +879,10 @@ footer a:hover {
 
             <div class="score-bar">
                 <div class="score-item">
+                    <div class="score-label">Victoires</div>
+                    <div class="score-value" id="global-correct">0</div>
+                </div>
+                <div class="score-item">
                     <div class="score-label">Série 🔥</div>
                     <div class="score-value" id="global-streak">0</div>
                 </div>
@@ -1028,7 +1032,7 @@ footer a:hover {
 
         let difficulty = 'easy';
         let encodeWord = ''; let encodeIndex = 0; let encodeBits = [0, 0, 0, 0, 0];
-        let encodeLocked = false; let globalStreak = 0; let globalBest = 0;
+        let encodeLocked = false; let globalCorrect = 0; let globalStreak = 0; let globalBest = 0;
         let currentTab = 'play';
 
         // ========================================== 
@@ -1336,8 +1340,10 @@ footer a:hover {
                     encodeIndex++; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
 
                     if (encodeIndex >= encodeWord.length) {
+                        globalCorrect++;
                         globalStreak++;
                         if (globalStreak > globalBest) globalBest = globalStreak;
+                        document.getElementById('global-correct').innerText = globalCorrect;
                         document.getElementById('global-streak').innerText = globalStreak;
                         document.getElementById('global-best').innerText = globalBest;
                         if (globalStreak % 3 === 0) launchConfetti();
