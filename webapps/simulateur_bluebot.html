@@ -872,6 +872,7 @@ body {
 
                 <div style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
                     <button class="btn btn-outline btn-small" onclick="placeRandomSimTarget()">⭐ Placer une étoile</button>
+                    <span id="sim-star-counter" style="display: none; font-weight: bold; align-items: center; justify-content: center; padding: 6px 12px; background: var(--card-bg); border: 2px solid var(--accent); border-radius: 6px; color: var(--accent);">⭐ x 0</span>
                     <button class="btn btn-outline btn-small" onclick="randomizeSimWalls()">🧱 Placer murs
                         aléatoires</button>
                     <button class="btn btn-outline btn-small" onclick="clearSimWalls()">🧹 Nettoyer grille</button>
@@ -898,7 +899,6 @@ body {
 
                 <div class="controls">
                     <button class="btn btn-check" id="btnRun" onclick="runProgram()">▶ GO (Exécuter)</button>
-                    <button class="btn btn-outline" id="btnUndo" onclick="undoCmd()">↩ Annuler</button>
                     <button class="btn btn-clear" id="btnClear" onclick="clearProgram()">🗑 Effacer (X)</button>
                     <button class="btn btn-outline" id="btnReset" onclick="resetSimulatorPosition()">🔄 Réinitialiser la
                         position</button>
@@ -1032,7 +1032,7 @@ body {
 
         let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
-            running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null
+            running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0
         };
 
         let chalState = {
@@ -1157,10 +1157,6 @@ body {
             if (simState.program.length >= 24) { showToast('Mémoire pleine (24 commandes max)', false); return; }
             simState.program.push(cmd); renderProgram();
         }
-        function undoCmd() {
-            if (simState.running) return;
-            playSound('click'); simState.program.pop(); renderProgram();
-        }
         function removeSpecificCmd(index) {
             if (simState.running) return;
             playSound('click'); simState.program.splice(index, 1); renderProgram();
@@ -1193,9 +1189,9 @@ body {
             markVisited('sim-grid', simState.robotRow, simState.robotCol);
         }
 
-        function placeRandomSimTarget() {
+        function placeRandomSimTarget(silent = false) {
             if (simState.running) return;
-            playSound('click');
+            if (!silent) playSound('click');
 
             let attempts = 0;
             let targetR, targetC;
@@ -1204,12 +1200,18 @@ body {
                 targetR = Math.floor(Math.random() * GRID_ROWS);
                 targetC = Math.floor(Math.random() * GRID_COLS);
                 attempts++;
-            } while (attempts < 100 && ((targetR === 5 && targetC === 0) || simState.obstacles.some(o => o.r === targetR && o.c === targetC)));
+            } while (attempts < 100 && ((targetR === 5 && targetC === 0) || simState.obstacles.some(o => o.r === targetR && o.c === targetC) || (Math.abs(targetR - simState.robotRow) <= 1 && Math.abs(targetC - simState.robotCol) <= 1)));
 
             if (attempts < 100) {
                 simState.targetRow = targetR;
                 simState.targetCol = targetC;
                 renderTarget('sim-grid', 'sim-target', targetR, targetC);
+
+                const counter = document.getElementById('sim-star-counter');
+                if (counter) {
+                    counter.style.display = 'inline-flex';
+                    counter.textContent = `⭐ x ${simState.starCount}`;
+                }
             }
         }
 
@@ -1217,14 +1219,20 @@ body {
             if (simState.running) return;
             playSound('click');
             simState.obstacles = [];
+            simState.targetRow = null;
+            simState.targetCol = null;
+            simState.starCount = 0;
+
+            const counter = document.getElementById('sim-star-counter');
+            if (counter) counter.style.display = 'none';
+
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
-            if (simState.targetRow !== null && simState.targetCol !== null) {
-                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
-            }
-        }
 
+            const target = document.getElementById('sim-target');
+            if (target) target.remove();
+        }
         function resetSimulatorPosition() {
             if (simState.running) return;
             playSound('click');
@@ -1309,10 +1317,18 @@ body {
                     playSound('success');
                     launchConfetti();
                     showToast('Bravo ! Tu as atteint l\'étoile !', true);
+                    simState.starCount++;
+                    const counter = document.getElementById('sim-star-counter');
+                    if (counter) counter.textContent = `⭐ x ${simState.starCount}`;
+
                     const target = document.getElementById('sim-target');
                     if (target) {
                         target.classList.add('pulse');
-                        setTimeout(() => target.classList.remove('pulse'), 500);
+                        setTimeout(() => {
+                            target.classList.remove('pulse');
+                            target.remove();
+                            placeRandomSimTarget(true);
+                        }, 500);
                     }
                 } else {
                     showToast('Exécution terminée !', true);
@@ -1324,7 +1340,6 @@ body {
         function toggleCmdButtons(disabled) {
             document.querySelectorAll('#sim-cmd-pad .cmd-btn').forEach(b => b.disabled = disabled);
             document.getElementById('btnRun').disabled = disabled;
-            document.getElementById('btnUndo').disabled = disabled;
             document.getElementById('btnClear').disabled = disabled;
         }
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
