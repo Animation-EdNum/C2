@@ -872,7 +872,7 @@ body {
 
                 <div style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
                     <button class="btn btn-outline btn-small" onclick="placeRandomSimTarget()">⭐ Placer une étoile</button>
-                    <span id="sim-star-counter" style="display: none; font-weight: bold; align-items: center; justify-content: center; padding: 6px 12px; background: var(--card-bg); border: 2px solid var(--accent); border-radius: 6px; color: var(--accent);">⭐ x 0</span>
+
                     <button class="btn btn-outline btn-small" onclick="randomizeSimWalls()">🧱 Placer murs
                         aléatoires</button>
                     <button class="btn btn-outline btn-small" onclick="clearSimWalls()">🧹 Nettoyer grille</button>
@@ -904,6 +904,13 @@ body {
                         position</button>
                 </div>
 
+                <div class="score-bar" id="sim-score-bar" style="display: none;">
+                    <div class="score-item">
+                        <div class="score-label">Étoiles collectées</div>
+                        <div class="score-value" id="sim-star-counter-val">0</div>
+                    </div>
+                </div>
+
                 <div class="legend" id="legend-container"></div>
             </div>
         </div>
@@ -926,7 +933,7 @@ body {
                 <div class="controls">
                     <button class="btn btn-new" id="btnNextChallenge" onclick="newChallenge()" style="display:none;">➡
                         Défi suivant</button>
-                    <button class="btn btn-outline" onclick="newChallenge()">🔄 Passer ce défi</button>
+
                 </div>
 
                 <div class="score-bar">
@@ -1166,19 +1173,69 @@ body {
             playSound('click'); simState.program = []; simState.stepIndex = -1; simState.failed = false; renderProgram();
         }
 
+
+        function countReachable(startR, startC, startD, obstacles) {
+            const queue = [{ r: startR, c: startC, d: startD }];
+            const visited = new Set([`${startR},${startC},${startD}`]);
+            const visitedCells = new Set([`${startR},${startC}`]);
+            const cmds = ['forward', 'left', 'right', 'backward'];
+
+            while (queue.length > 0) {
+                const curr = queue.shift();
+                for (let cmd of cmds) {
+                    const res = moveRobot({ robotRow: curr.r, robotCol: curr.c, robotDir: curr.d, obstacles }, cmd);
+                    if (!res.blocked) {
+                        const key = `${res.robotRow},${res.robotCol},${res.robotDir}`;
+                        if (!visited.has(key)) {
+                            visited.add(key);
+                            visitedCells.add(`${res.robotRow},${res.robotCol}`);
+                            queue.push({ r: res.robotRow, c: res.robotCol, d: res.robotDir });
+                        }
+                    }
+                }
+            }
+            return visitedCells.size;
+        }
+
         function randomizeSimWalls() {
             if (simState.running) return;
             playSound('click');
-            simState.obstacles = [];
-            for (let r = 0; r < GRID_ROWS; r++) {
-                for (let c = 0; c < GRID_COLS; c++) {
-                    // Jamais de mur sur la case de départ par défaut (5,0) ni sous le robot actuel ni sur la cible
-                    if (r === 5 && c === 0) continue;
-                    if (r === simState.robotRow && c === simState.robotCol) continue;
-                    if (simState.targetRow !== null && r === simState.targetRow && c === simState.targetCol) continue;
-                    if (Math.random() < 0.15) simState.obstacles.push({ r, c });
+            let attempts = 0;
+            let bestObstacles = [];
+            let maxReachable = 0;
+            let success = false;
+
+            do {
+                let tempObstacles = [];
+                for (let r = 0; r < GRID_ROWS; r++) {
+                    for (let c = 0; c < GRID_COLS; c++) {
+                        if (r === 5 && c === 0) continue;
+                        if (r === simState.robotRow && c === simState.robotCol) continue;
+                        if (simState.targetRow !== null && r === simState.targetRow && c === simState.targetCol) continue;
+                        if (Math.random() < 0.15) tempObstacles.push({ r, c });
+                    }
                 }
-            }
+                attempts++;
+
+                if (simState.targetRow !== null) {
+                    let path = findShortestPath(simState.robotRow, simState.robotCol, simState.robotDir, simState.targetRow, simState.targetCol, tempObstacles);
+                    if (path !== null) {
+                        bestObstacles = tempObstacles;
+                        success = true;
+                    }
+                } else {
+                    let reachable = countReachable(simState.robotRow, simState.robotCol, simState.robotDir, tempObstacles);
+                    if (reachable > maxReachable) {
+                        maxReachable = reachable;
+                        bestObstacles = tempObstacles;
+                    }
+                    if (reachable >= 15) {
+                        success = true;
+                    }
+                }
+            } while (!success && attempts < 50);
+
+            simState.obstacles = bestObstacles;
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
@@ -1200,18 +1257,22 @@ body {
                 targetR = Math.floor(Math.random() * GRID_ROWS);
                 targetC = Math.floor(Math.random() * GRID_COLS);
                 attempts++;
-            } while (attempts < 100 && ((targetR === 5 && targetC === 0) || simState.obstacles.some(o => o.r === targetR && o.c === targetC) || (Math.abs(targetR - simState.robotRow) <= 1 && Math.abs(targetC - simState.robotCol) <= 1)));
+            } while (attempts < 100 && (
+                (targetR === 5 && targetC === 0) ||
+                simState.obstacles.some(o => o.r === targetR && o.c === targetC) ||
+                (Math.abs(targetR - simState.robotRow) <= 1 && Math.abs(targetC - simState.robotCol) <= 1) ||
+                findShortestPath(simState.robotRow, simState.robotCol, simState.robotDir, targetR, targetC, simState.obstacles) === null
+            ));
 
             if (attempts < 100) {
                 simState.targetRow = targetR;
                 simState.targetCol = targetC;
                 renderTarget('sim-grid', 'sim-target', targetR, targetC);
 
-                const counter = document.getElementById('sim-star-counter');
-                if (counter) {
-                    counter.style.display = 'inline-flex';
-                    counter.textContent = `⭐ x ${simState.starCount}`;
-                }
+                const counter = document.getElementById('sim-score-bar');
+                if (counter) counter.style.display = 'flex';
+                const counterVal = document.getElementById('sim-star-counter-val');
+                if (counterVal) counterVal.textContent = simState.starCount;
             }
         }
 
@@ -1223,7 +1284,7 @@ body {
             simState.targetCol = null;
             simState.starCount = 0;
 
-            const counter = document.getElementById('sim-star-counter');
+            const counter = document.getElementById('sim-score-bar');
             if (counter) counter.style.display = 'none';
 
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, []);
@@ -1318,8 +1379,9 @@ body {
                     launchConfetti();
                     showToast('Bravo ! Tu as atteint l\'étoile !', true);
                     simState.starCount++;
-                    const counter = document.getElementById('sim-star-counter');
-                    if (counter) counter.textContent = `⭐ x ${simState.starCount}`;
+                    const counterVal = document.getElementById('sim-star-counter-val');
+                    if (counterVal) counterVal.textContent = simState.starCount;
+
 
                     const target = document.getElementById('sim-target');
                     if (target) {
@@ -1327,9 +1389,14 @@ body {
                         setTimeout(() => {
                             target.classList.remove('pulse');
                             target.remove();
+                            simState.program = [];
+                            simState.stepIndex = -1;
+                            simState.failed = false;
+                            renderProgram();
                             placeRandomSimTarget(true);
                         }, 500);
                     }
+
                 } else {
                     showToast('Exécution terminée !', true);
                 }
@@ -1442,13 +1509,19 @@ body {
                     let idx = randomInt(0, fake.length - 1);
                     fake[idx] = ['forward', 'backward', 'left', 'right'][randomInt(0, 3)];
                 }
-                if (Math.random() < 0.5 && fake.length < 10) fake.push(['forward', 'left', 'right'][randomInt(0, 2)]);
-                else if (fake.length > 2) fake.pop();
+
+                // Ensure fake doesn't end with left or right
+                while (fake.length > 0 && (fake[fake.length - 1] === 'left' || fake[fake.length - 1] === 'right')) {
+                    fake[fake.length - 1] = ['forward', 'backward'][randomInt(0, 1)];
+                }
 
                 tries++;
             } while (tries < 50 && (JSON.stringify(fake) === JSON.stringify(correctPath) || programReachesTarget(fake, startR, startC, startD, targetR, targetC, obstacles)));
 
-            if (programReachesTarget(fake, startR, startC, startD, targetR, targetC, obstacles)) return ['left', 'left', 'left'];
+            if (programReachesTarget(fake, startR, startC, startD, targetR, targetC, obstacles)) {
+                let fallback = new Array(correctPath.length).fill('forward');
+                return fallback;
+            }
             return fake;
         }
 
