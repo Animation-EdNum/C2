@@ -15,6 +15,7 @@ const ASSETS_TO_CACHE = [
   './webapps/binaire_studio.html',
   './css/shared.css',
   './js/theme.js',
+  './js/swipe.js',
   './js/lucide.min.js',
   './fonts/outfit.woff2',
   './fonts/jetbrains-mono.woff2',
