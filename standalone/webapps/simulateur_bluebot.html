@@ -975,7 +975,6 @@ footer a:hover {
 
                 <div style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
                     <button class="btn btn-outline btn-small" onclick="placeRandomSimTarget()">⭐ Placer une étoile</button>
-                    <span id="sim-star-counter" style="display: none; font-weight: bold; align-items: center; justify-content: center; padding: 6px 12px; background: var(--card-bg); border: 2px solid var(--accent); border-radius: 6px; color: var(--accent);">⭐ x 0</span>
                     <button class="btn btn-outline btn-small" onclick="randomizeSimWalls()">🧱 Placer murs
                         aléatoires</button>
                     <button class="btn btn-outline btn-small" onclick="clearSimWalls()">🧹 Nettoyer grille</button>
@@ -1005,6 +1004,12 @@ footer a:hover {
                     <button class="btn btn-clear" id="btnClear" onclick="clearProgram()">🗑 Effacer (X)</button>
                     <button class="btn btn-outline" id="btnReset" onclick="resetSimulatorPosition()">🔄 Réinitialiser la
                         position</button>
+                </div>
+                <div class="score-bar" id="sim-score-bar" style="display:none; justify-content: center; gap: 40px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--card-border);">
+                    <div class="score-item">
+                        <div class="score-label">Étoiles collectées</div>
+                        <div class="score-value" id="sim-star-value">0</div>
+                    </div>
                 </div>
 
                 <div class="legend" id="legend-container"></div>
@@ -1310,11 +1315,10 @@ footer a:hover {
                 simState.targetCol = targetC;
                 renderTarget('sim-grid', 'sim-target', targetR, targetC);
 
-                const counter = document.getElementById('sim-star-counter');
-                if (counter) {
-                    counter.style.display = 'inline-flex';
-                    counter.textContent = `⭐ x ${simState.starCount}`;
-                }
+                const scoreBar = document.getElementById('sim-score-bar');
+                if (scoreBar) scoreBar.style.display = 'flex';
+                const starVal = document.getElementById('sim-star-value');
+                if (starVal) starVal.textContent = simState.starCount;
             }
         }
         function clearSimWalls() {
@@ -1325,8 +1329,8 @@ footer a:hover {
             simState.targetCol = null;
             simState.starCount = 0;
 
-            const counter = document.getElementById('sim-star-counter');
-            if (counter) counter.style.display = 'none';
+            const scoreBar = document.getElementById('sim-score-bar');
+            if (scoreBar) scoreBar.style.display = 'none';
 
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
@@ -1420,8 +1424,9 @@ footer a:hover {
                     launchConfetti();
                     showToast('Bravo ! Tu as atteint l\'étoile !', true);
                     simState.starCount++;
-                    const counter = document.getElementById('sim-star-counter');
-                    if (counter) counter.textContent = `⭐ x ${simState.starCount}`;
+                    const starVal = document.getElementById('sim-star-value');
+                    if (starVal) starVal.textContent = simState.starCount;
+                    clearProgram();
 
                     const target = document.getElementById('sim-target');
                     if (target) {
