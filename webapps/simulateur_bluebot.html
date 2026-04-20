@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="../css/shared.css">
 
     <style>
+        button {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
         body>header,
         body>.container {
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
@@ -73,8 +78,8 @@
             -webkit-user-select: none;
             user-select: none;
         }
-
-        body {
+body {
+            touch-action: manipulation;
             font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             min-height: 100vh;
@@ -1535,37 +1540,14 @@
         buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
         resetSimulatorPosition();
 
-        // ==========================================
-        // SWIPE (TOUCH) POUR ONGLETS
-        // ==========================================
-        let touchStartX = 0;
-        let touchStartY = 0;
 
-        document.querySelector('.container').addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, { passive: true });
 
-        document.querySelector('.container').addEventListener('touchend', e => {
-            const touchEndX = e.changedTouches[0].screenX;
-            const touchEndY = e.changedTouches[0].screenY;
-            const dx = touchEndX - touchStartX;
-            const dy = touchEndY - touchStartY;
 
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-                if (dx < 0 && document.getElementById('view-simulator').classList.contains('active')) {
-                    const fakeEvent = { target: document.querySelectorAll('.tab-btn')[1] };
-                    switchTab(fakeEvent, 'challenge');
-                } else if (dx > 0 && document.getElementById('view-challenge').classList.contains('active')) {
-                    const fakeEvent = { target: document.querySelectorAll('.tab-btn')[0] };
-                    switchTab(fakeEvent, 'simulator');
-                }
-            }
-        }, { passive: true });
 
     </script>
     <script src="../js/theme.js"></script>
 <script src="../js/confetti.js"></script>
+<script src="../js/swipe.js"></script>
 </body>
 
 </html>
