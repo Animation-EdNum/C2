@@ -815,7 +815,7 @@ footer a:hover {
         // ========================================== 
         let parsedNodes = [], parsedEdges = [], adjacency = {};
         let currentPath = [], isLocked = false, difficulty = 'easy';
-        let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0;
+        let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0, mistakesInCurrentNetwork = 0;
         let lastNetworkIndex = -1; // Anti-répétition 
 
         function parseNetwork(raw) {
@@ -881,7 +881,7 @@ footer a:hover {
             lastNetworkIndex = idx;
             parseNetwork(pool[idx]);
             currentPath = ['src'];
-            isLocked = false; netCount++;
+            isLocked = false; netCount++; mistakesInCurrentNetwork = 0;
             document.getElementById('netNumber').textContent = netCount;
             document.getElementById('card-subtitle').textContent = `Réseau ${difficulty === 'easy' ? 'facile' : difficulty === 'medium' ? 'moyen' : 'difficile'}`;
             document.getElementById('feedback').className = 'feedback'; // Hide feedback 
@@ -977,6 +977,7 @@ footer a:hover {
             const fb = document.getElementById('feedback');
 
             if (last !== 'dst') {
+                mistakesInCurrentNetwork++;
                 fb.className = 'feedback show error';
                 fb.innerHTML = `<strong>❌ Le paquet n'est pas arrivé !</strong><br>Tu dois atteindre l'ordinateur B. Continue à cliquer sur les routeurs.`;
                 return;
@@ -990,12 +991,14 @@ footer a:hover {
                 fb.className = 'feedback show success';
                 fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`;
                 isLocked = true; globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                if (globalStreak >= 2) launchConfetti();
+                if (difficulty === 'hard' && mistakesInCurrentNetwork === 0) { launchFire(); }
+                else if (globalStreak >= 2) { launchConfetti(); }
                 render(); setTimeout(newNetwork, 3000);
             } else {
                 // ARRIVÉ MAIS TROP LENT 
                 fb.className = 'feedback show warn';
                 fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Annuler" pour chercher une meilleure route.</em>`;
+                mistakesInCurrentNetwork++;
                 globalStreak = 0;
             }
 
