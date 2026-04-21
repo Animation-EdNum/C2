@@ -1021,6 +1021,33 @@ body {
 </head>
 
 <body>
+<svg width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="lavaGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <radialGradient id="lava" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fef08a"/>
+            <stop offset="40%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#991b1b"/>
+        </radialGradient>
+        <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fef3c7"/>
+            <stop offset="30%" stop-color="#fbbf24"/>
+            <stop offset="80%" stop-color="#d97706"/>
+            <stop offset="100%" stop-color="#92400e"/>
+        </linearGradient>
+    </defs>
+</svg>
     <div class="action-buttons">
         <button class="icon-action-btn btn-skins-action" onclick="openSkinsModal()" title="Ouvrir les skins" aria-label="Ouvrir les skins">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1108,10 +1135,9 @@ body {
             <div class="exercise-card">
 
                 <div style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button class="btn btn-outline btn-small" onclick="placeRandomSimTarget()">⭐ Placer une étoile</button>
+                    <button class="btn btn-outline btn-small" onclick="placeRandomSimTarget()"><span id="btn-target-icon">⭐</span> Placer un trésor</button>
 
-                    <button class="btn btn-outline btn-small" onclick="randomizeSimWalls()">🧱 Placer murs
-                        aléatoires</button>
+                    <button class="btn btn-outline btn-small" onclick="randomizeSimWalls()"><span id="btn-obstacle-icon">🧱</span> Placer des obstacles</button>
                     <button class="btn btn-outline btn-small" onclick="clearSimWalls()">🧹 Nettoyer grille</button>
                 </div>
 
@@ -1330,13 +1356,44 @@ body {
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
-            }
-
-            if (chalState.obstacles && chalState.obstacles.length > 0) {
+            }            if (chalState.obstacles && chalState.obstacles.length > 0) {
                 buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles);
                 renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
                 renderGhost('chal-grid', chalState.startRow, chalState.startCol, chalState.startDir);
                 renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+            }
+
+            const tgtBtn = document.getElementById('btn-target-icon');
+            if (tgtBtn) {
+                const tg = SKIN_CONFIG[activeSkin].target;
+                if (tg && tg.includes('<svg')) {
+                    tgtBtn.innerHTML = tg;
+                    const svg = tgtBtn.querySelector('svg');
+                    if (svg) {
+                        svg.style.width = '1.2em';
+                        svg.style.height = '1.2em';
+                        svg.style.display = 'inline-block';
+                        svg.style.verticalAlign = 'middle';
+                    }
+                } else {
+                    tgtBtn.innerText = tg || '';
+                }
+            }
+            const obsBtn = document.getElementById('btn-obstacle-icon');
+            if (obsBtn) {
+                const ob = SKIN_CONFIG[activeSkin].obstacle;
+                if (ob && ob.includes('<svg')) {
+                    obsBtn.innerHTML = ob;
+                    const svg = obsBtn.querySelector('svg');
+                    if (svg) {
+                        svg.style.width = '1.2em';
+                        svg.style.height = '1.2em';
+                        svg.style.display = 'inline-block';
+                        svg.style.verticalAlign = 'middle';
+                    }
+                } else {
+                    obsBtn.innerText = ob || '';
+                }
             }
         }
 
@@ -1344,7 +1401,13 @@ body {
             if (!unlockedSkins.includes(skinId)) {
                 unlockedSkins.push(skinId);
                 localStorage.setItem('bb_unlocked_skins', JSON.stringify(unlockedSkins));
-                launchConfetti();
+
+                    if (activeSkin === 'volcano') {
+                        launchFire();
+                    } else {
+                        launchConfetti();
+                    }
+
                 showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, true);
             }
         }
@@ -1352,15 +1415,10 @@ body {
                 const SKIN_CONFIG = {
             'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le Blue-Bot standard.' },
             'beebot': { name: 'Bee-Bot', obstacle: '🌳', target: '🌻', desc: 'Débloqué : Attraper une étoile avec des murs en Simulateur.' },
-            'rainbow': { name: 'Unicorn-Bot', obstacle: '⛈️', target: '🌈', desc: 'Débloqué : Gagner un défi Facile.' },
+            'unicorn': { name: 'Unicorn-Bot', obstacle: '⛈️', target: '🌈', desc: 'Débloqué : Gagner un défi Facile.' },
             'space': { name: 'Mission Spatiale', obstacle: '☄️', target: '💎', desc: 'Débloqué : Gagner un défi Moyen.' },
             'volcano': { name: 'The floor is lava', obstacle: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <filter id="lavaGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-    </defs>
+
     <style>
         .bubble1 { animation: pop 2s infinite ease-in-out; transform-origin: 45px 45px; }
         .bubble2 { animation: pop 2.5s infinite ease-in-out 1s; transform-origin: 58px 55px; }
@@ -1378,15 +1436,7 @@ body {
     <circle cx="45" cy="45" r="4" fill="#fef08a" class="bubble1" filter="url(#lavaGlow)"/>
     <circle cx="58" cy="55" r="3" fill="#fef08a" class="bubble2" filter="url(#lavaGlow)"/>
 </svg>`, target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
 
-        <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#fef3c7"/> <stop offset="30%" stop-color="#fbbf24"/> <stop offset="80%" stop-color="#d97706"/> <stop offset="100%" stop-color="#92400e"/> </linearGradient>
-    </defs>
 
     <style>
         .sparkle {
@@ -1480,7 +1530,7 @@ body {
                     <circle cx="35" cy="75" r="6" fill="#3b82f6"/>
                     <circle cx="65" cy="75" r="6" fill="#3b82f6"/>
                 </svg>`,
-            'rainbow': `
+            'unicorn': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <defs>
                         <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1540,18 +1590,7 @@ body {
                 </svg>`,
             'volcano': `
                 <svg viewBox="-15 -35 130 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
 
-        <radialGradient id="lava" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#fef08a"/>
-            <stop offset="40%" stop-color="#f97316"/>
-            <stop offset="100%" stop-color="#991b1b"/>
-        </radialGradient>
-    </defs>
 
     <style>
         .wing-l { transform-origin: 40px 50px; animation: flapL 0.7s ease-in-out infinite alternate; }
@@ -1979,7 +2018,13 @@ body {
 
                 if (simState.targetRow !== null && simState.robotRow === simState.targetRow && simState.robotCol === simState.targetCol) {
                     playSound('success');
-                    launchConfetti();
+
+                    if (activeSkin === 'volcano') {
+                        launchFire();
+                    } else {
+                        launchConfetti();
+                    }
+
                     showToast('Bravo ! Tu as atteint l\'étoile !', true);
 
                     if (simState.obstacles && simState.obstacles.length > 0) {
@@ -2215,11 +2260,17 @@ body {
                     globalScore++; globalStreak++;
                     document.getElementById('global-score').textContent = globalScore;
                     document.getElementById('global-streak').textContent = globalStreak;
-                    if (globalStreak > 0 && globalStreak % 3 === 0) launchConfetti();
+                    if (globalStreak > 0 && globalStreak % 3 === 0)
+                    if (activeSkin === 'volcano') {
+                        launchFire();
+                    } else {
+                        launchConfetti();
+                    }
+
                     showToast('Bravo ! Chemin optimal trouvé.', true);
 
                     // Gamification Unlocks
-                    if (chalState.difficulty === 'easy') unlockSkin('rainbow');
+                    if (chalState.difficulty === 'easy') unlockSkin('unicorn');
                     else if (chalState.difficulty === 'medium') unlockSkin('space');
                     else if (chalState.difficulty === 'hard') unlockSkin('volcano');
 
@@ -2245,7 +2296,45 @@ body {
            ================================================================ */
 
         // Init
+
+        // Initial button update
+        (function() {
+            const tg = SKIN_CONFIG[activeSkin].target;
+            const tgtBtn = document.getElementById('btn-target-icon');
+            if (tgtBtn) {
+                if (tg && tg.includes('<svg')) {
+                    tgtBtn.innerHTML = tg;
+                    const svg = tgtBtn.querySelector('svg');
+                    if(svg) {
+                        svg.style.width = '1.2em';
+                        svg.style.height = '1.2em';
+                        svg.style.display = 'inline-block';
+                        svg.style.verticalAlign = 'middle';
+                    }
+                } else {
+                    tgtBtn.innerText = tg || '';
+                }
+            }
+            const ob = SKIN_CONFIG[activeSkin].obstacle;
+            const obsBtn = document.getElementById('btn-obstacle-icon');
+            if (obsBtn) {
+                if (ob && ob.includes('<svg')) {
+                    obsBtn.innerHTML = ob;
+                    const svg = obsBtn.querySelector('svg');
+                    if(svg) {
+                        svg.style.width = '1.2em';
+                        svg.style.height = '1.2em';
+                        svg.style.display = 'inline-block';
+                        svg.style.verticalAlign = 'middle';
+                    }
+                } else {
+                    obsBtn.innerText = ob || '';
+                }
+            }
+        })();
+
         buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
+
         resetSimulatorPosition();
 
 
@@ -2266,6 +2355,8 @@ body {
             document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
         });
 </script>
+<script src="../js/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 
 </html>
