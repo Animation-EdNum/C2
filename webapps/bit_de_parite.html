@@ -866,7 +866,7 @@
         // ========================================== 
         let currentMode = 'train';
         let gridSize = 4;
-        let trainData = [], trainAnswers = [], isTrainLocked = false;
+        let trainData = [], trainAnswers = [], isTrainLocked = false, isFirstAttempt = true;
         let magicData = [], magicParityRow = [], magicParityCol = [], magicCorner = 0;
         let globalCorrect = 0, globalStreak = 0, globalBest = 0;
 
@@ -898,7 +898,7 @@
         }
 
         function initTrainMode() {
-            isTrainLocked = false; trainData = []; trainAnswers = [];
+            isTrainLocked = false; isFirstAttempt = true; trainData = []; trainAnswers = [];
             const totalSize = gridSize + 1;
 
             // Generate Random Data 
@@ -1015,10 +1015,17 @@
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
                 globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                if (globalStreak % 3 === 0) launchConfetti();
+
+                if (gridSize === 6 && isFirstAttempt) {
+                    launchFire();
+                } else if (globalStreak % 3 === 0) {
+                    launchConfetti();
+                }
+
                 showToast("Parfait ! Tout est pair.");
                 setTimeout(initTrainMode, 2000);
             } else {
+                isFirstAttempt = false;
                 playSound('error'); globalStreak = 0;
                 showToast("Il y a des erreurs en rouge.", false);
                 // Remove error classes after animation 
