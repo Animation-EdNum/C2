@@ -963,6 +963,7 @@ footer a:hover {
         let trainData = [], trainAnswers = [], isTrainLocked = false;
         let magicData = [], magicParityRow = [], magicParityCol = [], magicCorner = 0;
         let globalCorrect = 0, globalStreak = 0, globalBest = 0;
+        let trainFailures = 0;
 
         function switchTab(event, tab) {
             currentMode = tab;
@@ -992,7 +993,7 @@ footer a:hover {
         }
 
         function initTrainMode() {
-            isTrainLocked = false; trainData = []; trainAnswers = [];
+            isTrainLocked = false; trainData = []; trainAnswers = []; trainFailures = 0;
             const totalSize = gridSize + 1;
 
             // Generate Random Data 
@@ -1109,11 +1110,15 @@ footer a:hover {
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
                 globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                if (globalStreak % 3 === 0) launchConfetti();
+                if (gridSize === 6 && trainFailures === 0) {
+                    launchFire();
+                } else if (globalStreak % 3 === 0) {
+                    launchConfetti();
+                }
                 showToast("Parfait ! Tout est pair.");
                 setTimeout(initTrainMode, 2000);
             } else {
-                playSound('error'); globalStreak = 0;
+                playSound('error'); globalStreak = 0; trainFailures++;
                 showToast("Il y a des erreurs en rouge.", false);
                 // Remove error classes after animation 
                 setTimeout(() => {
