@@ -1046,7 +1046,19 @@ body {
             <stop offset="80%" stop-color="#d97706"/>
             <stop offset="100%" stop-color="#92400e"/>
         </linearGradient>
-    </defs>
+
+        <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff0000">
+                <animate attributeName="stop-color" values="#ff0000;#ff7f00;#ffff00;#00ff00;#0000ff;#4b0082;#9400d3;#ff0000" dur="4s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="50%" stop-color="#00ff00">
+                <animate attributeName="stop-color" values="#00ff00;#0000ff;#4b0082;#9400d3;#ff0000;#ff7f00;#ffff00;#00ff00" dur="4s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stop-color="#0000ff">
+                <animate attributeName="stop-color" values="#0000ff;#4b0082;#9400d3;#ff0000;#ff7f00;#ffff00;#00ff00;#0000ff" dur="4s" repeatCount="indefinite" />
+            </stop>
+        </linearGradient>
+</defs>
 </svg>
     <div class="action-buttons">
         <button class="icon-action-btn btn-skins-action" onclick="openSkinsModal()" title="Ouvrir les skins" aria-label="Ouvrir les skins">
@@ -1356,11 +1368,12 @@ body {
             renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
-            }            if (chalState.obstacles && chalState.obstacles.length > 0) {
-                buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles);
+            }
+            if (chalState.robotRow !== null) {
+                buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
                 renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
                 renderGhost('chal-grid', chalState.startRow, chalState.startCol, chalState.startDir);
-                renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+                if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
             }
 
             const tgtBtn = document.getElementById('btn-target-icon');
@@ -1517,7 +1530,7 @@ body {
         const ROBOT_SVGS = {
             'default': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="white" stroke="#3b82f6" stroke-width="3"/>
+                    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
                     <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
                     <circle cx="72" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
                     <circle cx="28" cy="12" r="3" fill="#1e293b"/>
@@ -1532,19 +1545,7 @@ body {
                 </svg>`,
             'unicorn': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <defs>
-                        <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ff0000">
-                                <animate attributeName="stop-color" values="#ff0000;#ff7f00;#ffff00;#00ff00;#0000ff;#4b0082;#9400d3;#ff0000" dur="4s" repeatCount="indefinite" />
-                            </stop>
-                            <stop offset="50%" stop-color="#00ff00">
-                                <animate attributeName="stop-color" values="#00ff00;#0000ff;#4b0082;#9400d3;#ff0000;#ff7f00;#ffff00;#00ff00" dur="4s" repeatCount="indefinite" />
-                            </stop>
-                            <stop offset="100%" stop-color="#0000ff">
-                                <animate attributeName="stop-color" values="#0000ff;#4b0082;#9400d3;#ff0000;#ff7f00;#ffff00;#00ff00;#0000ff" dur="4s" repeatCount="indefinite" />
-                            </stop>
-                        </linearGradient>
-                    </defs>
+
                     <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="url(#rainbowGrad)" stroke="white" stroke-width="3"/>
                     <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
                     <circle cx="72" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
@@ -2260,11 +2261,12 @@ body {
                     globalScore++; globalStreak++;
                     document.getElementById('global-score').textContent = globalScore;
                     document.getElementById('global-streak').textContent = globalStreak;
-                    if (globalStreak > 0 && globalStreak % 3 === 0)
-                    if (activeSkin === 'volcano') {
-                        launchFire();
-                    } else {
-                        launchConfetti();
+                    if (globalStreak > 0 && globalStreak % 3 === 0) {
+                        if (activeSkin === 'volcano') {
+                            launchFire();
+                        } else {
+                            launchConfetti();
+                        }
                     }
 
                     showToast('Bravo ! Chemin optimal trouvé.', true);
