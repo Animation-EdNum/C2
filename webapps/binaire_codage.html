@@ -449,7 +449,15 @@ function checkDecToBin() {
      
     const card = document.getElementById('card-dec-bin');
     if (userBin === expectedBin) { 
-        playSound('success'); updateGlobalScore(true); 
+        let isFire = (currentBits === 8 && decBinMistakes === 0);
+        if (isFire) {
+            playSound('success');
+            launchFire();
+            updateGlobalScore(true, true);
+        } else {
+            playSound('success');
+            updateGlobalScore(true, false);
+        }
         fb.className = 'feedback success'; fb.innerHTML = `✅ Parfait ! ${explainBinary(userBin)}.`; 
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
         decBinLocked = true; setTimeout(newDecToBin, 1500); 
@@ -489,7 +497,15 @@ function checkBinToDec() {
  
     const card = document.getElementById('card-bin-dec');
     if (userVal === expectedVal) { 
-        playSound('success'); updateGlobalScore(true); 
+        let isFire = (currentBits === 8 && binDecMistakes === 0);
+        if (isFire) {
+            playSound('success');
+            launchFire();
+            updateGlobalScore(true, true);
+        } else {
+            playSound('success');
+            updateGlobalScore(true, false);
+        }
         fb.innerHTML = `✅ Exact ! ${explainBinary(currentBinString)}.`;
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
         binDecLocked = true;  
@@ -528,8 +544,8 @@ function resetHelpTimer() {
     }, 8000); // Pulse après 8 secondes d'inactivité 
 } 
  
-function updateGlobalScore(correct) { 
-    if(correct) { globalCorrect++; globalStreak++; if(globalStreak>globalBest) globalBest = globalStreak; if(globalStreak%3===0) launchConfetti(); } 
+function updateGlobalScore(correct, isFire = false) {
+    if(correct) { globalCorrect++; globalStreak++; if(globalStreak>globalBest) globalBest = globalStreak; if(!isFire && globalStreak%3===0) launchConfetti(); }
     else { globalStreak = 0; } 
     document.getElementById('global-correct').textContent = globalCorrect; 
     document.getElementById('global-streak').textContent = globalStreak; 
