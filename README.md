@@ -22,10 +22,7 @@ Ce dépôt regroupe des applications web interactives (webapps) et des ressource
 Nos outils sont conçus pour être le plus simple possible à utiliser et s'adaptent à vos besoins de déploiement :
 
 ### 📂 Structure du projet
-Le dépôt est organisé en deux modes d'utilisation :
-
-1.  **Utilisation Web (Standard) :** Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagées (CSS, JS, Fonts) situées dans les dossiers racines. C'est le mode idéal pour un hébergement sur un serveur web.
-2.  **Utilisation Autonome (Dossier `/standalone/`) :** Ce répertoire contient des versions **100% indépendantes**. Chaque fichier HTML inclut son propre code CSS et JavaScript. C'est la solution parfaite pour une distribution simple (un seul fichier à copier) ou pour un usage sur des ordinateurs sans accès réseau fiable.
+Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagées (CSS, JS, Fonts) situées dans les dossiers racines. C'est le mode idéal pour un hébergement sur un serveur web.
 
 ### 🚀 Points forts
 - **Utilisation locale :** Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
