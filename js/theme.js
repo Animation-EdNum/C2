@@ -29,6 +29,11 @@
         if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
         if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
 
+        const themeToggleText = document.getElementById('themeToggleText');
+        if (themeToggleText) {
+            themeToggleText.textContent = theme === 'dark' ? 'Mode Clair' : 'Mode Sombre';
+        }
+
         // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
         if (typeof window.__onThemeChange === 'function') {
             window.__onThemeChange(theme);
