@@ -6,4 +6,7 @@
 - **[2026-04-22] Mobile-First Navigation:** Standardized on a Bottom Tab Bar for mobile devices to solve reachability issues, moving away from desktop-centric top headers.
 - **[2026-04-18] LocalStorage for Persistence:** Use `localStorage` for all state persistence (theme, student lists, streaks) to avoid the complexity of local databases while maintaining offline functionality.
 - **[2026-04-12] Font Self-Hosting:** All fonts (Outfit, Inter) must be stored in the `/fonts` directory to ensure consistent rendering without internet access.
+- **[2026-04-23] Unified UI & Shared Styles:** Avoid duplicating common styles (e.g., action buttons, footer, dark mode toggles) in webapps; these must be managed centrally through `css/shared.css`. The webapps share a unified interface and natively include a global Dark Mode, storing the user's choice in `localStorage` to maintain consistency across the applications.
+- **[2026-04-23] Audio Handling:** Webapps that incorporate audio must be silent by default (`let isMuted = true;`). The UI should include a toggle button to allow users to manually enable/disable sound. Guard `playSound` execution with `if (isMuted) return;`. Do not add audio or sound effects unless explicitly requested (e.g., interpret 'coup de feu' as a visual effect like `launchFire()`).
+- **[2026-04-23] Testing Strategy:** Verification of functionality relies primarily on Playwright frontend verification scripts. There are no automated test suites (like `pytest` or `npm test`) configured in this repository.
 
