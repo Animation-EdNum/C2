@@ -291,9 +291,14 @@ body {
             display: flex;
             align-items: center;
             justify-content: center;
-            pointer-events: none;
+            pointer-events: auto;
             z-index: 10;
             transition: top 0.35s ease-in-out, left 0.35s ease-in-out;
+            cursor: grab;
+        }
+
+        .robot-overlay:active {
+            cursor: grabbing;
         }
 
         .robot-body {
@@ -719,9 +724,10 @@ body {
         /* TOAST */
         #toast {
             position: fixed;
-            bottom: 20px;
+            top: 50%;
+            bottom: auto;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            transform: translate(-50%, -50%) scale(0.9);
             background: var(--card-bg);
             color: white;
             padding: 12px 24px;
@@ -729,13 +735,14 @@ body {
             font-weight: 600;
             opacity: 0;
             transition: 0.3s var(--spring-easing);
-            z-index: 1000;
+            z-index: 10000;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             text-align: center;
+            pointer-events: none;
         }
 
         #toast.show {
-            transform: translateX(-50%) translateY(0);
+            transform: translate(-50%, -50%) scale(1);
             opacity: 1;
         }
 
@@ -1452,6 +1459,7 @@ body {
                     }
 
                 showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, true);
+                selectSkin(skinId);
             }
         }
 
@@ -1756,6 +1764,12 @@ body {
                 case 'ArrowDown': e.preventDefault(); addCmd('backward'); break;
                 case 'ArrowLeft': e.preventDefault(); addCmd('left'); break;
                 case 'ArrowRight': e.preventDefault(); addCmd('right'); break;
+                case 'Backspace':
+                    e.preventDefault();
+                    if (simState.program.length > 0) {
+                        removeSpecificCmd(simState.program.length - 1);
+                    }
+                    break;
             }
         });
 
@@ -1809,6 +1823,24 @@ body {
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
                     cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isObstacle ? SKIN_CONFIG[activeSkin].name + ' Obstacle' : 'Vide'}`);
+
+                    // Allow dropping onto cells
+                    cell.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                    });
+
+                    cell.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        if (containerId === 'sim-grid' && !simState.running && !isObstacle) {
+                            playSound('click');
+                            simState.robotRow = r;
+                            simState.robotCol = c;
+                            simState.startRow = r;
+                            simState.startCol = c;
+                            resetSimulatorPosition();
+                        }
+                    });
+
                     row.appendChild(cell);
                 }
                 grid.appendChild(row);
@@ -1841,6 +1873,19 @@ body {
             const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
             placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
+
+            const overlay = document.getElementById(overlayId);
+            if (overlay && containerId === 'sim-grid') {
+                overlay.setAttribute('draggable', 'true');
+                overlay.ondragstart = (e) => {
+                    if (simState.running) {
+                        e.preventDefault();
+                    } else {
+                        e.dataTransfer.setData('text/plain', 'robot');
+                        e.dataTransfer.effectAllowed = 'move';
+                    }
+                };
+            }
         }
 
         function renderGhost(containerId, row, col, dirIndex) {
