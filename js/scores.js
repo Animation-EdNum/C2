@@ -145,11 +145,9 @@ const ScoreManager = {
                 if (diff === 'hard') diffName = 'Difficile';
                 if (diff === 'extreme') diffName = 'Extrême';
 
-                const pctFirstTry = st.totalAttempts > 0 ? Math.round((st.firstTrySuccess / st.totalAttempts) * 100) : 0;
-                const pctTotalSuccess = st.totalAttempts > 0 ? Math.round((st.totalSuccess / st.totalAttempts) * 100) : 0;
-                // Mistakes percentage relates to total attempts + mistakes? The prompt says: "combien d'erreurs (avec pourcentage)"
-                // A common way: mistakes / (totalSuccess + mistakes) or mistakes / totalActions
                 const totalActions = st.totalSuccess + st.mistakes;
+                const pctFirstTry = st.totalSuccess > 0 ? Math.round((st.firstTrySuccess / st.totalSuccess) * 100) : 0;
+                const pctTotalSuccess = totalActions > 0 ? Math.round((st.totalSuccess / totalActions) * 100) : 0;
                 const pctMistakes = totalActions > 0 ? Math.round((st.mistakes / totalActions) * 100) : 0;
 
                 html += `<tr>
