@@ -34,7 +34,7 @@ Every application follows this high-level structure:
 ## 4. Resource Pathing
 To ensure compatibility between "Web" and "Standalone" modes:
 - Use relative paths: `./css/style.css` in root webapps.
-- The `standalone/` files bundle these into a single file during export (via Python scripts like `replace_header.py`).
+- [DEPRECATED FOR NOW] The `standalone/` files bundle these into a single file during export (via Python scripts like `replace_header.py`).
 
 ## 5. Event Handling
 Prefer delegation or clean initialization:
