@@ -671,10 +671,14 @@
             }
         }
     </style>
+<script src="../js/scores.js"></script>
 </head>
 
 <body>
     <div class="action-buttons">
+        <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </button>
         <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -1014,7 +1018,8 @@
 
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
-                globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
+                globalCorrect++;
+                ScoreManager.addSuccess("train", gridSize, isFirstAttempt ? 0 : 1); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
 
                 if (gridSize === 6 && isFirstAttempt) {
                     launchFire();
@@ -1026,7 +1031,8 @@
                 setTimeout(initTrainMode, 2000);
             } else {
                 isFirstAttempt = false;
-                playSound('error'); globalStreak = 0;
+                playSound('error');
+                ScoreManager.addMistake("train", gridSize); globalStreak = 0;
                 showToast("Il y a des erreurs en rouge.", false);
                 // Remove error classes after animation 
                 setTimeout(() => {
@@ -1163,6 +1169,7 @@
             document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
         });
 </script>
+<script>window.addEventListener('load', () => ScoreManager.init('bit_de_parite'));</script>
 </body>
 
 </html>

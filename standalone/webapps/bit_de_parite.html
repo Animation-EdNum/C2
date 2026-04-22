@@ -771,11 +771,573 @@ footer a:hover {
     box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
 }
 
+
+
+
+
+
+
+
+/* ============================================================
+   Modal Statistiques détaillées (ScoreManager)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color, #1a202c);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color, #1a202c);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-close-modal:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.05);
+}
+
+.btn-reset-scores {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.btn-reset-scores:hover {
+    background: #c53030;
+    transform: scale(1.02);
+}
+
+.stat-mode-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color, #667eea);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.stat-table-wrapper {
+    overflow-x: auto;
+}
+
+.stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.stat-table th, .stat-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-table th {
+    font-weight: bold;
+    color: var(--primary-color, #667eea);
+}
+
+.stat-pct {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #f7fafc;
+}
+
+body.dark-mode .btn-close-modal {
+    color: #f7fafc;
+}
+
+body.dark-mode .stat-table th, body.dark-mode .stat-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+
+/* ============================================================
+   Modal Statistiques détaillées (ScoreManager)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color, #1a202c);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color, #1a202c);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-close-modal:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.05);
+}
+
+.btn-reset-scores {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.btn-reset-scores:hover {
+    background: #c53030;
+    transform: scale(1.02);
+}
+
+.stat-mode-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color, #667eea);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.stat-table-wrapper {
+    overflow-x: auto;
+}
+
+.stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.stat-table th, .stat-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-table th {
+    font-weight: bold;
+    color: var(--primary-color, #667eea);
+}
+
+.stat-pct {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #f7fafc;
+}
+
+body.dark-mode .btn-close-modal {
+    color: #f7fafc;
+}
+
+body.dark-mode .stat-table th, body.dark-mode .stat-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+
+/* ============================================================
+   Modal Statistiques détaillées (ScoreManager)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color, #1a202c);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color, #1a202c);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-close-modal:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.05);
+}
+
+.btn-reset-scores {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.btn-reset-scores:hover {
+    background: #c53030;
+    transform: scale(1.02);
+}
+
+.stat-mode-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color, #667eea);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.stat-table-wrapper {
+    overflow-x: auto;
+}
+
+.stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.stat-table th, .stat-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-table th {
+    font-weight: bold;
+    color: var(--primary-color, #667eea);
+}
+
+.stat-pct {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #f7fafc;
+}
+
+body.dark-mode .btn-close-modal {
+    color: #f7fafc;
+}
+
+body.dark-mode .stat-table th, body.dark-mode .stat-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+
+/* ============================================================
+   Modal Statistiques détaillées (ScoreManager)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color, #1a202c);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color, #1a202c);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-close-modal:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.05);
+}
+
+.btn-reset-scores {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.btn-reset-scores:hover {
+    background: #c53030;
+    transform: scale(1.02);
+}
+
+.stat-mode-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color, #667eea);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.stat-table-wrapper {
+    overflow-x: auto;
+}
+
+.stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.stat-table th, .stat-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-table th {
+    font-weight: bold;
+    color: var(--primary-color, #667eea);
+}
+
+.stat-pct {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #f7fafc;
+}
+
+body.dark-mode .btn-close-modal {
+    color: #f7fafc;
+}
+
+body.dark-mode .stat-table th, body.dark-mode .stat-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+
 </style>
 </head>
 
 <body>
     <div class="action-buttons">
+        <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </button>
         <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
             <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1108,7 +1670,8 @@ footer a:hover {
 
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
-                globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
+                globalCorrect++;
+                ScoreManager.addSuccess("train", gridSize, isFirstAttempt ? 0 : 1); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
 
                 if (gridSize === 6 && isFirstAttempt) {
                     launchFire();
@@ -1120,7 +1683,8 @@ footer a:hover {
                 setTimeout(initTrainMode, 2000);
             } else {
                 isFirstAttempt = false;
-                playSound('error'); globalStreak = 0;
+                playSound('error');
+                ScoreManager.addMistake("train", gridSize); globalStreak = 0;
                 showToast("Il y a des erreurs en rouge.", false);
                 // Remove error classes after animation 
                 setTimeout(() => {
@@ -1413,6 +1977,179 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
         });
 </script>
+<script>
+/**
+ * ScoreManager - Handles detailed scoring stats and rendering of the stats modal.
+ */
+const ScoreManager = {
+    appId: null,
+    stats: {}, // structure: { mode: { difficulty: { totalAttempts: 0, totalSuccess: 0, firstTrySuccess: 0, mistakes: 0 } } }
+
+    init(appId) {
+        this.appId = appId;
+        this.loadStats();
+        this.injectModalHtml();
+    },
+
+    loadStats() {
+        const data = localStorage.getItem(`c2_stats_${this.appId}`);
+        if (data) {
+            try {
+                this.stats = JSON.parse(data);
+            } catch (e) {
+                this.stats = {};
+            }
+        } else {
+            this.stats = {};
+        }
+    },
+
+    saveStats() {
+        localStorage.setItem(`c2_stats_${this.appId}`, JSON.stringify(this.stats));
+    },
+
+    ensurePath(mode, difficulty) {
+        if (!this.stats[mode]) this.stats[mode] = {};
+        if (!this.stats[mode][difficulty]) {
+            this.stats[mode][difficulty] = {
+                totalAttempts: 0,
+                totalSuccess: 0,
+                firstTrySuccess: 0,
+                mistakes: 0
+            };
+        }
+    },
+
+    addSuccess(mode, difficulty, mistakesMade) {
+        this.ensurePath(mode, difficulty);
+        const st = this.stats[mode][difficulty];
+        st.totalAttempts++;
+        st.totalSuccess++;
+        if (mistakesMade === 0) {
+            st.firstTrySuccess++;
+        }
+        this.saveStats();
+    },
+
+    addMistake(mode, difficulty) {
+        this.ensurePath(mode, difficulty);
+        const st = this.stats[mode][difficulty];
+        st.mistakes++;
+        this.saveStats();
+    },
+
+    resetScores() {
+        if (confirm("Voulez-vous vraiment réinitialiser toutes vos statistiques pour cette application ?")) {
+            this.stats = {};
+            this.saveStats();
+            this.renderModalContent();
+        }
+    },
+
+    injectModalHtml() {
+        if (document.getElementById('score-details-modal')) return;
+
+        const modalHtml = `
+            <div id="score-details-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
+                <div class="modal-content">
+                    <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
+                    <button class="btn-close-modal" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
+
+                    <div id="score-modal-body"></div>
+
+                    <button class="btn-reset-scores" onclick="ScoreManager.resetScores()">Réinitialiser les scores</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    },
+
+    showModal() {
+        const modal = document.getElementById('score-details-modal');
+        if (!modal) return;
+        this.renderModalContent();
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+    },
+
+    closeModal() {
+        const modal = document.getElementById('score-details-modal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    },
+
+    renderModalContent() {
+        const body = document.getElementById('score-modal-body');
+        if (!body) return;
+
+        if (Object.keys(this.stats).length === 0) {
+            body.innerHTML = '<p style="text-align: center; color: var(--text-color); opacity: 0.7;">Aucune statistique enregistrée pour le moment.</p>';
+            return;
+        }
+
+        let html = '';
+        for (const mode in this.stats) {
+            // Translate mode logic if necessary
+            let modeName = mode;
+            if (mode === 'dec_to_bin') modeName = 'Décimal → Binaire';
+            if (mode === 'bin_to_dec') modeName = 'Binaire → Décimal';
+            if (mode === 'encode') modeName = 'Encodage';
+            if (mode === 'decode') modeName = 'Décodage';
+            if (mode === 'train') modeName = 'Entraînement';
+            if (mode === 'path') modeName = 'Routage';
+            if (mode === 'chal') modeName = 'Simulateur';
+
+            html += `<h3 class="stat-mode-title">${modeName}</h3>`;
+            html += `<div class="stat-table-wrapper"><table class="stat-table">
+                        <thead>
+                            <tr>
+                                <th>Difficulté</th>
+                                <th>Réussites 1er coup</th>
+                                <th>Total réussites</th>
+                                <th>Erreurs</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            for (const diff in this.stats[mode]) {
+                const st = this.stats[mode][diff];
+                const totalAttempts = st.totalAttempts || 1; // Prevent division by zero for percentage
+
+                let diffName = diff;
+                if (diff === '4') diffName = 'Facile (4 bits)';
+                if (diff === '7') diffName = 'Moyen (7 bits)';
+                if (diff === '8') diffName = 'Difficile (8 bits)';
+                if (diff === 'easy') diffName = 'Facile';
+                if (diff === 'medium') diffName = 'Moyen';
+                if (diff === 'hard') diffName = 'Difficile';
+                if (diff === 'extreme') diffName = 'Extrême';
+
+                const pctFirstTry = st.totalAttempts > 0 ? Math.round((st.firstTrySuccess / st.totalAttempts) * 100) : 0;
+                const pctTotalSuccess = st.totalAttempts > 0 ? Math.round((st.totalSuccess / st.totalAttempts) * 100) : 0;
+                // Mistakes percentage relates to total attempts + mistakes? The prompt says: "combien d'erreurs (avec pourcentage)"
+                // A common way: mistakes / (totalSuccess + mistakes) or mistakes / totalActions
+                const totalActions = st.totalSuccess + st.mistakes;
+                const pctMistakes = totalActions > 0 ? Math.round((st.mistakes / totalActions) * 100) : 0;
+
+                html += `<tr>
+                            <td><strong>${diffName}</strong></td>
+                            <td>${st.firstTrySuccess} <span class="stat-pct">(${pctFirstTry}%)</span></td>
+                            <td>${st.totalSuccess} <span class="stat-pct">(${pctTotalSuccess}%)</span></td>
+                            <td>${st.mistakes} <span class="stat-pct">(${pctMistakes}%)</span></td>
+                         </tr>`;
+            }
+            html += `</tbody></table></div>`;
+        }
+
+        body.innerHTML = html;
+    }
+};
+
+window.ScoreManager = ScoreManager;
+
+</script>
+<script>window.addEventListener('load', () => ScoreManager.init('bit_de_parite'));</script>
 </body>
 
 </html>

@@ -171,9 +171,13 @@ body {
         
         @media print { .no-print { display: none !important; } }
     </style> 
+<script src="../js/scores.js"></script>
 </head> 
 <body> 
 <div class="action-buttons">
+        <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </button>
     <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
     </a>
@@ -454,16 +458,19 @@ function checkDecToBin() {
             playSound('success');
             launchFire();
             updateGlobalScore(true, true);
+            ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
         } else {
             playSound('success');
             updateGlobalScore(true, false);
+            ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
         }
         fb.className = 'feedback success'; fb.innerHTML = `✅ Parfait ! ${explainBinary(userBin)}.`; 
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
         decBinLocked = true; setTimeout(newDecToBin, 1500); 
     } else { 
         decBinMistakes++;
-        playSound('error'); updateGlobalScore(false); 
+        playSound('error'); updateGlobalScore(false);
+        ScoreManager.addMistake("dec_to_bin", currentBits);
         fb.className = 'feedback error';  
         if (decBinMistakes === 1) {
             fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.`;
@@ -502,9 +509,11 @@ function checkBinToDec() {
             playSound('success');
             launchFire();
             updateGlobalScore(true, true);
+            ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
         } else {
             playSound('success');
             updateGlobalScore(true, false);
+            ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
         }
         fb.innerHTML = `✅ Exact ! ${explainBinary(currentBinString)}.`;
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
@@ -512,7 +521,8 @@ function checkBinToDec() {
         setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500); // Auto-focus 
     } else { 
         binDecMistakes++;
-        playSound('error'); updateGlobalScore(false); 
+        playSound('error'); updateGlobalScore(false);
+        ScoreManager.addMistake("bin_to_dec", currentBits);
         fb.className = 'feedback error';
         if (binDecMistakes === 1) {
             fb.innerHTML = `❌ Faux. Essaie encore !`;
@@ -581,5 +591,6 @@ setDifficulty('medium');
             document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
         });
 </script>
+<script>window.addEventListener('load', () => ScoreManager.init('binaire_codage'));</script>
 </body> 
 </html>
