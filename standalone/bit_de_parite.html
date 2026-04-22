@@ -9,8 +9,326 @@
     <meta property="og:description"
         content="Un exercice ludique abordant la notion de parité pour la détection d'erreurs.">
     <meta property="og:type" content="website">
-    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="../css/shared.css">
+        <style>
+
+:root {
+    --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --glass-blur: blur(16px);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   shared.css — Styles communs à toutes les pages du projet C2
+   ============================================================ */
+
+/* --- Typographie locale (hors ligne) --- */
+@font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 400 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('fonts/jetbrains-mono.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* --- Accessibilité et Touch (Tablet-First) --- */
+body {
+    touch-action: manipulation; /* Élimine le délai de 300ms sur mobile */
+}
+
+button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* --- Animation d'entrée principale --- */
+@keyframes fadeInCascade {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header unifié --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+.app-header h1 {
+    margin-bottom: 0;
+}
+
+/* --- Boutons d'action --- */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+/* --- Dropdown Réglages --- */
+.settings-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.settings-dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background: var(--container-bg, rgba(255, 255, 255, 0.95));
+    min-width: 60px;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
+    border-radius: 14px;
+    z-index: 101;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 10px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+body.dark .settings-dropdown-content {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.6);
+}
+
+/* Affichage au survol ou au clic sur le bouton déclencheur */
+.settings-dropdown:hover .settings-dropdown-content,
+.settings-dropdown-content.show {
+    display: flex;
+    animation: fadeInCascade 0.2s var(--spring-easing, cubic-bezier(0.175, 0.885, 0.32, 1.275)) forwards;
+}
+
+.icon-action-btn {
+    background: var(--card-bg, rgba(255, 255, 255, 0.8));
+    border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
+    color: var(--text-main, #1e293b);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    min-width: 44px;
+    min-height: 44px;
+}
+body.dark .icon-action-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}
+
+.icon-action-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+}
+body.dark .icon-action-btn:hover {
+    background: rgba(30, 41, 59, 0.9);
+}
+
+.settings-dropdown-content .icon-action-btn {
+    color: var(--text-main, #1e293b);
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+}
+.settings-dropdown-content .icon-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: none;
+}
+body.dark .settings-dropdown-content .icon-action-btn {
+    color: #fff;
+    background: transparent;
+    border: 1px solid transparent;
+}
+body.dark .settings-dropdown-content .icon-action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Footer commun --- */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* --- Impression --- */
+@media print {
+    .no-print { display: none !important; }
+}
+
+/* --- Accessibilité et ancres --- */
+:target { scroll-margin-top: 5rem; }
+
+/* --- Accessibilité : Focus Rings --- */
+:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+}
+
+/* ============================================================
+   Modal Statistiques détaillées (ScoreManager)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color, #1a202c);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color, #1a202c);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-close-modal:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.05);
+}
+
+.btn-reset-scores {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.btn-reset-scores:hover {
+    background: #c53030;
+    transform: scale(1.02);
+}
+
+.stat-mode-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color, #667eea);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.stat-table-wrapper {
+    overflow-x: auto;
+}
+
+.stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.stat-table th, .stat-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-table th {
+    font-weight: bold;
+    color: var(--primary-color, #667eea);
+}
+
+.stat-pct {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #f7fafc;
+}
+
+body.dark-mode .btn-close-modal {
+    color: #f7fafc;
+}
+
+body.dark-mode .stat-table th, body.dark-mode .stat-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+</style>
     <style>
         body>header,
         body>.container {
@@ -671,7 +989,6 @@
             }
         }
     </style>
-<script src="../js/scores.js"></script>
 </head>
 
 <body>
@@ -684,9 +1001,7 @@
                 <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                 </button>
-                <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                </a>
+
 
                 <div class="settings-dropdown">
                     <button class="icon-action-btn" title="Réglages" aria-label="Réglages">
@@ -798,9 +1113,9 @@
     </footer>
 
     <script>
-        // ========================================== 
-        // AUDIO ENGINE (Web Audio API) 
-        // ========================================== 
+        // ==========================================
+        // AUDIO ENGINE (Web Audio API)
+        // ==========================================
         let audioCtx = null;
 
         let isMuted = true;
@@ -856,9 +1171,9 @@
             }
         }
 
-        // ========================================== 
-        // GLOBAL STATE & UTILS 
-        // ========================================== 
+        // ==========================================
+        // GLOBAL STATE & UTILS
+        // ==========================================
         let currentMode = 'train';
         let gridSize = 4;
         let trainData = [], trainAnswers = [], isTrainLocked = false, isFirstAttempt = true;
@@ -883,9 +1198,9 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ========================================== 
-        // MODE ENTRAÎNEMENT 
-        // ========================================== 
+        // ==========================================
+        // MODE ENTRAÎNEMENT
+        // ==========================================
         function setDifficulty(lvl) {
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl === 'easy' ? '4×4' : lvl === 'medium' ? '5×5' : '6×6')));
             gridSize = lvl === 'easy' ? 4 : (lvl === 'medium' ? 5 : 6);
@@ -896,12 +1211,12 @@
             isTrainLocked = false; isFirstAttempt = true; trainData = []; trainAnswers = [];
             const totalSize = gridSize + 1;
 
-            // Generate Random Data 
+            // Generate Random Data
             for (let i = 0; i < gridSize; i++) {
                 let row = []; for (let j = 0; j < gridSize; j++) row.push(Math.random() < 0.5 ? 0 : 1);
                 trainData.push(row);
             }
-            // Init empty answers 
+            // Init empty answers
             for (let i = 0; i < totalSize; i++) {
                 let row = []; for (let j = 0; j < totalSize; j++) row.push(null);
                 trainAnswers.push(row);
@@ -919,11 +1234,11 @@
                     const cell = document.createElement('div');
 
                     if (i < gridSize && j < gridSize) {
-                        // Data Cell 
+                        // Data Cell
                         cell.className = 'cell data'; cell.textContent = trainData[i][j];
                         cell.dataset.r = i; cell.dataset.c = j;
                     } else {
-                        // Parity Cell 
+                        // Parity Cell
                         cell.className = `cell ${i === gridSize && j === gridSize ? 'corner' : (i === gridSize ? 'parity-col' : 'parity-line')}`;
                         if (isTrainLocked) cell.classList.add('locked');
 
@@ -931,7 +1246,7 @@
                         if (val !== null) { cell.textContent = val; cell.classList.add('filled'); }
                         else cell.textContent = '';
 
-                        // Interactions 
+                        // Interactions
                         cell.onclick = () => toggleTrainBit(i, j);
                         cell.onmouseenter = () => highlightLine(i, j);
                         cell.onmouseleave = clearHighlights;
@@ -945,16 +1260,16 @@
             if (isTrainLocked) return;
             playSound('click');
             let current = trainAnswers[r][c];
-            // Cycle: null -> 1 -> 0 -> null 
+            // Cycle: null -> 1 -> 0 -> null
             if (current === null) trainAnswers[r][c] = 1;
             else if (current === 1) trainAnswers[r][c] = 0;
             else trainAnswers[r][c] = null;
 
-            // Fast re-render of this cell only for performance 
+            // Fast re-render of this cell only for performance
             renderTrainGrid();
         }
 
-        // Hover Assistance 
+        // Hover Assistance
         function highlightLine(r, c) {
             if (isTrainLocked) return;
             const cells = document.getElementById('train-grid').children;
@@ -976,10 +1291,10 @@
             let hasError = false;
             const cells = document.getElementById('train-grid').children;
 
-            // Helper to find a specific cell div 
+            // Helper to find a specific cell div
             const getCell = (r, c) => cells[r * (gridSize + 1) + c];
 
-            // Check Rows 
+            // Check Rows
             for (let i = 0; i < gridSize; i++) {
                 let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0);
                 if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) {
@@ -987,7 +1302,7 @@
                 } else { getCell(i, gridSize).classList.add('cell-correct'); }
             }
 
-            // Check Cols 
+            // Check Cols
             for (let j = 0; j < gridSize; j++) {
                 let sum = trainAnswers[gridSize][j] || 0;
                 for (let i = 0; i < gridSize; i++) sum += trainData[i][j];
@@ -996,7 +1311,7 @@
                 } else { getCell(gridSize, j).classList.add('cell-correct'); }
             }
 
-            // Check Corner 
+            // Check Corner
             let rowSum = 0;
             let colSum = 0;
             for (let i = 0; i < gridSize; i++) rowSum += (trainAnswers[gridSize][i] || 0);
@@ -1025,7 +1340,7 @@
                 playSound('error');
                 ScoreManager.addMistake("train", gridSize); globalStreak = 0;
                 showToast("Il y a des erreurs en rouge.", false);
-                // Remove error classes after animation 
+                // Remove error classes after animation
                 setTimeout(() => {
                     document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error'));
                 }, 1000);
@@ -1037,16 +1352,16 @@
         }
 
 
-        // ========================================== 
-        // MODE TOUR DE MAGIE 
-        // ========================================== 
+        // ==========================================
+        // MODE TOUR DE MAGIE
+        // ==========================================
         let isMagicDone = false;
         let magicDomNodes = { data: [], rowParity: [], colParity: [], corner: null };
 
         function initMagicMode() {
             isMagicDone = false; magicData = []; magicParityRow = []; magicParityCol = []; magicCorner = 0;
 
-            // Generate 5x5 for magic trick 
+            // Generate 5x5 for magic trick
             const mgSize = 5;
             let totalDataSum = 0;
 
@@ -1057,7 +1372,7 @@
                     row.push(val); rowSum += val; totalDataSum += val;
                 }
                 magicData.push(row);
-                magicParityRow.push(rowSum % 2); // Pair -> 0, Impair -> 1 
+                magicParityRow.push(rowSum % 2); // Pair -> 0, Impair -> 1
             }
 
             for (let j = 0; j < mgSize; j++) {
@@ -1066,7 +1381,7 @@
                 magicParityCol.push(colSum % 2);
             }
 
-            magicCorner = magicParityRow.reduce((a, b) => a + b, 0) % 2; // Should match Col parity sum 
+            magicCorner = magicParityRow.reduce((a, b) => a + b, 0) % 2; // Should match Col parity sum
 
             renderMagicGrid();
         }
@@ -1109,27 +1424,27 @@
             if (isMagicDone) return;
             isMagicDone = true;
 
-            // Flip the bit visually 
+            // Flip the bit visually
             magicData[r][c] = magicData[r][c] === 1 ? 0 : 1;
-            renderMagicGrid(); // Re-render with new bit, locking interactions 
+            renderMagicGrid(); // Re-render with new bit, locking interactions
 
-            // Magic Animation Sequence 
+            // Magic Animation Sequence
             playSound('magic');
             showToast("🔍 Analyse de la parité en cours…", false);
 
             setTimeout(() => {
-                // Highlight the row and col that are now WRONG 
+                // Highlight the row and col that are now WRONG
                 magicDomNodes.rowParity[r].classList.add('magic-error-row');
                 magicDomNodes.colParity[c].classList.add('magic-error-col');
 
-                // Highlight all data in that row/col for dramatic effect 
+                // Highlight all data in that row/col for dramatic effect
                 for (let i = 0; i < 5; i++) {
                     magicDomNodes.data[r][i].classList.add('magic-error-row');
                     magicDomNodes.data[i][c].classList.add('magic-error-col');
                 }
 
                 setTimeout(() => {
-                    // Target the intersection! 
+                    // Target the intersection!
                     magicDomNodes.data[r][c].className = 'cell magic-target';
                     playSound('success');
                     showToast("✨ Erreur localisée par intersection !");
@@ -1138,18 +1453,16 @@
             }, 1000);
         }
 
-        // ========================================== 
-        // CONFETTI 
+        // ==========================================
+        // CONFETTI
         // ==========================================
 
-        // INIT 
+        // INIT
         initTrainMode();
 
         // THEME — géré par ../js/theme.js
     </script>
-    <script src="../js/theme.js"></script>
-<script src="../js/confetti.js"></script>
-<script src="../js/swipe.js">
+    <script src="../js/swipe.js">
 </script>
 
 <script>
@@ -1161,6 +1474,408 @@
         });
 </script>
 <script>window.addEventListener('load', () => ScoreManager.init('bit_de_parite'));</script>
+
+<script>
+/* js/scores.js */
+/**
+ * ScoreManager - Handles detailed scoring stats and rendering of the stats modal.
+ */
+const ScoreManager = {
+    appId: null,
+    stats: {}, // structure: { mode: { difficulty: { totalAttempts: 0, totalSuccess: 0, firstTrySuccess: 0, mistakes: 0 } } }
+
+    init(appId) {
+        this.appId = appId;
+        this.loadStats();
+        this.injectModalHtml();
+    },
+
+    loadStats() {
+        const data = localStorage.getItem(`c2_stats_${this.appId}`);
+        if (data) {
+            try {
+                this.stats = JSON.parse(data);
+            } catch (e) {
+                this.stats = {};
+            }
+        } else {
+            this.stats = {};
+        }
+    },
+
+    saveStats() {
+        localStorage.setItem(`c2_stats_${this.appId}`, JSON.stringify(this.stats));
+    },
+
+    ensurePath(mode, difficulty) {
+        if (!this.stats[mode]) this.stats[mode] = {};
+        if (!this.stats[mode][difficulty]) {
+            this.stats[mode][difficulty] = {
+                totalAttempts: 0,
+                totalSuccess: 0,
+                firstTrySuccess: 0,
+                mistakes: 0
+            };
+        }
+    },
+
+    addSuccess(mode, difficulty, mistakesMade) {
+        this.ensurePath(mode, difficulty);
+        const st = this.stats[mode][difficulty];
+        st.totalAttempts++;
+        st.totalSuccess++;
+        if (mistakesMade === 0) {
+            st.firstTrySuccess++;
+        }
+        this.saveStats();
+    },
+
+    addMistake(mode, difficulty) {
+        this.ensurePath(mode, difficulty);
+        const st = this.stats[mode][difficulty];
+        st.mistakes++;
+        this.saveStats();
+    },
+
+    resetScores() {
+        if (confirm("Voulez-vous vraiment réinitialiser toutes vos statistiques pour cette application ?")) {
+            this.stats = {};
+            this.saveStats();
+            this.renderModalContent();
+        }
+    },
+
+    injectModalHtml() {
+        if (document.getElementById('score-details-modal')) return;
+
+        const modalHtml = `
+            <div id="score-details-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
+                <div class="modal-content">
+                    <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
+                    <button class="btn-close-modal" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
+
+                    <div id="score-modal-body"></div>
+
+                    <button class="btn-reset-scores" onclick="ScoreManager.resetScores()">Réinitialiser les scores</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    },
+
+    showModal() {
+        const modal = document.getElementById('score-details-modal');
+        if (!modal) return;
+        this.renderModalContent();
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+    },
+
+    closeModal() {
+        const modal = document.getElementById('score-details-modal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    },
+
+    renderModalContent() {
+        const body = document.getElementById('score-modal-body');
+        if (!body) return;
+
+        if (Object.keys(this.stats).length === 0) {
+            body.innerHTML = '<p style="text-align: center; color: var(--text-color); opacity: 0.7;">Aucune statistique enregistrée pour le moment.</p>';
+            return;
+        }
+
+        let html = '';
+        for (const mode in this.stats) {
+            // Translate mode logic if necessary
+            let modeName = mode;
+            if (mode === 'dec_to_bin') modeName = 'Décimal → Binaire';
+            if (mode === 'bin_to_dec') modeName = 'Binaire → Décimal';
+            if (mode === 'encode') modeName = 'Encodage';
+            if (mode === 'decode') modeName = 'Décodage';
+            if (mode === 'train') modeName = 'Entraînement';
+            if (mode === 'path') modeName = 'Routage';
+            if (mode === 'chal') modeName = 'Simulateur';
+
+            html += `<h3 class="stat-mode-title">${modeName}</h3>`;
+            html += `<div class="stat-table-wrapper"><table class="stat-table">
+                        <thead>
+                            <tr>
+                                <th>Difficulté</th>
+                                <th>Réussites 1er coup</th>
+                                <th>Total réussites</th>
+                                <th>Erreurs</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            for (const diff in this.stats[mode]) {
+                const st = this.stats[mode][diff];
+                const totalAttempts = st.totalAttempts || 1; // Prevent division by zero for percentage
+
+                let diffName = diff;
+                if (diff === '4') diffName = 'Facile (4 bits)';
+                if (diff === '7') diffName = 'Moyen (7 bits)';
+                if (diff === '8') diffName = 'Difficile (8 bits)';
+                if (diff === 'easy') diffName = 'Facile';
+                if (diff === 'medium') diffName = 'Moyen';
+                if (diff === 'hard') diffName = 'Difficile';
+                if (diff === 'extreme') diffName = 'Extrême';
+
+                const pctFirstTry = st.totalAttempts > 0 ? Math.round((st.firstTrySuccess / st.totalAttempts) * 100) : 0;
+                const pctTotalSuccess = st.totalAttempts > 0 ? Math.round((st.totalSuccess / st.totalAttempts) * 100) : 0;
+                // Mistakes percentage relates to total attempts + mistakes? The prompt says: "combien d'erreurs (avec pourcentage)"
+                // A common way: mistakes / (totalSuccess + mistakes) or mistakes / totalActions
+                const totalActions = st.totalSuccess + st.mistakes;
+                const pctMistakes = totalActions > 0 ? Math.round((st.mistakes / totalActions) * 100) : 0;
+
+                html += `<tr>
+                            <td><strong>${diffName}</strong></td>
+                            <td>${st.firstTrySuccess} <span class="stat-pct">(${pctFirstTry}%)</span></td>
+                            <td>${st.totalSuccess} <span class="stat-pct">(${pctTotalSuccess}%)</span></td>
+                            <td>${st.mistakes} <span class="stat-pct">(${pctMistakes}%)</span></td>
+                         </tr>`;
+            }
+            html += `</tbody></table></div>`;
+        }
+
+        body.innerHTML = html;
+    }
+};
+
+window.ScoreManager = ScoreManager;
+
+</script>
+<script>
+/* js/theme.js */
+/**
+ * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
+ *
+ * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
+ * Prérequis dans le HTML :
+ *   - Un bouton  id="themeToggleBtn"
+ *   - Un svg     id="icon-sun"  (affiché en mode sombre)
+ *   - Un svg     id="icon-moon" (affiché en mode clair)
+ *
+ * Persistance : localStorage('global_theme') = 'light' | 'dark'
+ *
+ * Note : certaines pages (routage_reseau) peuvent définir un callback
+ * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
+ */
+
+(function () {
+    const btn     = document.getElementById('themeToggleBtn');
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon= document.getElementById('icon-moon');
+
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+        localStorage.setItem('global_theme', theme);
+
+        if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
+        if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
+
+        // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
+        if (typeof window.__onThemeChange === 'function') {
+            window.__onThemeChange(theme);
+        }
+    }
+
+    // Lecture du thème sauvegardé (défaut : clair)
+    const saved = localStorage.getItem('global_theme') || 'light';
+    setTheme(saved);
+
+    if (btn) {
+        btn.addEventListener('click', function () {
+            setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+        });
+    }
+})();
+
+</script>
+<script>
+/* js/swipe.js */
+/* =========================================
+   GESTION DU SWIPE (TOUCH) POUR ONGLETS
+   ========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    // Utiliser main ou le body par défaut pour capter le swipe
+    const swipeContainer = document.querySelector('main') || document.querySelector('.container') || document.body;
+
+    swipeContainer.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    swipeContainer.addEventListener('touchend', e => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+
+        // Détection de balayage horizontal prédominant (filtrage du scrolling vertical)
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+            const tabContainer = document.querySelector('.tabs');
+            if (!tabContainer) return; // Pas de système d'onglets sur cette page
+
+            const tabs = Array.from(tabContainer.querySelectorAll('.tab-btn'));
+            if (tabs.length === 0) return;
+
+            const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));
+            if (activeIndex === -1) return;
+
+            // Swipe gauche -> Droite (aller vers l'onglet suivant)
+            if (dx < 0 && activeIndex < tabs.length - 1) {
+                tabs[activeIndex + 1].click();
+            }
+            // Swipe droite -> Gauche (aller vers l'onglet précédent)
+            else if (dx > 0 && activeIndex > 0) {
+                tabs[activeIndex - 1].click();
+            }
+        }
+    }, { passive: true });
+});
+
+</script>
+<script>
+/* js/confetti.js */
+function launchConfetti() {
+    const cvs = document.getElementById('confetti-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+    let parts = [];
+    let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
+    for (let i = 0; i < 80; i++) {
+        parts.push({
+            x: Math.random() * cvs.width,
+            y: -50,
+            vx: (Math.random() - 0.5) * 6,
+            vy: Math.random() * 4 + 2,
+            c: cols[Math.floor(Math.random() * cols.length)],
+            s: Math.random() * 6 + 3,
+            rot: 0,
+            rotSpeed: (Math.random() - 0.5) * 10
+        });
+    }
+    function anim() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        let alive = false;
+        parts.forEach(p => {
+            if (p.y > cvs.height) return;
+            alive = true;
+            p.x += p.vx;
+            p.vy += 0.1;
+            p.y += p.vy;
+            p.rot += p.rotSpeed;
+            ctx.save();
+            ctx.translate(p.x + p.s / 2, p.y + p.s / 2);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.fillStyle = p.c;
+            ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+            ctx.restore();
+        });
+        if (alive) requestAnimationFrame(anim);
+    }
+    anim();
+}
+
+function launchFire() {
+    const cvs = document.getElementById('confetti-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+    let parts = [];
+
+    // Create particles iteratively so it looks like a continuous breath over time
+    let frameCount = 0;
+
+    function createParticle() {
+        // Start center top
+        const startX = cvs.width / 2;
+        const startY = -20;
+
+        // Spread outwards and downwards
+        const angle = (Math.random() * Math.PI / 2) + (Math.PI / 4); // Downwards cone
+        const speed = Math.random() * 10 + 5;
+
+        // Colors: white/yellow core, fading to orange, then red, then grey
+        const cols = ['#fef08a', '#fde047', '#f59e0b', '#ea580c', '#dc2626', '#991b1b', '#292524'];
+
+        parts.push({
+            x: startX + (Math.random() - 0.5) * 40,
+            y: startY,
+            vx: Math.cos(angle) * speed * 0.5,
+            vy: Math.sin(angle) * speed,
+            c: cols[Math.floor(Math.random() * cols.length)],
+            s: Math.random() * 20 + 10,
+            life: 1.0,
+            decay: Math.random() * 0.015 + 0.01
+        });
+    }
+
+    // Pre-seed some particles
+    for (let i = 0; i < 100; i++) createParticle();
+
+    function anim() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+        // Keep breathing fire for ~60 frames
+        if (frameCount < 60) {
+            for (let i = 0; i < 15; i++) createParticle();
+        }
+        frameCount++;
+
+        let alive = false;
+
+        // Use global composite operation to make it glow like fire
+        ctx.globalCompositeOperation = 'screen';
+
+        for (let i = parts.length - 1; i >= 0; i--) {
+            let p = parts[i];
+
+            p.x += p.vx;
+            p.y += p.vy;
+            p.s *= 0.96; // shrink as it burns
+            p.life -= p.decay;
+
+            if (p.life > 0 && p.s > 1 && p.y < cvs.height + 50) {
+                alive = true;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                ctx.fillStyle = p.c;
+                ctx.globalAlpha = p.life;
+                ctx.fill();
+            } else {
+                parts.splice(i, 1);
+            }
+        }
+
+        // Reset composite for standard things
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+
+        if (alive) {
+            requestAnimationFrame(anim);
+        } else {
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+        }
+    }
+    anim();
+}
+
+</script>
 </body>
 
 </html>

@@ -9,8 +9,326 @@
     <meta property="og:description"
         content="Une simulation visuelle pour trouver le chemin le plus rapide dans un réseau.">
     <meta property="og:type" content="website">
-    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="../css/shared.css">
+        <style>
+
+:root {
+    --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --glass-blur: blur(16px);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================
+   shared.css — Styles communs à toutes les pages du projet C2
+   ============================================================ */
+
+/* --- Typographie locale (hors ligne) --- */
+@font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 400 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('fonts/jetbrains-mono.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* --- Accessibilité et Touch (Tablet-First) --- */
+body {
+    touch-action: manipulation; /* Élimine le délai de 300ms sur mobile */
+}
+
+button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* --- Animation d'entrée principale --- */
+@keyframes fadeInCascade {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Header unifié --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+.app-header h1 {
+    margin-bottom: 0;
+}
+
+/* --- Boutons d'action --- */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+/* --- Dropdown Réglages --- */
+.settings-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.settings-dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 110%;
+    background: var(--container-bg, rgba(255, 255, 255, 0.95));
+    min-width: 60px;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
+    border-radius: 14px;
+    z-index: 101;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 10px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+body.dark .settings-dropdown-content {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.6);
+}
+
+/* Affichage au survol ou au clic sur le bouton déclencheur */
+.settings-dropdown:hover .settings-dropdown-content,
+.settings-dropdown-content.show {
+    display: flex;
+    animation: fadeInCascade 0.2s var(--spring-easing, cubic-bezier(0.175, 0.885, 0.32, 1.275)) forwards;
+}
+
+.icon-action-btn {
+    background: var(--card-bg, rgba(255, 255, 255, 0.8));
+    border: 1px solid var(--card-border, rgba(0, 0, 0, 0.1));
+    color: var(--text-main, #1e293b);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    min-width: 44px;
+    min-height: 44px;
+}
+body.dark .icon-action-btn {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}
+
+.icon-action-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+}
+body.dark .icon-action-btn:hover {
+    background: rgba(30, 41, 59, 0.9);
+}
+
+.settings-dropdown-content .icon-action-btn {
+    color: var(--text-main, #1e293b);
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+}
+.settings-dropdown-content .icon-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: none;
+}
+body.dark .settings-dropdown-content .icon-action-btn {
+    color: #fff;
+    background: transparent;
+    border: 1px solid transparent;
+}
+body.dark .settings-dropdown-content .icon-action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Footer commun --- */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* --- Impression --- */
+@media print {
+    .no-print { display: none !important; }
+}
+
+/* --- Accessibilité et ancres --- */
+:target { scroll-margin-top: 5rem; }
+
+/* --- Accessibilité : Focus Rings --- */
+:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+}
+
+/* ============================================================
+   Modal Statistiques détaillées (ScoreManager)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-color, #1a202c);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color, #1a202c);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btn-close-modal:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.05);
+}
+
+.btn-reset-scores {
+    margin-top: 25px;
+    padding: 12px 24px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: block;
+    width: 100%;
+}
+
+.btn-reset-scores:hover {
+    background: #c53030;
+    transform: scale(1.02);
+}
+
+.stat-mode-title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color, #667eea);
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.stat-table-wrapper {
+    overflow-x: auto;
+}
+
+.stat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.stat-table th, .stat-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.stat-table th {
+    font-weight: bold;
+    color: var(--primary-color, #667eea);
+}
+
+.stat-pct {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
+/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
+body.dark-mode .modal-content {
+    background: #2d3748;
+    color: #f7fafc;
+}
+
+body.dark-mode .btn-close-modal {
+    color: #f7fafc;
+}
+
+body.dark-mode .stat-table th, body.dark-mode .stat-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+</style>
     <style>
         body>header,
         body>.container {
@@ -73,7 +391,7 @@
         }
 
         body.dark .instructions {
-            background: var(--card-bg);
+            background: #1e293b;
             border-color: #4f46e5;
             color: #cbd5e1;
         }
@@ -84,7 +402,7 @@
         }
 
         body.dark .path-display {
-            background: var(--card-bg);
+            background: #1e293b;
             border-color: #334155;
         }
 
@@ -95,7 +413,7 @@
         }
 
         body.dark .node-router {
-            background: var(--card-bg);
+            background: #1e293b;
             border-color: #475569;
             color: #cbd5e1;
         }
@@ -557,7 +875,6 @@
             }
         }
     </style>
-<script src="../js/scores.js"></script>
 </head>
 
 <body>
@@ -565,13 +882,7 @@
         <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
         </button>
-        <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-        </a>
+
         <button class="icon-action-btn" id="themeToggleBtn" title="Mode sombre/clair" aria-label="Changer de thème">
             <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -674,54 +985,54 @@
     </footer>
 
     <script>
-        // ========================================== 
-        //  RÉSEAUX AVEC POIDS (Temps en UTI) 
-        // ========================================== 
-        //[id1, id2, UTI (temps)] 
+        // ==========================================
+        //  RÉSEAUX AVEC POIDS (Temps en UTI)
+        // ==========================================
+        //[id1, id2, UTI (temps)]
         const networkPool = {
             easy: [
-                { // Diamant : Le chemin avec le moins de sauts n'est pas forcément le plus rapide 
+                { // Diamant : Le chemin avec le moins de sauts n'est pas forcément le plus rapide
                     nodes: [['src', 8, 50, 's'], ['R1', 34, 22, 'r'], ['R2', 34, 78, 'r'], ['R3', 66, 50, 'r'], ['dst', 92, 50, 'd']],
                     edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R3', 2], ['R2', 'R3', 6], ['R3', 'dst', 3]]
                 },
-                { // Fourche 
+                { // Fourche
                     nodes: [['src', 8, 50, 's'], ['R1', 36, 50, 'r'], ['R2', 64, 25, 'r'], ['R3', 64, 75, 'r'], ['dst', 92, 50, 'd']],
                     edges: [['src', 'R1', 2], ['R1', 'R2', 5], ['R1', 'R3', 2], ['R2', 'dst', 2], ['R3', 'dst', 6]]
                 },
-                { // Zigzag 
+                { // Zigzag
                     nodes: [['src', 8, 35, 's'], ['R1', 32, 75, 'r'], ['R2', 58, 25, 'r'], ['R3', 78, 70, 'r'], ['dst', 92, 40, 'd']],
                     edges: [['src', 'R1', 2], ['src', 'R2', 8], ['R1', 'R2', 3], ['R2', 'R3', 2], ['R3', 'dst', 4]]
                 }
             ],
             medium: [
-                { // Double diamant 
+                { // Double diamant
                     nodes: [['src', 7, 50, 's'], ['R1', 24, 22, 'r'], ['R2', 24, 78, 'r'], ['R3', 48, 50, 'r'], ['R4', 72, 25, 'r'], ['R5', 72, 75, 'r'], ['dst', 93, 50, 'd']],
                     edges: [['src', 'R1', 3], ['src', 'R2', 5], ['R1', 'R3', 4], ['R2', 'R3', 2], ['R1', 'R4', 8], ['R2', 'R5', 7], ['R3', 'R4', 2], ['R3', 'R5', 5], ['R4', 'dst', 4], ['R5', 'dst', 2]]
                 },
-                { // Grille 
+                { // Grille
                     nodes: [['src', 7, 50, 's'], ['R1', 25, 22, 'r'], ['R2', 25, 78, 'r'], ['R3', 50, 22, 'r'], ['R4', 50, 78, 'r'], ['R5', 75, 50, 'r'], ['dst', 93, 50, 'd']],
                     edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R2', 2], ['R1', 'R3', 6], ['R2', 'R4', 3], ['R3', 'R4', 2], ['R3', 'R5', 3], ['R4', 'R5', 5], ['R5', 'dst', 2]]
                 }
             ],
             hard: [
-                { // Maillage complexe 
+                { // Maillage complexe
                     nodes: [['src', 5, 50, 's'], ['R1', 18, 18, 'r'], ['R2', 18, 82, 'r'], ['R3', 36, 50, 'r'], ['R4', 54, 18, 'r'], ['R5', 54, 50, 'r'], ['R6', 54, 82, 'r'], ['R7', 76, 35, 'r'], ['R8', 76, 70, 'r'], ['dst', 95, 50, 'd']],
                     edges: [['src', 'R1', 2], ['src', 'R2', 3], ['R1', 'R3', 4], ['R2', 'R3', 2], ['R1', 'R4', 6], ['R3', 'R5', 3], ['R3', 'R6', 5], ['R2', 'R6', 7], ['R4', 'R5', 1], ['R4', 'R7', 4], ['R5', 'R7', 2], ['R5', 'R8', 5], ['R6', 'R8', 3], ['R7', 'dst', 3], ['R8', 'dst', 4]]
                 },
-                { // Large mesh 
+                { // Large mesh
                     nodes: [['src', 5, 50, 's'], ['R1', 16, 25, 'r'], ['R2', 16, 75, 'r'], ['R3', 32, 50, 'r'], ['R4', 48, 20, 'r'], ['R5', 48, 80, 'r'], ['R6', 64, 50, 'r'], ['R7', 80, 25, 'r'], ['R8', 80, 75, 'r'], ['dst', 95, 50, 'd']],
                     edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R3', 2], ['R2', 'R3', 5], ['R3', 'R4', 3], ['R3', 'R5', 6], ['R4', 'R6', 2], ['R5', 'R6', 1], ['R6', 'R7', 4], ['R6', 'R8', 3], ['R7', 'dst', 2], ['R8', 'dst', 5], ['R4', 'R7', 7], ['R5', 'R8', 2], ['R1', 'R4', 8]]
                 }
             ]
         };
 
-        // ========================================== 
-        //  MOTEUR DU JEU 
-        // ========================================== 
+        // ==========================================
+        //  MOTEUR DU JEU
+        // ==========================================
         let parsedNodes = [], parsedEdges = [], adjacency = {};
         let currentPath = [], isLocked = false, difficulty = 'easy';
         let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0, mistakesInCurrentNetwork = 0;
-        let lastNetworkIndex = -1; // Anti-répétition 
+        let lastNetworkIndex = -1; // Anti-répétition
 
         function parseNetwork(raw) {
             parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] }));
@@ -742,7 +1053,7 @@
             newNetwork();
         }
 
-        // Algorithme de Dijkstra pour trouver le VRAI chemin le plus rapide 
+        // Algorithme de Dijkstra pour trouver le VRAI chemin le plus rapide
         function getFastestPath() {
             let dist = {}, prev = {}, unvisited = [];
             parsedNodes.forEach(n => { dist[n.id] = Infinity; prev[n.id] = null; unvisited.push(n.id); });
@@ -762,7 +1073,7 @@
                     }
                 });
             }
-            return dist['dst']; // Retourne le temps optimal minimum 
+            return dist['dst']; // Retourne le temps optimal minimum
         }
 
         function calculateCurrentTime() {
@@ -789,7 +1100,7 @@
             isLocked = false; netCount++; mistakesInCurrentNetwork = 0;
             document.getElementById('netNumber').textContent = netCount;
             document.getElementById('card-subtitle').textContent = `Réseau ${difficulty === 'easy' ? 'facile' : difficulty === 'medium' ? 'moyen' : 'difficile'}`;
-            document.getElementById('feedback').className = 'feedback'; // Hide feedback 
+            document.getElementById('feedback').className = 'feedback'; // Hide feedback
             render();
         }
 
@@ -810,7 +1121,7 @@
                 const n1 = getNode(e.from), n2 = getNode(e.to);
                 const isPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1;
 
-                // Ligne 
+                // Ligne
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', `${n1.x}%`); line.setAttribute('y1', `${n1.y}%`);
                 line.setAttribute('x2', `${n2.x}%`); line.setAttribute('y2', `${n2.y}%`);
@@ -818,7 +1129,7 @@
                 line.setAttribute('stroke-width', isPath ? '5' : '2.5');
                 svg.appendChild(line);
 
-                // Cercle UTI (Poids) 
+                // Cercle UTI (Poids)
                 const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
@@ -826,7 +1137,7 @@
                 circle.setAttribute('fill', isPath ? '#e65100' : weightColor);
                 svg.appendChild(circle);
 
-                // Texte UTI 
+                // Texte UTI
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.setAttribute('x', `${cx}%`); text.setAttribute('y', `${cy}%`);
                 text.setAttribute('fill', '#ffffff'); text.setAttribute('font-size', '11');
@@ -870,7 +1181,7 @@
 
         function onNodeClick(id, clickable, last) {
             if (isLocked) return;
-            if (id === last && id !== 'src') undoStep(); // Clic sur le dernier = annuler 
+            if (id === last && id !== 'src') undoStep(); // Clic sur le dernier = annuler
             else if (clickable.includes(id)) { currentPath.push(id); render(); }
         }
 
@@ -893,7 +1204,7 @@
             const optimalTime = getFastestPath();
 
             if (userTime === optimalTime) {
-                // SUCCÈS TOTAL 
+                // SUCCÈS TOTAL
                 fb.className = 'feedback show success';
                 fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`;
                 isLocked = true; globalCorrect++;
@@ -902,7 +1213,7 @@
                 else if (globalStreak >= 2) { launchConfetti(); }
                 render(); setTimeout(newNetwork, 3000);
             } else {
-                // ARRIVÉ MAIS TROP LENT 
+                // ARRIVÉ MAIS TROP LENT
                 fb.className = 'feedback show warn';
                 fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Annuler" pour chercher une meilleure route.</em>`;
                 mistakesInCurrentNetwork++;
@@ -925,9 +1236,362 @@
             if (parsedEdges && parsedEdges.length > 0) renderEdges();
         };
     </script>
-    <script src="../js/theme.js"></script>
-<script src="../js/confetti.js"></script>
-<script>window.addEventListener('load', () => ScoreManager.init('routage_reseau'));</script>
+    <script>window.addEventListener('load', () => ScoreManager.init('routage_reseau'));</script>
+
+<script>
+/* js/scores.js */
+/**
+ * ScoreManager - Handles detailed scoring stats and rendering of the stats modal.
+ */
+const ScoreManager = {
+    appId: null,
+    stats: {}, // structure: { mode: { difficulty: { totalAttempts: 0, totalSuccess: 0, firstTrySuccess: 0, mistakes: 0 } } }
+
+    init(appId) {
+        this.appId = appId;
+        this.loadStats();
+        this.injectModalHtml();
+    },
+
+    loadStats() {
+        const data = localStorage.getItem(`c2_stats_${this.appId}`);
+        if (data) {
+            try {
+                this.stats = JSON.parse(data);
+            } catch (e) {
+                this.stats = {};
+            }
+        } else {
+            this.stats = {};
+        }
+    },
+
+    saveStats() {
+        localStorage.setItem(`c2_stats_${this.appId}`, JSON.stringify(this.stats));
+    },
+
+    ensurePath(mode, difficulty) {
+        if (!this.stats[mode]) this.stats[mode] = {};
+        if (!this.stats[mode][difficulty]) {
+            this.stats[mode][difficulty] = {
+                totalAttempts: 0,
+                totalSuccess: 0,
+                firstTrySuccess: 0,
+                mistakes: 0
+            };
+        }
+    },
+
+    addSuccess(mode, difficulty, mistakesMade) {
+        this.ensurePath(mode, difficulty);
+        const st = this.stats[mode][difficulty];
+        st.totalAttempts++;
+        st.totalSuccess++;
+        if (mistakesMade === 0) {
+            st.firstTrySuccess++;
+        }
+        this.saveStats();
+    },
+
+    addMistake(mode, difficulty) {
+        this.ensurePath(mode, difficulty);
+        const st = this.stats[mode][difficulty];
+        st.mistakes++;
+        this.saveStats();
+    },
+
+    resetScores() {
+        if (confirm("Voulez-vous vraiment réinitialiser toutes vos statistiques pour cette application ?")) {
+            this.stats = {};
+            this.saveStats();
+            this.renderModalContent();
+        }
+    },
+
+    injectModalHtml() {
+        if (document.getElementById('score-details-modal')) return;
+
+        const modalHtml = `
+            <div id="score-details-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
+                <div class="modal-content">
+                    <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
+                    <button class="btn-close-modal" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
+
+                    <div id="score-modal-body"></div>
+
+                    <button class="btn-reset-scores" onclick="ScoreManager.resetScores()">Réinitialiser les scores</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    },
+
+    showModal() {
+        const modal = document.getElementById('score-details-modal');
+        if (!modal) return;
+        this.renderModalContent();
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+    },
+
+    closeModal() {
+        const modal = document.getElementById('score-details-modal');
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+    },
+
+    renderModalContent() {
+        const body = document.getElementById('score-modal-body');
+        if (!body) return;
+
+        if (Object.keys(this.stats).length === 0) {
+            body.innerHTML = '<p style="text-align: center; color: var(--text-color); opacity: 0.7;">Aucune statistique enregistrée pour le moment.</p>';
+            return;
+        }
+
+        let html = '';
+        for (const mode in this.stats) {
+            // Translate mode logic if necessary
+            let modeName = mode;
+            if (mode === 'dec_to_bin') modeName = 'Décimal → Binaire';
+            if (mode === 'bin_to_dec') modeName = 'Binaire → Décimal';
+            if (mode === 'encode') modeName = 'Encodage';
+            if (mode === 'decode') modeName = 'Décodage';
+            if (mode === 'train') modeName = 'Entraînement';
+            if (mode === 'path') modeName = 'Routage';
+            if (mode === 'chal') modeName = 'Simulateur';
+
+            html += `<h3 class="stat-mode-title">${modeName}</h3>`;
+            html += `<div class="stat-table-wrapper"><table class="stat-table">
+                        <thead>
+                            <tr>
+                                <th>Difficulté</th>
+                                <th>Réussites 1er coup</th>
+                                <th>Total réussites</th>
+                                <th>Erreurs</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            for (const diff in this.stats[mode]) {
+                const st = this.stats[mode][diff];
+                const totalAttempts = st.totalAttempts || 1; // Prevent division by zero for percentage
+
+                let diffName = diff;
+                if (diff === '4') diffName = 'Facile (4 bits)';
+                if (diff === '7') diffName = 'Moyen (7 bits)';
+                if (diff === '8') diffName = 'Difficile (8 bits)';
+                if (diff === 'easy') diffName = 'Facile';
+                if (diff === 'medium') diffName = 'Moyen';
+                if (diff === 'hard') diffName = 'Difficile';
+                if (diff === 'extreme') diffName = 'Extrême';
+
+                const pctFirstTry = st.totalAttempts > 0 ? Math.round((st.firstTrySuccess / st.totalAttempts) * 100) : 0;
+                const pctTotalSuccess = st.totalAttempts > 0 ? Math.round((st.totalSuccess / st.totalAttempts) * 100) : 0;
+                // Mistakes percentage relates to total attempts + mistakes? The prompt says: "combien d'erreurs (avec pourcentage)"
+                // A common way: mistakes / (totalSuccess + mistakes) or mistakes / totalActions
+                const totalActions = st.totalSuccess + st.mistakes;
+                const pctMistakes = totalActions > 0 ? Math.round((st.mistakes / totalActions) * 100) : 0;
+
+                html += `<tr>
+                            <td><strong>${diffName}</strong></td>
+                            <td>${st.firstTrySuccess} <span class="stat-pct">(${pctFirstTry}%)</span></td>
+                            <td>${st.totalSuccess} <span class="stat-pct">(${pctTotalSuccess}%)</span></td>
+                            <td>${st.mistakes} <span class="stat-pct">(${pctMistakes}%)</span></td>
+                         </tr>`;
+            }
+            html += `</tbody></table></div>`;
+        }
+
+        body.innerHTML = html;
+    }
+};
+
+window.ScoreManager = ScoreManager;
+
+</script>
+<script>
+/* js/theme.js */
+/**
+ * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
+ *
+ * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
+ * Prérequis dans le HTML :
+ *   - Un bouton  id="themeToggleBtn"
+ *   - Un svg     id="icon-sun"  (affiché en mode sombre)
+ *   - Un svg     id="icon-moon" (affiché en mode clair)
+ *
+ * Persistance : localStorage('global_theme') = 'light' | 'dark'
+ *
+ * Note : certaines pages (routage_reseau) peuvent définir un callback
+ * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
+ */
+
+(function () {
+    const btn     = document.getElementById('themeToggleBtn');
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon= document.getElementById('icon-moon');
+
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+        localStorage.setItem('global_theme', theme);
+
+        if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
+        if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
+
+        // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
+        if (typeof window.__onThemeChange === 'function') {
+            window.__onThemeChange(theme);
+        }
+    }
+
+    // Lecture du thème sauvegardé (défaut : clair)
+    const saved = localStorage.getItem('global_theme') || 'light';
+    setTheme(saved);
+
+    if (btn) {
+        btn.addEventListener('click', function () {
+            setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+        });
+    }
+})();
+
+</script>
+<script>
+/* js/confetti.js */
+function launchConfetti() {
+    const cvs = document.getElementById('confetti-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+    let parts = [];
+    let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
+    for (let i = 0; i < 80; i++) {
+        parts.push({
+            x: Math.random() * cvs.width,
+            y: -50,
+            vx: (Math.random() - 0.5) * 6,
+            vy: Math.random() * 4 + 2,
+            c: cols[Math.floor(Math.random() * cols.length)],
+            s: Math.random() * 6 + 3,
+            rot: 0,
+            rotSpeed: (Math.random() - 0.5) * 10
+        });
+    }
+    function anim() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        let alive = false;
+        parts.forEach(p => {
+            if (p.y > cvs.height) return;
+            alive = true;
+            p.x += p.vx;
+            p.vy += 0.1;
+            p.y += p.vy;
+            p.rot += p.rotSpeed;
+            ctx.save();
+            ctx.translate(p.x + p.s / 2, p.y + p.s / 2);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.fillStyle = p.c;
+            ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+            ctx.restore();
+        });
+        if (alive) requestAnimationFrame(anim);
+    }
+    anim();
+}
+
+function launchFire() {
+    const cvs = document.getElementById('confetti-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+    let parts = [];
+
+    // Create particles iteratively so it looks like a continuous breath over time
+    let frameCount = 0;
+
+    function createParticle() {
+        // Start center top
+        const startX = cvs.width / 2;
+        const startY = -20;
+
+        // Spread outwards and downwards
+        const angle = (Math.random() * Math.PI / 2) + (Math.PI / 4); // Downwards cone
+        const speed = Math.random() * 10 + 5;
+
+        // Colors: white/yellow core, fading to orange, then red, then grey
+        const cols = ['#fef08a', '#fde047', '#f59e0b', '#ea580c', '#dc2626', '#991b1b', '#292524'];
+
+        parts.push({
+            x: startX + (Math.random() - 0.5) * 40,
+            y: startY,
+            vx: Math.cos(angle) * speed * 0.5,
+            vy: Math.sin(angle) * speed,
+            c: cols[Math.floor(Math.random() * cols.length)],
+            s: Math.random() * 20 + 10,
+            life: 1.0,
+            decay: Math.random() * 0.015 + 0.01
+        });
+    }
+
+    // Pre-seed some particles
+    for (let i = 0; i < 100; i++) createParticle();
+
+    function anim() {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+        // Keep breathing fire for ~60 frames
+        if (frameCount < 60) {
+            for (let i = 0; i < 15; i++) createParticle();
+        }
+        frameCount++;
+
+        let alive = false;
+
+        // Use global composite operation to make it glow like fire
+        ctx.globalCompositeOperation = 'screen';
+
+        for (let i = parts.length - 1; i >= 0; i--) {
+            let p = parts[i];
+
+            p.x += p.vx;
+            p.y += p.vy;
+            p.s *= 0.96; // shrink as it burns
+            p.life -= p.decay;
+
+            if (p.life > 0 && p.s > 1 && p.y < cvs.height + 50) {
+                alive = true;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                ctx.fillStyle = p.c;
+                ctx.globalAlpha = p.life;
+                ctx.fill();
+            } else {
+                parts.splice(i, 1);
+            }
+        }
+
+        // Reset composite for standard things
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1.0;
+
+        if (alive) {
+            requestAnimationFrame(anim);
+        } else {
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+        }
+    }
+    anim();
+}
+
+</script>
 </body>
 
 </html>
