@@ -1018,6 +1018,7 @@ body {
         }
         /* End New Styles */
 </style>
+<script src="../js/scores.js"></script>
 </head>
 
 <body>
@@ -1061,6 +1062,9 @@ body {
 </defs>
 </svg>
     <div class="action-buttons">
+        <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </button>
         <button class="icon-action-btn btn-skins-action" onclick="openSkinsModal()" title="Ouvrir les skins" aria-label="Ouvrir les skins">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 12 20 22 4 22 4 12"></polyline>
@@ -2259,6 +2263,7 @@ body {
                 if (option.isCorrect) {
                     playSound('success'); el.classList.add('correct');
                     globalScore++; globalStreak++;
+                    ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
                     document.getElementById('global-score').textContent = globalScore;
                     document.getElementById('global-streak').textContent = globalStreak;
                     if (globalStreak > 0 && globalStreak % 3 === 0) {
@@ -2279,6 +2284,8 @@ body {
                     const target = document.getElementById('chal-target'); if (target) target.classList.add('pulse');
                 } else {
                     playSound('error'); el.classList.add('wrong'); globalStreak = 0;
+                    chalState.mistakes = (chalState.mistakes || 0) + 1;
+                    ScoreManager.addMistake("chal", chalState.difficulty);
                     document.getElementById('global-streak').textContent = globalStreak;
                     chalState.options.forEach((o, j) => { if (o.isCorrect) opts[j].classList.add('correct'); });
                     showToast('Faux. Clique sur la proposition en vert pour voir la solution.', false);
@@ -2359,6 +2366,7 @@ body {
 </script>
 <script src="../js/lucide.min.js"></script>
 <script>lucide.createIcons();</script>
+<script>window.addEventListener('load', () => ScoreManager.init('simulateur_bluebot'));</script>
 </body>
 
 </html>

@@ -557,10 +557,14 @@
             }
         }
     </style>
+<script src="../js/scores.js"></script>
 </head>
 
 <body>
     <div class="action-buttons">
+        <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </button>
         <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -880,6 +884,7 @@
             if (last !== 'dst') {
                 mistakesInCurrentNetwork++;
                 fb.className = 'feedback show error';
+                ScoreManager.addMistake("path", difficulty);
                 fb.innerHTML = `<strong>❌ Le paquet n'est pas arrivé !</strong><br>Tu dois atteindre l'ordinateur B. Continue à cliquer sur les routeurs.`;
                 return;
             }
@@ -891,7 +896,8 @@
                 // SUCCÈS TOTAL 
                 fb.className = 'feedback show success';
                 fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`;
-                isLocked = true; globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
+                isLocked = true; globalCorrect++;
+                ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
                 if (difficulty === 'hard' && mistakesInCurrentNetwork === 0) { launchFire(); }
                 else if (globalStreak >= 2) { launchConfetti(); }
                 render(); setTimeout(newNetwork, 3000);
@@ -901,6 +907,7 @@
                 fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Annuler" pour chercher une meilleure route.</em>`;
                 mistakesInCurrentNetwork++;
                 globalStreak = 0;
+                ScoreManager.addMistake("path", difficulty);
             }
 
             document.getElementById('global-correct').textContent = globalCorrect;
@@ -920,6 +927,7 @@
     </script>
     <script src="../js/theme.js"></script>
 <script src="../js/confetti.js"></script>
+<script>window.addEventListener('load', () => ScoreManager.init('routage_reseau'));</script>
 </body>
 
 </html>

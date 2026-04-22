@@ -694,10 +694,14 @@
             .live-calc { min-width: 0; width: 100%; font-size: 14px; }
         }
     </style>
+<script src="../js/scores.js"></script>
 </head>
 
 <body>
     <div class="action-buttons">
+        <button class="icon-action-btn" onclick="ScoreManager.showModal()" title="Détail des scores" aria-label="Détail des scores">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </button>
         <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -1051,6 +1055,7 @@
             if (decodeCurrentIndex >= decodeBlocks.length) {
                 document.getElementById('decoder-workspace').style.display = 'none';
                 document.getElementById('decoder-success').style.display = 'block';
+                ScoreManager.addSuccess("decode", difficulty, decodeMistakes);
                 document.getElementById('decoder-final-word').innerText = decodeWordResult.join('');
                 launchConfetti();
                 playSound('success');
@@ -1120,6 +1125,7 @@
                 playSound('error');
                 inputEl.style.borderColor = 'var(--error)';
                 decodeMistakes++;
+                ScoreManager.addMistake("decode", difficulty);
 
                 if (decodeMistakes === 1) {
                     document.getElementById('decode-values-row').style.display = 'flex';
@@ -1247,6 +1253,7 @@
 
                     if (encodeIndex >= encodeWord.length) {
                         globalCorrect++;
+                        ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
                         globalStreak++;
                         if (globalStreak > globalBest) globalBest = globalStreak;
                         document.getElementById('global-correct').innerText = globalCorrect;
@@ -1300,6 +1307,7 @@
             document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
         });
 </script>
+<script>window.addEventListener('load', () => ScoreManager.init('binaire_message'));</script>
 </body>
 
 </html>
