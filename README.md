@@ -34,6 +34,10 @@ Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui 
 
 Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles utilisent la typographie **Outfit** pour une lisibilité optimale et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre. La page d'accueil propose également un accès rapide aux **applications récemment consultées**.
 
+### Portail d'accueil (`index.html`)
+![Portail d'accueil](screenshots/index.png)
+- **À quoi sert l'outil :** Un portail central permettant d'accéder facilement à toutes les webapps et ressources. Il inclut la gestion du mode sombre global et un accès rapide aux applications récemment consultées.
+
 Les webapps disponibles sont :
 
 ### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
