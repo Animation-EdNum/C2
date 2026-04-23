@@ -849,7 +849,7 @@ body {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            z-index: 10001; /* Higher than confetti (9999) and toast (10000) */
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(5px);
@@ -871,6 +871,28 @@ body {
             overflow-y: auto;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             color: var(--text-main);
+        }
+
+        @keyframes slideUpBottomSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            #skins-modal {
+                align-items: flex-end;
+            }
+            #skins-modal.active .skins-content {
+                animation: slideUpBottomSheet 0.3s ease-out forwards;
+            }
+            #skins-modal .skins-content {
+                width: 100%;
+                max-width: none;
+                border-radius: 24px 24px 0 0;
+                margin: 0;
+                padding-bottom: max(24px, env(safe-area-inset-bottom));
+                border-bottom: none;
+            }
         }
 
         .skins-header {
@@ -1182,10 +1204,9 @@ body {
                 </div>
 
                 <div class="controls">
-                    <button class="btn btn-check" id="btnRun" >▶ GO (Exécuter)</button>
-                    <button class="btn btn-clear" id="btnClear" >🗑 Effacer (X)</button>
-                    <button class="btn btn-outline" id="btnReset" >🔄 Réinitialiser la
-                        position</button>
+                    <button class="btn btn-check" id="btnRun" onclick="runProgram()" title="Ex&eacute;cuter">▶ GO</button>
+                    <button class="btn btn-clear" id="btnClear" onclick="clearProgram()">🗑 Effacer (X)</button>
+                    <button class="btn btn-outline" id="btnReset" onclick="resetSimulatorPosition()" title="Réinitialiser la position de l'automate">🔄 Reset position</button>
                 </div>
 
                 <div class="score-bar" id="sim-score-bar" style="display: none;">
