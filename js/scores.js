@@ -17,7 +17,7 @@ const ScoreManager = {
 
     DIFF_LABELS: {
         '4': 'Facile (4 bits)',
-        '7': 'Moyen (7 bits)',
+        '6': 'Moyen (6 bits)',
         '8': 'Difficile (8 bits)',
         'easy': 'Facile',
         'medium': 'Moyen',
