@@ -5,7 +5,6 @@
     <title>💻 Codage binaire</title>
     <meta property="og:title" content="Codage binaire">
     <meta property="og:description" content="Plateforme d'entraînement au passage des nombres entiers vers leur écriture en binaire, et inversement.">
-    <meta property="og:description" content="Plateforme d'entraînement au passage des nombres entiers vers leur écriture en binaire, et inversement.">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link rel="stylesheet" href="../css/shared.css">
@@ -172,6 +171,7 @@ body {
         @media print { .no-print { display: none !important; } }
     </style> 
 <script src="../js/scores.js"></script>
+<script src="../js/audio.js"></script>
 <script src="../js/lucide.min.js"></script>
 </head> 
 <body> 
@@ -196,16 +196,16 @@ body {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques" onclick="ScoreManager.showModal()">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                             <span>Voir mes statistiques</span>
                         </button>
-                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème" onclick="toggleTheme()">
                             <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                             <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                             <span id="themeToggleText">Changer le thème</span>
                         </button>
-                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son" onclick="toggleAudio()">
                             <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                             <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
                             <span id="audioToggleText">Activer le son</span>
@@ -218,14 +218,14 @@ body {
  
     <!-- DIFFICULTÉ --> 
     <div class="difficulty-bar"> 
-        <button class="diff-btn" id="diff-easy">🟢 Facile (4 bits)</button>
-        <button class="diff-btn active" id="diff-medium">🟡 Moyen (6 bits)</button>
-        <button class="diff-btn" id="diff-hard">🔴 Difficile (8 bits)</button>
+        <button class="diff-btn" id="diff-easy" onclick="setDifficulty('easy')">🟢 Facile (4 bits)</button>
+        <button class="diff-btn active" id="diff-medium" onclick="setDifficulty('medium')">🟡 Moyen (6 bits)</button>
+        <button class="diff-btn" id="diff-hard" onclick="setDifficulty('hard')">🔴 Difficile (8 bits)</button>
     </div> 
  
     <!-- CALCULATRICE --> 
     <div class="calc-section"> 
-        <div class="calc-header" tabindex="0" id="calc-header">
+        <div class="calc-header" tabindex="0" id="calc-header" onclick="toggleCalc()">
             <span>🧮 Mini-calculatrice binaire (Aide)</span>
             <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
         </div> 
@@ -236,7 +236,7 @@ body {
                 </table> 
             </div> 
             <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div> 
-            <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;" id="reset-calc-btn">Remise à zéro</button></div>
+            <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;" id="reset-calc-btn" onclick="resetCalc()">Remise à zéro</button></div>
         </div> 
     </div> 
  
@@ -251,7 +251,7 @@ body {
                 <!-- Généré en JS --> 
             </div> 
             <div class="btn-row"> 
-                <button class="btn btn-check" id="decBin-check-btn">Vérifier</button>
+                <button class="btn btn-check" id="decBin-check-btn" onclick="checkDecToBin()">Vérifier</button>
             </div> 
             <div id="decBin-feedback" class="feedback"></div> 
         </div> 
@@ -265,7 +265,7 @@ body {
             <div class="card-instruction">Ta réponse en base 10 :</div>
             <div class="input-row"> 
                 <input type="text" id="binDec-input" placeholder="ex. 20" autocomplete="off"> 
-                <button class="btn btn-check" id="binDec-check-btn">Vérifier</button>
+                <button class="btn btn-check" id="binDec-check-btn" onclick="checkBinToDec()">Vérifier</button>
             </div> 
             <div id="binDec-feedback" class="feedback"></div> 
         </div> 
@@ -279,54 +279,7 @@ body {
 </div> 
  
 <script> 
-// ========================================== 
-// AUDIO ENGINE (Web Audio API) 
-// ========================================== 
-let audioCtx = null; 
 
-let isMuted = true;
-        function playSound(type) {
-            if (isMuted) return;
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-
-    const t = audioCtx.currentTime;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-     
-    if (type === 'click') { 
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-        osc.start();
-        osc.stop(t + 0.05);
-    } else if (type === 'success') { 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, t);
-        osc.frequency.setValueAtTime(659.25, t + 0.1);
-        osc.frequency.setValueAtTime(783.99, t + 0.2);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.4);
-        osc.start();
-        osc.stop(t + 0.4);
-    } else if (type === 'error') { 
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, t);
-        gain.gain.setValueAtTime(0.15, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.3);
-        osc.start();
-        osc.stop(t + 0.3);
-    } 
-} 
- 
 // ========================================== 
 // ETAT & CONFIG 
 // ========================================== 
@@ -557,19 +510,7 @@ function checkBinToDec() {
 
     // Event Listeners for binaire_codage
     document.addEventListener('DOMContentLoaded', () => {
-        const scoreBtn = document.getElementById('score-manager-btn');
-        if(scoreBtn) scoreBtn.addEventListener('click', () => { if(typeof ScoreManager !== 'undefined') ScoreManager.showModal(); });
-        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
-        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
-        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
 
-        const calcHeader = document.getElementById('calc-header');
-        calcHeader.addEventListener('click', toggleCalc);
-        calcHeader.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCalc(); } });
-
-        document.getElementById('reset-calc-btn').addEventListener('click', resetCalc);
-        document.getElementById('decBin-check-btn').addEventListener('click', checkDecToBin);
-        document.getElementById('binDec-check-btn').addEventListener('click', checkBinToDec);
 
         // Event delegation for dynamically generated bits
         document.addEventListener('click', (e) => {
@@ -645,22 +586,6 @@ setDifficulty('medium');
 <script src="../js/confetti.js">
 </script>
 
-<script>
-        // Audio Toggle
-        document.getElementById('audioToggleBtn').addEventListener('click', () => {
-                    isMuted = !isMuted;
-        const iconOn = document.getElementById('icon-vol-on');
-        const iconOff = document.getElementById('icon-vol-off');
-        if (iconOn) iconOn.style.display = isMuted ? 'none' : 'block';
-        if (iconOff) iconOff.style.display = isMuted ? 'block' : 'none';
-
-        const audioText = document.getElementById('audioToggleText');
-        if (audioText) {
-            audioText.textContent = isMuted ? 'Activer le son' : 'Couper le son';
-        }
-    });
-</script>
 <script>window.addEventListener('load', () => ScoreManager.init('binaire_codage'));</script>
-<script>if(typeof lucide !== 'undefined') lucide.createIcons();</script>
 </body> 
 </html>
