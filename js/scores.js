@@ -29,6 +29,12 @@ const ScoreManager = {
         this.appId = appId;
         this.loadStats();
         this.injectModalHtml();
+
+        // Attacher le listener au bouton de statistiques
+        const statsBtn = document.getElementById('score-manager-btn');
+        if (statsBtn) {
+            statsBtn.addEventListener('click', () => this.showModal());
+        }
     },
 
     loadStats() {

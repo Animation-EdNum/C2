@@ -693,16 +693,16 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques" onclick="ScoreManager.showModal()">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                             <span>Voir mes statistiques</span>
                         </button>
-                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème" onclick="toggleTheme()">
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
                             <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                             <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                             <span id="themeToggleText">Changer le thème</span>
                         </button>
-                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son" onclick="toggleAudio()">
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
                             <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                             <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
                             <span id="audioToggleText">Activer le son</span>
@@ -714,16 +714,16 @@
 
         <!-- NAVIGATION -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'train')">📝 Entraînement</button>
-            <button class="tab-btn" onclick="switchTab(event, 'magic')">🎩 Tour de Magie</button>
+            <button class="tab-btn active" id="tab-train">📝 Entraînement</button>
+            <button class="tab-btn" id="tab-magic">🎩 Tour de Magie</button>
         </div>
 
         <!-- MODE ENTRAÎNEMENT -->
         <div id="view-train" class="view active">
             <div class="difficulty-bar">
-                <button class="diff-btn active" onclick="setDifficulty('easy')">🟢 Facile (4×4)</button>
-                <button class="diff-btn" onclick="setDifficulty('medium')">🟡 Moyen (5×5)</button>
-                <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile (6×6)</button>
+                <button class="diff-btn active" id="diff-easy">🟢 Facile (4×4)</button>
+                <button class="diff-btn" id="diff-medium">🟡 Moyen (5×5)</button>
+                <button class="diff-btn" id="diff-hard">🔴 Difficile (6×6)</button>
             </div>
 
             <div class="exercise-card">
@@ -732,7 +732,7 @@
                 </div>
                 <div class="controls" style="align-items: center;">
                     <span style="font-weight: 700; color: var(--text-main);">Complète les bits manquants.</span>
-                    <button class="btn btn-check" onclick="checkTrainAnswer()">✅ Vérifier</button>
+                    <button class="btn btn-check" id="verifyBtn">✅ Vérifier</button>
                 </div>
             </div>
 
@@ -783,7 +783,7 @@
                     <div class="grid" id="magic-grid"></div>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-magic" onclick="initMagicMode()">🔄 Recommencer le tour</button>
+                    <button class="btn btn-magic" id="resetMagicBtn">🔄 Recommencer le tour</button>
                 </div>
             </div>
         </div>
@@ -1094,8 +1094,30 @@
         // INIT 
         initTrainMode();
 
-        // THEME — géré par ../js/theme.js
+        // Événements
+        document.getElementById('tab-train').addEventListener('click', (e) => switchTab(e, 'train'));
+        document.getElementById('tab-magic').addEventListener('click', (e) => switchTab(e, 'magic'));
+        
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+        
+        document.getElementById('verifyBtn').addEventListener('click', checkTrainAnswer);
+        document.getElementById('resetMagicBtn').addEventListener('click', initMagicMode);
+        
+        // Delegation pour les bits (dynamiques)
+        document.addEventListener('click', (e) => {
+            const bit = e.target.closest('.bit');
+            if (bit) {
+                const r = parseInt(bit.dataset.r);
+                const c = parseInt(bit.dataset.c);
+                const gridId = bit.closest('.grid').id;
+                if (gridId === 'train-grid') toggleBit(r, c);
+                else if (gridId === 'magic-grid') toggleMagicBit(r, c);
+            }
+        });
     </script>
+    <script src="../js/audio.js"></script>
     <script src="../js/theme.js"></script>
 <script src="../js/confetti.js"></script>
 <script src="../js/swipe.js">

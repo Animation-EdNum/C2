@@ -44,4 +44,29 @@
     window.toggleTheme = function () {
         setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
     };
+
+    // Gestion des événements du Header
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeBtn = document.getElementById('themeToggleBtn');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', window.toggleTheme);
+        }
+
+        const optionsBtn = document.getElementById('optionsMenuBtn');
+        const optionsContent = document.querySelector('.settings-dropdown-content');
+        if (optionsBtn && optionsContent) {
+            optionsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                optionsContent.classList.toggle('show');
+            });
+        }
+
+        // Fermeture automatique du menu si on clique ailleurs
+        document.addEventListener('click', (event) => {
+            const content = document.querySelector('.settings-dropdown-content.show');
+            if (content && !event.target.closest('.settings-dropdown')) {
+                content.classList.remove('show');
+            }
+        });
+    });
 })();

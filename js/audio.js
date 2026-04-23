@@ -57,4 +57,11 @@ function toggleAudio() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const audioBtn = document.getElementById('audioToggleBtn');
+    if (audioBtn) {
+        audioBtn.addEventListener('click', toggleAudio);
+    }
+});
+
 

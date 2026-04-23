@@ -582,16 +582,16 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques" onclick="ScoreManager.showModal()">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                             <span>Voir mes statistiques</span>
                         </button>
-                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème" onclick="toggleTheme()">
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
                             <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                             <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                             <span id="themeToggleText">Changer le thème</span>
                         </button>
-                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son" onclick="toggleAudio()">
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
                             <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                             <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
                             <span id="audioToggleText">Activer le son</span>
@@ -603,9 +603,9 @@
         <p class="subtitle">Trouve le chemin <strong>le plus rapide</strong> pour acheminer le paquet de A vers B.</p>
 
         <div class="difficulty-bar">
-            <button class="diff-btn active" onclick="setDifficulty('easy')">🟢 Facile</button>
-            <button class="diff-btn" onclick="setDifficulty('medium')">🟡 Moyen</button>
-            <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile</button>
+            <button class="diff-btn active" id="diff-easy">🟢 Facile</button>
+            <button class="diff-btn" id="diff-medium">🟡 Moyen</button>
+            <button class="diff-btn" id="diff-hard">🔴 Difficile</button>
         </div>
 
         <details class="instructions">
@@ -644,9 +644,9 @@
             </div>
 
             <div class="controls">
-                <button class="btn btn-check" id="btn-check" onclick="checkPath()">✅ Vérifier</button>
-                <button class="btn btn-undo" id="btn-undo" onclick="undoStep()">↩ Annuler</button>
-                <button class="btn btn-new" id="btn-new" onclick="newNetwork()">➡ Nouveau réseau</button>
+                <button class="btn btn-outline" id="resetBtn">🔄 Reset</button>
+                <button class="btn btn-check" id="checkBtn">✅ Vérifier</button>
+                <button class="btn btn-new" id="btnNextChallenge" style="display:none;">➡ Suivant</button>
             </div>
 
             <div class="feedback" id="feedback"></div>
@@ -745,8 +745,8 @@
         function getNode(id) { return parsedNodes.find(n => n.id === id); }
         function setDifficulty(lvl) {
             difficulty = lvl;
-            document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl === 'easy' ? 'facile' : (lvl === 'medium' ? 'moyen' : 'difficile'))));
-            newNetwork();
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.id === `diff-${lvl}`));
+            newChallenge();
         }
 
         // Algorithme de Dijkstra pour trouver le VRAI chemin le plus rapide 
@@ -781,7 +781,7 @@
             return time;
         }
 
-        function newNetwork() {
+        function newChallenge() {
             const pool = networkPool[difficulty];
             // Anti-répétition : choisir un index différent du dernier
             let idx;
@@ -797,14 +797,14 @@
             document.getElementById('netNumber').textContent = netCount;
             document.getElementById('card-subtitle').textContent = `Réseau ${difficulty === 'easy' ? 'facile' : difficulty === 'medium' ? 'moyen' : 'difficile'}`;
             document.getElementById('feedback').className = 'feedback'; // Hide feedback 
+            document.getElementById('btnNextChallenge').style.display = 'none';
             render();
         }
 
         function render() {
             renderEdges(); renderNodes(); renderPathDisplay();
-            document.getElementById('btn-check').disabled = isLocked;
-            document.getElementById('btn-undo').disabled = isLocked || currentPath.length <= 1;
-            document.getElementById('btn-new').disabled = isLocked;
+            document.getElementById('checkBtn').disabled = isLocked;
+            document.getElementById('resetBtn').disabled = isLocked || currentPath.length <= 1;
         }
 
         function renderEdges() {
@@ -870,7 +870,11 @@
                 labelSpan.textContent = n.type === 's' ? 'A' : n.type === 'd' ? 'B' : n.id;
                 div.appendChild(labelSpan);
 
-                div.onclick = () => onNodeClick(n.id, clickable, last);
+                div.addEventListener('click', () => {
+                    if (isLocked) return;
+                    if (n.id === last && n.id !== 'src') resetCurrentChallenge();
+                    else if (clickable.includes(n.id)) { currentPath.push(n.id); render(); }
+                });
                 container.appendChild(div);
             });
         }
@@ -904,13 +908,7 @@
             document.getElementById('path-time').textContent = calculateCurrentTime();
         }
 
-        function onNodeClick(id, clickable, last) {
-            if (isLocked) return;
-            if (id === last && id !== 'src') undoStep(); // Clic sur le dernier = annuler 
-            else if (clickable.includes(id)) { currentPath.push(id); render(); }
-        }
-
-        function undoStep() { if (!isLocked && currentPath.length > 1) { currentPath.pop(); render(); } }
+        function resetCurrentChallenge() { if (!isLocked) { currentPath = ['src']; render(); } }
 
         function checkPath() {
             if (isLocked) return;
@@ -936,11 +934,12 @@
                 ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
                 if (difficulty === 'hard' && mistakesInCurrentNetwork === 0) { launchFire(); }
                 else if (globalStreak >= 2) { launchConfetti(); }
-                render(); setTimeout(newNetwork, 3000);
+                document.getElementById('btnNextChallenge').style.display = 'inline-block';
+                render();
             } else {
                 // ARRIVÉ MAIS TROP LENT 
                 fb.className = 'feedback show warn';
-                fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Annuler" pour chercher une meilleure route.</em>`;
+                fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Reset" pour chercher une meilleure route.</em>`;
                 mistakesInCurrentNetwork++;
                 globalStreak = 0;
                 ScoreManager.addMistake("path", difficulty);
@@ -951,9 +950,16 @@
             document.getElementById('global-best').textContent = globalBest;
         }
 
-        // Confetti Engine
+        // Événements
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+        
+        document.getElementById('resetBtn').addEventListener('click', resetCurrentChallenge);
+        document.getElementById('checkBtn').addEventListener('click', checkPath);
+        document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
 
-        newNetwork();
+        newChallenge();
 
         // THEME — géré par ../js/theme.js
         // renderEdges() est appelé via le hook __onThemeChange
@@ -961,6 +967,7 @@
             if (parsedEdges && parsedEdges.length > 0) renderEdges();
         };
     </script>
+    <script src="../js/audio.js"></script>
     <script src="../js/theme.js"></script>
 <script src="../js/confetti.js"></script>
 <script>window.addEventListener('load', () => ScoreManager.init('routage_reseau'));</script>
