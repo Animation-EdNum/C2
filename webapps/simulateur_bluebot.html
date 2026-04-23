@@ -274,16 +274,48 @@ body {
             position: absolute;
         }
 
-        /* Trace visible persistante pour le robot */
-        .bot-cell.visited {
-            background-color: rgba(59, 130, 246, 0.15) !important;
-            box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.3);
+        /* SVG Trail Layer */
+        .trail-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
         }
 
-        body.dark .bot-cell.visited {
-            background-color: rgba(99, 102, 241, 0.25) !important;
-            box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.5);
+        .trail-path {
+            fill: none;
+            stroke: #2563eb;
+            stroke-width: 1.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s;
         }
+
+        .start-marker-circle {
+            fill: #2563eb;
+            transition: fill 0.3s;
+        }
+
+        .start-marker-chevron {
+            fill: none;
+            stroke: white;
+            stroke-width: 0.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Skin Volcano/Dragon overrides */
+        .bot-grid.skin-volcano .trail-path { stroke: #dc2626; }
+        .bot-grid.skin-volcano .start-marker-circle { fill: #dc2626; }
+
+        /* Dark Mode overrides */
+        body.dark .trail-path { stroke: #60a5fa; }
+        body.dark .start-marker-circle { fill: #60a5fa; }
+        body.dark .bot-grid.skin-volcano .trail-path { stroke: #f87171; }
+        body.dark .bot-grid.skin-volcano .start-marker-circle { fill: #f87171; }
 
         /* ROBOT, GHOST & CIBLE */
         .robot-overlay {
@@ -311,16 +343,6 @@ body {
             filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
         }
 
-        .ghost-overlay {
-            position: absolute;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            z-index: 4;
-            opacity: 0.35;
-            filter: grayscale(50%);
-        }
 
         .target-overlay {
             position: absolute;
@@ -1402,14 +1424,14 @@ body {
             // Re-render grids to apply skin
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
+            TrailManager.clear('sim-grid');
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
             if (chalState.robotRow !== null) {
                 buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
                 renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
-                renderGhost('chal-grid', chalState.startRow, chalState.startCol, chalState.startDir);
+                TrailManager.clear('chal-grid');
                 if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
             }
 
@@ -1888,31 +1910,102 @@ body {
             }
         }
 
-        function renderGhost(containerId, row, col, dirIndex) {
-            const deg = dirIndex * 90;
-            const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
-            const dirStr = directions[dirIndex % 4] || 'Haut';
-            const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
-            const html = `<div class="robot-body" style="transform:rotate(${deg}deg); box-shadow: none; opacity: 0.6;">${svg}</div>`;
-            placeOverlay(containerId, containerId + '-ghost', row, col, html, 'ghost-overlay', `Fantôme du robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
-        }
+        /* ================================================================
+           SVG TRAIL MANAGER
+           ================================================================ */
+        const TrailManager = {
+            states: {},
+            
+            _getCenter(row, col) {
+                const cw = 100 / GRID_COLS;
+                const ch = 100 / GRID_ROWS;
+                return { x: (col + 0.5) * cw, y: (row + 0.5) * ch };
+            },
 
-        function renderTarget(containerId, overlayId, row, col) {
-            const targetChar = SKIN_CONFIG[activeSkin].target || '⭐';
-            placeOverlay(containerId, overlayId, row, col, targetChar, 'target-overlay', `Cible en ligne ${row + 1}, colonne ${col + 1}`);
+            initLayer(containerId) {
+                let layer = document.querySelector(`#${containerId} .trail-layer`);
+                if (!layer) {
+                    layer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    layer.setAttribute("class", "trail-layer");
+                    layer.setAttribute("viewBox", "0 0 100 100");
+                    layer.setAttribute("preserveAspectRatio", "none");
+                    layer.setAttribute("aria-hidden", "true");
+                    document.getElementById(containerId).appendChild(layer);
+                }
+                return layer;
+            },
 
-            const targetOverlay = document.getElementById(overlayId);
-            if (targetOverlay) {
-                if (activeSkin === 'space') targetOverlay.classList.add('glow-space');
-                else targetOverlay.classList.remove('glow-space');
+            captureInitialState(containerId, row, col, dirIndex) {
+                const layer = this.initLayer(containerId);
+                layer.innerHTML = ''; // Clear existing
+                
+                const pt = this._getCenter(row, col);
+                const rot = dirIndex * 90;
+                
+                // Create path element
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("class", "trail-path");
+                const d = `M ${pt.x} ${pt.y}`;
+                path.setAttribute("d", d);
+                
+                // Draw start marker
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "start-marker");
+                
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("class", "start-marker-circle");
+                circle.setAttribute("cx", pt.x);
+                circle.setAttribute("cy", pt.y);
+                circle.setAttribute("r", "3");
+                
+                const chevron = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                chevron.setAttribute("class", "start-marker-chevron");
+                chevron.setAttribute("d", `M ${pt.x - 1.5} ${pt.y + 1} L ${pt.x} ${pt.y - 1} L ${pt.x + 1.5} ${pt.y + 1}`);
+                chevron.setAttribute("transform", `rotate(${rot} ${pt.x} ${pt.y})`);
+                
+                g.appendChild(circle);
+                g.appendChild(chevron);
+                
+                layer.appendChild(path);
+                layer.appendChild(g); // Marker on top
+                
+                this.states[containerId] = {
+                    points: [{x: pt.x, y: pt.y}],
+                    pathElement: path,
+                    dString: d
+                };
+            },
+            
+            addSegment(containerId, toRow, toCol) {
+                const state = this.states[containerId];
+                if (!state || !state.pathElement) return;
+                
+                const pt = this._getCenter(toRow, toCol);
+                state.points.push({x: pt.x, y: pt.y});
+                state.dString += ` L ${pt.x} ${pt.y}`;
+                state.pathElement.setAttribute("d", state.dString);
+            },
+            
+            clear(containerId) {
+                const layer = document.querySelector(`#${containerId} .trail-layer`);
+                if (layer) layer.innerHTML = '';
+                delete this.states[containerId];
+            },
+            
+            removeLastSegment(containerId) {
+                const state = this.states[containerId];
+                if (!state || state.points.length <= 1) return;
+                
+                state.points.pop();
+                // Rebuild dString
+                let newD = "";
+                state.points.forEach((p, i) => {
+                    newD += i === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`;
+                });
+                state.dString = newD;
+                state.pathElement.setAttribute("d", state.dString);
             }
-        }
-
-        function markVisited(containerId, row, col) {
-            const cell = document.querySelector(`#${containerId} .bot-cell[data-row="${row}"][data-col="${col}"]`);
-            if (cell) cell.classList.add('visited');
-        }
-        function clearVisited(containerId) { document.querySelectorAll(`#${containerId} .bot-cell`).forEach(c => c.classList.remove('visited')); }
+        };
 
         /* ================================================================
            MOTEUR DU ROBOT (SIMULATEUR)
@@ -1997,12 +2090,11 @@ body {
             simState.obstacles = bestObstacles;
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
+            
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
-            clearVisited('sim-grid');
-            markVisited('sim-grid', simState.robotRow, simState.robotCol);
+            TrailManager.clear('sim-grid');
         }
 
         function placeRandomSimTarget(silent = false) {
@@ -2048,7 +2140,7 @@ body {
 
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
+            TrailManager.clear('sim-grid');
 
             const target = document.getElementById('sim-target');
             if (target) target.remove();
@@ -2060,10 +2152,8 @@ body {
             simState.startRow = 5; simState.startCol = 0; simState.startDir = 0;
             simState.stepIndex = -1; simState.failed = false;
 
-            clearVisited('sim-grid');
-            markVisited('sim-grid', simState.robotRow, simState.robotCol);
+            TrailManager.clear('sim-grid');
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
@@ -2106,17 +2196,24 @@ body {
 
             // Nouvelle origine du ghost à l'endroit où le robot démarre
             simState.startRow = simState.robotRow; simState.startCol = simState.robotCol; simState.startDir = simState.robotDir;
-            renderGhost('sim-grid', simState.startRow, simState.startCol, simState.startDir);
-
-            clearVisited('sim-grid');
-            markVisited('sim-grid', simState.robotRow, simState.robotCol); // Colorie case de départ
+            
+            TrailManager.clear('sim-grid');
+            TrailManager.captureInitialState('sim-grid', simState.robotRow, simState.robotCol, simState.robotDir);
 
             for (let i = 0; i < simState.program.length; i++) {
                 simState.stepIndex = i; renderProgram();
-                const cmd = simState.program[i]; const result = moveRobot(simState, cmd);
+                const cmd = simState.program[i]; 
+                
+                let oldR = simState.robotRow; let oldC = simState.robotCol;
+                const result = moveRobot(simState, cmd);
                 simState.robotRow = result.robotRow; simState.robotCol = result.robotCol; simState.robotDir = result.robotDir;
 
-                markVisited('sim-grid', simState.robotRow, simState.robotCol);
+                if (cmd === 'forward' || cmd === 'backward') {
+                    if (!result.blocked) {
+                        TrailManager.addSegment('sim-grid', simState.robotRow, simState.robotCol);
+                    }
+                }
+
                 renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
 
                 if (result.blocked) {
@@ -2324,8 +2421,7 @@ body {
 
             buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('chal-grid', 'chal-robot', chal.startR, chal.startC, chal.startD);
-            renderGhost('chal-grid', chal.startR, chal.startC, chal.startD); // Fantôme position de départ
-            markVisited('chal-grid', chal.startR, chal.startC); // Colorie la case de départ
+            TrailManager.clear('chal-grid');
             renderTarget('chal-grid', 'chal-target', chal.targetR, chal.targetC);
             renderChallengeOptions();
         }
@@ -2352,14 +2448,22 @@ body {
             let startR = chalState.robotRow, startC = chalState.robotCol, startD = chalState.robotDir;
             let r = startR, c = startC, d = startD;
 
-            clearVisited('chal-grid');
-            markVisited('chal-grid', r, c);
+            TrailManager.clear('chal-grid');
+            TrailManager.captureInitialState('chal-grid', r, c, d);
             renderRobot('chal-grid', 'chal-robot', r, c, d);
 
             for (const cmd of option.cmds) {
+                let oldR = r, oldC = c;
                 const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd);
                 r = result.robotRow; c = result.robotCol; d = result.robotDir;
-                markVisited('chal-grid', r, c); renderRobot('chal-grid', 'chal-robot', r, c, d);
+                
+                if (cmd === 'forward' || cmd === 'backward') {
+                    if (!result.blocked) {
+                        TrailManager.addSegment('chal-grid', r, c);
+                    }
+                }
+                
+                renderRobot('chal-grid', 'chal-robot', r, c, d);
 
                 if (result.blocked) {
                     playSound('error');
