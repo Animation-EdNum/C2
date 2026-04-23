@@ -771,10 +771,10 @@
 
                 <div class="encode-bits-area">
                     <div class="encode-bits-row" id="encode-bits-row"></div>
-                    <div class="encode-values-row" id="encode-values-row"></div>
+                    <div class="encode-values-row" id="encode-values-row" style="display: none;"></div>
                 </div>
 
-                <div class="live-calc" id="live-calc">0 + 0 + 0 + 0 + 0 = 0</div>
+                <div class="live-calc" id="live-calc" style="display: none;">0 + 0 + 0 + 0 + 0 = 0</div>
 
                 <div class="btn-row">
                     <button class="btn btn-check" id="encode-check">Vérifier
@@ -943,6 +943,7 @@
         let encodeWord = ''; let encodeIndex = 0; let encodeBits = [0, 0, 0, 0, 0];
         let encodeLocked = false; let globalCorrect = 0; let globalStreak = 0; let globalBest = 0;
         let encodeMistakes = 0;
+        let encodeLetterMistakes = 0;
         let currentTab = 'play';
 
         // ========================================== 
@@ -1252,6 +1253,9 @@
             encodeWord = pickRandom(wordLists[difficulty]);
             encodeIndex = 0; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
             encodeMistakes = 0;
+            encodeLetterMistakes = 0;
+            document.getElementById('encode-values-row').style.display = 'none';
+            document.getElementById('live-calc').style.display = 'none';
             document.getElementById('encode-check').disabled = false;
             hideAlpha(); renderGame(); updateLiveCalc();
         }
@@ -1306,6 +1310,8 @@
                 hideAlpha(); encodeLocked = true;
 
                 // Animation didactique 
+                document.getElementById('encode-values-row').style.display = 'flex';
+                document.getElementById('live-calc').style.display = 'block';
                 const calc = document.getElementById('live-calc');
                 calc.innerText = `${userSum} ➜ ${letter} ✅`;
                 calc.classList.add('success-anim');
@@ -1313,6 +1319,7 @@
                 setTimeout(() => {
                     calc.classList.remove('success-anim');
                     encodeIndex++; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
+                    encodeLetterMistakes = 0;
 
                     if (encodeIndex >= encodeWord.length) {
                         globalCorrect++;
@@ -1331,6 +1338,9 @@
 
                         document.getElementById('encode-check').disabled = true;
                         setTimeout(newEncode, 2000);
+                    } else {
+                        document.getElementById('encode-values-row').style.display = 'none';
+                        document.getElementById('live-calc').style.display = 'none';
                     }
                     renderGame(); updateLiveCalc();
                 }, 1000);
@@ -1338,8 +1348,15 @@
             } else {
                 playSound('error');
                 encodeMistakes++;
+                encodeLetterMistakes++;
                 globalStreak = 0; document.getElementById('global-streak').innerText = globalStreak;
-                showAlpha();
+
+                if (encodeLetterMistakes === 1) {
+                    document.getElementById('encode-values-row').style.display = 'flex';
+                    document.getElementById('live-calc').style.display = 'block';
+                } else if (encodeLetterMistakes >= 2) {
+                    showAlpha();
+                }
 
                 const card = document.getElementById('card-encode');
                 card.style.animation = 'none'; void card.offsetWidth;
