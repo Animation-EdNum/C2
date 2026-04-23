@@ -1095,7 +1095,6 @@
             if (decodeCurrentIndex >= decodeBlocks.length) {
                 document.getElementById('decoder-workspace').style.display = 'none';
                 document.getElementById('decoder-success').style.display = 'block';
-                ScoreManager.addSuccess("decode", difficulty, decodeMistakes);
                 document.getElementById('decoder-final-word').innerText = decodeWordResult.join('');
                 launchConfetti();
                 playSound('success');
@@ -1142,6 +1141,8 @@
 
             if (typedChar === expectedChar) {
                 playSound('success');
+                ScoreManager.addSuccess("decode", difficulty, decodeMistakes);
+                decodeMistakes = 0; // Reset for next letter
                 inputEl.style.borderColor = 'var(--success)';
                 inputEl.style.backgroundColor = '#d4edda';
 
@@ -1291,21 +1292,22 @@
                     calc.classList.remove('success-anim');
                     encodeIndex++; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
 
+                    globalCorrect++;
+                    ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
+                    encodeMistakes = 0; // Reset for next letter
+                    globalStreak++;
+                    if (globalStreak > globalBest) globalBest = globalStreak;
+                    document.getElementById('global-correct').innerText = globalCorrect;
+                    document.getElementById('global-streak').innerText = globalStreak;
+                    document.getElementById('global-best').innerText = globalBest;
+
+                    if (difficulty === 'hard' && encodeMistakes === 0) {
+                        launchFire();
+                    } else if (globalStreak % 3 === 0) {
+                        launchConfetti();
+                    }
+
                     if (encodeIndex >= encodeWord.length) {
-                        globalCorrect++;
-                        ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
-                        globalStreak++;
-                        if (globalStreak > globalBest) globalBest = globalStreak;
-                        document.getElementById('global-correct').innerText = globalCorrect;
-                        document.getElementById('global-streak').innerText = globalStreak;
-                        document.getElementById('global-best').innerText = globalBest;
-
-                        if (difficulty === 'hard' && encodeMistakes === 0) {
-                            launchFire();
-                        } else if (globalStreak % 3 === 0) {
-                            launchConfetti();
-                        }
-
                         document.getElementById('encode-check').disabled = true;
                         setTimeout(newEncode, 2000);
                     }
@@ -1315,6 +1317,7 @@
             } else {
                 playSound('error');
                 encodeMistakes++;
+                ScoreManager.addMistake("encode", difficulty);
                 globalStreak = 0; document.getElementById('global-streak').innerText = globalStreak;
                 showAlpha();
 
