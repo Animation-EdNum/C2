@@ -667,6 +667,7 @@
         }
     </style>
 <script src="../js/scores.js"></script>
+    <script src="../js/audio.js"></script>
 <script src="../js/lucide.min.js"></script>
 </head>
 
@@ -713,16 +714,16 @@
 
         <!-- NAVIGATION -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'train')">📝 Entraînement</button>
-            <button class="tab-btn" onclick="switchTab(event, 'magic')">🎩 Tour de Magie</button>
+            <button class="tab-btn active" id="tab-train">📝 Entraînement</button>
+            <button class="tab-btn" id="tab-magic">🎩 Tour de Magie</button>
         </div>
 
         <!-- MODE ENTRAÎNEMENT -->
         <div id="view-train" class="view active">
             <div class="difficulty-bar">
-                <button class="diff-btn active" onclick="setDifficulty('easy')">🟢 Facile (4×4)</button>
-                <button class="diff-btn" onclick="setDifficulty('medium')">🟡 Moyen (5×5)</button>
-                <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile (6×6)</button>
+                <button class="diff-btn active" id="diff-easy">🟢 Facile (4×4)</button>
+                <button class="diff-btn" id="diff-medium">🟡 Moyen (5×5)</button>
+                <button class="diff-btn" id="diff-hard">🔴 Difficile (6×6)</button>
             </div>
 
             <div class="exercise-card">
@@ -731,7 +732,7 @@
                 </div>
                 <div class="controls" style="align-items: center;">
                     <span style="font-weight: 700; color: var(--text-main);">Complète les bits manquants.</span>
-                    <button class="btn btn-check" onclick="checkTrainAnswer()">✅ Vérifier</button>
+                    <button class="btn btn-check" id="verifyBtn">✅ Vérifier</button>
                 </div>
             </div>
 
@@ -782,7 +783,7 @@
                     <div class="grid" id="magic-grid"></div>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-magic" onclick="initMagicMode()">🔄 Recommencer le tour</button>
+                    <button class="btn btn-magic" id="resetMagicBtn">🔄 Recommencer le tour</button>
                 </div>
             </div>
         </div>
@@ -804,64 +805,6 @@
 
     <script>if(typeof lucide !== 'undefined') lucide.createIcons();</script>
     <script>
-        // ========================================== 
-        // AUDIO ENGINE (Web Audio API) 
-        // ========================================== 
-        let audioCtx = null;
-
-        let isMuted = true;
-        function playSound(type) {
-            if (isMuted) return;
-            // Initialisation différée de l'AudioContext sur interaction utilisateur
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            const t = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'click') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(400, t);
-                osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-                gain.gain.setValueAtTime(0.1, t);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-                osc.start();
-                osc.stop(t + 0.05);
-            } else if (type === 'success') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, t);
-                osc.frequency.setValueAtTime(659.25, t + 0.1);
-                osc.frequency.setValueAtTime(783.99, t + 0.2);
-                gain.gain.setValueAtTime(0.1, t);
-                gain.gain.linearRampToValueAtTime(0, t + 0.4);
-                osc.start();
-                osc.stop(t + 0.4);
-            } else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, t);
-                gain.gain.setValueAtTime(0.15, t);
-                gain.gain.linearRampToValueAtTime(0, t + 0.3);
-                osc.start();
-                osc.stop(t + 0.3);
-            } else if (type === 'magic') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(220, t);
-                osc.frequency.exponentialRampToValueAtTime(880, t + 0.5);
-                gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(0.2, t + 0.2);
-                gain.gain.linearRampToValueAtTime(0, t + 0.5);
-                osc.start();
-                osc.stop(t + 0.5);
-            }
-        }
-
         // ========================================== 
         // GLOBAL STATE & UTILS 
         // ========================================== 
@@ -1151,28 +1094,36 @@
         // INIT 
         initTrainMode();
 
-        // THEME — géré par ../js/theme.js
+        // Événements
+        document.getElementById('tab-train').addEventListener('click', (e) => switchTab(e, 'train'));
+        document.getElementById('tab-magic').addEventListener('click', (e) => switchTab(e, 'magic'));
+        
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+        
+        document.getElementById('verifyBtn').addEventListener('click', checkTrainAnswer);
+        document.getElementById('resetMagicBtn').addEventListener('click', initMagicMode);
+        
+        // Delegation pour les bits (dynamiques)
+        document.addEventListener('click', (e) => {
+            const bit = e.target.closest('.bit');
+            if (bit) {
+                const r = parseInt(bit.dataset.r);
+                const c = parseInt(bit.dataset.c);
+                const gridId = bit.closest('.grid').id;
+                if (gridId === 'train-grid') toggleBit(r, c);
+                else if (gridId === 'magic-grid') toggleMagicBit(r, c);
+            }
+        });
     </script>
+    <script src="../js/audio.js"></script>
     <script src="../js/theme.js"></script>
 <script src="../js/confetti.js"></script>
 <script src="../js/swipe.js">
 </script>
 
-<script>
-        // Audio Toggle
-        document.getElementById('audioToggleBtn').addEventListener('click', () => {
-                    isMuted = !isMuted;
-        const iconOn = document.getElementById('icon-vol-on');
-        const iconOff = document.getElementById('icon-vol-off');
-        if (iconOn) iconOn.style.display = isMuted ? 'none' : 'block';
-        if (iconOff) iconOff.style.display = isMuted ? 'block' : 'none';
 
-        const audioText = document.getElementById('audioToggleText');
-        if (audioText) {
-            audioText.textContent = isMuted ? 'Activer le son' : 'Couper le son';
-        }
-    });
-</script>
 <script>window.addEventListener('load', () => ScoreManager.init('bit_de_parite'));</script>
 </body>
 

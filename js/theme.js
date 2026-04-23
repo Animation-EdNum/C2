@@ -14,7 +14,6 @@
  */
 
 (function () {
-    const btn     = document.getElementById('themeToggleBtn');
     const iconSun = document.getElementById('icon-sun');
     const iconMoon= document.getElementById('icon-moon');
 
@@ -34,19 +33,40 @@
             themeToggleText.textContent = theme === 'dark' ? 'Mode Clair' : 'Mode Sombre';
         }
 
-        // Hook optionnel pour les pages qui ont besoin d'un traitement supplémentaire
         if (typeof window.__onThemeChange === 'function') {
             window.__onThemeChange(theme);
         }
     }
 
-    // Lecture du thème sauvegardé (défaut : clair)
     const saved = localStorage.getItem('global_theme') || 'light';
     setTheme(saved);
 
-    if (btn) {
-        btn.addEventListener('click', function () {
-            setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+    window.toggleTheme = function () {
+        setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+    };
+
+    // Gestion des événements du Header
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeBtn = document.getElementById('themeToggleBtn');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', window.toggleTheme);
+        }
+
+        const optionsBtn = document.getElementById('optionsMenuBtn');
+        const optionsContent = document.querySelector('.settings-dropdown-content');
+        if (optionsBtn && optionsContent) {
+            optionsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                optionsContent.classList.toggle('show');
+            });
+        }
+
+        // Fermeture automatique du menu si on clique ailleurs
+        document.addEventListener('click', (event) => {
+            const content = document.querySelector('.settings-dropdown-content.show');
+            if (content && !event.target.closest('.settings-dropdown')) {
+                content.classList.remove('show');
+            }
         });
-    }
+    });
 })();

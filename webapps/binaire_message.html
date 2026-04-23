@@ -695,6 +695,7 @@
         }
     </style>
 <script src="../js/scores.js"></script>
+    <script src="../js/audio.js"></script>
 <script src="../js/lucide.min.js"></script>
 </head>
 
@@ -771,10 +772,10 @@
 
                 <div class="encode-bits-area">
                     <div class="encode-bits-row" id="encode-bits-row"></div>
-                    <div class="encode-values-row" id="encode-values-row"></div>
+                    <div class="encode-values-row" id="encode-values-row" style="display: none;"></div>
                 </div>
 
-                <div class="live-calc" id="live-calc">0 + 0 + 0 + 0 + 0 = 0</div>
+                <div class="live-calc" id="live-calc" style="display: none;">0 + 0 + 0 + 0 + 0 = 0</div>
 
                 <div class="btn-row">
                     <button class="btn btn-check" id="encode-check">Vérifier
@@ -823,8 +824,7 @@
                     le code binaire envoyé par ton camarade.</p>
                 <input type="text" id="decoder-input" placeholder="Ex: 00010 01111 01110"
                     style="padding: 12px; border-radius: 8px; border: 2px solid #e0e7ff; font-family: 'Consolas', monospace; font-size: 16px; width: 100%; text-align: center; outline: none; margin-bottom: 15px;" />
-                <button class="btn btn-check" id="btn-start-decode" style="margin: 0 auto; display: block;"
-                     disabled>Commencer le décodage</button>
+                <button class="btn btn-check" id="btn-start-decode" style="margin: 0 auto; display: block;" disabled>Commencer le décodage</button>
 
                 <div id="decoder-workspace" style="display: none; margin-top: 20px;">
                     <div class="decode-progress" id="decode-progress"
@@ -880,53 +880,6 @@
     <script>if(typeof lucide !== 'undefined') lucide.createIcons();</script>
     <script>
         // ========================================== 
-        // AUDIO ENGINE (Web Audio API) 
-        // ========================================== 
-        let audioCtx = null;
-
-        let isMuted = true;
-        function playSound(type) {
-            if (isMuted) return;
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            const t = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'click') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(300, t);
-                osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
-                gain.gain.setValueAtTime(0.1, t);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-                osc.start();
-                osc.stop(t + 0.05);
-            } else if (type === 'success') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, t);
-                osc.frequency.setValueAtTime(800, t + 0.1);
-                gain.gain.setValueAtTime(0.1, t);
-                gain.gain.linearRampToValueAtTime(0, t + 0.3);
-                osc.start();
-                osc.stop(t + 0.3);
-            } else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, t);
-                gain.gain.setValueAtTime(0.2, t);
-                gain.gain.linearRampToValueAtTime(0, t + 0.3);
-                osc.start();
-                osc.stop(t + 0.3);
-            }
-        }
-
-        // ========================================== 
         // UTILITAIRES & DONNÉES 
         // ========================================== 
         function letterToRank(ch) { return ch.toUpperCase().charCodeAt(0) - 64; }
@@ -944,6 +897,7 @@
         let encodeWord = ''; let encodeIndex = 0; let encodeBits = [0, 0, 0, 0, 0];
         let encodeLocked = false; let globalCorrect = 0; let globalStreak = 0; let globalBest = 0;
         let encodeMistakes = 0;
+        let encodeLetterMistakes = 0;
         let currentTab = 'play';
 
         // ========================================== 
@@ -952,39 +906,34 @@
 
     // Event Listeners for binaire_message
     document.addEventListener('DOMContentLoaded', () => {
-        const scoreBtn = document.getElementById('score-manager-btn');
-        if(scoreBtn) scoreBtn.addEventListener('click', () => { if(typeof ScoreManager !== 'undefined') ScoreManager.showModal(); });
-        document.getElementById('tab-play').addEventListener('click', () => switchTab('play'));
-        document.getElementById('tab-create').addEventListener('click', () => switchTab('create'));
-
-        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
-        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
-        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
-
-        const alphaHeader = document.getElementById('alpha-header');
-        alphaHeader.addEventListener('click', toggleAlpha);
-        alphaHeader.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAlpha(); } });
-
-        document.getElementById('encode-check').addEventListener('click', checkEncodeLetter);
-        document.getElementById('encode-new').addEventListener('click', newEncode);
-
-        document.getElementById('creator-input').addEventListener('input', translateToBinary);
-        document.getElementById('copy-binary-btn').addEventListener('click', copyBinary);
-
-        document.getElementById('decoder-input').addEventListener('input', prepareDecode);
-        document.getElementById('btn-start-decode').addEventListener('click', startDecoding);
-        document.getElementById('reset-decoder-btn').addEventListener('click', resetDecoder);
-
-        // Event delegation for dynamically generated encode bits
-        document.addEventListener('click', (e) => {
-            if(e.target.classList.contains('encode-bit-btn')) {
-                const id = e.target.id;
-                const match = id.match(/-(\\d+)$/);
-                if(match) {
-                    toggleBit(parseInt(match[1], 10));
+        // Delegation for dynamically generated bits
+        document.getElementById('encode-bits-row').addEventListener('click', (e) => {
+            const btn = e.target.closest('.encode-bit-btn');
+            if (btn && btn.id && btn.id.startsWith('encode-bit-')) {
+                const idx = parseInt(btn.id.replace('encode-bit-', ''), 10);
+                if (!isNaN(idx)) {
+                    toggleBit(idx);
                 }
             }
         });
+
+        // Keyboard support for Alpha Header
+        const alphaHeader = document.getElementById('alpha-header');
+        if (alphaHeader) {
+            alphaHeader.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleAlpha(); } });
+        }
+
+        // Creator input handling
+        const creatorInput = document.getElementById('creator-input');
+        if (creatorInput) {
+            creatorInput.addEventListener('input', translateToBinary);
+        }
+
+        // Decoder input handling
+        const decoderInput = document.getElementById('decoder-input');
+        if (decoderInput) {
+            decoderInput.addEventListener('input', prepareDecode);
+        }
     });
 
         window.addEventListener('keydown', function (e) {
@@ -998,11 +947,15 @@
         // ========================================== 
         // TABS & CREATOR MODE 
         // ========================================== 
-        function switchTab(tab) {
+        function switchTab(event, tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            } else {
+                document.getElementById(`tab-${tab}`).classList.add('active');
+            }
             document.getElementById(`view-${tab}`).classList.add('active');
         }
 
@@ -1112,14 +1065,14 @@
             const bits = block.split('').map(Number);
             const powers = [16, 8, 4, 2, 1];
 
-            let htmlBits = '';
-            let htmlVals = '';
+            let htmlBits = [];
+            let htmlVals = [];
             let sumStr = [];
             let sum = 0;
 
             for (let i = 0; i < 5; i++) {
-                htmlBits += `<div class="encode-bit-btn ${bits[i] ? 'active' : ''}" style="cursor:default;">${bits[i]}</div>`;
-                htmlVals += `<div class="encode-value-label">${powers[i]}</div>`;
+                htmlBits.push(`<div class="encode-bit-btn ${bits[i] ? 'active' : ''}" style="cursor:default;">${bits[i]}</div>`);
+                htmlVals.push(`<div class="encode-value-label">${powers[i]}</div>`);
                 if (bits[i] === 1) {
                     sumStr.push(powers[i]);
                     sum += powers[i];
@@ -1128,8 +1081,8 @@
                 }
             }
 
-            document.getElementById('decode-bits-display').innerHTML = htmlBits;
-            document.getElementById('decode-values-row').innerHTML = htmlVals;
+            document.getElementById('decode-bits-display').innerHTML = htmlBits.join('');
+            document.getElementById('decode-values-row').innerHTML = htmlVals.join('');
             document.getElementById('decode-live-calc').innerText = `${sumStr.join(' + ')} = ${sum}`;
             document.getElementById('decode-live-calc').className = 'live-calc';
         }
@@ -1206,11 +1159,11 @@
         // ========================================== 
         function generateAlphaGrid() {
             const grid = document.getElementById('alpha-grid');
-            let html = '';
+            let html = [];
             for (let i = 1; i <= 26; i++) {
-                html += `<div class="alpha-cell"><span class="alpha-cell-letter">${rankToLetter(i)}</span><span class="alpha-cell-bin">${rankToBin5(i)}</span></div>`;
+                html.push(`<div class="alpha-cell"><span class="alpha-cell-letter">${rankToLetter(i)}</span><span class="alpha-cell-bin">${rankToBin5(i)}</span></div>`);
             }
-            grid.innerHTML = html;
+            grid.innerHTML = html.join('');
         }
 
         function showAlpha() { document.getElementById('alpha-section').classList.add('revealed'); document.getElementById('alpha-section').classList.remove('hiding'); }
@@ -1230,6 +1183,9 @@
             encodeWord = pickRandom(wordLists[difficulty]);
             encodeIndex = 0; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
             encodeMistakes = 0;
+            encodeLetterMistakes = 0;
+            document.getElementById('encode-values-row').style.display = 'none';
+            document.getElementById('live-calc').style.display = 'none';
             document.getElementById('encode-check').disabled = false;
             hideAlpha(); renderGame(); updateLiveCalc();
         }
@@ -1249,7 +1205,7 @@
             // Bits 
             const powers = [16, 8, 4, 2, 1];
             document.getElementById('encode-bits-row').innerHTML = powers.map((p, i) =>
-                `<button class="encode-bit-btn ${encodeBits[i] ? 'active' : ''}" id="encode-bit-${i}">${encodeBits[i]}</button>`
+                `<button class="encode-bit-btn ${encodeBits[i] ? 'active' : ''}" id="encode-bit-${i}" >${encodeBits[i]}</button>`
             ).join('');
             document.getElementById('encode-values-row').innerHTML = powers.map(p => `<div class="encode-value-label">${p}</div>`).join('');
         }
@@ -1284,6 +1240,8 @@
                 hideAlpha(); encodeLocked = true;
 
                 // Animation didactique 
+                document.getElementById('encode-values-row').style.display = 'flex';
+                document.getElementById('live-calc').style.display = 'block';
                 const calc = document.getElementById('live-calc');
                 calc.innerText = `${userSum} ➜ ${letter} ✅`;
                 calc.classList.add('success-anim');
@@ -1291,6 +1249,7 @@
                 setTimeout(() => {
                     calc.classList.remove('success-anim');
                     encodeIndex++; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
+                    encodeLetterMistakes = 0;
 
                     globalCorrect++;
                     ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
@@ -1310,6 +1269,9 @@
                     if (encodeIndex >= encodeWord.length) {
                         document.getElementById('encode-check').disabled = true;
                         setTimeout(newEncode, 2000);
+                    } else {
+                        document.getElementById('encode-values-row').style.display = 'none';
+                        document.getElementById('live-calc').style.display = 'none';
                     }
                     renderGame(); updateLiveCalc();
                 }, 1000);
@@ -1319,7 +1281,13 @@
                 encodeMistakes++;
                 ScoreManager.addMistake("encode", difficulty);
                 globalStreak = 0; document.getElementById('global-streak').innerText = globalStreak;
-                showAlpha();
+
+                if (encodeLetterMistakes === 1) {
+                    document.getElementById('encode-values-row').style.display = 'flex';
+                    document.getElementById('live-calc').style.display = 'block';
+                } else if (encodeLetterMistakes >= 2) {
+                    showAlpha();
+                }
 
                 const card = document.getElementById('card-encode');
                 card.style.animation = 'none'; void card.offsetWidth;
@@ -1335,28 +1303,28 @@
         generateAlphaGrid();
         newEncode();
 
-        // THEME — géré par ../js/theme.js
+        // Événements
+        document.getElementById('tab-play').addEventListener('click', (e) => switchTab(e, 'play'));
+        document.getElementById('tab-create').addEventListener('click', (e) => switchTab(e, 'create'));
+        
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+        
+        document.getElementById('alpha-header').addEventListener('click', toggleAlpha);
+        document.getElementById('encode-check').addEventListener('click', checkEncodeLetter);
+        document.getElementById('encode-new').addEventListener('click', newEncode);
+        document.getElementById('copy-binary-btn').addEventListener('click', copyBinary);
+        document.getElementById('btn-start-decode').addEventListener('click', startDecoding);
+        document.getElementById('reset-decoder-btn').addEventListener('click', resetDecoder);
     </script>
+    <script src="../js/audio.js"></script>
     <script src="../js/theme.js"></script>
 <script src="../js/confetti.js"></script>
 <script src="../js/swipe.js">
 </script>
 
-<script>
-        // Audio Toggle
-        document.getElementById('audioToggleBtn').addEventListener('click', () => {
-                    isMuted = !isMuted;
-        const iconOn = document.getElementById('icon-vol-on');
-        const iconOff = document.getElementById('icon-vol-off');
-        if (iconOn) iconOn.style.display = isMuted ? 'none' : 'block';
-        if (iconOff) iconOff.style.display = isMuted ? 'block' : 'none';
 
-        const audioText = document.getElementById('audioToggleText');
-        if (audioText) {
-            audioText.textContent = isMuted ? 'Activer le son' : 'Couper le son';
-        }
-    });
-</script>
 <script>window.addEventListener('load', () => ScoreManager.init('binaire_message'));</script>
 </body>
 

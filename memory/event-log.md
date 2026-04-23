@@ -18,3 +18,5 @@
 - **[2026-04-22]** [UX] Unified webapp headers and performed final UI polish (#85).
 - **[2026-04-22]** [System] Initialized memory directory and 3-layer architecture index.
 - **[2026-04-22]** [System] Populated memory domains with project-specific context, decisions, patterns, and preferences.
+- **[2026-04-23]** [Architecture] Centralized audio logic into `js/audio.js` and removed duplicated audio engine implementations across all webapps.
+- **[2026-04-23]** [Code Quality] Standardized Dark Mode selectors to `body.dark`, removed duplicate meta tags, and migrated event handlers to inline `onclick` attributes.
