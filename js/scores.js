@@ -5,6 +5,26 @@ const ScoreManager = {
     appId: null,
     stats: {}, // structure: { mode: { difficulty: { totalAttempts: 0, totalSuccess: 0, firstTrySuccess: 0, mistakes: 0 } } }
 
+    MODE_LABELS: {
+        'dec_to_bin': 'Décimal → Binaire',
+        'bin_to_dec': 'Binaire → Décimal',
+        'encode': 'Encodage',
+        'decode': 'Décodage',
+        'train': 'Entraînement',
+        'path': 'Routage',
+        'chal': 'Simulateur'
+    },
+
+    DIFF_LABELS: {
+        '4': 'Facile (4 bits)',
+        '7': 'Moyen (7 bits)',
+        '8': 'Difficile (8 bits)',
+        'easy': 'Facile',
+        'medium': 'Moyen',
+        'hard': 'Difficile',
+        'extreme': 'Extrême'
+    },
+
     init(appId) {
         this.appId = appId;
         this.loadStats();
@@ -113,15 +133,7 @@ const ScoreManager = {
 
         let html = '';
         for (const mode in this.stats) {
-            // Translate mode logic if necessary
-            let modeName = mode;
-            if (mode === 'dec_to_bin') modeName = 'Décimal → Binaire';
-            if (mode === 'bin_to_dec') modeName = 'Binaire → Décimal';
-            if (mode === 'encode') modeName = 'Encodage';
-            if (mode === 'decode') modeName = 'Décodage';
-            if (mode === 'train') modeName = 'Entraînement';
-            if (mode === 'path') modeName = 'Routage';
-            if (mode === 'chal') modeName = 'Simulateur';
+            const modeName = this.MODE_LABELS[mode] || mode;
 
             html += `<h3 class="stat-mode-title">${modeName}</h3>`;
             html += `<div class="stat-table-wrapper"><table class="stat-table">
@@ -139,14 +151,7 @@ const ScoreManager = {
                 const st = this.stats[mode][diff];
                 const totalAttempts = st.totalAttempts || 1; // Prevent division by zero for percentage
 
-                let diffName = diff;
-                if (diff === '4') diffName = 'Facile (4 bits)';
-                if (diff === '7') diffName = 'Moyen (7 bits)';
-                if (diff === '8') diffName = 'Difficile (8 bits)';
-                if (diff === 'easy') diffName = 'Facile';
-                if (diff === 'medium') diffName = 'Moyen';
-                if (diff === 'hard') diffName = 'Difficile';
-                if (diff === 'extreme') diffName = 'Extrême';
+                const diffName = this.DIFF_LABELS[diff] || diff;
 
                 const totalActions = st.totalSuccess + st.mistakes;
                 const pctFirstTry = st.totalSuccess > 0 ? Math.round((st.firstTrySuccess / st.totalSuccess) * 100) : 0;
