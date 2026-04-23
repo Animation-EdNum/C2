@@ -9,6 +9,9 @@ const ScoreManager = {
         this.appId = appId;
         this.loadStats();
         this.injectModalHtml();
+        
+        const scoreBtn = document.getElementById('score-manager-btn');
+        if(scoreBtn) scoreBtn.addEventListener('click', () => { this.showModal(); });
     },
 
     loadStats() {
