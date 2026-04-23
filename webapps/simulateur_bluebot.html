@@ -294,8 +294,10 @@ body {
             transition: stroke 0.3s;
         }
 
-        .start-marker-circle {
-            fill: #2563eb;
+        .start-marker-bg {
+            fill: #f97316;
+            stroke: #c2410c;
+            stroke-width: 1;
             transition: fill 0.3s;
         }
 
@@ -309,13 +311,13 @@ body {
 
         /* Skin Volcano/Dragon overrides */
         .bot-grid.skin-volcano .trail-path { stroke: #dc2626; }
-        .bot-grid.skin-volcano .start-marker-circle { fill: #dc2626; }
+        .bot-grid.skin-volcano .start-marker-bg { fill: #dc2626; }
 
         /* Dark Mode overrides */
         body.dark .trail-path { stroke: #60a5fa; }
-        body.dark .start-marker-circle { fill: #60a5fa; }
+        body.dark .start-marker-bg { fill: #f97316; }
         body.dark .bot-grid.skin-volcano .trail-path { stroke: #f87171; }
-        body.dark .bot-grid.skin-volcano .start-marker-circle { fill: #f87171; }
+        body.dark .bot-grid.skin-volcano .start-marker-bg { fill: #f87171; }
 
         /* ROBOT, GHOST & CIBLE */
         .robot-overlay {
@@ -1318,6 +1320,7 @@ body {
             </div>
 
             <div class="exercise-card">
+                <div id="current-diff-display" style="text-align: center; font-weight: bold; margin-bottom: 10px; color: var(--accent);">Niveau : Facile</div>
                 <div class="grid-wrapper">
                     <div class="bot-grid" id="chal-grid"></div>
                 </div>
@@ -1526,7 +1529,7 @@ body {
                 const SKIN_CONFIG = {
             'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le Blue-Bot standard.' },
             'beebot': { name: 'Bee-Bot', obstacle: '🌳', target: '🌻', desc: 'Attrape une étoile avec des murs en Simulateur pour débloquer.' },
-            'thymio': { name: 'Thymio', obstacle: '🚧', target: '🔋', desc: 'Gagne un défi facile pour débloquer.' },
+            'thymio': { name: 'Thymio', obstacle: '🚧', target: '✏️', desc: 'Gagne un défi facile pour débloquer.' },
             'space': { name: 'Mission spatiale', obstacle: '☄️', target: '💎', desc: 'Gagne un défi moyen pour débloquer.' },
             'volcano': { name: 'Le sol est EN FEU !!!', obstacle: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
 
@@ -1642,7 +1645,7 @@ body {
                     <circle cx="65" cy="75" r="6" fill="#3b82f6"/>
                 </svg>`,
             'thymio': `
-                <svg viewBox="-10 -10 120 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <filter id="violetGlow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" result="blur" />
@@ -1685,7 +1688,7 @@ body {
         <polygon points="50,52 46,47 54,47" fill="#94a3b8" stroke="none" />
         <polygon points="38,40 43,36 43,44" fill="#94a3b8" stroke="none" />
         <polygon points="62,40 57,36 57,44" fill="#94a3b8" stroke="none" />
-        <circle cx="50" cy="40" r="16" fill="none" />
+        <circle cx="50" cy="40" r="16" fill="#eab308" />
     </g>
 
     <g>
@@ -1699,8 +1702,9 @@ body {
             'beebot': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
-                    <rect x="15" y="35" width="70" height="10" fill="#1e293b"/>
-                    <rect x="15" y="55" width="70" height="10" fill="#1e293b"/>
+                    <rect x="15" y="30" width="70" height="8" fill="#1e293b"/>
+                    <rect x="15" y="45" width="70" height="8" fill="#1e293b"/>
+                    <rect x="15" y="60" width="70" height="8" fill="#1e293b"/>
                     <circle cx="28" cy="15" r="10" fill="white" stroke="#ca8a04" stroke-width="2"/>
                     <circle cx="72" cy="15" r="10" fill="white" stroke="#ca8a04" stroke-width="2"/>
                     <circle cx="28" cy="12" r="4" fill="#1e293b"/>
@@ -1755,9 +1759,9 @@ body {
     </style>
 
     <g class="tail">
-        <path d="M 45 75 Q 50 110 50 120 Q 50 110 55 75 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
-        <polygon points="50,120 44,108 56,108" fill="#f97316" filter="url(#glow)"/>
-        <polygon points="50,98 47,90 53,90" fill="#ea580c"/>
+        <path d="M 40 75 Q 50 135 50 145 Q 50 135 60 75 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
+        <polygon points="50,145 44,133 56,133" fill="#f97316" filter="url(#glow)"/>
+        <polygon points="50,123 47,115 53,115" fill="#ea580c"/>
     </g>
 
     <g class="wing-l">
@@ -1783,8 +1787,8 @@ body {
     <polygon points="56,10 51,13 57,16" fill="#fef08a" filter="url(#glow)"/>
 
     <g class="fire">
-        <path d="M 50 -2 C 40 -18 46 -30 50 -35 C 54 -30 60 -18 50 -2 Z" fill="#fef08a" filter="url(#glow)"/>
-        <path d="M 50 -2 C 45 -12 48 -18 50 -24 C 52 -18 55 -12 50 -2 Z" fill="#ea580c"/>
+        <path d="M 50 -2 Q 30 -25 40 -50 Q 50 -35 60 -50 Q 70 -25 50 -2 Z" fill="#fef08a" filter="url(#glow)"/>
+        <path d="M 50 -2 Q 40 -20 45 -35 Q 50 -25 55 -35 Q 60 -20 50 -2 Z" fill="#ea580c"/>
     </g>
 </svg>`
         };
@@ -1840,7 +1844,7 @@ body {
             toast.textContent = (msg.includes('Ouch') || !isSuccess ? '❌ ' : '✅ ') + msg;
             toast.style.background = isSuccess ? '#10b981' : '#ef4444';
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            setTimeout(() => toast.classList.remove('show'), 6000);
         }
 
         function switchTab(event, tab) {
@@ -2003,18 +2007,16 @@ body {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "start-marker");
                 
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("class", "start-marker-circle");
-                circle.setAttribute("cx", pt.x);
-                circle.setAttribute("cy", pt.y);
-                circle.setAttribute("r", "3");
+                const markerBg = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                markerBg.setAttribute("class", "start-marker-bg");
+                markerBg.setAttribute("points", `${pt.x},${pt.y - 3.5} ${pt.x - 3.5},${pt.y + 3.5} ${pt.x + 3.5},${pt.y + 3.5}`);
                 
                 const chevron = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 chevron.setAttribute("class", "start-marker-chevron");
                 chevron.setAttribute("d", `M ${pt.x - 1.5} ${pt.y + 1} L ${pt.x} ${pt.y - 1} L ${pt.x + 1.5} ${pt.y + 1}`);
                 chevron.setAttribute("transform", `rotate(${rot} ${pt.x} ${pt.y})`);
                 
-                g.appendChild(circle);
+                g.appendChild(markerBg);
                 g.appendChild(chevron);
                 
                 layer.appendChild(path);
@@ -2349,6 +2351,7 @@ body {
         function setDifficulty(diff) {
             playSound('click'); chalState.difficulty = diff;
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === diff));
+            document.getElementById('current-diff-display').innerText = 'Niveau : ' + (diff === 'easy' ? 'Facile' : (diff === 'medium' ? 'Moyen' : 'Difficile'));
             newChallenge();
         }
         function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -2468,19 +2471,21 @@ body {
             return { startR: 5, startC: 0, startD: 0, targetR: 3, targetC: 0, correct: ['forward', 'forward'], obstacles: [] };
         }
 
-        function generateFakeOption(correctPath, startR, startC, startD, targetR, targetC, obstacles) {
+        function generateFakeOption(correctPath, startR, startC, startD, targetR, targetC, obstacles, diff) {
             let fake; let tries = 0;
             do {
                 fake = [...correctPath];
                 let numMut = randomInt(1, Math.max(1, Math.floor(fake.length / 2)));
                 for (let i = 0; i < numMut; i++) {
                     let idx = randomInt(0, fake.length - 1);
-                    fake[idx] = ['forward', 'backward', 'left', 'right'][randomInt(0, 3)];
+                    let cmds = (diff === 'easy' || diff === 'medium') ? ['forward', 'left', 'right'] : ['forward', 'backward', 'left', 'right'];
+                    fake[idx] = cmds[randomInt(0, cmds.length - 1)];
                 }
 
                 // Ensure fake doesn't end with left or right
                 while (fake.length > 0 && (fake[fake.length - 1] === 'left' || fake[fake.length - 1] === 'right')) {
-                    fake[fake.length - 1] = ['forward', 'backward'][randomInt(0, 1)];
+                    let endCmds = (diff === 'easy' || diff === 'medium') ? ['forward'] : ['forward', 'backward'];
+                    fake[fake.length - 1] = endCmds[randomInt(0, endCmds.length - 1)];
                 }
 
                 tries++;
@@ -2517,7 +2522,7 @@ body {
 
             for (let i = 0; i < numOptions; i++) {
                 if (i === correctIdx) options.push({ cmds: chal.correct, isCorrect: true });
-                else options.push({ cmds: generateFakeOption(chal.correct, chal.startR, chal.startC, chal.startD, chal.targetR, chal.targetC, chal.obstacles), isCorrect: false });
+                else options.push({ cmds: generateFakeOption(chal.correct, chal.startR, chal.startC, chal.startD, chal.targetR, chal.targetC, chal.obstacles, chalState.difficulty), isCorrect: false });
             }
             chalState.options = options;
 
