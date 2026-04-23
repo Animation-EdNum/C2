@@ -514,6 +514,39 @@ body {
             z-index: 2;
         }
 
+        .program-cmd.error-step::before {
+            content: '⚠';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            line-height: 1;
+            z-index: 3;
+            animation: bounceInTriangle 0.4s ease;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+        }
+
+        @keyframes bounceInTriangle {
+            0% { transform: translateX(-50%) scale(0) translateY(8px); opacity: 0; }
+            60% { transform: translateX(-50%) scale(1.3) translateY(-4px); opacity: 1; }
+            100% { transform: translateX(-50%) scale(1) translateY(0); opacity: 1; }
+        }
+
+        @keyframes windowShake {
+            0%, 100% { transform: translateX(0); }
+            15% { transform: translateX(-8px) rotate(-0.5deg); }
+            30% { transform: translateX(8px) rotate(0.5deg); }
+            45% { transform: translateX(-6px); }
+            60% { transform: translateX(6px); }
+            75% { transform: translateX(-3px); }
+            90% { transform: translateX(3px); }
+        }
+
+        .window-shake {
+            animation: windowShake 0.5s ease;
+        }
+
         .program-cmd:hover:not(.active-step):not(.error-step) {
             transform: scale(1.1);
             background: var(--error) !important;
@@ -1263,8 +1296,12 @@ body {
 
                 <div class="score-bar" id="sim-score-bar" style="display: none;">
                     <div class="score-item">
-                        <div class="score-label">Étoiles collectées</div>
+                        <div class="score-label">Récompenses récoltées</div>
                         <div class="score-value" id="sim-star-counter-val">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Du premier coup 🎯</div>
+                        <div class="score-value" id="sim-first-try-val">0</div>
                     </div>
                 </div>
 
@@ -1286,6 +1323,10 @@ body {
                 </div>
 
                 <div class="challenge-options" id="chal-options"></div>
+
+                <div id="chal-hint" style="display:none; text-align:center; margin: 12px 0; padding: 10px 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warn); border-radius: 10px; font-size: 13px; color: var(--warn); font-weight: 600;">
+                    💡 Rappel : Blue-Bot peut aussi <strong>reculer</strong> !
+                </div>
 
                 <div class="controls">
                     <button class="btn btn-new" id="btnNextChallenge" style="display:none;">➡
@@ -1750,7 +1791,8 @@ body {
 
         let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
-            running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0
+            running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
+            firstTryCount: 0, firstAttempt: true
         };
 
         let chalState = {
@@ -1758,19 +1800,19 @@ body {
             correctProgram: [], options: [], locked: false, obstacles: [], isAnimating: false
         };
 
-        let currentSpeed = 450;
+        let currentSpeed = 900;
 
         function toggleSpeed() {
             playSound('click');
             const iconSpd1 = document.getElementById('icon-speed-1x');
             const iconSpd2 = document.getElementById('icon-speed-2x');
-            if (currentSpeed === 450) {
-                currentSpeed = 150;
+            if (currentSpeed === 900) {
+                currentSpeed = 400;
                 if(iconSpd1) iconSpd1.style.display = 'none'; 
                 if(iconSpd2) iconSpd2.style.display = 'block';
                 if(document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Vitesse Rapide';
             } else {
-                currentSpeed = 450;
+                currentSpeed = 900;
                 if(iconSpd1) iconSpd1.style.display = 'block'; 
                 if(iconSpd2) iconSpd2.style.display = 'none';
                 if(document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Vitesse Normale';
@@ -2127,6 +2169,7 @@ body {
             if (attempts < 100) {
                 simState.targetRow = targetR;
                 simState.targetCol = targetC;
+                simState.firstAttempt = true; // Nouveau trésor, nouveau premier essai
                 renderTarget('sim-grid', 'sim-target', targetR, targetC);
 
                 const counter = document.getElementById('sim-score-bar');
@@ -2143,6 +2186,8 @@ body {
             simState.targetRow = null;
             simState.targetCol = null;
             simState.starCount = 0;
+            simState.firstTryCount = 0;
+            simState.firstAttempt = true;
 
             const counter = document.getElementById('sim-score-bar');
             if (counter) counter.style.display = 'none';
@@ -2213,27 +2258,34 @@ body {
                 simState.stepIndex = i; renderProgram();
                 const cmd = simState.program[i]; 
                 
-                let oldR = simState.robotRow; let oldC = simState.robotCol;
                 const result = moveRobot(simState, cmd);
                 simState.robotRow = result.robotRow; simState.robotCol = result.robotCol; simState.robotDir = result.robotDir;
 
-                if (cmd === 'forward' || cmd === 'backward') {
-                    if (!result.blocked) {
-                        TrailManager.addSegment('sim-grid', simState.robotRow, simState.robotCol);
-                    }
-                }
-
+                // Déplacer le robot d'abord (déclenche la transition CSS)
                 renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
 
                 if (result.blocked) {
                     playSound('error');
-                    simState.failed = true; renderProgram();
+                    simState.failed = true; simState.firstAttempt = false; renderProgram();
+                    // Shake du robot
                     document.getElementById('sim-robot').classList.add('shake');
                     setTimeout(() => document.getElementById('sim-robot').classList.remove('shake'), 350);
+                    // Shake global du container
+                    const container = document.querySelector('.container');
+                    container.classList.add('window-shake');
+                    setTimeout(() => container.classList.remove('window-shake'), 500);
                     showToast('Ouch ! Mur en vue. Exécution stoppée.', false);
                     break;
                 }
-                await sleep(currentSpeed);
+
+                // Tracé synchronisé : attendre la fin de la transition CSS du robot, puis tracer
+                if (cmd === 'forward' || cmd === 'backward') {
+                    await sleep(350); // Durée transition CSS du robot
+                    TrailManager.addSegment('sim-grid', simState.robotRow, simState.robotCol);
+                }
+
+                // Pause après chaque commande (y compris les rotations)
+                await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
             }
 
             if (!simState.failed) {
@@ -2248,14 +2300,17 @@ body {
                         launchConfetti();
                     }
 
-                    showToast('Bravo ! Tu as atteint l\'étoile !', true);
+                    showToast('Bravo ! Tu as atteint la récompense !', true);
 
                     if (simState.obstacles && simState.obstacles.length > 0) {
                         unlockSkin('beebot');
                     }
                     simState.starCount++;
+                    if (simState.firstAttempt) simState.firstTryCount++;
                     const counterVal = document.getElementById('sim-star-counter-val');
                     if (counterVal) counterVal.textContent = simState.starCount;
+                    const firstTryVal = document.getElementById('sim-first-try-val');
+                    if (firstTryVal) firstTryVal.textContent = simState.firstTryCount;
 
 
                     const target = document.getElementById('sim-target');
@@ -2267,12 +2322,14 @@ body {
                             simState.program = [];
                             simState.stepIndex = -1;
                             simState.failed = false;
+                            simState.firstAttempt = true; // Reset pour la prochaine cible
                             renderProgram();
                             placeRandomSimTarget(true);
                         }, 500);
                     }
 
                 } else {
+                    simState.firstAttempt = false; // Exécution sans succès
                     showToast('Exécution terminée !', true);
                 }
             }
@@ -2321,10 +2378,31 @@ body {
             return null;
         }
 
+        /**
+         * Vérifie qu'au moins un obstacle se trouve "entre" le robot et la cible,
+         * c'est-à-dire qu'un chemin en ligne droite (même row ou même col) est bloqué,
+         * ou qu'un obstacle se situe dans le rectangle délimité par les deux positions.
+         */
+        function hasObstacleBetween(startR, startC, targetR, targetC, obstacles) {
+            const minR = Math.min(startR, targetR);
+            const maxR = Math.max(startR, targetR);
+            const minC = Math.min(startC, targetC);
+            const maxC = Math.max(startC, targetC);
+
+            return obstacles.some(o => {
+                // L'obstacle est dans le rectangle englobant (exclus les coins start/target)
+                if (o.r >= minR && o.r <= maxR && o.c >= minC && o.c <= maxC) {
+                    if ((o.r === startR && o.c === startC) || (o.r === targetR && o.c === targetC)) return false;
+                    return true;
+                }
+                return false;
+            });
+        }
+
         function generateChallengePath(diff) {
             let minL, maxL, maxBack, minBack;
             if (diff === 'easy') { minL = 2; maxL = 4; maxBack = 0; minBack = 0; }
-            else if (diff === 'medium') { minL = 3; maxL = 6; maxBack = 1; minBack = 0; }
+            else if (diff === 'medium') { minL = 3; maxL = 6; maxBack = 0; minBack = 0; }
             else { minL = 5; maxL = 8; maxBack = 3; minBack = 1; }
 
             for (let attempts = 0; attempts < 1000; attempts++) {
@@ -2348,6 +2426,21 @@ body {
                     }
                 }
 
+                // Moyen : forcer un obstacle entre robot et cible si absent
+                if (diff === 'medium' && !hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) {
+                    const minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
+                    const minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
+                    // Si le rectangle est trop petit (adjacents), skip
+                    if (maxR - minR <= 0 && maxC - minC <= 0) continue;
+                    let or = randomInt(minR, maxR);
+                    let oc = randomInt(minC, maxC);
+                    if ((or !== startR || oc !== startC) && (or !== targetR || oc !== targetC)) {
+                        if (!obstacles.some(o => o.r === or && o.c === oc)) obstacles.push({ r: or, c: oc });
+                    }
+                    // Re-vérifier
+                    if (!hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) continue;
+                }
+
                 if (diff === 'hard') {
                     let minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
                     let minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
@@ -2365,7 +2458,7 @@ body {
                     let backwardCount = path.filter(c => c === 'backward').length;
 
                     if (diff === 'easy' && hasBackward) continue;
-                    if (diff === 'medium' && backwardCount > maxBack) continue;
+                    if (diff === 'medium' && hasBackward) continue;
                     if (diff === 'hard' && backwardCount < minBack) continue;
 
                     return { startR, startC, startD, targetR, targetC, correct: path, obstacles };
@@ -2433,6 +2526,10 @@ body {
             TrailManager.clear('chal-grid');
             renderTarget('chal-grid', 'chal-target', chal.targetR, chal.targetC);
             renderChallengeOptions();
+
+            // Afficher l'indice "reculer" uniquement en mode Difficile
+            const hintEl = document.getElementById('chal-hint');
+            if (hintEl) hintEl.style.display = chalState.difficulty === 'hard' ? 'block' : 'none';
         }
 
         function renderChallengeOptions() {
@@ -2462,16 +2559,10 @@ body {
             renderRobot('chal-grid', 'chal-robot', r, c, d);
 
             for (const cmd of option.cmds) {
-                let oldR = r, oldC = c;
                 const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd);
                 r = result.robotRow; c = result.robotCol; d = result.robotDir;
                 
-                if (cmd === 'forward' || cmd === 'backward') {
-                    if (!result.blocked) {
-                        TrailManager.addSegment('chal-grid', r, c);
-                    }
-                }
-                
+                // Déplacer le robot d'abord (déclenche la transition CSS)
                 renderRobot('chal-grid', 'chal-robot', r, c, d);
 
                 if (result.blocked) {
@@ -2480,7 +2571,15 @@ body {
                     setTimeout(() => document.getElementById('chal-robot').classList.remove('shake'), 350);
                     break;
                 }
-                await sleep(currentSpeed);
+
+                // Tracé synchronisé : attendre la fin de la transition CSS du robot, puis tracer
+                if (cmd === 'forward' || cmd === 'backward') {
+                    await sleep(350);
+                    TrailManager.addSegment('chal-grid', r, c);
+                }
+
+                // Pause après chaque commande (y compris les rotations)
+                await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
             }
 
             if (!chalState.locked) {
