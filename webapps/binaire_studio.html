@@ -163,13 +163,42 @@ body {
             letter-spacing: -0.5px;
         }
 
-        .convention {
-            text-align: center;
+        .convention-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0 16px;
+        }
+
+        .convention-pill {
+            padding: 4px 14px;
+            border-radius: 999px;
             font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            margin-bottom: 12px;
             font-weight: 600;
+        }
+
+        .pill-dark {
+            background: #1e293b;
+            color: #f1f5f9;
+            border: 2px solid #0f172a;
+        }
+
+        .pill-light {
+            background: #f8fafc;
+            color: #1e293b;
+            border: 2px solid #cbd5e1;
+        }
+
+        body.dark .pill-dark {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        body.dark .pill-light {
+            background: rgba(248, 250, 252, 0.08);
+            color: #cbd5e1;
+            border-color: #334155;
         }
 
         /* NAVIGATION */
@@ -370,41 +399,92 @@ body {
             text-align: center;
         }
 
-        /* EDITOR LAYOUT — output à droite */
-        .editor-layout {
+        /* EDITOR LAYOUT */
+        .editor-toolbar {
             display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            justify-content: center;
-            margin: 15px 0;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
-        .editor-output-panel {
+        .editor-size-group,
+        .editor-action-group {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex: 0 0 auto;
-            min-width: 120px;
+            gap: 6px;
+        }
+
+        .editor-size-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .editor-grid-area {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .editor-output-area {
+            border-radius: 12px;
+            border: 2px solid #1e293b;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        .editor-output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #1e293b;
+        }
+
+        .editor-output-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
         }
 
         #editor-output {
             width: 100%;
             font-family: 'JetBrains Mono', monospace;
-            background: var(--card-bg);
+            background: transparent;
             color: #34d399;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 12px;
+            padding: 12px 16px;
             border: none;
             outline: none;
             resize: none;
             -webkit-user-select: text;
             user-select: text;
-            line-height: 1.5;
-            flex: 1;
-            min-height: 180px;
+            font-size: 14px;
+            line-height: 1.8;
+            letter-spacing: 6px;
             white-space: pre;
             overflow: hidden;
+        }
+
+        .btn-copy-output {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #64748b;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-copy-output:hover {
+            background: #334155;
+            color: #f8fafc;
+            border-color: #475569;
         }
 
         /* UTILS & TOAST */
@@ -543,18 +623,13 @@ body {
                 letter-spacing: 4px;
             }
 
-            .editor-layout {
-                flex-direction: column;
-                align-items: center;
+            .editor-toolbar {
+                gap: 8px;
             }
 
-            .editor-output-panel {
-                max-width: 100%;
-                width: 100%;
-            }
-
-            #editor-output {
-                min-height: 140px;
+            .editor-size-group,
+            .editor-action-group {
+                flex-wrap: wrap;
             }
         }
 
@@ -624,7 +699,10 @@ body {
         <!-- ==================== MODE DÉCODER ==================== -->
         <div id="mode-decode" class="card active">
             <div class="mode-instruction">Dessine sur la grille pour reproduire le code binaire.</div>
-            <div class="convention">⬛ Noir = 0 &nbsp;|&nbsp; ⬜ Blanc = 1</div>
+            <div class="convention-row">
+                <span class="convention-pill pill-dark">⬛ Noir = 0</span>
+                <span class="convention-pill pill-light">⬜ Blanc = 1</span>
+            </div>
             <div class="play-area">
                 <div class="row-labels" id="decode-hints"></div>
                 <div class="grid-wrapper" id="grid-decode"></div>
@@ -637,7 +715,10 @@ body {
         <!-- ==================== MODE ENCODER ==================== -->
         <div id="mode-encode" class="card">
             <div class="mode-instruction">Trouve le code binaire correspondant à cette image.</div>
-            <div class="convention">⬛ Noir = 0 &nbsp;|&nbsp; ⬜ Blanc = 1</div>
+            <div class="convention-row">
+                <span class="convention-pill pill-dark">⬛ Noir = 0</span>
+                <span class="convention-pill pill-light">⬜ Blanc = 1</span>
+            </div>
             <div class="play-area">
                 <div class="grid-wrapper" id="grid-encode-static"></div>
                 <div class="binary-input-group" id="encode-inputs"></div>
@@ -647,22 +728,30 @@ body {
         <!-- ==================== MODE ÉDITEUR ==================== -->
         <div id="mode-editor" class="card">
             <div class="mode-instruction">Dessine librement. Le code binaire se génère en temps réel.</div>
-            <div class="convention">⬛ Noir = 0 &nbsp;|&nbsp; ⬜ Blanc = 1</div>
-            <div style="display:flex;justify-content:center;gap:8px;margin-bottom:15px;">
-                <button class="btn btn-outline btn-small" id="btn-editor-5">5×5</button>
-                <button class="btn btn-outline btn-small" id="btn-editor-8">8×8</button>
-                <button class="btn btn-outline btn-small" id="btn-editor-10">10×10</button>
+            <div class="convention-row">
+                <span class="convention-pill pill-dark">⬛ Noir = 0</span>
+                <span class="convention-pill pill-light">⬜ Blanc = 1</span>
             </div>
-            <div class="editor-layout">
-                <div class="grid-wrapper" id="grid-editor"></div>
-                <div class="editor-output-panel">
-                    <textarea id="editor-output" readonly placeholder="Code binaire généré ici…"></textarea>
-                    <button class="btn btn-outline btn-small" id="btn-copy-editor">📋 Copier le code</button>
+            <div class="editor-toolbar">
+                <div class="editor-size-group">
+                    <button class="btn btn-outline btn-small editor-size-btn" id="btn-editor-5">5×5</button>
+                    <button class="btn btn-outline btn-small editor-size-btn" id="btn-editor-8">8×8</button>
+                    <button class="btn btn-outline btn-small editor-size-btn" id="btn-editor-10">10×10</button>
+                </div>
+                <div class="editor-action-group">
+                    <button class="btn btn-outline btn-small" id="btn-clear-editor">🧹 Effacer</button>
+                    <button class="btn btn-primary btn-small" id="btn-export-editor">💾 Exporter</button>
                 </div>
             </div>
-            <div class="controls">
-                <button class="btn btn-outline" id="btn-clear-editor">🧹 Effacer</button>
-                <button class="btn btn-primary" id="btn-export-editor">💾 Exporter PNG</button>
+            <div class="editor-grid-area">
+                <div class="grid-wrapper" id="grid-editor"></div>
+            </div>
+            <div class="editor-output-area">
+                <div class="editor-output-header">
+                    <span class="editor-output-label">Code binaire</span>
+                    <button class="btn-copy-output" id="btn-copy-editor">📋 Copier</button>
+                </div>
+                <textarea id="editor-output" readonly placeholder="Dessine pour générer le code…"></textarea>
             </div>
         </div>
 
@@ -986,8 +1075,10 @@ body {
             editorSize = size || 5;
             buildGrid('grid-editor', editorSize, null, false);
             document.getElementById('editor-output').value = '';
+            document.querySelectorAll('.editor-size-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById('btn-editor-' + editorSize);
+            if (activeBtn) activeBtn.classList.add('active');
             updateEditorOutput();
-            adjustEditorHeight();
         }
 
         function clearEditor() {
@@ -1016,16 +1107,9 @@ body {
                 output += binary + '\n';
             });
 
-            document.getElementById('editor-output').value = output;
-        }
-
-        function adjustEditorHeight() {
-            // Adapter la hauteur du textarea à la grille
-            const wrapper = document.getElementById('grid-editor');
-            if (wrapper) {
-                const h = wrapper.offsetHeight;
-                document.getElementById('editor-output').style.minHeight = Math.max(h, 180) + 'px';
-            }
+            const ta = document.getElementById('editor-output');
+            ta.value = output;
+            ta.rows = rows.length;
         }
 
         function copyEditorOutput() {
