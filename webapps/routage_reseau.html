@@ -860,18 +860,47 @@
                 if (clickable.includes(n.id)) div.classList.add('clickable-next');
                 if (isLocked) div.classList.add('locked');
 
-                div.innerHTML = `<span class="node-icon">${n.type === 's' ? '💻' : n.type === 'd' ? '🖥️' : '📡'}</span><span class="node-label">${n.type === 's' ? 'A' : n.type === 'd' ? 'B' : n.id}</span>`;
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'node-icon';
+                iconSpan.textContent = n.type === 's' ? '💻' : n.type === 'd' ? '🖥️' : '📡';
+                div.appendChild(iconSpan);
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'node-label';
+                labelSpan.textContent = n.type === 's' ? 'A' : n.type === 'd' ? 'B' : n.id;
+                div.appendChild(labelSpan);
+
                 div.onclick = () => onNodeClick(n.id, clickable, last);
                 container.appendChild(div);
             });
         }
 
         function renderPathDisplay() {
-            const text = currentPath.map(id => {
-                const n = getNode(id); return `<span class="path-current">${n.type === 's' ? '💻 A' : n.type === 'd' ? '🖥️ B' : '📡 ' + n.id}</span>`;
-            }).join('<span class="path-arrow"> → </span>') + (currentPath[currentPath.length - 1] !== 'dst' ? '<span class="path-waiting"> → ❓</span>' : '');
+            const container = document.getElementById('path-text');
+            container.innerHTML = '';
 
-            document.getElementById('path-text').innerHTML = text;
+            currentPath.forEach((id, index) => {
+                const n = getNode(id);
+                const span = document.createElement('span');
+                span.className = 'path-current';
+                span.textContent = n.type === 's' ? '💻 A' : n.type === 'd' ? '🖥️ B' : '📡 ' + n.id;
+                container.appendChild(span);
+
+                if (index < currentPath.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'path-arrow';
+                    arrow.textContent = ' → ';
+                    container.appendChild(arrow);
+                }
+            });
+
+            if (currentPath[currentPath.length - 1] !== 'dst') {
+                const waiting = document.createElement('span');
+                waiting.className = 'path-waiting';
+                waiting.textContent = ' → ❓';
+                container.appendChild(waiting);
+            }
+
             document.getElementById('path-time').textContent = calculateCurrentTime();
         }
 
