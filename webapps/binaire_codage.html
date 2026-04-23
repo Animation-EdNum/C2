@@ -188,7 +188,7 @@ body {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" onclick="if(typeof ScoreManager !== 'undefined') ScoreManager.showModal()" aria-label="Voir mes statistiques">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                             <span>Voir mes statistiques</span>
                         </button>
@@ -210,14 +210,14 @@ body {
  
     <!-- DIFFICULTÉ --> 
     <div class="difficulty-bar"> 
-        <button class="diff-btn" onclick="setDifficulty('easy')">🟢 Facile (4 bits)</button> 
-        <button class="diff-btn active" onclick="setDifficulty('medium')">🟡 Moyen (7 bits)</button> 
-        <button class="diff-btn" onclick="setDifficulty('hard')">🔴 Difficile (8 bits)</button> 
+        <button class="diff-btn" id="diff-easy">🟢 Facile (4 bits)</button>
+        <button class="diff-btn active" id="diff-medium">🟡 Moyen (7 bits)</button>
+        <button class="diff-btn" id="diff-hard">🔴 Difficile (8 bits)</button>
     </div> 
  
     <!-- CALCULATRICE --> 
     <div class="calc-section"> 
-        <div class="calc-header" tabindex="0" onclick="toggleCalc()" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">
+        <div class="calc-header" tabindex="0" id="calc-header">
             <span>🧮 Mini-calculatrice binaire (Aide)</span>
             <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
         </div> 
@@ -228,7 +228,7 @@ body {
                 </table> 
             </div> 
             <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div> 
-            <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;" onclick="resetCalc()">Remise à zéro</button></div>
+            <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;" id="reset-calc-btn">Remise à zéro</button></div>
         </div> 
     </div> 
  
@@ -243,7 +243,7 @@ body {
                 <!-- Généré en JS --> 
             </div> 
             <div class="btn-row"> 
-                <button class="btn btn-check" id="decBin-check-btn" onclick="checkDecToBin()">Vérifier</button> 
+                <button class="btn btn-check" id="decBin-check-btn">Vérifier</button>
             </div> 
             <div id="decBin-feedback" class="feedback"></div> 
         </div> 
@@ -257,7 +257,7 @@ body {
             <div class="card-instruction">Ta réponse en base 10 :</div>
             <div class="input-row"> 
                 <input type="text" id="binDec-input" placeholder="ex. 20" autocomplete="off"> 
-                <button class="btn btn-check" id="binDec-check-btn" onclick="checkBinToDec()">Vérifier</button> 
+                <button class="btn btn-check" id="binDec-check-btn">Vérifier</button>
             </div> 
             <div id="binDec-feedback" class="feedback"></div> 
         </div> 
@@ -349,15 +349,15 @@ function buildUI() {
         let isHidden = (8 - i) > currentBits ? 'hidden-col' : ''; 
          
         // Calc HTML 
-        trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" onclick="toggleBitIndex(${i})">0</button></td>`; 
+        trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" >0</button></td>`;
         trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7-i}</sup></td>`; 
-        trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0" onclick="toggleBitIndex(${i})" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">${powers[i]}</div></td>`;
+        trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0">${powers[i]}</div></td>`;
          
         // Exercise HTML (Toggles only, no kb hints) 
         if(!isHidden) { 
             togglesHtml += ` 
             <div class="bit-toggle-container"> 
-                <button class="bit-toggle" id="tog-${i}" onclick="toggleBitIndex(${i})">0</button> 
+                <button class="bit-toggle" id="tog-${i}" >0</button>
             </div>`; 
         } 
     } 
@@ -546,6 +546,48 @@ function checkBinToDec() {
 } 
  
 // ========================================== 
+
+    // Event Listeners for binaire_codage
+    document.addEventListener('DOMContentLoaded', () => {
+        const scoreBtn = document.getElementById('score-manager-btn');
+        if(scoreBtn) scoreBtn.addEventListener('click', () => { if(typeof ScoreManager !== 'undefined') ScoreManager.showModal(); });
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+
+        const calcHeader = document.getElementById('calc-header');
+        calcHeader.addEventListener('click', toggleCalc);
+        calcHeader.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCalc(); } });
+
+        document.getElementById('reset-calc-btn').addEventListener('click', resetCalc);
+        document.getElementById('decBin-check-btn').addEventListener('click', checkDecToBin);
+        document.getElementById('binDec-check-btn').addEventListener('click', checkBinToDec);
+
+        // Event delegation for dynamically generated bits
+        document.addEventListener('click', (e) => {
+            if(e.target.classList.contains('calc-bit') || e.target.classList.contains('bit-toggle') || e.target.classList.contains('calc-box')) {
+                const id = e.target.id;
+                const match = id.match(/-(\d+)$/);
+                if(match) {
+                    toggleBitIndex(parseInt(match[1], 10));
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' ') {
+                if(e.target.classList.contains('calc-box')) {
+                    e.preventDefault();
+                    const id = e.target.id;
+                    const match = id.match(/-(\d+)$/);
+                    if(match) {
+                        toggleBitIndex(parseInt(match[1], 10));
+                    }
+                }
+            }
+        });
+    });
+
 // UX GLOBALES (Aide, Confetti, Entrée) 
 // ========================================== 
 window.addEventListener('keydown', e => { 
