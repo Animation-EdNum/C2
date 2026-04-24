@@ -472,11 +472,18 @@ function checkDecToBin() {
         decBinMistakes++;
         playSound('error'); updateGlobalScore(false);
         ScoreManager.addMistake("dec_to_bin", currentBits);
-        fb.className = 'feedback error';  
+        fb.className = 'feedback error';
+
+        let userVal = parseInt(userBin, 2);
+        let diff = Math.abs(userVal - currentDecNumber);
+        let hint = (diff > 0 && (diff & (diff - 1)) === 0) ? ` Vérifie le bit de poids ${diff} !` : "";
+        let direction = userVal > currentDecNumber ? "grande" : "petite";
+        let baseMsg = `❌ Erreur. Ta valeur (${userVal}) est trop ${direction} de ${diff}.${hint}`;
+
         if (decBinMistakes === 1) {
-            fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.`;
+            fb.innerHTML = baseMsg;
         } else {
-            fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.<br>Il faut faire : <strong>${explainBinary(expectedBin)}</strong>.`;
+            fb.innerHTML = `${baseMsg}<br>Il faut faire : <strong>${explainBinary(expectedBin)}</strong>.`;
         }
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
     } 
@@ -525,10 +532,16 @@ function checkBinToDec() {
         playSound('error'); updateGlobalScore(false);
         ScoreManager.addMistake("bin_to_dec", currentBits);
         fb.className = 'feedback error';
+
+        let diff = Math.abs(userVal - expectedVal);
+        let hint = (diff > 0 && (diff & (diff - 1)) === 0) ? ` Vérifie le bit de poids ${diff} !` : "";
+        let direction = userVal > expectedVal ? "grande" : "petite";
+        let baseMsg = `❌ Faux. Ta valeur (${userVal}) est trop ${direction} de ${diff}.${hint}`;
+
         if (binDecMistakes === 1) {
-            fb.innerHTML = `❌ Faux. Essaie encore !`;
+            fb.innerHTML = baseMsg;
         } else {
-            fb.innerHTML = `❌ Faux. L'ordinateur lit : <strong>${explainBinary(currentBinString)}</strong>.`;
+            fb.innerHTML = `${baseMsg}<br>L'ordinateur lit : <strong>${explainBinary(currentBinString)}</strong>.`;
         }
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
     } 
