@@ -1514,7 +1514,7 @@
                     <div class="bot-grid" id="read-grid"></div>
                 </div>
 
-                <div class="cmd-strip" id="read-program" style="margin-top: 15px; justify-content: center; min-height: 40px; cursor: pointer;">
+                <div class="program-strip" id="read-program" style="margin-top: 15px;">
                     <!-- Commands will be rendered here -->
                 </div>
 
@@ -2723,54 +2723,24 @@
             readState.mistakes = 0; // Reset mistakes for the new challenge
             document.getElementById('btnNextRead').style.display = 'none';
 
-            // 50% chance for destination, 50% for bug
-            readState.type = Math.random() < 0.5 ? 'destination' : 'bug';
+            readState.type = 'destination';
 
             let chal = generateChallengePath(readState.difficulty);
-
-            // Si la difficulté est facile ou moyenne, on peut avoir un programme trop court pour faire un bug intéressant
-            // Assurons-nous d'avoir au moins 2 commandes pour le mode bug
-            if (readState.type === 'bug' && chal.correct.length < 2) {
-                 chal = generateChallengePath('medium'); // forcer au moins medium pour avoir plus de commandes
-            }
 
             readState.robotRow = chal.startR; readState.robotCol = chal.startC; readState.robotDir = chal.startD;
             readState.targetRow = chal.targetR; readState.targetCol = chal.targetC;
             readState.obstacles = chal.obstacles;
 
-            if (readState.type === 'destination') {
-                readState.program = [...chal.correct];
-                readState.bugIndex = -1;
-                document.getElementById('read-instruction').innerHTML = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
-            } else {
-                // Bug mode
-                let buggedProgram;
-                let bIndex;
-                let attempts = 0;
-                do {
-                    buggedProgram = [...chal.correct];
-                    bIndex = randomInt(0, buggedProgram.length - 1);
-                    const originalCmd = buggedProgram[bIndex];
-                    const possibleCmds = ['forward', 'backward', 'left', 'right'].filter(c => c !== originalCmd);
-                    buggedProgram[bIndex] = possibleCmds[randomInt(0, possibleCmds.length - 1)];
-                    attempts++;
-                } while (programReachesTarget(buggedProgram, chal.startR, chal.startC, chal.startD, chal.targetR, chal.targetC, chal.obstacles) && attempts < 50);
-
-                readState.program = buggedProgram;
-                readState.bugIndex = bIndex;
-                document.getElementById('read-instruction').innerHTML = "Le robot n'arrivera pas au but ! <strong>Clique sur la commande incorrecte.</strong>";
-            }
+            readState.program = [...chal.correct];
+            readState.bugIndex = -1;
+            document.getElementById('read-instruction').innerHTML = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
 
             buildGrid('read-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('read-grid', 'read-robot', chal.startR, chal.startC, chal.startD);
             TrailManager.clear('read-grid');
 
-            if (readState.type === 'bug') {
-                renderTarget('read-grid', 'read-target', chal.targetR, chal.targetC);
-            } else {
-                const target = document.getElementById('read-target');
-                if (target) target.remove();
-            }
+            const target = document.getElementById('read-target');
+            if (target) target.remove();
 
             renderReadProgram();
         }
@@ -2778,7 +2748,7 @@
         function renderReadProgram() {
             const strip = document.getElementById('read-program');
             strip.innerHTML = readState.program.map((cmd, i) => {
-                return `<div class="program-cmd" data-index="${i}" tabindex="0">${BB_SVGS[cmd]}</div>`;
+                return `<div class="program-cmd" data-index="${i}">${BB_SVGS[cmd]}</div>`;
             }).join('');
         }
 
@@ -2830,49 +2800,6 @@
 
             if (isCorrect) document.getElementById('btnNextRead').style.display = 'inline-flex';
             readState.isAnimating = false;
-        }
-
-        async function handleReadCmdClick(idx) {
-            if (readState.locked || readState.isAnimating || readState.type !== 'bug') return;
-
-            readState.locked = true;
-
-            const isCorrect = (idx === readState.bugIndex);
-            const cmdEls = document.querySelectorAll('#read-program .program-cmd');
-            const clickedEl = cmdEls[idx];
-
-            if (isCorrect) {
-                playSound('success');
-                if (clickedEl) clickedEl.classList.add('wrong'); // Style "error" to show it's the bug
-                readGlobalScore++; readGlobalStreak++;
-                ScoreManager.addSuccess("read", readState.difficulty, readState.mistakes || 0);
-                document.getElementById('read-global-score').textContent = readGlobalScore;
-                document.getElementById('read-global-streak').textContent = readGlobalStreak;
-
-                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
-                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
-                }
-                showToast('Bien vu ! C\'est bien le bug.', true);
-
-            } else {
-                playSound('error');
-                if (clickedEl) {
-                    clickedEl.style.transform = 'translateY(4px)';
-                    clickedEl.style.boxShadow = 'none';
-                    setTimeout(() => {
-                        clickedEl.style.transform = '';
-                        clickedEl.style.boxShadow = '';
-                    }, 200);
-                }
-                readGlobalStreak = 0;
-                readState.mistakes = (readState.mistakes || 0) + 1;
-                ScoreManager.addMistake("read", readState.difficulty);
-                document.getElementById('read-global-streak').textContent = readGlobalStreak;
-                showToast('Ce n\'est pas cette commande. Cherche encore !', false);
-                readState.locked = false;
-            }
-
-            if (isCorrect) document.getElementById('btnNextRead').style.display = 'inline-flex';
         }
 
         function newChallenge() {
@@ -3094,14 +3021,6 @@
                 const r = parseInt(cell.dataset.row);
                 const c = parseInt(cell.dataset.col);
                 handleReadGridClick(r, c);
-            }
-        });
-
-        document.getElementById('read-program').addEventListener('click', (e) => {
-            const cmdEl = e.target.closest('.program-cmd');
-            if (cmdEl) {
-                const idx = parseInt(cmdEl.dataset.index);
-                handleReadCmdClick(idx);
             }
         });
 
