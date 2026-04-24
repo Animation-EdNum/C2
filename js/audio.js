@@ -2,7 +2,7 @@
  * Gestion centralisée de l'audio (Web Audio API) pour la suite C2
  */
 let audioCtx = null;
-let isMuted = true;
+let isMuted = localStorage.getItem('c2_audio_muted') === 'false' ? false : true;
 
 function playSound(type) {
     if (isMuted) return;
@@ -44,8 +44,7 @@ function playSound(type) {
     }
 }
 
-function toggleAudio() {
-    isMuted = !isMuted;
+function updateAudioUI() {
     const iconOn = document.getElementById('icon-vol-on');
     const iconOff = document.getElementById('icon-vol-off');
     if (iconOn) iconOn.style.display = isMuted ? 'none' : 'block';
@@ -57,10 +56,17 @@ function toggleAudio() {
     }
 }
 
+function toggleAudio() {
+    isMuted = !isMuted;
+    localStorage.setItem('c2_audio_muted', isMuted);
+    updateAudioUI();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const audioBtn = document.getElementById('audioToggleBtn');
     if (audioBtn) {
         audioBtn.addEventListener('click', toggleAudio);
+        updateAudioUI();
     }
 });
 
