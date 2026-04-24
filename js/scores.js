@@ -139,8 +139,8 @@ const ScoreManager = {
                         <h2 style="margin-bottom: 15px;">🌟 Niveau maîtrisé !</h2>
                         <p style="margin-bottom: 20px;">Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
                         <div style="display: flex; gap: 10px; justify-content: center;">
-                            <button id="btn-adaptive-yes" class="btn-new" style="flex: 1;">Oui, allons-y !</button>
-                            <button id="btn-adaptive-no" class="btn-outline-error" style="flex: 1;">Non, je reste ici</button>
+                            <button id="btn-adaptive-yes" class="btn btn-new" style="flex: 1; justify-content: center;">Oui, allons-y !</button>
+                            <button id="btn-adaptive-no" class="btn btn-outline-error" style="flex: 1; justify-content: center;">Non, je reste ici</button>
                         </div>
                     </div>
                 </div>
