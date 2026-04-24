@@ -13,6 +13,7 @@ const ScoreManager = {
         'train': 'Entraînement',
         'path': 'Routage',
         'chal': 'Simulateur',
+        'read': 'Lecture de code',
         'detect': 'Détection d\'erreur'
     },
 
@@ -147,37 +148,57 @@ const ScoreManager = {
         for (const mode in this.stats) {
             const modeName = this.MODE_LABELS[mode] || mode;
             const diffs = Object.keys(this.stats[mode]);
+
+            // Aggregation for the chart
+            let aggSuccess1st = 0;
+            let aggSuccessMore = 0;
+            let aggMistakes = 0;
+            let totalSuccess = 0;
+
+            for (const diff in this.stats[mode]) {
+                const st = this.stats[mode][diff];
+                aggSuccess1st += st.firstTrySuccess;
+                aggSuccessMore += (st.totalSuccess - st.firstTrySuccess);
+                aggMistakes += st.mistakes;
+                totalSuccess += st.totalSuccess;
+            }
+
+            const totalActions = totalSuccess + aggMistakes;
+
+            html += `<div class="stat-mode-container">
+                        <h3 class="stat-mode-title">${modeName}</h3>
+                        <div class="stat-chart-wrapper">
+                            ${this.generateDonutChart(aggSuccess1st, aggSuccessMore, aggMistakes)}
+                            <div class="stat-legend">
+                                <div class="stat-legend-item">
+                                    <div class="stat-legend-color color-success-1st"></div>
+                                    <span class="stat-legend-label">Réussite (1er coup)</span>
+                                    <span class="stat-legend-value">${aggSuccess1st}</span>
+                                </div>
+                                <div class="stat-legend-item">
+                                    <div class="stat-legend-color color-success-more"></div>
+                                    <span class="stat-legend-label">Réussite (après essai)</span>
+                                    <span class="stat-legend-value">${aggSuccessMore}</span>
+                                </div>
+                                <div class="stat-legend-item">
+                                    <div class="stat-legend-color color-mistakes"></div>
+                                    <span class="stat-legend-label">Erreurs (clics)</span>
+                                    <span class="stat-legend-value">${aggMistakes}</span>
+                                </div>
+                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); font-size: 12px; opacity: 0.8;">
+                                    <strong>Efficacité globale :</strong> ${totalActions > 0 ? Math.round((totalSuccess / totalActions) * 100) : 0}%
+                                </div>
+                            </div>
+                        </div>`;
+
+            // Detailed table
             const isNoDiff = diffs.length === 1 && diffs[0] === this._NO_DIFF;
-
-            html += `<h3 class="stat-mode-title">${modeName}</h3>`;
-
-            if (isNoDiff) {
-                // Mode without difficulty levels — no Difficulté column
-                const st = this.stats[mode][this._NO_DIFF];
-                const totalActions = st.totalSuccess + st.mistakes;
-                const pctFirstTry = st.totalSuccess > 0 ? Math.round((st.firstTrySuccess / st.totalSuccess) * 100) : 0;
-                const pctSuccess = totalActions > 0 ? Math.round((st.totalSuccess / totalActions) * 100) : 0;
-                const pctMistakes = totalActions > 0 ? Math.round((st.mistakes / totalActions) * 100) : 0;
-
-                html += `<div class="stat-table-wrapper"><table class="stat-table">
-                            <thead><tr>
-                                <th>Réussites 1er coup</th>
-                                <th>Total réussites</th>
-                                <th>Erreurs</th>
-                            </tr></thead>
-                            <tbody><tr>
-                                <td>${st.firstTrySuccess} <span class="stat-pct">(${pctFirstTry}%)</span></td>
-                                <td>${st.totalSuccess} <span class="stat-pct">(${pctSuccess}%)</span></td>
-                                <td>${st.mistakes} <span class="stat-pct">(${pctMistakes}%)</span></td>
-                            </tr></tbody>
-                        </table></div>`;
-            } else {
-                // Mode with difficulty levels
+            if (!isNoDiff) {
                 html += `<div class="stat-table-wrapper"><table class="stat-table">
                             <thead><tr>
                                 <th>Difficulté</th>
-                                <th>Réussites 1er coup</th>
-                                <th>Total réussites</th>
+                                <th>1er coup</th>
+                                <th>Total</th>
                                 <th>Erreurs</th>
                             </tr></thead>
                             <tbody>`;
@@ -185,24 +206,73 @@ const ScoreManager = {
                 for (const diff in this.stats[mode]) {
                     if (diff === this._NO_DIFF) continue;
                     const st = this.stats[mode][diff];
-                    const totalActions = st.totalSuccess + st.mistakes;
-                    const pctFirstTry = st.totalSuccess > 0 ? Math.round((st.firstTrySuccess / st.totalSuccess) * 100) : 0;
-                    const pctSuccess = totalActions > 0 ? Math.round((st.totalSuccess / totalActions) * 100) : 0;
-                    const pctMistakes = totalActions > 0 ? Math.round((st.mistakes / totalActions) * 100) : 0;
                     const diffName = this.DIFF_LABELS[diff] || diff;
 
                     html += `<tr>
                                 <td><strong>${diffName}</strong></td>
-                                <td>${st.firstTrySuccess} <span class="stat-pct">(${pctFirstTry}%)</span></td>
-                                <td>${st.totalSuccess} <span class="stat-pct">(${pctSuccess}%)</span></td>
-                                <td>${st.mistakes} <span class="stat-pct">(${pctMistakes}%)</span></td>
+                                <td>${st.firstTrySuccess}</td>
+                                <td>${st.totalSuccess}</td>
+                                <td>${st.mistakes}</td>
                              </tr>`;
                 }
                 html += `</tbody></table></div>`;
             }
+            html += `</div>`;
         }
 
         body.innerHTML = html;
+
+        // Trigger animation reset by re-setting stroke-dashoffset after a short delay
+        setTimeout(() => {
+            document.querySelectorAll('.stat-donut-circle').forEach(circle => {
+                const target = circle.getAttribute('data-target');
+                if (target) circle.style.strokeDashoffset = target;
+            });
+        }, 50);
+    },
+
+    generateDonutChart(s1, s2, m) {
+        const total = s1 + s2 + m;
+        if (total === 0) return `<div class="stat-donut-container" style="display:flex; align-items:center; justify-content:center; border: 2px dashed rgba(0,0,0,0.1); border-radius:50%; font-size:12px; color:rgba(0,0,0,0.4);">Aucune donnée</div>`;
+
+        const radius = 50;
+        const circ = 2 * Math.PI * radius;
+
+        const p1 = (s1 / total) * 100;
+        const p2 = (s2 / total) * 100;
+        const p3 = (m / total) * 100;
+
+        // Cumulative offsets
+        const off1 = 0;
+        const off2 = (p1 / 100) * circ;
+        const off3 = ((p1 + p2) / 100) * circ;
+
+        const drawSegment = (percent, offset, colorClass) => {
+            const dash = (percent / 100) * circ;
+            // Use negative dashoffset for cumulative segments
+            return `<circle class="stat-donut-circle ${colorClass}"
+                        cx="70" cy="70" r="${radius}"
+                        stroke-dasharray="${circ}"
+                        stroke-dashoffset="${circ}"
+                        data-target="${circ - dash}"
+                        style="transform: rotate(${(offset / circ) * 360}deg); transform-origin: center;">
+                    </circle>`;
+        };
+
+        return `
+            <div class="stat-donut-container">
+                <svg class="stat-donut" viewBox="0 0 140 140">
+                    <circle class="stat-donut-bg" cx="70" cy="70" r="${radius}"></circle>
+                    ${drawSegment(p1, 0, 'color-success-1st')}
+                    ${drawSegment(p2, (p1/100)*circ, 'color-success-more')}
+                    ${drawSegment(p3, ((p1+p2)/100)*circ, 'color-mistakes')}
+                </svg>
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; line-height:1;">
+                    <div style="font-size:24px; font-weight:800;">${s1+s2}</div>
+                    <div style="font-size:10px; text-transform:uppercase; opacity:0.6;">Succès</div>
+                </div>
+            </div>
+        `;
     }
 };
 

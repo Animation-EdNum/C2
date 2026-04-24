@@ -1099,7 +1099,15 @@
 
                 document.getElementById('decode-values-row').style.display = 'flex';
                 document.getElementById('decode-live-calc').style.display = 'block';
-                document.getElementById('decode-live-calc').innerText = `${parseInt(block, 2)} ➜ ${typedChar} ✅`;
+
+                const powers = [16, 8, 4, 2, 1];
+                let str = [];
+                for (let i = 0; i < 5; i++) {
+                    if (block[i] === '1') str.push(powers[i]);
+                    else str.push('0');
+                }
+
+                document.getElementById('decode-live-calc').innerText = `${str.join(' + ')} = ${parseInt(block, 2)} ➜ ${typedChar} ✅`;
                 document.getElementById('decode-live-calc').classList.add('success-anim');
 
                 decodeWordResult[decodeCurrentIndex] = typedChar;
@@ -1241,7 +1249,14 @@
                 document.getElementById('encode-values-row').style.display = 'flex';
                 document.getElementById('live-calc').style.display = 'block';
                 const calc = document.getElementById('live-calc');
-                calc.innerText = `${userSum} ➜ ${letter} ✅`;
+
+                const powers = [16, 8, 4, 2, 1];
+                let str = [];
+                for (let i = 0; i < 5; i++) {
+                    if (encodeBits[i]) str.push(powers[i]);
+                    else str.push('0');
+                }
+                calc.innerText = `${str.join(' + ')} = ${userSum} ➜ ${letter} ✅`;
                 calc.classList.add('success-anim');
 
                 setTimeout(() => {
