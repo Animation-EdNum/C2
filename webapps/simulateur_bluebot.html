@@ -1407,6 +1407,7 @@
         <div class="tabs">
             <button class="tab-btn active" id="tab-simulator">🎮 Simulateur</button>
             <button class="tab-btn" id="tab-challenge">🧩 Défis</button>
+            <button class="tab-btn" id="tab-read">📖 Lecture</button>
         </div>
 
         <div id="view-simulator" class="view active">
@@ -1492,6 +1493,43 @@
                     <div class="score-item">
                         <div class="score-label">Série 🔥</div>
                         <div class="score-value" id="global-streak">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-read" class="view">
+
+            <div class="difficulty-bar">
+                <button class="diff-btn active" id="read-diff-easy" data-diff="easy">⭐ Facile</button>
+                <button class="diff-btn" id="read-diff-medium" data-diff="medium">⭐⭐ Moyen</button>
+                <button class="diff-btn" id="read-diff-hard" data-diff="hard">⭐⭐⭐ Difficile</button>
+            </div>
+
+            <div class="exercise-card">
+                <div id="read-instruction" style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                </div>
+
+                <div class="grid-wrapper">
+                    <div class="bot-grid" id="read-grid"></div>
+                </div>
+
+                <div class="cmd-strip" id="read-program" style="margin-top: 15px; justify-content: center; min-height: 40px; cursor: pointer;">
+                    <!-- Commands will be rendered here -->
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-new" id="btnNextRead" style="display:none; margin: 0 auto;">➡ Défi suivant</button>
+                </div>
+
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Victoires</div>
+                        <div class="score-value" id="read-global-score">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Série 🔥</div>
+                        <div class="score-value" id="read-global-streak">0</div>
                     </div>
                 </div>
             </div>
@@ -1956,6 +1994,13 @@
             correctProgram: [], options: [], locked: false, obstacles: [], isAnimating: false
         };
 
+        let readState = {
+            difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
+            program: [], obstacles: [], locked: false, isAnimating: false, type: 'destination', bugIndex: -1
+        };
+        let readGlobalScore = 0;
+        let readGlobalStreak = 0;
+
         let currentSpeed = 900;
 
         function toggleSpeed() {
@@ -2005,6 +2050,7 @@
             event.target.classList.add('active');
             document.getElementById(`view-${tab}`).classList.add('active');
             if (tab === 'challenge') newChallenge();
+            if (tab === 'read') newReadChallenge();
         }
 
         /* ================================================================
@@ -2662,6 +2708,173 @@
             return r === targetR && c === targetC;
         }
 
+        /* ================================================================
+           LECTURE DE CODE
+           ================================================================ */
+        function setReadDifficulty(diff) {
+            playSound('click'); readState.difficulty = diff;
+            document.querySelectorAll('#view-read .diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === diff));
+            newReadChallenge();
+        }
+
+        function newReadChallenge() {
+            if (readState.isAnimating) return;
+            readState.locked = false;
+            readState.mistakes = 0; // Reset mistakes for the new challenge
+            document.getElementById('btnNextRead').style.display = 'none';
+
+            // 50% chance for destination, 50% for bug
+            readState.type = Math.random() < 0.5 ? 'destination' : 'bug';
+
+            let chal = generateChallengePath(readState.difficulty);
+
+            // Si la difficulté est facile ou moyenne, on peut avoir un programme trop court pour faire un bug intéressant
+            // Assurons-nous d'avoir au moins 2 commandes pour le mode bug
+            if (readState.type === 'bug' && chal.correct.length < 2) {
+                 chal = generateChallengePath('medium'); // forcer au moins medium pour avoir plus de commandes
+            }
+
+            readState.robotRow = chal.startR; readState.robotCol = chal.startC; readState.robotDir = chal.startD;
+            readState.targetRow = chal.targetR; readState.targetCol = chal.targetC;
+            readState.obstacles = chal.obstacles;
+
+            if (readState.type === 'destination') {
+                readState.program = [...chal.correct];
+                readState.bugIndex = -1;
+                document.getElementById('read-instruction').innerHTML = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
+            } else {
+                // Bug mode
+                let buggedProgram;
+                let bIndex;
+                let attempts = 0;
+                do {
+                    buggedProgram = [...chal.correct];
+                    bIndex = randomInt(0, buggedProgram.length - 1);
+                    const originalCmd = buggedProgram[bIndex];
+                    const possibleCmds = ['forward', 'backward', 'left', 'right'].filter(c => c !== originalCmd);
+                    buggedProgram[bIndex] = possibleCmds[randomInt(0, possibleCmds.length - 1)];
+                    attempts++;
+                } while (programReachesTarget(buggedProgram, chal.startR, chal.startC, chal.startD, chal.targetR, chal.targetC, chal.obstacles) && attempts < 50);
+
+                readState.program = buggedProgram;
+                readState.bugIndex = bIndex;
+                document.getElementById('read-instruction').innerHTML = "Le robot n'arrivera pas au but ! <strong>Clique sur la commande incorrecte.</strong>";
+            }
+
+            buildGrid('read-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
+            renderRobot('read-grid', 'read-robot', chal.startR, chal.startC, chal.startD);
+            TrailManager.clear('read-grid');
+
+            if (readState.type === 'bug') {
+                renderTarget('read-grid', 'read-target', chal.targetR, chal.targetC);
+            } else {
+                const target = document.getElementById('read-target');
+                if (target) target.remove();
+            }
+
+            renderReadProgram();
+        }
+
+        function renderReadProgram() {
+            const strip = document.getElementById('read-program');
+            strip.innerHTML = readState.program.map((cmd, i) => {
+                return `<div class="program-cmd" data-index="${i}" tabindex="0">${BB_SVGS[cmd]}</div>`;
+            }).join('');
+        }
+
+        async function handleReadGridClick(r, c) {
+            if (readState.locked || readState.isAnimating || readState.type !== 'destination') return;
+
+            readState.locked = true;
+            readState.isAnimating = true;
+
+            const isCorrect = (r === readState.targetRow && c === readState.targetCol);
+            const cell = document.querySelector(`#read-grid .bot-cell[data-row="${r}"][data-col="${c}"]`);
+
+            if (isCorrect) {
+                playSound('success');
+                if (cell) cell.style.background = 'rgba(16, 185, 129, 0.4)'; // vert
+                readGlobalScore++; readGlobalStreak++;
+                ScoreManager.addSuccess("read", readState.difficulty, readState.mistakes || 0);
+                document.getElementById('read-global-score').textContent = readGlobalScore;
+                document.getElementById('read-global-streak').textContent = readGlobalStreak;
+
+                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
+                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
+                }
+                showToast('Correct ! Le robot s\'arrête bien ici.', true);
+
+                // Animate robot to destination
+                let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
+                TrailManager.captureInitialState('read-grid', currR, currC, currD);
+                for (const cmd of readState.program) {
+                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd);
+                    currR = res.robotRow; currC = res.robotCol; currD = res.robotDir;
+                    renderRobot('read-grid', 'read-robot', currR, currC, currD);
+                    await sleep(350);
+                }
+
+            } else {
+                playSound('error');
+                if (cell) {
+                    cell.style.background = 'rgba(239, 68, 68, 0.4)'; // rouge
+                    setTimeout(() => cell.style.background = '', 1000);
+                }
+                readGlobalStreak = 0;
+                readState.mistakes = (readState.mistakes || 0) + 1;
+                ScoreManager.addMistake("read", readState.difficulty);
+                document.getElementById('read-global-streak').textContent = readGlobalStreak;
+                showToast('Faux. Essaie encore !', false);
+                readState.locked = false;
+            }
+
+            if (isCorrect) document.getElementById('btnNextRead').style.display = 'inline-flex';
+            readState.isAnimating = false;
+        }
+
+        async function handleReadCmdClick(idx) {
+            if (readState.locked || readState.isAnimating || readState.type !== 'bug') return;
+
+            readState.locked = true;
+
+            const isCorrect = (idx === readState.bugIndex);
+            const cmdEls = document.querySelectorAll('#read-program .program-cmd');
+            const clickedEl = cmdEls[idx];
+
+            if (isCorrect) {
+                playSound('success');
+                if (clickedEl) clickedEl.classList.add('wrong'); // Style "error" to show it's the bug
+                readGlobalScore++; readGlobalStreak++;
+                ScoreManager.addSuccess("read", readState.difficulty, readState.mistakes || 0);
+                document.getElementById('read-global-score').textContent = readGlobalScore;
+                document.getElementById('read-global-streak').textContent = readGlobalStreak;
+
+                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
+                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
+                }
+                showToast('Bien vu ! C\'est bien le bug.', true);
+
+            } else {
+                playSound('error');
+                if (clickedEl) {
+                    clickedEl.style.transform = 'translateY(4px)';
+                    clickedEl.style.boxShadow = 'none';
+                    setTimeout(() => {
+                        clickedEl.style.transform = '';
+                        clickedEl.style.boxShadow = '';
+                    }, 200);
+                }
+                readGlobalStreak = 0;
+                readState.mistakes = (readState.mistakes || 0) + 1;
+                ScoreManager.addMistake("read", readState.difficulty);
+                document.getElementById('read-global-streak').textContent = readGlobalStreak;
+                showToast('Ce n\'est pas cette commande. Cherche encore !', false);
+                readState.locked = false;
+            }
+
+            if (isCorrect) document.getElementById('btnNextRead').style.display = 'inline-flex';
+        }
+
         function newChallenge() {
             if (chalState.isAnimating) return;
             chalState.locked = false; document.getElementById('btnNextChallenge').style.display = 'none';
@@ -2840,6 +3053,7 @@
 
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
         document.getElementById('tab-challenge').addEventListener('click', (e) => switchTab(e, 'challenge'));
+        document.getElementById('tab-read').addEventListener('click', (e) => switchTab(e, 'read'));
 
         document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
         document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
@@ -2866,6 +3080,29 @@
         document.getElementById('chal-options').addEventListener('click', (e) => {
             const optEl = e.target.closest('.challenge-option');
             if (optEl) pickOption(parseInt(optEl.dataset.index));
+        });
+
+        // Read Events
+        document.getElementById('read-diff-easy').addEventListener('click', () => setReadDifficulty('easy'));
+        document.getElementById('read-diff-medium').addEventListener('click', () => setReadDifficulty('medium'));
+        document.getElementById('read-diff-hard').addEventListener('click', () => setReadDifficulty('hard'));
+        document.getElementById('btnNextRead').addEventListener('click', newReadChallenge);
+
+        document.getElementById('read-grid').addEventListener('click', (e) => {
+            const cell = e.target.closest('.bot-cell');
+            if (cell) {
+                const r = parseInt(cell.dataset.row);
+                const c = parseInt(cell.dataset.col);
+                handleReadGridClick(r, c);
+            }
+        });
+
+        document.getElementById('read-program').addEventListener('click', (e) => {
+            const cmdEl = e.target.closest('.program-cmd');
+            if (cmdEl) {
+                const idx = parseInt(cmdEl.dataset.index);
+                handleReadCmdClick(idx);
+            }
         });
 
         document.getElementById('skins-grid-container').addEventListener('click', (e) => {
