@@ -30,7 +30,6 @@ The **C2 (Animation-EdNum)** project is a suite of interactive, high-quality edu
 - **Contact:** The primary contact email for project support, questions, or issues is vivian.epiney@hepvs.ch.
 
 ## Current Sprint / Focus
-- **Mobile Optimization:** Implementing Bottom Tab Bars for consistent navigation and Action Sheets for header actions.
-- **UI Unification:** Ensuring all apps share the same "App Shell" design and dark/light mode persistence.
-- **Gamification:** Adding skins and streaks (e.g., to Blue-Bot) to increase engagement.
-
+- **Blue-Bot Simulator – Feature Complete (2026-04-24):** All planned pedagogical and UX refinements have been implemented. The simulator is considered stable.
+- **Ongoing:** Screenshots refresh and README update to reflect all new features.
+- **Next:** Mobile optimization audit and final accessibility review across the full suite.

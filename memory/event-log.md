@@ -20,3 +20,4 @@
 - **[2026-04-22]** [System] Populated memory domains with project-specific context, decisions, patterns, and preferences.
 - **[2026-04-23]** [Architecture] Centralized audio logic into `js/audio.js` and removed duplicated audio engine implementations across all webapps.
 - **[2026-04-23]** [Code Quality] Standardized Dark Mode selectors to `body.dark`, removed duplicate meta tags, and migrated event handlers to inline `onclick` attributes.
+- **[2026-04-24]** [UX/Pedagogy] Refined Blue-Bot simulator: improved pedagogical constraints for challenge modes, overhauled collision feedback, and updated robot skins.
