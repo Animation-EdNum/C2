@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔢 Bit de parité - Entraînement & Magie</title>
-    <meta property="og:title" content="Bit de parité - Entraînement & Magie">
+    <title>🛡️ Bit de Parité – Entraînement & Détection</title>
+    <meta property="og:title" content="Bit de Parité – Entraînement & Détection">
     <meta property="og:description"
-        content="Un exercice ludique abordant la notion de parité pour la détection d'erreurs.">
+        content="Exerce-toi à calculer les bits de parité et à détecter des erreurs de transmission.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../css/shared.css">
@@ -33,7 +33,6 @@
             --success: #10b981;
             --error: #ef4444;
             --warn: #f59e0b;
-
             --data-bg: #f1f5f9;
             --data-border: #94a3b8;
             --parity-line-bg: #fff7ed;
@@ -127,25 +126,6 @@
             box-shadow: 0 0 8px rgba(217, 119, 6, 0.5);
         }
 
-        body.dark .magic-instructions {
-            background: var(--card-bg);
-            border-color: #334155;
-            color: #cbd5e1;
-        }
-
-        body.dark .cell.magic-error-row,
-        body.dark .cell.magic-error-col {
-            background-color: #7f1d1d !important;
-            border-color: #991b1b !important;
-            color: #fca5a5 !important;
-        }
-
-        body.dark .cell.magic-target {
-            background-color: #991b1b !important;
-            color: #fef2f2 !important;
-            border-color: #7f1d1d !important;
-        }
-
         body.dark .cell.cell-error {
             background: #7f1d1d !important;
             color: #fca5a5 !important;
@@ -154,6 +134,24 @@
 
         body.dark .card-title {
             color: #f8fafc;
+        }
+
+        body.dark .cell.parity-error {
+            background: #78350f !important;
+            border-color: #d97706 !important;
+            color: #fde68a !important;
+        }
+
+        body.dark .instructions {
+            background: var(--card-bg);
+            border-color: #4f46e5;
+            color: #cbd5e1;
+        }
+
+        body.dark .detect-header {
+            background: var(--card-bg);
+            border-color: #334155;
+            color: #cbd5e1;
         }
 
         * {
@@ -197,14 +195,23 @@
             font-size: 26px;
         }
 
-        .subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
+        /* INSTRUCTIONS */
+        .instructions {
+            background: #f0f4ff;
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+            border-radius: 5px;
             font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            cursor: pointer;
         }
 
-        /* TABS NAVIGATION */
+        .instructions strong {
+            color: var(--accent);
+        }
+
+        /* TABS */
         .tabs {
             display: flex;
             justify-content: center;
@@ -300,7 +307,7 @@
             border-color: var(--parity-col-border);
         }
 
-        /* CARTES ET VUES */
+        /* VUES */
         .view {
             display: none;
             animation: fadeIn 0.3s ease;
@@ -383,7 +390,6 @@
             color: #0f172a;
         }
 
-        /* Interactive Parity Cells */
         .cell.parity-line {
             background: var(--parity-line-bg);
             border-color: var(--parity-line-border);
@@ -419,8 +425,8 @@
         }
 
         .cell.corner {
-            background: var(--corner-bg);
-            border-color: var(--corner-border);
+            background: var(--corner-bg, #f8fafc);
+            border-color: var(--corner-border, #e2e8f0);
             color: #cbd5e1;
             cursor: pointer;
         }
@@ -441,7 +447,7 @@
             box-shadow: none !important;
         }
 
-        /* Hover Assistance */
+        /* Hover */
         .cell.hover-highlight {
             background-color: #fef08a !important;
             border-color: #eab308 !important;
@@ -450,64 +456,38 @@
             z-index: 10;
         }
 
-        /* Magic Trick Animations */
-        .cell.magic-clickable {
+        /* Detect mode clickable data */
+        .cell.detect-clickable {
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .cell.magic-clickable:hover {
+        .cell.detect-clickable:hover {
             transform: scale(1.1);
-            background: #e0e7ff;
-            border-color: var(--accent);
-            color: var(--accent);
+            background: #dbeafe !important;
+            border-color: var(--accent) !important;
+            color: var(--accent-dark) !important;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
         }
 
-        .cell.magic-error-row {
-            background-color: #fee2e2 !important;
-            border-color: #f87171 !important;
-            color: #991b1b !important;
+        /* Parity error (detection mode) */
+        .cell.parity-error {
+            background: #fef3c7 !important;
+            border-color: #f59e0b !important;
+            color: #92400e !important;
+            animation: parityErrorPulse 2s ease-in-out infinite alternate;
         }
 
-        .cell.magic-error-col {
-            background-color: #fee2e2 !important;
-            border-color: #f87171 !important;
-            color: #991b1b !important;
-        }
-
-        .cell.magic-target {
-            animation: magicPulse 1s infinite alternate;
-            background-color: #ef4444 !important;
-            color: white !important;
-            border-color: #991b1b !important;
-            z-index: 20;
-        }
-
-        @keyframes magicPulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        @keyframes parityErrorPulse {
+            from {
+                box-shadow: 0 0 4px rgba(245, 158, 11, 0.3);
             }
 
-            100% {
-                transform: scale(1.2);
-                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            to {
+                box-shadow: 0 0 14px rgba(245, 158, 11, 0.8);
             }
         }
 
-        .magic-instructions {
-            text-align: center;
-            font-size: 15px;
-            color: var(--text-main);
-            margin-bottom: 15px;
-            background: #eff6ff;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #bfdbfe;
-            transition: all 0.2s;
-        }
-
-        /* Validation Colors */
+        /* Validation */
         .cell.cell-correct {
             border-color: var(--success) !important;
             background: #dcfce7 !important;
@@ -583,13 +563,16 @@
             background: var(--accent-dark);
         }
 
-        .btn-magic {
-            background: #d946ef;
-            color: white;
-        }
-
-        .btn-magic:hover:not(:disabled) {
-            background: #c026d3;
+        /* Detect mode header banner */
+        .detect-header {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #bfdbfe;
         }
 
         /* TOAST */
@@ -598,7 +581,6 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--card-bg);
             color: white;
             padding: 12px 24px;
             border-radius: 30px;
@@ -666,9 +648,8 @@
             }
         }
     </style>
-<script src="../js/scores.js"></script>
-    <script src="../js/audio.js"></script>
-<script src="../js/lucide.min.js"></script>
+    <script src="../js/scores.js"></script>
+    <script src="../js/lucide.min.js"></script>
 </head>
 
 <body>
@@ -685,26 +666,67 @@
                 </div>
             </div>
             <div class="action-buttons">
-                <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
                 </a>
                 <div class="settings-dropdown">
                     <button class="icon-action-btn" title="Options" aria-label="Options" id="optionsMenuBtn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
                     </button>
                     <div class="settings-dropdown-content">
                         <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
                             <span>Voir mes statistiques</span>
                         </button>
                         <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
-                            <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                            <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
                             <span id="themeToggleText">Changer le thème</span>
                         </button>
                         <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
-                            <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
-                            <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                            <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                            </svg>
+                            <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <line x1="23" y1="9" x2="17" y2="15"></line>
+                                <line x1="17" y1="9" x2="23" y2="15"></line>
+                            </svg>
                             <span id="audioToggleText">Activer le son</span>
                         </button>
                     </div>
@@ -715,14 +737,33 @@
         <!-- NAVIGATION -->
         <div class="tabs">
             <button class="tab-btn active" id="tab-train">📝 Entraînement</button>
-            <button class="tab-btn" id="tab-magic">🎩 Tour de Magie</button>
+            <button class="tab-btn" id="tab-detect">🔍 Trouve l'erreur</button>
         </div>
+
+        <!-- INSTRUCTIONS -->
+        <details class="instructions">
+            <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
+            <div style="margin-top:10px;">
+                <strong>Le principe :</strong> Un <strong>bit de parité</strong> est ajouté à chaque ligne et chaque
+                colonne d'un bloc de données pour que le nombre de <strong>1</strong> soit toujours
+                <strong>pair</strong>. Si un bit est altéré lors d'une transmission, certaines parités ne seront plus
+                respectées — on peut alors <em>localiser précisément</em> la cellule corrompue !<br><br>
+                <strong>📝 Mode Entraînement :</strong> La grille de données est générée aléatoirement. Complète les
+                cases de parité vides (en bordure) pour que chaque ligne et chaque colonne contienne un nombre
+                <strong>pair de 1</strong>. Survole une case de parité pour voir quelle ligne ou colonne elle
+                surveille.<br><br>
+                <strong>🔍 Trouve l'erreur :</strong> Un bit a été corrompu lors d'une transmission. Les bits de parité
+                corrects sont affichés en bordure. Les cases <strong>en orange ⚠️</strong> signalent une parité violée :
+                leur ligne ou colonne ne respecte plus la règle. <strong>L'intersection</strong> de la ligne et de la
+                colonne suspectes désigne le bit corrompu — clique dessus pour le corriger !
+            </div>
+        </details>
 
         <!-- MODE ENTRAÎNEMENT -->
         <div id="view-train" class="view active">
             <div class="difficulty-bar">
-                <button class="diff-btn active" id="diff-easy">🟢 Facile (4×4)</button>
-                <button class="diff-btn" id="diff-medium">🟡 Moyen (5×5)</button>
+                <button class="diff-btn" id="diff-easy">🟢 Facile (4×4)</button>
+                <button class="diff-btn active" id="diff-medium">🟡 Moyen (5×5)</button>
                 <button class="diff-btn" id="diff-hard">🔴 Difficile (6×6)</button>
             </div>
 
@@ -734,12 +775,6 @@
                     <span style="font-weight: 700; color: var(--text-main);">Complète les bits manquants.</span>
                     <button class="btn btn-check" id="verifyBtn">✅ Vérifier</button>
                 </div>
-            </div>
-
-            <div style="text-align: center; font-size: 14px; color: var(--text-secondary); margin-bottom: 15px;">
-                💡 <strong>Astuce :</strong> Survole une case de parité (bordure) pour voir quelle ligne/colonne elle
-                surveille.<br>
-                Le but : chaque ligne et chaque colonne doit contenir un nombre <strong>pair</strong> de "1".
             </div>
 
             <div class="legend">
@@ -770,20 +805,47 @@
             </div>
         </div>
 
-        <!-- MODE TOUR DE MAGIE -->
-        <div id="view-magic" class="view">
-            <div class="magic-instructions">
-                🪄 L'ordinateur a généré un bloc de données avec ses bits de parité corrects.<br>
-                <strong>Clique sur un bit de donnée (bleu) pour simuler un piratage !</strong> L'ordinateur le
-                retrouvera.
+        <!-- MODE DÉTECTION D'ERREUR -->
+        <div id="view-detect" class="view">
+            <div class="detect-header" id="detect-header">
+                🚨 <strong>Un bit a été corrompu lors de la transmission !</strong><br>
+                Analyse la grille et clique sur le bit que tu penses <strong>corrompu</strong>
             </div>
 
             <div class="exercise-card">
+                <div class="card-title" id="detect-card-title">Défi n°1 – Trouve le bit corrompu !</div>
                 <div class="grid-wrapper">
-                    <div class="grid" id="magic-grid"></div>
+                    <div class="grid" id="detect-grid"></div>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-magic" id="resetMagicBtn">🔄 Recommencer le tour</button>
+                    <button class="btn btn-new" id="newDetectBtn">🔄 Nouveau défi</button>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box data-box"></div> Données
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box parity-line-box"></div> Parité Ligne
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box parity-col-box"></div> Parité Colonne
+                </div>
+            </div>
+
+            <div class="score-bar">
+                <div class="score-item">
+                    <div class="score-label">Trouvés</div>
+                    <div class="score-value" id="detect-correct">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Série 🔥</div>
+                    <div class="score-value" id="detect-streak">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Meilleure</div>
+                    <div class="score-value" id="detect-best">0</div>
                 </div>
             </div>
         </div>
@@ -794,24 +856,27 @@
 
     <footer class="no-print">
         <p>
-            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
+            Webapp conçue par Vivian de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
             <br>
             <span style="font-size: 0.9em; opacity: 0.85;">
-                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
-                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                    libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
             </span>
         </p>
     </footer>
 
-    <script>if(typeof lucide !== 'undefined') lucide.createIcons();</script>
+    <script>if (typeof lucide !== 'undefined') lucide.createIcons();</script>
     <script>
-        // ========================================== 
-        // GLOBAL STATE & UTILS 
-        // ========================================== 
+        // ==========================================
+        // GLOBAL STATE & UTILS
+        // ==========================================
         let currentMode = 'train';
-        let gridSize = 4;
+        let gridSize = 5;
         let trainData = [], trainAnswers = [], isTrainLocked = false, isFirstAttempt = true;
-        let magicData = [], magicParityRow = [], magicParityCol = [], magicCorner = 0;
         let globalCorrect = 0, globalStreak = 0, globalBest = 0;
 
         function switchTab(event, tab) {
@@ -821,22 +886,24 @@
             event.target.classList.add('active');
             document.getElementById(`view-${tab}`).classList.add('active');
             if (tab === 'train') initTrainMode();
-            else initMagicMode();
+            else initDetectMode();
         }
 
         function showToast(msg, isSuccess = true) {
             const toast = document.getElementById('toast');
-            toast.textContent = (isSuccess ? '✅ ' : '❌ ') + msg;
-            toast.style.background = isSuccess ? '#10b981' : (msg.includes('Magie') ? '#d946ef' : '#ef4444');
+            toast.textContent = msg;
+            toast.style.background = isSuccess ? '#10b981' : '#ef4444';
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ========================================== 
-        // MODE ENTRAÎNEMENT 
-        // ========================================== 
+        // ==========================================
+        // MODE ENTRAÎNEMENT
+        // ==========================================
         function setDifficulty(lvl) {
-            document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl === 'easy' ? '4×4' : lvl === 'medium' ? '5×5' : '6×6')));
+            document.querySelectorAll('.diff-btn').forEach(b =>
+                b.classList.toggle('active', b.innerText.includes(lvl === 'easy' ? '4×4' : lvl === 'medium' ? '5×5' : '6×6'))
+            );
             gridSize = lvl === 'easy' ? 4 : (lvl === 'medium' ? 5 : 6);
             initTrainMode();
         }
@@ -844,15 +911,14 @@
         function initTrainMode() {
             isTrainLocked = false; isFirstAttempt = true; trainData = []; trainAnswers = [];
             const totalSize = gridSize + 1;
-
-            // Generate Random Data 
             for (let i = 0; i < gridSize; i++) {
-                let row = []; for (let j = 0; j < gridSize; j++) row.push(Math.random() < 0.5 ? 0 : 1);
+                let row = [];
+                for (let j = 0; j < gridSize; j++) row.push(Math.random() < 0.5 ? 0 : 1);
                 trainData.push(row);
             }
-            // Init empty answers 
             for (let i = 0; i < totalSize; i++) {
-                let row = []; for (let j = 0; j < totalSize; j++) row.push(null);
+                let row = [];
+                for (let j = 0; j < totalSize; j++) row.push(null);
                 trainAnswers.push(row);
             }
             renderTrainGrid();
@@ -862,25 +928,19 @@
             const grid = document.getElementById('train-grid');
             grid.innerHTML = '';
             grid.style.gridTemplateColumns = `repeat(${gridSize + 1}, 1fr)`;
-
             for (let i = 0; i <= gridSize; i++) {
                 for (let j = 0; j <= gridSize; j++) {
                     const cell = document.createElement('div');
-
                     if (i < gridSize && j < gridSize) {
-                        // Data Cell 
-                        cell.className = 'cell data'; cell.textContent = trainData[i][j];
+                        cell.className = 'cell data';
+                        cell.textContent = trainData[i][j];
                         cell.dataset.r = i; cell.dataset.c = j;
                     } else {
-                        // Parity Cell 
                         cell.className = `cell ${i === gridSize && j === gridSize ? 'corner' : (i === gridSize ? 'parity-col' : 'parity-line')}`;
                         if (isTrainLocked) cell.classList.add('locked');
-
                         let val = trainAnswers[i][j];
                         if (val !== null) { cell.textContent = val; cell.classList.add('filled'); }
                         else cell.textContent = '';
-
-                        // Interactions 
                         cell.onclick = () => toggleTrainBit(i, j);
                         cell.onmouseenter = () => highlightLine(i, j);
                         cell.onmouseleave = clearHighlights;
@@ -893,29 +953,23 @@
         function toggleTrainBit(r, c) {
             if (isTrainLocked) return;
             playSound('click');
-            let current = trainAnswers[r][c];
-            // Cycle: null -> 1 -> 0 -> null 
-            if (current === null) trainAnswers[r][c] = 1;
-            else if (current === 1) trainAnswers[r][c] = 0;
-            else trainAnswers[r][c] = null;
-
-            // Fast re-render of this cell only for performance 
+            let cur = trainAnswers[r][c];
+            trainAnswers[r][c] = cur === null ? 1 : (cur === 1 ? 0 : null);
             renderTrainGrid();
         }
 
-        // Hover Assistance 
         function highlightLine(r, c) {
             if (isTrainLocked) return;
             const cells = document.getElementById('train-grid').children;
             for (let i = 0; i < cells.length; i++) {
-                let cr = cells[i].dataset.r;
-                let cc = cells[i].dataset.c;
+                let cr = cells[i].dataset.r, cc = cells[i].dataset.c;
                 if (cr !== undefined && cc !== undefined) {
                     if (r < gridSize && cr == r) cells[i].classList.add('hover-highlight');
                     if (c < gridSize && cc == c) cells[i].classList.add('hover-highlight');
                 }
             }
         }
+
         function clearHighlights() {
             document.querySelectorAll('.hover-highlight').forEach(c => c.classList.remove('hover-highlight'));
         }
@@ -924,11 +978,8 @@
             if (isTrainLocked) return;
             let hasError = false;
             const cells = document.getElementById('train-grid').children;
-
-            // Helper to find a specific cell div 
             const getCell = (r, c) => cells[r * (gridSize + 1) + c];
 
-            // Check Rows 
             for (let i = 0; i < gridSize; i++) {
                 let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0);
                 if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) {
@@ -936,7 +987,6 @@
                 } else { getCell(i, gridSize).classList.add('cell-correct'); }
             }
 
-            // Check Cols 
             for (let j = 0; j < gridSize; j++) {
                 let sum = trainAnswers[gridSize][j] || 0;
                 for (let i = 0; i < gridSize; i++) sum += trainData[i][j];
@@ -945,13 +995,10 @@
                 } else { getCell(gridSize, j).classList.add('cell-correct'); }
             }
 
-            // Check Corner 
-            let rowSum = 0;
-            let colSum = 0;
+            let rowSum = 0, colSum = 0;
             for (let i = 0; i < gridSize; i++) rowSum += (trainAnswers[gridSize][i] || 0);
             for (let i = 0; i < gridSize; i++) colSum += (trainAnswers[i][gridSize] || 0);
             let cornerVal = trainAnswers[gridSize][gridSize];
-
             if (cornerVal === null || (rowSum + cornerVal) % 2 !== 0 || (colSum + cornerVal) % 2 !== 0) {
                 hasError = true; getCell(gridSize, gridSize).classList.add('cell-error');
             } else { getCell(gridSize, gridSize).classList.add('cell-correct'); }
@@ -959,25 +1006,18 @@
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
                 globalCorrect++;
-                ScoreManager.addSuccess("train", gridSize, isFirstAttempt ? 0 : 1); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-
-                if (gridSize === 6 && isFirstAttempt) {
-                    launchFire();
-                } else if (globalStreak % 3 === 0) {
-                    launchConfetti();
-                }
-
-                showToast("Parfait ! Tout est pair.");
+                ScoreManager.addSuccess("train", 'grid' + gridSize, isFirstAttempt ? 0 : 1);
+                globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
+                if (gridSize === 6 && isFirstAttempt) launchFire();
+                else if (globalStreak % 3 === 0) launchConfetti();
+                showToast("✅ Parfait ! Tout est pair.");
                 setTimeout(initTrainMode, 2000);
             } else {
                 isFirstAttempt = false;
                 playSound('error');
-                ScoreManager.addMistake("train", gridSize); globalStreak = 0;
-                showToast("Il y a des erreurs en rouge.", false);
-                // Remove error classes after animation 
-                setTimeout(() => {
-                    document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error'));
-                }, 1000);
+                ScoreManager.addMistake("train", 'grid' + gridSize); globalStreak = 0;
+                showToast("❌ Il y a des erreurs en rouge.", false);
+                setTimeout(() => document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error')), 1000);
             }
 
             document.getElementById('global-correct').textContent = globalCorrect;
@@ -985,146 +1025,214 @@
             document.getElementById('global-best').textContent = globalBest;
         }
 
+        // ==========================================
+        // MODE DÉTECTION D'ERREUR
+        // ==========================================
+        const DET_SIZE = 5;
+        let detectData = [], detectParityRow = [], detectParityCol = [], detectCorner = 0;
+        let detectCorruptedR = -1, detectCorruptedC = -1;
+        let detectLocked = false, detectAttempts = 0, detectHintsEnabled = false;
+        let detectCorrect = 0, detectStreak = 0, detectBest = 0;
+        let detectExerciseCount = 0;
 
-        // ========================================== 
-        // MODE TOUR DE MAGIE 
-        // ========================================== 
-        let isMagicDone = false;
-        let magicDomNodes = { data: [], rowParity: [], colParity: [], corner: null };
+        function initDetectMode() {
+            detectLocked = false;
+            detectAttempts = 0;
+            detectHintsEnabled = false;
+            detectExerciseCount++;
+            document.getElementById('detect-header').innerHTML =
+                '🔍 <strong>Un bit de données a été altéré lors d\'une transmission.</strong><br>' +
+                'Analyse la grille et clique sur le bit que tu penses <strong>corrompu</strong> !';
 
-        function initMagicMode() {
-            isMagicDone = false; magicData = []; magicParityRow = []; magicParityCol = []; magicCorner = 0;
-
-            // Generate 5x5 for magic trick 
-            const mgSize = 5;
-            let totalDataSum = 0;
-
-            for (let i = 0; i < mgSize; i++) {
-                let row = []; let rowSum = 0;
-                for (let j = 0; j < mgSize; j++) {
-                    let val = Math.random() < 0.5 ? 0 : 1;
-                    row.push(val); rowSum += val; totalDataSum += val;
-                }
-                magicData.push(row);
-                magicParityRow.push(rowSum % 2); // Pair -> 0, Impair -> 1 
+            detectData = [];
+            for (let i = 0; i < DET_SIZE; i++) {
+                let row = [];
+                for (let j = 0; j < DET_SIZE; j++) row.push(Math.random() < 0.5 ? 0 : 1);
+                detectData.push(row);
             }
 
-            for (let j = 0; j < mgSize; j++) {
-                let colSum = 0;
-                for (let i = 0; i < mgSize; i++) colSum += magicData[i][j];
-                magicParityCol.push(colSum % 2);
+            detectParityRow = [];
+            for (let i = 0; i < DET_SIZE; i++)
+                detectParityRow.push(detectData[i].reduce((a, b) => a + b, 0) % 2);
+
+            detectParityCol = [];
+            for (let j = 0; j < DET_SIZE; j++) {
+                let sum = 0;
+                for (let i = 0; i < DET_SIZE; i++) sum += detectData[i][j];
+                detectParityCol.push(sum % 2);
             }
 
-            magicCorner = magicParityRow.reduce((a, b) => a + b, 0) % 2; // Should match Col parity sum 
+            detectCorner = detectParityRow.reduce((a, b) => a + b, 0) % 2;
 
-            renderMagicGrid();
+            // Corrupt exactly one data bit
+            detectCorruptedR = Math.floor(Math.random() * DET_SIZE);
+            detectCorruptedC = Math.floor(Math.random() * DET_SIZE);
+            detectData[detectCorruptedR][detectCorruptedC] ^= 1;
+
+            document.getElementById('detect-card-title').textContent = `Défi n°${detectExerciseCount} – Trouve le bit corrompu !`;
+            renderDetectGrid();
+            updateDetectScoreDisplay();
         }
 
-        function renderMagicGrid() {
-            const grid = document.getElementById('magic-grid');
-            grid.innerHTML = ''; const mgSize = 5;
-            grid.style.gridTemplateColumns = `repeat(${mgSize + 1}, 1fr)`;
+        function isRowOk(r) {
+            return detectData[r].reduce((a, b) => a + b, 0) % 2 === detectParityRow[r];
+        }
 
-            magicDomNodes.data = []; magicDomNodes.rowParity = []; magicDomNodes.colParity = [];
+        function isColOk(c) {
+            let sum = 0;
+            for (let i = 0; i < DET_SIZE; i++) sum += detectData[i][c];
+            return sum % 2 === detectParityCol[c];
+        }
 
-            for (let i = 0; i <= mgSize; i++) {
-                let dataRow = [];
-                for (let j = 0; j <= mgSize; j++) {
+        function renderDetectGrid() {
+            const grid = document.getElementById('detect-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${DET_SIZE + 1}, 1fr)`;
+
+            for (let i = 0; i <= DET_SIZE; i++) {
+                for (let j = 0; j <= DET_SIZE; j++) {
                     const cell = document.createElement('div');
 
-                    if (i < mgSize && j < mgSize) {
-                        cell.className = `cell data ${!isMagicDone ? 'magic-clickable' : ''}`;
-                        cell.textContent = magicData[i][j];
-                        if (!isMagicDone) cell.onclick = () => flipMagicBit(i, j);
-                        cell.id = `m-${i}-${j}`;
-                        dataRow.push(cell);
-                    } else if (i < mgSize && j === mgSize) {
-                        cell.className = 'cell parity-line locked filled'; cell.textContent = magicParityRow[i]; cell.id = `mr-${i}`;
-                        magicDomNodes.rowParity.push(cell);
-                    } else if (i === mgSize && j < mgSize) {
-                        cell.className = 'cell parity-col locked filled'; cell.textContent = magicParityCol[j]; cell.id = `mc-${j}`;
-                        magicDomNodes.colParity.push(cell);
+                    if (i < DET_SIZE && j < DET_SIZE) {
+                        cell.className = 'cell data';
+                        cell.textContent = detectData[i][j];
+                        cell.dataset.r = i; cell.dataset.c = j;
+                        if (!detectLocked) {
+                            cell.classList.add('detect-clickable');
+                            cell.onclick = () => clickDetectCell(i, j);
+                            cell.onmouseenter = () => highlightDetectData(i, j);
+                            cell.onmouseleave = clearHighlights;
+                        }
+                    } else if (i < DET_SIZE && j === DET_SIZE) {
+                        cell.className = 'cell parity-line locked';
+                        cell.textContent = detectParityRow[i];
+                        cell.id = `dp-row-${i}`;
+                        if (detectHintsEnabled && !isRowOk(i)) cell.classList.add('parity-error');
+                        else cell.classList.add('filled');
+                        if (!detectLocked && detectHintsEnabled) {
+                            cell.onmouseenter = () => highlightDetectParityRow(i);
+                            cell.onmouseleave = clearHighlights;
+                        }
+                    } else if (i === DET_SIZE && j < DET_SIZE) {
+                        cell.className = 'cell parity-col locked';
+                        cell.textContent = detectParityCol[j];
+                        cell.id = `dp-col-${j}`;
+                        if (detectHintsEnabled && !isColOk(j)) cell.classList.add('parity-error');
+                        else cell.classList.add('filled');
+                        if (!detectLocked && detectHintsEnabled) {
+                            cell.onmouseenter = () => highlightDetectParityCol(j);
+                            cell.onmouseleave = clearHighlights;
+                        }
                     } else {
-                        cell.className = 'cell corner locked filled'; cell.textContent = magicCorner; cell.id = `m-corner`;
-                        magicDomNodes.corner = cell;
+                        cell.className = 'cell corner locked filled';
+                        cell.textContent = detectCorner;
                     }
+
                     grid.appendChild(cell);
                 }
-                if (i < mgSize) magicDomNodes.data.push(dataRow);
             }
         }
 
-        function flipMagicBit(r, c) {
-            if (isMagicDone) return;
-            isMagicDone = true;
-
-            // Flip the bit visually 
-            magicData[r][c] = magicData[r][c] === 1 ? 0 : 1;
-            renderMagicGrid(); // Re-render with new bit, locking interactions 
-
-            // Magic Animation Sequence 
-            playSound('magic');
-            showToast("🔍 Analyse de la parité en cours…", false);
-
-            setTimeout(() => {
-                // Highlight the row and col that are now WRONG 
-                magicDomNodes.rowParity[r].classList.add('magic-error-row');
-                magicDomNodes.colParity[c].classList.add('magic-error-col');
-
-                // Highlight all data in that row/col for dramatic effect 
-                for (let i = 0; i < 5; i++) {
-                    magicDomNodes.data[r][i].classList.add('magic-error-row');
-                    magicDomNodes.data[i][c].classList.add('magic-error-col');
-                }
-
-                setTimeout(() => {
-                    // Target the intersection! 
-                    magicDomNodes.data[r][c].className = 'cell magic-target';
-                    playSound('success');
-                    showToast("✨ Erreur localisée par intersection !");
-                }, 1500);
-
-            }, 1000);
+        function highlightDetectData(r, c) {
+            clearHighlights();
+            const rowCell = document.getElementById(`dp-row-${r}`);
+            const colCell = document.getElementById(`dp-col-${c}`);
+            if (rowCell) rowCell.classList.add('hover-highlight');
+            if (colCell) colCell.classList.add('hover-highlight');
         }
 
-        // ========================================== 
-        // CONFETTI 
-        // ==========================================
+        function highlightDetectParityRow(r) {
+            const grid = document.getElementById('detect-grid');
+            for (let j = 0; j < DET_SIZE; j++)
+                grid.children[r * (DET_SIZE + 1) + j].classList.add('hover-highlight');
+        }
 
-        // INIT 
+        function highlightDetectParityCol(c) {
+            const grid = document.getElementById('detect-grid');
+            for (let i = 0; i < DET_SIZE; i++)
+                grid.children[i * (DET_SIZE + 1) + c].classList.add('hover-highlight');
+        }
+
+        function clickDetectCell(r, c) {
+            if (detectLocked) return;
+            playSound('click');
+            detectAttempts++;
+
+            const grid = document.getElementById('detect-grid');
+            const clickedCell = grid.children[r * (DET_SIZE + 1) + c];
+
+            if (r === detectCorruptedR && c === detectCorruptedC) {
+                detectLocked = true;
+                playSound('success');
+
+                // Re-render with locked state, then mark the found cell
+                renderDetectGrid();
+                const foundCell = document.getElementById('detect-grid').children[r * (DET_SIZE + 1) + c];
+                foundCell.classList.add('cell-correct');
+                foundCell.textContent = detectData[r][c] ^ 1;
+
+                detectCorrect++;
+                detectStreak++;
+                if (detectStreak > detectBest) detectBest = detectStreak;
+
+                ScoreManager.addSuccess("detect", null, detectAttempts - 1);
+
+                if (detectAttempts === 1) {
+                    launchFire();
+                    showToast("🎉 Premier essai ! Génial !");
+                } else {
+                    if (detectStreak >= 3) launchConfetti();
+                    showToast(`✅ Trouvé en ${detectAttempts} essai${detectAttempts > 1 ? 's' : ''} !`);
+                }
+
+                updateDetectScoreDisplay();
+                setTimeout(initDetectMode, 2000);
+            } else {
+                const firstHint = !detectHintsEnabled;
+                if (firstHint) {
+                    detectHintsEnabled = true;
+                    document.getElementById('detect-header').innerHTML =
+                        '🚨 <strong>Un bit a été corrompu !</strong><br>' +
+                        'Les cases <strong>en orange ⚠️</strong> indiquent les parités violées — leur intersection pointe vers l\'erreur.<br>' +
+                        '<strong>Clique sur le bit corrompu pour le corriger !</strong>';
+                    renderDetectGrid();
+                }
+                detectStreak = 0;
+                ScoreManager.addMistake("detect", null);
+                playSound('error');
+                // Get cell from potentially re-rendered grid
+                const errCell = document.getElementById('detect-grid').children[r * (DET_SIZE + 1) + c];
+                errCell.classList.add('cell-error');
+                setTimeout(() => errCell.classList.remove('cell-error'), 600);
+                showToast(firstHint ? "❌ Pas ce bit ! Les parités en orange t'indiquent où chercher." : "❌ Pas ce bit ! Consulte les parités en orange.", false);
+                updateDetectScoreDisplay();
+            }
+        }
+
+        function updateDetectScoreDisplay() {
+            document.getElementById('detect-correct').textContent = detectCorrect;
+            document.getElementById('detect-streak').textContent = detectStreak;
+            document.getElementById('detect-best').textContent = detectBest;
+        }
+
+        // ==========================================
+        // INIT
+        // ==========================================
         initTrainMode();
 
-        // Événements
         document.getElementById('tab-train').addEventListener('click', (e) => switchTab(e, 'train'));
-        document.getElementById('tab-magic').addEventListener('click', (e) => switchTab(e, 'magic'));
-        
+        document.getElementById('tab-detect').addEventListener('click', (e) => switchTab(e, 'detect'));
         document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
         document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
         document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
-        
         document.getElementById('verifyBtn').addEventListener('click', checkTrainAnswer);
-        document.getElementById('resetMagicBtn').addEventListener('click', initMagicMode);
-        
-        // Delegation pour les bits (dynamiques)
-        document.addEventListener('click', (e) => {
-            const bit = e.target.closest('.bit');
-            if (bit) {
-                const r = parseInt(bit.dataset.r);
-                const c = parseInt(bit.dataset.c);
-                const gridId = bit.closest('.grid').id;
-                if (gridId === 'train-grid') toggleBit(r, c);
-                else if (gridId === 'magic-grid') toggleMagicBit(r, c);
-            }
-        });
+        document.getElementById('newDetectBtn').addEventListener('click', initDetectMode);
     </script>
     <script src="../js/audio.js"></script>
     <script src="../js/theme.js"></script>
-<script src="../js/confetti.js"></script>
-<script src="../js/swipe.js">
-</script>
-
-
-<script>window.addEventListener('load', () => ScoreManager.init('bit_de_parite'));</script>
+    <script src="../js/confetti.js"></script>
+    <script src="../js/swipe.js"></script>
+    <script>window.addEventListener('load', () => ScoreManager.init('bit_de_parite'));</script>
 </body>
 
 </html>
