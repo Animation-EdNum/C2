@@ -13,3 +13,9 @@
 
 
 - **[2026-04-24] Mobile Bottom Navigation Rule:** Bottom buttons/tabs must only be used to switch exercises within a webapp (`.tabs`, `.nav-bar`, `.tab-bar`), never to select a difficulty level (`.difficulty-bar`).
+- **[2026-04-25] Adaptive Difficulty:** The application features an Adaptive Difficulty system managed by `ScoreManager` in `js/scores.js`. When a user accepts a difficulty level-up suggestion, a `c2_change_difficulty` custom event is dispatched to `window`.
+- **[2026-04-25] Educational Feedback:** When implementing error feedback, prefer 'scaffolded' feedback that helps students identify errors (e.g., indicating if a value is too high/low) rather than simple true/false binary feedback.
+- **[2026-04-25] Binary Math Visualization:** Always include '0' values for inactive bits in binary calculations or visual decompositions to explicitly reinforce bit weighting (e.g., `128 + 0 + 32 + 0 = 160`).
+- **[2026-04-25] XSS Mitigation:** Avoid `innerHTML` for rendering untrusted or user-controlled data. Use `document.createElement` and `textContent` to ensure data is safely escaped.
+- **[2026-04-25] Standalone Directory:** The `standalone/` directory has been intentionally removed from the project to reduce maintenance overhead. Do not attempt to recreate standalone versions.
+- **[2026-04-25] SEO & Meta Tags:** When creating new HTML files, include Open Graph meta tags (`og:title`, `og:description`, `og:type`) and link to the shared `favicon.svg`.

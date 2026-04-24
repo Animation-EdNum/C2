@@ -21,9 +21,12 @@ The **suite EdNum** (by Animation-EdNum, HEP-VS) is a suite of interactive, high
 - **Premium Aesthetics:** Modern Glassmorphism design, "Outfit" typography, and smooth micro-animations.
 - **Accessibility:** WCAG AA compliant, full keyboard support, and ARIA integration.
 - **Architecture Constraints:** The `standalone/` directory has been intentionally removed from the project to reduce maintenance overhead. Do not attempt to recreate standalone versions of the webapps.
+- **Project Scope:** The C2 (Animation-EdNum) project is a suite of interactive educational web applications for primary school students in Switzerland (HEP-VS) focusing on computer science concepts. Do NOT modify `.github/workflows` without explicit permission.
 
 ## Documentation & Assets
-- **Visuals:** Project documentation visual assets are stored in the `screenshots/` directory at the repository root. The `README.md` file must contain a screenshot for every single webapp and resource.
+- **Visuals:** Project documentation visual assets are stored in the `screenshots/` directory at the repository root. The `README.md` file must contain a screenshot for every single webapp and resource. The root `index.html` file serves as the project's central entry portal and must also be documented with a screenshot.
+- **Directory Structure:** Utility pages like `bareme.html` and `tirage.html` are located in the `ressources/` directory, separate from the main interactive applications which are located in `webapps/`.
+- **Attribution:** All HTML files must use a uniform `<footer class="no-print">` containing attribution exactly worded as 'Webapp conçue par Vivian de l'AP EdNum avec ❤️ et quelques neurones artificiels' (with the hyperlink 'https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/' placed exclusively on the text 'AP EdNum', not the preceding words) and a link to the source code stating 'Code 100% libre (AGPL-3.0)'.
 
 ## License & Support
 - **License:** The project source code is licensed under the AGPL-3.0 license.
