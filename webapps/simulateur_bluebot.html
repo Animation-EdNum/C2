@@ -235,7 +235,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             background: var(--card-bg);
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             aspect-ratio: 1 / 1;
             margin: 0 auto;
         }
@@ -265,15 +265,23 @@
 
         .bot-cell.obstacle::after {
             content: attr(data-obstacle);
-            font-size: clamp(20px, 6vw, 32px);
             position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(26px, 8vw, 60px);
+            line-height: 1;
             filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+            z-index: 1;
+            pointer-events: none;
         }
 
         .bot-cell.obstacle>svg {
             width: 80%;
             height: 80%;
-            position: absolute;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+            pointer-events: none;
         }
 
         /* SVG Trail Layer */
@@ -309,6 +317,39 @@
             stroke-linejoin: round;
         }
 
+        /* Skin Cyberbot Grid */
+        .bot-grid.skin-cyberbot {
+            border-color: #ff00ff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+        }
+
+        .bot-grid.skin-cyberbot .bot-cell {
+            border-color: rgba(255, 0, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bot-grid.skin-cyberbot .bot-cell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.15) 0%, transparent 85%);
+            animation: cyberGlow 2.5s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes cyberGlow {
+            from {
+                opacity: 0.4;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 0.9;
+                transform: scale(1.1);
+            }
+        }
+
         /* Skin Volcano/Dragon overrides */
         .bot-grid.skin-volcano .trail-path {
             stroke: #dc2626;
@@ -334,6 +375,17 @@
 
         body.dark .bot-grid.skin-volcano .start-marker-circle {
             fill: #f87171;
+        }
+
+        /* Cache le bouton extrême par défaut */
+        #diff-extreme,
+        #read-diff-extreme {
+            display: none !important;
+        }
+
+        #diff-extreme.unlocked,
+        #read-diff-extreme.unlocked {
+            display: inline-block !important;
         }
 
         /* Coulée de lave - le chemin lumineux */
@@ -500,8 +552,8 @@
         }
 
         .robot-body {
-            width: 85%;
-            height: 85%;
+            width: 90%;
+            height: 90%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -517,13 +569,14 @@
             justify-content: center;
             pointer-events: none;
             z-index: 5;
-            font-size: 28px;
+            font-size: clamp(30px, 12vw, 80px);
+            line-height: 1;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
         .target-overlay>svg {
-            width: 80%;
-            height: 80%;
+            width: 85%;
+            height: 85%;
         }
 
         @keyframes robotShake {
@@ -1748,6 +1801,7 @@
                 <button class="diff-btn active" id="diff-easy" data-diff="easy">⭐ Facile</button>
                 <button class="diff-btn" id="diff-medium" data-diff="medium">⭐⭐ Moyen</button>
                 <button class="diff-btn" id="diff-hard" data-diff="hard">⭐⭐⭐ Difficile</button>
+                <button class="diff-btn" id="diff-extreme" data-diff="extreme">🔥🔥 Extrême</button>
             </div>
 
             <div class="exercise-card">
@@ -1787,6 +1841,7 @@
                 <button class="diff-btn active" id="read-diff-easy" data-diff="easy">⭐ Facile</button>
                 <button class="diff-btn" id="read-diff-medium" data-diff="medium">⭐⭐ Moyen</button>
                 <button class="diff-btn" id="read-diff-hard" data-diff="hard">⭐⭐⭐ Difficile</button>
+                <button class="diff-btn" id="read-diff-extreme" data-diff="extreme">🔥🔥 Extrême</button>
             </div>
 
             <div class="exercise-card">
@@ -2016,11 +2071,11 @@
             'space': { name: 'Mission spatiale', obstacle: '☄️', target: '💎', desc: 'Gagne un défi moyen pour débloquer.' },
             'volcano': {
                 name: 'Le sol est EN FEU !!!',
-                obstacle: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#1e3a8a"/><stop offset="35%" stop-color="#2563eb"/><stop offset="70%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#f0f9ff"/></linearGradient><linearGradient id="b" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#60a5fa" stop-opacity=".3"/><stop offset="100%" stop-color="#fff" stop-opacity=".95"/></linearGradient><filter id="c" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="d" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="50" cy="90" rx="38" ry="5" fill="#1e3a8a" opacity=".35"/><ellipse cx="50" cy="89" rx="30" ry="3" fill="#60a5fa" opacity=".5"/><path fill="url(#a)" stroke="#1e40af" stroke-width=".8" opacity=".85" d="m18 88 9-46 7 46z"/><path fill="url(#b)" opacity=".6" d="m24 88 3-42v42z"/><path fill="url(#a)" stroke="#1e40af" stroke-width=".8" opacity=".85" d="m68 88 9-58 9 58z"/><path fill="url(#b)" opacity=".6" d="m73 88 4-53v53z"/><path fill="url(#a)" stroke="#1e40af" stroke-width="1.2" filter="url(#c)" d="M32 88 50 8l16 80z"/><path fill="url(#b)" opacity=".75" d="m43 86 7-72 4 72z"/><path fill="#fff" opacity=".85" d="m48 82 2-66 2 66z"/><path fill="none" stroke="#bfdbfe" stroke-width=".6" opacity=".7" d="m42 70 5-25-3-20m14 50-4-25 2-20"/><path fill="url(#a)" opacity=".9" d="m40 88 4-20 4 20z"/><path fill="url(#a)" opacity=".9" d="m54 88 4-16 4 16z"/><g><path fill="#fff" d="m22 30 2 3-2 3-2-3z"><animate attributeName="opacity" values="0.15;1;0.15" dur="2.2s" repeatCount="indefinite" begin="0s"/></path><animateTransform attributeName="transform" type="rotate" from="0 22 33" to="45 22 33" dur="2.2s" repeatCount="indefinite" begin="0s"/></g><g><path fill="#fff" d="m82 22 2 3-2 3-2-3z"><animate attributeName="opacity" values="0.15;1;0.15" dur="2.2s" repeatCount="indefinite" begin="0.6s"/></path><animateTransform attributeName="transform" type="rotate" from="0 82 25" to="45 82 25" dur="2.2s" repeatCount="indefinite" begin="0.6s"/></g><g><path fill="#e0f2fe" d="m15 55 2 2-2 2-2-2z"><animate attributeName="opacity" values="0.15;1;0.15" dur="2.2s" repeatCount="indefinite" begin="1.1s"/></path><animateTransform attributeName="transform" type="rotate" from="0 15 57" to="45 15 57" dur="2.2s" repeatCount="indefinite" begin="1.1s"/></g><g><path fill="#e0f2fe" d="m88 60 2 2-2 2-2-2z"><animate attributeName="opacity" values="0.15;1;0.15" dur="2.2s" repeatCount="indefinite" begin="1.7s"/></path><animateTransform attributeName="transform" type="rotate" from="0 88 62" to="45 88 62" dur="2.2s" repeatCount="indefinite" begin="1.7s"/></g><circle cx="50" cy="12" r="2.5" fill="#67e8f9" filter="url(#d)"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="2.5s" repeatCount="indefinite"/><animate attributeName="r" values="2;4;2" dur="2.5s" repeatCount="indefinite"/></circle></svg>`,
+                obstacle: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#1e3a8a"/><stop offset="35%" stop-color="#2563eb"/><stop offset="70%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#f0f9ff"/></linearGradient><linearGradient id="b" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#fff"/></linearGradient><filter id="c" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="d" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="50" cy="90" rx="38" ry="5" fill="#1e3a8a"/><ellipse cx="50" cy="89" rx="30" ry="3" fill="#60a5fa"/><path fill="url(#a)" stroke="#1e40af" stroke-width=".8" d="m18 88 9-46 7 46z"/><path fill="url(#b)" d="m24 88 3-42v42z"/><path fill="url(#a)" stroke="#1e40af" stroke-width=".8" d="m68 88 9-58 9 58z"/><path fill="url(#b)" d="m73 88 4-53v53z"/><path fill="url(#a)" stroke="#1e40af" stroke-width="1.2" filter="url(#c)" d="M32 88 50 8l16 80z"/><path fill="url(#b)" d="m43 86 7-72 4 72z"/><path fill="#fff" d="m48 82 2-66 2 66z"/><path fill="none" stroke="#bfdbfe" stroke-width=".6" d="m42 70 5-25-3-20m14 50-4-25 2-20"/><path fill="url(#a)" d="m40 88 4-20 4 20z"/><path fill="url(#a)" d="m54 88 4-16 4 16z"/><g><path fill="#fff" d="m22 30 2 3-2 3-2-3z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="0s"/></path><animateTransform attributeName="transform" type="rotate" from="0 22 33" to="45 22 33" dur="2.2s" repeatCount="indefinite" begin="0s"/></g><g><path fill="#fff" d="m82 22 2 3-2 3-2-3z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="0.6s"/></path><animateTransform attributeName="transform" type="rotate" from="0 82 25" to="45 82 25" dur="2.2s" repeatCount="indefinite" begin="0.6s"/></g><g><path fill="#e0f2fe" d="m15 55 2 2-2 2-2-2z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="1.1s"/></path><animateTransform attributeName="transform" type="rotate" from="0 15 57" to="45 15 57" dur="2.2s" repeatCount="indefinite" begin="1.1s"/></g><g><path fill="#e0f2fe" d="m88 60 2 2-2 2-2-2z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="1.7s"/></path><animateTransform attributeName="transform" type="rotate" from="0 88 62" to="45 88 62" dur="2.2s" repeatCount="indefinite" begin="1.7s"/></g><circle cx="50" cy="12" r="2.5" fill="#67e8f9" filter="url(#d)"><animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/><animate attributeName="r" values="2;4;2" dur="2.5s" repeatCount="indefinite"/></circle></svg>`,
                 target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coinGrad)"/><circle cx="70" cy="30" r="9" fill="url(#coinGrad)"/><circle cx="20" cy="55" r="8" fill="url(#coinGrad)"/><circle cx="80" cy="65" r="11" fill="url(#coinGrad)"/><circle cx="45" cy="75" r="12" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coinGrad)"/><circle cx="65" cy="50" r="13" fill="url(#coinGrad)"/><circle cx="35" cy="60" r="12" fill="url(#coinGrad)"/><circle cx="60" cy="70" r="9" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coinGrad)" filter="url(#goldGlow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#goldGlow)"/></g></g></svg>`,
-                desc: 'Réussis un défi de lecture (Difficile) du premier coup.'
+                desc: 'Réussis un défi de lecture (Extrême) du premier coup.'
             },
-            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '👾', target: '💾', desc: 'Gagne un défi (Difficile) du premier coup.' },
+            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '👾', target: '💾', desc: 'Gagne un défi (Extrême) du premier coup.' },
             'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true }
         };
 
@@ -2303,10 +2358,7 @@
                         if (obs.includes('<svg')) {
                             cell.innerHTML = obs;
                         } else {
-                            const span = document.createElement('span');
-                            span.innerText = obs;
-                            if (activeSkin === 'cyberbot' && obs === '👾') span.className = 'glitch-emoji';
-                            cell.appendChild(span);
+                            cell.dataset.obstacle = obs;
                         }
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
@@ -2794,6 +2846,7 @@
                     playSound('error');
                     simState.failed = true; simState.firstAttempt = false; renderProgram();
                     simState.consecutiveMistakes++;
+                    ScoreManager.addMistake('simulator', null);
                     if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
 
                     // Shake du robot
@@ -2832,7 +2885,7 @@
 
                     // Statistiques en mode simulateur
                     if (simState.targetRow !== null) {
-                        ScoreManager.addSuccess('chal', 'easy', simState.firstAttempt ? 0 : 1);
+                        ScoreManager.addSuccess('simulator', null, simState.firstAttempt ? 0 : 1);
                         simState.starCount++;
                         simState.firstTryCount += simState.firstAttempt ? 1 : 0;
                         simState.consecutiveMistakes = 0; // Reset
@@ -2887,6 +2940,15 @@
         /* ================================================================
            DÉFIS : PATHFINDING & GÉNÉRATION
            ================================================================ */
+        function updateExtremeVisibility() {
+            const stats = ScoreManager.stats;
+            const chalHardSuccess = stats['chal'] && stats['chal']['hard'] && stats['chal']['hard'].totalSuccess > 0;
+            const readHardSuccess = stats['read'] && stats['read']['hard'] && stats['read']['hard'].totalSuccess > 0;
+
+            if (chalHardSuccess) document.getElementById('diff-extreme')?.classList.add('unlocked');
+            if (readHardSuccess) document.getElementById('read-diff-extreme')?.classList.add('unlocked');
+        }
+
         function setDifficulty(diff) {
             playSound('click'); chalState.difficulty = diff;
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === diff));
@@ -2943,8 +3005,9 @@
         function generateChallengePath(diff) {
             let minL, maxL, maxBack, minBack;
             if (diff === 'easy') { minL = 2; maxL = 4; maxBack = 0; minBack = 0; }
-            else if (diff === 'medium') { minL = 3; maxL = 6; maxBack = 0; minBack = 0; }
-            else { minL = 5; maxL = 8; maxBack = 3; minBack = 1; }
+            else if (diff === 'medium') { minL = 3; maxL = 4; maxBack = 0; minBack = 0; }
+            else if (diff === 'hard') { minL = 4; maxL = 6; maxBack = 0; minBack = 0; }
+            else { minL = 6; maxL = 10; maxBack = 3; minBack = 1; } // extreme
 
             for (let attempts = 0; attempts < 1000; attempts++) {
                 let startR = randomInt(0, GRID_ROWS - 1);
@@ -2957,7 +3020,10 @@
                 if (startR === targetR && startC === targetC) continue;
 
                 let obstacles = [];
-                let numObs = diff === 'easy' ? 0 : (diff === 'medium' ? randomInt(2, 4) : randomInt(4, 6));
+                let numObs = 0;
+                if (diff === 'medium') numObs = randomInt(1, 2);
+                else if (diff === 'hard') numObs = randomInt(3, 4);
+                else if (diff === 'extreme') numObs = randomInt(5, 7);
 
                 while (obstacles.length < numObs) {
                     let or = randomInt(0, GRID_ROWS - 1);
@@ -2967,50 +3033,36 @@
                     }
                 }
 
-                // Moyen : forcer un obstacle entre robot et cible si absent
-                if (diff === 'medium' && !hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) {
+                // Pour Medium et plus, forcer un obstacle entre robot et cible si possible
+                if (diff !== 'easy' && !hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) {
                     const minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
                     const minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
-                    // Si le rectangle est trop petit (adjacents), skip
-                    if (maxR - minR <= 0 && maxC - minC <= 0) continue;
-                    let or = randomInt(minR, maxR);
-                    let oc = randomInt(minC, maxC);
-                    if ((or !== startR || oc !== startC) && (or !== targetR || oc !== targetC)) {
-                        if (!obstacles.some(o => o.r === or && o.c === oc)) obstacles.push({ r: or, c: oc });
-                    }
-                    // Re-vérifier
-                    if (!hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) continue;
-                }
-
-                if (diff === 'hard') {
-                    let minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
-                    let minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
-                    let or = randomInt(minR, maxR);
-                    let oc = randomInt(minC, maxC);
-                    if ((or !== startR || oc !== startC) && (or !== targetR || oc !== targetC)) {
-                        if (!obstacles.some(o => o.r === or && o.c === oc)) obstacles.push({ r: or, c: oc });
+                    if (maxR - minR > 0 || maxC - minC > 0) {
+                        let or = randomInt(minR, maxR);
+                        let oc = randomInt(minC, maxC);
+                        if ((or !== startR || oc !== startC) && (or !== targetR || oc !== targetC)) {
+                            if (!obstacles.some(o => o.r === or && o.c === oc)) obstacles.push({ r: or, c: oc });
+                        }
                     }
                 }
 
                 let path = findShortestPath(startR, startC, startD, targetR, targetC, obstacles);
 
                 if (path && path.length >= minL && path.length <= maxL) {
-                    let hasBackward = path.includes('backward');
                     let backwardCount = path.filter(c => c === 'backward').length;
 
-                    if (diff === 'easy' && hasBackward) continue;
-                    if (diff === 'medium' && hasBackward) continue;
-                    if (diff === 'hard' && backwardCount < minBack) continue;
+                    if (diff !== 'extreme' && backwardCount > 0) continue;
+                    if (diff === 'extreme' && backwardCount < minBack) continue;
 
                     return { startR, startC, startD, targetR, targetC, correct: path, obstacles };
                 }
             }
-
+            // Fallback
             return { startR: 5, startC: 0, startD: 0, targetR: 3, targetC: 0, correct: ['forward', 'forward'], obstacles: [] };
         }
 
         function generateFakeOption(correctPath, startR, startC, startD, targetR, targetC, obstacles) {
-            const noBackward = (chalState.difficulty === 'easy' || chalState.difficulty === 'medium');
+            const noBackward = (chalState.difficulty !== 'extreme');
             const mutCmds = noBackward ? ['forward', 'left', 'right'] : ['forward', 'backward', 'left', 'right'];
             const endCmds = noBackward ? ['forward'] : ['forward', 'backward'];
 
@@ -3108,11 +3160,12 @@
                 readGlobalScore++;
                 readGlobalStreak++;
                 ScoreManager.addSuccess('read', readState.difficulty, 0);
+                updateExtremeVisibility();
 
                 // Déblocages
                 if (readState.difficulty === 'medium') {
                     unlockSkin('thymio');
-                } else if (readState.difficulty === 'hard') {
+                } else if (readState.difficulty === 'extreme') {
                     document.getElementById('sim-grid').classList.add('ground-fire');
                     document.getElementById('chal-grid').classList.add('ground-fire');
                     document.getElementById('read-grid').classList.add('ground-fire');
@@ -3182,9 +3235,9 @@
             renderTarget('chal-grid', 'chal-target', chal.targetR, chal.targetC);
             renderChallengeOptions();
 
-            // Afficher l'indice "reculer" uniquement en mode Difficile
+            // Afficher l'indice "reculer" uniquement en mode Extrême
             const hintEl = document.getElementById('chal-hint');
-            if (hintEl) hintEl.style.display = chalState.difficulty === 'hard' ? 'block' : 'none';
+            if (hintEl) hintEl.style.display = chalState.difficulty === 'extreme' ? 'block' : 'none';
         }
 
         function renderChallengeOptions() {
@@ -3250,6 +3303,7 @@
                     globalScore++;
                     globalStreak++;
                     ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
+                    updateExtremeVisibility();
 
                     document.getElementById('global-score').textContent = globalScore;
                     document.getElementById('global-streak').textContent = globalStreak;
@@ -3260,7 +3314,7 @@
                     }
 
                     // Déblocages
-                    if (chalState.difficulty === 'hard') unlockSkin('cyberbot');
+                    if (chalState.difficulty === 'extreme') unlockSkin('cyberbot');
                     if (chalState.difficulty === 'easy') unlockSkin('beebot');
 
                     showToast(`Bravo ! Défi réussi !`, true);
@@ -3344,6 +3398,7 @@
         document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
         document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
         document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+        document.getElementById('diff-extreme').addEventListener('click', () => setDifficulty('extreme'));
 
         document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
 
@@ -3372,6 +3427,7 @@
         document.getElementById('read-diff-easy').addEventListener('click', () => setReadDifficulty('easy'));
         document.getElementById('read-diff-medium').addEventListener('click', () => setReadDifficulty('medium'));
         document.getElementById('read-diff-hard').addEventListener('click', () => setReadDifficulty('hard'));
+        document.getElementById('read-diff-extreme').addEventListener('click', () => setReadDifficulty('extreme'));
         document.getElementById('btnNextRead').addEventListener('click', newReadChallenge);
 
         document.getElementById('read-grid').addEventListener('click', (e) => {
@@ -3407,16 +3463,21 @@
     <script src="../js/lucide.min.js"></script>
     <script>lucide.createIcons();</script>
     <script>
-        window.addEventListener('load', () => ScoreManager.init('simulateur_bluebot'));
+        window.addEventListener('load', () => {
+            ScoreManager.init('simulateur_bluebot');
+            updateExtremeVisibility();
+        });
         window.addEventListener('c2_change_difficulty', (e) => {
             const nextDiff = e.detail.difficulty;
             const mode = e.detail.mode; // 'read' or 'chal'
             if (mode === 'read') {
                 if (nextDiff === 'medium') document.getElementById('read-diff-medium')?.click();
                 if (nextDiff === 'hard') document.getElementById('read-diff-hard')?.click();
+                if (nextDiff === 'extreme') document.getElementById('read-diff-extreme')?.click();
             } else if (mode === 'chal') {
                 if (nextDiff === 'medium') document.getElementById('diff-medium')?.click();
                 if (nextDiff === 'hard') document.getElementById('diff-hard')?.click();
+                if (nextDiff === 'extreme') document.getElementById('diff-extreme')?.click();
             }
         });
     </script>

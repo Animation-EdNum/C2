@@ -12,9 +12,10 @@ const ScoreManager = {
         'decode': 'Décodage',
         'train': 'Entraînement',
         'path': 'Routage',
-        'chal': 'Simulateur',
+        'chal': 'Défis',
         'read': 'Lecture de code',
-        'detect': 'Détection d\'erreur'
+        'detect': 'Détection d\'erreur',
+        'simulator': 'Simulateur'
     },
 
     DIFF_LABELS: {
@@ -22,6 +23,7 @@ const ScoreManager = {
         '4': 'Facile (4 bits)',
         '6': 'Moyen (6 bits)',
         '8': 'Difficile (8 bits)',
+        '10': 'Extrême (10 bits)',
         // generic string levels
         'easy': 'Facile',
         'medium': 'Moyen',
@@ -30,7 +32,8 @@ const ScoreManager = {
         // bit_de_parite grid sizes
         'grid4': 'Facile (4×4)',
         'grid5': 'Moyen (5×5)',
-        'grid6': 'Difficile (6×6)'
+        'grid6': 'Difficile (6×6)',
+        'grid7': 'Extrême (7×7)'
     },
 
     // Internal sentinel used when difficulty is null/undefined (mode has no levels)
@@ -111,10 +114,13 @@ const ScoreManager = {
         const upgrades = {
             'easy': 'medium',
             'medium': 'hard',
+            'hard': 'extreme',
             '4': '6',
             '6': '8',
+            '8': '10',
             'grid4': 'grid5',
-            'grid5': 'grid6'
+            'grid5': 'grid6',
+            'grid6': 'grid7'
         };
         const diffStr = String(difficulty);
         if (upgrades[diffStr]) {
