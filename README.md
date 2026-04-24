@@ -32,7 +32,11 @@ Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagée
 ## Webapps (Applications pour les élèves)
 Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui travaillent avec les manuels scolaires *Décodage*. Vous pouvez trouver plus d'informations sur les manuels sur [https://decodage.edu-vd.ch/](https://decodage.edu-vd.ch/).
 
-Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles utilisent la typographie **Outfit** pour une lisibilité optimale et incluent de manière native un **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire pour une expérience continue d'une application à l'autre. La page d'accueil propose également un accès rapide aux **applications récemment consultées**.
+Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles incluent :
+- **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire.
+- **Visualisation des progrès** : Graphiques circulaires (Donut Charts) détaillés avec code couleur sémantique (Vert: Succès 1er coup, Ambre: Succès après essai, Rouge: Erreurs).
+- **Historique** : Accès rapide aux applications récemment consultées sur la page d'accueil.
+- **Typographie Outfit** pour une lisibilité optimale.
 
 ### Portail d'accueil (`index.html`)
 ![Portail d'accueil](screenshots/index.png)
@@ -46,10 +50,13 @@ Les webapps disponibles sont :
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot**
 - **Demi-cycle concerné :** 3-4H
 - **Fonctionnalités :**
-  - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot à 3 raies, Thymio, Dragon cracheur de feu) modifiant également les obstacles et les récompenses.
-  - **Mode Défis intelligent :** 3 niveaux de difficulté avec règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
+  - **Modes de jeu variés :**
+    - **Simulateur :** Exploration libre et apprentissage des commandes.
+    - **Défis :** Puzzles de cheminement avec 3 niveaux de difficulté et règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
+    - **Lecture de code (Nouveau) :** Deux sous-modes pour travailler l'anticipation : *Destination* (prédire la case finale) et *Bug* (identifier la commande erronée dans un programme).
+  - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot, Thymio, Dragon) modifiant également les obstacles et les récompenses.
   - **Feedback visuel immersif :** Effet de "shake" (secousse) de toute la fenêtre lors d'une collision et mise en évidence immédiate de la commande erronée (bouton noir/blanc contrasté).
-  - **Statistiques détaillées :** Suivi des récompenses récoltées et du taux de réussite "du premier coup" pour encourager la réflexion avant l'exécution.
+  - **Statistiques visuelles :** Suivi par mode et difficulté avec graphiques Donut animés pour une lecture immédiate de l'efficacité.
   - **Vitesse paramétrable :** Modes "Vitesse Normale" (900 ms avec pause) ou "Vitesse Rapide" (400 ms) avec tracé du parcours en temps réel.
 
 ### 2. Pixel Studio (`webapps/binaire_studio.html`)
@@ -80,7 +87,8 @@ Les webapps disponibles sont :
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - 3 niveaux de difficulté modifiant la taille et la complexité du réseau (génération dynamique).
-  - Interface basée sur un canvas vectoriel (SVG) pour interagir directement sur les nœuds en cliquant.
+  - Interface basée sur un canvas vectoriel (SVG) avec icônes de routeurs Lucide pour une immersion accrue.
+  - **Auto-vérification :** Le jeu s'arrête automatiquement à l'arrivée au serveur pour valider le parcours.
   - Suivi en temps réel du coût du chemin (Unité de Temps/UTI).
   - Validateur d'optimalité qui compare le chemin de l'élève avec le chemin mathématiquement le plus court.
 
@@ -91,11 +99,8 @@ Les webapps disponibles sont :
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - Exercices générés aléatoirement (conversion dans les deux sens).
-  - Intégration d'une aide sous forme de "Mini-calculatrice binaire" dépliable pour aider à visualiser les puissances de 2.
-  - Validation ultra-rapide au clavier (touche "Entrée") pour favoriser l'automatisme.
-  - **Retour visuel dynamique :** Animations de succès (flash vert) ou d'erreur (secousse) pour un feedback immédiat.
-  - **Algorithme affiné :** Génération de nombres aléatoires excluant le zéro pour garantir la pertinence pédagogique de chaque exercice.
-  - **Aide proactive :** La mini-calculatrice "pulse" visuellement après quelques secondes d'inactivité pour guider l'élève sans l'interrompre.
+  - **Aide proactive & Feedback :** La mini-calculatrice binaire "pulse" visuellement après quelques secondes d'inactivité.
+  - **Système de tutorat :** En cas d'erreur, l'outil indique si la valeur est trop grande/petite et propose un indice ciblé sur le bit de poids erroné.
   - **Saisie optimisée :** Focus automatique sur le champ de réponse pour enchaîner les exercices sans utiliser la souris.
 
 ### 6. Bit de Parité (`webapps/bit_de_parite.html`)
