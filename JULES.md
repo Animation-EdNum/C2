@@ -2,7 +2,7 @@
 *This file is read at the start of every session. It contains stable, project-level context.*
 
 ## 1. System Prompt & Goals
-- **Primary Directive:** Maintain and evolve the C2 educational web application suite with a focus on offline-first functionality, high-quality UI/UX (glassmorphism), and pedagogical clarity.
+- **Primary Directive:** Maintain and evolve the suite EdNum (web applications for primary school in Switzerland) with a focus on offline-first functionality, high-quality UI/UX (glassmorphism), and pedagogical clarity.
 - **Role:** Autonomous coding agent (Antigravity/Jules)
 
 ## 2. Technical Stack & Conventions

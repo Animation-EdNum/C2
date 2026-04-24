@@ -1,7 +1,7 @@
 # Project Context
 
 ## Overview
-The **C2 (Animation-EdNum)** project is a suite of interactive, high-quality educational web applications designed for primary school students in Switzerland (Hautes Écoles Pédagogiques - HEP-VS). These tools complement the **Décodage** manuals, focusing on computer science concepts like algorithms, binary encoding, networking, and logic.
+The **suite EdNum** (by Animation-EdNum, HEP-VS) is a suite of interactive, high-quality educational web applications designed for primary school students in Switzerland (Hautes Écoles Pédagogiques - HEP-VS). These tools complement the **Décodage** manuals, focusing on computer science concepts like algorithms, binary encoding, networking, and logic.
 
 ## Key Applications
 - **Student Tools (Webapps):**

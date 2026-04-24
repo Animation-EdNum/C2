@@ -1,4 +1,4 @@
-# Éducation Numérique Webapps & Ressources
+# Suite EdNum - Éducation Numérique (Webapps & Ressources)
 
 ![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
