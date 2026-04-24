@@ -13,6 +13,7 @@ const ScoreManager = {
         'train': 'Entraînement',
         'path': 'Routage',
         'chal': 'Simulateur',
+        'read': 'Lecture de code',
         'detect': 'Détection d\'erreur'
     },
 
