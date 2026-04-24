@@ -42,14 +42,15 @@ Les webapps disponibles sont :
 
 ### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
 ![Simulateur Blue-Bot](screenshots/simulateur_bluebot.png)
-- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des défis de pathfinding.
-- **Lien DÉ&gt;CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot**
+- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques.
+- **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot**
 - **Demi-cycle concerné :** 3-4H
 - **Fonctionnalités :**
-  - **Mode Simulateur :** Grille interactive avec placement de murs aléatoires pour tester des programmes.
-  - **Mode Défis :** 3 niveaux de difficulté (Facile, Moyen, Difficile) avec génération dynamique de puzzles de cheminement.
-  - **Système de série (Streak) :** Gamification pour encourager les bonnes réponses consécutives avec effets visuels (confettis).
-  - **Double vitesse :** Mode "Tortue" ou "Lièvre" pour accélérer l'exécution des programmes.
+  - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot à 3 raies, Thymio, Dragon cracheur de feu) modifiant également les obstacles et les récompenses.
+  - **Mode Défis intelligent :** 3 niveaux de difficulté avec règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
+  - **Feedback visuel immersif :** Effet de "shake" (secousse) de toute la fenêtre lors d'une collision et mise en évidence immédiate de la commande erronée (bouton noir/blanc contrasté).
+  - **Statistiques détaillées :** Suivi des récompenses récoltées et du taux de réussite "du premier coup" pour encourager la réflexion avant l'exécution.
+  - **Vitesse paramétrable :** Modes "Vitesse Normale" (900 ms avec pause) ou "Vitesse Rapide" (400 ms) avec tracé du parcours en temps réel.
 
 ### 2. Pixel Studio (`webapps/binaire_studio.html`)
 ![Pixel Studio](screenshots/binaire_studio.png)
@@ -64,14 +65,13 @@ Les webapps disponibles sont :
 
 ### 3. Mots secrets (`webapps/binaire_message.html`)
 ![Mots secrets](screenshots/binaire_message.png)
-- **À quoi sert l'outil :** Un jeu interactif en deux parties pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire avec un camarade.
+- **À quoi sert l'outil :** Un jeu interactif pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)**
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
-  - **Partie en deux étapes :** création d'un mot secret codé en binaire (max 4 lettres) que l'on transmet à un camarade, puis décodage d'un message reçu caractère par caractère.
-  - **Progression adaptative :** mots de difficulté croissante (lettres A-G, puis A-O, puis A-Z) avec une assistance progressive au décodage (pas d'aide, puis la somme des bits, puis l'alphabet binaire complet).
-  - Touche de validation rapide au clavier ("Entrée") et design épuré pour faciliter la concentration.
-  - **Mode Défi (Share) :** Un mode "(Dé)codeur" permet de créer un message secret, de copier le code binaire généré et de l'envoyer à un camarade pour qu'il le décode directement dans l'interface.
+  - **Modes Encodeur et (Dé)codeur :** Permet de créer un message secret binaire à envoyer à un camarade ou de s'entraîner seul au décodage.
+  - **Progression pédagogique :** 3 niveaux de difficulté (Facile/Moyen/Difficile) ajustant l'étendue de l'alphabet (A-G, A-O, A-Z) et les aides disponibles (alphabet complet, somme des bits ou rien).
+  - **Interface optimisée :** Saisie rapide au clavier ("Entrée") et feedback immédiat sur les erreurs de codage.
 
 ### 4. Routage Réseau (`webapps/routage_reseau.html`)
 ![Routage Réseau](screenshots/routage_reseau.png)
