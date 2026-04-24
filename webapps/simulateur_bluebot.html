@@ -1280,6 +1280,65 @@
             }
         }
 
+
+        #mats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        #mats-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @media (max-width: 600px) {
+            #mats-modal {
+                align-items: flex-end;
+            }
+
+            #mats-modal.active .skins-content {
+                animation: slideUpBottomSheet 0.3s ease-out forwards;
+            }
+
+            #mats-modal .skins-content {
+                width: 100%;
+                max-width: none;
+                border-radius: 24px 24px 0 0;
+                margin: 0;
+                padding-bottom: max(24px, env(safe-area-inset-bottom));
+                border-bottom: none;
+            }
+        }
+
+
+        .mat-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(20px, 6vw, 40px);
+            font-weight: 800;
+            color: var(--text-muted);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body.dark .mat-content {
+            color: #94a3b8;
+            opacity: 0.2;
+        }
+
         /* Skins UI */
         /* Skins Modal */
         #skins-modal {
@@ -1621,6 +1680,20 @@
     <canvas id="confetti-canvas"></canvas>
 
 
+
+    <!-- Mats Modal -->
+    <div id="mats-modal" aria-hidden="true" role="dialog" aria-labelledby="mats-modal-title">
+        <div class="skins-content">
+            <div class="skins-header">
+                <h2 id="mats-modal-title">🗺️ Tapis</h2>
+                <button class="btn-close-modal" id="btn-close-mats" aria-label="Fermer">✖</button>
+            </div>
+            <div class="skins-grid" id="mats-grid-container">
+                <!-- Mats generated via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Skins Modal -->
     <div id="skins-modal" aria-hidden="true" role="dialog" aria-labelledby="skins-modal-title">
         <div class="skins-content">
@@ -1653,6 +1726,16 @@
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                 </a>
+
+                <button class="icon-action-btn btn-skins-action" id="btn-open-mats" title="Ouvrir les tapis"
+                    aria-label="Ouvrir les tapis" style="background: linear-gradient(135deg, #10b981, #059669) !important;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 6 12 2 21 6 12 10 3 6"></polygon>
+                        <polygon points="3 11 12 15 21 11"></polygon>
+                        <polygon points="3 16 12 20 21 16"></polygon>
+                    </svg>
+                </button>
                 <button class="icon-action-btn btn-skins-action" id="btn-open-skins" title="Ouvrir les skins"
                     aria-label="Ouvrir les skins">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1930,6 +2013,72 @@
            SKINS ET GAMIFICATION
            ================================================================ */
 
+
+        function openMatsModal() {
+            playSound('click');
+            renderMatsGrid();
+            document.getElementById('mats-modal').classList.add('active');
+            document.getElementById('mats-modal').setAttribute('aria-hidden', 'false');
+        }
+
+        function closeMatsModal() {
+            playSound('click');
+            document.getElementById('mats-modal').classList.remove('active');
+            document.getElementById('mats-modal').setAttribute('aria-hidden', 'true');
+        }
+
+        function renderMatsGrid() {
+            const container = document.getElementById('mats-grid-container');
+            container.innerHTML = Object.keys(MAT_CONFIG).map(matId => {
+                const config = MAT_CONFIG[matId];
+                const isActive = activeMat === matId;
+
+                let btnHtml = isActive
+                        ? `<button class="btn btn-small" disabled style="background:var(--success); color:white; width:100%;">Activé ✓</button>`
+                        : `<button class="btn btn-outline btn-small select-mat-btn" data-mat="${matId}" style="width:100%;">Sélectionner</button>`;
+
+                return `
+                    <div class="skin-card ${isActive ? 'active-skin' : ''}" data-mat="${matId}" tabindex="0" >
+                        <div class="skin-card-header">
+                            <span>${config.name}</span>
+                        </div>
+                        <div class="skin-preview" style="background: var(--grid-light);">
+                            <div style="font-size: 32px; font-weight: bold; color: var(--text-muted); opacity: 0.5;">
+                                ${matId === 'none' ? 'Aucun' : 'A'}
+                            </div>
+                        </div>
+                        <div class="skin-desc">${config.desc}</div>
+                        <div style="margin-top:auto; padding-top:10px;">
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectMat(matId) {
+            playSound('click');
+            activeMat = matId;
+            localStorage.setItem('bb_active_mat', matId);
+
+            renderMatsGrid();
+            closeMatsModal();
+
+            // Re-render grids to apply mat
+            buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+            renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+            TrailManager.clear('sim-grid');
+            if (simState.targetRow !== null && simState.targetCol !== null) {
+                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+            }
+            if (chalState.robotRow !== null) {
+                buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
+                renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
+                TrailManager.clear('chal-grid');
+                if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+            }
+        }
+
         function openSkinsModal() {
             playSound('click');
             renderSkinsGrid();
@@ -2063,6 +2212,14 @@
                 selectSkin(skinId);
             }
         }
+
+
+        const MAT_CONFIG = {
+            'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '' },
+            'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', content: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' }
+        };
+        let activeMat = localStorage.getItem('bb_active_mat') || 'none';
+        if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
         const SKIN_CONFIG = {
             'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le Blue-Bot standard.' },
@@ -2359,6 +2516,16 @@
                             cell.innerHTML = obs;
                         } else {
                             cell.dataset.obstacle = obs;
+                        }
+                    } else if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                        // Ajouter le texte du tapis si ce n'est pas un obstacle et si un tapis avec du contenu est sélectionné
+                        const content = MAT_CONFIG[activeMat].content;
+                        const index = r * cols + c;
+                        if (index < content.length) {
+                             const span = document.createElement('span');
+                             span.className = 'mat-content';
+                             span.textContent = content[index];
+                             cell.appendChild(span);
                         }
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
@@ -3393,6 +3560,15 @@
         resetSimulatorPosition();
 
         // Événements
+
+        document.getElementById('btn-open-mats').addEventListener('click', openMatsModal);
+        document.getElementById('btn-close-mats').addEventListener('click', closeMatsModal);
+        document.getElementById('mats-grid-container').addEventListener('click', (e) => {
+            const card = e.target.closest('.skin-card');
+            const btn = e.target.closest('.select-mat-btn');
+            const matId = (card || btn)?.dataset.mat;
+            if (matId) selectMat(matId);
+        });
         document.getElementById('btn-open-skins').addEventListener('click', openSkinsModal);
         document.getElementById('btn-close-skins').addEventListener('click', closeSkinsModal);
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
