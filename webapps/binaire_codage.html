@@ -420,7 +420,12 @@ function explainBinary(binStr) {
     let parts = [];
     let val = 1 << (binStr.length - 1);
     for (let char of binStr) { 
-        if (char === '1') { parts.push(val); sum += val; } 
+        if (char === '1') {
+            parts.push(val);
+            sum += val;
+        } else {
+            parts.push('0');
+        }
         val >>= 1; 
     } 
     return parts.length === 0 ? "0 = 0" : `${parts.join(' + ')} = ${sum}`; 
@@ -476,9 +481,11 @@ function checkDecToBin() {
 
         let userVal = parseInt(userBin, 2);
         let diff = Math.abs(userVal - currentDecNumber);
-        let hint = (diff > 0 && (diff & (diff - 1)) === 0) ? ` Vérifie le bit de poids ${diff} !` : "";
+        let action = userVal > currentDecNumber ? "désactiver" : "activer";
+        let hint = (diff > 0 && (diff & (diff - 1)) === 0) ? ` Vois-tu quel bit tu dois ${action} ?` : "";
         let direction = userVal > currentDecNumber ? "grande" : "petite";
-        let baseMsg = `❌ Erreur. Ta valeur (${userVal}) est trop ${direction} de ${diff}.${hint}`;
+        let actionPrefix = userVal > currentDecNumber ? "Il y a en trop" : "Il te manque";
+        let baseMsg = `❌ C'est presque ça ! Ta valeur (${userVal}) est un peu trop ${direction}. ${actionPrefix} ${diff}.${hint}`;
 
         if (decBinMistakes === 1) {
             fb.innerHTML = baseMsg;
@@ -534,9 +541,11 @@ function checkBinToDec() {
         fb.className = 'feedback error';
 
         let diff = Math.abs(userVal - expectedVal);
-        let hint = (diff > 0 && (diff & (diff - 1)) === 0) ? ` Vérifie le bit de poids ${diff} !` : "";
+        let action = userVal > expectedVal ? "désactiver" : "activer";
+        let hint = (diff > 0 && (diff & (diff - 1)) === 0) ? ` Vois-tu quel bit est faux ?` : "";
         let direction = userVal > expectedVal ? "grande" : "petite";
-        let baseMsg = `❌ Faux. Ta valeur (${userVal}) est trop ${direction} de ${diff}.${hint}`;
+        let actionPrefix = userVal > expectedVal ? "Il y a en trop" : "Il te manque";
+        let baseMsg = `❌ C'est presque ça ! Ta valeur (${userVal}) est un peu trop ${direction}. ${actionPrefix} ${diff}.${hint}`;
 
         if (binDecMistakes === 1) {
             fb.innerHTML = baseMsg;
