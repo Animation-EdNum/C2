@@ -76,7 +76,8 @@ const ScoreManager = {
                 totalAttempts: 0,
                 totalSuccess: 0,
                 firstTrySuccess: 0,
-                mistakes: 0
+                mistakes: 0,
+                streak: 0
             };
         }
     },
@@ -86,14 +87,87 @@ const ScoreManager = {
         const st = this.stats[mode][this._diffKey(difficulty)];
         st.totalAttempts++;
         st.totalSuccess++;
-        if (mistakesMade === 0) st.firstTrySuccess++;
+        if (mistakesMade === 0) {
+            st.firstTrySuccess++;
+            st.streak = (st.streak || 0) + 1;
+            if (st.streak === 3) {
+                this.checkAdaptiveDifficulty(mode, difficulty);
+            }
+        } else {
+            st.streak = 0;
+        }
         this.saveStats();
     },
 
     addMistake(mode, difficulty) {
         this.ensurePath(mode, difficulty);
-        this.stats[mode][this._diffKey(difficulty)].mistakes++;
+        const st = this.stats[mode][this._diffKey(difficulty)];
+        st.mistakes++;
+        st.streak = 0;
         this.saveStats();
+    },
+
+    checkAdaptiveDifficulty(mode, difficulty) {
+        const upgrades = {
+            'easy': 'medium',
+            'medium': 'hard',
+            '4': '6',
+            '6': '8',
+            'grid4': 'grid5',
+            'grid5': 'grid6'
+        };
+        const diffStr = String(difficulty);
+        if (upgrades[diffStr]) {
+            const nextDiff = upgrades[diffStr];
+            const nextDiffLabel = this.DIFF_LABELS[nextDiff] || nextDiff;
+            this.showAdaptivePopup(nextDiff, nextDiffLabel, mode);
+        }
+    },
+
+    showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
+        let popup = document.getElementById('adaptive-difficulty-popup');
+        if (!popup) {
+            const popupHtml = `
+                <div id="adaptive-difficulty-popup" class="modal-overlay" aria-hidden="true" role="dialog" style="z-index: 10001;">
+                    <div class="modal-content" style="max-width: 400px; text-align: center;">
+                        <h2 style="margin-bottom: 15px;">🌟 Niveau maîtrisé !</h2>
+                        <p style="margin-bottom: 20px;">Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button id="btn-adaptive-yes" class="btn-new" style="flex: 1;">Oui, allons-y !</button>
+                            <button id="btn-adaptive-no" class="btn-outline-error" style="flex: 1;">Non, je reste ici</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', popupHtml);
+            popup = document.getElementById('adaptive-difficulty-popup');
+
+            document.getElementById('btn-adaptive-no').addEventListener('click', () => {
+                popup.classList.remove('active');
+                popup.setAttribute('aria-hidden', 'true');
+            });
+        }
+
+        document.getElementById('adaptive-next-label').textContent = nextDiffLabel;
+
+        const btnYes = document.getElementById('btn-adaptive-yes');
+        // Remove old listeners by cloning
+        const newBtnYes = btnYes.cloneNode(true);
+        btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+
+        newBtnYes.addEventListener('click', () => {
+            popup.classList.remove('active');
+            popup.setAttribute('aria-hidden', 'true');
+            window.dispatchEvent(new CustomEvent('c2_change_difficulty', {
+                detail: { difficulty: nextDiffKey, mode: mode }
+            }));
+        });
+
+        // Small delay to allow potential confettis or other animations to be seen before modal
+        setTimeout(() => {
+            popup.classList.add('active');
+            popup.setAttribute('aria-hidden', 'false');
+        }, 1500);
     },
 
     resetScores() {
