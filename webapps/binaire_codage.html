@@ -1,0 +1,660 @@
+<!DOCTYPE html> 
+<html lang="fr"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <title>💻 Codage binaire</title>
+    <meta property="og:title" content="Codage binaire">
+    <meta property="og:description" content="Plateforme d'entraînement au passage des nombres entiers vers leur écriture en binaire, et inversement.">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <link rel="stylesheet" href="../css/shared.css">
+    <style> 
+        body > header, body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root { 
+            --bg-gradient-start: #667eea; --bg-gradient-end: #764ba2; 
+            --card-bg: rgba(249, 250, 252, 0.85); --card-border: #e0e7ff; --container-bg: rgba(255, 255, 255, 0.85); 
+            --text-main: #333; --text-secondary: #666; --text-muted: #777; 
+            --accent: #667eea; --accent-dark: #5568d3; 
+            --badge-bg: #ede9fe; --badge-color: #6d28d9; 
+            --input-border: #cbd5f5; --instructions-bg: #f0f4ff; 
+            --success: #166534; --error: #b91c1c; 
+            --shadow-color: rgba(0, 0, 0, 0.3); --card-shadow: rgba(102, 126, 234, 0.15); 
+        } 
+        
+        body.dark { 
+            --bg-gradient-start: #0f172a; --bg-gradient-end: #1e1b4b; 
+            --card-bg: rgba(30, 41, 59, 0.75); --card-border: #334155; --container-bg: rgba(15, 23, 42, 0.75); 
+            --text-main: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b; 
+            --accent: #6366f1; --accent-dark: #4f46e5; 
+            --badge-bg: #312e81; --badge-color: #818cf8; 
+            --input-border: #334155; --instructions-bg: #1e293b; 
+            --success: #34d399; --error: #f87171; 
+            --shadow-color: rgba(0, 0, 0, 0.5); --card-shadow: rgba(0, 0, 0, 0.4); 
+        }
+
+        body.dark .icon-action-btn { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); }
+
+        body.dark .calc-bit { background: #334155; border-color: #475569; color: #94a3b8; }
+        body.dark .calc-box { background: var(--card-bg); border-color: #334155; color: #818cf8; }
+        body.dark .calc-bit.active, body.dark .calc-box.selected { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+        body.dark .bit-toggle { background: var(--card-bg); border-color: #334155; color: #94a3b8; }
+        body.dark .bit-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+        body.dark .big-number { background: #0c4a6e; border-color: #0284c7; color: #7dd3fc; }
+        body.dark input[type="text"] { background: var(--card-bg); color: #f8fafc; border-color: #334155; }
+        body.dark .calc-result-area { background: var(--card-bg); border-color: #334155; color: #f8fafc; }
+        body.dark .calc-body { background: #0f172a; }
+        body.dark .calc-header { background: var(--card-bg); color: #818cf8; }
+        body.dark .calc-header:hover { background: #334155; }
+        body.dark .calc-power-cell { color: #64748b; }
+        body.dark .card-title { color: #818cf8; }
+        body.dark .card { border-color: #334155; }
+        body.dark .diff-btn:hover:not(.active) { background: var(--card-bg); }
+ 
+        * { margin: 0; padding: 0; box-sizing: border-box; } 
+body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%); 
+            min-height: 100vh; padding: 20px; color: var(--text-main); 
+        } 
+ 
+        .container { 
+            max-width: 1050px; margin: 0 auto; background: var(--container-bg); 
+            padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px var(--shadow-color); 
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border);
+        } 
+ 
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; } 
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; } 
+ 
+        /* ========== DIFFICULTÉ ========== */ 
+        .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; } 
+        .diff-btn { 
+            padding: 6px 16px; border-radius: 20px; border: 2px solid var(--accent); 
+            background: transparent; color: var(--accent); font-size: 13px; font-weight: 600; 
+            cursor: pointer; transition: all 0.2s; outline: none; 
+            min-width: 44px; min-height: 44px;
+        } 
+        .diff-btn.active { background: var(--accent); color: #fff; } 
+        .diff-btn:hover:not(.active) { background: #eef2ff; } 
+ 
+        /* ========== MINI-CALCULATRICE ========== */ 
+        .calc-section { margin-bottom: 25px; border: 2px solid var(--card-border); border-radius: 12px; overflow: hidden; } 
+        .calc-header { 
+            background: var(--instructions-bg); padding: 12px 18px; cursor: pointer; 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-weight: 600; color: #4c51bf; font-size: 15px; user-select: none; transition: 0.3s; 
+        } 
+        .calc-header:hover { background: #e8ecff; } 
+        .calc-toggle-icon { transition: transform 0.3s; font-size: 12px; } 
+        .calc-toggle-icon.open { transform: rotate(90deg); } 
+        .calc-body { padding: 18px; background: #fafbff; display: none; } 
+        .calc-body.visible { display: block; animation: fadeIn 0.3s ease; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } } 
+ 
+        /* Animation d'aide */ 
+        .pulse-help { animation: pulseAnim 2s infinite; } 
+        @keyframes pulseAnim {  
+            0% { background: var(--instructions-bg); box-shadow: inset 0 0 0 rgba(102,126,234,0); }  
+            50% { background: #e0e7ff; box-shadow: inset 0 0 15px rgba(102,126,234,0.4); }  
+            100% { background: var(--instructions-bg); box-shadow: inset 0 0 0 rgba(102,126,234,0); }  
+        } 
+ 
+        .calc-table-wrapper { overflow-x: auto; margin-bottom: 14px; } 
+        .calc-table { margin: 0 auto; border-spacing: clamp(2px, 1.5vw, 6px); width: fit-content; table-layout: fixed; }
+        .calc-table th { font-size: 11px; color: var(--text-muted); text-transform: uppercase; text-align: right; padding-right: 10px; } 
+        .calc-bit, .calc-box { 
+            width: clamp(35px, 8vw, 50px); height: 44px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-family: "Consolas", monospace; font-weight: 700; cursor: pointer; transition: all 0.3s var(--spring-easing); margin: 0 auto;
+        } 
+        .calc-bit { border: 2px solid #d1d5db; background: #f3f4f6; color: #9ca3af; font-size: clamp(16px, 5vw, 22px); min-width: 0; min-height: 44px; }
+        .calc-box { border: 2px solid #c7d2fe; background: #eef2ff; color: #4c51bf; font-size: clamp(12px, 4vw, 15px); min-width: 0; }
+        .calc-bit.active, .calc-box.selected { background: var(--accent); color: #fff; border-color: var(--accent-dark); box-shadow: 0 4px 12px rgba(102,126,234,0.4); transform: scale(1.1) translateY(-3px); }
+        .calc-power-cell { font-family: monospace; font-size: clamp(9px, 3vw, 11px); color: #9ca3af; text-align: center; }
+ 
+        .hidden-col { display: none !important; } /* Pour cacher les bits inutiles */ 
+ 
+        .calc-result-area { text-align: center; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid var(--card-border); margin-bottom: 10px; } 
+        .calc-operation { font-family: monospace; font-size: 18px; font-weight: 700; } 
+        .calc-sum { color: var(--accent); font-size: 22px; } 
+ 
+        /* ========== TABS ========== */
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .tab-btn {
+            padding: 8px 20px; border-radius: 20px; border: 2px solid var(--accent);
+            background: transparent; color: var(--accent); font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px;
+        }
+        .tab-btn.active { background: var(--accent); color: #fff; }
+        .tab-btn:hover:not(.active) { background: #eef2ff; }
+        body.dark .tab-btn:hover:not(.active) { background: var(--card-bg); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ========== CARTE ========== */
+        .card { background: var(--card-bg); border-radius: 12px; padding: 18px; border: 1px solid var(--card-border); box-shadow: 0 4px 12px var(--card-shadow); display: flex; flex-direction: column; transition: 0.2s; min-width: 0; }
+         
+        .card.shake { animation: shake 0.4s; } 
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} } 
+         
+        .card.flash-success { animation: flashSuccess 0.5s; } 
+        @keyframes flashSuccess { 50% { box-shadow: 0 0 0 8px rgba(76, 175, 80, 0.2); } } 
+ 
+        .card-badge { display: inline-block; background: var(--badge-bg); color: var(--badge-color); border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; } 
+        .card-title { font-weight: 600; color: #4c51bf; margin-bottom: 10px; font-size: 16px; } 
+        .card-instruction { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
+         
+        .big-number { font-family: monospace; font-size: 22px; font-weight: 700; text-align: center; background: #e0f2fe; border-radius: 8px; padding: 8px; border: 1px solid #bae6fd; margin-bottom: 10px; } 
+ 
+        .bit-toggle-container { display: flex; flex-direction: column; align-items: center; min-width: 0; max-width: 44px; width: clamp(35px, 8vw, 50px); }
+        .bit-toggle-row { display: flex; justify-content: center; gap: clamp(2px, 1.5vw, 6px); margin: 8px 0; width: 100%; }
+        .bit-toggle { 
+            width: 100%; height: 48px; border-radius: 8px; border: 2px solid var(--input-border); padding: 0;
+            background: #fff; font-family: monospace; font-size: clamp(16px, 5vw, 22px); font-weight: 700; cursor: pointer;
+            color: var(--text-muted); transition: all 0.3s var(--spring-easing); min-width: 0;
+        } 
+        .bit-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent-dark); transform: scale(1.1) translateY(-3px); box-shadow: 0 6px 12px rgba(102,126,234,0.4); }
+ 
+        .btn-row { display: flex; gap: 6px; justify-content: center; margin: 10px 0; } 
+        .input-row { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+        input[type="text"] { flex: 1; min-width: 0; padding: 8px; border-radius: 6px; border: 2px solid var(--input-border); font-size: 16px; font-family: monospace; outline: none; text-align: center; font-weight: bold; width: 100%; }
+        input[type="text"]:focus { border-color: var(--accent); } 
+ 
+        .btn { border: none; border-radius: 6px; padding: 8px 16px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; min-width: 44px; min-height: 44px; }
+        .btn-check { background: #4caf50; color: #fff; } .btn-check:active { transform: scale(0.95); } 
+        .btn-new { background: var(--accent); color: #fff; } .btn-new:active { transform: scale(0.95); } 
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; } 
+ 
+        .feedback { font-size: 13px; margin-top: 5px; min-height: 20px; font-weight: 500; line-height: 1.4; } 
+        .feedback.success { color: var(--success); } 
+        .feedback.error { color: var(--error); } 
+ 
+        .score-bar { display: flex; justify-content: center; gap: 24px; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--card-border); flex-wrap: wrap; } 
+        .score-item { text-align: center; } 
+        .score-item .score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; } 
+        .score-item .score-value { font-size: 22px; font-weight: 700; color: var(--accent); font-family: monospace; } 
+         
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; } 
+        
+        @media print { .no-print { display: none !important; } }
+    </style> 
+<script src="../js/scores.js"></script>
+<script src="../js/audio.js"></script>
+<script src="../js/lucide.min.js"></script>
+</head> 
+<body> 
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <div class="header-icon">
+                    <i data-lucide="binary"></i>
+                </div>
+                <div>
+                    <h1>Codage binaire</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="../index.html" class="icon-action-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </a>
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="optionsMenuBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            <span>Voir mes statistiques</span>
+                        </button>
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
+                            <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <span id="themeToggleText">Changer le thème</span>
+                        </button>
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
+                            <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                            <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                            <span id="audioToggleText">Activer le son</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-dec-bin">🔢 Décimal → Binaire</button>
+        <button class="tab-btn" id="tab-bin-dec">💻 Binaire → Décimal</button>
+    </div>
+
+    <p class="subtitle">Appuie sur la touche <strong>Entrée</strong> pour valider tes réponses.</p>
+
+    <!-- DIFFICULTÉ -->
+    <div class="difficulty-bar">
+        <button class="diff-btn" id="diff-easy">🟢 Facile (4 bits)</button>
+        <button class="diff-btn active" id="diff-medium">🟡 Moyen (6 bits)</button>
+        <button class="diff-btn" id="diff-hard">🔴 Difficile (8 bits)</button>
+    </div>
+
+    <!-- CALCULATRICE -->
+    <div class="calc-section">
+        <div class="calc-header" tabindex="0" id="calc-header">
+            <span>🧮 Mini-calculatrice binaire (Aide)</span>
+            <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
+        </div>
+        <div class="calc-body" id="calc-body">
+            <div class="calc-table-wrapper">
+                <table class="calc-table" id="calc-table">
+                    <!-- Généré en JS -->
+                </table>
+            </div>
+            <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
+            <div style="text-align: center;"><button class="btn" style="background:#e0e7ff; color:#4c51bf;" id="reset-calc-btn">Remise à zéro</button></div>
+        </div>
+    </div>
+
+    <!-- PANEL DEC -> BIN -->
+    <div class="tab-panel active" id="panel-dec-bin">
+
+        <div class="card" id="card-dec-bin">
+            <div class="card-badge">Décimal → Binaire</div>
+            <div class="card-instruction">Nombre à coder :</div>
+            <div class="big-number" id="decBin-number">–</div>
+
+            <div class="bit-toggle-row" id="bit-toggles">
+                <!-- Généré en JS -->
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-check" id="decBin-check-btn">Vérifier</button>
+                <button class="btn btn-new" id="btn-new-dec">Nouveau défi</button>
+            </div>
+            <div id="decBin-feedback" class="feedback"></div>
+        </div>
+    </div>
+
+    <!-- PANEL BIN -> DEC -->
+    <div class="tab-panel" id="panel-bin-dec">
+        <div class="card" id="card-bin-dec">
+            <div class="card-badge">Binaire → Décimal</div>
+            <div class="card-instruction">Binaire à décoder :</div>
+            <div class="big-number" id="binDec-binary" style="letter-spacing: 2px;">–</div>
+
+            <div class="card-instruction">Ta réponse en base 10 :</div>
+            <div class="input-row">
+                <input type="text" id="binDec-input" placeholder="ex. 20" autocomplete="off">
+                <button class="btn btn-check" id="binDec-check-btn">Vérifier</button>
+                <button class="btn btn-new" id="btn-new-bin">Nouveau défi</button>
+            </div>
+            <div id="binDec-feedback" class="feedback"></div>
+        </div>
+    </div> 
+ 
+    <div class="score-bar"> 
+        <div class="score-item"><div class="score-label">Victoires</div><div class="score-value" id="global-correct">0</div></div> 
+        <div class="score-item"><div class="score-label">Série 🔥</div><div class="score-value" id="global-streak">0</div></div> 
+        <div class="score-item"><div class="score-label">Meilleure</div><div class="score-value" id="global-best">0</div></div> 
+    </div> 
+</div> 
+ 
+<script> 
+
+// ========================================== 
+// ETAT & CONFIG 
+// ========================================== 
+const powers =[128, 64, 32, 16, 8, 4, 2, 1]; 
+ 
+let currentBits = 6; // Medium default
+let calcState =[0,0,0,0,0,0,0,0]; // 0=MSB(128), 7=LSB(1) 
+let decBinLocked = false;
+let binDecLocked = false;
+let currentDecNumber = null;
+let currentBinString = null;
+let globalCorrect = 0;
+let globalStreak = 0;
+let globalBest = 0;
+let helpTimer = null; 
+let decBinMistakes = 0;
+let binDecMistakes = 0;
+ 
+// ========================================== 
+// UI GENERATION (Adaptative Bits) 
+// ========================================== 
+function buildUI() { 
+    // Calc Table 
+    let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>'; 
+    let togglesHtml = ''; 
+     
+    for(let i=0; i<8; i++) { 
+        let isHidden = (8 - i) > currentBits ? 'hidden-col' : ''; 
+         
+        // Calc HTML 
+        trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" >0</button></td>`;
+        trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7-i}</sup></td>`; 
+        trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0">${powers[i]}</div></td>`;
+         
+        // Exercise HTML (Toggles only, no kb hints) 
+        if(!isHidden) { 
+            togglesHtml += ` 
+            <div class="bit-toggle-container"> 
+                <button class="bit-toggle" id="tog-${i}" >0</button>
+            </div>`; 
+        } 
+    } 
+     
+    document.getElementById('calc-table').innerHTML = `<tr>${trBits}</tr><tr>${trPow}</tr><tr>${trVals}</tr>`; 
+    document.getElementById('bit-toggles').innerHTML = togglesHtml; 
+} 
+ 
+function setDifficulty(lvl) { 
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl==='easy'?'facile':lvl==='medium'?'moyen':'difficile'))); 
+    currentBits = lvl === 'easy' ? 4 : (lvl === 'medium' ? 6 : 8);
+    buildUI(); resetCalc(); initChallenges();
+} 
+ 
+// ========================================== 
+// CALCULATRICE & SYNC 
+// ========================================== 
+function toggleCalc() { 
+    const body = document.getElementById('calc-body'); 
+    body.classList.toggle('visible'); 
+    document.getElementById('calc-toggle-icon').classList.toggle('open'); 
+    document.querySelector('.calc-header').classList.remove('pulse-help'); 
+} 
+ 
+function toggleBitIndex(i) { 
+    if (decBinLocked) return; 
+    playSound('click'); resetHelpTimer();
+     
+    calcState[i] = calcState[i] ? 0 : 1; 
+     
+    // Sync UI (Calc + Exercice) 
+    const cBit = document.getElementById(`calc-bit-${i}`); 
+    const cBox = document.getElementById(`calc-box-${i}`); 
+    const tog = document.getElementById(`tog-${i}`); 
+     
+    if(calcState[i]) { 
+        if(cBit) { cBit.textContent = '1'; cBit.classList.add('active'); cBox.classList.add('selected'); } 
+        if(tog) { tog.textContent = '1'; tog.classList.add('active'); } 
+    } else { 
+        if(cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); } 
+        if(tog) { tog.textContent = '0'; tog.classList.remove('active'); } 
+    } 
+     
+    updateCalcResult(); 
+    document.getElementById('decBin-feedback').textContent = ''; 
+} 
+ 
+function resetCalc() {
+    calcState = [0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < 8; i++) {
+        const cBit = document.getElementById(`calc-bit-${i}`);
+        const cBox = document.getElementById(`calc-box-${i}`);
+        const tog = document.getElementById(`tog-${i}`);
+        if (cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); }
+        if (tog) { tog.textContent = '0'; tog.classList.remove('active'); }
+    }
+    updateCalcResult();
+} 
+function updateCalcResult() { 
+    let sum = 0;
+    let parts = [];
+    for(let i=0; i<8; i++) { if(calcState[i] && (8-i)<=currentBits) { sum += powers[i]; parts.push(powers[i]); } } 
+     
+    if(parts.length === 0) { 
+        document.getElementById('calc-result-area').innerHTML = '<span style="color:#999">Clique sur les bits pour calculer</span>'; 
+    } else { 
+        document.getElementById('calc-result-area').innerHTML = `<div class="calc-operation">${parts.join(' + ')} = <span class="calc-sum">${sum}</span></div>`; 
+    } 
+} 
+ 
+// ========================================== 
+// EXPLICATIONS DETAILLEES 
+// ========================================== 
+function explainBinary(binStr) { 
+    let sum = 0;
+    let parts = [];
+    let val = 1 << (binStr.length - 1);
+    for (let char of binStr) { 
+        if (char === '1') { parts.push(val); sum += val; } 
+        val >>= 1; 
+    } 
+    return parts.length === 0 ? "0 = 0" : `${parts.join(' + ')} = ${sum}`; 
+} 
+ 
+// ========================================== 
+// EXERCICES LOGIC 
+// ========================================== 
+function initChallenges() {
+    newDecToBin();
+    newBinToDec();
+}
+
+function newDecToBin() { 
+    const max = Math.pow(2, currentBits) - 1; 
+    currentDecNumber = Math.floor(Math.random() * max) + 1; 
+    document.getElementById('decBin-number').textContent = currentDecNumber; 
+    resetCalc(); decBinLocked = false; 
+    document.getElementById('decBin-feedback').textContent = ''; 
+    decBinMistakes = 0;
+    resetHelpTimer(); 
+} 
+ 
+function checkDecToBin() { 
+    if (decBinLocked || currentDecNumber === null) return; 
+    resetHelpTimer();
+     
+    const userBin = calcState.slice(8-currentBits).join(''); 
+    const expectedBin = currentDecNumber.toString(2).padStart(currentBits, '0'); 
+    const fb = document.getElementById('decBin-feedback'); 
+     
+    const card = document.getElementById('card-dec-bin');
+    if (userBin === expectedBin) { 
+        let isFire = (currentBits === 8 && decBinMistakes === 0);
+        if (isFire) {
+            playSound('success');
+            launchFire();
+            updateGlobalScore(true, true);
+            ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
+        } else {
+            playSound('success');
+            updateGlobalScore(true, false);
+            ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
+        }
+        fb.className = 'feedback success'; fb.innerHTML = `✅ Parfait ! ${explainBinary(userBin)}.`; 
+        card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
+        decBinLocked = true; setTimeout(newDecToBin, 1500); 
+    } else { 
+        decBinMistakes++;
+        playSound('error'); updateGlobalScore(false);
+        ScoreManager.addMistake("dec_to_bin", currentBits);
+        fb.className = 'feedback error';  
+        if (decBinMistakes === 1) {
+            fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.`;
+        } else {
+            fb.innerHTML = `❌ Erreur. Tu as fait ${explainBinary(userBin)}.<br>Il faut faire : <strong>${explainBinary(expectedBin)}</strong>.`;
+        }
+        card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
+    } 
+} 
+ 
+function newBinToDec() { 
+    const max = Math.pow(2, currentBits) - 1; 
+    currentBinString = (Math.floor(Math.random() * max) + 1).toString(2).padStart(currentBits, '0'); 
+    document.getElementById('binDec-binary').textContent = currentBinString; 
+    document.getElementById('binDec-input').value = ''; 
+    document.getElementById('binDec-feedback').textContent = ''; 
+    binDecLocked = false;
+    binDecMistakes = 0;
+    resetHelpTimer();
+} 
+ 
+function checkBinToDec() { 
+    if (binDecLocked || !currentBinString) return; 
+    resetHelpTimer();
+     
+    const userVal = parseInt(document.getElementById('binDec-input').value, 10); 
+    const expectedVal = parseInt(currentBinString, 2); 
+    const fb = document.getElementById('binDec-feedback'); 
+     
+    if(isNaN(userVal)) { fb.className='feedback error'; fb.textContent = "Tape un nombre !"; return; } 
+ 
+    const card = document.getElementById('card-bin-dec');
+    if (userVal === expectedVal) { 
+        let isFire = (currentBits === 8 && binDecMistakes === 0);
+        if (isFire) {
+            playSound('success');
+            launchFire();
+            updateGlobalScore(true, true);
+            ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
+        } else {
+            playSound('success');
+            updateGlobalScore(true, false);
+            ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
+        }
+        fb.innerHTML = `✅ Exact ! ${explainBinary(currentBinString)}.`;
+        card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
+        binDecLocked = true;  
+        setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500); // Auto-focus 
+    } else { 
+        binDecMistakes++;
+        playSound('error'); updateGlobalScore(false);
+        ScoreManager.addMistake("bin_to_dec", currentBits);
+        fb.className = 'feedback error';
+        if (binDecMistakes === 1) {
+            fb.innerHTML = `❌ Faux. Essaie encore !`;
+        } else {
+            fb.innerHTML = `❌ Faux. L'ordinateur lit : <strong>${explainBinary(currentBinString)}</strong>.`;
+        }
+        card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
+    } 
+} 
+ 
+// ========================================== 
+
+    // Event Listeners for binaire_codage
+    document.addEventListener('DOMContentLoaded', () => {
+
+        initChallenges();
+
+        // Événements
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+        
+        document.getElementById('calc-header').addEventListener('click', toggleCalc);
+        document.getElementById('reset-calc-btn').addEventListener('click', resetCalc);
+        document.getElementById('btn-new-dec').addEventListener('click', newDecToBin);
+        document.getElementById('btn-new-bin').addEventListener('click', newBinToDec);
+        document.getElementById('decBin-check-btn').addEventListener('click', checkDecToBin);
+        document.getElementById('binDec-check-btn').addEventListener('click', checkBinToDec);
+
+        // Tab switching
+        document.getElementById('tab-dec-bin').addEventListener('click', () => switchTab('dec-bin'));
+        document.getElementById('tab-bin-dec').addEventListener('click', () => switchTab('bin-dec'));
+
+        // Event delegation for dynamically generated bits
+        document.addEventListener('click', (e) => {
+            if(e.target.classList.contains('calc-bit') || e.target.classList.contains('bit-toggle') || e.target.classList.contains('calc-box')) {
+                const id = e.target.id;
+                const match = id.match(/-(\d+)$/);
+                if(match) {
+                    toggleBitIndex(parseInt(match[1], 10));
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' ') {
+                if(e.target.classList.contains('calc-box')) {
+                    e.preventDefault();
+                    const id = e.target.id;
+                    const match = id.match(/-(\d+)$/);
+                    if(match) {
+                        toggleBitIndex(parseInt(match[1], 10));
+                    }
+                }
+            }
+        });
+    });
+
+// ==========================================
+// TAB SWITCHING
+// ==========================================
+let activeTab = 'dec-bin';
+function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    document.getElementById(`panel-${tab}`).classList.add('active');
+    // Focus input when switching to bin-dec
+    if (tab === 'bin-dec') {
+        setTimeout(() => document.getElementById('binDec-input').focus(), 50);
+    }
+}
+
+// UX GLOBALES (Aide, Confetti, Entrée)
+// ==========================================
+window.addEventListener('keydown', e => {
+    // Entrée pour valider
+    if (e.key === 'Enter') {
+        if (document.activeElement.tagName === 'INPUT') { checkBinToDec(); }
+        else if (activeTab === 'bin-dec') { checkBinToDec(); }
+        else { checkDecToBin(); }
+    }
+}); 
+ 
+function resetHelpTimer() { 
+    clearTimeout(helpTimer); 
+    document.querySelector('.calc-header').classList.remove('pulse-help'); 
+    helpTimer = setTimeout(() => { 
+        if (!document.getElementById('calc-body').classList.contains('visible')) { 
+            document.querySelector('.calc-header').classList.add('pulse-help'); 
+        } 
+    }, 8000); // Pulse après 8 secondes d'inactivité 
+} 
+ 
+function updateGlobalScore(correct, isFire = false) {
+    if(correct) { globalCorrect++; globalStreak++; if(globalStreak>globalBest) globalBest = globalStreak; if(!isFire && globalStreak%3===0) launchConfetti(); }
+    else { globalStreak = 0; } 
+    document.getElementById('global-correct').textContent = globalCorrect; 
+    document.getElementById('global-streak').textContent = globalStreak; 
+    document.getElementById('global-best').textContent = globalBest; 
+} 
+ 
+// INIT 
+buildUI(); 
+setDifficulty('medium'); 
+
+// THEME — géré par ../js/theme.js
+</script>
+<script src="../js/audio.js"></script>
+<script src="../js/theme.js"></script>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+<script src="../js/confetti.js">
+</script>
+
+<script>
+    window.addEventListener('load', () => ScoreManager.init('binaire_codage'));
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+    <script src="../js/swipe.js"></script>
+</body> 
+</html>
