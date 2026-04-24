@@ -527,40 +527,33 @@
         }
 
         .program-cmd.error-step {
-            background: #f5be0b !important;
-            box-shadow: 0 2px 0 #b45309;
-            clip-path: polygon(50% 5%, 5% 95%, 95% 95%);
-            transform: scale(1.45);
+            background: #1e293b !important;
+            box-shadow: 0 2px 0 #0f172a;
+            transform: scale(1.25);
             z-index: 2;
-            width: 40px;
-            height: 40px;
-            border-radius: 0;
-            animation: bounceInTriangle 0.4s ease;
+            animation: errorPop 0.3s ease;
         }
 
         .program-cmd.error-step svg {
-            color: #1e293b;
-            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
-            stroke: #e5e7ea;
-            margin-top: 6px;
-            transform: translateY(-2px);
+            color: #ffffff;
+            stroke: #ffffff;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
         }
 
-        @keyframes bounceInTriangle {
-            0% {
-                transform: scale(0) translateY(8px);
-                opacity: 0;
-            }
+        body.dark .program-cmd.error-step {
+            background: #f8fafc !important;
+            box-shadow: 0 2px 0 #cbd5e1;
+        }
 
-            60% {
-                transform: scale(1.6) translateY(-4px);
-                opacity: 1;
-            }
+        body.dark .program-cmd.error-step svg {
+            color: #1e293b;
+            stroke: #1e293b;
+        }
 
-            100% {
-                transform: scale(1.45) translateY(0);
-                opacity: 1;
-            }
+        @keyframes errorPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1.25); }
         }
 
         @keyframes windowShake {
@@ -596,7 +589,7 @@
         }
 
         .window-shake {
-            animation: windowShake 0.5s ease;
+            animation: windowShake 0.5s ease !important;
         }
 
         .program-cmd:hover:not(.active-step):not(.error-step) {
@@ -2433,10 +2426,9 @@
                     // Shake du robot
                     document.getElementById('sim-robot').classList.add('shake');
                     setTimeout(() => document.getElementById('sim-robot').classList.remove('shake'), 350);
-                    // Shake global du container
-                    const container = document.querySelector('.container');
-                    container.classList.add('window-shake');
-                    setTimeout(() => container.classList.remove('window-shake'), 500);
+                    // Shake global de la fenêtre
+                    document.body.classList.add('window-shake');
+                    setTimeout(() => document.body.classList.remove('window-shake'), 500);
                     showToast('Ouch ! Mur en vue. Exécution stoppée.', false);
                     break;
                 }
@@ -2736,6 +2728,10 @@
                     playSound('error');
                     document.getElementById('chal-robot').classList.add('shake');
                     setTimeout(() => document.getElementById('chal-robot').classList.remove('shake'), 350);
+                    
+                    // Shake global de la fenêtre
+                    document.body.classList.add('window-shake');
+                    setTimeout(() => document.body.classList.remove('window-shake'), 500);
                     break;
                 }
 
