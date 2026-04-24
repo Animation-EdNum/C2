@@ -47,6 +47,8 @@ Every application follows this high-level HTML structure:
 - **Touch Swipes:** When implementing custom touch swipe gestures, ensure touch event listeners use `{passive: true}` and explicitly measure drag intent (`Math.abs(dx) > Math.abs(dy)`) to avoid interfering with native vertical scrolling.
 - **Event Handling:** Prefer delegation or clean initialization inside `DOMContentLoaded`.
 
+- **Mobile Navigation Rule:** Bottom buttons/tabs must only be used to switch exercises within a webapp (`.tabs`, `.nav-bar`, `.tab-bar`), never to select a difficulty level (`.difficulty-bar`).
+
 ## 6. Accessibility (A11y) Patterns
 - **Keyboard Navigation:** Custom interactive elements (e.g., `<div>` or `<span>` with `onclick`) must include `tabindex="0"` and an `onkeydown` handler that triggers on 'Enter' or 'Space' (`if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }`).
 - **ARIA Semantics:** Custom interactive grids and overlays must implement precise ARIA semantics: `role="grid"`, `role="row"`, `role="gridcell"`, and `role="img"` for absolute overlays. Maintain dynamically updated `aria-label` attributes reflecting exact coordinates, states, and orientations. Icon-only buttons must always include an `aria-label`. Menu dropdown items must be wide, easily clickable, and use explicit text labels paired with icons instead of hidden title tooltips.

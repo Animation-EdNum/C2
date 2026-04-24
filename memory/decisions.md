@@ -11,3 +11,5 @@
 - **[2026-04-23] Testing Strategy:** Verification of functionality relies primarily on Playwright frontend verification scripts. There are no automated test suites (like `pytest` or `npm test`) configured in this repository.
 - **[2026-04-24] Pedagogical Constraint Enforcement:** Established a pattern for enforcing pedagogical rules (e.g., restricted moves, required obstacles) at the state generation level rather than the UI level to ensure consistency across difficulty tiers.
 
+
+- **[2026-04-24] Mobile Bottom Navigation Rule:** Bottom buttons/tabs must only be used to switch exercises within a webapp (`.tabs`, `.nav-bar`, `.tab-bar`), never to select a difficulty level (`.difficulty-bar`).
