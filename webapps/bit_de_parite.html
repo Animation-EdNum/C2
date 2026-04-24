@@ -381,7 +381,7 @@
             border: 2px solid #ddd;
             background: var(--card-bg);
             font-family: "JetBrains Mono", "Consolas", monospace;
-            transition: all 0.15s;
+            transition: all 0.3s var(--spring-easing);
         }
 
         .cell.data {
@@ -445,6 +445,17 @@
             cursor: default !important;
             transform: none !important;
             box-shadow: none !important;
+        }
+
+
+        @keyframes bitPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15) translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+            100% { transform: scale(1); }
+        }
+
+        .toggled {
+            animation: bitPop 0.3s var(--spring-easing);
         }
 
         /* Hover */
@@ -956,6 +967,12 @@
             let cur = trainAnswers[r][c];
             trainAnswers[r][c] = cur === null ? 1 : (cur === 1 ? 0 : null);
             renderTrainGrid();
+            let targetCell = document.getElementById('train-grid').children[r * (gridSize + 1) + c];
+            if (targetCell) {
+                targetCell.classList.remove('toggled');
+                void targetCell.offsetWidth; // trigger reflow
+                targetCell.classList.add('toggled');
+            }
         }
 
         function highlightLine(r, c) {
@@ -1160,7 +1177,6 @@
 
             const grid = document.getElementById('detect-grid');
             const clickedCell = grid.children[r * (DET_SIZE + 1) + c];
-
             if (r === detectCorruptedR && c === detectCorruptedC) {
                 detectLocked = true;
                 playSound('success');
@@ -1169,6 +1185,7 @@
                 renderDetectGrid();
                 const foundCell = document.getElementById('detect-grid').children[r * (DET_SIZE + 1) + c];
                 foundCell.classList.add('cell-correct');
+                foundCell.classList.add('toggled');
                 foundCell.textContent = detectData[r][c] ^ 1;
 
                 detectCorrect++;
@@ -1203,6 +1220,7 @@
                 // Get cell from potentially re-rendered grid
                 const errCell = document.getElementById('detect-grid').children[r * (DET_SIZE + 1) + c];
                 errCell.classList.add('cell-error');
+                errCell.classList.add('toggled');
                 setTimeout(() => errCell.classList.remove('cell-error'), 600);
                 showToast(firstHint ? "❌ Pas ce bit ! Les parités en orange t'indiquent où chercher." : "❌ Pas ce bit ! Consulte les parités en orange.", false);
                 updateDetectScoreDisplay();

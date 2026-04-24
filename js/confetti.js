@@ -41,6 +41,16 @@ function launchConfetti() {
 }
 
 function launchFire() {
+    // Add critical success glow to the body
+    let overlay = document.createElement('div');
+    overlay.className = 'critical-success-overlay';
+    document.body.appendChild(overlay);
+    setTimeout(() => {
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+    }, 2500);
+
     const cvs = document.getElementById('confetti-canvas');
     if (!cvs) return;
     const ctx = cvs.getContext('2d');

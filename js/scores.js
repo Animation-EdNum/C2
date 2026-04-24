@@ -148,7 +148,7 @@ const ScoreManager = {
         for (const mode in this.stats) {
             const modeName = this.MODE_LABELS[mode] || mode;
             const diffs = Object.keys(this.stats[mode]);
-            
+
             // Aggregation for the chart
             let aggSuccess1st = 0;
             let aggSuccessMore = 0;
@@ -221,7 +221,7 @@ const ScoreManager = {
         }
 
         body.innerHTML = html;
-        
+
         // Trigger animation reset by re-setting stroke-dashoffset after a short delay
         setTimeout(() => {
             document.querySelectorAll('.stat-donut-circle').forEach(circle => {
@@ -237,7 +237,7 @@ const ScoreManager = {
 
         const radius = 50;
         const circ = 2 * Math.PI * radius;
-        
+
         const p1 = (s1 / total) * 100;
         const p2 = (s2 / total) * 100;
         const p3 = (m / total) * 100;
@@ -250,7 +250,7 @@ const ScoreManager = {
         const drawSegment = (percent, offset, colorClass) => {
             const dash = (percent / 100) * circ;
             // Use negative dashoffset for cumulative segments
-            return `<circle class="stat-donut-circle ${colorClass}" 
+            return `<circle class="stat-donut-circle ${colorClass}"
                         cx="70" cy="70" r="${radius}"
                         stroke-dasharray="${circ}"
                         stroke-dashoffset="${circ}"
