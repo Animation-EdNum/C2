@@ -262,6 +262,54 @@
             border: 1px solid var(--card-border);
             margin: 12px 0 16px;
             overflow: hidden;
+            padding: 25px 35px;
+            display: flex;
+        }
+
+        .network-inner {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .weight-circle {
+            r: 14;
+        }
+
+        .weight-text {
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .network-container {
+                padding: 15px 22px;
+                height: 320px;
+            }
+            .node-source, .node-dest {
+                width: 44px;
+                height: 44px;
+            }
+            .node-router {
+                width: 38px;
+                height: 38px;
+            }
+            .node-icon {
+                font-size: 14px;
+            }
+            .node-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+            .node-label {
+                font-size: 10px;
+            }
+            .weight-circle {
+                r: 10;
+            }
+            .weight-text {
+                font-size: 11px;
+            }
         }
 
         .network-svg {
@@ -673,7 +721,9 @@
             <div class="card-subtitle" id="card-subtitle">Réseau facile</div>
 
             <div class="network-container" id="network-container">
-                <svg class="network-svg" id="network-svg" width="100%" height="100%"></svg>
+                <div class="network-inner" id="network-inner">
+                    <svg class="network-svg" id="network-svg" width="100%" height="100%"></svg>
+                </div>
             </div>
 
             <div class="path-display">
@@ -875,14 +925,14 @@
                 const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
-                circle.setAttribute('r', '14');
+                circle.classList.add('weight-circle');
                 circle.setAttribute('fill', isPath ? '#e65100' : '#ff9800');
                 svg.appendChild(circle);
 
                 // Texte UTI 
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.setAttribute('x', `${cx}%`); text.setAttribute('y', `${cy}%`);
-                text.setAttribute('fill', '#ffffff'); text.setAttribute('font-size', '12');
+                text.setAttribute('fill', '#ffffff'); text.classList.add('weight-text');
                 text.setAttribute('font-weight', 'bold'); text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('dominant-baseline', 'central');
                 text.textContent = e.weight;
@@ -891,7 +941,7 @@
         }
 
         function renderNodes() {
-            const container = document.getElementById('network-container');
+            const container = document.getElementById('network-inner');
             container.querySelectorAll('.node').forEach(n => n.remove());
 
             const last = currentPath[currentPath.length - 1];
