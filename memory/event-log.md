@@ -22,3 +22,5 @@
 - **[2026-04-23]** [Code Quality] Standardized Dark Mode selectors to `body.dark`, removed duplicate meta tags, and migrated event handlers to inline `onclick` attributes.
 - **[2026-04-24]** [UX/Pedagogy] Refined Blue-Bot simulator: improved pedagogical constraints for challenge modes, overhauled collision feedback, and updated robot skins.
 - **[2026-04-24]** [UX/Design] Enhanced Routage Réseau: updated router icons (SVG), improved UTI visibility with larger orange circles, and implemented automatic verification at goal.
+
+- **2026-04-25**: Updated code-patterns.md rule on absolute dropdown menu alignment, changing mobile preference to `right: 0; left: auto;` to prevent layout overflow.
