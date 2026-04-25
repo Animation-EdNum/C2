@@ -1983,7 +1983,7 @@
                 <div class="grid-wrapper" style="margin-top: 0;">
                     <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column;" class="bot-grid-container">
                         <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
-                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-map" title="Plein écran" style="position: absolute; top: -15px; right: -15px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;">
+                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-map" title="Plein écran" style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;">
                             <i data-lucide="maximize"></i>
                         </button>
                     </div>
@@ -2843,15 +2843,18 @@
 
             const overlay = document.getElementById(overlayId);
 
-            // Clear previous volcano loops if any
-            if (window.dragonFireTimeout) clearTimeout(window.dragonFireTimeout);
-            if (window.dragonFireAnimFrame) cancelAnimationFrame(window.dragonFireAnimFrame);
+            // Clear previous volcano loops if any (only if we're not using the volcano skin, so we don't break moving animation)
+            if (activeSkin !== 'volcano') {
+                if (window.dragonFireTimeout) clearTimeout(window.dragonFireTimeout);
+                if (window.dragonFireAnimFrame) cancelAnimationFrame(window.dragonFireAnimFrame);
+                window.dragonFireActive = false;
 
-            // Clear the canvas to ensure no frozen fire particles are left when robot moves/updates
-            const cvs = document.getElementById('dragon-fire-canvas');
-            if (cvs) {
-                const ctx = cvs.getContext('2d');
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                // Clear the canvas to ensure no frozen fire particles are left when robot changes/moves
+                const cvs = document.getElementById('dragon-fire-canvas');
+                if (cvs) {
+                    const ctx = cvs.getContext('2d');
+                    ctx.clearRect(0, 0, cvs.width, cvs.height);
+                }
             }
 
             if (overlay) {
@@ -2941,14 +2944,17 @@
                             if (alive) {
                                 window.dragonFireAnimFrame = requestAnimationFrame(anim);
                             } else {
-                                const nextTime = Math.random() * 14000 + 6000;
+                                const nextTime = Math.random() * 8000 + 5000;
                                 window.dragonFireTimeout = setTimeout(triggerDragonFire, nextTime);
                             }
                         }
                         anim();
                     };
 
-                    window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 14000 + 6000);
+                    if (!window.dragonFireActive) {
+                        window.dragonFireActive = true;
+                        window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 8000 + 5000);
+                    }
                 }
             }
 
