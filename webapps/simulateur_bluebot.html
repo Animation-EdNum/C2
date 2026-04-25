@@ -702,6 +702,28 @@
             border-color: rgba(22, 163, 74, 0.1);
         }
 
+        /* Skin Hélicoptère */
+        .bot-grid.skin-helicopter .robot-body {
+            filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.5));
+        }
+
+        body.dark .bot-grid.skin-helicopter .robot-body::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body.dark .bot-grid.skin-helicopter .robot-body {
+            filter: drop-shadow(0px 15px 15px rgba(0,0,0,0.8));
+        }
+
         /* Sol en feu */
         .ground-fire .bot-cell {
             position: relative;
@@ -2358,6 +2380,10 @@
                 TrailManager.clear('chal-grid');
                 if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
             }
+
+            if (matId !== 'none') {
+                unlockSkin('helicopter');
+            }
         }
 
         function openSkinsModal() {
@@ -2578,7 +2604,8 @@
                 desc: 'Réussis un décodage (Extrême) du premier coup.'
             },
             'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '👾', target: '💾', desc: 'Gagne un pilotage (Extrême) du premier coup.' },
-            'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true }
+            'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
+            'helicopter': { name: 'Hélicoptère', obstacle: '☁️', target: '🏥', desc: "Utilise un tapis (n'importe lequel) pour débloquer." }
         };
 
         function launchMatrix() {
@@ -2591,6 +2618,30 @@
         if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
         const ROBOT_SVGS = {
+            'helicopter': `
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="scale(0.8) translate(12.5, 12.5)">
+                        <!-- Corps de l'hélicoptère -->
+                        <rect x="35" y="20" width="30" height="50" rx="15" ry="15" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+                        <!-- Queue -->
+                        <rect x="47" y="65" width="6" height="25" fill="#ef4444" stroke="#b91c1c" stroke-width="1"/>
+                        <circle cx="50" cy="85" r="4" fill="#9ca3af"/>
+                        <!-- Patins -->
+                        <line x1="25" y1="30" x2="25" y2="70" stroke="#4b5563" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="75" y1="30" x2="75" y2="70" stroke="#4b5563" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="25" y1="50" x2="35" y2="50" stroke="#4b5563" stroke-width="2"/>
+                        <line x1="75" y1="50" x2="65" y2="50" stroke="#4b5563" stroke-width="2"/>
+                        <!-- Cockpit -->
+                        <ellipse cx="50" cy="35" rx="10" ry="8" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+                        <!-- Pales animées -->
+                        <g>
+                            <line x1="10" y1="50" x2="90" y2="50" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="50" y1="10" x2="50" y2="90" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="50" cy="50" r="5" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+                            <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="0.3s" repeatCount="indefinite" />
+                        </g>
+                    </g>
+                </svg>`,
             'default': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
