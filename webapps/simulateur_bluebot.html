@@ -397,7 +397,8 @@
             filter: drop-shadow(0 0 4px #f97316) drop-shadow(0 0 8px #dc2626) drop-shadow(0 0 12px #991b1b);
             opacity: 0;
             animation: lavaAppear 0.5s ease-out forwards,
-                lavaPulse 2.5s ease-in-out infinite 0.5s;
+                lavaPulse 2.5s ease-in-out infinite 0.5s,
+                lavaFadeOut 1s ease-in forwards 4s;
             pointer-events: none;
         }
 
@@ -410,6 +411,15 @@
             to {
                 opacity: 0.85;
                 stroke-width: 5;
+            }
+        }
+
+        @keyframes lavaFadeOut {
+            from {
+                opacity: 0.85;
+            }
+            to {
+                opacity: 0;
             }
         }
 
@@ -431,8 +441,15 @@
         .trail-lava-ember {
             fill: #fbbf24;
             filter: drop-shadow(0 0 3px #f97316) drop-shadow(0 0 6px #dc2626);
-            animation: emberGlow 1.8s ease-in-out infinite;
+            animation: emberGlow 1.8s ease-in-out infinite,
+                emberFadeOut 1s ease-in forwards 4s;
             pointer-events: none;
+        }
+
+        @keyframes emberFadeOut {
+            to {
+                opacity: 0 !important;
+            }
         }
 
         @keyframes emberGlow {
@@ -3114,6 +3131,7 @@
                         seg.setAttribute("x2", pt.x);
                         seg.setAttribute("y2", pt.y);
                         layer.insertBefore(seg, layer.firstChild); // en dessous des particules
+                        setTimeout(() => { if (seg && seg.parentNode) seg.remove(); }, 5000);
                     }
                     this.lastVolcanoPt = { x: pt.x, y: pt.y };
 
@@ -3128,6 +3146,7 @@
                         // Délai d'animation aléatoire pour que les braises pulsent à contretemps
                         e.style.animationDelay = `${Math.random() * 2}s`;
                         layer.appendChild(e);
+                        setTimeout(() => { if (e && e.parentNode) e.remove(); }, 5000);
                     }
                 } else if (activeSkin === 'botanique') {
                     // Trace Nature (Liane et feuilles)
