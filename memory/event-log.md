@@ -24,4 +24,4 @@
 - **[2026-04-24]** [UX/Design] Enhanced Routage Réseau: updated router icons (SVG), improved UTI visibility with larger orange circles, and implemented automatic verification at goal.
 - **[2026-04-25]** [UX/Security] Improved Blue-Bot simulator fullscreen mode and implemented comprehensive global security/XSS mitigations.
 - **2026-04-25**: Updated code-patterns.md rule on absolute dropdown menu alignment, changing mobile preference to `right: 0; left: auto;` to prevent layout overflow.
-- **[2026-04-25]** [UX/Gamification] Refined Blue-Bot simulator: introduced custom mat image upload feature and refined geometric shape constraints.
+- **[2026-04-25]** [UX/Gamification] Refined Blue-Bot simulator: introduced custom mat image upload feature.
