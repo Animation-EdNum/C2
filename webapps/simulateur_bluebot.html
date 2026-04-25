@@ -2263,6 +2263,16 @@
            ================================================================ */
 
 
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
         function openMatsModal() {
             playSound('click');
             renderMatsGrid();
@@ -2305,6 +2315,18 @@
             }).join('');
         }
 
+        function generateMatContent(matId) {
+            const config = MAT_CONFIG[matId];
+            if (!config) return;
+            if (config.baseContent) {
+                if (matId === 'shapes') {
+                    config.content = shuffleArray([...config.baseContent, ...config.baseContent]);
+                } else if (matId === 'fairy_tale') {
+                    config.content = shuffleArray([...config.baseContent]).slice(0, 36);
+                }
+            }
+        }
+
         function selectMat(matId) {
             if (matId === 'custom' && !localStorage.getItem('bb_custom_mat_image')) {
                 // If user selects custom mat but no image uploaded yet, prompt upload
@@ -2318,6 +2340,7 @@
             playSound('click');
             activeMat = matId;
             localStorage.setItem('bb_active_mat', matId);
+            generateMatContent(matId);
 
             renderMatsGrid();
             closeMatsModal();
@@ -2491,13 +2514,11 @@
                 name: 'Couleurs et formes',
                 desc: 'Formes géométriques colorées.',
                 icon: '🔵',
-                content: [
-                    '🔷', '🟡', '🔺', '🔴', '🔴', '🔴',
-                    '🔺', '🟩', '🟣', '🔻', '🟦', '🟩',
-                    '🟦', '🔷', '🔷', '🔷', '🟡', '🔻',
-                    '🔺', '🟩', '🟣', '🟦', '🔶', '🟩',
-                    '🟦', '🟣', '🔻', '🟣', '🔻', '🔶',
-                    '🔺', '🟡', '🔶', '🟡', '🔴', '🔶'
+                content: [],
+                baseContent: [
+                    '🔴', '🟠', '🟡', '🟢', '🔵', '🟣',
+                    '🟥', '🟧', '🟨', '🟩', '🟦', '🟪',
+                    '🔺', '🔻', '🔶', '🔷', '🔸', '🔹'
                 ]
             },
             'geo': {
@@ -2530,7 +2551,8 @@
                 name: 'Conte personnalisable',
                 desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
                 icon: '🧚',
-                content: [
+                content: [],
+                baseContent: [
                     '👸', '🐉', '🧙', '🏰', '🌲', '💎',
                     '👑', '🦄', '⚔️', '🛡️', '🗝️', '📜',
                     '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️',
@@ -2541,6 +2563,7 @@
             }
         };
         let activeMat = localStorage.getItem('bb_active_mat') || 'none';
+        generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
         const SKIN_CONFIG = {
