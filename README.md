@@ -53,8 +53,8 @@ Les webapps disponibles sont :
 - **Fonctionnalités :**
   - **Modes de jeu variés :**
     - **Simulateur :** Exploration libre et apprentissage des commandes.
-    - **Défis :** Puzzles de cheminement avec 3 niveaux de difficulté et règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
-    - **Lecture de code (Nouveau) :** Deux sous-modes pour travailler l'anticipation : *Destination* (prédire la case finale) et *Bug* (identifier la commande erronée dans un programme).
+    - **Pilotage :** Puzzles de cheminement avec 3 niveaux de difficulté et règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
+    - **Décodage (Nouveau) :** Deux sous-modes pour travailler l'anticipation : *Destination* (prédire la case finale) et *Bug* (identifier la commande erronée dans un programme).
   - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot, Thymio, Dragon) modifiant également les obstacles et les récompenses.
   - **Tapis Pédagogiques :** Intégration de tapis personnalisés (ex: conte de fées) avec un curseur d'opacité ajustable pour un apprentissage thématique.
   - **Mode Plein Écran :** Affichage optimisé avec carte et contrôles immersifs pour réduire les distractions.

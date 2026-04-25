@@ -12,8 +12,8 @@ const ScoreManager = {
         'decode': 'Décodage',
         'train': 'Entraînement',
         'path': 'Routage',
-        'chal': 'Défis',
-        'read': 'Lecture de code',
+        'chal': 'Pilotage',
+        'read': 'Décodage',
         'detect': 'Détection d\'erreur',
         'simulator': 'Simulateur'
     },
