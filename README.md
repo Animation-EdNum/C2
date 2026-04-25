@@ -34,8 +34,9 @@ Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui 
 
 Les webapps partagent une interface unifiée basée sur un design **Glassmorphism** moderne et épuré. Elles incluent :
 - **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire.
+- **Difficulté Adaptative** : Le système propose d'augmenter la difficulté de manière intelligente après plusieurs réussites parfaites.
 - **Visualisation des progrès** : Graphiques circulaires (Donut Charts) détaillés avec code couleur sémantique (Vert: Succès 1er coup, Ambre: Succès après essai, Rouge: Erreurs).
-- **Historique** : Accès rapide aux applications récemment consultées sur la page d'accueil.
+- **Historique et Navigation** : Accès rapide aux applications récemment consultées sur la page d'accueil. L'icône dans l'en-tête permet un retour rapide au menu principal.
 - **Typographie Outfit** pour une lisibilité optimale.
 
 ### Portail d'accueil (`index.html`)
@@ -55,6 +56,8 @@ Les webapps disponibles sont :
     - **Défis :** Puzzles de cheminement avec 3 niveaux de difficulté et règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
     - **Lecture de code (Nouveau) :** Deux sous-modes pour travailler l'anticipation : *Destination* (prédire la case finale) et *Bug* (identifier la commande erronée dans un programme).
   - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot, Thymio, Dragon) modifiant également les obstacles et les récompenses.
+  - **Tapis Pédagogiques :** Intégration de tapis personnalisés (ex: conte de fées) avec un curseur d'opacité ajustable pour un apprentissage thématique.
+  - **Mode Plein Écran :** Affichage optimisé avec carte et contrôles immersifs pour réduire les distractions.
   - **Feedback visuel immersif :** Effet de "shake" (secousse) de toute la fenêtre lors d'une collision et mise en évidence immédiate de la commande erronée (bouton noir/blanc contrasté).
   - **Statistiques visuelles :** Suivi par mode et difficulté avec graphiques Donut animés pour une lecture immédiate de l'efficacité.
   - **Vitesse paramétrable :** Modes "Vitesse Normale" (900 ms avec pause) ou "Vitesse Rapide" (400 ms) avec tracé du parcours en temps réel.
@@ -99,7 +102,7 @@ Les webapps disponibles sont :
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - Exercices générés aléatoirement (conversion dans les deux sens).
-  - **Aide proactive & Feedback :** La mini-calculatrice binaire "pulse" visuellement après quelques secondes d'inactivité.
+  - **Aide proactive & Feedback Étayé :** La mini-calculatrice binaire "pulse" visuellement après quelques secondes d'inactivité. Un feedback progressif est fourni en cas d'erreur.
   - **Système de tutorat :** En cas d'erreur, l'outil indique si la valeur est trop grande/petite et propose un indice ciblé sur le bit de poids erroné.
   - **Saisie optimisée :** Focus automatique sur le champ de réponse pour enchaîner les exercices sans utiliser la souris.
 
