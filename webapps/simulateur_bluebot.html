@@ -3841,8 +3841,6 @@
 
             if (isCorrect) {
                 readState.locked = true;
-                playSound('success');
-                launchConfetti();
                 readGlobalScore++;
                 readGlobalStreak++;
                 ScoreManager.addSuccess('read', readState.difficulty, 0);
@@ -3859,15 +3857,10 @@
                     showToast('Le sol est maintenant EN FEU !', true);
                 }
 
-                showToast(`Excellent ! C'est la bonne réponse !`, true);
                 if (cell) cell.style.background = 'rgba(16, 185, 129, 0.4)'; // vert
 
                 document.getElementById('read-global-score').textContent = readGlobalScore;
                 document.getElementById('read-global-streak').textContent = readGlobalStreak;
-
-                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
-                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
-                }
 
                 // Animate robot to destination
                 let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
@@ -3883,6 +3876,14 @@
                     }
 
                     await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
+                }
+
+                playSound('success');
+                launchConfetti();
+                showToast(`Excellent ! C'est la bonne réponse !`, true);
+
+                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
+                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
                 }
 
             } else {

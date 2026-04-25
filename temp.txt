@@ -1,0 +1,77 @@
+        async function handleReadGridClick(r, c) {
+            if (readState.locked || readState.isAnimating || readState.type !== 'destination') return;
+
+            readState.locked = true;
+            readState.isAnimating = true;
+
+            const isCorrect = (r === readState.targetRow && c === readState.targetCol);
+            const cell = document.querySelector(`#read-grid .bot-cell[data-row="${r}"][data-col="${c}"]`);
+
+            if (isCorrect) {
+                readState.locked = true;
+                playSound('success');
+                launchConfetti();
+                readGlobalScore++;
+                readGlobalStreak++;
+                ScoreManager.addSuccess('read', readState.difficulty, 0);
+                updateExtremeVisibility();
+
+                // Déblocages
+                if (readState.difficulty === 'medium' && (!readState.mistakes || readState.mistakes === 0)) {
+                    unlockSkin('thymio');
+                } else if (readState.difficulty === 'extreme') {
+                    if (!readState.mistakes || readState.mistakes === 0) unlockSkin('volcano');
+                    document.getElementById('sim-grid').classList.add('ground-fire');
+                    document.getElementById('chal-grid').classList.add('ground-fire');
+                    document.getElementById('read-grid').classList.add('ground-fire');
+                    showToast('Le sol est maintenant EN FEU !', true);
+                }
+
+                showToast(`Excellent ! C'est la bonne réponse !`, true);
+                if (cell) cell.style.background = 'rgba(16, 185, 129, 0.4)'; // vert
+
+                document.getElementById('read-global-score').textContent = readGlobalScore;
+                document.getElementById('read-global-streak').textContent = readGlobalStreak;
+
+                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
+                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
+                }
+
+                // Animate robot to destination
+                let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
+                TrailManager.captureInitialState('read-grid', currR, currC, currD);
+                for (const cmd of readState.program) {
+                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd);
+                    currR = res.robotRow; currC = res.robotCol; currD = res.robotDir;
+                    renderRobot('read-grid', 'read-robot', currR, currC, currD);
+
+                    if (cmd === 'forward' || cmd === 'backward') {
+                        await sleep(350);
+                        TrailManager.addSegment('read-grid', currR, currC);
+                    }
+
+                    await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
+                }
+
+            } else {
+                playSound('error');
+                if (cell) {
+                    cell.style.background = 'rgba(239, 68, 68, 0.4)'; // rouge
+                    setTimeout(() => cell.style.background = '', 1000);
+                }
+                readGlobalStreak = 0;
+                readState.mistakes = (readState.mistakes || 0) + 1;
+                simState.consecutiveMistakes++;
+                ScoreManager.addMistake("read", readState.difficulty);
+                document.getElementById('read-global-streak').textContent = readGlobalStreak;
+                showToast('Faux. Essaie encore !', false);
+                readState.locked = false;
+            }
+
+            if (isCorrect) document.getElementById('btnNextRead').style.display = 'inline-flex';
+            readState.isAnimating = false;
+        }
+
+        function newChallenge() {
+            if (chalState.isAnimating) return;
+            chalState.locked = false; document.getElementById('btnNextChallenge').style.display = 'none';
