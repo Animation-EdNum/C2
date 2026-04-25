@@ -811,6 +811,24 @@
             grid-area: right;
         }
 
+        .cmd-btn-go {
+            grid-area: go;
+            background: #22c55e;
+            box-shadow: 0 4px 0 #16a34a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: none;
+        }
+
+        .cmd-btn-clear {
+            grid-area: clear;
+            background: #3b82f6;
+            box-shadow: 0 4px 0 #2563eb;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: none;
+        }
+
         /* STRIP PROGRAMME */
         .program-strip {
             display: flex;
@@ -1384,25 +1402,40 @@
             overflow: hidden; /* Prevent grid wrapper from overflowing and pushing cmd pad */
         }
 
+        body.fullscreen-map .bot-grid-container {
+            max-height: 100%;
+            max-width: 100% !important;
+            height: auto !important;
+            width: 100% !important;
+            flex: 0 1 auto;
+            aspect-ratio: 1 / 1;
+        }
+
         body.fullscreen-map .bot-grid {
             max-height: 100%;
             max-width: 100%;
             height: 100%;
-            width: auto;
-            flex: 0 1 auto;
-            aspect-ratio: 6/6;
+            width: 100%;
         }
 
         body.fullscreen-map #sim-cmd-pad {
             margin: 10px auto;
             flex-shrink: 0; /* Keep command pad fixed size */
+            grid-template-areas: ". up ." "left go right" "clear down .";
+            grid-template-rows: 62px 62px 62px;
+        }
+
+        body.fullscreen-map .cmd-btn-go,
+        body.fullscreen-map .cmd-btn-clear {
+            display: flex;
         }
 
         body.fullscreen-map .sim-options,
         body.fullscreen-map .program-strip,
         body.fullscreen-map .controls,
         body.fullscreen-map .score-bar,
-        body.fullscreen-map .legend {
+        body.fullscreen-map .legend,
+        body.fullscreen-map #btn-fullscreen-map {
             display: none !important;
         }
 
@@ -1925,11 +1958,15 @@
                 <div class="sim-options" style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
                     <button class="btn btn-new btn-small" id="btn-place-elements">⭐🧱 Trésor & Obstacles</button>
                     <button class="btn btn-outline-error btn-small" id="btn-clear-walls">🧹 Nettoyer grille</button>
-                    <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-map" title="Plein écran" style="padding: 0 10px;">🔲</button>
                 </div>
 
                 <div class="grid-wrapper" style="margin-top: 0;">
-                    <div class="bot-grid" id="sim-grid"></div>
+                    <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column;" class="bot-grid-container">
+                        <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
+                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-map" title="Plein écran" style="position: absolute; top: -15px; right: -15px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;">
+                            <i data-lucide="maximize"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="cmd-pad" id="sim-cmd-pad">
@@ -1937,6 +1974,8 @@
                     <button class="cmd-btn cmd-btn-left" id="pad-left" aria-label="Tourner à gauche"></button>
                     <button class="cmd-btn cmd-btn-backward" id="pad-bwd" aria-label="Reculer"></button>
                     <button class="cmd-btn cmd-btn-right" id="pad-right" aria-label="Tourner à droite"></button>
+                    <button class="cmd-btn cmd-btn-go" id="pad-go" aria-label="Go">GO</button>
+                    <button class="cmd-btn cmd-btn-clear" id="pad-clear" aria-label="Effacer">X</button>
                 </div>
 
                 <div class="program-strip" id="sim-program">
@@ -3861,6 +3900,8 @@
             const fullCmd = cmd === 'fwd' ? 'forward' : (cmd === 'bwd' ? 'backward' : cmd);
             document.getElementById(id).addEventListener('click', () => addCmd(fullCmd));
         });
+        document.getElementById('pad-go').addEventListener('click', runProgram);
+        document.getElementById('pad-clear').addEventListener('click', clearProgram);
 
         // Mat Opacity
         const matOpacitySlider = document.getElementById('matOpacitySlider');
