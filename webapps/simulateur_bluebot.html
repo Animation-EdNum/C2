@@ -1824,6 +1824,34 @@
         .bot-grid.mat-city .mat-content {
             display: none !important;
         }
+
+        .bot-grid.mat-custom {
+            position: relative;
+            background: var(--card-bg) !important;
+        }
+
+        .bot-grid.mat-custom::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: var(--custom-mat-url, none);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: var(--mat-opacity, 0.3);
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 8px; /* Match grid border-radius */
+        }
+
+        .bot-grid.mat-custom .bot-cell {
+            background: transparent !important;
+            z-index: 1;
+        }
+
+        .bot-grid.mat-custom .mat-content {
+            display: none !important;
+        }
     </style>
     <script src="../js/scores.js"></script>
     <script src="../js/audio.js"></script>
@@ -1895,6 +1923,18 @@
                 </div>
                 <input type="range" id="matOpacitySlider" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
             </div>
+
+            <div id="mat-upload-container" style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 15px; padding: 15px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
+                <div style="font-size: 1em; color: var(--text-main); font-weight: 600;">Ajouter un tapis personnalisé</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label for="customMatUpload" class="btn btn-outline" style="cursor: pointer; flex-grow: 1; text-align: center;">
+                        <i data-lucide="upload" style="width: 18px; height: 18px; margin-right: 5px; vertical-align: middle;"></i> Sélectionner une image
+                    </label>
+                    <input type="file" id="customMatUpload" accept="image/*" style="display: none;">
+                </div>
+                <div id="customMatStatus" style="font-size: 0.85em; color: var(--text-muted); text-align: center; min-height: 1.2em;"></div>
+            </div>
+
             <div class="skins-grid" id="mats-grid-container">
                 <!-- Mats generated via JS -->
             </div>
@@ -2425,6 +2465,7 @@
 
         const MAT_CONFIG = {
             'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
+            'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
             'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
             'city': {
                 name: 'Cité des directions',
@@ -4139,6 +4180,70 @@
                 localStorage.setItem('bb_mat_opacity', val);
             });
         }
+
+        const customMatUpload = document.getElementById('customMatUpload');
+        const customMatStatus = document.getElementById('customMatStatus');
+        if (customMatUpload) {
+            customMatUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                customMatStatus.textContent = "Chargement et optimisation...";
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const MAX_SIZE = 1024;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        try {
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                            localStorage.setItem('bb_custom_mat_image', dataUrl);
+                            document.documentElement.style.setProperty('--custom-mat-url', `url(${dataUrl})`);
+                            selectMat('custom');
+                            customMatStatus.textContent = "Image ajoutée avec succès !";
+                            customMatStatus.style.color = "var(--success)";
+                            setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
+                        } catch (err) {
+                            console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
+                            customMatStatus.textContent = "Erreur : image trop grande.";
+                            customMatStatus.style.color = "var(--danger)";
+                        }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+                // Reset file input so same file can be selected again
+                e.target.value = '';
+            });
+        }
+
+        // Restore custom mat on load if exists
+        const savedCustomMat = localStorage.getItem('bb_custom_mat_image');
+        if (savedCustomMat) {
+            document.documentElement.style.setProperty('--custom-mat-url', `url(${savedCustomMat})`);
+        }
+
     </script>
     <script src="../js/theme.js"></script>
     <script src="../js/confetti.js"></script>
