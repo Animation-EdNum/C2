@@ -19,3 +19,6 @@
 - **[2026-04-25] XSS Mitigation:** Avoid `innerHTML` for rendering untrusted or user-controlled data. Use `document.createElement` and `textContent` to ensure data is safely escaped.
 - **[2026-04-25] Standalone Directory:** The `standalone/` directory has been intentionally removed from the project to reduce maintenance overhead. Do not attempt to recreate standalone versions.
 - **[2026-04-25] SEO & Meta Tags:** When creating new HTML files, include Open Graph meta tags (`og:title`, `og:description`, `og:type`) and link to the shared `favicon.svg`.
+- **[2026-04-25] Navigation Pattern:** Avoid explicit 'home' buttons. Instead, configure the application's header icon (`.header-icon`) as a clickable link pointing to `../index.html`.
+- **[2026-04-25] Global Security Review:** Implement comprehensive XSS vulnerability scans across the codebase; when a vulnerability is found, search for and remediate all similar unsafe patterns (e.g., `innerHTML` usage).
+- **[2026-04-25] Simulation Modes Focus:** Ensure strict pedagogical focus per mode. E.g., the 'lecture' (reading) mode in Blue-Bot strictly focuses on destination prediction without 'bug identification' tasks.

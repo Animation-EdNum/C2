@@ -64,3 +64,17 @@ Every application follows this high-level HTML structure:
 - **Keyboard Navigation:** Custom interactive elements (e.g., `<div>` or `<span>` with `onclick`) must include `tabindex="0"` and an `onkeydown` handler that triggers on 'Enter' or 'Space' (`if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }`).
 - **ARIA Semantics:** Custom interactive grids and overlays must implement precise ARIA semantics: `role="grid"`, `role="row"`, `role="gridcell"`, and `role="img"` for absolute overlays. Maintain dynamically updated `aria-label` attributes reflecting exact coordinates, states, and orientations. Icon-only buttons must always include an `aria-label`. Menu dropdown items must be wide, easily clickable, and use explicit text labels paired with icons instead of hidden title tooltips.
 
+
+## 7. SVG & Visual Effects
+- **Responsive SVGs:** Avoid hardcoding fixed attributes like 'r' or 'font-size' via `setAttribute()`. Assign them CSS classes using `classList.add()` so they can scale with media queries. Preserve root `<svg>` responsive attributes (`width="100%" height="100%" viewBox="..."`) and scale inner graphics using `<g transform="scale(...)">`.
+- **Overflow Visibility:** To allow visual effects (like canvas-based particles or glow drop-shadows) to overflow grid cell boundaries, explicitly style parent containers (like `.bot-cell`, grids, and overlays) with `overflow: visible`.
+- **Boundary Rendering:** When rendering percentage-based, absolutely positioned elements at container boundaries (e.g., 0% or 100%), place them inside a relative inner wrapper within a padded parent container to prevent visual clipping.
+
+## 8. Simulator & Hardware UI Specifics
+- **Fullscreen Mode:** Designed for minimal distraction (e.g., Blue-Bot `.fullscreen-map`). Forces the grid to remain perfectly square (`aspect-ratio: 1/1`), explicitly hides headers/tabs/options, and exposes embedded physical robot buttons (like 'GO' and 'X') within the directional command pad.
+- **Visual Consistency:** Background elements like robot paths should be drawn consistently (e.g., using `TrailManager`) during movement animations across all active simulation modes. Educational mats (`MAT_CONFIG`) should be configured with an array of strings (`content: ['🏠', ...]`) to correctly render multi-byte emojis.
+- **DOM Refresh Strategy:** When resetting or dynamically recreating a container's contents via `innerHTML = ''` (like a `.bot-grid`), ensure that statically positioned interactive overlays (e.g., fullscreen toggle buttons) are placed in an external parent wrapper (like `.grid-wrapper`) to prevent destruction during redraw. Placement functionalities (targets vs obstacles) should be combined into single interactive UI elements (`#btn-place-elements`) to reduce configuration clutter.
+
+## 9. Gamification Specifics
+- **Explicit Conditions:** When implementing 'first try' conditions for gamification or unlock mechanisms, explicitly verify that the relevant mistake counter (e.g., `mistakes`) is exactly `0` or falsy.
+- **Consistent Styling:** Rewards (targets) in simulator grids use the `.target-overlay` CSS class and should feature a consistent glow effect implemented via `filter: drop-shadow`.
