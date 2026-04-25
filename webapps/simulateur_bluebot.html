@@ -402,6 +402,17 @@
             pointer-events: none;
         }
 
+        .trail-rainbow-particle {
+            pointer-events: none;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 3px currentColor);
+            animation: rainbowFade 2s forwards;
+        }
+        @keyframes rainbowFade {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.2); }
+        }
+
         @keyframes lavaAppear {
             from {
                 opacity: 0;
@@ -2597,6 +2608,10 @@
             'beebot': { name: 'Bee-Bot', obstacle: '🌳', target: '🌻', desc: 'Arrive à un trésor avec des obstacles en utilisant "Reculer" au moins une fois.' },
             'thymio': { name: 'Thymio', obstacle: '🚧', target: '✏️', desc: 'Réussis un décodage (Moyen) du premier coup.' },
             'space': { name: 'Mission spatiale', obstacle: '☄️', target: '💎', desc: 'Gagne un pilotage moyen pour débloquer.' },
+            'pirate': { name: 'Pirate-Bot', obstacle: '🐙', target: '🪙', desc: 'Explorateur des mers : Crée un programme de plus de 10 instructions qui atteint la cible du premier coup.' },
+            'f1': { name: 'F1', obstacle: '🚧', target: '🏁', desc: 'Trajectoire parfaite : Enchaîne 3 victoires de suite en mode Pilotage sans faire une seule erreur.' },
+            'unicorn': { name: 'Licorne Magique', obstacle: '⛈️', target: '🧁', desc: 'Tête qui tourne : Mystère...', hidden: true },
+            'train': { name: 'Locomotive', obstacle: '🛑', target: '🚉', desc: 'Grand voyageur : Parcours un total de 100 cases cumulées sur la grille depuis tes débuts sur le simulateur.' },
             'volcano': {
                 name: 'Le sol est EN FEU !!!',
                 obstacle: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#1e3a8a"/><stop offset="35%" stop-color="#2563eb"/><stop offset="70%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#f0f9ff"/></linearGradient><linearGradient id="b" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#fff"/></linearGradient><filter id="c" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="d" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><ellipse cx="50" cy="90" rx="38" ry="5" fill="#1e3a8a"/><ellipse cx="50" cy="89" rx="30" ry="3" fill="#60a5fa"/><path fill="#f0f9ff" d="M18 88 L27 42 L32 88 L50 8 L66 88 L77 30 L82 88 Z"/><path fill="url(#a)" stroke="#1e40af" stroke-width=".8" d="m18 88 9-46 7 46z"/><path fill="url(#b)" d="m24 88 3-42v42z"/><path fill="url(#a)" stroke="#1e40af" stroke-width=".8" d="m68 88 9-58 9 58z"/><path fill="url(#b)" d="m73 88 4-53v53z"/><path fill="url(#a)" stroke="#1e40af" stroke-width="1.2" filter="url(#c)" d="M32 88 50 8l16 80z"/><path fill="url(#b)" d="m43 86 7-72 4 72z"/><path fill="#fff" d="m48 82 2-66 2 66z"/><path fill="none" stroke="#bfdbfe" stroke-width=".6" d="m42 70 5-25-3-20m14 50-4-25 2-20"/><path fill="url(#a)" d="m40 88 4-20 4 20z"/><path fill="url(#a)" d="m54 88 4-16 4 16z"/><g><path fill="#fff" d="m22 30 2 3-2 3-2-3z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="0s"/></path><animateTransform attributeName="transform" type="rotate" from="0 22 33" to="45 22 33" dur="2.2s" repeatCount="indefinite" begin="0s"/></g><g><path fill="#fff" d="m82 22 2 3-2 3-2-3z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="0.6s"/></path><animateTransform attributeName="transform" type="rotate" from="0 82 25" to="45 82 25" dur="2.2s" repeatCount="indefinite" begin="0.6s"/></g><g><path fill="#e0f2fe" d="m15 55 2 2-2 2-2-2z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="1.1s"/></path><animateTransform attributeName="transform" type="rotate" from="0 15 57" to="45 15 57" dur="2.2s" repeatCount="indefinite" begin="1.1s"/></g><g><path fill="#e0f2fe" d="m88 60 2 2-2 2-2-2z"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="1.7s"/></path><animateTransform attributeName="transform" type="rotate" from="0 88 62" to="45 88 62" dur="2.2s" repeatCount="indefinite" begin="1.7s"/></g><circle cx="50" cy="12" r="2.5" fill="#67e8f9" filter="url(#d)"><animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/><animate attributeName="r" values="2;4;2" dur="2.5s" repeatCount="indefinite"/></circle></svg>`,
@@ -2618,6 +2633,82 @@
         if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
         const ROBOT_SVGS = {
+            'pirate': `
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="scale(0.8) translate(12.5, 12.5)">
+                        <!-- Coque -->
+                        <path d="M 20 60 Q 50 80 80 60 L 70 40 L 30 40 Z" fill="#8B4513" stroke="#5C4033" stroke-width="2"/>
+                        <!-- Mât -->
+                        <rect x="48" y="10" width="4" height="40" fill="#5C4033" />
+                        <!-- Voile -->
+                        <path d="M 50 15 Q 70 25 50 45 Q 30 25 50 15 Z" fill="#F5F5DC" stroke="#D3D3D3" stroke-width="1"/>
+                        <!-- Drapeau pirate -->
+                        <rect x="52" y="10" width="15" height="10" fill="black"/>
+                        <circle cx="59.5" cy="15" r="2" fill="white"/>
+                        <path d="M 56 18 L 63 18" stroke="white" stroke-width="1"/>
+                    </g>
+                </svg>`,
+            'f1': `
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="scale(0.8) translate(12.5, 12.5)">
+                        <!-- Pneus -->
+                        <rect x="20" y="20" width="10" height="20" rx="3" fill="#333" />
+                        <rect x="70" y="20" width="10" height="20" rx="3" fill="#333" />
+                        <rect x="20" y="60" width="10" height="20" rx="3" fill="#333" />
+                        <rect x="70" y="60" width="10" height="20" rx="3" fill="#333" />
+                        <!-- Carrosserie -->
+                        <path d="M 40 10 L 60 10 L 65 30 L 70 50 L 70 80 L 30 80 L 30 50 L 35 30 Z" fill="#E32636" stroke="#990000" stroke-width="2"/>
+                        <!-- Cockpit -->
+                        <rect x="42" y="45" width="16" height="15" rx="5" fill="#111" />
+                        <!-- Aileron avant -->
+                        <rect x="25" y="10" width="50" height="5" fill="#E32636" />
+                        <!-- Aileron arrière -->
+                        <rect x="25" y="80" width="50" height="8" fill="#111" />
+                    </g>
+                </svg>`,
+            'unicorn': `
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="scale(0.8) translate(12.5, 12.5)">
+                        <!-- Corps -->
+                        <ellipse cx="50" cy="60" rx="25" ry="20" fill="#FFF" stroke="#FFC0CB" stroke-width="2"/>
+                        <!-- Tête -->
+                        <circle cx="70" cy="40" r="15" fill="#FFF" stroke="#FFC0CB" stroke-width="2"/>
+                        <!-- Museau -->
+                        <ellipse cx="80" cy="40" rx="8" ry="10" fill="#FFC0CB" />
+                        <!-- Corne -->
+                        <path d="M 65 25 L 75 25 L 70 5 Z" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+                        <!-- Oeil -->
+                        <circle cx="70" cy="35" r="2" fill="#000" />
+                        <!-- Crinière -->
+                        <path d="M 55 30 Q 50 40 60 50" fill="none" stroke="#FF69B4" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 50 35 Q 45 45 55 55" fill="none" stroke="#87CEEB" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Pattes -->
+                        <rect x="35" y="70" width="6" height="15" fill="#FFF" stroke="#FFC0CB" stroke-width="1"/>
+                        <rect x="45" y="75" width="6" height="15" fill="#FFF" stroke="#FFC0CB" stroke-width="1"/>
+                        <rect x="55" y="75" width="6" height="15" fill="#FFF" stroke="#FFC0CB" stroke-width="1"/>
+                        <rect x="65" y="70" width="6" height="15" fill="#FFF" stroke="#FFC0CB" stroke-width="1"/>
+                    </g>
+                </svg>`,
+            'train': `
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="scale(0.8) translate(12.5, 12.5)">
+                        <!-- Chaudière -->
+                        <rect x="25" y="40" width="40" height="30" rx="5" fill="#000" />
+                        <!-- Cabine -->
+                        <rect x="10" y="30" width="25" height="40" rx="2" fill="#B22222" />
+                        <!-- Fenêtre -->
+                        <rect x="15" y="35" width="10" height="15" fill="#87CEEB" />
+                        <!-- Cheminée -->
+                        <rect x="50" y="25" width="8" height="15" fill="#000" />
+                        <polygon points="45,25 63,25 58,15 50,15" fill="#B22222" />
+                        <!-- Roues -->
+                        <circle cx="20" cy="75" r="10" fill="#A9A9A9" stroke="#000" stroke-width="2"/>
+                        <circle cx="45" cy="75" r="10" fill="#A9A9A9" stroke="#000" stroke-width="2"/>
+                        <circle cx="65" cy="75" r="10" fill="#A9A9A9" stroke="#000" stroke-width="2"/>
+                        <!-- Pare-buffle -->
+                        <polygon points="65,70 80,70 75,50 65,50" fill="#000" />
+                    </g>
+                </svg>`,
             'helicopter': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
@@ -3349,6 +3440,20 @@
                     const endLeaf = leaf.cloneNode(true);
                     endLeaf.setAttribute("transform", `translate(${pt.x}, ${pt.y}) rotate(${angle - side / 2}) scale(0.3)`);
                     layer.appendChild(endLeaf);
+                } else if (activeSkin === 'unicorn') {
+                    // Trace Arc-en-ciel
+                    const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
+                    for (let i = 0; i < 8; i++) {
+                        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        c.setAttribute("class", "trail-rainbow-particle");
+                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 8);
+                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 8);
+                        c.setAttribute("r", 1.5 + Math.random() * 2);
+                        c.setAttribute("fill", colors[Math.floor(Math.random() * colors.length)]);
+                        c.style.color = c.getAttribute("fill");
+                        layer.appendChild(c);
+                        setTimeout(() => { if (layer.contains(c)) layer.removeChild(c); }, 2000);
+                    }
                 }
             },
 
@@ -3545,6 +3650,7 @@
 
         function moveRobot(state, cmd) {
             let { robotRow: r, robotCol: c, robotDir: d, obstacles } = state;
+            let moved = false;
             if (cmd === 'left') { d = (d + 3) % 4; }
             else if (cmd === 'right') { d = (d + 1) % 4; }
             else {
@@ -3554,8 +3660,17 @@
                 if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
                     if (obstacles && obstacles.some(o => o.r === nr && o.c === nc)) return { ...state, robotDir: d, blocked: true };
                     r = nr; c = nc;
+                    moved = true;
                 } else { return { ...state, robotDir: d, blocked: true }; }
             }
+
+            if (moved) {
+                let totalSteps = parseInt(localStorage.getItem('bb_total_steps') || '0');
+                totalSteps++;
+                localStorage.setItem('bb_total_steps', totalSteps);
+                if (totalSteps >= 100) unlockSkin('train');
+            }
+
             return { ...state, robotRow: r, robotCol: c, robotDir: d, blocked: false };
         }
 
@@ -3630,6 +3745,17 @@
                         // Déblocage Bee-Bot
                         if (simState.obstacles.length > 0 && simState.program.includes('backward')) {
                             unlockSkin('beebot');
+                        }
+
+                        // Déblocage Pirate-Bot
+                        if (simState.program.length > 10 && simState.firstAttempt) {
+                            unlockSkin('pirate');
+                        }
+
+                        // Déblocage Unicorn
+                        const progStr = simState.program.join(',');
+                        if (progStr.includes('left,left,left,left') || progStr.includes('right,right,right,right')) {
+                            unlockSkin('unicorn');
                         }
 
                         showToast('Trésor trouvé ! Félicitations !', true);
@@ -4062,6 +4188,7 @@
                     if (chalState.difficulty === 'medium' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('space');
                     if (chalState.difficulty === 'extreme' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('cyberbot');
                     if (chalState.difficulty === 'easy') unlockSkin('beebot');
+                    if (globalStreak >= 3) unlockSkin('f1');
 
                     showToast(`Bravo ! Pilotage réussi !`, true);
                     el.classList.add('correct');
