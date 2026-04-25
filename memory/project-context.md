@@ -33,6 +33,6 @@ The **suite EdNum** (by Animation-EdNum, HEP-VS) is a suite of interactive, high
 - **Contact:** The primary contact email for project support, questions, or issues is vivian.epiney@hepvs.ch.
 
 ## Current Sprint / Focus
-- **Blue-Bot Simulator – Feature Complete (2026-04-24):** All planned pedagogical and UX refinements have been implemented. The simulator is considered stable.
+- **Blue-Bot Simulator – Feature Complete (2026-04-25):** All planned pedagogical and UX refinements have been implemented, including the new custom mat upload feature. The simulator is considered stable.
 - **Ongoing:** Screenshots refresh and README update to reflect all new features.
 - **Next:** Mobile optimization audit and final accessibility review across the full suite.
