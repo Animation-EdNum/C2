@@ -2882,8 +2882,9 @@
 
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
             const deg = dirIndex * 90;
+            const normalizedDir = ((dirIndex % 4) + 4) % 4;
             const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
-            const dirStr = directions[dirIndex % 4] || 'Haut';
+            const dirStr = directions[normalizedDir] || 'Haut';
             const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
             placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
@@ -2925,10 +2926,10 @@
 
                         // Calculate angle and origin based on robot orientation
                         let baseAngle = -Math.PI / 2; // Up by default
-                        if (dirIndex % 4 === 0) startY -= 40; // Up
-                        if (dirIndex % 4 === 1) { baseAngle = 0; startX += 40; } // Right
-                        if (dirIndex % 4 === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
-                        if (dirIndex % 4 === 3) { baseAngle = Math.PI; startX -= 40; } // Left
+                        if (normalizedDir === 0) startY -= 40; // Up
+                        if (normalizedDir === 1) { baseAngle = 0; startX += 40; } // Right
+                        if (normalizedDir === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
+                        if (normalizedDir === 3) { baseAngle = Math.PI; startX -= 40; } // Left
 
                         function createParticle() {
                             const angle = baseAngle + (Math.random() - 0.5) * (Math.PI / 3);
