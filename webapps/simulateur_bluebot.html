@@ -2842,6 +2842,18 @@
             placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
 
             const overlay = document.getElementById(overlayId);
+
+            // Clear previous volcano loops if any
+            if (window.dragonFireTimeout) clearTimeout(window.dragonFireTimeout);
+            if (window.dragonFireAnimFrame) cancelAnimationFrame(window.dragonFireAnimFrame);
+
+            // Clear the canvas to ensure no frozen fire particles are left when robot moves/updates
+            const cvs = document.getElementById('dragon-fire-canvas');
+            if (cvs) {
+                const ctx = cvs.getContext('2d');
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+            }
+
             if (overlay) {
                 if (activeSkin === 'volcano') {
                     const triggerDragonFire = () => {
@@ -2927,16 +2939,16 @@
                             ctx.globalAlpha = 1.0;
 
                             if (alive) {
-                                requestAnimationFrame(anim);
+                                window.dragonFireAnimFrame = requestAnimationFrame(anim);
                             } else {
                                 const nextTime = Math.random() * 14000 + 6000;
-                                setTimeout(triggerDragonFire, nextTime);
+                                window.dragonFireTimeout = setTimeout(triggerDragonFire, nextTime);
                             }
                         }
                         anim();
                     };
 
-                    setTimeout(triggerDragonFire, Math.random() * 14000 + 6000);
+                    window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 14000 + 6000);
                 }
             }
 
