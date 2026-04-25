@@ -220,7 +220,7 @@
             display: flex;
             justify-content: center;
             margin: 20px 0;
-            overflow-x: auto;
+            overflow: visible;
             padding: 10px;
         }
 
@@ -231,7 +231,7 @@
             flex-direction: column;
             border: 3px solid var(--grid-border);
             border-radius: 8px;
-            overflow: hidden;
+            overflow: visible !important;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             background: var(--card-bg);
             width: 100%;
@@ -253,6 +253,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: visible;
         }
 
         .bot-cell.cell-light {
@@ -545,6 +546,15 @@
             z-index: 10;
             transition: top 0.35s ease-in-out, left 0.35s ease-in-out;
             cursor: grab;
+            overflow: visible;
+        }
+
+        .robot-overlay svg {
+            overflow: visible;
+        }
+
+        #sim-grid .robot-overlay {
+            overflow: visible !important;
         }
 
         .robot-overlay:active {
@@ -559,6 +569,7 @@
             justify-content: center;
             transition: transform 0.3s ease;
             filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            overflow: visible;
         }
 
 
@@ -1628,6 +1639,16 @@
             height: 100%;
         }
 
+        #dragon-fire-canvas {
+            z-index: 9998;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         .skin-preview>div {
             width: 40px;
             height: 40px;
@@ -1707,6 +1728,16 @@
 
         .skin-volcano .bot-cell {
             border: 1px solid #7f1d1d;
+            overflow: visible; /* Allow flame to extend outside */
+        }
+
+        .skin-volcano {
+            overflow: visible !important;
+        }
+
+        .skin-volcano #sim-grid,
+        .skin-volcano .bot-grid {
+            overflow: visible !important;
         }
 
         /* Dalles de roche volcanique */
@@ -1791,7 +1822,10 @@
         </defs>
     </svg>
 
+    <!-- AUDIO -->
+    <audio id="audio-win" src="../ressources/win.mp3" preload="auto"></audio>
     <canvas id="confetti-canvas"></canvas>
+    <canvas id="dragon-fire-canvas"></canvas>
 
 
 
@@ -2536,7 +2570,7 @@
                     <path class="rocket-flame-inner" d="M 42 70 Q 50 90 58 70 Q 50 80 42 70 Z" fill="#fef08a"/>
                 </svg>`,
             'volcano': `
-                <svg viewBox="-15 -60 130 215" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
     <style>
         .wing-l { transform-origin: 40px 50px; animation: flapL 0.7s ease-in-out infinite alternate; }
         .wing-r { transform-origin: 60px 50px; animation: flapR 0.7s ease-in-out infinite alternate; }
@@ -2548,30 +2582,33 @@
         @keyframes spit { 0% { transform: scaleY(1) scaleX(0.9); opacity: 0.8; } 100% { transform: scaleY(1.3) scaleX(1.1); opacity: 1; } }
         @keyframes swish { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
     </style>
-    <g class="tail">
-        <path d="M 45 75 Q 50 135 50 155 Q 50 135 55 75 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="1.5"/>
-        <polygon points="50,155 40,140 60,140" fill="#f97316" filter="url(#glow)"/>
-        <polygon points="50,115 45,100 55,100" fill="#ea580c"/>
-    </g>
-    <g class="wing-l">
-        <path d="M 40 45 C 5 20 -20 40 0 65 C 10 55 20 70 25 58 C 30 68 35 60 40 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
-        <path d="M 40 45 Q 15 30 0 65 M 40 45 Q 20 45 25 58 M 40 45 Q 30 55 35 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
-    </g>
-    <g class="wing-r">
-        <path d="M 60 45 C 95 20 120 40 100 65 C 90 55 80 70 75 58 C 70 68 65 60 60 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
-        <path d="M 60 45 Q 85 30 100 65 M 60 45 Q 80 45 75 58 M 60 45 Q 70 55 65 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
-    </g>
-    <path d="M 50 22 C 68 28 72 60 50 82 C 28 60 32 28 50 22 Z" fill="#991b1b" stroke="#991b1b" stroke-width="2"/>
-    <path d="M 50 32 C 57 45 56 60 50 72 C 44 60 43 45 50 32 Z" fill="url(#lava)" filter="url(#glow)"/>
-    <path d="M 40 26 C 40 8 46 3 50 -2 C 54 3 60 8 60 26 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
-    <path d="M 40 20 Q 25 8 20 25 Q 32 18 40 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
-    <path d="M 60 20 Q 75 8 80 25 Q 68 18 60 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
-    <polygon points="44,10 49,13 43,16" fill="#fef08a" filter="url(#glow)"/>
-    <polygon points="56,10 51,13 57,16" fill="#fef08a" filter="url(#glow)"/>
-    <g class="fire">
-        <path d="M 38 -2 C 25 -20 15 -30 20 -42 Q 30 -35 35 -38 Q 28 -50 40 -48 Q 42 -40 50 -45 Q 58 -40 60 -48 Q 72 -50 65 -38 Q 70 -35 80 -42 C 85 -30 75 -20 62 -2 Z" fill="#fef08a" filter="url(#glow)" opacity="0.9"/>
-        <path d="M 42 -2 C 32 -16 30 -28 38 -38 Q 44 -30 50 -35 Q 56 -30 62 -38 C 70 -28 68 -16 58 -2 Z" fill="#f97316"/>
-        <path d="M 46 -2 C 40 -12 42 -22 50 -28 C 58 -22 60 -12 54 -2 Z" fill="#ea580c"/>
+    <g transform="scale(1.4) translate(-14, -14)">
+        <g class="tail">
+            <path d="M 45 75 Q 50 135 50 155 Q 50 135 55 75 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="1.5"/>
+            <polygon points="50,155 40,140 60,140" fill="#f97316" filter="url(#glow)"/>
+            <polygon points="50,115 45,100 55,100" fill="#ea580c"/>
+        </g>
+        <g class="wing-l">
+            <!-- Scaled up wings -->
+            <g transform="scale(1.5) translate(-13, -15)">
+                <path d="M 40 45 C 5 20 -20 40 0 65 C 10 55 20 70 25 58 C 30 68 35 60 40 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
+                <path d="M 40 45 Q 15 30 0 65 M 40 45 Q 20 45 25 58 M 40 45 Q 30 55 35 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
+            </g>
+        </g>
+        <g class="wing-r">
+            <!-- Scaled up wings -->
+            <g transform="scale(1.5) translate(-20, -15)">
+                <path d="M 60 45 C 95 20 120 40 100 65 C 90 55 80 70 75 58 C 70 68 65 60 60 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
+                <path d="M 60 45 Q 85 30 100 65 M 60 45 Q 80 45 75 58 M 60 45 Q 70 55 65 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
+            </g>
+        </g>
+        <path d="M 50 22 C 68 28 72 60 50 82 C 28 60 32 28 50 22 Z" fill="#991b1b" stroke="#991b1b" stroke-width="2"/>
+        <path d="M 50 32 C 57 45 56 60 50 72 C 44 60 43 45 50 32 Z" fill="url(#lava)" filter="url(#glow)"/>
+        <path d="M 40 26 C 40 8 46 3 50 -2 C 54 3 60 8 60 26 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
+        <path d="M 40 20 Q 25 8 20 25 Q 32 18 40 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
+        <path d="M 60 20 Q 75 8 80 25 Q 68 18 60 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
+        <polygon points="44,10 49,13 43,16" fill="#fef08a" filter="url(#glow)"/>
+        <polygon points="56,10 51,13 57,16" fill="#fef08a" filter="url(#glow)"/>
     </g>
 </svg>`,
             'cyberbot': `
@@ -2810,6 +2847,104 @@
             placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
 
             const overlay = document.getElementById(overlayId);
+            if (overlay) {
+                if (activeSkin === 'volcano') {
+                    const triggerDragonFire = () => {
+                        if (!document.contains(overlay)) return;
+
+                        const cvs = document.getElementById('dragon-fire-canvas');
+                        if (!cvs) return;
+
+                        const ctx = cvs.getContext('2d');
+                        cvs.width = window.innerWidth;
+                        cvs.height = window.innerHeight;
+
+                        const rect = overlay.getBoundingClientRect();
+                        let startX = rect.left + rect.width / 2;
+                        let startY = rect.top + rect.height / 2;
+
+                        let parts = [];
+                        let frameCount = 0;
+
+                        // Calculate angle and origin based on robot orientation
+                        let baseAngle = -Math.PI / 2; // Up by default
+                        if (dirIndex % 4 === 0) startY -= 40; // Up
+                        if (dirIndex % 4 === 1) { baseAngle = 0; startX += 40; } // Right
+                        if (dirIndex % 4 === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
+                        if (dirIndex % 4 === 3) { baseAngle = Math.PI; startX -= 40; } // Left
+
+                        function createParticle() {
+                            const angle = baseAngle + (Math.random() - 0.5) * (Math.PI / 3);
+                            const speed = Math.random() * 8 + 4;
+                            const cols = ['#fef08a', '#fde047', '#f59e0b', '#ea580c', '#dc2626', '#991b1b', '#292524'];
+
+                            parts.push({
+                                x: startX + (Math.random() - 0.5) * 10,
+                                y: startY + (Math.random() - 0.5) * 10,
+                                vx: Math.cos(angle) * speed,
+                                vy: Math.sin(angle) * speed,
+                                c: cols[Math.floor(Math.random() * cols.length)],
+                                s: Math.random() * 15 + 5,
+                                life: 1.0,
+                                decay: Math.random() * 0.02 + 0.015
+                            });
+                        }
+
+                        for (let i = 0; i < 40; i++) createParticle();
+
+                        function anim() {
+                            if (!document.contains(overlay)) {
+                                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                                return;
+                            }
+
+                            ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+                            if (frameCount < 20) {
+                                for (let i = 0; i < 5; i++) createParticle();
+                            }
+                            frameCount++;
+
+                            let alive = false;
+
+                            ctx.globalCompositeOperation = 'screen';
+
+                            for (let i = parts.length - 1; i >= 0; i--) {
+                                let p = parts[i];
+                                p.x += p.vx;
+                                p.y += p.vy;
+                                p.s *= 0.95;
+                                p.life -= p.decay;
+
+                                if (p.life > 0 && p.s > 0.5) {
+                                    alive = true;
+                                    ctx.beginPath();
+                                    ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                                    ctx.fillStyle = p.c;
+                                    ctx.globalAlpha = p.life;
+                                    ctx.fill();
+                                } else {
+                                    parts.splice(i, 1);
+                                }
+                            }
+
+                            ctx.globalCompositeOperation = 'source-over';
+                            ctx.globalAlpha = 1.0;
+
+                            if (alive) {
+                                requestAnimationFrame(anim);
+                            } else {
+                                const nextTime = Math.random() * 14000 + 6000;
+                                setTimeout(triggerDragonFire, nextTime);
+                            }
+                        }
+                        anim();
+                    };
+
+                    setTimeout(triggerDragonFire, Math.random() * 14000 + 6000);
+                }
+            }
+
             if (overlay && containerId === 'sim-grid') {
                 overlay.setAttribute('draggable', 'true');
                 overlay.ondragstart = (e) => {
