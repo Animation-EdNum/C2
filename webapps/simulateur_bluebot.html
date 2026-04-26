@@ -824,6 +824,35 @@
             filter: drop-shadow(10px -10px 12px rgba(0, 0, 0, 0.8));
         }
 
+        /* Effet Océan pour Pirate */
+        .ground-ocean .bot-cell {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ground-ocean .bot-cell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, transparent 70%); /* bleu clair */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+            transform: scale(0.5);
+        }
+
+        .ground-ocean .bot-cell.ripple::before {
+            opacity: 0.8;
+            transform: scale(2);
+            transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+        }
+
+        .ground-ocean .bot-cell.ripple-fade::before {
+            opacity: 0;
+            transform: scale(3);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
         /* Sol en feu */
         .ground-fire .bot-cell {
             position: relative;
@@ -2561,6 +2590,12 @@
                 if (!document.body.classList.contains('dark')) toggleTheme();
             }
 
+            if (skinId === 'pirate') {
+                startOceanRipples();
+            } else {
+                stopOceanRipples();
+            }
+
             renderSkinsGrid();
             closeSkinsModal();
 
@@ -3244,6 +3279,65 @@
         /* ================================================================
            GRILLE ET AFFICHAGE
            ================================================================ */
+
+        // --- Effet Océan ---
+        let oceanRippleInterval = null;
+
+        function startOceanRipples() {
+            if (oceanRippleInterval) clearInterval(oceanRippleInterval);
+            oceanRippleInterval = setInterval(() => {
+                if (activeSkin !== 'pirate') return;
+                const row = Math.floor(Math.random() * GRID_ROWS);
+                const col = Math.floor(Math.random() * GRID_COLS);
+                triggerRipple(row, col, 0);
+            }, 2000);
+        }
+
+        function stopOceanRipples() {
+            if (oceanRippleInterval) {
+                clearInterval(oceanRippleInterval);
+                oceanRippleInterval = null;
+            }
+        }
+
+        function triggerRipple(row, col, delay) {
+            setTimeout(() => {
+                // Trouver les cellules dans toutes les grilles possibles
+                const grids = ['sim-grid', 'chal-grid', 'read-grid'];
+                grids.forEach(gridId => {
+                    const cellId = `${gridId}-cell-${row}-${col}`;
+                    const cell = document.getElementById(cellId);
+                    if (cell) {
+                        cell.classList.add('ripple');
+                        cell.classList.remove('ripple-fade');
+                        setTimeout(() => {
+                            cell.classList.add('ripple-fade');
+                            cell.classList.remove('ripple');
+                        }, 200);
+                    }
+                });
+            }, delay);
+
+            if (delay === 0) {
+                const neighbors = [ [-1, 0], [1, 0], [0, -1], [0, 1] ];
+                neighbors.forEach(n => {
+                    const nr = row + n[0];
+                    const nc = col + n[1];
+                    if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
+                        triggerRipple(nr, nc, 300);
+                        const neighbors2 = [ [-1, 0], [1, 0], [0, -1], [0, 1] ];
+                        neighbors2.forEach(n2 => {
+                            const nnr = nr + n2[0];
+                            const nnc = nc + n2[1];
+                            if (nnr >= 0 && nnr < GRID_ROWS && nnc >= 0 && nnc < GRID_COLS && (nnr !== row || nnc !== col)) {
+                               triggerRipple(nnr, nnc, 600);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
             grid.innerHTML = ''; grid.style.position = 'relative';
@@ -3256,6 +3350,11 @@
             });
             if (activeSkin !== 'volcano') {
                 grid.classList.remove('ground-fire');
+            }
+            if (activeSkin !== 'pirate') {
+                grid.classList.remove('ground-ocean');
+            } else {
+                grid.classList.add('ground-ocean');
             }
             grid.classList.add(`skin-${activeSkin}`);
 
@@ -3274,6 +3373,7 @@
                     const cell = document.createElement('div');
                     cell.className = 'bot-cell ' + ((r + c) % 2 === 0 ? 'cell-light' : 'cell-dark');
                     cell.setAttribute('role', 'gridcell');
+                    cell.id = `${containerId}-cell-${r}-${c}`;
                     const isObstacle = obstacles.some(o => o.r === r && o.c === c);
                     if (isObstacle) {
                         cell.classList.add('obstacle');
@@ -4774,6 +4874,9 @@
     <script>lucide.createIcons();</script>
     <script>
         window.addEventListener('load', () => {
+            if (activeSkin === 'pirate') {
+                startOceanRipples();
+            }
             ScoreManager.init('simulateur_bluebot');
             updateExtremeVisibility();
         });
