@@ -2238,8 +2238,8 @@
                 <div class="controls">
                     <button class="btn btn-check" id="btnRun" title="Ex&eacute;cuter">▶ GO</button>
                     <button class="btn btn-clear" id="btnClear">🗑 Effacer (X)</button>
-                    <button class="btn btn-outline" id="btnReset" title="Réinitialiser la position de l'automate">🔄
-                        Reset position</button>
+                    <button class="btn btn-outline" id="btnReset" title="Placer l'automate à une position aléatoire">🎲
+                        Position aléatoire</button>
                 </div>
 
                 <div class="score-bar" id="sim-score-bar" style="display: none;">
@@ -3304,7 +3304,10 @@
 
                     cell.addEventListener('drop', (e) => {
                         e.preventDefault();
-                        if (containerId === 'sim-grid' && !simState.running && !isObstacle) {
+                        const isSimObstacle = simState.obstacles && simState.obstacles.some(o => o.r === r && o.c === c);
+                        const isSimTarget = simState.targetRow === r && simState.targetCol === c;
+
+                        if (containerId === 'sim-grid' && !simState.running && !isSimObstacle && !isSimTarget) {
                             playSound('click');
                             simState.robotRow = r;
                             simState.robotCol = c;
@@ -3349,6 +3352,17 @@
             placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
 
             const overlay = document.getElementById(overlayId);
+
+            if (overlay && containerId === 'sim-grid') {
+                overlay.setAttribute('draggable', 'true');
+                overlay.addEventListener('dragstart', (e) => {
+                    if (simState.running) {
+                        e.preventDefault();
+                        return;
+                    }
+                    e.dataTransfer.setData('text/plain', 'robot');
+                });
+            }
 
             // Clear previous volcano loops if any (only if we're not using the volcano skin, so we don't break moving animation)
             if (activeSkin !== 'volcano') {
@@ -3845,7 +3859,6 @@
                 let tempObstacles = [];
                 for (let r = 0; r < GRID_ROWS; r++) {
                     for (let c = 0; c < GRID_COLS; c++) {
-                        if (r === 5 && c === 0) continue;
                         if (r === simState.robotRow && c === simState.robotCol) continue;
                         if (simState.targetRow !== null && r === simState.targetRow && c === simState.targetCol) continue;
                         if (Math.random() < 0.15) tempObstacles.push({ r, c });
@@ -3893,7 +3906,6 @@
                 targetC = Math.floor(Math.random() * GRID_COLS);
                 attempts++;
             } while (attempts < 100 && (
-                (targetR === 5 && targetC === 0) ||
                 simState.obstacles.some(o => o.r === targetR && o.c === targetC) ||
                 (Math.abs(targetR - simState.robotRow) <= 1 && Math.abs(targetC - simState.robotCol) <= 1) ||
                 findShortestPath(simState.robotRow, simState.robotCol, simState.robotDir, targetR, targetC, simState.obstacles) === null
@@ -3932,11 +3944,41 @@
             const target = document.getElementById('sim-target');
             if (target) target.remove();
         }
+        function randomizeSimulatorPosition() {
+            if (simState.running) return;
+            playSound('click');
+
+            let newRow, newCol;
+            let attempts = 0;
+            do {
+                newRow = Math.floor(Math.random() * GRID_ROWS);
+                newCol = Math.floor(Math.random() * GRID_COLS);
+                attempts++;
+            } while (attempts < 100 && (
+                simState.obstacles.some(o => o.r === newRow && o.c === newCol) ||
+                (simState.targetRow !== null && newRow === simState.targetRow && newCol === simState.targetCol)
+            ));
+
+            simState.robotRow = newRow;
+            simState.robotCol = newCol;
+            simState.startRow = newRow;
+            simState.startCol = newCol;
+            simState.robotDir = 0;
+            simState.startDir = 0;
+            simState.stepIndex = -1;
+            simState.failed = false;
+
+            TrailManager.clear('sim-grid');
+            renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+            renderProgram();
+        }
+
         function resetSimulatorPosition() {
             if (simState.running) return;
             playSound('click');
-            simState.robotRow = 5; simState.robotCol = 0; simState.robotDir = 0;
-            simState.startRow = 5; simState.startCol = 0; simState.startDir = 0;
+            simState.robotRow = simState.startRow;
+            simState.robotCol = simState.startCol;
+            simState.robotDir = simState.startDir;
             simState.stepIndex = -1; simState.failed = false;
 
             TrailManager.clear('sim-grid');
@@ -4571,7 +4613,7 @@
 
         buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
 
-        resetSimulatorPosition();
+        randomizeSimulatorPosition();
 
         // Événements
 
@@ -4601,7 +4643,7 @@
         // Simulator controls
         document.getElementById('btnClear').addEventListener('click', clearProgram);
         document.getElementById('btnRun').addEventListener('click', runProgram);
-        document.getElementById('btnReset').addEventListener('click', resetSimulatorPosition);
+        document.getElementById('btnReset').addEventListener('click', randomizeSimulatorPosition);
 
         document.getElementById('btn-place-elements').addEventListener('click', () => {
             placeRandomSimTarget();
