@@ -3258,10 +3258,15 @@
             }
         });
 
-        function showToast(msg, isSuccess = true) {
+        function showToast(msg, isSuccess = true, isWarning = false) {
             const toast = document.getElementById('toast');
-            toast.textContent = (msg.includes('Attention') || !isSuccess ? '❌ ' : '✅ ') + msg;
-            toast.style.background = isSuccess ? '#10b981' : '#ef4444';
+            if (isWarning) {
+                toast.textContent = '⚠️ ' + msg;
+                toast.style.background = '#f97316';
+            } else {
+                toast.textContent = (msg.includes('Attention') || !isSuccess ? '❌ ' : '✅ ') + msg;
+                toast.style.background = isSuccess ? '#10b981' : '#ef4444';
+            }
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 5000);
         }
@@ -3407,13 +3412,31 @@
                         const isSimObstacle = simState.obstacles && simState.obstacles.some(o => o.r === r && o.c === c);
                         const isSimTarget = simState.targetRow === r && simState.targetCol === c;
 
-                        if (containerId === 'sim-grid' && !simState.running && !isSimObstacle && !isSimTarget) {
-                            playSound('click');
-                            simState.robotRow = r;
-                            simState.robotCol = c;
-                            simState.startRow = r;
-                            simState.startCol = c;
-                            resetSimulatorPosition();
+                        if (containerId === 'sim-grid' && !simState.running && !isSimObstacle) {
+                            if (isSimTarget) {
+                                playSound('click');
+                                simState.robotRow = r;
+                                simState.robotCol = c;
+                                simState.startRow = r;
+                                simState.startCol = c;
+                                resetSimulatorPosition();
+                                showToast('Trésor non comptabilisé (déplacement manuel)', false, true);
+
+                                const target = document.getElementById('sim-target');
+                                if (target) {
+                                    target.remove();
+                                    simState.targetRow = null;
+                                    simState.targetCol = null;
+                                }
+                                placeRandomSimTarget(true);
+                            } else {
+                                playSound('click');
+                                simState.robotRow = r;
+                                simState.robotCol = c;
+                                simState.startRow = r;
+                                simState.startCol = c;
+                                resetSimulatorPosition();
+                            }
                         }
                     });
 
