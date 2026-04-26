@@ -1789,12 +1789,12 @@
         }
 
         .skin-list-item.active-skin {
-            border-color: var(--accent);
-            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
         }
 
         body.dark .skin-list-item.active-skin {
-            background: rgba(99, 102, 241, 0.2);
+            background: rgba(34, 197, 94, 0.2);
         }
 
         .skin-item-avatar {
@@ -2438,43 +2438,30 @@
 
 
 
-    <!-- Mats Modal -->
-    <div id="mats-modal" aria-hidden="true" role="dialog" aria-labelledby="mats-modal-title">
-        <div class="skins-content">
-            <div class="skins-header">
-                <h2 id="mats-modal-title">🗺️ Tapis</h2>
+    <!-- Mats Drawer Component -->
+    <div id="mats-drawer-overlay" class="skins-drawer-overlay" aria-hidden="true"></div>
+    <div id="mats-drawer" class="skins-drawer" aria-hidden="true" role="dialog" aria-labelledby="mats-drawer-title">
+        <div class="skins-drawer-header" style="flex-direction: column; align-items: stretch; gap: 10px; padding: 15px 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="mats-drawer-title">🗺️ Tapis</h2>
                 <button class="btn-close-modal" id="btn-close-mats" aria-label="Fermer">✖</button>
             </div>
-            <div id="mat-opacity-container"
-                style="display: flex; flex-direction: column; align-items: stretch; gap: 5px; margin-bottom: 15px; padding: 15px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
-                <div
-                    style="display: flex; justify-content: space-between; font-size: 1em; color: var(--text-main); font-weight: 600;">
-                    <span>Opacité des tapis</span>
-                    <span id="matOpacityValue">30%</span>
-                </div>
-                <input type="range" id="matOpacitySlider" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
-            </div>
 
-            <div id="mat-upload-container"
-                style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 15px; padding: 15px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
-                <div id="customMatTitle" style="font-size: 1em; color: var(--text-main); font-weight: 600;">Ajouter un
-                    tapis personnalisé</div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <label for="customMatUpload" class="btn btn-outline"
-                        style="cursor: pointer; flex-grow: 1; text-align: center;">
-                        <i data-lucide="upload"
-                            style="width: 18px; height: 18px; margin-right: 5px; vertical-align: middle;"></i>
-                        Sélectionner une image
-                    </label>
-                    <input type="file" id="customMatUpload" accept="image/*" style="display: none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                <div id="mat-opacity-container" style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9em; font-weight: 600;">
+                        <span>Opacité</span>
+                        <span id="matOpacityValue">30%</span>
+                    </div>
+                    <input type="range" id="matOpacitySlider" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
                 </div>
-                <div id="customMatStatus"
-                    style="font-size: 0.85em; color: var(--text-muted); text-align: center; min-height: 1.2em;"></div>
+                <button class="btn btn-outline btn-small" id="btn-remove-mat" style="white-space: nowrap; font-size: 0.9em;">
+                    <i data-lucide="trash-2" style="width: 16px; height: 16px; margin-right: 5px;"></i>Aucun tapis
+                </button>
             </div>
-
-            <div class="skins-grid" id="mats-grid-container">
-                <!-- Mats generated via JS -->
-            </div>
+        </div>
+        <div class="skins-list" id="mats-list-container">
+            <!-- Mats generated via JS -->
         </div>
     </div>
 
@@ -2813,43 +2800,78 @@
         function openMatsModal() {
             playSound('click');
             renderMatsGrid();
-            document.getElementById('mats-modal').classList.add('active');
-            document.getElementById('mats-modal').setAttribute('aria-hidden', 'false');
+            document.getElementById('mats-drawer').classList.add('active');
+            document.getElementById('mats-drawer-overlay').classList.add('active');
+            document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'false');
+            document.getElementById('mats-drawer').setAttribute('aria-hidden', 'false');
         }
 
         function closeMatsModal() {
             playSound('click');
-            document.getElementById('mats-modal').classList.remove('active');
-            document.getElementById('mats-modal').setAttribute('aria-hidden', 'true');
+            document.getElementById('mats-drawer').classList.remove('active');
+            document.getElementById('mats-drawer-overlay').classList.remove('active');
+            document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'true');
+            document.getElementById('mats-drawer').setAttribute('aria-hidden', 'true');
         }
 
         function renderMatsGrid() {
-            const container = document.getElementById('mats-grid-container');
-            container.innerHTML = Object.keys(MAT_CONFIG).map(matId => {
+            const container = document.getElementById('mats-list-container');
+            container.innerHTML = Object.keys(MAT_CONFIG).filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
                 const config = MAT_CONFIG[matId];
                 const isActive = activeMat === matId;
 
-                let btnHtml = isActive
-                    ? `<button class="btn btn-small" disabled style="background:var(--success); color:white; width:100%;">Activé ✓</button>`
-                    : `<button class="btn btn-outline btn-small select-mat-btn" data-mat="${matId}" style="width:100%;">Sélectionner</button>`;
+                const exampleHtml = config.example ? `<div class="skin-item-desc" style="font-style: italic; color: var(--accent); margin-top: 4px; font-size: 0.8em;">💡 ${config.example}</div>` : '';
 
                 return `
-                    <div class="skin-card ${isActive ? 'active-skin' : ''}" data-mat="${matId}" tabindex="0" >
-                        <div class="skin-card-header">
-                            <span>${config.name}</span>
+                    <div class="skin-list-item ${isActive ? 'active-skin' : ''}" data-mat="${matId}" tabindex="0">
+                        <div class="skin-item-avatar" style="font-size: 32px;">
+                            ${config.icon || 'A'}
                         </div>
-                        <div class="skin-preview" style="background: var(--grid-light);">
-                            <div style="font-size: 32px; font-weight: bold; color: var(--text-muted); opacity: 0.5;">
-                                ${config.icon || 'A'}
-                            </div>
-                        </div>
-                        <div class="skin-desc">${config.desc}</div>
-                        <div style="margin-top:auto; padding-top:10px;">
-                            ${btnHtml}
+                        <div class="skin-item-info">
+                            <div class="skin-item-name">${config.name}</div>
+                            <div class="skin-item-desc">${config.desc}</div>
+                            ${exampleHtml}
                         </div>
                     </div>
                 `;
             }).join('');
+
+            // Re-append the custom upload at the end
+            const customConfig = MAT_CONFIG['custom'];
+            const isCustomActive = activeMat === 'custom';
+            const customHtml = `
+                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-top: 15px; border-top: 1px solid var(--grid-border); border-radius: 0 0 12px 12px; padding-top: 15px;">
+                    <div class="skin-item-avatar" style="font-size: 32px;">
+                        ${customConfig.icon}
+                    </div>
+                    <div class="skin-item-info">
+                        <div class="skin-item-name">${customConfig.name}</div>
+                        <div class="skin-item-desc">${customConfig.desc}</div>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;" onclick="event.stopPropagation()">
+                            <label for="customMatUpload" class="btn btn-outline btn-small"
+                                style="cursor: pointer; flex-grow: 1; text-align: center; font-size: 0.85em; padding: 4px 8px;">
+                                <i data-lucide="upload" style="width: 14px; height: 14px; margin-right: 5px; vertical-align: middle;"></i>
+                                Télécharger image
+                            </label>
+                            <input type="file" id="customMatUpload" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="customMatStatus" style="font-size: 0.8em; color: var(--text-muted); margin-top: 5px;"></div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += customHtml;
+            lucide.createIcons();
+
+            // Re-bind the upload listener here since the DOM is recreated
+            const uploadInput = document.getElementById('customMatUpload');
+            if (uploadInput) {
+                // Ensure we call the existing global function if defined, or define one dynamically
+                uploadInput.addEventListener('change', function(e) {
+                    if (typeof handleCustomMatUpload === 'function') {
+                        handleCustomMatUpload(e);
+                    }
+                });
+            }
         }
 
         function generateMatContent(matId) {
@@ -2932,13 +2954,8 @@
                 let btnHtml = '';
                 let lockIcon = '';
 
-                if (isUnlocked) {
-                    btnHtml = isActive
-                        ? `<button class="btn btn-small" disabled style="background:var(--success); color:white; padding: 4px 8px; font-size: 12px;">✓</button>`
-                        : `<button class="btn btn-outline btn-small select-skin-btn" data-skin="${skinId}" style="padding: 4px 8px; font-size: 12px;">Choisir</button>`;
-                } else {
+                if (!isUnlocked) {
                     lockIcon = `<div class="lock-icon" style="position: absolute; font-size: 24px; z-index: 2;">🔒</div>`;
-                    btnHtml = `<button class="btn btn-outline btn-small" disabled style="padding: 4px 8px; font-size: 12px; opacity:0.5;">🔒</button>`;
                 }
 
                 return `
@@ -2955,9 +2972,7 @@
                             <div class="skin-item-mini" title="Obstacle">${config.obstacle}</div>
                             <div class="skin-item-mini" title="Récompense">${config.target}</div>
                         </div>
-                        <div class="skin-item-action">
-                            ${btnHtml}
-                        </div>
+
                     </div>
                 `;
             }).join('');
@@ -3051,21 +3066,24 @@
         const MAT_CONFIG = {
             'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
             'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
-            'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+            'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
             'city': {
                 name: 'Cité des directions',
                 desc: 'Thème ville et sécurité routière.',
+                example: 'Amène le robot au supermarché.',
                 icon: '🏙️'
             },
             'math': {
                 name: 'Calcul mental',
                 desc: 'Chiffres de 0 à 35 pour s\'entraîner au calcul.',
+                example: 'Va sur le résultat de 5 + 7.',
                 icon: '🔢',
                 content: Array.from({ length: 36 }, (_, i) => i.toString())
             },
             'shapes': {
                 name: 'Couleurs et formes',
                 desc: 'Formes géométriques colorées.',
+                example: 'Trouve le carré rouge.',
                 icon: '🔵',
                 content: [],
                 baseContent: [
@@ -3077,6 +3095,7 @@
             'geo': {
                 name: 'Géographie',
                 desc: 'Drapeaux du monde.',
+                example: 'Va sur le drapeau du Japon.',
                 icon: '🌍',
                 content: [
                     '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧',
@@ -5103,10 +5122,11 @@
 
         document.getElementById('btn-open-mats').addEventListener('click', openMatsModal);
         document.getElementById('btn-close-mats').addEventListener('click', closeMatsModal);
-        document.getElementById('mats-grid-container').addEventListener('click', (e) => {
-            const card = e.target.closest('.skin-card');
-            const btn = e.target.closest('.select-mat-btn');
-            const matId = (card || btn)?.dataset.mat;
+        document.getElementById('mats-drawer-overlay').addEventListener('click', closeMatsModal);
+        document.getElementById('btn-remove-mat').addEventListener('click', () => selectMat('none'));
+        document.getElementById('mats-list-container').addEventListener('click', (e) => {
+            const item = e.target.closest('.skin-list-item');
+            const matId = item?.dataset.mat;
             if (matId) selectMat(matId);
         });
         document.getElementById('btn-open-skins').addEventListener('click', openSkinsModal);
