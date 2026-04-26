@@ -484,8 +484,8 @@
         /* Skin Train */
         .bot-grid.skin-train .trail-path-ties {
             stroke: #8B4513;
-            stroke-width: 14;
-            stroke-dasharray: 4 6;
+            stroke-width: 10;
+            stroke-dasharray: 2 3;
             opacity: 0.9;
             fill: none;
             stroke-linecap: butt;
@@ -494,7 +494,7 @@
 
         .bot-grid.skin-train .trail-path-rail-base {
             stroke: #555;
-            stroke-width: 6;
+            stroke-width: 7;
             opacity: 0.9;
             fill: none;
             stroke-linecap: round;
@@ -505,19 +505,11 @@
             display: none;
         }
 
-        .bot-grid.skin-train .trail-path-rail-inner {
-            stroke: rgba(255, 255, 255, 0.4);
-            stroke-width: 2;
-            opacity: 0.9;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
 
         /* Skin F1 */
         .bot-grid.skin-f1 .trail-path-red {
             stroke: #ff0000;
-            stroke-width: 19;
+            stroke-width: 15;
             opacity: 0.9;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -526,8 +518,8 @@
 
         .bot-grid.skin-f1 .trail-path-border {
             stroke: #fff;
-            stroke-width: 19;
-            stroke-dasharray: 8 8;
+            stroke-width: 15;
+            stroke-dasharray: 6 6;
             opacity: 0.9;
             stroke-linecap: butt;
             stroke-linejoin: round;
@@ -536,7 +528,7 @@
 
         .bot-grid.skin-f1 .trail-path {
             stroke: #666;
-            stroke-width: 15;
+            stroke-width: 11;
             opacity: 0.9;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -3494,21 +3486,59 @@
 
                     this.states[containerId].extraPaths.push(redPath, borderPath);
                 } else if (activeSkin === 'train') {
+                    // Inject mask for double rail
+                    let maskId = `rail-mask-${containerId}`;
+                    let mask = layer.querySelector(`#${maskId}`);
+                    let maskPath = layer.querySelector(`#${maskId} .rail-mask-path`);
+
+                    if (!mask || !maskPath) {
+                        // Clean up partial mask if it exists
+                        if (mask) mask.remove();
+
+                        let defs = layer.querySelector('defs');
+                        if (!defs) {
+                            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                            layer.insertBefore(defs, layer.firstChild);
+                        }
+
+                        mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+                        mask.setAttribute("id", maskId);
+                        let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                        rect.setAttribute("width", "200%");
+                        rect.setAttribute("height", "200%");
+                        rect.setAttribute("x", "-50%");
+                        rect.setAttribute("y", "-50%");
+                        rect.setAttribute("fill", "white");
+
+                        maskPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        maskPath.setAttribute("class", "rail-mask-path");
+                        maskPath.setAttribute("stroke", "black");
+                        maskPath.setAttribute("stroke-width", "3");
+                        maskPath.setAttribute("fill", "none");
+                        maskPath.setAttribute("stroke-linecap", "round");
+                        maskPath.setAttribute("stroke-linejoin", "round");
+
+                        mask.appendChild(rect);
+                        mask.appendChild(maskPath);
+                        defs.appendChild(mask);
+                    }
+
+                    if (maskPath) maskPath.setAttribute("d", d);
+
                     const tiesPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     tiesPath.setAttribute("class", "trail-path-ties");
                     tiesPath.setAttribute("d", d);
                     const railBasePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     railBasePath.setAttribute("class", "trail-path-rail-base");
                     railBasePath.setAttribute("d", d);
-                    const railInnerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    railInnerPath.setAttribute("class", "trail-path-rail-inner");
-                    railInnerPath.setAttribute("d", d);
+                    railBasePath.setAttribute("mask", `url(#${maskId})`);
+
+                    // We don't need railInnerPath anymore for the double rail effect
 
                     layer.insertBefore(tiesPath, path);
                     layer.insertBefore(railBasePath, path);
-                    layer.insertBefore(railInnerPath, path);
 
-                    this.states[containerId].extraPaths.push(tiesPath, railBasePath, railInnerPath);
+                    this.states[containerId].extraPaths.push(tiesPath, railBasePath, maskPath);
                 }
             },
 
