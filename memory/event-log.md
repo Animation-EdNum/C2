@@ -25,3 +25,5 @@
 - **[2026-04-25]** [UX/Security] Improved Blue-Bot simulator fullscreen mode and implemented comprehensive global security/XSS mitigations.
 - **2026-04-25**: Updated code-patterns.md rule on absolute dropdown menu alignment, changing mobile preference to `right: 0; left: auto;` to prevent layout overflow.
 - **[2026-04-25]** [UX/Gamification] Refined Blue-Bot simulator: introduced custom mat image upload feature.
+- **[2026-04-26]** [UI/UX] Replaced Blue-Bot skins modal with a sliding side drawer for better accessibility and mobile experience.
+- **[2026-04-26]** [Gamification] Added new robot skins (Pirate-Bot, F1, Locomotive) and related easter eggs/rewards to Blue-Bot Simulator.
