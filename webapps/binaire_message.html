@@ -935,6 +935,9 @@
             if (currentTab !== 'play') return;
             if (e.key === 'Enter') {
                 e.preventDefault();
+                if (e.repeat) return;
+                const checkBtn = document.getElementById('encode-check');
+                if (checkBtn && checkBtn.disabled) return;
                 checkEncodeLetter();
             }
         });
@@ -991,6 +994,58 @@
             toast.textContent = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        const cooldownTimers = {};
+
+        function applyValidationCooldown(btnId) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+
+            if (cooldownTimers[btnId]) {
+                clearInterval(cooldownTimers[btnId].interval);
+                clearTimeout(cooldownTimers[btnId].timeout);
+            }
+
+            const originalText = btn.dataset.originalText || btn.innerText;
+            btn.dataset.originalText = originalText;
+            btn.disabled = true;
+
+            let secondsLeft = 5;
+            btn.innerText = `⏳ ${secondsLeft}s`;
+
+            const intervalId = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    btn.innerText = `⏳ ${secondsLeft}s`;
+                }
+            }, 1000);
+
+            const timeoutId = setTimeout(() => {
+                clearInterval(intervalId);
+                btn.disabled = false;
+                btn.innerText = originalText;
+                delete cooldownTimers[btnId];
+            }, 5000);
+
+            cooldownTimers[btnId] = { interval: intervalId, timeout: timeoutId };
+        }
+
+        function resetValidationCooldown(btnId) {
+            if (cooldownTimers[btnId]) {
+                clearInterval(cooldownTimers[btnId].interval);
+                clearTimeout(cooldownTimers[btnId].timeout);
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = false;
+                    if (btn.dataset.originalText) {
+                        btn.innerText = btn.dataset.originalText;
+                    } else {
+                        if (btn.innerText.includes('⏳')) btn.innerText = "Valider !";
+                    }
+                }
+                delete cooldownTimers[btnId];
+            }
         }
 
         // ==========================================
@@ -1189,6 +1244,7 @@
             encodeLetterMistakes = 0;
             document.getElementById('encode-values-row').style.display = 'none';
             document.getElementById('live-calc').style.display = 'none';
+            resetValidationCooldown('encode-check');
             document.getElementById('encode-check').disabled = false;
             hideAlpha(); renderGame(); updateLiveCalc();
         }
@@ -1231,7 +1287,7 @@
         }
 
         function checkEncodeLetter() {
-            if (encodeLocked || encodeIndex >= encodeWord.length) return;
+            if (encodeLocked || encodeIndex >= encodeWord.length || document.getElementById('encode-check').disabled) return;
 
             const letter = encodeWord[encodeIndex];
             const expected = rankToBin5(letterToRank(letter));
@@ -1239,6 +1295,7 @@
             const userSum = parseInt(userBin, 2);
 
             if (userBin === expected) {
+                resetValidationCooldown('encode-check');
                 playSound('success');
                 hideAlpha(); encodeLocked = true;
 
@@ -1287,6 +1344,7 @@
                 }, 1000);
 
             } else {
+                applyValidationCooldown('encode-check');
                 playSound('error');
                 encodeMistakes++;
                 encodeLetterMistakes++;
