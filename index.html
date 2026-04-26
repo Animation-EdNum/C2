@@ -583,6 +583,61 @@
             </div>
 
             <div class="grid searchable-grid">
+                <a href="alpha/webapps/machine_a_trier.html" class="card alpha-app" data-level="1-2H" data-id="app-machine-trier" style="display: none;">
+                    <div class="badges-wrapper"><span class="badge">1-2H</span></div>
+                    <div class="card-title">
+                        <i data-lucide="package" style="width:32px; height:32px; flex-shrink: 0;"></i>
+                        Machine à trier
+                    </div>
+                    <div class="card-desc">Glisse et trie les objets par couleur ou par forme.</div>
+                    <div class="card-tags">#Algorithmique #Tri</div>
+                    <div class="card-ref">📘 DÉ&gt;CODAGE 1-2 · Activité 3</div>
+                </a>
+
+                <a href="alpha/webapps/jeu_de_la_grue.html" class="card alpha-app" data-level="1-2H" data-id="app-jeu-grue" style="display: none;">
+                    <div class="badges-wrapper"><span class="badge">1-2H</span></div>
+                    <div class="card-title">
+                        <i data-lucide="crane" style="width:32px; height:32px; flex-shrink: 0;"></i>
+                        Jeu de la grue
+                    </div>
+                    <div class="card-desc">Programme la grue pour empiler des blocs.</div>
+                    <div class="card-tags">#Algorithmique #Séquence</div>
+                    <div class="card-ref">📘 DÉ&gt;CODAGE 1-2 · Activité 2</div>
+                </a>
+
+                <a href="alpha/webapps/pixel_studio_rvb.html" class="card alpha-app" data-level="5-6H" data-id="app-pixel-rvb" style="display: none;">
+                    <div class="badges-wrapper"><span class="badge">5-6H</span></div>
+                    <div class="card-title">
+                        <i data-lucide="palette" style="width:32px; height:32px; flex-shrink: 0;"></i>
+                        Pixel Studio RVB
+                    </div>
+                    <div class="card-desc">Mélange les couleurs pour comprendre le codage RGB.</div>
+                    <div class="card-tags">#Couleurs #Codage</div>
+                    <div class="card-ref">📘 DÉ&gt;CODAGE 5-6 · Scénario 6</div>
+                </a>
+
+                <a href="alpha/webapps/machine_a_chiffrer.html" class="card alpha-app" data-level="7-8H" data-id="app-machine-chiffrer" style="display: none;">
+                    <div class="badges-wrapper"><span class="badge">7-8H</span></div>
+                    <div class="card-title">
+                        <i data-lucide="lock" style="width:32px; height:32px; flex-shrink: 0;"></i>
+                        Machine à chiffrer
+                    </div>
+                    <div class="card-desc">Code et décode des messages avec le chiffre de César.</div>
+                    <div class="card-tags">#Cryptographie #Sécurité</div>
+                    <div class="card-ref">📘 DÉ&gt;CODAGE 7-8 · Alpha</div>
+                </a>
+
+                <a href="alpha/webapps/reseau_de_tri.html" class="card alpha-app" data-level="5-6H" data-id="app-reseau-tri" style="display: none;">
+                    <div class="badges-wrapper"><span class="badge">5-6H</span></div>
+                    <div class="card-title">
+                        <i data-lucide="git-merge" style="width:32px; height:32px; flex-shrink: 0;"></i>
+                        Réseau de tri
+                    </div>
+                    <div class="card-desc">Comprends comment les ordinateurs trient les nombres.</div>
+                    <div class="card-tags">#Algorithmique #Tri</div>
+                    <div class="card-ref">📘 DÉ&gt;CODAGE 5-6 · Alpha</div>
+                </a>
+
 
                 <a href="webapps/simulateur_bluebot.html" class="card" data-level="3-4H" data-id="app-bluebot">
                     <div class="badges-wrapper">
@@ -779,19 +834,35 @@
 
             // Filtrage des cartes
             document.querySelectorAll('.searchable-grid .card').forEach(card => {
-                const textContent = card.innerText.toLowerCase();
-                const level = card.getAttribute('data-level');
+                const isAlphaApp = card.classList.contains('alpha-app');
 
-                // Vérifie la recherche texte
-                const matchesSearch = textContent.includes(query);
-
-                // Vérifie le filtre de niveau (seulement si on ne recherche pas globalement)
-                const matchesFilter = isSearching ? true : (currentFilter === 'all' || level === currentFilter);
-
-                if (matchesSearch && matchesFilter) {
-                    card.classList.remove('filter-hidden');
+                if (query === 'alpha') {
+                    if (isAlphaApp) {
+                        card.style.display = 'block'; // Or flex depending on card
+                        card.classList.remove('filter-hidden');
+                    } else {
+                        card.classList.add('filter-hidden');
+                    }
                 } else {
-                    card.classList.add('filter-hidden');
+                    if (isAlphaApp) {
+                        card.style.display = 'none';
+                        card.classList.add('filter-hidden');
+                    } else {
+                        const textContent = card.innerText.toLowerCase();
+                        const level = card.getAttribute('data-level');
+
+                        // Vérifie la recherche texte
+                        const matchesSearch = textContent.includes(query);
+
+                        // Vérifie le filtre de niveau (seulement si on ne recherche pas globalement)
+                        const matchesFilter = isSearching ? true : (currentFilter === 'all' || level === currentFilter);
+
+                        if (matchesSearch && matchesFilter) {
+                            card.classList.remove('filter-hidden');
+                        } else {
+                            card.classList.add('filter-hidden');
+                        }
+                    }
                 }
             });
         }
