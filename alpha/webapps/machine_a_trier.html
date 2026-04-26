@@ -1,52 +1,540 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Machine à trier</title>
+    <title>📦 Machine à trier</title>
+    <meta property="og:title" content="Machine à trier">
+    <meta property="og:description" content="Trie les objets dans le bon bac selon leur forme ou leur couleur.">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../css/shared.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; }
-        .bins { display: flex; gap: 20px; margin-top: 20px; }
-        .bin { width: 150px; height: 150px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; }
-        .items { display: flex; gap: 10px; margin-top: 20px; }
-        .item { width: 50px; height: 50px; background: #fff; color: #000; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: grab; }
+        body > header, body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-gradient-start: #667eea; --bg-gradient-end: #764ba2;
+            --card-bg: rgba(249, 250, 252, 0.85); --card-border: #e0e7ff; --container-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #333; --text-secondary: #666; --text-muted: #777;
+            --accent: #667eea; --accent-dark: #5568d3;
+            --badge-bg: #ede9fe; --badge-color: #6d28d9;
+            --input-border: #cbd5f5; --instructions-bg: #f0f4ff;
+            --success: #166534; --error: #b91c1c;
+            --shadow-color: rgba(0, 0, 0, 0.3); --card-shadow: rgba(102, 126, 234, 0.15);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a; --bg-gradient-end: #1e1b4b;
+            --card-bg: rgba(30, 41, 59, 0.75); --card-border: #334155; --container-bg: rgba(15, 23, 42, 0.75);
+            --text-main: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b;
+            --accent: #6366f1; --accent-dark: #4f46e5;
+            --badge-bg: #312e81; --badge-color: #818cf8;
+            --input-border: #334155; --instructions-bg: #1e293b;
+            --success: #34d399; --error: #f87171;
+            --shadow-color: rgba(0, 0, 0, 0.5); --card-shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark .icon-action-btn { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); }
+        body.dark .bin { border-color: #475569; background: rgba(30, 41, 59, 0.8); }
+        body.dark .item { border-color: #475569; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh; padding: 20px; color: var(--text-main);
+        }
+
+        .container {
+            max-width: 1050px; margin: 0 auto; background: var(--container-bg);
+            padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border);
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+
+        /* ========== TABS ========== */
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 8px 20px; border-radius: 20px; border: 2px solid var(--accent);
+            background: transparent; color: var(--accent); font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px;
+        }
+        .tab-btn.active { background: var(--accent); color: #fff; }
+        .tab-btn:hover:not(.active) { background: #eef2ff; }
+        body.dark .tab-btn:hover:not(.active) { background: var(--card-bg); }
+
+        /* ========== DIFFICULTÉ ========== */
+        .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .diff-btn {
+            padding: 6px 16px; border-radius: 20px; border: 2px solid var(--accent);
+            background: transparent; color: var(--accent); font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px;
+        }
+        .diff-btn.active { background: var(--accent); color: #fff; }
+        .diff-btn:hover:not(.active) { background: #eef2ff; }
+
+        /* ========== GAME AREA ========== */
+        .game-area {
+            display: flex; flex-direction: column; align-items: center; gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .items-container {
+            display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;
+            min-height: 80px; padding: 10px; border-radius: 12px;
+            background: rgba(0,0,0,0.05); width: 100%; max-width: 800px;
+        }
+
+        body.dark .items-container { background: rgba(255,255,255,0.05); }
+
+        .item {
+            width: 60px; height: 60px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: grab; transition: transform 0.2s, box-shadow 0.2s;
+            background: #fff; border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+        .item:active { cursor: grabbing; transform: scale(1.1); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+        .item.selected { transform: scale(1.1); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.4); }
+
+        .bins-container {
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+            width: 100%;
+        }
+
+        .bin {
+            width: 120px; height: 140px; border: 3px dashed #cbd5e1; border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #f8fafc; transition: all 0.2s; gap: 10px;
+            cursor: pointer; position: relative;
+        }
+        .bin:hover, .bin.drag-over {
+            border-color: var(--accent); background: #e0e7ff;
+            transform: translateY(-5px);
+        }
+        .bin-label {
+            font-weight: 600; font-size: 14px; text-transform: uppercase;
+            text-align: center; color: var(--text-secondary); pointer-events: none;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .bin-icon {
+            width: 32px; height: 32px;
+        }
+
+        .color-red { color: #ef4444 !important; }
+        .color-blue { color: #3b82f6 !important; }
+        .color-green { color: #22c55e !important; }
+        .color-yellow { color: #eab308 !important; }
+        .color-purple { color: #a855f7 !important; }
+
+        .bg-red { background-color: #ef4444 !important; }
+        .bg-blue { background-color: #3b82f6 !important; }
+        .bg-green { background-color: #22c55e !important; }
+        .bg-yellow { background-color: #eab308 !important; }
+        .bg-purple { background-color: #a855f7 !important; }
+
+        .shape-icon { width: 40px; height: 40px; }
+
+        /* ========== FEEDBACK & SCORE ========== */
+        .feedback { font-size: 16px; font-weight: 600; text-align: center; height: 24px; margin-bottom: 10px; transition: color 0.3s; }
+        .feedback.success { color: var(--success); }
+        .feedback.error { color: var(--error); }
+
+        .score-bar { display: flex; justify-content: center; gap: 24px; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--card-border); flex-wrap: wrap; }
+        .score-item { text-align: center; }
+        .score-item .score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+        .score-item .score-value { font-size: 22px; font-weight: 700; color: var(--accent); font-family: monospace; }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+
+        @media print { .no-print { display: none !important; } }
     </style>
+    <script src="../../js/scores.js"></script>
+    <script src="../../js/audio.js"></script>
+    <script src="../../js/lucide.min.js"></script>
 </head>
 <body>
+    <canvas id="confetti-canvas"></canvas>
+
     <div class="container">
-        <h1>Machine à trier</h1>
-        <p>Glisse les objets dans le bon bac.</p>
-        <div class="items">
-            <div class="item" draggable="true" id="item1" style="background: red;">R</div>
-            <div class="item" draggable="true" id="item2" style="background: blue;">B</div>
-            <div class="item" draggable="true" id="item3" style="background: red;">R</div>
-            <div class="item" draggable="true" id="item4" style="background: blue;">B</div>
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-lucide="package"></i>
+                </a>
+                <div>
+                    <h1>Machine à trier</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="optionsMenuBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            <span>Voir mes statistiques</span>
+                        </button>
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
+                            <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <span id="themeToggleText">Changer le thème</span>
+                        </button>
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
+                            <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                            <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                            <span id="audioToggleText">Activer le son</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <p class="subtitle">Trie les objets dans le bon bac ! Clique sur un objet puis sur un bac, ou glisse-le directement.</p>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-color">🎨 Par couleur</button>
+            <button class="tab-btn" id="tab-shape">⭐ Par forme</button>
         </div>
-        <div class="bins">
-            <div class="bin" id="bin-red" ondragover="event.preventDefault()" ondrop="drop(event, 'red')">Rouge</div>
-            <div class="bin" id="bin-blue" ondragover="event.preventDefault()" ondrop="drop(event, 'blue')">Bleu</div>
+
+        <!-- DIFFICULTÉ -->
+        <div class="difficulty-bar">
+            <button class="diff-btn" id="diff-easy">🟢 Facile</button>
+            <button class="diff-btn active" id="diff-medium">🟡 Moyen</button>
+            <button class="diff-btn" id="diff-hard">🔴 Difficile</button>
+        </div>
+
+        <div class="feedback" id="feedback-msg"></div>
+
+        <!-- GAME AREA -->
+        <div class="game-area">
+            <div class="items-container" id="items-container">
+                <!-- Objets générés ici -->
+            </div>
+
+            <div class="bins-container" id="bins-container">
+                <!-- Bacs générés ici -->
+            </div>
+        </div>
+
+        <div class="score-bar">
+            <div class="score-item">
+                <div class="score-label">Score</div>
+                <div class="score-value" id="global-correct">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Série en cours</div>
+                <div class="score-value" id="global-streak">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Record</div>
+                <div class="score-value" id="global-best">0</div>
+            </div>
         </div>
     </div>
-    <script>
-        const items = document.querySelectorAll('.item');
-        items.forEach(item => {
-            item.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('text/plain', e.target.id);
-            });
-        });
 
-        function drop(event, color) {
-            event.preventDefault();
-            const id = event.dataTransfer.getData('text/plain');
-            const element = document.getElementById(id);
-            if (element.style.background === color) {
-                event.target.appendChild(element);
+    <footer class="no-print">
+        <p>
+            Webapp conçue par l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script src="../../js/confetti.js"></script>
+    <script>
+        const COLORS = [
+            { id: 'red', name: 'Rouge', hex: '#ef4444' },
+            { id: 'blue', name: 'Bleu', hex: '#3b82f6' },
+            { id: 'green', name: 'Vert', hex: '#22c55e' },
+            { id: 'yellow', name: 'Jaune', hex: '#eab308' },
+            { id: 'purple', name: 'Violet', hex: '#a855f7' }
+        ];
+
+        const SHAPES = [
+            { id: 'circle', name: 'Cercle', icon: 'circle' },
+            { id: 'square', name: 'Carré', icon: 'square' },
+            { id: 'triangle', name: 'Triangle', icon: 'triangle' },
+            { id: 'star', name: 'Étoile', icon: 'star' },
+            { id: 'hexagon', name: 'hexagon', icon: 'hexagon' }
+        ];
+
+        let currentMode = 'color'; // 'color' ou 'shape'
+        let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
+
+        let globalCorrect = 0;
+        let globalStreak = 0;
+        let globalBest = 0;
+
+        let selectedItem = null;
+
+        // UI Elements
+        const itemsContainer = document.getElementById('items-container');
+        const binsContainer = document.getElementById('bins-container');
+        const feedbackMsg = document.getElementById('feedback-msg');
+
+        // Initialisation
+        function init() {
+            setupEventListeners();
+            startNewLevel();
+            ScoreManager.init('machine_a_trier');
+        }
+
+        function setupEventListeners() {
+            // Tabs
+            document.getElementById('tab-color').addEventListener('click', () => setMode('color'));
+            document.getElementById('tab-shape').addEventListener('click', () => setMode('shape'));
+
+            // Difficulty
+            document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+            document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+            document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+
+            // Listen for global difficulty change
+            window.addEventListener('c2_change_difficulty', (e) => {
+                const nextDiff = e.detail.difficulty;
+                if (nextDiff === '4') document.getElementById('diff-easy')?.click();
+                else if (nextDiff === '6') document.getElementById('diff-medium')?.click();
+                else if (nextDiff === '8') document.getElementById('diff-hard')?.click();
+            });
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('tab-color').classList.toggle('active', mode === 'color');
+            document.getElementById('tab-shape').classList.toggle('active', mode === 'shape');
+            startNewLevel();
+        }
+
+        function setDifficulty(diff) {
+            currentDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`diff-${diff}`).classList.add('active');
+            startNewLevel();
+        }
+
+        function getNumBins() {
+            if (currentDifficulty === 'easy') return 2;
+            if (currentDifficulty === 'medium') return 3;
+            if (currentDifficulty === 'hard') return 4;
+            return 3;
+        }
+
+        function startNewLevel() {
+            selectedItem = null;
+            itemsContainer.innerHTML = '';
+            binsContainer.innerHTML = '';
+            feedbackMsg.textContent = '';
+
+            const numBins = getNumBins();
+            let availableTypes = [];
+
+            if (currentMode === 'color') {
+                // Mélanger et prendre N couleurs
+                const shuffled = [...COLORS].sort(() => 0.5 - Math.random());
+                availableTypes = shuffled.slice(0, numBins);
+
+                // Créer les bacs
+                availableTypes.forEach(type => {
+                    const bin = document.createElement('div');
+                    bin.className = `bin`;
+                    bin.dataset.accept = type.id;
+                    bin.innerHTML = `<div class="bin-label">
+                        <i data-lucide="palette" class="bin-icon color-${type.id}"></i>
+                        ${type.name}
+                    </div>`;
+                    setupBinEvents(bin);
+                    binsContainer.appendChild(bin);
+                });
             } else {
-                alert("Mauvais bac !");
+                // Mélanger et prendre N formes
+                const shuffled = [...SHAPES].sort(() => 0.5 - Math.random());
+                availableTypes = shuffled.slice(0, numBins);
+
+                // Créer les bacs
+                availableTypes.forEach(type => {
+                    const bin = document.createElement('div');
+                    bin.className = `bin`;
+                    bin.dataset.accept = type.id;
+                    bin.innerHTML = `<div class="bin-label">
+                        <i data-lucide="${type.icon}" class="bin-icon"></i>
+                        ${type.name}
+                    </div>`;
+                    setupBinEvents(bin);
+                    binsContainer.appendChild(bin);
+                });
+            }
+
+            lucide.createIcons();
+
+            // Générer des objets (ex: 2 objets par bac = numBins * 2)
+            const numItems = numBins * 2;
+            let items = [];
+            for (let i = 0; i < numItems; i++) {
+                // Choisir un type valide parmi ceux des bacs
+                const correctType = availableTypes[i % numBins];
+
+                // Assigner la forme ou couleur opposée aléatoirement pour varier l'apparence
+                let itemColor, itemShape;
+                if (currentMode === 'color') {
+                    itemColor = correctType;
+                    itemShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+                } else {
+                    itemShape = correctType;
+                    itemColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+                }
+
+                items.push({ id: `item-${i}`, color: itemColor, shape: itemShape, typeId: correctType.id });
+            }
+
+            // Mélanger les objets
+            items.sort(() => 0.5 - Math.random());
+
+            items.forEach(itemData => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.id = itemData.id;
+                item.dataset.type = itemData.typeId;
+                item.draggable = true;
+
+                // Apparence de l'objet
+                item.innerHTML = `<i data-lucide="${itemData.shape.icon}" class="shape-icon" style="color: ${itemData.color.hex}; fill: ${itemData.color.hex};"></i>`;
+
+                setupItemEvents(item);
+                itemsContainer.appendChild(item);
+            });
+
+            lucide.createIcons();
+        }
+
+        // --- Drag & Drop et Click Events ---
+
+        function setupItemEvents(item) {
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', item.id);
+                item.style.opacity = '0.5';
+                selectItem(item);
+            });
+
+            item.addEventListener('dragend', () => {
+                item.style.opacity = '1';
+            });
+
+            item.addEventListener('click', () => {
+                selectItem(item);
+                playSound('click');
+            });
+        }
+
+        function selectItem(item) {
+            if (selectedItem) {
+                selectedItem.classList.remove('selected');
+            }
+            selectedItem = item;
+            selectedItem.classList.add('selected');
+        }
+
+        function setupBinEvents(bin) {
+            bin.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                bin.classList.add('drag-over');
+            });
+
+            bin.addEventListener('dragleave', () => {
+                bin.classList.remove('drag-over');
+            });
+
+            bin.addEventListener('drop', (e) => {
+                e.preventDefault();
+                bin.classList.remove('drag-over');
+                const itemId = e.dataTransfer.getData('text/plain');
+                const item = document.getElementById(itemId);
+                if (item) {
+                    handleDrop(item, bin);
+                }
+            });
+
+            bin.addEventListener('click', () => {
+                if (selectedItem) {
+                    handleDrop(selectedItem, bin);
+                }
+            });
+        }
+
+        function handleDrop(item, bin) {
+            const itemType = item.dataset.type;
+            const binAccept = bin.dataset.accept;
+
+            if (itemType === binAccept) {
+                // Correct !
+                playSound('success');
+                showFeedback('Bravo !', 'success');
+                bin.appendChild(item);
+                item.draggable = false;
+                item.classList.remove('selected');
+                item.style.cursor = 'default';
+                item.style.pointerEvents = 'none';
+                selectedItem = null;
+
+                updateScore(true);
+
+                // Vérifier si niveau terminé
+                if (itemsContainer.children.length === 0) {
+                    setTimeout(() => {
+                        launchConfetti();
+                        playSound('win');
+                        startNewLevel();
+                    }, 1000);
+                }
+            } else {
+                // Incorrect
+                playSound('error');
+                showFeedback('Oups, essaie un autre bac !', 'error');
+                item.classList.remove('selected');
+                selectedItem = null;
+                updateScore(false);
             }
         }
+
+        function showFeedback(msg, type) {
+            feedbackMsg.textContent = msg;
+            feedbackMsg.className = `feedback ${type}`;
+            setTimeout(() => {
+                feedbackMsg.textContent = '';
+                feedbackMsg.className = 'feedback';
+            }, 2000);
+        }
+
+        function updateScore(correct) {
+            if (correct) {
+                globalCorrect++;
+                globalStreak++;
+                if (globalStreak > globalBest) globalBest = globalStreak;
+            } else {
+                globalStreak = 0;
+            }
+            document.getElementById('global-correct').textContent = globalCorrect;
+            document.getElementById('global-streak').textContent = globalStreak;
+            document.getElementById('global-best').textContent = globalBest;
+
+            ScoreManager.updateScore(globalCorrect, globalStreak, globalBest);
+        }
+
+        window.addEventListener('load', init);
     </script>
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/swipe.js"></script>
 </body>
 </html>
