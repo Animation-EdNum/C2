@@ -189,7 +189,7 @@ const ScoreManager = {
 
         const modalHtml = `
             <div id="score-details-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
-                <div class="modal-content">
+                <div class="modal-content" id="score-modal-content">
                     <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
                     <button class="btn-close-modal" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
                     <div id="score-modal-body"></div>
@@ -198,6 +198,43 @@ const ScoreManager = {
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHtml);
+        this.addSwipeToClose();
+    },
+
+    addSwipeToClose() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const modalContent = document.getElementById('score-modal-content');
+        if (!modalContent) return;
+
+        modalContent.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        modalContent.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const dy = touchEndY - touchStartY;
+            const dx = touchEndX - touchStartX;
+
+            const isMobile = window.innerWidth <= 600;
+
+            if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
+                this.closeModal(); // Swipe down
+            } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
+                this.closeModal(); // Swipe right
+            }
+        }, { passive: true });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('score-details-modal');
+                if (modal && modal.classList.contains('active')) {
+                    this.closeModal();
+                }
+            }
+        });
     },
 
     showModal() {

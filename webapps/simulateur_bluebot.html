@@ -5334,6 +5334,55 @@
             if (activeSkin === 'pirate') {
                 startOceanRipples();
             }
+
+        // Drawers Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('mats-drawer').classList.contains('active')) {
+                    closeMatsModal();
+                }
+                if (document.getElementById('skins-drawer').classList.contains('active')) {
+                    closeSkinsModal();
+                }
+            }
+        });
+
+        // Drawers swipe to close
+        let drawerTouchStartX = 0;
+        let drawerTouchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+            drawerTouchStartX = e.changedTouches[0].screenX;
+            drawerTouchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const dx = touchEndX - drawerTouchStartX;
+            const dy = touchEndY - drawerTouchStartY;
+
+            const matsDrawer = document.getElementById('mats-drawer');
+            const skinsDrawer = document.getElementById('skins-drawer');
+
+            const isMobile = window.innerWidth <= 600;
+
+            if (matsDrawer && matsDrawer.classList.contains('active')) {
+                if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
+                    closeMatsModal(); // swipe down on mobile
+                } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
+                    closeMatsModal(); // swipe right on desktop
+                }
+            }
+
+            if (skinsDrawer && skinsDrawer.classList.contains('active')) {
+                if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
+                    closeSkinsModal(); // swipe down on mobile
+                } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
+                    closeSkinsModal(); // swipe right on desktop
+                }
+            }
+        }, { passive: true });
+
             ScoreManager.init('simulateur_bluebot');
             updateExtremeVisibility();
         });
