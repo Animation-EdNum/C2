@@ -55,7 +55,7 @@ Les webapps disponibles sont :
     - **Simulateur :** Exploration libre et apprentissage des commandes.
     - **Pilotage :** Puzzles de cheminement avec 3 niveaux de difficulté et règles pédagogiques strictes (ex: pas de commande "reculer" en mode Facile/Moyen, obstacles obligatoires en mode Moyen).
     - **Décodage (Nouveau) :** Deux sous-modes pour travailler l'anticipation : *Destination* (prédire la case finale) et *Bug* (identifier la commande erronée dans un programme).
-  - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot, Thymio, Dragon) modifiant également les obstacles et les récompenses.
+  - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot, Thymio, Dragon, Pirate, F1, Train, Cyber-Bot) modifiant également les obstacles, le sillage laissé par le robot et les récompenses. Sélection via un tiroir latéral ("drawer").
   - **Tapis Pédagogiques :** Intégration de tapis prédéfinis (ex: formes géométriques, conte de fées) et possibilité de téléverser ses propres images pour créer des tapis personnalisés, avec un curseur d'opacité ajustable pour un apprentissage thématique.
   - **Mode Plein Écran :** Affichage optimisé avec carte et contrôles immersifs pour réduire les distractions.
   - **Feedback visuel immersif :** Effet de "shake" (secousse) de toute la fenêtre lors d'une collision et mise en évidence immédiate de la commande erronée (bouton noir/blanc contrasté).
