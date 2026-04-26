@@ -3380,12 +3380,23 @@
                         let parts = [];
                         let frameCount = 0;
 
-                        // Calculate angle and origin based on robot orientation
+                        // Calculate angle and origin based on current robot orientation
+                        let currentDir = normalizedDir;
+                        const body = overlay.querySelector('.robot-body');
+                        if (body && body.style.transform) {
+                            const match = body.style.transform.match(/rotate\(([-\d.]+)deg\)/);
+                            if (match) {
+                                let deg = parseFloat(match[1]);
+                                let dirIndex = Math.round(deg / 90);
+                                currentDir = ((dirIndex % 4) + 4) % 4;
+                            }
+                        }
+
                         let baseAngle = -Math.PI / 2; // Up by default
-                        if (normalizedDir === 0) startY -= 40; // Up
-                        if (normalizedDir === 1) { baseAngle = 0; startX += 40; } // Right
-                        if (normalizedDir === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
-                        if (normalizedDir === 3) { baseAngle = Math.PI; startX -= 40; } // Left
+                        if (currentDir === 0) startY -= 40; // Up
+                        if (currentDir === 1) { baseAngle = 0; startX += 40; } // Right
+                        if (currentDir === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
+                        if (currentDir === 3) { baseAngle = Math.PI; startX -= 40; } // Left
 
                         function createParticle() {
                             const angle = baseAngle + (Math.random() - 0.5) * (Math.PI / 3);
