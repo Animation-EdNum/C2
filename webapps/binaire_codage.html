@@ -439,10 +439,11 @@ function newDecToBin() {
     document.getElementById('decBin-feedback').textContent = ''; 
     decBinMistakes = 0;
     resetHelpTimer(); 
+    resetValidationCooldown('decBin-check-btn');
 } 
  
 function checkDecToBin() { 
-    if (decBinLocked || currentDecNumber === null) return; 
+    if (decBinLocked || currentDecNumber === null || document.getElementById('decBin-check-btn').disabled) return;
     resetHelpTimer();
      
     const userBin = calcState.slice(8-currentBits).join(''); 
@@ -451,6 +452,7 @@ function checkDecToBin() {
      
     const card = document.getElementById('card-dec-bin');
     if (userBin === expectedBin) { 
+        resetValidationCooldown('decBin-check-btn');
         let isFire = (currentBits === 8 && decBinMistakes === 0);
         if (isFire) {
             playSound('success');
@@ -466,6 +468,7 @@ function checkDecToBin() {
         card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
         decBinLocked = true; setTimeout(newDecToBin, 1500); 
     } else { 
+        applyValidationCooldown('decBin-check-btn');
         decBinMistakes++;
         playSound('error'); updateGlobalScore(false);
         ScoreManager.addMistake("dec_to_bin", currentBits);
@@ -488,10 +491,11 @@ function newBinToDec() {
     binDecLocked = false;
     binDecMistakes = 0;
     resetHelpTimer();
+    resetValidationCooldown('binDec-check-btn');
 } 
  
 function checkBinToDec() { 
-    if (binDecLocked || !currentBinString) return; 
+    if (binDecLocked || !currentBinString || document.getElementById('binDec-check-btn').disabled) return;
     resetHelpTimer();
      
     const userVal = parseInt(document.getElementById('binDec-input').value, 10); 
@@ -502,6 +506,7 @@ function checkBinToDec() {
  
     const card = document.getElementById('card-bin-dec');
     if (userVal === expectedVal) { 
+        resetValidationCooldown('binDec-check-btn');
         let isFire = (currentBits === 8 && binDecMistakes === 0);
         if (isFire) {
             playSound('success');
@@ -518,6 +523,7 @@ function checkBinToDec() {
         binDecLocked = true;  
         setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500); // Auto-focus 
     } else { 
+        applyValidationCooldown('binDec-check-btn');
         binDecMistakes++;
         playSound('error'); updateGlobalScore(false);
         ScoreManager.addMistake("bin_to_dec", currentBits);
@@ -597,9 +603,75 @@ function switchTab(tab) {
 
 // UX GLOBALES (Aide, Confetti, Entrée)
 // ==========================================
+const cooldownTimers = {};
+
+function applyValidationCooldown(btnId) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+
+    // Clear any existing cooldown for this button
+    if (cooldownTimers[btnId]) {
+        clearInterval(cooldownTimers[btnId].interval);
+        clearTimeout(cooldownTimers[btnId].timeout);
+    }
+
+    const originalText = btn.dataset.originalText || btn.innerText;
+    btn.dataset.originalText = originalText;
+    btn.disabled = true;
+
+    let secondsLeft = 5;
+    btn.innerText = `⏳ ${secondsLeft}s`;
+
+    const intervalId = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft > 0) {
+            btn.innerText = `⏳ ${secondsLeft}s`;
+        }
+    }, 1000);
+
+    const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        btn.disabled = false;
+        btn.innerText = originalText;
+        delete cooldownTimers[btnId];
+    }, 5000);
+
+    cooldownTimers[btnId] = { interval: intervalId, timeout: timeoutId };
+}
+
+function resetValidationCooldown(btnId) {
+    if (cooldownTimers[btnId]) {
+        clearInterval(cooldownTimers[btnId].interval);
+        clearTimeout(cooldownTimers[btnId].timeout);
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.disabled = false;
+            if (btn.dataset.originalText) {
+                btn.innerText = btn.dataset.originalText;
+            } else {
+                // Remove any '⏳' logic if original text not saved
+                if (btn.innerText.includes('⏳')) btn.innerText = "Valider";
+            }
+        }
+        delete cooldownTimers[btnId];
+    }
+}
+
 window.addEventListener('keydown', e => {
     // Entrée pour valider
     if (e.key === 'Enter') {
+        if (e.repeat) return; // Prevent holding Enter
+
+        // Determine which button would be clicked
+        let targetBtnId = null;
+        if (document.activeElement.tagName === 'INPUT') { targetBtnId = 'binDec-check-btn'; }
+        else if (activeTab === 'bin-dec') { targetBtnId = 'binDec-check-btn'; }
+        else { targetBtnId = 'decBin-check-btn'; }
+
+        // Only process if the corresponding button is not disabled (cooldown)
+        const targetBtn = document.getElementById(targetBtnId);
+        if (targetBtn && targetBtn.disabled) return;
+
         if (document.activeElement.tagName === 'INPUT') { checkBinToDec(); }
         else if (activeTab === 'bin-dec') { checkBinToDec(); }
         else { checkDecToBin(); }
