@@ -1,48 +1,346 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Machine à chiffrer</title>
+    <title>🔐 Machine à chiffrer</title>
+    <meta property="og:title" content="Machine à chiffrer">
+    <meta property="og:description" content="Chiffre et déchiffre tes messages secrets !">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../css/shared.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        textarea { width: 300px; height: 100px; margin: 10px 0; font-size: 16px; padding: 10px; border-radius: 8px; }
-        .controls { margin: 20px 0; display: flex; gap: 10px; align-items: center; }
+        body > header, body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-gradient-start: #10b981; --bg-gradient-end: #047857;
+            --card-bg: rgba(249, 250, 252, 0.85); --card-border: #d1fae5; --container-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #333; --text-secondary: #666; --text-muted: #777;
+            --accent: #059669; --accent-dark: #047857;
+            --badge-bg: #d1fae5; --badge-color: #047857;
+            --input-border: #a7f3d0; --instructions-bg: #ecfdf5;
+            --success: #166534; --error: #b91c1c;
+            --shadow-color: rgba(0, 0, 0, 0.3); --card-shadow: rgba(5, 150, 105, 0.15);
+        }
+
+        body.dark {
+            --bg-gradient-start: #064e3b; --bg-gradient-end: #022c22;
+            --card-bg: rgba(30, 41, 59, 0.75); --card-border: #334155; --container-bg: rgba(15, 23, 42, 0.75);
+            --text-main: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b;
+            --accent: #10b981; --accent-dark: #059669;
+            --badge-bg: #064e3b; --badge-color: #34d399;
+            --input-border: #334155; --instructions-bg: #1e293b;
+            --success: #34d399; --error: #f87171;
+            --shadow-color: rgba(0, 0, 0, 0.5); --card-shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark .icon-action-btn { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh; padding: 20px; color: var(--text-main);
+        }
+
+        .container {
+            max-width: 900px; margin: 0 auto; background: var(--container-bg);
+            padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+
+        /* ========== TABS ========== */
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 8px 20px; border-radius: 20px; border: 2px solid var(--accent);
+            background: transparent; color: var(--accent); font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px; display: flex; align-items: center; gap: 8px;
+        }
+        .tab-btn.active { background: var(--accent); color: #fff; }
+        .tab-btn:hover:not(.active) { background: var(--badge-bg); }
+        body.dark .tab-btn:hover:not(.active) { background: var(--card-bg); }
+
+        /* ========== APP CONTENT ========== */
+        .app-content {
+            display: flex; flex-direction: column; width: 100%; max-width: 700px; gap: 20px;
+        }
+
+        .textarea-container {
+            display: flex; flex-direction: column; gap: 8px;
+            width: 100%;
+        }
+
+        .textarea-header {
+            display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main);
+        }
+
+        textarea {
+            width: 100%; height: 120px; font-size: 16px; padding: 15px; border-radius: 12px;
+            border: 2px solid var(--input-border); background: var(--card-bg); color: var(--text-main);
+            resize: vertical; font-family: 'Outfit', sans-serif; transition: border-color 0.2s;
+            outline: none;
+        }
+
+        textarea:focus { border-color: var(--accent); }
+
+        .controls {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 15px; padding: 20px; background: var(--instructions-bg); border-radius: 12px;
+            border: 1px solid var(--card-border); margin: 10px 0;
+        }
+
+        .control-group {
+            display: flex; align-items: center; gap: 15px; width: 100%; justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group label {
+            font-weight: 600; display: flex; align-items: center; gap: 8px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none; width: 200px; height: 8px; background: var(--input-border);
+            border-radius: 4px; outline: none; cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none; width: 24px; height: 24px;
+            border-radius: 50%; background: var(--accent); cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        input[type="text"] {
+            padding: 10px 15px; font-size: 16px; border-radius: 8px; border: 2px solid var(--input-border);
+            background: var(--card-bg); color: var(--text-main); font-weight: bold; text-transform: uppercase;
+            width: 200px; outline: none; text-align: center; letter-spacing: 2px;
+        }
+
+        input[type="text"]:focus { border-color: var(--accent); }
+
+        #offset-val { font-family: monospace; font-size: 18px; font-weight: bold; color: var(--accent); min-width: 30px; text-align: center; display: inline-block;}
+
+        .mode-desc { text-align: center; font-size: 14px; color: var(--text-secondary); max-width: 500px; }
+
+        @media (max-width: 600px) {
+            .app-content { gap: 15px; }
+            textarea { height: 100px; }
+            .controls { padding: 15px; }
+        }
     </style>
+    <script src="../../js/audio.js"></script>
+    <script src="../../js/lucide.min.js"></script>
 </head>
 <body>
-    <h1>Machine à chiffrer</h1>
-    <textarea id="input" placeholder="Message clair..."></textarea>
-    <div class="controls">
-        <label>Décalage: <span id="offset-val">0</span></label>
-        <input type="range" id="offset" min="-25" max="25" value="0">
-    </div>
-    <textarea id="output" readonly placeholder="Message chiffré..."></textarea>
-    <script>
-        const input = document.getElementById('input');
-        const output = document.getElementById('output');
-        const offset = document.getElementById('offset');
-        const offsetVal = document.getElementById('offset-val');
+    <div class="container">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-lucide="package"></i>
+                </a>
+                <div>
+                    <h1>Machine à chiffrer</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="optionsMenuBtn">
+                        <i data-lucide="settings"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
+                            <i data-lucide="sun" id="icon-sun" style="display:none;"></i>
+                            <i data-lucide="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Changer le thème</span>
+                        </button>
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
+                            <i data-lucide="volume-2" id="icon-vol-on" style="display:none;"></i>
+                            <i data-lucide="volume-x" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer le son</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-        function cipher() {
-            const text = input.value.toUpperCase();
-            const shift = parseInt(offset.value);
-            offsetVal.textContent = shift;
+        <p class="subtitle">Chiffre et déchiffre tes messages secrets !</p>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-cesar"><i data-lucide="arrow-right-left"></i> Code César</button>
+            <button class="tab-btn" id="tab-vigenere"><i data-lucide="key"></i> Code Vigenère</button>
+        </div>
+
+        <!-- GAME AREA -->
+        <div class="app-content">
+
+            <div class="textarea-container">
+                <div class="textarea-header">
+                    <i data-lucide="message-circle"></i> Message en clair
+                </div>
+                <textarea id="input-clear" placeholder="Tape ton message ici..."></textarea>
+            </div>
+
+            <div class="controls" id="controls-cesar">
+                <div class="control-group">
+                    <label for="offset"><i data-lucide="sliders"></i> Décalage: <span id="offset-val">0</span></label>
+                    <input type="range" id="offset" min="-25" max="25" value="3">
+                </div>
+                <div class="mode-desc">Le code César décale chaque lettre de l'alphabet d'un nombre fixe.</div>
+            </div>
+
+            <div class="controls" id="controls-vigenere" style="display: none;">
+                <div class="control-group">
+                    <label for="keyword"><i data-lucide="key"></i> Mot clé:</label>
+                    <input type="text" id="keyword" placeholder="SECRET" value="SECRET">
+                </div>
+                <div class="mode-desc">Le code Vigenère utilise un mot clé pour décaler chaque lettre différemment.</div>
+            </div>
+
+            <div class="textarea-container">
+                <div class="textarea-header">
+                    <i data-lucide="lock"></i> Message chiffré
+                </div>
+                <textarea id="input-cipher" placeholder="Le message secret apparaîtra ici..."></textarea>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const inputClear = document.getElementById('input-clear');
+        const inputCipher = document.getElementById('input-cipher');
+        const offsetSlider = document.getElementById('offset');
+        const offsetVal = document.getElementById('offset-val');
+        const keywordInput = document.getElementById('keyword');
+
+        const tabCesar = document.getElementById('tab-cesar');
+        const tabVigenere = document.getElementById('tab-vigenere');
+        const controlsCesar = document.getElementById('controls-cesar');
+        const controlsVigenere = document.getElementById('controls-vigenere');
+
+        let currentMode = 'cesar';
+        let lastEdited = 'clear'; // 'clear' or 'cipher'
+
+        function init() {
+            lucide.createIcons();
+
+            tabCesar.addEventListener('click', () => setMode('cesar'));
+            tabVigenere.addEventListener('click', () => setMode('vigenere'));
+
+            inputClear.addEventListener('input', () => {
+                lastEdited = 'clear';
+                updateCipher();
+            });
+
+            inputCipher.addEventListener('input', () => {
+                lastEdited = 'cipher';
+                updateCipher();
+            });
+
+            offsetSlider.addEventListener('input', () => {
+                offsetVal.textContent = offsetSlider.value;
+                updateCipher();
+            });
+
+            keywordInput.addEventListener('input', () => {
+                keywordInput.value = keywordInput.value.toUpperCase().replace(/[^A-Z]/g, '');
+                updateCipher();
+            });
+
+            // Trigger initial update
+            offsetSlider.value = "3";
+            offsetVal.textContent = "3";
+            updateCipher();
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+
+            if (mode === 'cesar') {
+                tabCesar.classList.add('active');
+                tabVigenere.classList.remove('active');
+                controlsCesar.style.display = 'flex';
+                controlsVigenere.style.display = 'none';
+            } else {
+                tabCesar.classList.remove('active');
+                tabVigenere.classList.add('active');
+                controlsCesar.style.display = 'none';
+                controlsVigenere.style.display = 'flex';
+            }
+
+            playSound('click');
+            updateCipher();
+        }
+
+        function normalizeText(text) {
+            return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+        }
+
+        function processCesar(text, shift, decrypt = false) {
+            if (decrypt) shift = -shift;
             let result = '';
             for (let i = 0; i < text.length; i++) {
-                const c = text.charCodeAt(i);
+                let c = text.charCodeAt(i);
                 if (c >= 65 && c <= 90) {
-                    result += String.fromCharCode(((c - 65 + shift + 26) % 26) + 65);
+                    result += String.fromCharCode(((c - 65 + shift + 260) % 26) + 65);
                 } else {
                     result += text[i];
                 }
             }
-            output.value = result;
+            return result;
         }
 
-        input.addEventListener('input', cipher);
-        offset.addEventListener('input', cipher);
+        function processVigenere(text, keyword, decrypt = false) {
+            if (!keyword) return text;
+
+            let result = '';
+            let j = 0;
+            for (let i = 0; i < text.length; i++) {
+                let c = text.charCodeAt(i);
+                if (c >= 65 && c <= 90) {
+                    let shift = keyword.charCodeAt(j % keyword.length) - 65;
+                    if (decrypt) shift = -shift;
+
+                    result += String.fromCharCode(((c - 65 + shift + 260) % 26) + 65);
+                    j++;
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
+
+        function updateCipher() {
+            let shift = parseInt(offsetSlider.value) || 0;
+            let keyword = keywordInput.value;
+
+            if (lastEdited === 'clear') {
+                let text = normalizeText(inputClear.value);
+                if (currentMode === 'cesar') {
+                    inputCipher.value = processCesar(text, shift, false);
+                } else {
+                    inputCipher.value = processVigenere(text, keyword, false);
+                }
+            } else {
+                let text = normalizeText(inputCipher.value);
+                if (currentMode === 'cesar') {
+                    inputClear.value = processCesar(text, shift, true);
+                } else {
+                    inputClear.value = processVigenere(text, keyword, true);
+                }
+            }
+        }
+
+        window.addEventListener('load', init);
     </script>
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/swipe.js"></script>
 </body>
 </html>
