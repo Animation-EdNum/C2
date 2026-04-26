@@ -3947,7 +3947,7 @@
             }).join('');
         }
 
-        function moveRobot(state, cmd) {
+        function moveRobot(state, cmd, isRealMove = false) {
             let { robotRow: r, robotCol: c, robotDir: d, obstacles } = state;
             let moved = false;
             if (cmd === 'left') { d = (d + 3) % 4; }
@@ -3963,7 +3963,7 @@
                 } else { return { ...state, robotDir: d, blocked: true }; }
             }
 
-            if (moved) {
+            if (moved && isRealMove) {
                 let totalSteps = parseInt(localStorage.getItem('bb_total_steps') || '0');
                 totalSteps++;
                 localStorage.setItem('bb_total_steps', totalSteps);
@@ -3987,7 +3987,7 @@
                 simState.stepIndex = i; renderProgram();
                 const cmd = simState.program[i];
 
-                const result = moveRobot(simState, cmd);
+                const result = moveRobot(simState, cmd, true);
                 simState.robotRow = result.robotRow; simState.robotCol = result.robotCol; simState.robotDir = result.robotDir;
 
                 // Déplacer le robot d'abord (déclenche la transition CSS)
@@ -4342,7 +4342,7 @@
                 let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
                 TrailManager.captureInitialState('read-grid', currR, currC, currD);
                 for (const cmd of readState.program) {
-                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd);
+                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd, true);
                     currR = res.robotRow; currC = res.robotCol; currD = res.robotDir;
                     renderRobot('read-grid', 'read-robot', currR, currC, currD);
 
@@ -4383,6 +4383,7 @@
 
         function newChallenge() {
             if (chalState.isAnimating) return;
+            chalState.mistakes = 0;
             chalState.locked = false; document.getElementById('btnNextChallenge').style.display = 'none';
 
             const chal = generateChallengePath(chalState.difficulty);
@@ -4437,7 +4438,7 @@
             renderRobot('chal-grid', 'chal-robot', r, c, d);
 
             for (const cmd of option.cmds) {
-                const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd);
+                const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd, true);
                 r = result.robotRow; c = result.robotCol; d = result.robotDir;
 
                 // Déplacer le robot d'abord (déclenche la transition CSS)
