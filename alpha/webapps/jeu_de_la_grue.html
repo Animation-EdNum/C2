@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Jeu de la grue</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .grid { display: grid; grid-template-columns: repeat(5, 50px); grid-template-rows: repeat(5, 50px); gap: 2px; background: #333; padding: 2px; }
+        .cell { background: #555; width: 50px; height: 50px; }
+        .crane { background: yellow; }
+        .controls { margin-top: 20px; display: flex; gap: 10px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Jeu de la grue</h1>
+    <div class="grid" id="grid">
+        <!-- 5x5 grid -->
+    </div>
+    <div class="controls">
+        <button onclick="move(-1, 0)">Gauche</button>
+        <button onclick="move(1, 0)">Droite</button>
+        <button onclick="move(0, 1)">Bas</button>
+        <button onclick="move(0, -1)">Haut</button>
+    </div>
+    <script>
+        const grid = document.getElementById('grid');
+        for (let i = 0; i < 25; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.id = `cell-${i}`;
+            grid.appendChild(cell);
+        }
+        let cx = 2, cy = 0;
+        function update() {
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('crane'));
+            const idx = cy * 5 + cx;
+            document.getElementById(`cell-${idx}`).classList.add('crane');
+        }
+        function move(dx, dy) {
+            cx = Math.max(0, Math.min(4, cx + dx));
+            cy = Math.max(0, Math.min(4, cy + dy));
+            update();
+        }
+        update();
+    </script>
+</body>
+</html>

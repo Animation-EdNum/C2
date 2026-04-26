@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>Machine à trier</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .container { text-align: center; }
+        .bins { display: flex; gap: 20px; margin-top: 20px; }
+        .bin { width: 150px; height: 150px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; }
+        .items { display: flex; gap: 10px; margin-top: 20px; }
+        .item { width: 50px; height: 50px; background: #fff; color: #000; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: grab; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Machine à trier</h1>
+        <p>Glisse les objets dans le bon bac.</p>
+        <div class="items">
+            <div class="item" draggable="true" id="item1" style="background: red;">R</div>
+            <div class="item" draggable="true" id="item2" style="background: blue;">B</div>
+            <div class="item" draggable="true" id="item3" style="background: red;">R</div>
+            <div class="item" draggable="true" id="item4" style="background: blue;">B</div>
+        </div>
+        <div class="bins">
+            <div class="bin" id="bin-red" ondragover="event.preventDefault()" ondrop="drop(event, 'red')">Rouge</div>
+            <div class="bin" id="bin-blue" ondragover="event.preventDefault()" ondrop="drop(event, 'blue')">Bleu</div>
+        </div>
+    </div>
+    <script>
+        const items = document.querySelectorAll('.item');
+        items.forEach(item => {
+            item.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/plain', e.target.id);
+            });
+        });
+
+        function drop(event, color) {
+            event.preventDefault();
+            const id = event.dataTransfer.getData('text/plain');
+            const element = document.getElementById(id);
+            if (element.style.background === color) {
+                event.target.appendChild(element);
+            } else {
+                alert("Mauvais bac !");
+            }
+        }
+    </script>
+</body>
+</html>
