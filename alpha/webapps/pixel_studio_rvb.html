@@ -1,46 +1,600 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Pixel Studio RVB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Pixel Studio RVB</title>
+    <meta property="og:title" content="🎨 Pixel Studio RVB">
+    <meta property="og:description"
+        content="Un studio de codage interactif pour découvrir les couleurs RVB (Rouge, Vert, Bleu).">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="../../css/shared.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../../js/scores.js"></script>
+    <script src="../../js/audio.js"></script>
+    <script src="../../js/lucide.min.js"></script>
     <style>
-        body { font-family: 'Outfit', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .grid { display: grid; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); gap: 1px; background: #222; border: 2px solid #555; }
-        .cell { background: #fff; cursor: pointer; }
-        .controls { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .preview { width: 50px; height: 50px; border: 2px solid #fff; margin-top: 10px; }
+        body > header, body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-start: #667eea;
+            --bg-end: #764ba2;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #10b981;
+            --error: #ef4444;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: rgba(248, 250, 252, 0.85);
+            --border-color: #cbd5e1;
+        }
+
+        body.dark {
+            --bg-start: #0f172a;
+            --bg-end: #1e1b4b;
+            --accent: #818cf8;
+            --accent-hover: #6366f1;
+            --success: #34d399;
+            --error: #f87171;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --border-color: #334155;
+        }
+
+        body.dark .icon-action-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .nav-btn {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-muted);
+        }
+
+        body.dark .nav-btn:hover {
+            border-color: #475569;
+        }
+
+        body.dark .nav-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            min-height: 100vh;
+            padding: 15px;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .mode-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .mode-section.active {
+            display: flex;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            gap: 1px;
+            background: var(--border-color);
+            border: 2px solid var(--border-color);
+            touch-action: none;
+        }
+
+        .cell {
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .color-preview-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .preview {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .target-preview {
+            width: 80px;
+            height: 80px;
+            border: 3px dashed var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-row label {
+            width: 30px;
+            font-weight: 700;
+        }
+
+        .slider-row input[type="range"] {
+            flex-grow: 1;
+        }
+
+        .slider-row span {
+            width: 40px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        .label-r { color: #ef4444; }
+        .label-v { color: #22c55e; }
+        .label-b { color: #3b82f6; }
+
+        .btn-check {
+            padding: 12px 24px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-check:hover {
+            background: var(--accent-hover);
+        }
+
+        .feedback {
+            font-size: 18px;
+            font-weight: bold;
+            min-height: 24px;
+            text-align: center;
+        }
+
+        .score-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .score-item { text-align: center; }
+        .score-item .score-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+        .score-item .score-value { font-size: 22px; font-weight: 700; color: var(--accent); font-family: monospace; }
+
+        .btn-clear {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-clear:hover {
+            background: rgba(0,0,0,0.05);
+        }
+        body.dark .btn-clear:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        p.subtitle {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
-    <h1>Pixel Studio RVB</h1>
-    <div class="grid" id="grid"></div>
-    <div class="controls">
-        <label>R: <input type="range" id="r" min="0" max="255" value="0"></label>
-        <label>V: <input type="range" id="v" min="0" max="255" value="0"></label>
-        <label>B: <input type="range" id="b" min="0" max="255" value="0"></label>
-        <div class="preview" id="preview" style="background: rgb(0,0,0);"></div>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-lucide="palette"></i>
+                </a>
+                <div>
+                    <h1>Pixel Studio RVB</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="optionsMenuBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques" onclick="ScoreManager.showModal()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            <span>Voir mes statistiques</span>
+                        </button>
+                        <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
+                            <svg id="icon-sun" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                            <span id="themeToggleText">Changer le thème</span>
+                        </button>
+                        <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
+                            <svg id="icon-vol-on" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                            <svg id="icon-vol-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                            <span id="audioToggleText">Activer le son</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="nav-bar">
+            <button class="nav-btn active" id="nav-discovery">🎨 Découverte</button>
+            <button class="nav-btn" id="nav-challenge">🎯 Défi</button>
+        </div>
+
+        <!-- MODE DÉCOUVERTE -->
+        <div id="mode-discovery" class="mode-section active">
+            <p class="subtitle">Mélange les couleurs primaires et dessine sur la grille.</p>
+            <div class="play-area" style="display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:center;">
+                <div class="grid-container" style="display:flex; flex-direction:column; align-items:center;">
+                    <div class="grid" id="grid"></div>
+                    <button class="btn-clear" id="btn-clear">🧹 Effacer la grille</button>
+                </div>
+                <div class="controls">
+                    <div class="color-preview-container">
+                        <div class="preview" id="preview-discovery" style="background: rgb(0,0,0);"></div>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-row">
+                            <label class="label-r">R</label>
+                            <input type="range" id="r-discovery" min="0" max="255" value="0">
+                            <span id="r-val-discovery">0</span>
+                        </div>
+                        <div class="slider-row">
+                            <label class="label-v">V</label>
+                            <input type="range" id="v-discovery" min="0" max="255" value="0">
+                            <span id="v-val-discovery">0</span>
+                        </div>
+                        <div class="slider-row">
+                            <label class="label-b">B</label>
+                            <input type="range" id="b-discovery" min="0" max="255" value="0">
+                            <span id="b-val-discovery">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODE DÉFI -->
+        <div id="mode-challenge" class="mode-section">
+            <p class="subtitle">Retrouve la combinaison RVB de la couleur cible !</p>
+
+            <div class="color-preview-container" style="margin-bottom: 20px;">
+                <div style="text-align:center;">
+                    <div class="target-preview" id="preview-target" style="background: rgb(120, 50, 200);"></div>
+                    <div style="font-size:12px; margin-top:5px; color:var(--text-muted);">Cible</div>
+                </div>
+                <div style="font-size: 24px; font-weight:bold; color:var(--text-muted);">?</div>
+                <div style="text-align:center;">
+                    <div class="preview" id="preview-challenge" style="background: rgb(0,0,0); width:80px; height:80px;"></div>
+                    <div style="font-size:12px; margin-top:5px; color:var(--text-muted);">Ta couleur</div>
+                </div>
+            </div>
+
+            <div class="controls" style="max-width: 400px;">
+                <div class="slider-group">
+                    <div class="slider-row">
+                        <label class="label-r">R</label>
+                        <input type="range" id="r-challenge" min="0" max="255" value="0">
+                        <span id="r-val-challenge">0</span>
+                    </div>
+                    <div class="slider-row">
+                        <label class="label-v">V</label>
+                        <input type="range" id="v-challenge" min="0" max="255" value="0">
+                        <span id="v-val-challenge">0</span>
+                    </div>
+                    <div class="slider-row">
+                        <label class="label-b">B</label>
+                        <input type="range" id="b-challenge" min="0" max="255" value="0">
+                        <span id="b-val-challenge">0</span>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback"></div>
+                <button class="btn-check" id="btn-check">✅ Valider</button>
+            </div>
+
+            <div class="score-bar">
+                <div class="score-item">
+                    <div class="score-label">Score</div>
+                    <div class="score-value" id="global-correct">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Série en cours</div>
+                    <div class="score-value" id="global-streak">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Record</div>
+                    <div class="score-value" id="global-best">0</div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script>
+        lucide.createIcons();
+        ScoreManager.init('pixel_studio_rvb');
+
+        const navDiscovery = document.getElementById('nav-discovery');
+        const navChallenge = document.getElementById('nav-challenge');
+        const modeDiscovery = document.getElementById('mode-discovery');
+        const modeChallenge = document.getElementById('mode-challenge');
+
+        navDiscovery.addEventListener('click', () => {
+            navDiscovery.classList.add('active');
+            navChallenge.classList.remove('active');
+            modeDiscovery.classList.add('active');
+            modeChallenge.classList.remove('active');
+        });
+
+        navChallenge.addEventListener('click', () => {
+            navChallenge.classList.add('active');
+            navDiscovery.classList.remove('active');
+            modeChallenge.classList.add('active');
+            modeDiscovery.classList.remove('active');
+            initChallenge();
+        });
+
         const grid = document.getElementById('grid');
+        const previewDiscovery = document.getElementById('preview-discovery');
+        const rDisc = document.getElementById('r-discovery');
+        const vDisc = document.getElementById('v-discovery');
+        const bDisc = document.getElementById('b-discovery');
+        const rValDisc = document.getElementById('r-val-discovery');
+        const vValDisc = document.getElementById('v-val-discovery');
+        const bValDisc = document.getElementById('b-val-discovery');
+        const btnClear = document.getElementById('btn-clear');
+        let isDrawing = false;
+
         for (let i = 0; i < 64; i++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            cell.addEventListener('click', () => {
-                cell.style.background = document.getElementById('preview').style.background;
+
+            const applyColor = () => {
+                cell.style.background = previewDiscovery.style.background;
+            };
+
+            cell.addEventListener('mousedown', () => {
+                isDrawing = true;
+                applyColor();
             });
+            cell.addEventListener('mouseenter', () => {
+                if (isDrawing) applyColor();
+            });
+
+            cell.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                applyColor();
+            }, {passive: false});
+
             grid.appendChild(cell);
         }
-        function updateColor() {
-            const r = document.getElementById('r').value;
-            const v = document.getElementById('v').value;
-            const b = document.getElementById('b').value;
-            document.getElementById('preview').style.background = `rgb(${r},${v},${b})`;
+
+        window.addEventListener('mouseup', () => { isDrawing = false; });
+
+        grid.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (target && target.classList.contains('cell')) {
+                target.style.background = previewDiscovery.style.background;
+            }
+        }, {passive: false});
+
+        function updateDiscoveryColor() {
+            const r = rDisc.value;
+            const v = vDisc.value;
+            const b = bDisc.value;
+            rValDisc.textContent = r;
+            vValDisc.textContent = v;
+            bValDisc.textContent = b;
+            previewDiscovery.style.background = `rgb(${r},${v},${b})`;
         }
-        document.getElementById('r').addEventListener('input', updateColor);
-        document.getElementById('v').addEventListener('input', updateColor);
-        document.getElementById('b').addEventListener('input', updateColor);
+
+        rDisc.addEventListener('input', updateDiscoveryColor);
+        vDisc.addEventListener('input', updateDiscoveryColor);
+        bDisc.addEventListener('input', updateDiscoveryColor);
+
+        btnClear.addEventListener('click', () => {
+            document.querySelectorAll('.cell').forEach(cell => cell.style.background = '#fff');
+            if(window.AudioTools) AudioTools.play('click');
+        });
+
+        const previewTarget = document.getElementById('preview-target');
+        const previewChallenge = document.getElementById('preview-challenge');
+        const rChal = document.getElementById('r-challenge');
+        const vChal = document.getElementById('v-challenge');
+        const bChal = document.getElementById('b-challenge');
+        const rValChal = document.getElementById('r-val-challenge');
+        const vValChal = document.getElementById('v-val-challenge');
+        const bValChal = document.getElementById('b-val-challenge');
+        const btnCheck = document.getElementById('btn-check');
+        const feedback = document.getElementById('feedback');
+
+        let targetR, targetV, targetB;
+
+        function initChallenge() {
+            targetR = Math.floor(Math.random() * 18) * 15;
+            targetV = Math.floor(Math.random() * 18) * 15;
+            targetB = Math.floor(Math.random() * 18) * 15;
+
+            previewTarget.style.background = `rgb(${targetR},${targetV},${targetB})`;
+
+            rChal.value = 0;
+            vChal.value = 0;
+            bChal.value = 0;
+            updateChallengeColor();
+            feedback.textContent = "";
+            btnCheck.disabled = false;
+        }
+
+        function updateChallengeColor() {
+            const r = rChal.value;
+            const v = vChal.value;
+            const b = bChal.value;
+            rValChal.textContent = r;
+            vValChal.textContent = v;
+            bValChal.textContent = b;
+            previewChallenge.style.background = `rgb(${r},${v},${b})`;
+        }
+
+        rChal.addEventListener('input', updateChallengeColor);
+        vChal.addEventListener('input', updateChallengeColor);
+        bChal.addEventListener('input', updateChallengeColor);
+
+        btnCheck.addEventListener('click', () => {
+            const r = parseInt(rChal.value);
+            const v = parseInt(vChal.value);
+            const b = parseInt(bChal.value);
+
+            const diffR = Math.abs(r - targetR);
+            const diffV = Math.abs(v - targetV);
+            const diffB = Math.abs(b - targetB);
+            const totalDiff = diffR + diffV + diffB;
+
+            if (totalDiff < 45) {
+                feedback.textContent = "🎉 Bravo ! C'est parfait !";
+                feedback.style.color = "var(--success)";
+                if(window.AudioTools) AudioTools.play('success');
+                ScoreManager.addCorrect();
+                btnCheck.disabled = true;
+                setTimeout(initChallenge, 2000);
+            } else {
+                feedback.style.color = "var(--error)";
+                if(window.AudioTools) AudioTools.play('error');
+                ScoreManager.resetStreak();
+
+                let hints = [];
+                if (diffR > 30) hints.push(r < targetR ? "Plus de R" : "Moins de R");
+                if (diffV > 30) hints.push(v < targetV ? "Plus de V" : "Moins de V");
+                if (diffB > 30) hints.push(b < targetB ? "Plus de B" : "Moins de B");
+
+                if (hints.length > 0) {
+                    feedback.textContent = "Indice : " + hints.join(", ");
+                } else {
+                    feedback.textContent = "Tu y es presque !";
+                }
+            }
+        });
+
+        updateDiscoveryColor();
+
+        const optionsBtn = document.getElementById('optionsMenuBtn');
+        const settingsContent = document.querySelector('.settings-dropdown-content');
+
+        if (optionsBtn && settingsContent) {
+            optionsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isVisible = settingsContent.style.display === 'block';
+                settingsContent.style.display = isVisible ? 'none' : 'block';
+            });
+
+            document.addEventListener('click', () => {
+                settingsContent.style.display = 'none';
+            });
+            settingsContent.addEventListener('click', (e) => e.stopPropagation());
+        }
+
     </script>
+    <script src="../../js/theme.js"></script>
 </body>
 </html>
