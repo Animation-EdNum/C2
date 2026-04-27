@@ -2453,7 +2453,7 @@
                         <span>Opacité</span>
                         <span id="matOpacityValue">30%</span>
                     </div>
-                    <input type="range" id="matOpacitySlider" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
+                    <input type="range" id="matOpacitySlider" aria-label="Opacité du tapis pédagogique" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
                 </div>
                 <button class="btn btn-outline btn-small" id="btn-remove-mat" style="white-space: nowrap; font-size: 0.9em;">
                     <i data-lucide="trash-2" style="width: 16px; height: 16px; margin-right: 5px;"></i>Aucun tapis
@@ -5292,62 +5292,65 @@
             });
         }
 
-        const customMatUpload = document.getElementById('customMatUpload');
-        const customMatStatus = document.getElementById('customMatStatus');
-        if (customMatUpload) {
-            customMatUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
+        window.handleCustomMatUpload = function(e) {
+            const customMatStatus = document.getElementById('customMatStatus');
+            if (!customMatStatus) return;
+            const file = e.target.files[0];
+            if (!file) return;
 
-                customMatStatus.textContent = "Chargement et optimisation...";
+            customMatStatus.textContent = "Chargement et optimisation...";
 
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const MAX_SIZE = 1024;
-                        let width = img.width;
-                        let height = img.height;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const MAX_SIZE = 1024;
+                    let width = img.width;
+                    let height = img.height;
 
-                        if (width > height) {
-                            if (width > MAX_SIZE) {
-                                height *= MAX_SIZE / width;
-                                width = MAX_SIZE;
-                            }
-                        } else {
-                            if (height > MAX_SIZE) {
-                                width *= MAX_SIZE / height;
-                                height = MAX_SIZE;
-                            }
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
                         }
-
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        try {
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                            localStorage.setItem('bb_custom_mat_image', dataUrl);
-                            document.documentElement.style.setProperty('--custom-mat-url', `url(${dataUrl})`);
-                            updateCustomMatUI();
-                            selectMat('custom');
-                            customMatStatus.textContent = "Image ajoutée avec succès !";
-                            customMatStatus.style.color = "var(--success)";
-                            setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
-                        } catch (err) {
-                            console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
-                            customMatStatus.textContent = "Erreur : image trop grande.";
-                            customMatStatus.style.color = "var(--danger)";
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
                         }
-                    };
-                    img.src = event.target.result;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    try {
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        localStorage.setItem('bb_custom_mat_image', dataUrl);
+                        document.documentElement.style.setProperty('--custom-mat-url', `url(${dataUrl})`);
+                        updateCustomMatUI();
+                        selectMat('custom');
+                        customMatStatus.textContent = "Image ajoutée avec succès !";
+                        customMatStatus.style.color = "var(--success)";
+                        setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
+                    } catch (err) {
+                        console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
+                        customMatStatus.textContent = "Erreur : image trop grande.";
+                        customMatStatus.style.color = "var(--danger)";
+                    }
                 };
-                reader.readAsDataURL(file);
-                // Reset file input so same file can be selected again
-                e.target.value = '';
-            });
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            // Reset file input so same file can be selected again
+            e.target.value = '';
+        };
+
+        const customMatUpload = document.getElementById('customMatUpload');
+        if (customMatUpload) {
+            customMatUpload.addEventListener('change', window.handleCustomMatUpload);
         }
 
         function updateCustomMatUI() {
