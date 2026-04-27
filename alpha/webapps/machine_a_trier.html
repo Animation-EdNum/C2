@@ -204,6 +204,8 @@
         <div class="tabs">
             <button class="tab-btn active" id="tab-color">🎨 Par couleur</button>
             <button class="tab-btn" id="tab-shape">⭐ Par forme</button>
+            <button class="tab-btn" id="tab-quantity">🔢 Par quantité</button>
+            <button class="tab-btn" id="tab-size">📏 Par taille</button>
         </div>
 
         <!-- DIFFICULTÉ -->
@@ -268,10 +270,26 @@
             { id: 'square', name: 'Carré', icon: 'square' },
             { id: 'triangle', name: 'Triangle', icon: 'triangle' },
             { id: 'star', name: 'Étoile', icon: 'star' },
-            { id: 'hexagon', name: 'hexagon', icon: 'hexagon' }
+            { id: 'hexagon', name: 'Hexagone', icon: 'hexagon' }
         ];
 
-        let currentMode = 'color'; // 'color' ou 'shape'
+        const QUANTITIES = [
+            { id: '1', name: '1', icon: 'dice-1' },
+            { id: '2', name: '2', icon: 'dice-2' },
+            { id: '3', name: '3', icon: 'dice-3' },
+            { id: '4', name: '4', icon: 'dice-4' },
+            { id: '5', name: '5', icon: 'dice-5' },
+            { id: '6', name: '6', icon: 'dice-6' }
+        ];
+
+        const SIZES = [
+            { id: 'small', name: 'Petit', scale: 0.5 },
+            { id: 'medium', name: 'Moyen', scale: 0.8 },
+            { id: 'large', name: 'Grand', scale: 1.1 },
+            { id: 'xlarge', name: 'Très grand', scale: 1.4 }
+        ];
+
+        let currentMode = 'color'; // 'color', 'shape', 'quantity', 'size'
         let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
 
         let globalCorrect = 0;
@@ -296,6 +314,8 @@
             // Tabs
             document.getElementById('tab-color').addEventListener('click', () => setMode('color'));
             document.getElementById('tab-shape').addEventListener('click', () => setMode('shape'));
+            document.getElementById('tab-quantity').addEventListener('click', () => setMode('quantity'));
+            document.getElementById('tab-size').addEventListener('click', () => setMode('size'));
 
             // Difficulty
             document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
@@ -315,6 +335,8 @@
             currentMode = mode;
             document.getElementById('tab-color').classList.toggle('active', mode === 'color');
             document.getElementById('tab-shape').classList.toggle('active', mode === 'shape');
+            document.getElementById('tab-quantity').classList.toggle('active', mode === 'quantity');
+            document.getElementById('tab-size').classList.toggle('active', mode === 'size');
             startNewLevel();
         }
 
@@ -358,7 +380,7 @@
                     setupBinEvents(bin);
                     binsContainer.appendChild(bin);
                 });
-            } else {
+            } else if (currentMode === 'shape') {
                 // Mélanger et prendre N formes
                 const shuffled = [...SHAPES].sort(() => 0.5 - Math.random());
                 availableTypes = shuffled.slice(0, numBins);
@@ -370,6 +392,42 @@
                     bin.dataset.accept = type.id;
                     bin.innerHTML = `<div class="bin-label">
                         <i data-lucide="${type.icon}" class="bin-icon"></i>
+                        ${type.name}
+                    </div>`;
+                    setupBinEvents(bin);
+                    binsContainer.appendChild(bin);
+                });
+            } else if (currentMode === 'quantity') {
+                // Mélanger et prendre N quantités
+                const shuffled = [...QUANTITIES].sort(() => 0.5 - Math.random());
+                availableTypes = shuffled.slice(0, numBins);
+                // Trier les bacs par quantité croissante pour plus de clarté
+                availableTypes.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+                // Créer les bacs
+                availableTypes.forEach(type => {
+                    const bin = document.createElement('div');
+                    bin.className = `bin`;
+                    bin.dataset.accept = type.id;
+                    bin.innerHTML = `<div class="bin-label" style="font-size: 24px; font-weight: bold; font-family: monospace;">
+                        ${type.name}
+                    </div>`;
+                    setupBinEvents(bin);
+                    binsContainer.appendChild(bin);
+                });
+            } else if (currentMode === 'size') {
+                // Mélanger et prendre N tailles
+                const shuffled = [...SIZES].sort(() => 0.5 - Math.random());
+                availableTypes = shuffled.slice(0, numBins);
+                // Trier les bacs par taille croissante pour plus de clarté
+                availableTypes.sort((a, b) => a.scale - b.scale);
+
+                // Créer les bacs
+                availableTypes.forEach(type => {
+                    const bin = document.createElement('div');
+                    bin.className = `bin`;
+                    bin.dataset.accept = type.id;
+                    bin.innerHTML = `<div class="bin-label">
                         ${type.name}
                     </div>`;
                     setupBinEvents(bin);
@@ -387,16 +445,21 @@
                 const correctType = availableTypes[i % numBins];
 
                 // Assigner la forme ou couleur opposée aléatoirement pour varier l'apparence
-                let itemColor, itemShape;
+                let itemColor, itemShape, itemQuantity, itemScale;
+                itemColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+                itemShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+
                 if (currentMode === 'color') {
                     itemColor = correctType;
-                    itemShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-                } else {
+                } else if (currentMode === 'shape') {
                     itemShape = correctType;
-                    itemColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+                } else if (currentMode === 'quantity') {
+                    itemQuantity = correctType;
+                } else if (currentMode === 'size') {
+                    itemScale = correctType;
                 }
 
-                items.push({ id: `item-${i}`, color: itemColor, shape: itemShape, typeId: correctType.id });
+                items.push({ id: `item-${i}`, color: itemColor, shape: itemShape, quantity: itemQuantity, scaleObj: itemScale, typeId: correctType.id });
             }
 
             // Mélanger les objets
@@ -410,7 +473,13 @@
                 item.draggable = true;
 
                 // Apparence de l'objet
-                item.innerHTML = `<i data-lucide="${itemData.shape.icon}" class="shape-icon" style="color: ${itemData.color.hex}; fill: ${itemData.color.hex};"></i>`;
+                if (currentMode === 'quantity') {
+                    item.innerHTML = `<i data-lucide="${itemData.quantity.icon}" class="shape-icon" style="color: ${itemData.color.hex}; width: 44px; height: 44px;"></i>`;
+                } else if (currentMode === 'size') {
+                    item.innerHTML = `<i data-lucide="${itemData.shape.icon}" class="shape-icon" style="color: ${itemData.color.hex}; fill: ${itemData.color.hex}; transform: scale(${itemData.scaleObj.scale});"></i>`;
+                } else {
+                    item.innerHTML = `<i data-lucide="${itemData.shape.icon}" class="shape-icon" style="color: ${itemData.color.hex}; fill: ${itemData.color.hex};"></i>`;
+                }
 
                 setupItemEvents(item);
                 itemsContainer.appendChild(item);
