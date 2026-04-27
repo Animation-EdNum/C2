@@ -1539,6 +1539,11 @@
         }
 
         /* FULLSCREEN MAP */
+
+        body.fullscreen-map .difficulty-bar {
+            display: none !important;
+        }
+
         body.fullscreen-map .app-header {
             display: none !important;
         }
@@ -1560,7 +1565,7 @@
             height: 100vh;
         }
 
-        body.fullscreen-map #view-simulator {
+        body.fullscreen-map .view.active {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -1615,12 +1620,7 @@
             display: flex;
         }
 
-        body.fullscreen-map .sim-options,
-        body.fullscreen-map .program-strip,
-        body.fullscreen-map .controls,
-        body.fullscreen-map .score-bar,
-        body.fullscreen-map .legend,
-        body.fullscreen-map #btn-fullscreen-map {
+        body.fullscreen-map .sim-options, body.fullscreen-map .controls, body.fullscreen-map .score-bar, body.fullscreen-map .legend, body.fullscreen-map .icon-action-btn, body.fullscreen-map #sim-program {
             display: none !important;
         }
 
@@ -1948,7 +1948,7 @@
             height: 100vh;
         }
 
-        body.fullscreen-map #view-simulator {
+        body.fullscreen-map .view.active {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -2003,12 +2003,7 @@
             display: flex;
         }
 
-        body.fullscreen-map .sim-options,
-        body.fullscreen-map .program-strip,
-        body.fullscreen-map .controls,
-        body.fullscreen-map .score-bar,
-        body.fullscreen-map .legend,
-        body.fullscreen-map #btn-fullscreen-map {
+        body.fullscreen-map .sim-options, body.fullscreen-map .controls, body.fullscreen-map .score-bar, body.fullscreen-map .legend, body.fullscreen-map .icon-action-btn, body.fullscreen-map #sim-program {
             display: none !important;
         }
 
@@ -2453,7 +2448,7 @@
                         <span>Opacité</span>
                         <span id="matOpacityValue">30%</span>
                     </div>
-                    <input type="range" id="matOpacitySlider" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
+                    <input type="range" id="matOpacitySlider" aria-label="Opacité du tapis pédagogique" min="0.1" max="1" step="0.1" value="0.3" style="width: 100%;">
                 </div>
                 <button class="btn btn-outline btn-small" id="btn-remove-mat" style="white-space: nowrap; font-size: 0.9em;">
                     <i data-lucide="trash-2" style="width: 16px; height: 16px; margin-right: 5px;"></i>Aucun tapis
@@ -2585,6 +2580,9 @@
 
         </header>
 
+
+        <button id="btn-exit-fullscreen" style="display:none; position: fixed; top: 10px; right: 10px; z-index: 10000; border-radius: 50%; width: 44px; height: 44px; padding: 0; align-items: center; justify-content: center;" class="btn btn-new" title="Quitter le plein écran">✖</button>
+
         <div class="tabs">
             <button class="tab-btn active" id="tab-simulator">🎮 Simulateur</button>
             <button class="tab-btn" id="tab-challenge">🧩 Pilotage</button>
@@ -2592,9 +2590,7 @@
         </div>
 
         <div id="view-simulator" class="view active">
-            <button id="btn-exit-fullscreen"
-                style="display:none; position: fixed; top: 10px; right: 10px; z-index: 10000; border-radius: 50%; width: 44px; height: 44px; padding: 0; align-items: center; justify-content: center;"
-                class="btn btn-new" title="Quitter le plein écran">✖</button>
+
 
             <div class="exercise-card">
 
@@ -2661,11 +2657,14 @@
             </div>
 
             <div class="exercise-card">
-                <div class="grid-wrapper">
-                    <div class="bot-grid" id="chal-grid"></div>
-                </div>
+                <div class="challenge-options" id="chal-options" style="margin-bottom: 15px;"></div>
 
-                <div class="challenge-options" id="chal-options"></div>
+                <div class="grid-wrapper">
+                    <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column;" class="bot-grid-container">
+                        <div class="bot-grid" id="chal-grid" style="margin: 0; max-width: none;"></div>
+                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-chal" title="Plein écran" style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;"><i data-lucide="maximize"></i></button>
+                    </div>
+                </div>
 
                 <div id="chal-hint"
                     style="display:none; text-align:center; margin: 12px 0; padding: 10px 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warn); border-radius: 10px; font-size: 13px; color: var(--warn); font-weight: 600;">
@@ -2710,7 +2709,10 @@
                 </div>
 
                 <div class="grid-wrapper">
-                    <div class="bot-grid" id="read-grid"></div>
+                    <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column;" class="bot-grid-container">
+                        <div class="bot-grid" id="read-grid" style="margin: 0; max-width: none;"></div>
+                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-read" title="Plein écran" style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;"><i data-lucide="maximize"></i></button>
+                    </div>
                 </div>
 
                 <div class="controls">
@@ -5208,6 +5210,28 @@
         });
         document.getElementById('btn-clear-walls').addEventListener('click', clearSimWalls);
 
+        document.getElementById('btn-fullscreen-chal').addEventListener('click', () => {
+            playSound('click');
+            document.body.classList.add('fullscreen-map');
+            setTimeout(() => {
+                const grid = document.getElementById('chal-grid');
+                grid.style.display = 'none';
+                grid.offsetHeight;
+                grid.style.display = '';
+            }, 50);
+        });
+
+        document.getElementById('btn-fullscreen-read').addEventListener('click', () => {
+            playSound('click');
+            document.body.classList.add('fullscreen-map');
+            setTimeout(() => {
+                const grid = document.getElementById('read-grid');
+                grid.style.display = 'none';
+                grid.offsetHeight;
+                grid.style.display = '';
+            }, 50);
+        });
+
         document.getElementById('btn-fullscreen-map').addEventListener('click', () => {
             playSound('click');
             document.body.classList.add('fullscreen-map');
@@ -5225,12 +5249,15 @@
             playSound('click');
             document.body.classList.remove('fullscreen-map');
 
-            // Force redraw/resize of grid if needed
             setTimeout(() => {
-                const grid = document.getElementById('sim-grid');
-                grid.style.display = 'none';
-                grid.offsetHeight; // trigger reflow
-                grid.style.display = '';
+                ['sim-grid', 'chal-grid', 'read-grid'].forEach(id => {
+                    const grid = document.getElementById(id);
+                    if(grid) {
+                        grid.style.display = 'none';
+                        grid.offsetHeight;
+                        grid.style.display = '';
+                    }
+                });
             }, 50);
         });
 
@@ -5296,62 +5323,65 @@
             });
         }
 
-        const customMatUpload = document.getElementById('customMatUpload');
-        const customMatStatus = document.getElementById('customMatStatus');
-        if (customMatUpload) {
-            customMatUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
+        window.handleCustomMatUpload = function(e) {
+            const customMatStatus = document.getElementById('customMatStatus');
+            if (!customMatStatus) return;
+            const file = e.target.files[0];
+            if (!file) return;
 
-                customMatStatus.textContent = "Chargement et optimisation...";
+            customMatStatus.textContent = "Chargement et optimisation...";
 
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const MAX_SIZE = 1024;
-                        let width = img.width;
-                        let height = img.height;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const MAX_SIZE = 1024;
+                    let width = img.width;
+                    let height = img.height;
 
-                        if (width > height) {
-                            if (width > MAX_SIZE) {
-                                height *= MAX_SIZE / width;
-                                width = MAX_SIZE;
-                            }
-                        } else {
-                            if (height > MAX_SIZE) {
-                                width *= MAX_SIZE / height;
-                                height = MAX_SIZE;
-                            }
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
                         }
-
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        try {
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                            localStorage.setItem('bb_custom_mat_image', dataUrl);
-                            document.documentElement.style.setProperty('--custom-mat-url', `url(${dataUrl})`);
-                            updateCustomMatUI();
-                            selectMat('custom');
-                            customMatStatus.textContent = "Image ajoutée avec succès !";
-                            customMatStatus.style.color = "var(--success)";
-                            setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
-                        } catch (err) {
-                            console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
-                            customMatStatus.textContent = "Erreur : image trop grande.";
-                            customMatStatus.style.color = "var(--danger)";
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
                         }
-                    };
-                    img.src = event.target.result;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    try {
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        localStorage.setItem('bb_custom_mat_image', dataUrl);
+                        document.documentElement.style.setProperty('--custom-mat-url', `url(${dataUrl})`);
+                        updateCustomMatUI();
+                        selectMat('custom');
+                        customMatStatus.textContent = "Image ajoutée avec succès !";
+                        customMatStatus.style.color = "var(--success)";
+                        setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
+                    } catch (err) {
+                        console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
+                        customMatStatus.textContent = "Erreur : image trop grande.";
+                        customMatStatus.style.color = "var(--danger)";
+                    }
                 };
-                reader.readAsDataURL(file);
-                // Reset file input so same file can be selected again
-                e.target.value = '';
-            });
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+            // Reset file input so same file can be selected again
+            e.target.value = '';
+        };
+
+        const customMatUpload = document.getElementById('customMatUpload');
+        if (customMatUpload) {
+            customMatUpload.addEventListener('change', window.handleCustomMatUpload);
         }
 
         function updateCustomMatUI() {
