@@ -1539,6 +1539,11 @@
         }
 
         /* FULLSCREEN MAP */
+
+        body.fullscreen-map .difficulty-bar {
+            display: none !important;
+        }
+
         body.fullscreen-map .app-header {
             display: none !important;
         }
@@ -1560,7 +1565,7 @@
             height: 100vh;
         }
 
-        body.fullscreen-map #view-simulator {
+        body.fullscreen-map .view.active {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -1615,12 +1620,7 @@
             display: flex;
         }
 
-        body.fullscreen-map .sim-options,
-        body.fullscreen-map .program-strip,
-        body.fullscreen-map .controls,
-        body.fullscreen-map .score-bar,
-        body.fullscreen-map .legend,
-        body.fullscreen-map #btn-fullscreen-map {
+        body.fullscreen-map .sim-options, body.fullscreen-map .controls, body.fullscreen-map .score-bar, body.fullscreen-map .legend, body.fullscreen-map .icon-action-btn, body.fullscreen-map #sim-program {
             display: none !important;
         }
 
@@ -1948,7 +1948,7 @@
             height: 100vh;
         }
 
-        body.fullscreen-map #view-simulator {
+        body.fullscreen-map .view.active {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -2003,12 +2003,7 @@
             display: flex;
         }
 
-        body.fullscreen-map .sim-options,
-        body.fullscreen-map .program-strip,
-        body.fullscreen-map .controls,
-        body.fullscreen-map .score-bar,
-        body.fullscreen-map .legend,
-        body.fullscreen-map #btn-fullscreen-map {
+        body.fullscreen-map .sim-options, body.fullscreen-map .controls, body.fullscreen-map .score-bar, body.fullscreen-map .legend, body.fullscreen-map .icon-action-btn, body.fullscreen-map #sim-program {
             display: none !important;
         }
 
@@ -2585,6 +2580,9 @@
 
         </header>
 
+
+        <button id="btn-exit-fullscreen" style="display:none; position: fixed; top: 10px; right: 10px; z-index: 10000; border-radius: 50%; width: 44px; height: 44px; padding: 0; align-items: center; justify-content: center;" class="btn btn-new" title="Quitter le plein écran">✖</button>
+
         <div class="tabs">
             <button class="tab-btn active" id="tab-simulator">🎮 Simulateur</button>
             <button class="tab-btn" id="tab-challenge">🧩 Pilotage</button>
@@ -2592,9 +2590,7 @@
         </div>
 
         <div id="view-simulator" class="view active">
-            <button id="btn-exit-fullscreen"
-                style="display:none; position: fixed; top: 10px; right: 10px; z-index: 10000; border-radius: 50%; width: 44px; height: 44px; padding: 0; align-items: center; justify-content: center;"
-                class="btn btn-new" title="Quitter le plein écran">✖</button>
+
 
             <div class="exercise-card">
 
@@ -2661,11 +2657,14 @@
             </div>
 
             <div class="exercise-card">
-                <div class="grid-wrapper">
-                    <div class="bot-grid" id="chal-grid"></div>
-                </div>
+                <div class="challenge-options" id="chal-options" style="margin-bottom: 15px;"></div>
 
-                <div class="challenge-options" id="chal-options"></div>
+                <div class="grid-wrapper">
+                    <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column;" class="bot-grid-container">
+                        <div class="bot-grid" id="chal-grid" style="margin: 0; max-width: none;"></div>
+                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-chal" title="Plein écran" style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;"><i data-lucide="maximize"></i></button>
+                    </div>
+                </div>
 
                 <div id="chal-hint"
                     style="display:none; text-align:center; margin: 12px 0; padding: 10px 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warn); border-radius: 10px; font-size: 13px; color: var(--warn); font-weight: 600;">
@@ -2705,12 +2704,15 @@
                     style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
                 </div>
 
-                <div class="grid-wrapper">
-                    <div class="bot-grid" id="read-grid"></div>
+                <div class="program-strip" id="read-program" style="margin-top: 15px; margin-bottom: 15px;">
+                    <!-- Commands will be rendered here -->
                 </div>
 
-                <div class="program-strip" id="read-program" style="margin-top: 15px;">
-                    <!-- Commands will be rendered here -->
+                <div class="grid-wrapper">
+                    <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column;" class="bot-grid-container">
+                        <div class="bot-grid" id="read-grid" style="margin: 0; max-width: none;"></div>
+                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-read" title="Plein écran" style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;"><i data-lucide="maximize"></i></button>
+                    </div>
                 </div>
 
                 <div class="controls">
@@ -5204,6 +5206,28 @@
         });
         document.getElementById('btn-clear-walls').addEventListener('click', clearSimWalls);
 
+        document.getElementById('btn-fullscreen-chal').addEventListener('click', () => {
+            playSound('click');
+            document.body.classList.add('fullscreen-map');
+            setTimeout(() => {
+                const grid = document.getElementById('chal-grid');
+                grid.style.display = 'none';
+                grid.offsetHeight;
+                grid.style.display = '';
+            }, 50);
+        });
+
+        document.getElementById('btn-fullscreen-read').addEventListener('click', () => {
+            playSound('click');
+            document.body.classList.add('fullscreen-map');
+            setTimeout(() => {
+                const grid = document.getElementById('read-grid');
+                grid.style.display = 'none';
+                grid.offsetHeight;
+                grid.style.display = '';
+            }, 50);
+        });
+
         document.getElementById('btn-fullscreen-map').addEventListener('click', () => {
             playSound('click');
             document.body.classList.add('fullscreen-map');
@@ -5221,12 +5245,15 @@
             playSound('click');
             document.body.classList.remove('fullscreen-map');
 
-            // Force redraw/resize of grid if needed
             setTimeout(() => {
-                const grid = document.getElementById('sim-grid');
-                grid.style.display = 'none';
-                grid.offsetHeight; // trigger reflow
-                grid.style.display = '';
+                ['sim-grid', 'chal-grid', 'read-grid'].forEach(id => {
+                    const grid = document.getElementById(id);
+                    if(grid) {
+                        grid.style.display = 'none';
+                        grid.offsetHeight;
+                        grid.style.display = '';
+                    }
+                });
             }, 50);
         });
 
