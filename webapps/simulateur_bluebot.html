@@ -3856,6 +3856,24 @@
 
             const overlay = document.getElementById(overlayId);
 
+            if (overlay) {
+                overlay.style.cursor = 'pointer'; // Make it clear it's clickable
+                overlay.onclick = (e) => {
+                    // Prevent switching if the simulation is running
+                    if (typeof simState !== 'undefined' && simState && simState.running) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Calculate next skin based on SKIN_CONFIG order, filtering for unlocked ones
+                    const availableSkins = Object.keys(SKIN_CONFIG).filter(id => unlockedSkins.includes(id));
+                    const currentIndex = availableSkins.indexOf(activeSkin);
+                    if (currentIndex !== -1 && availableSkins.length > 1) {
+                        const nextSkinId = availableSkins[(currentIndex + 1) % availableSkins.length];
+                        selectSkin(nextSkinId);
+                    }
+                };
+            }
+
             if (overlay && containerId === 'sim-grid') {
                 overlay.setAttribute('draggable', 'true');
                 overlay.addEventListener('dragstart', (e) => {
