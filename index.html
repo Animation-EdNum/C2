@@ -869,7 +869,24 @@
                         const matchesSearch = textContent.includes(query);
 
                         // Vérifie le filtre de niveau (seulement si on ne recherche pas globalement)
-                        const matchesFilter = isSearching ? true : (currentFilter === 'all' || level === currentFilter);
+                        // On vérifie le data-level principal, ainsi que les badges à l'intérieur
+                        let matchesLevel = false;
+                        if (currentFilter === 'all') {
+                            matchesLevel = true;
+                        } else {
+                            if (level === currentFilter) {
+                                matchesLevel = true;
+                            } else {
+                                // check badges
+                                const badges = card.querySelectorAll('.badge');
+                                badges.forEach(badge => {
+                                    if (badge.innerText === currentFilter) {
+                                        matchesLevel = true;
+                                    }
+                                });
+                            }
+                        }
+                        const matchesFilter = isSearching ? true : matchesLevel;
 
                         if (matchesSearch && matchesFilter) {
                             card.classList.remove('filter-hidden');
