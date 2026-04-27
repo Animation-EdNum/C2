@@ -2978,6 +2978,24 @@
             }).join('');
         }
 
+        function redrawTrail(containerId, state) {
+            let maxIndex = state.program.length - 1;
+            if (state.running || state.failed) {
+                maxIndex = state.stepIndex - 1;
+            }
+            TrailManager.clear(containerId);
+            TrailManager.captureInitialState(containerId, state.startRow, state.startCol, state.startDir);
+            let tempState = { robotRow: state.startRow, robotCol: state.startCol, robotDir: state.startDir, obstacles: state.obstacles };
+            for(let i = 0; i <= maxIndex; i++) {
+                let cmd = state.program[i];
+                let res = moveRobot(tempState, cmd, false);
+                if (res.robotRow !== tempState.robotRow || res.robotCol !== tempState.robotCol) {
+                    TrailManager.addSegment(containerId, res.robotRow, res.robotCol);
+                }
+                tempState = res;
+            }
+        }
+
         function selectSkin(skinId) {
             if (!unlockedSkins.includes(skinId)) return;
             playSound('click');
@@ -3001,7 +3019,13 @@
             // Re-render grids to apply skin
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            TrailManager.clear('sim-grid');
+
+            if (TrailManager.states['sim-grid']) {
+                redrawTrail('sim-grid', simState);
+            } else {
+                TrailManager.clear('sim-grid');
+            }
+
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
@@ -3810,13 +3834,19 @@
                         const isSimObstacle = simState.obstacles && simState.obstacles.some(o => o.r === r && o.c === c);
                         const isSimTarget = simState.targetRow === r && simState.targetCol === c;
 
-                        if (containerId === 'sim-grid' && !simState.running && !isSimObstacle && !isSimTarget) {
+                        if (containerId === 'sim-grid' && !simState.running && !isSimObstacle) {
                             playSound('click');
                             simState.robotRow = r;
                             simState.robotCol = c;
                             simState.startRow = r;
                             simState.startCol = c;
+                            simState.startDir = simState.robotDir;
                             resetSimulatorPosition();
+
+                            if (isSimTarget) {
+                                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', true, true);
+                                placeRandomSimTarget(true);
+                            }
                         }
                     });
 
