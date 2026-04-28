@@ -326,6 +326,7 @@
             right: 15px;
             height: 70px;
             pointer-events: none;
+            z-index: 20;
         }
 
         .crane-rail {
@@ -872,6 +873,7 @@
         let craneState = { pos: 0, height: 0, holding: null };
         let program = [];
         let isExecuting = false;
+        let isCooldown = false;
 
         const feedbackMsg = document.getElementById('feedback-msg');
         const targetBoardEl = document.getElementById('target-board');
@@ -940,6 +942,7 @@
             clearInterval(window.failInterval);
             clearTimeout(window.failTimeout);
             isExecuting = false;
+            isCooldown = false;
             playBtn.disabled = false;
             program = [];
             clearProgram();
@@ -1069,13 +1072,13 @@
                 programStrip.appendChild(stepEl);
             });
             lucide.createIcons();
-            playBtn.disabled = program.length === 0;
+            playBtn.disabled = program.length === 0 || isExecuting || isCooldown;
         }
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
 
         async function executeProgram() {
-            if (isExecuting || program.length === 0) return;
+            if (isExecuting || isCooldown || program.length === 0) return;
             isExecuting = true;
             playBtn.disabled = true;
 
@@ -1083,11 +1086,14 @@
             resetToInitial();
             renderAll();
             await delay(500); // brief pause before action
+            if (!isExecuting) return; // Prevent old execution from continuing if reset
 
             feedbackMsg.textContent = 'Exécution...';
             feedbackMsg.className = 'feedback';
 
             for (let i = 0; i < program.length; i++) {
+                if (!isExecuting) return; // Prevent old execution from continuing if reset
+
                 document.querySelectorAll('.prog-step').forEach(el => el.classList.remove('active'));
                 let currentStepEl = document.getElementById(`prog-step-${i}`);
                 if (currentStepEl) currentStepEl.classList.add('active');
@@ -1105,6 +1111,7 @@
                 await delay(600);
             }
 
+            if (!isExecuting) return; // Prevent checkWin from firing if reset
             document.querySelectorAll('.prog-step').forEach(el => el.classList.remove('active'));
             checkWin();
         }
@@ -1172,25 +1179,30 @@
 
             if (isWin) {
                 updateScore(true);
-                showFeedback('Bien joué !', 'success');
+                showFeedback('Bien joué ! Exercice réussi.', 'success');
                 playSound('win');
                 launchConfetti();
                 setTimeout(() => {
                     startNewLevel();
-                }, 2500);
+                }, 5000); // Wait 5 seconds before the next challenge
             } else {
                 updateScore(false);
                 playSound('error');
 
                 let seconds = 5;
-                showFeedback(`Erreur. Réinitialisation dans ${seconds}s...`, 'error');
-                isExecuting = true;
-                playBtn.disabled = true;
+                // Add specific error messages based on state
+                let errorReason = "La disposition ne correspond pas.";
+                if (craneState.holding) errorReason = "La grue tient encore un objet.";
+
+                showFeedback(`Erreur: ${errorReason} Réinitialisation dans ${seconds}s...`, 'error');
+                isExecuting = false;
+                isCooldown = true;
+                renderProgram(); // disable play button
 
                 window.failInterval = setInterval(() => {
                     seconds--;
                     if (seconds > 0) {
-                        showFeedback(`Erreur. Réinitialisation dans ${seconds}s...`, 'error');
+                        showFeedback(`Erreur: ${errorReason} Réinitialisation dans ${seconds}s...`, 'error');
                     }
                 }, 1000);
 
@@ -1198,19 +1210,21 @@
                     clearInterval(window.failInterval);
                     feedbackMsg.textContent = '';
                     feedbackMsg.className = 'feedback';
-                    isExecuting = false;
-                    playBtn.disabled = false;
+                    isCooldown = false;
+                    renderProgram(); // re-enable play button if valid
                     resetToInitial();
                     renderAll();
                 }, 5000);
             }
         }
 
+        let feedbackTimeout = null;
         function showFeedback(msg, type) {
+            clearTimeout(feedbackTimeout);
             feedbackMsg.textContent = msg;
             feedbackMsg.className = `feedback ${type}`;
-            if (type === 'error') {
-                setTimeout(() => {
+            if (type === 'error' && !isCooldown) {
+                feedbackTimeout = setTimeout(() => {
                     feedbackMsg.textContent = '';
                     feedbackMsg.className = 'feedback';
                 }, 3000);
