@@ -45,6 +45,19 @@
         setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
     };
 
+    // Enregistrement global du Service Worker (PWA hors-ligne)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const isRoot = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
+            const swPath = isRoot ? './sw.js' : '../sw.js';
+            navigator.serviceWorker.register(swPath).then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }).catch(err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+
     // Gestion des événements du Header
     document.addEventListener('DOMContentLoaded', () => {
         const themeBtn = document.getElementById('themeToggleBtn');
@@ -70,3 +83,28 @@
         });
     });
 })();
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        // Find the relative path to the root from the current page.
+        // Assuming all pages are either at root, or 1 level deep (e.g., webapps/, ressources/),
+        // or 2 levels deep (alpha/webapps/).
+        let rootPath = './';
+        if (window.location.pathname.includes('/webapps/')) {
+            if (window.location.pathname.includes('/alpha/')) {
+                rootPath = '../../';
+            } else {
+                rootPath = '../';
+            }
+        } else if (window.location.pathname.includes('/ressources/')) {
+            rootPath = '../';
+        }
+
+        navigator.serviceWorker.register(rootPath + 'sw.js').then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, err => {
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+}

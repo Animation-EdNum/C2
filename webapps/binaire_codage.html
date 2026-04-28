@@ -14,7 +14,7 @@
         }
 
         :root { 
-            --bg-gradient-start: #8b5cf6; --bg-gradient-end: #d946ef;
+            --bg-gradient-start: #c084fc; --bg-gradient-end: #db2777;
             --card-bg: rgba(249, 250, 252, 0.85); --card-border: #e0e7ff; --container-bg: rgba(255, 255, 255, 0.85); 
             --text-main: #333; --text-secondary: #666; --text-muted: #777; 
             --accent: #d946ef; --accent-dark: #c026d3;
@@ -25,9 +25,26 @@
         } 
         
         body.dark { 
-            --bg-gradient-start: #2e1065; --bg-gradient-end: #4a044e;
+            --bg-gradient-start: #4a044e; --bg-gradient-end: #831843;
             --card-bg: rgba(30, 41, 59, 0.75); --card-border: #334155; --container-bg: rgba(15, 23, 42, 0.75); 
             --text-main: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b; 
+            --accent: #e879f9; --accent-dark: #d946ef;
+            --badge-bg: #701a75; --badge-color: #f5d0fe;
+            --input-border: #4a044e; --instructions-bg: #1e293b;
+            --bg-gradient-start: #8b5cf6; --bg-gradient-end: #d946ef;
+            --card-bg: rgba(249, 250, 252, 0.85); --card-border: #e0e7ff; --container-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #333; --text-secondary: #666; --text-muted: #777;
+            --accent: #d946ef; --accent-dark: #c026d3;
+            --badge-bg: #fdf4ff; --badge-color: #a21caf;
+            --input-border: #f5d0fe; --instructions-bg: #fae8ff;
+            --success: #166534; --error: #b91c1c;
+            --shadow-color: rgba(0, 0, 0, 0.3); --card-shadow: rgba(217, 70, 239, 0.15);
+        }
+
+        body.dark {
+            --bg-gradient-start: #2e1065; --bg-gradient-end: #4a044e;
+            --card-bg: rgba(30, 41, 59, 0.75); --card-border: #334155; --container-bg: rgba(15, 23, 42, 0.75);
+            --text-main: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b;
             --accent: #e879f9; --accent-dark: #d946ef;
             --badge-bg: #701a75; --badge-color: #f5d0fe;
             --input-border: #4a044e; --instructions-bg: #1e293b;
@@ -70,7 +87,6 @@ body {
         h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; } 
         .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; } 
  
-        /* ========== DIFFICULTÉ ========== */ 
         .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; } 
         .diff-btn { 
             padding: 6px 16px; border-radius: 20px; border: 2px solid var(--accent); 
@@ -81,7 +97,6 @@ body {
         .diff-btn.active { background: var(--accent); color: #fff; } 
         .diff-btn:hover:not(.active) { background: #eef2ff; } 
  
-        /* ========== MINI-CALCULATRICE ========== */ 
         .calc-section { margin-bottom: 25px; border: 2px solid var(--card-border); border-radius: 12px; overflow: hidden; } 
         .calc-header { 
             background: var(--instructions-bg); padding: 12px 18px; cursor: pointer; 
@@ -121,7 +136,6 @@ body {
         .calc-operation { font-family: monospace; font-size: 18px; font-weight: 700; } 
         .calc-sum { color: var(--accent); font-size: 22px; } 
  
-        /* ========== TABS ========== */
         .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
         .tab-btn {
             padding: 8px 20px; border-radius: 20px; border: 2px solid var(--accent);
@@ -135,7 +149,6 @@ body {
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
 
-        /* ========== CARTE ========== */
         .card { background: var(--card-bg); border-radius: 12px; padding: 18px; border: 1px solid var(--card-border); box-shadow: 0 4px 12px var(--card-shadow); display: flex; flex-direction: column; transition: 0.2s; min-width: 0; }
          
         .card.shake { animation: shake 0.4s; } 
@@ -300,9 +313,7 @@ body {
  
 <script> 
 
-// ========================================== 
 // ETAT & CONFIG 
-// ========================================== 
 const powers =[128, 64, 32, 16, 8, 4, 2, 1]; 
  
 let currentBits = 6; // Medium default
@@ -318,9 +329,7 @@ let helpTimer = null;
 let decBinMistakes = 0;
 let binDecMistakes = 0;
  
-// ========================================== 
 // UI GENERATION (Adaptative Bits) 
-// ========================================== 
 function buildUI() { 
     // Calc Table 
     let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>'; 
@@ -353,9 +362,7 @@ function setDifficulty(lvl) {
     buildUI(); resetCalc(); initChallenges();
 } 
  
-// ========================================== 
 // CALCULATRICE & SYNC 
-// ========================================== 
 function toggleCalc() { 
     const body = document.getElementById('calc-body'); 
     body.classList.toggle('visible'); 
@@ -409,9 +416,7 @@ function updateCalcResult() {
     } 
 } 
  
-// ========================================== 
 // EXPLICATIONS DETAILLEES 
-// ========================================== 
 function explainBinary(binStr) { 
     let sum = 0;
     let parts = [];
@@ -423,9 +428,7 @@ function explainBinary(binStr) {
     return parts.length === 0 ? "0 = 0" : `${parts.join(' + ')} = ${sum}`; 
 } 
  
-// ========================================== 
 // EXERCICES LOGIC 
-// ========================================== 
 function initChallenges() {
     newDecToBin();
     newBinToDec();
@@ -537,7 +540,6 @@ function checkBinToDec() {
     } 
 } 
  
-// ========================================== 
 
     // Event Listeners for binaire_codage
     document.addEventListener('DOMContentLoaded', () => {
@@ -585,9 +587,7 @@ function checkBinToDec() {
         });
     });
 
-// ==========================================
 // TAB SWITCHING
-// ==========================================
 let activeTab = 'dec-bin';
 function switchTab(tab) {
     activeTab = tab;
@@ -602,7 +602,6 @@ function switchTab(tab) {
 }
 
 // UX GLOBALES (Aide, Confetti, Entrée)
-// ==========================================
 const cooldownTimers = {};
 
 function applyValidationCooldown(btnId) {
