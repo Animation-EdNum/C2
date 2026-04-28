@@ -491,12 +491,24 @@
 
             // Draw comparators
             networkDef.forEach((stage, stageIdx) => {
+                // Check if any comparators in this stage overlap vertically
+                let hasOverlap = false;
+                for (let a = 0; a < stage.length; a++) {
+                    for (let b = a + 1; b < stage.length; b++) {
+                        let minA = Math.min(stage[a].w1, stage[a].w2);
+                        let maxA = Math.max(stage[a].w1, stage[a].w2);
+                        let minB = Math.min(stage[b].w1, stage[b].w2);
+                        let maxB = Math.max(stage[b].w1, stage[b].w2);
+                        if (maxA >= minB && maxB >= minA) {
+                            hasOverlap = true;
+                        }
+                    }
+                }
+
                 stage.forEach((comp, compIdx) => {
                     let offsetX = 0;
-                    if (stage.length > 1) {
-                        // Check for overlaps in the same stage to apply horizontal offset
-                        // If there are multiple comparators in the same stage, spread them out slightly
-                        // e.g. -15px for first, +15px for second
+                    if (hasOverlap) {
+                        // Spread them out slightly to avoid visual crossing
                         if (compIdx === 0) offsetX = -15;
                         else if (compIdx === 1) offsetX = 15;
                     }
