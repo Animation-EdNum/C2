@@ -72,6 +72,19 @@
         h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
         .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
 
+        .instructions {
+            background: var(--instructions-bg);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-main);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+            line-height: 1.5;
+        }
+
         /* ========== TABS ========== */
         .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
@@ -113,15 +126,21 @@
             min-width: fit-content;
         }
 
-        .network-grid {
+        .network-inner {
             position: relative;
             /* Will be set dynamically by JS */
+        }
+
+        .network-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
         }
 
         /* SVG Overlay for drawing lines */
         .network-svg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
+            overflow: visible;
             pointer-events: none; /* Let clicks pass through to comparators if needed */
         }
 
@@ -258,7 +277,9 @@
             </div>
         </header>
 
-        <p class="subtitle">Clique sur les barres verticales actives pour échanger les éléments si nécessaire, puis valide l'étape. Le plus petit va en haut !</p>
+        <div class="instructions">
+            <p>Clique sur les barres verticales actives pour échanger les éléments si nécessaire, puis valide l'étape. Le plus petit va en haut !</p>
+        </div>
 
         <!-- TABS -->
         <div class="tabs">
@@ -278,10 +299,12 @@
         <!-- GAME AREA -->
         <div class="game-area">
             <div class="network-wrapper" id="network-wrapper">
-                <!-- SVG generated dynamically -->
-                <svg class="network-svg" id="network-svg"></svg>
-                <div class="network-grid" id="network-grid">
-                    <!-- HTML elements (comparators and moving items) generated dynamically -->
+                <div class="network-inner" id="network-inner">
+                    <!-- SVG generated dynamically -->
+                    <svg class="network-svg" id="network-svg"></svg>
+                    <div class="network-grid" id="network-grid">
+                        <!-- HTML elements (comparators and moving items) generated dynamically -->
+                    </div>
                 </div>
             </div>
 
@@ -343,8 +366,8 @@
             ]
         };
 
-        const GRID_SPACING_Y = 60; // Distance between horizontal wires
-        const GRID_SPACING_X = 80; // Distance between stages (vertical comparators)
+        const GRID_SPACING_Y = 80; // Distance between horizontal wires
+        const GRID_SPACING_X = 140; // Distance between stages (vertical comparators)
 
         let currentMode = 'nombres'; // 'nombres' ou 'lettres'
         let currentDifficulty = 'medium'; // 'easy'=3, 'medium'=4, 'hard'=5
@@ -450,8 +473,9 @@
             const totalWidth = (numStages + 1) * GRID_SPACING_X;
             const totalHeight = (numWires - 1) * GRID_SPACING_Y;
 
-            gridContainer.style.width = `${totalWidth}px`;
-            gridContainer.style.height = `${totalHeight}px`;
+            const networkInner = document.getElementById('network-inner');
+            networkInner.style.width = `${totalWidth}px`;
+            networkInner.style.height = `${totalHeight}px`;
 
             // Draw horizontal wires
             for(let i=0; i<numWires; i++) {
@@ -467,16 +491,8 @@
 
             // Draw comparators
             networkDef.forEach((stage, stageIdx) => {
-                stage.forEach((comp, compIdx) => {
-                    let offsetX = 0;
-                    if (stage.length > 1) {
-                        // Check for overlaps in the same stage to apply horizontal offset
-                        // If there are multiple comparators in the same stage, spread them out slightly
-                        // e.g. -15px for first, +15px for second
-                        if (compIdx === 0) offsetX = -15;
-                        else if (compIdx === 1) offsetX = 15;
-                    }
-                    const x = (stageIdx + 1) * GRID_SPACING_X + offsetX;
+                const x = (stageIdx + 1) * GRID_SPACING_X;
+                stage.forEach(comp => {
                     const y1 = comp.w1 * GRID_SPACING_Y;
                     const y2 = comp.w2 * GRID_SPACING_Y;
 
@@ -556,7 +572,12 @@
         }
 
         function updateElementPosition(stateObj, stageIndex) {
-            const x = stageIndex * GRID_SPACING_X;
+            // Place elements slightly after the previous comparator, or at the start
+            // Comparators are at (stageIdx + 1) * GRID_SPACING_X
+            // So comparator 0 is at 1 * 140 = 140.
+            // When stageIndex = 0, x should be 40.
+            // When stageIndex = 1, x should be 140 + 40 = 180.
+            const x = 40 + stageIndex * GRID_SPACING_X;
             const y = stateObj.currentWire * GRID_SPACING_Y;
             stateObj.domElement.style.left = `${x}px`;
             stateObj.domElement.style.top = `${y}px`;
