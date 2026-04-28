@@ -2427,6 +2427,24 @@
                     <i data-lucide="trash-2" style="width: 16px; height: 16px; margin-right: 5px;"></i>Aucun tapis
                 </button>
             </div>
+
+            <div id="grid-size-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <div style="font-size: 0.9em; font-weight: 600; text-align: left;">Taille de la grille (<span id="gridSizeValue">6x6</span>)</div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8em;">
+                            <span>Largeur</span>
+                        </div>
+                        <input type="range" id="gridColsSlider" aria-label="Largeur de la grille" min="4" max="10" step="1" value="6" style="width: 100%;">
+                    </div>
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8em;">
+                            <span>Hauteur</span>
+                        </div>
+                        <input type="range" id="gridRowsSlider" aria-label="Hauteur de la grille" min="4" max="10" step="1" value="6" style="width: 100%;">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="skins-list" id="mats-list-container">
             <!-- Mats generated via JS -->
@@ -2753,7 +2771,7 @@
         /* ================================================================
            LOGIQUE GLOBALE
            ================================================================ */
-        const GRID_ROWS = 6, GRID_COLS = 6;
+        let GRID_ROWS = 6, GRID_COLS = 6;
         let globalScore = 0, globalStreak = 0;
 
 
@@ -2878,6 +2896,7 @@
 
             renderMatsGrid();
             closeMatsModal();
+            updateGridSizeSlidersState();
 
             // Re-render grids to apply mat
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
@@ -3136,6 +3155,37 @@
         let activeMat = localStorage.getItem('bb_active_mat') || 'none';
         generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
+
+        function updateGridSizeSlidersState() {
+            const restrictedMats = ['alphabet', 'city', 'time'];
+            const isRestricted = restrictedMats.includes(activeMat);
+            const gridColsSlider = document.getElementById('gridColsSlider');
+            const gridRowsSlider = document.getElementById('gridRowsSlider');
+
+            if (gridColsSlider && gridRowsSlider) {
+                if (isRestricted) {
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.title = "Taille fixe de 6x6 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 6x6 pour ce tapis";
+
+                    if (GRID_COLS !== 6 || GRID_ROWS !== 6) {
+                        gridColsSlider.value = 6;
+                        gridRowsSlider.value = 6;
+                        onGridSizeChanged();
+                    }
+                } else {
+                    gridColsSlider.disabled = false;
+                    gridRowsSlider.disabled = false;
+                    gridColsSlider.parentElement.style.opacity = '1';
+                    gridRowsSlider.parentElement.style.opacity = '1';
+                    gridColsSlider.parentElement.title = "";
+                    gridRowsSlider.parentElement.title = "";
+                }
+            }
+        }
 
         const SKIN_CONFIG = {
             'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le robot que tu connais bien.' },
@@ -3740,11 +3790,20 @@
             }
         }
 
+        function updateGridContainersAspectRatio() {
+            const containers = document.querySelectorAll('.bot-grid-container');
+            containers.forEach(container => {
+                container.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
+            });
+        }
+
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
             grid.innerHTML = ''; grid.style.position = 'relative';
             grid.setAttribute('role', 'grid');
             grid.setAttribute('aria-label', `Grille ${rows}x${cols}`);
+
+            updateGridContainersAspectRatio();
 
             // Appliquer la classe du skin à la grille pour le CSS
             Array.from(grid.classList).forEach(cls => {
@@ -5141,6 +5200,8 @@
             }
         })();
 
+        updateGridSizeSlidersState();
+
         buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
 
         randomizeSimulatorPosition();
@@ -5294,6 +5355,37 @@
                 matOpacityValue.textContent = Math.round(val * 100) + '%';
                 localStorage.setItem('bb_mat_opacity', val);
             });
+        }
+
+        // Grid Size Sliders
+        const gridColsSlider = document.getElementById('gridColsSlider');
+        const gridRowsSlider = document.getElementById('gridRowsSlider');
+        const gridSizeValue = document.getElementById('gridSizeValue');
+
+        function onGridSizeChanged() {
+            GRID_COLS = parseInt(gridColsSlider.value);
+            GRID_ROWS = parseInt(gridRowsSlider.value);
+            gridSizeValue.textContent = `${GRID_COLS}x${GRID_ROWS}`;
+
+            // Re-randomize the simulator position with new sizes
+            simState.obstacles = [];
+            simState.targetRow = null;
+            simState.targetCol = null;
+
+            buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
+            randomizeSimulatorPosition();
+
+            // If in challenge or read modes, reset them
+            if (activeTab === 'challenge') {
+                newChallenge();
+            } else if (activeTab === 'read') {
+                newReadChallenge();
+            }
+        }
+
+        if (gridColsSlider && gridRowsSlider) {
+            gridColsSlider.addEventListener('input', onGridSizeChanged);
+            gridRowsSlider.addEventListener('input', onGridSizeChanged);
         }
 
         window.handleCustomMatUpload = function(e) {
