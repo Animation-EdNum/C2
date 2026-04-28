@@ -29,6 +29,7 @@ const ASSETS = [
     './webapps/bit_de_parite.html',
     './webapps/routage_reseau.html',
     './webapps/simulateur_bluebot.html',
+    './webapps/train_pirate.html',
 
     // Ressources
     './ressources/bareme.html',
@@ -70,9 +71,9 @@ self.addEventListener('fetch', event => {
 
                 // Sinon, on fait la requête réseau
                 return fetch(event.request).then(
-                    function (response) {
+                    function(response) {
                         // On vérifie qu'on a bien reçu une réponse valide
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                        if(!response || response.status !== 200 || response.type !== 'basic') {
                             return response;
                         }
 
@@ -80,7 +81,7 @@ self.addEventListener('fetch', event => {
                         var responseToCache = response.clone();
 
                         caches.open(CACHE_NAME)
-                            .then(function (cache) {
+                            .then(function(cache) {
                                 cache.put(event.request, responseToCache);
                             });
 

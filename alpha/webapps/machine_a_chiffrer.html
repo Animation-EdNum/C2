@@ -134,126 +134,6 @@
             .controls { padding: 15px; }
         }
     </style>
-
-        #toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(16, 185, 129, 0.95);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s var(--spring-easing), transform 0.3s var(--spring-easing);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #toast.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        .quick-actions {
-            display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-top: 5px;
-        }
-
-        .action-btn {
-            background: transparent; border: 1px solid var(--input-border); border-radius: 8px;
-            padding: 6px 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 5px; font-size: 14px; font-family: 'Outfit', sans-serif;
-        }
-
-        .action-btn:hover { background: var(--badge-bg); color: var(--accent); border-color: var(--accent); }
-        body.dark .action-btn:hover { background: var(--card-bg); }
-
-
-        .caesar-wheel-container {
-            position: relative; width: 250px; height: 250px; margin: 20px auto;
-        }
-
-        .wheel {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-        }
-
-        .wheel-outer {
-            background: var(--card-bg); border: 2px solid var(--accent); z-index: 1;
-        }
-
-        .wheel-inner {
-            width: 70%; height: 70%; top: 15%; left: 15%;
-            background: var(--badge-bg); border: 2px dashed var(--accent); z-index: 2;
-            transition: transform 0.5s var(--spring-easing);
-        }
-
-        body.dark .wheel-inner {
-            background: var(--card-bg);
-        }
-
-        .wheel-letter {
-            position: absolute; top: 5px; left: 50%; transform-origin: 50% 120px;
-            transform: translateX(-50%); font-weight: bold; font-family: monospace; font-size: 16px;
-            color: var(--text-main);
-        }
-
-        .wheel-inner .wheel-letter {
-            transform-origin: 50% 82.5px; color: var(--accent);
-        }
-
-
-        .crack-container {
-            margin-top: 15px; width: 100%; display: none; flex-direction: column; gap: 10px;
-        }
-
-        .crack-btn {
-            background: var(--accent); color: white; border: none; padding: 10px 20px;
-            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: transform 0.2s, background 0.2s; align-self: center; font-family: 'Outfit', sans-serif;
-        }
-
-        .crack-btn:hover { transform: scale(1.05); background: var(--accent-dark); }
-        .crack-btn:active { transform: scale(0.95); }
-
-        .crack-results {
-            display: none; flex-direction: column; gap: 5px; max-height: 200px; overflow-y: auto;
-            background: var(--card-bg); border: 2px solid var(--input-border); border-radius: 8px;
-            padding: 10px; font-family: monospace; font-size: 14px; color: var(--text-main);
-        }
-
-        .dynamic-explanation {
-            background: var(--badge-bg);
-            color: var(--accent-dark);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid var(--accent);
-            line-height: 1.4;
-            width: 100%;
-            max-width: 700px;
-        }
-        body.dark .dynamic-explanation {
-            color: var(--accent);
-        }
-        .dynamic-explanation i { flex-shrink: 0; }
-
-        .crack-item { display: flex; gap: 10px; padding: 4px; border-bottom: 1px solid var(--input-border); }
-        .crack-item:last-child { border-bottom: none; }
-        .crack-shift { font-weight: bold; color: var(--accent); min-width: 40px; }
-
-</style>
     <script src="../../js/audio.js"></script>
     <script src="../../js/lucide.min.js"></script>
 </head>
@@ -295,11 +175,6 @@
         <div class="tabs">
             <button class="tab-btn active" id="tab-cesar"><i data-lucide="arrow-right-left"></i> Code César</button>
             <button class="tab-btn" id="tab-vigenere"><i data-lucide="key"></i> Code Vigenère</button>
-        </div>
-
-        <div class="dynamic-explanation" id="dynamic-explanation">
-            <i data-lucide="info"></i>
-            <span id="explanation-text">Imagine une roue magique : on tourne l'alphabet pour remplacer chaque lettre par une autre, un peu plus loin !</span>
         </div>
 
         <!-- GAME AREA -->
@@ -387,57 +262,6 @@
 
         function setMode(mode) {
             currentMode = mode;
-            toggleCrackVisibility();
-            if (explanationText) {
-                explanationText.textContent = EXPLANATIONS['cesar'];
-            }
-        }
-
-
-        function drawCaesarWheel() {
-            const outer = document.getElementById('wheel-outer');
-            const inner = document.getElementById('wheel-inner');
-            outer.innerHTML = ''; inner.innerHTML = '';
-
-            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const angleStep = 360 / 26;
-
-            for (let i = 0; i < 26; i++) {
-                // Outer letter (Clear text)
-                let oLetter = document.createElement('div');
-                oLetter.className = 'wheel-letter';
-                oLetter.textContent = alphabet[i];
-                oLetter.style.transform = `translateX(-50%) rotate(${i * angleStep}deg)`;
-                outer.appendChild(oLetter);
-
-                // Inner letter (Cipher text)
-                let iLetter = document.createElement('div');
-                iLetter.className = 'wheel-letter';
-                iLetter.textContent = alphabet[i];
-                iLetter.style.transform = `translateX(-50%) rotate(${i * angleStep}deg)`;
-                inner.appendChild(iLetter);
-            }
-        }
-
-
-        const explanationText = document.getElementById('explanation-text');
-
-        const EXPLANATIONS = {
-            'cesar': "Imagine une roue magique : on tourne l'alphabet pour remplacer chaque lettre par une autre, un peu plus loin !",
-            'vigenere': "C'est comme le code César, mais avec un mot de passe secret qui change le décalage pour chaque lettre !",
-            'atbash': "Un jeu de miroir ! Le A devient Z, le B devient Y... L'alphabet est complètement retourné !",
-            'morse': "Un langage secret fait de points et de tirets, inventé pour envoyer des messages de très loin !"
-        };
-
-        function setMode(mode) {
-            currentMode = mode;
-            [tabCesar, tabVigenere, tabAtbash, tabMorse].forEach(t => t.classList.remove('active'));
-            explanationText.textContent = EXPLANATIONS[mode];
-            if (window.lucide) lucide.createIcons();
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
 
             if (mode === 'cesar') {
                 tabCesar.classList.add('active');
@@ -453,42 +277,6 @@
 
             playSound('click');
             updateCipher();
-        }
-
-
-        const MORSE_DICT = {
-            'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
-            'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
-            'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
-            'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
-            'Y': '-.--', 'Z': '--..', '0': '-----', '1': '.----', '2': '..---',
-            '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...',
-            '8': '---..', '9': '----.', ' ': '/'
-        };
-        const REVERSE_MORSE_DICT = Object.fromEntries(Object.entries(MORSE_DICT).map(([k, v]) => [v, k]));
-
-        function processMorse(text, decrypt = false) {
-            if (!decrypt) {
-                return text.split('').map(char => MORSE_DICT[char] || char).join(' ').trim();
-            } else {
-                return text.split(' ').map(token => {
-                    if (token === '/') return ' ';
-                    return REVERSE_MORSE_DICT[token] || token;
-                }).join('');
-            }
-        }
-
-        function processAtbash(text) {
-            let result = '';
-            for (let i = 0; i < text.length; i++) {
-                let c = text.charCodeAt(i);
-                if (c >= 65 && c <= 90) {
-                    result += String.fromCharCode(90 - (c - 65));
-                } else {
-                    result += text[i];
-                }
-            }
-            return result;
         }
 
         function normalizeText(text) {
