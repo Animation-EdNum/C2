@@ -2899,9 +2899,15 @@
             if (!config) return;
             if (config.baseContent) {
                 if (matId === 'shapes') {
-                    config.content = shuffleArray([...config.baseContent, ...config.baseContent]);
+                    // Duplicate enough times to fill a larger grid if needed (e.g. 10x10)
+                    let expandedContent = [];
+                    const needed = GRID_ROWS * GRID_COLS;
+                    while (expandedContent.length < needed) {
+                        expandedContent = expandedContent.concat(config.baseContent);
+                    }
+                    config.content = shuffleArray(expandedContent).slice(0, needed);
                 } else if (matId === 'fairy_tale') {
-                    config.content = shuffleArray([...config.baseContent]).slice(0, 36);
+                    config.content = shuffleArray([...config.baseContent]).slice(0, GRID_ROWS * GRID_COLS);
                 }
             }
         }
@@ -3120,10 +3126,10 @@
             },
             'math': {
                 name: 'Calcul mental',
-                desc: 'Chiffres de 0 à 35 pour s\'entraîner au calcul.',
+                desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
                 example: 'Va sur le résultat de 5 + 7.',
                 icon: '🔢',
-                content: Array.from({ length: 36 }, (_, i) => i.toString())
+                content: Array.from({ length: 101 }, (_, i) => i.toString())
             },
             'shapes': {
                 name: 'Couleurs et formes',
@@ -3132,9 +3138,10 @@
                 icon: '🔵',
                 content: [],
                 baseContent: [
-                    '🔴', '🟠', '🟡', '🟢', '🔵', '🟣',
-                    '🟥', '🟧', '🟨', '🟩', '🟦', '🟪',
-                    '🔺', '🔻', '🔶', '🔷', '🔸', '🔹'
+                    '🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '🟤', '⚫', '⚪',
+                    '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '🟫', '⬛', '⬜',
+                    '🔺', '🔻', '🔶', '🔷', '🔸', '🔹', '❤️', '🧡', '💛',
+                    '💚', '💙', '💜', '🤎', '🖤', '🤍', '🤎', '🩷', '🩵'
                 ]
             },
             'geo': {
@@ -3143,12 +3150,16 @@
                 example: 'Va sur le drapeau du Japon.',
                 icon: '🌍',
                 content: [
-                    '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧',
-                    '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷', '🇸🇪', '🇳🇴',
-                    '🇺🇸', '🇨🇦', '🇲🇽', '🇨🇭', '🇨🇴', '🇦🇷',
-                    '🇯🇵', '🇰🇷', '🇧🇷', '🇿🇦', '🇦🇺', '🇳🇿',
-                    '🇨🇳', '🇮🇳', '🇪🇬', '🇲🇦', '🇸🇳', '🇰🇪',
-                    '🇷🇺', '🇹🇷', '🇵🇱', '🇩🇰', '🇫🇮', '🇮🇪'
+                    '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧', '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷',
+                    '🇸🇪', '🇳🇴', '🇺🇸', '🇨🇦', '🇲🇽', '🇨🇭', '🇨🇴', '🇦🇷', '🇯🇵', '🇰🇷',
+                    '🇧🇷', '🇿🇦', '🇦🇺', '🇳🇿', '🇨🇳', '🇮🇳', '🇪🇬', '🇲🇦', '🇸🇳', '🇰🇪',
+                    '🇷🇺', '🇹🇷', '🇵🇱', '🇩🇰', '🇫🇮', '🇮🇪', '🇨🇿', '🇭🇺', '🇷🇴', '🇧🇬',
+                    '🇷🇸', '🇭🇷', '🇸🇮', '🇸🇰', '🇺🇦', '🇨🇱', '🇵🇪', '🇻🇪', '🇺🇾', '🇵🇾',
+                    '🇧🇴', '🇪🇨', '🇨🇺', '🇯🇲', '🇭🇹', '🇩🇴', '🇵🇷', '🇲🇬', '🇳🇬', '🇬🇭',
+                    '🇨🇮', '🇨🇲', '🇩🇿', '🇹🇳', '🇱🇾', '🇸🇩', '🇪🇹', '🇸🇴', '🇹🇿', '🇺🇬',
+                    '🇷🇼', '🇿🇲', '🇿🇼', '🇲🇿', '🇦🇴', '🇳🇦', '🇧🇼', '🇲🇾', '🇮🇩', '🇵🇭',
+                    '🇹🇭', '🇻🇳', '🇲🇲', '🇰🇭', '🇱🇦', '🇸🇬', '🇧🇩', '🇵🇰', '🇮🇷', '🇮🇶',
+                    '🇸🇦', '🇦🇪', '🇶🇦', '🇰🇼', '🇴🇲', '🇾🇪', '🇸🇾', '🇯🇴', '🇱🇧', '🇮🇱'
                 ]
             },
             'time': {
@@ -3170,12 +3181,16 @@
                 icon: '🧚',
                 content: [],
                 baseContent: [
-                    '👸', '🐉', '🧙', '🏰', '🌲', '💎',
-                    '👑', '🦄', '⚔️', '🛡️', '🗝️', '📜',
-                    '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️',
-                    '🧛‍♂️', '🧟‍♀️', '🧞‍♀️', '🪞', '🍎', '🍄',
-                    '🌼', '🌈', '⭐', '🌙', '☀️', '☁️',
-                    '⚡', '🔥', '💧', '❄️', '🌪️', '🪙'
+                    '👸', '🐉', '🧙', '🏰', '🌲', '💎', '👑', '🦄', '⚔️', '🛡️',
+                    '🗝️', '📜', '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️', '🧛‍♂️', '🧟‍♀️',
+                    '🧞‍♀️', '🪞', '🍎', '🍄', '🌼', '🌈', '⭐', '🌙', '☀️', '☁️',
+                    '⚡', '🔥', '💧', '🌊', '❄️', '🌪️', '🤴', '🦹', '🦸', '🐺',
+                    '🕷️', '🕸️', '🦇', '🥀', '🌹', '🏹', '🪄', '🔮', '🧪', '🩸',
+                    '🦴', '☠️', '👻', '👽', '👾', '🤖', '🎃', '🎭', '🎨', '🎻',
+                    '🎺', '🪘', '🥁', '⛺', '🛶', '⛵', '⚓', '🧭', '🗺️', '🏔️',
+                    '🌋', '🏕️', '🛤️', '🪙', '💰', '💸', '🏺', '💍', '🦅', '🦆',
+                    '🦢', '🦩', '🦚', '🦜', '🐊', '🐢', '🦎', '🐍', '🦕', '🦖',
+                    '🐳', '🐬', '🦭', '🐟', '🐠', '🐡', '🦈', '🐙'
                 ]
             }
         };
@@ -3821,6 +3836,10 @@
             const containers = document.querySelectorAll('.bot-grid-container');
             containers.forEach(container => {
                 container.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
+            });
+            const grids = document.querySelectorAll('.bot-grid');
+            grids.forEach(grid => {
+                grid.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
             });
         }
 
