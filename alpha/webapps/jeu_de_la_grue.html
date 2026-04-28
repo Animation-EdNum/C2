@@ -132,13 +132,33 @@
             border-radius: 0 0 16px 16px;
             border: 4px solid #cbd5e1;
             border-top: none;
+            position: relative;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .cup-slots {
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .cup-slot {
+            flex: 1;
+            border: 2px dashed rgba(148, 163, 184, 0.4);
+            border-radius: 8px;
+            background: rgba(241, 245, 249, 0.3);
+        }
+        body.dark .cup-slot { border-color: rgba(71, 85, 105, 0.4); background: rgba(30, 41, 59, 0.3); }
+
+        .cup-blocks {
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
             display: flex;
             flex-direction: column-reverse;
             align-items: center;
-            padding: 5px;
             gap: 5px;
-            position: relative;
-            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.05);
         }
         body.dark .cup { background: rgba(0, 0, 0, 0.2); border-color: #475569; }
 
@@ -146,17 +166,24 @@
             width: 45px;
             height: 120px;
             border-width: 3px;
-            padding: 3px;
-            gap: 3px;
             border-radius: 0 0 12px 12px;
+        }
+        .target-board .cup-slots {
+            top: 3px; left: 3px; right: 3px; bottom: 3px;
+            gap: 3px;
+        }
+        .target-board .cup-slot { border-radius: 6px; }
+        .target-board .cup-blocks {
+            top: 3px; left: 3px; right: 3px; bottom: 3px;
+            gap: 3px;
         }
 
         .cube {
             width: 100%;
             height: 50px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: var(--cube-color, linear-gradient(135deg, #3b82f6, #2563eb));
             border-radius: 8px;
-            box-shadow: 0 4px 0 #1d4ed8, 0 5px 5px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.3);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 5px 5px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -421,6 +448,11 @@
 
         <p class="subtitle">Déplace la grue pour attraper et déplacer des objets !</p>
 
+        <div class="instructions">
+            <p><strong>But du jeu :</strong> Observe bien la zone <em>Objectif</em>. Tu dois utiliser la grue pour déplacer les cubes dans la <em>Zone de travail</em> afin de reproduire exactement la même disposition.</p>
+            <p><strong>Comment faire ?</strong> Une machine ne devine rien ! Tu dois lui donner une suite d'instructions précises à l'avance. Ajoute des flèches pour te déplacer et la pince pour attraper/lâcher, puis appuie sur <em>Exécuter</em> pour vérifier ton programme.</p>
+        </div>
+
         <!-- DIFFICULTÉ -->
         <div class="difficulty-bar">
             <button class="diff-btn" id="diff-easy">🟢 Facile</button>
@@ -577,12 +609,13 @@
 
         function generateRandomState(numBlocks) {
             let state = [[], [], []];
+            const colors = ['#3b82f6', '#ef4444', '#10b981']; // Standard blue, red, green
             for(let i=0; i<numBlocks; i++) {
                 let cupIdx;
                 do {
                     cupIdx = Math.floor(Math.random() * NUM_CUPS);
                 } while (state[cupIdx].length >= MAX_STACK);
-                state[cupIdx].push({ id: i, color: `hsl(${Math.random()*360}, 70%, 50%)` });
+                state[cupIdx].push({ id: i, color: colors[i % colors.length] });
             }
             return state;
         }
@@ -631,28 +664,43 @@
                 cupEl.className = 'cup';
                 if (!isTarget) cupEl.id = `cup-${i}`;
 
+                // Add background slots for visual guidance
+                let slotsContainer = document.createElement('div');
+                slotsContainer.className = 'cup-slots';
+                for(let s=0; s<MAX_STACK; s++) {
+                    let slotEl = document.createElement('div');
+                    slotEl.className = 'cup-slot';
+                    slotsContainer.appendChild(slotEl);
+                }
+                cupEl.appendChild(slotsContainer);
+
+                let blocksContainer = document.createElement('div');
+                blocksContainer.className = 'cup-blocks';
                 // Render from bottom to top, flex column-reverse handles this naturally
                 for(let j=0; j<boardState[i].length; j++) {
                     let block = boardState[i][j];
                     let blockEl = document.createElement('div');
                     blockEl.className = 'cube';
-                    // blockEl.style.background = block.color; // Using default blue for simplicity now
-                    cupEl.appendChild(blockEl);
+                    blockEl.style.setProperty('--cube-color', block.color);
+                    blocksContainer.appendChild(blockEl);
                 }
+                cupEl.appendChild(blocksContainer);
+
                 container.appendChild(cupEl);
             }
         }
 
         function updateCraneVisuals() {
-            const cupWidth = 60;
-            const gap = 15;
+            const cupWidth = 70; // updated CSS
+            const gap = 15; // gap in flex is 15px
+            // Main board has 15px padding inside, but relative position inside crane-layer matches
             const baseX = craneState.pos * (cupWidth + gap);
 
             craneEl.style.left = `${baseX}px`;
 
             // Height visual mapping
             const baseArmHeight = 40;
-            const dropPerLevel = 50;
+            const dropPerLevel = 55; // visual slot height
             craneArmEl.style.height = `${baseArmHeight + (craneState.height * dropPerLevel)}px`;
 
             if (craneState.holding) {
@@ -664,9 +712,18 @@
 
         function addInstruction(type) {
             if (isExecuting) return;
-            program.push(type);
-            renderProgram();
-            playSound('click');
+
+            // Preview logic: simulate the instruction on current state
+            let valid = processInstruction(type);
+
+            if (valid) {
+                program.push(type);
+                renderProgram();
+                renderAll(); // update visual preview
+                playSound('click');
+            } else {
+                playSound('error');
+            }
         }
 
         function deleteLastInstruction() {
@@ -674,12 +731,21 @@
             program.pop();
             renderProgram();
             playSound('click');
+
+            // Recompute preview state from initial + program
+            resetToInitial();
+            for(let inst of program) {
+                processInstruction(inst);
+            }
+            renderAll();
         }
 
         function clearProgram() {
             if (isExecuting) return;
             program = [];
             renderProgram();
+            resetToInitial();
+            renderAll();
         }
 
         function renderProgram() {
@@ -709,7 +775,11 @@
             if (isExecuting || program.length === 0) return;
             isExecuting = true;
             playBtn.disabled = true;
-            resetToInitial(); // Reset before run
+
+            // Re-render from initial state before animation
+            resetToInitial();
+            renderAll();
+            await delay(500); // brief pause before action
 
             feedbackMsg.textContent = 'Exécution...';
             feedbackMsg.className = 'feedback';
@@ -720,19 +790,10 @@
                 if(currentStepEl) currentStepEl.classList.add('active');
 
                 let inst = program[i];
-                let success = processInstruction(inst);
+                // we know it's valid because we checked during preview mode
+                processInstruction(inst);
 
                 renderAll();
-
-                if (!success) {
-                    playSound('error');
-                    showFeedback('Erreur : Mouvement impossible !', 'error');
-                    isExecuting = false;
-                    playBtn.disabled = false;
-                    document.querySelectorAll('.prog-step').forEach(el => el.classList.remove('active'));
-                    return;
-                }
-
                 playSound('click');
                 await delay(600);
             }
@@ -755,7 +816,12 @@
                 }
                 return false;
             } else if (inst === 'down') {
-                if (craneState.height < MAX_STACK) {
+                let currentStack = cups[craneState.pos];
+                let blocksInCup = currentStack.length;
+                let maxPossibleHeight = MAX_STACK - blocksInCup; // collision with blocks
+                if (craneState.holding) maxPossibleHeight -= 1; // holding block takes space
+
+                if (craneState.height < maxPossibleHeight) {
                     craneState.height++;
                     return true;
                 }
@@ -768,30 +834,25 @@
                 return false;
             } else if (inst === 'action') {
                 let currentStack = cups[craneState.pos];
-                // Distance from top of cup
                 let blocksInCup = currentStack.length;
-                let requiredHeightForAction = MAX_STACK - blocksInCup; // 0 height is top, 3 height is bottom
 
                 if (craneState.holding) {
                     // Try to drop
-                    if (blocksInCup < MAX_STACK) { // Needs to be exactly above the top block
-                        // In a real precise model, height would need to match. For simplicity and kids,
-                        // if they are at or above the drop zone, let it drop, but to teach precision, let's enforce height match
-                        if (craneState.height === requiredHeightForAction) {
-                            currentStack.push(craneState.holding);
-                            craneState.holding = null;
-                            return true;
-                        }
+                    let requiredHeightForAction = MAX_STACK - blocksInCup - 1;
+                    // Note: maxPossibleHeight above restricts going lower than this anyway.
+                    // Enforce precision: must be right above the top block
+                    if (craneState.height === requiredHeightForAction && blocksInCup < MAX_STACK) {
+                        currentStack.push(craneState.holding);
+                        craneState.holding = null;
+                        return true;
                     }
                     return false;
                 } else {
                     // Try to grab
-                    if (blocksInCup > 0) {
-                        let requiredHeightForGrab = MAX_STACK - blocksInCup;
-                        if (craneState.height === requiredHeightForGrab) {
-                            craneState.holding = currentStack.pop();
-                            return true;
-                        }
+                    let requiredHeightForGrab = MAX_STACK - blocksInCup;
+                    if (craneState.height === requiredHeightForGrab && blocksInCup > 0) {
+                        craneState.holding = currentStack.pop();
+                        return true;
                     }
                     return false;
                 }
