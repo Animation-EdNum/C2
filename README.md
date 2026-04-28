@@ -124,6 +124,8 @@ Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, co
 
 Les ressources disponibles sont :
 
+Le portail propose également des liens vers diverses ressources externes utiles pour le corps enseignant.
+
 ### 7. Générateur de Barème (`ressources/bareme.html`)
 ![Générateur de Barème](screenshots/bareme.png)
 - **À quoi sert l'outil :** Un petit utilitaire sans publicité permettant aux enseignants de générer instantanément un barème de points pour la correction de leurs évaluations.

@@ -602,8 +602,7 @@
             drawHistory: []
         };
         let isDrawing = false;
-        let audioCtx = null;
-        let isMuted = true;
+
 
         // ==========================================
         // ÉLÉMENTS DOM
@@ -632,35 +631,6 @@
                 document.getElementById('mode-names-view').classList.toggle('hidden', state.mode !== 'names');
             });
         });
-
-        // Audio Toggle
-        document.getElementById('audioToggleBtn').addEventListener('click', () => {
-            isMuted = !isMuted;
-            document.getElementById('icon-vol-on').style.display = isMuted ? 'none' : 'block';
-            document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
-        });
-
-        function playSound(type) {
-            if (isMuted) return;
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const t = audioCtx.currentTime;
-            if (type === 'tick') {
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.type = 'square'; osc.frequency.setValueAtTime(600, t);
-                osc.frequency.exponentialRampToValueAtTime(800, t + 0.05);
-                gain.gain.setValueAtTime(0.05, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-                osc.start(); osc.stop(t + 0.05);
-            } else if (type === 'ding') {
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, t);
-                osc.frequency.setValueAtTime(659.25, t + 0.1);
-                gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
-                osc.start(); osc.stop(t + 0.8);
-            }
-        }
 
         function showToast(message, icon = 'info') {
             const container = document.getElementById('toast-container');
@@ -847,6 +817,7 @@
         loadState();
     </script>
     <script src="../js/theme.js"></script>
+    <script src="../js/audio.js"></script>
 <script src="../js/swipe.js"></script>
 </body>
 
