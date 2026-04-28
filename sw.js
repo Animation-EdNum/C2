@@ -29,6 +29,7 @@ const ASSETS_TO_CACHE = [
   './webapps/binaire_message.html',
   './webapps/routage_reseau.html',
   './webapps/bit_de_parite.html',
+  './webapps/train_pirate.html',
   './webapps/mats/city.png',
 
   // Alpha Webapps
