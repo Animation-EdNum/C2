@@ -714,7 +714,8 @@
 
             <div class="network-container" id="network-container">
                 <div class="network-inner" id="network-inner">
-                    <svg class="network-svg" id="network-svg" width="100%" height="100%"></svg>
+                    <svg class="network-svg" id="network-svg-edges" width="100%" height="100%" style="z-index: 1;"></svg>
+                    <svg class="network-svg" id="network-svg-weights" width="100%" height="100%" style="z-index: 3; position: absolute; top: 0; left: 0; pointer-events: none;"></svg>
                 </div>
             </div>
 
@@ -896,7 +897,8 @@
         }
 
         function renderEdges() {
-            const svg = document.getElementById('network-svg'); svg.innerHTML = '';
+            const svgEdges = document.getElementById('network-svg-edges'); svgEdges.innerHTML = '';
+            const svgWeights = document.getElementById('network-svg-weights'); svgWeights.innerHTML = '';
             const isDark = document.body.classList.contains('dark');
             const edgeColor = isDark ? '#475569' : '#c5cbe9';
             const weightColor = isDark ? '#334155' : '#9fa8da';
@@ -911,7 +913,7 @@
                 line.setAttribute('x2', `${n2.x}%`); line.setAttribute('y2', `${n2.y}%`);
                 line.setAttribute('stroke', isPath ? '#ff9800' : edgeColor);
                 line.setAttribute('stroke-width', isPath ? '5' : '2.5');
-                svg.appendChild(line);
+                svgEdges.appendChild(line);
 
                 // Cercle UTI (Poids) — toujours orange, plus grand
                 const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
@@ -919,7 +921,7 @@
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
                 circle.classList.add('weight-circle');
                 circle.setAttribute('fill', isPath ? '#e65100' : '#ff9800');
-                svg.appendChild(circle);
+                svgWeights.appendChild(circle);
 
                 // Texte UTI 
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -928,7 +930,7 @@
                 text.setAttribute('font-weight', 'bold'); text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('dominant-baseline', 'central');
                 text.textContent = e.weight;
-                svg.appendChild(text);
+                svgWeights.appendChild(text);
             });
         }
 
