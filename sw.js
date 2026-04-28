@@ -23,12 +23,6 @@ const ASSETS = [
     './fonts/outfit.woff2',
 
     // Webapps
-    './alpha/webapps/jeu_de_la_grue.html',
-    './alpha/webapps/machine_a_chiffrer.html',
-    './alpha/webapps/machine_a_trier.html',
-    './alpha/webapps/pixel_studio_rvb.html',
-    './alpha/webapps/pixels_binaires.html',
-    './alpha/webapps/reseau_de_tri.html',
     './webapps/binaire_codage.html',
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
