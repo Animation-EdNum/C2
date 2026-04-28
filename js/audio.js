@@ -32,6 +32,33 @@ function playSound(type) {
             g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.3);
             o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.3);
         });
+    } else if (type === 'tick') {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.type = 'square';
+        o.frequency.setValueAtTime(600, t);
+        o.frequency.exponentialRampToValueAtTime(800, t + 0.05);
+        g.gain.setValueAtTime(0.05, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        o.start(); o.stop(t + 0.05);
+    } else if (type === 'ding') {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.type = 'sine';
+        o.frequency.setValueAtTime(523.25, t);
+        o.frequency.setValueAtTime(659.25, t + 0.1);
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+        o.start(); o.stop(t + 0.8);
+    } else if (type === 'win') {
+        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.type = 'sine'; o.frequency.value = f;
+            g.gain.setValueAtTime(0.15, t + i * 0.12);
+            g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.4);
+            o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.4);
+        });
     } else if (type === 'error') {
         const o = audioCtx.createOscillator(), g = audioCtx.createGain();
         o.connect(g); g.connect(audioCtx.destination);
