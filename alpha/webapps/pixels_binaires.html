@@ -14,6 +14,7 @@
     <script src="../../js/audio.js"></script>
     <script src="../../js/lucide.min.js"></script>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body > header, body > .container {
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
@@ -27,6 +28,10 @@
             --input-border: #bfdbfe; --instructions-bg: #eff6ff;
             --success: #166534; --error: #b91c1c;
             --shadow-color: rgba(0, 0, 0, 0.3); --card-shadow: rgba(37, 99, 235, 0.15);
+
+
+
+
 
             --c-noir: #000000;
             --c-vert: #22c55e;
@@ -44,6 +49,10 @@
             --success: #34d399; --error: #f87171;
             --shadow-color: rgba(0, 0, 0, 0.5); --card-shadow: rgba(0, 0, 0, 0.4);
 
+
+
+
+
             --c-noir: #000000; /* Le noir reste noir même en dark mode pour ce jeu précis */
         }
 
@@ -52,7 +61,23 @@
             border-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* ========== TABS ========== */
+        body {
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh; padding: 20px; color: var(--text-main);
+        }
+
+        .container {
+            max-width: 900px; margin: 0 auto; background: var(--container-bg);
+            padding: 30px; border-radius: 15px; box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+
+        /* === TABS === */
         .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
             padding: 8px 20px; border-radius: 20px; border: 2px solid var(--accent);
@@ -67,18 +92,24 @@
         .mode-container { display: none; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
         .mode-container.active { display: flex; }
 
-        .main-card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
+        /* ========== APP CONTENT ========== */
+        .app-content {
+            display: flex; flex-direction: column; width: 100%; max-width: 700px; gap: 20px;
             align-items: center;
-            border: 1px solid var(--border-color);
         }
+
+        .main-card {
+            background: var(--card-bg); padding: 30px; border-radius: 16px;
+            box-shadow: 0 8px 30px var(--card-shadow);
+            border: 1px solid var(--card-border);
+            display: flex; flex-direction: column; gap: 20px;
+            width: 100%;
+            align-items: center;
+        }
+
+
+
+
 
         .instructions {
             text-align: center;
@@ -86,6 +117,10 @@
             color: var(--text-main);
             font-size: 1.1em;
         }
+
+
+
+
 
         .legend {
             display: flex;
@@ -99,6 +134,10 @@
             border: 1px solid var(--card-border);
         }
 
+
+
+
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -108,10 +147,18 @@
             color: var(--text-main);
         }
 
+
+
+
+
         .color-box {
             width: 20px; height: 20px; border-radius: 4px;
             border: 1px solid var(--border-color);
         }
+
+
+
+
 
         /* Grid */
         .pixel-grid {
@@ -123,6 +170,10 @@
             margin-bottom: 20px;
         }
 
+
+
+
+
         .pixel-cell {
             width: 50px;
             height: 50px;
@@ -130,6 +181,7 @@
             cursor: pointer;
             transition: transform 0.1s;
         }
+
 
         .pixel-cell:active {
             transform: scale(0.95);
@@ -139,6 +191,17 @@
             .pixel-cell { width: 40px; height: 40px; }
         }
 
+
+
+        .pixel-cell:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 400px) {
+            .pixel-cell { width: 40px; height: 40px; }
+        }
+
+
         /* Binary Output/Input */
         .binary-container {
             width: 100%;
@@ -147,6 +210,10 @@
             gap: 10px;
             align-items: center;
         }
+
+
+
+
 
         .binary-text {
             width: 100%;
@@ -166,9 +233,17 @@
             letter-spacing: 2px;
         }
 
+
         .binary-text:focus {
             outline: 2px solid var(--accent);
         }
+
+
+
+        .binary-text:focus {
+            outline: 2px solid var(--accent);
+        }
+
 
         .btn {
             padding: 10px 20px;
@@ -185,14 +260,26 @@
             gap: 8px;
         }
 
+
         .btn:hover {
             background: var(--accent-hover);
         }
+
+
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
 
         .btn:disabled {
             background: var(--text-muted);
             cursor: not-allowed;
         }
+
+
+
+
 
         .feedback {
             margin-top: 15px;
@@ -282,7 +369,13 @@
             <div class="main-card">
                 <div class="instructions">Dessine sur la grille pour voir le code binaire se générer.</div>
 
+
                 <div class="pixel-grid" id="grid-codage"></div>
+
+
+
+                <div class="pixel-grid" id="grid-codage"></div>
+
 
                 <div class="binary-container">
                     <div class="binary-text" id="output-codage">00000000000000000000000000000000000000000000000000</div>
@@ -297,6 +390,7 @@
             <div class="main-card">
                 <div class="instructions">Lis le code binaire et reproduis l'image sur la grille !</div>
 
+
                 <div class="binary-container" style="margin-bottom: 20px;">
                     <div class="binary-text" id="target-binary"></div>
                 </div>
@@ -307,6 +401,20 @@
 
                 <button class="btn" id="btn-check"><i data-lucide="check-circle"></i> Valider</button>
             </div>
+
+
+
+                <div class="binary-container" style="margin-bottom: 20px;">
+                    <div class="binary-text" id="target-binary"></div>
+                </div>
+
+                <div class="pixel-grid" id="grid-decodage"></div>
+
+                <div class="feedback" id="feedback-decodage"></div>
+
+                <button class="btn" id="btn-check"><i data-lucide="check-circle"></i> Valider</button>
+            </div>
+
 
             <div class="score-bar">
                 <div class="score-item">
@@ -376,6 +484,10 @@
                 cell.dataset.index = i;
                 cell.style.background = COLORS[stateCodage[i]].var;
 
+
+
+
+
                 cell.addEventListener('mousedown', () => cycleColorCodage(i));
                 cell.addEventListener('touchstart', (e) => {
                     e.preventDefault();
@@ -436,6 +548,10 @@
                 cell.dataset.index = i;
                 cell.style.background = COLORS[stateDecodage[i]].var;
 
+
+
+
+
                 cell.addEventListener('mousedown', () => cycleColorDecodage(i));
                 cell.addEventListener('touchstart', (e) => {
                     e.preventDefault();
@@ -460,6 +576,10 @@
                 targetBinary += COLORS[r].code;
             }
 
+
+
+
+
             // Chunk string into 5 lines for readability
             let formattedBinary = "";
             for(let i=0; i<5; i++) {
@@ -470,12 +590,20 @@
             stateDecodage.fill(0);
             buildGridDecodage();
 
+
+
+
+
             feedbackDecodage.textContent = "";
             btnCheck.disabled = false;
         }
 
         btnCheck.addEventListener('click', () => {
             const currentBinary = stateDecodage.map(val => COLORS[val].code).join('');
+
+
+
+
 
             if (currentBinary === targetBinary) {
                 feedbackDecodage.textContent = "🎉 Bravo ! Image décodée !";
