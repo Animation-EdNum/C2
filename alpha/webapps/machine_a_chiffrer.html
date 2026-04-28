@@ -294,6 +294,8 @@
         <div class="tabs">
             <button class="tab-btn active" id="tab-cesar"><i data-lucide="arrow-right-left"></i> Code César</button>
             <button class="tab-btn" id="tab-vigenere"><i data-lucide="key"></i> Code Vigenère</button>
+            <button class="tab-btn" id="tab-atbash"><i data-lucide="flip-horizontal"></i> Atbash</button>
+            <button class="tab-btn" id="tab-morse"><i data-lucide="radio"></i> Morse</button>
         </div>
 
         <div class="dynamic-explanation" id="dynamic-explanation">
@@ -308,7 +310,13 @@
                 <div class="textarea-header">
                     <i data-lucide="message-circle"></i> Message en clair
                 </div>
+
                 <textarea id="input-clear" placeholder="Tape ton message ici..."></textarea>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="copyText('input-clear')"><i data-lucide="copy"></i> Copier</button>
+                    <button class="action-btn" onclick="clearText('input-clear')"><i data-lucide="trash-2"></i> Effacer</button>
+                </div>
+
             </div>
 
             <div class="controls" id="controls-cesar">
@@ -316,7 +324,13 @@
                     <label for="offset"><i data-lucide="sliders"></i> Décalage: <span id="offset-val">0</span></label>
                     <input type="range" id="offset" min="-25" max="25" value="3">
                 </div>
+
                 <div class="mode-desc">Le code César décale chaque lettre de l'alphabet d'un nombre fixe.</div>
+                <div class="caesar-wheel-container" id="caesar-wheel">
+                    <div class="wheel wheel-outer" id="wheel-outer"></div>
+                    <div class="wheel wheel-inner" id="wheel-inner"></div>
+                </div>
+
             </div>
 
             <div class="controls" id="controls-vigenere" style="display: none;">
@@ -331,11 +345,23 @@
                 <div class="textarea-header">
                     <i data-lucide="lock"></i> Message chiffré
                 </div>
+
                 <textarea id="input-cipher" placeholder="Le message secret apparaîtra ici..."></textarea>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="copyText('input-cipher')"><i data-lucide="copy"></i> Copier</button>
+                    <button class="action-btn" onclick="clearText('input-cipher')"><i data-lucide="trash-2"></i> Effacer</button>
+                </div>
+
             </div>
 
+
+            <div class="crack-container" id="crack-container">
+                <button class="crack-btn" onclick="crackCode()"><i data-lucide="unlock"></i> Craquer le code (Brute Force)</button>
+                <div class="crack-results" id="crack-results"></div>
+            </div>
         </div>
     </div>
+
 
     <script>
         const inputClear = document.getElementById('input-clear');
@@ -346,6 +372,8 @@
 
         const tabCesar = document.getElementById('tab-cesar');
         const tabVigenere = document.getElementById('tab-vigenere');
+        const tabAtbash = document.getElementById('tab-atbash');
+        const tabMorse = document.getElementById('tab-morse');
         const controlsCesar = document.getElementById('controls-cesar');
         const controlsVigenere = document.getElementById('controls-vigenere');
 
@@ -357,6 +385,8 @@
 
             tabCesar.addEventListener('click', () => setMode('cesar'));
             tabVigenere.addEventListener('click', () => setMode('vigenere'));
+            tabAtbash.addEventListener('click', () => setMode('atbash'));
+            tabMorse.addEventListener('click', () => setMode('morse'));
 
             inputClear.addEventListener('input', () => {
                 lastEdited = 'clear';
@@ -429,25 +459,28 @@
             [tabCesar, tabVigenere, tabAtbash, tabMorse].forEach(t => t.classList.remove('active'));
             explanationText.textContent = EXPLANATIONS[mode];
             if (window.lucide) lucide.createIcons();
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
 
             if (mode === 'cesar') {
                 tabCesar.classList.add('active');
-                tabVigenere.classList.remove('active');
                 controlsCesar.style.display = 'flex';
                 controlsVigenere.style.display = 'none';
-            } else {
-                tabCesar.classList.remove('active');
+            } else if (mode === 'vigenere') {
                 tabVigenere.classList.add('active');
                 controlsCesar.style.display = 'none';
                 controlsVigenere.style.display = 'flex';
+            } else if (mode === 'atbash') {
+                tabAtbash.classList.add('active');
+                controlsCesar.style.display = 'none';
+                controlsVigenere.style.display = 'none';
+            } else if (mode === 'morse') {
+                tabMorse.classList.add('active');
+                controlsCesar.style.display = 'none';
+                controlsVigenere.style.display = 'none';
             }
 
             playSound('click');
             updateCipher();
+            toggleCrackVisibility();
         }
 
 
@@ -524,30 +557,123 @@
             return result;
         }
 
+
         function updateCipher() {
             let shift = parseInt(offsetSlider.value) || 0;
             let keyword = keywordInput.value;
 
+            if (currentMode === 'cesar') {
+                const innerWheel = document.getElementById('wheel-inner');
+                if (innerWheel) {
+                    innerWheel.style.transform = `rotate(${-shift * (360/26)}deg)`;
+                }
+            }
+
+
             if (lastEdited === 'clear') {
-                let text = normalizeText(inputClear.value);
+                let text = currentMode === 'morse' ? inputClear.value.toUpperCase() : normalizeText(inputClear.value);
                 if (currentMode === 'cesar') {
                     inputCipher.value = processCesar(text, shift, false);
-                } else {
+                } else if (currentMode === 'vigenere') {
                     inputCipher.value = processVigenere(text, keyword, false);
+                } else if (currentMode === 'atbash') {
+                    inputCipher.value = processAtbash(text);
+                } else if (currentMode === 'morse') {
+                    inputCipher.value = processMorse(text, false);
                 }
             } else {
-                let text = normalizeText(inputCipher.value);
+                let text = currentMode === 'morse' ? inputCipher.value.toUpperCase() : normalizeText(inputCipher.value);
                 if (currentMode === 'cesar') {
                     inputClear.value = processCesar(text, shift, true);
-                } else {
+                } else if (currentMode === 'vigenere') {
                     inputClear.value = processVigenere(text, keyword, true);
+                } else if (currentMode === 'atbash') {
+                    inputClear.value = processAtbash(text);
+                } else if (currentMode === 'morse') {
+                    inputClear.value = processMorse(text, true);
                 }
             }
         }
 
+
+
+        function copyText(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                showToast("Copié !");
+                playSound('click');
+            }).catch(err => {
+                console.error("Erreur de copie : ", err);
+                showToast("Erreur", false);
+            });
+            window.getSelection().removeAllRanges();
+        }
+
+        function clearText(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.value = '';
+            lastEdited = elementId === 'input-clear' ? 'clear' : 'cipher';
+            updateCipher();
+            playSound('click');
+        }
+
+
+        function crackCode() {
+            const cipherText = normalizeText(inputCipher.value);
+            if (!cipherText) {
+                showToast("Rien à craquer !", false);
+                return;
+            }
+
+            const resultsContainer = document.getElementById('crack-results');
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'flex';
+
+            for (let shift = 1; shift < 26; shift++) {
+                let decrypted = processCesar(cipherText, shift, true);
+
+                let item = document.createElement('div');
+                item.className = 'crack-item';
+
+                let shiftSpan = document.createElement('span');
+                shiftSpan.className = 'crack-shift';
+                shiftSpan.textContent = `+${shift}:`;
+
+                let textSpan = document.createElement('span');
+                textSpan.textContent = decrypted;
+
+                item.appendChild(shiftSpan);
+                item.appendChild(textSpan);
+                resultsContainer.appendChild(item);
+            }
+            playSound('success');
+            resultsContainer.scrollTop = 0;
+        }
+
+        function toggleCrackVisibility() {
+            const crackContainer = document.getElementById('crack-container');
+            if (currentMode === 'cesar') {
+                crackContainer.style.display = 'flex';
+                document.getElementById('crack-results').style.display = 'none';
+            } else {
+                crackContainer.style.display = 'none';
+            }
+        }
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.background = isSuccess ? '#10b981' : '#ef4444';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        drawCaesarWheel();
         window.addEventListener('load', init);
     </script>
     <script src="../../js/theme.js"></script>
     <script src="../../js/swipe.js"></script>
+    <div id="toast"></div>
 </body>
 </html>

@@ -26,7 +26,6 @@ Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagée
 
 ### 🚀 Points forts
 - **Utilisation locale :** Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
-- **Progressive Web App (PWA) :** Le projet intègre un Service Worker, permettant une installation sur vos appareils et un accès 100% hors-ligne après la première visite.
 - **Essayez en ligne :** Vous pouvez tester directement l'ensemble des applications ici : [www.zooom.top](https://www.zooom.top).
 - **Pour les enseignant·e·s :** Vous pouvez distribuer ces fichiers directement sur les ordinateurs de votre classe, ou les héberger facilement sur le site de votre école ou intranet. 
 
@@ -152,12 +151,6 @@ L'accessibilité est une priorité absolue de ce projet pour répondre aux besoi
 ## Contribuer
 
 Les contributions sont les bienvenues ! Que ce soit pour signaler un bug (Bug Reports), proposer de nouvelles fonctionnalités (Feature Requests) ou soumettre des améliorations (Pull Requests), n'hésitez pas à participer à ce projet éducatif.
-
-### Tests End-to-End (E2E)
-Pour exécuter la suite de tests Playwright locale :
-1. Installez les dépendances : `pip install pytest-playwright playwright && playwright install`
-2. Démarrez un serveur HTTP local à la racine : `python -m http.server 8000`
-3. Dans un autre terminal, lancez les tests : `python -m pytest e2e_tests/`
 
 ## Contact / Support
 

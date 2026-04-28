@@ -55,23 +55,19 @@
         h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
         .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
 
-        /* ========== DIFFICULTÉ ========== */
-        .instructions {
-            background: var(--instructions-bg);
-            border-left: 4px solid var(--accent);
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            border-radius: 0 8px 8px 0;
-            color: var(--text-secondary);
-            font-size: 15px;
-            line-height: 1.5;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        /* ========== TABS ========== */
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 8px 20px; border-radius: 20px; border: 2px solid var(--accent);
+            background: transparent; color: var(--accent); font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px;
         }
-        body.dark .instructions { box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .instructions p { margin-bottom: 10px; }
-        .instructions p:last-child { margin-bottom: 0; }
-        .instructions strong { color: var(--text-main); }
+        .tab-btn.active { background: var(--accent); color: #fff; }
+        .tab-btn:hover:not(.active) { background: #fef3c7; }
+        body.dark .tab-btn:hover:not(.active) { background: var(--card-bg); }
 
+        /* ========== DIFFICULTÉ ========== */
         .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
         .diff-btn {
             padding: 6px 16px; border-radius: 20px; border: 2px solid var(--accent);
@@ -83,285 +79,147 @@
         .diff-btn:hover:not(.active) { background: #fef3c7; }
         body.dark .diff-btn:hover:not(.active) { background: var(--card-bg); }
 
-        /* ========== GAME BOARDS ========== */
-        .game-boards {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 40px;
+        /* ========== GAME AREA ========== */
+        .game-area {
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
             margin-bottom: 30px;
-            flex-wrap: wrap;
         }
 
-        .board-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .main-wrapper {
-            padding-top: 70px;
-            position: relative;
-        }
-
-        .board-title {
-            font-size: 14px;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-        }
-
-        .board {
-            display: flex;
-            gap: 15px;
-            padding: 15px;
-            background: var(--card-bg);
-            border: 2px solid var(--card-border);
-            border-radius: 16px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
-        body.dark .board { box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
-
-        .cup {
-            width: 70px;
-            height: 180px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 0 0 16px 16px;
-            border: 4px solid #cbd5e1;
-            border-top: none;
-            display: flex;
-            flex-direction: column-reverse;
-            align-items: center;
-            padding: 5px;
-            gap: 5px;
-            position: relative;
-            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.05);
-        }
-        body.dark .cup { background: rgba(0, 0, 0, 0.2); border-color: #475569; }
-
-        .target-board .cup {
-            width: 45px;
-            height: 120px;
-            border-width: 3px;
-            padding: 3px;
-            gap: 3px;
-            border-radius: 0 0 12px 12px;
-        }
-
-        .cube {
-            width: 100%;
-            height: 50px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-radius: 8px;
-            box-shadow: 0 4px 0 #1d4ed8, 0 5px 5px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            color: white;
-            font-weight: bold;
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: transform 0.2s;
-        }
-
-        .target-board .cube {
-            height: 35px;
-            box-shadow: 0 2px 0 #1d4ed8, 0 3px 3px rgba(0,0,0,0.2);
-            border-radius: 6px;
-        }
-
-        .crane-layer {
-            position: absolute;
-            top: 0;
-            left: 15px;
-            right: 15px;
-            height: 70px;
-            pointer-events: none;
-        }
-
-        .crane {
-            width: 70px;
-            height: 70px;
-            position: absolute;
-            top: -10px;
-            left: 0;
-            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
-        }
-
-        .crane-arm {
-            width: 12px;
-            height: 40px;
-            background: linear-gradient(90deg, #94a3b8, #cbd5e1, #94a3b8);
-            border-radius: 6px;
-            position: relative;
-            transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid #64748b;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
-        }
-
-        .crane-claw {
-            width: 50px;
-            height: 25px;
-            border: 8px solid var(--accent-dark);
-            border-top: none;
-            border-radius: 0 0 12px 12px;
-            position: relative;
-            top: -5px;
-            background: transparent;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-        }
-
-        .crane.holding .crane-claw::after {
-            content: '';
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-radius: 8px;
-            position: absolute;
-            top: 5px;
-            left: -5px;
-            box-shadow: 0 4px 0 #1d4ed8, 0 5px 5px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        /* ========== PROGRAMMING AREA ========== */
-        .program-area {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            margin-bottom: 30px;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .program-strip-wrapper {
-            background: var(--card-bg);
-            border: 2px solid var(--card-border);
-            border-radius: 20px;
-            padding: 15px 20px;
-            min-height: 90px;
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
-        body.dark .program-strip-wrapper { box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
-
-        .program-strip {
-            display: flex;
-            gap: 10px;
-        }
-
-        .prog-step {
-            width: 55px;
-            height: 55px;
+        .grid-container {
+            display: inline-block;
             background: #e2e8f0;
-            border-radius: 14px;
+            padding: 4px;
+            border-radius: 8px;
+        }
+        body.dark .grid-container { background: #334155; }
+
+        .grid {
+            display: grid;
+            gap: 2px;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-main);
-            flex-shrink: 0;
-            box-shadow: 0 4px 0 #cbd5e1;
-            transition: all 0.2s;
-            font-size: 24px;
-        }
-        body.dark .prog-step { background: #475569; box-shadow: 0 4px 0 #334155; }
-
-        .prog-step.active {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.1) translateY(4px);
-            box-shadow: 0 0 0 transparent;
+            position: relative;
         }
 
+        @media (max-width: 600px) {
+            .cell {
+                width: 40px; height: 40px;
+            }
+        }
+
+        .crane-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .crane-icon {
+            width: 80%;
+            height: 80%;
+            color: var(--accent);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .target-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px dashed #22c55e;
+            border-radius: 4px;
+        }
+
+        .object-icon {
+            width: 70%;
+            height: 70%;
+            color: #ef4444;
+            fill: #ef4444;
+        }
+
+        .crane-holding {
+            color: #ef4444;
+        }
+
+        /* ========== CONTROLS ========== */
         .controls-panel {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .instructions-group {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            padding: 15px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 2px solid var(--card-border);
-        }
-
-        .instruction-btn {
-            width: 65px;
-            height: 65px;
-            border-radius: 18px;
-            border: 2px solid var(--card-border);
-            background: white;
-            color: var(--text-main);
-            display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.1s;
-            box-shadow: 0 5px 0 var(--card-border), 0 6px 6px var(--card-shadow);
-            font-size: 28px;
-        }
-
-        .instruction-btn:hover { background: #fef3c7; transform: translateY(-2px); box-shadow: 0 7px 0 var(--card-border), 0 8px 8px var(--card-shadow); }
-        body.dark .instruction-btn { background: var(--card-bg); }
-        body.dark .instruction-btn:hover { background: #475569; }
-        .instruction-btn:active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 transparent; }
-
-        .instruction-btn.action-color {
-            color: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 5px 0 var(--accent-dark), 0 6px 6px var(--card-shadow);
-        }
-        .instruction-btn.action-color:hover {
-            box-shadow: 0 7px 0 var(--accent-dark), 0 8px 8px var(--card-shadow);
-        }
-
-        .execution-group {
-            display: flex;
-            justify-content: center;
             gap: 15px;
-            flex-wrap: wrap;
+            margin-top: 10px;
         }
 
-        .exec-btn {
-            padding: 14px 28px;
-            border-radius: 30px;
+        .dpad {
+            display: grid;
+            grid-template-columns: 50px 50px 50px;
+            grid-template-rows: 50px 50px 50px;
+            gap: 5px;
+        }
+
+        .dpad-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: all 0.1s;
+        }
+
+        .dpad-btn:hover { background: #e2e8f0; }
+        body.dark .dpad-btn:hover { background: #475569; }
+        .dpad-btn:active { transform: scale(0.95); }
+
+        .dpad-up { grid-column: 2; grid-row: 1; }
+        .dpad-left { grid-column: 1; grid-row: 2; }
+        .dpad-right { grid-column: 3; grid-row: 2; }
+        .dpad-down { grid-column: 2; grid-row: 3; }
+        .dpad-action {
+            grid-column: 2; grid-row: 2;
+            background: var(--accent);
+            border-color: var(--accent-dark);
+            color: white;
+            border-radius: 50%;
+        }
+        .dpad-action:hover { background: var(--accent-dark); }
+        .dpad-action svg { color: white; }
+
+        .action-btn-large {
+            padding: 12px 24px;
+            border-radius: 24px;
+            background: var(--accent);
+            color: white;
             border: none;
-            font-weight: bold;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.1s;
-            min-height: 54px;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+            gap: 8px;
+            transition: transform 0.1s;
+            outline: none;
+            min-width: 44px;
+            min-height: 44px;
         }
-        .exec-btn:active { transform: scale(0.95) translateY(5px); box-shadow: 0 0 0 transparent; }
-
-        .play-btn { background: var(--success); color: white; box-shadow: 0 5px 0 #14532d; font-size: 18px; padding: 14px 36px; }
-        .play-btn:hover { background: #15803d; transform: translateY(-2px); box-shadow: 0 7px 0 #14532d; }
-        .play-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 0 5px 0 #14532d; }
-
-        .del-btn { background: var(--card-bg); border: 2px solid var(--card-border); color: var(--text-main); }
-        .del-btn:hover { background: #fef3c7; }
-        .clear-btn { background: var(--error); color: white; box-shadow: 0 5px 0 #7f1d1d; }
-        .clear-btn:hover { background: #dc2626; }
+        .action-btn-large:hover { background: var(--accent-dark); }
+        .action-btn-large:active { transform: scale(0.95); }
 
         /* ========== FEEDBACK & SCORE ========== */
         .feedback { font-size: 16px; font-weight: 600; text-align: center; height: 24px; margin-bottom: 10px; transition: color 0.3s; }
@@ -421,9 +279,10 @@
 
         <p class="subtitle">Déplace la grue pour attraper et déplacer des objets !</p>
 
-        <div class="instructions">
-            <p><strong>But du jeu :</strong> Observe bien la zone <em>Objectif</em>. Tu dois utiliser la grue pour déplacer les cubes dans la <em>Zone de travail</em> afin de reproduire exactement la même disposition.</p>
-            <p><strong>Comment faire ?</strong> Une machine ne devine rien ! Tu dois lui donner une suite d'instructions précises à l'avance. Ajoute des flèches pour te déplacer et la pince pour attraper/lâcher, puis appuie sur <em>Exécuter</em> pour vérifier ton programme.</p>
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-collect">🎯 Collecte</button>
+            <button class="tab-btn" id="tab-deliver">🚚 Livraison</button>
         </div>
 
         <!-- DIFFICULTÉ -->
@@ -435,55 +294,28 @@
 
         <div class="feedback" id="feedback-msg"></div>
 
-        <!-- GAME BOARDS -->
-        <div class="game-boards">
-            <div class="board-wrapper">
-                <div class="board-title">Objectif</div>
-                <div class="board target-board" id="target-board">
-                    <div class="cup"></div>
-                    <div class="cup"></div>
-                    <div class="cup"></div>
+        <!-- GAME AREA -->
+        <div class="game-area">
+            <div class="grid-container">
+                <div class="grid" id="grid">
+                    <!-- Grille générée ici -->
                 </div>
             </div>
 
-            <div class="board-wrapper main-wrapper">
-                <div class="board-title">Zone de travail</div>
-                <div class="crane-layer" id="crane-layer">
-                    <div class="crane" id="crane">
-                        <div class="crane-arm" id="crane-arm"></div>
-                        <div class="crane-claw" id="crane-claw"></div>
-                    </div>
-                </div>
-                <div class="board main-board" id="main-board">
-                    <div class="cup" id="cup-0"></div>
-                    <div class="cup" id="cup-1"></div>
-                    <div class="cup" id="cup-2"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PROGRAMMING AREA -->
-        <div class="program-area">
-            <div class="program-strip-wrapper">
-                <div class="program-strip" id="program-strip">
-                    <!-- Instructions apparaitront ici -->
-                </div>
-            </div>
-
+            <!-- CONTROLS -->
             <div class="controls-panel">
-                <div class="instructions-group">
-                    <button class="instruction-btn" onclick="addInstruction('up')" aria-label="Haut"><i data-lucide="arrow-up"></i></button>
-                    <button class="instruction-btn" onclick="addInstruction('down')" aria-label="Bas"><i data-lucide="arrow-down"></i></button>
-                    <button class="instruction-btn" onclick="addInstruction('left')" aria-label="Gauche"><i data-lucide="arrow-left"></i></button>
-                    <button class="instruction-btn" onclick="addInstruction('right')" aria-label="Droite"><i data-lucide="arrow-right"></i></button>
-                    <button class="instruction-btn action-color" onclick="addInstruction('action')" aria-label="Action"><i data-lucide="grip-horizontal"></i></button>
+                <div class="dpad">
+                    <button class="dpad-btn dpad-up" aria-label="Haut" onclick="moveCrane(0, -1)"><i data-lucide="arrow-up"></i></button>
+                    <button class="dpad-btn dpad-left" aria-label="Gauche" onclick="moveCrane(-1, 0)"><i data-lucide="arrow-left"></i></button>
+                    <button class="dpad-btn dpad-action" aria-label="Action" onclick="actionCrane()"><i data-lucide="check"></i></button>
+                    <button class="dpad-btn dpad-right" aria-label="Droite" onclick="moveCrane(1, 0)"><i data-lucide="arrow-right"></i></button>
+                    <button class="dpad-btn dpad-down" aria-label="Bas" onclick="moveCrane(0, 1)"><i data-lucide="arrow-down"></i></button>
                 </div>
 
-                <div class="execution-group">
-                    <button class="exec-btn del-btn" onclick="deleteLastInstruction()"><i data-lucide="delete"></i> Effacer</button>
-                    <button class="exec-btn clear-btn" onclick="clearProgram()"><i data-lucide="trash-2"></i> Tout vider</button>
-                    <button class="exec-btn play-btn" id="play-btn" onclick="executeProgram()"><i data-lucide="play"></i> Exécuter</button>
-                </div>
+                <button class="action-btn-large" onclick="actionCrane()">
+                    <i data-lucide="hand"></i>
+                    <span id="action-text">Action</span>
+                </button>
             </div>
         </div>
 
@@ -516,28 +348,23 @@
 
     <script src="../../js/confetti.js"></script>
     <script>
+        let currentMode = 'collect'; // 'collect' ou 'deliver'
         let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
-        let globalCorrect = 0, globalStreak = 0, globalBest = 0;
 
-        const NUM_CUPS = 3;
-        const MAX_STACK = 3;
+        let globalCorrect = 0;
+        let globalStreak = 0;
+        let globalBest = 0;
 
-        let cups = [[], [], []];
-        let initialCupsState = [[], [], []];
-        let targetCups = [[], [], []];
+        let gridCols = 5;
+        let gridRows = 5;
+        let crane = { x: 2, y: 0, holding: false };
 
-        let craneState = { pos: 0, height: 0, holding: null };
-        let program = [];
-        let isExecuting = false;
+        let objects = [];
+        let targets = [];
 
         const feedbackMsg = document.getElementById('feedback-msg');
-        const targetBoardEl = document.getElementById('target-board');
-        const mainBoardEl = document.getElementById('main-board');
-        const craneEl = document.getElementById('crane');
-        const craneArmEl = document.getElementById('crane-arm');
-        const craneClawEl = document.getElementById('crane-claw');
-        const programStrip = document.getElementById('program-strip');
-        const playBtn = document.getElementById('play-btn');
+        const gridEl = document.getElementById('grid');
+        const actionTextEl = document.getElementById('action-text');
 
         function init() {
             setupEventListeners();
@@ -546,22 +373,27 @@
         }
 
         function setupEventListeners() {
+            document.getElementById('tab-collect').addEventListener('click', () => setMode('collect'));
+            document.getElementById('tab-deliver').addEventListener('click', () => setMode('deliver'));
+
             document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
             document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
             document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
 
             window.addEventListener('keydown', (e) => {
-                if (e.repeat || isExecuting) return;
+                if (e.repeat) return;
+
+                // Allow keyboard control only if no modal or input is focused
                 if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
 
                 switch(e.key) {
-                    case 'ArrowUp': e.preventDefault(); addInstruction('up'); break;
-                    case 'ArrowDown': e.preventDefault(); addInstruction('down'); break;
-                    case 'ArrowLeft': e.preventDefault(); addInstruction('left'); break;
-                    case 'ArrowRight': e.preventDefault(); addInstruction('right'); break;
-                    case ' ': e.preventDefault(); addInstruction('action'); break;
-                    case 'Enter': e.preventDefault(); executeProgram(); break;
-                    case 'Backspace': e.preventDefault(); deleteLastInstruction(); break;
+                    case 'ArrowUp': e.preventDefault(); moveCrane(0, -1); break;
+                    case 'ArrowDown': e.preventDefault(); moveCrane(0, 1); break;
+                    case 'ArrowLeft': e.preventDefault(); moveCrane(-1, 0); break;
+                    case 'ArrowRight': e.preventDefault(); moveCrane(1, 0); break;
+                    case 'Enter':
+                    case ' ':
+                        e.preventDefault(); actionCrane(); break;
                 }
             });
 
@@ -573,6 +405,13 @@
             });
         }
 
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('tab-collect').classList.toggle('active', mode === 'collect');
+            document.getElementById('tab-deliver').classList.toggle('active', mode === 'deliver');
+            startNewLevel();
+        }
+
         function setDifficulty(diff) {
             currentDifficulty = diff;
             document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
@@ -580,259 +419,177 @@
             startNewLevel();
         }
 
-        function generateRandomState(numBlocks) {
-            let state = [[], [], []];
-            for(let i=0; i<numBlocks; i++) {
-                let cupIdx;
-                do {
-                    cupIdx = Math.floor(Math.random() * NUM_CUPS);
-                } while (state[cupIdx].length >= MAX_STACK);
-                state[cupIdx].push({ id: i, color: `hsl(${Math.random()*360}, 70%, 50%)` });
-            }
-            return state;
-        }
-
         function startNewLevel() {
-            isExecuting = false;
-            program = [];
-            clearProgram();
+            if (currentDifficulty === 'easy') { gridCols = 4; gridRows = 4; }
+            else if (currentDifficulty === 'medium') { gridCols = 5; gridRows = 5; }
+            else if (currentDifficulty === 'hard') { gridCols = 6; gridRows = 6; }
 
-            let numBlocks = currentDifficulty === 'easy' ? 1 : (currentDifficulty === 'medium' ? 2 : 3);
-
-            cups = generateRandomState(numBlocks);
-            targetCups = generateRandomState(numBlocks);
-
-            // Ensure they are different
-            while (JSON.stringify(cups) === JSON.stringify(targetCups)) {
-                targetCups = generateRandomState(numBlocks);
-            }
-
-            initialCupsState = JSON.parse(JSON.stringify(cups));
-            craneState = { pos: 0, height: 0, holding: null };
-
+            crane = { x: Math.floor(gridCols / 2), y: 0, holding: false };
+            objects = [];
+            targets = [];
             feedbackMsg.textContent = '';
             feedbackMsg.className = 'feedback';
 
-            renderAll();
-        }
+            let numObjects = currentDifficulty === 'easy' ? 1 : (currentDifficulty === 'medium' ? 2 : 3);
 
-        function resetToInitial() {
-            cups = JSON.parse(JSON.stringify(initialCupsState));
-            craneState = { pos: 0, height: 0, holding: null };
-            renderAll();
-        }
-
-        function renderAll() {
-            renderBoard(targetCups, targetBoardEl, true);
-            renderBoard(cups, mainBoardEl, false);
-            updateCraneVisuals();
-            lucide.createIcons();
-        }
-
-        function renderBoard(boardState, container, isTarget) {
-            container.innerHTML = '';
-            for(let i=0; i<NUM_CUPS; i++) {
-                let cupEl = document.createElement('div');
-                cupEl.className = 'cup';
-                if (!isTarget) cupEl.id = `cup-${i}`;
-
-                // Render from bottom to top, flex column-reverse handles this naturally
-                for(let j=0; j<boardState[i].length; j++) {
-                    let block = boardState[i][j];
-                    let blockEl = document.createElement('div');
-                    blockEl.className = 'cube';
-                    // blockEl.style.background = block.color; // Using default blue for simplicity now
-                    cupEl.appendChild(blockEl);
+            let cells = [];
+            for(let i=0; i<gridCols; i++) {
+                for(let j=1; j<gridRows; j++) {
+                    cells.push({x: i, y: j});
                 }
-                container.appendChild(cupEl);
             }
+            cells.sort(() => Math.random() - 0.5);
+
+            for(let i=0; i<numObjects; i++) {
+                let cell = cells.pop();
+                objects.push({ id: i, x: cell.x, y: cell.y, delivered: false });
+            }
+
+            if (currentMode === 'deliver') {
+                for(let i=0; i<numObjects; i++) {
+                    let cell = cells.pop();
+                    targets.push({ id: i, x: cell.x, y: cell.y });
+                }
+            }
+
+            renderGrid();
         }
 
-        function updateCraneVisuals() {
-            const cupWidth = 60;
-            const gap = 15;
-            const baseX = craneState.pos * (cupWidth + gap);
+        function renderGrid() {
+            gridEl.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
+            gridEl.innerHTML = '';
 
-            craneEl.style.left = `${baseX}px`;
+            for(let y=0; y<gridRows; y++) {
+                for(let x=0; x<gridCols; x++) {
+                    let cellEl = document.createElement('div');
+                    cellEl.className = 'cell';
 
-            // Height visual mapping
-            const baseArmHeight = 40;
-            const dropPerLevel = 50;
-            craneArmEl.style.height = `${baseArmHeight + (craneState.height * dropPerLevel)}px`;
+                    let isTarget = targets.some(t => t.x === x && t.y === y);
+                    if (isTarget) {
+                        let targetEl = document.createElement('div');
+                        targetEl.className = 'target-overlay';
+                        cellEl.appendChild(targetEl);
+                    }
 
-            if (craneState.holding) {
-                craneEl.classList.add('holding');
+                    let obj = objects.find(o => o.x === x && o.y === y && !o.delivered);
+                    if (obj && !(crane.x === x && crane.y === y && crane.holding === obj.id)) {
+                        let objEl = document.createElement('i');
+                        objEl.setAttribute('data-lucide', 'package');
+                        objEl.className = 'object-icon';
+                        cellEl.appendChild(objEl);
+                    }
+
+                    if (crane.x === x && crane.y === y) {
+                        let craneEl = document.createElement('div');
+                        craneEl.className = 'crane-overlay';
+                        if (crane.holding !== false) {
+                            craneEl.innerHTML = `<i data-lucide="crosshair" class="crane-icon crane-holding"></i>`;
+                        } else {
+                            craneEl.innerHTML = `<i data-lucide="crosshair" class="crane-icon"></i>`;
+                        }
+                        cellEl.appendChild(craneEl);
+                    }
+
+                    gridEl.appendChild(cellEl);
+                }
+            }
+
+            if (crane.holding !== false) {
+                actionTextEl.textContent = 'Déposer';
             } else {
-                craneEl.classList.remove('holding');
+                actionTextEl.textContent = 'Attraper';
             }
-        }
 
-        function addInstruction(type) {
-            if (isExecuting) return;
-            program.push(type);
-            renderProgram();
-            playSound('click');
-        }
-
-        function deleteLastInstruction() {
-            if (isExecuting || program.length === 0) return;
-            program.pop();
-            renderProgram();
-            playSound('click');
-        }
-
-        function clearProgram() {
-            if (isExecuting) return;
-            program = [];
-            renderProgram();
-        }
-
-        function renderProgram() {
-            programStrip.innerHTML = '';
-            program.forEach((inst, idx) => {
-                let stepEl = document.createElement('div');
-                stepEl.className = 'prog-step';
-                stepEl.id = `prog-step-${idx}`;
-
-                let icon = '';
-                if(inst === 'up') icon = 'arrow-up';
-                else if(inst === 'down') icon = 'arrow-down';
-                else if(inst === 'left') icon = 'arrow-left';
-                else if(inst === 'right') icon = 'arrow-right';
-                else if(inst === 'action') icon = 'grip-horizontal';
-
-                stepEl.innerHTML = `<i data-lucide="${icon}"></i>`;
-                programStrip.appendChild(stepEl);
-            });
             lucide.createIcons();
-            playBtn.disabled = program.length === 0;
         }
 
-        const delay = ms => new Promise(res => setTimeout(res, ms));
-
-        async function executeProgram() {
-            if (isExecuting || program.length === 0) return;
-            isExecuting = true;
-            playBtn.disabled = true;
-            resetToInitial(); // Reset before run
-
-            feedbackMsg.textContent = 'Exécution...';
-            feedbackMsg.className = 'feedback';
-
-            for(let i=0; i<program.length; i++) {
-                document.querySelectorAll('.prog-step').forEach(el => el.classList.remove('active'));
-                let currentStepEl = document.getElementById(`prog-step-${i}`);
-                if(currentStepEl) currentStepEl.classList.add('active');
-
-                let inst = program[i];
-                let success = processInstruction(inst);
-
-                renderAll();
-
-                if (!success) {
-                    playSound('error');
-                    showFeedback('Erreur : Mouvement impossible !', 'error');
-                    isExecuting = false;
-                    playBtn.disabled = false;
-                    document.querySelectorAll('.prog-step').forEach(el => el.classList.remove('active'));
-                    return;
+        function moveCrane(dx, dy) {
+            let nx = crane.x + dx;
+            let ny = crane.y + dy;
+            if (nx >= 0 && nx < gridCols && ny >= 0 && ny < gridRows) {
+                crane.x = nx;
+                crane.y = ny;
+                if (crane.holding !== false) {
+                    let obj = objects.find(o => o.id === crane.holding);
+                    if (obj) {
+                        obj.x = nx;
+                        obj.y = ny;
+                    }
                 }
-
+                renderGrid();
                 playSound('click');
-                await delay(600);
             }
-
-            document.querySelectorAll('.prog-step').forEach(el => el.classList.remove('active'));
-            checkWin();
         }
 
-        function processInstruction(inst) {
-            if (inst === 'left') {
-                if (craneState.pos > 0) {
-                    craneState.pos--;
-                    return true;
-                }
-                return false;
-            } else if (inst === 'right') {
-                if (craneState.pos < NUM_CUPS - 1) {
-                    craneState.pos++;
-                    return true;
-                }
-                return false;
-            } else if (inst === 'down') {
-                if (craneState.height < MAX_STACK) {
-                    craneState.height++;
-                    return true;
-                }
-                return false;
-            } else if (inst === 'up') {
-                if (craneState.height > 0) {
-                    craneState.height--;
-                    return true;
-                }
-                return false;
-            } else if (inst === 'action') {
-                let currentStack = cups[craneState.pos];
-                // Distance from top of cup
-                let blocksInCup = currentStack.length;
-                let requiredHeightForAction = MAX_STACK - blocksInCup; // 0 height is top, 3 height is bottom
-
-                if (craneState.holding) {
-                    // Try to drop
-                    if (blocksInCup < MAX_STACK) { // Needs to be exactly above the top block
-                        // In a real precise model, height would need to match. For simplicity and kids,
-                        // if they are at or above the drop zone, let it drop, but to teach precision, let's enforce height match
-                        if (craneState.height === requiredHeightForAction) {
-                            currentStack.push(craneState.holding);
-                            craneState.holding = null;
-                            return true;
+        function actionCrane() {
+            if (crane.holding !== false) {
+                // Drop
+                if (currentMode === 'collect') {
+                    // Collect mode shouldn't hold, but just in case
+                } else if (currentMode === 'deliver') {
+                    let targetIdx = targets.findIndex(t => t.x === crane.x && t.y === crane.y);
+                    if (targetIdx !== -1) {
+                        // Drop on target
+                        let obj = objects.find(o => o.id === crane.holding);
+                        obj.delivered = true;
+                        crane.holding = false;
+                        targets.splice(targetIdx, 1);
+                        playSound('success');
+                        showFeedback('Bien joué !', 'success');
+                        renderGrid();
+                        checkWin();
+                    } else {
+                        // Drop on empty?
+                        let otherObj = objects.find(o => o.x === crane.x && o.y === crane.y && o.id !== crane.holding && !o.delivered);
+                        if (otherObj) {
+                            playSound('error');
+                            showFeedback('Case occupée !', 'error');
+                        } else {
+                            crane.holding = false;
+                            playSound('click');
+                            renderGrid();
                         }
                     }
-                    return false;
+                }
+            } else {
+                // Pick up
+                let obj = objects.find(o => o.x === crane.x && o.y === crane.y && !o.delivered);
+                if (obj) {
+                    if (currentMode === 'collect') {
+                        obj.delivered = true;
+                        playSound('success');
+                        showFeedback('Objet collecté !', 'success');
+                        renderGrid();
+                        checkWin();
+                    } else {
+                        crane.holding = obj.id;
+                        playSound('click');
+                        renderGrid();
+                    }
                 } else {
-                    // Try to grab
-                    if (blocksInCup > 0) {
-                        let requiredHeightForGrab = MAX_STACK - blocksInCup;
-                        if (craneState.height === requiredHeightForGrab) {
-                            craneState.holding = currentStack.pop();
-                            return true;
-                        }
-                    }
-                    return false;
+                    playSound('error');
                 }
             }
-            return false;
         }
 
         function checkWin() {
-            let isWin = JSON.stringify(cups) === JSON.stringify(targetCups) && !craneState.holding;
-
-            if (isWin) {
+            if (objects.every(o => o.delivered)) {
                 updateScore(true);
-                showFeedback('Bien joué !', 'success');
-                playSound('win');
-                launchConfetti();
                 setTimeout(() => {
+                    launchConfetti();
+                    playSound('win');
                     startNewLevel();
-                }, 2500);
-            } else {
-                updateScore(false);
-                playSound('error');
-                showFeedback('Ce nest pas la bonne disposition.', 'error');
-                isExecuting = false;
-                playBtn.disabled = false;
+                }, 1000);
             }
         }
 
         function showFeedback(msg, type) {
             feedbackMsg.textContent = msg;
             feedbackMsg.className = `feedback ${type}`;
-            if(type === 'error') {
-                setTimeout(() => {
-                    feedbackMsg.textContent = '';
-                    feedbackMsg.className = 'feedback';
-                }, 3000);
-            }
+            setTimeout(() => {
+                feedbackMsg.textContent = '';
+                feedbackMsg.className = 'feedback';
+            }, 2000);
         }
 
         function updateScore(correct) {
