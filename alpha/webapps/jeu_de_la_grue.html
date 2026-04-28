@@ -328,6 +328,18 @@
             pointer-events: none;
         }
 
+        .crane-rail {
+            position: absolute;
+            top: 5px;
+            left: -10px;
+            right: -10px;
+            height: 12px;
+            background: linear-gradient(to bottom, #475569, #64748b, #475569);
+            border-radius: 6px;
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3), 0 5px 5px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+
         .crane {
             width: 70px;
             height: 70px;
@@ -339,18 +351,43 @@
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2));
+        }
+
+        .crane-motor {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: 2px solid #b45309;
+            border-radius: 6px;
+            position: relative;
+            z-index: 12;
+            margin-top: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        .crane-motor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            border: 2px solid #64748b;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .crane-arm {
-            width: 12px;
-            height: 40px;
-            background: linear-gradient(90deg, #94a3b8, #cbd5e1, #94a3b8);
-            border-radius: 6px;
+            width: 4px;
+            height: 10px;
+            background: #94a3b8;
+            margin: 0 auto;
             position: relative;
+            z-index: 11;
             transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid #64748b;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 1px 0 2px rgba(0,0,0,0.2);
         }
 
         .crane-claw {
@@ -369,7 +406,7 @@
             content: '';
             width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: var(--held-color, linear-gradient(135deg, #3b82f6, #2563eb));
             border-radius: 8px;
             position: absolute;
             top: 5px;
@@ -742,7 +779,9 @@
             <div class="board-wrapper main-wrapper">
                 <div class="board-title">Zone de travail</div>
                 <div class="crane-layer" id="crane-layer">
+                    <div class="crane-rail"></div>
                     <div class="crane" id="crane">
+                        <div class="crane-motor"></div>
                         <div class="crane-arm" id="crane-arm"></div>
                         <div class="crane-claw" id="crane-claw"></div>
                     </div>
@@ -774,7 +813,7 @@
                     <button class="instruction-btn" onclick="addInstruction('right')" aria-label="Droite"><i
                             data-lucide="arrow-right"></i></button>
                     <button class="instruction-btn action-color" onclick="addInstruction('action')"
-                        aria-label="Action"><i data-lucide="grip-horizontal"></i></button>
+                        aria-label="Action"><i data-lucide="hand-grab"></i></button>
                 </div>
 
                 <div class="execution-group">
@@ -898,7 +937,10 @@
         }
 
         function startNewLevel() {
+            clearInterval(window.failInterval);
+            clearTimeout(window.failTimeout);
             isExecuting = false;
+            playBtn.disabled = false;
             program = [];
             clearProgram();
 
@@ -976,12 +1018,13 @@
             craneEl.style.left = `${baseX}px`;
 
             // Height visual mapping
-            const baseArmHeight = 40;
+            const baseArmHeight = 10;
             const dropPerLevel = 55; // visual slot height
             craneArmEl.style.height = `${baseArmHeight + (craneState.height * dropPerLevel)}px`;
 
             if (craneState.holding) {
                 craneEl.classList.add('holding');
+                craneEl.style.setProperty('--held-color', craneState.holding.color);
             } else {
                 craneEl.classList.remove('holding');
             }
@@ -990,17 +1033,9 @@
         function addInstruction(type) {
             if (isExecuting) return;
 
-            // Preview logic: simulate the instruction on current state
-            let valid = processInstruction(type);
-
-            if (valid) {
-                program.push(type);
-                renderProgram();
-                renderAll(); // update visual preview
-                playSound('click');
-            } else {
-                playSound('error');
-            }
+            program.push(type);
+            renderProgram();
+            playSound('click');
         }
 
         function deleteLastInstruction() {
@@ -1008,21 +1043,12 @@
             program.pop();
             renderProgram();
             playSound('click');
-
-            // Recompute preview state from initial + program
-            resetToInitial();
-            for (let inst of program) {
-                processInstruction(inst);
-            }
-            renderAll();
         }
 
         function clearProgram() {
             if (isExecuting) return;
             program = [];
             renderProgram();
-            resetToInitial();
-            renderAll();
         }
 
         function renderProgram() {
@@ -1037,7 +1063,7 @@
                 else if (inst === 'down') icon = 'arrow-down';
                 else if (inst === 'left') icon = 'arrow-left';
                 else if (inst === 'right') icon = 'arrow-right';
-                else if (inst === 'action') icon = 'grip-horizontal';
+                else if (inst === 'action') icon = 'hand-grab';
 
                 stepEl.innerHTML = `<i data-lucide="${icon}"></i>`;
                 programStrip.appendChild(stepEl);
@@ -1067,11 +1093,15 @@
                 if (currentStepEl) currentStepEl.classList.add('active');
 
                 let inst = program[i];
-                // we know it's valid because we checked during preview mode
-                processInstruction(inst);
+                let valid = processInstruction(inst);
 
                 renderAll();
-                playSound('click');
+                if (!valid) {
+                    // Don't play sound here, let checkWin() handle it to prevent overlap
+                    break;
+                } else {
+                    playSound('click');
+                }
                 await delay(600);
             }
 
@@ -1151,9 +1181,28 @@
             } else {
                 updateScore(false);
                 playSound('error');
-                showFeedback('Ce nest pas la bonne disposition.', 'error');
-                isExecuting = false;
-                playBtn.disabled = false;
+
+                let seconds = 5;
+                showFeedback(`Erreur. Réinitialisation dans ${seconds}s...`, 'error');
+                isExecuting = true;
+                playBtn.disabled = true;
+
+                window.failInterval = setInterval(() => {
+                    seconds--;
+                    if (seconds > 0) {
+                        showFeedback(`Erreur. Réinitialisation dans ${seconds}s...`, 'error');
+                    }
+                }, 1000);
+
+                window.failTimeout = setTimeout(() => {
+                    clearInterval(window.failInterval);
+                    feedbackMsg.textContent = '';
+                    feedbackMsg.className = 'feedback';
+                    isExecuting = false;
+                    playBtn.disabled = false;
+                    resetToInitial();
+                    renderAll();
+                }, 5000);
             }
         }
 
