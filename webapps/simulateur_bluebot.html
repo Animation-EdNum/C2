@@ -1589,175 +1589,7 @@
             opacity: var(--mat-opacity, 0.2);
         }
 
-        /* FULLSCREEN MAP */
 
-        body.fullscreen-map .difficulty-bar {
-            display: none;
-        }
-
-        body.fullscreen-map .app-header {
-            display: none;
-        }
-
-        body.fullscreen-map .tabs {
-            display: none;
-        }
-
-        body.fullscreen-map .no-print {
-            display: none;
-        }
-
-        body.fullscreen-map .container {
-            max-width: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        body.fullscreen-map .view.active {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        body.fullscreen-map .exercise-card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            border-radius: 0;
-            border: none;
-            margin: 0;
-            padding: 10px;
-        }
-
-        body.fullscreen-map .grid-wrapper {
-            flex: 1;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            /* Prevent grid wrapper from overflowing and pushing cmd pad */
-            min-height: 0;
-            min-width: 0;
-        }
-
-        body.fullscreen-map .grid-wrapper {
-            container-type: size;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        body.fullscreen-map .bot-grid-container {
-            max-height: 100%;
-            max-width: 100%;
-            width: min(100cqw, calc(100cqh * (var(--grid-cols, 6) / var(--grid-rows, 6))));
-            height: min(100cqh, calc(100cqw * (var(--grid-rows, 6) / var(--grid-cols, 6))));
-            flex: 0 1 auto;
-            margin: auto;
-        }
-
-        body.fullscreen-map .bot-grid {
-            max-height: 100%;
-            max-width: 100%;
-            height: 100%;
-            width: 100%;
-        }
-
-        body.fullscreen-map #sim-cmd-pad {
-            margin: 10px auto;
-            flex-shrink: 0;
-            /* Keep command pad fixed size */
-            grid-template-areas: ". up ." "left go right" "clear down .";
-            grid-template-rows: 62px 62px 62px;
-        }
-
-
-        body.fullscreen-map .cmd-btn-go,
-        body.fullscreen-map .cmd-btn-clear {
-            display: flex;
-        }
-
-        body.fullscreen-map .sim-options,
-        body.fullscreen-map .controls,
-        body.fullscreen-map .score-bar,
-        body.fullscreen-map .legend,
-        body.fullscreen-map .icon-action-btn,
-        body.fullscreen-map #sim-program {
-            display: none;
-        }
-
-        body.fullscreen-map #sim-instruction {
-            display: block;
-        }
-
-        body.fullscreen-map #btn-exit-fullscreen {
-            display: flex;
-        }
-
-        @media (min-width: 601px) {
-            body.fullscreen-map .exercise-card {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) auto;
-                align-content: center;
-                align-items: center;
-                justify-items: center;
-                gap: 15px 40px;
-                padding: 20px;
-            }
-
-            body.fullscreen-map .grid-wrapper {
-                grid-column: 1;
-                grid-row: 1 / 20;
-                width: 100%;
-                height: 100%;
-                display: flex;
-            }
-
-            body.fullscreen-map .exercise-card> :not(.grid-wrapper) {
-                grid-column: 2;
-            }
-
-            body.fullscreen-map .bot-grid-container {
-                width: min(100cqw, calc(100cqh * (var(--grid-cols, 6) / var(--grid-rows, 6))));
-                height: min(100cqh, calc(100cqw * (var(--grid-rows, 6) / var(--grid-cols, 6))));
-                margin: auto;
-            }
-
-            body.fullscreen-map .challenge-options {
-                flex-direction: column;
-            }
-
-            body.fullscreen-map .program-cmd {
-                transform: scale(1.5);
-                margin: 10px 15px;
-            }
-
-            body.fullscreen-map .mini-cmd {
-                width: 60px;
-                height: 60px;
-            }
-
-            body.fullscreen-map .mini-cmd svg {
-                width: 30px;
-                height: 30px;
-            }
-
-            body.fullscreen-map .challenge-option {
-                padding: 30px;
-            }
-
-            body.fullscreen-map #read-instruction,
-            body.fullscreen-map #chal-instruction,
-            body.fullscreen-map #sim-instruction {
-                font-size: 1.5em !important;
-                margin-top: 50px;
-                margin-right: 50px;
-            }
-        }
 
         /* Skins UI */
         /* Skins Modal */
@@ -2447,8 +2279,9 @@
             }
 
             .bot-grid-container {
-                max-width: none !important;
-                height: 600px;
+                height: auto;
+                max-height: 60vh;
+                max-width: min(100%, calc(60vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))) !important;
             }
         }
     </style>
@@ -2677,11 +2510,6 @@
 
         </header>
 
-
-        <button id="btn-exit-fullscreen"
-            style="display:none; position: fixed; top: 10px; right: 20px; z-index: 10000; border-radius: 50%; width: 50px; height: 50px; padding: 0; align-items: center; justify-content: center;"
-            class="btn btn-new" title="Quitter le plein écran">✖</button>
-
         <div class="tabs">
             <button class="tab-btn active" id="tab-simulator">🎮 Simulateur</button>
             <button class="tab-btn" id="tab-challenge">🧩 Pilotage</button>
@@ -2705,14 +2533,9 @@
                 </div>
 
                 <div class="grid-wrapper" style="margin-top: 0;">
-                    <div style="position: relative; width: 100%; max-width: min(500px, 55vh); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: 1 / 1;"
+                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                         class="bot-grid-container">
                         <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
-                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-map"
-                            title="Plein écran"
-                            style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;">
-                            <i data-lucide="maximize"></i>
-                        </button>
                     </div>
                 </div>
 
@@ -2768,13 +2591,9 @@
                 <div class="challenge-options" id="chal-options" style="margin-bottom: 15px;"></div>
 
                 <div class="grid-wrapper">
-                    <div style="position: relative; width: 100%; max-width: min(500px, 55vh); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: 1 / 1;"
+                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                         class="bot-grid-container">
                         <div class="bot-grid" id="chal-grid" style="margin: 0; max-width: none;"></div>
-                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-chal"
-                            title="Plein écran"
-                            style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;"><i
-                                data-lucide="maximize"></i></button>
                     </div>
                 </div>
 
@@ -2821,13 +2640,9 @@
                 </div>
 
                 <div class="grid-wrapper">
-                    <div style="position: relative; width: 100%; max-width: min(500px, 55vh); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: 1 / 1;"
+                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                         class="bot-grid-container">
                         <div class="bot-grid" id="read-grid" style="margin: 0; max-width: none;"></div>
-                        <button class="btn btn-outline btn-small icon-action-btn" id="btn-fullscreen-read"
-                            title="Plein écran"
-                            style="position: absolute; top: -24px; right: -24px; z-index: 20; padding: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); border-radius: 50%;"><i
-                                data-lucide="maximize"></i></button>
                     </div>
                 </div>
 
@@ -3138,8 +2953,8 @@
             activeSkin = skinId;
             localStorage.setItem('bb_active_skin', skinId);
 
-            // Cyber-Bot forces Dark Mode
-            if (skinId === 'cyberbot') {
+            // Cyber-Bot and Volcano force Dark Mode
+            if (skinId === 'cyberbot' || skinId === 'volcano') {
                 if (!document.body.classList.contains('dark')) toggleTheme();
             }
 
@@ -5489,56 +5304,7 @@
         });
         document.getElementById('btn-clear-walls').addEventListener('click', clearSimWalls);
 
-        document.getElementById('btn-fullscreen-chal').addEventListener('click', () => {
-            playSound('click');
-            document.body.classList.add('fullscreen-map');
-            setTimeout(() => {
-                const grid = document.getElementById('chal-grid');
-                grid.style.display = 'none';
-                grid.offsetHeight;
-                grid.style.display = '';
-            }, 50);
-        });
 
-        document.getElementById('btn-fullscreen-read').addEventListener('click', () => {
-            playSound('click');
-            document.body.classList.add('fullscreen-map');
-            setTimeout(() => {
-                const grid = document.getElementById('read-grid');
-                grid.style.display = 'none';
-                grid.offsetHeight;
-                grid.style.display = '';
-            }, 50);
-        });
-
-        document.getElementById('btn-fullscreen-map').addEventListener('click', () => {
-            playSound('click');
-            document.body.classList.add('fullscreen-map');
-
-            // Force redraw/resize of grid if needed
-            setTimeout(() => {
-                const grid = document.getElementById('sim-grid');
-                grid.style.display = 'none';
-                grid.offsetHeight; // trigger reflow
-                grid.style.display = '';
-            }, 50);
-        });
-
-        document.getElementById('btn-exit-fullscreen').addEventListener('click', () => {
-            playSound('click');
-            document.body.classList.remove('fullscreen-map');
-
-            setTimeout(() => {
-                ['sim-grid', 'chal-grid', 'read-grid'].forEach(id => {
-                    const grid = document.getElementById(id);
-                    if (grid) {
-                        grid.style.display = 'none';
-                        grid.offsetHeight;
-                        grid.style.display = '';
-                    }
-                });
-            }, 50);
-        });
 
         // Delegation pour les elements dynamiques
         document.getElementById('sim-program').addEventListener('click', (e) => {
