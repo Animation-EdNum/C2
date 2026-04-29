@@ -13,3 +13,4 @@
 ## 3. Boundaries
 - Do NOT modify `.github/workflows` without explicit permission.
 - Always read `agents.md` before making architectural assumptions.
+- Do NOT use `replace_file_content`; only use `write_to_file` for all file modifications.

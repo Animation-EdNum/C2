@@ -27,3 +27,4 @@
 - **[2026-04-25]** [UX/Gamification] Refined Blue-Bot simulator: introduced custom mat image upload feature.
 - **[2026-04-26]** [UI/UX] Replaced Blue-Bot skins modal with a sliding side drawer for better accessibility and mobile experience.
 - **[2026-04-26]** [Gamification] Added new robot skins (Pirate-Bot, F1, Locomotive) and related easter eggs/rewards to Blue-Bot Simulator.
+- **[2026-04-29]** [System] Updated `JULES.md` to restrict file modification tools to `write_to_file` only, prohibiting `replace_file_content`.
