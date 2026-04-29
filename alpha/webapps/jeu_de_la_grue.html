@@ -253,6 +253,15 @@
             background: rgba(30, 41, 59, 0.3);
         }
 
+        .cup.active-column {
+            background: rgba(245, 158, 11, 0.15); /* light accent background */
+            transition: background 0.3s;
+        }
+
+        body.dark .cup.active-column {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
         .cup-blocks {
             position: absolute;
             top: 5px;
@@ -605,6 +614,25 @@
             background: #dc2626;
         }
 
+        body.dark .del-btn {
+            background: rgba(30, 41, 59, 0.8);
+            color: #f8fafc;
+        }
+
+        body.dark .del-btn:hover {
+            background: #475569;
+        }
+
+        body.dark .clear-btn {
+            background: #7f1d1d;
+            color: white;
+            box-shadow: 0 5px 0 #450a0a;
+        }
+
+        body.dark .clear-btn:hover {
+            background: #991b1b;
+        }
+
         /* ========== FEEDBACK & SCORE ========== */
         .feedback {
             font-size: 16px;
@@ -858,6 +886,7 @@
     <script>
         let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
         let globalCorrect = 0, globalStreak = 0, globalBest = 0;
+        let currentMistakes = 0;
 
         const NUM_CUPS = 3;
         const MAX_STACK = 3;
@@ -941,6 +970,7 @@
             isCooldown = false;
             playBtn.disabled = false;
             program = [];
+            currentMistakes = 0;
             clearProgram();
 
             let numBlocks = currentDifficulty === 'easy' ? 1 : (currentDifficulty === 'medium' ? 2 : 3);
@@ -1026,6 +1056,17 @@
                 craneEl.style.setProperty('--held-color', craneState.holding.color);
             } else {
                 craneEl.classList.remove('holding');
+            }
+
+            for (let i = 0; i < NUM_CUPS; i++) {
+                let cupEl = document.getElementById('cup-' + i);
+                if (cupEl) {
+                    if (i === craneState.pos) {
+                        cupEl.classList.add('active-column');
+                    } else {
+                        cupEl.classList.remove('active-column');
+                    }
+                }
             }
         }
 
@@ -1175,13 +1216,18 @@
 
             if (isWin) {
                 updateScore(true);
-                showFeedback('Bien joué ! Exercice réussi.', 'success');
                 playSound('win');
-                launchConfetti();
+                if (globalStreak > 0 && globalStreak % 3 === 0) {
+                    if (typeof launchFire === 'function') launchFire();
+                } else {
+                    launchConfetti();
+                    showToast('Bien joué ! Exercice réussi.', true);
+                }
                 setTimeout(() => {
                     startNewLevel();
-                }, 5000); // Wait 5 seconds before the next challenge
+                }, 4000); // Wait 4 seconds before the next challenge
             } else {
+                currentMistakes++;
                 updateScore(false);
                 playSound('error');
 
@@ -1227,24 +1273,34 @@
             }
         }
 
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.style.background = isSuccess ? '#10b981' : '#ef4444';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
         function updateScore(correct) {
             if (correct) {
                 globalCorrect++;
                 globalStreak++;
                 if (globalStreak > globalBest) globalBest = globalStreak;
+                ScoreManager.addSuccess('jeu_de_la_grue', currentDifficulty, currentMistakes);
             } else {
                 globalStreak = 0;
+                ScoreManager.addMistake('jeu_de_la_grue', currentDifficulty);
             }
             document.getElementById('global-correct').textContent = globalCorrect;
             document.getElementById('global-streak').textContent = globalStreak;
-
-            ScoreManager.updateScore(globalCorrect, globalStreak, globalBest);
         }
 
         window.addEventListener('load', init);
     </script>
     <script src="../../js/theme.js"></script>
     <script src="../../js/swipe.js"></script>
+    <div id="toast"></div>
 </body>
 
 </html>
