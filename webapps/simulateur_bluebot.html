@@ -1600,13 +1600,21 @@
             min-width: 0;
         }
 
+        body.fullscreen-map .grid-wrapper {
+            container-type: size;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         body.fullscreen-map .bot-grid-container {
             max-height: 100%;
             max-width: 100% !important;
-            height: min(100%, 100vh - 80px) !important;
-            width: min(100%, 100vh - 80px) !important;
+            width: min(100cqw, calc(100cqh * (var(--grid-cols, 6) / var(--grid-rows, 6)))) !important;
+            height: min(100cqh, calc(100cqw * (var(--grid-rows, 6) / var(--grid-cols, 6)))) !important;
             flex: 0 1 auto;
-            aspect-ratio: 1 / 1;
             margin: auto;
         }
 
@@ -1672,8 +1680,8 @@
             }
 
             body.fullscreen-map .bot-grid-container {
-                height: min(100%, 100vh - 120px) !important;
-                width: min(100%, 100vh - 120px) !important;
+                width: min(100cqw, calc(100cqh * (var(--grid-cols, 6) / var(--grid-rows, 6)))) !important;
+                height: min(100cqh, calc(100cqw * (var(--grid-rows, 6) / var(--grid-cols, 6)))) !important;
                 margin: auto;
             }
 
@@ -3861,6 +3869,8 @@
             const containers = document.querySelectorAll('.bot-grid-container');
             containers.forEach(container => {
                 container.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
+                container.style.setProperty('--grid-cols', GRID_COLS);
+                container.style.setProperty('--grid-rows', GRID_ROWS);
             });
             const grids = document.querySelectorAll('.bot-grid');
             grids.forEach(grid => {
