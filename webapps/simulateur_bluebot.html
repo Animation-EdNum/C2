@@ -3162,6 +3162,30 @@
             'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
             'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
             'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+            'emotions': {
+                name: 'Émotions et sentiments',
+                desc: 'Reconnaître et nommer les émotions.',
+                example: 'Va sur le visage joyeux.',
+                icon: '🎭',
+                content: [
+                    '😀', '😢', '😡', '😨',
+                    '🤢', '😴', '🤔', '🤩',
+                    '😭', '🥳', '🥱', '🤐',
+                    '🤧', '🤒', '🤕', '🤑'
+                ]
+            },
+            'seasons': {
+                name: 'Saisons et météo',
+                desc: 'Les saisons et les différents types de météo.',
+                example: 'Va sur le soleil.',
+                icon: '☀️',
+                content: [
+                    '☀️', '🌧️', '⛅', '⛈️', '❄️',
+                    '⛄', '🍂', '🍁', '🌸', '🏖️',
+                    '🧥', '🧣', '🧤', '☂️', '🌈',
+                    '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
+                ]
+            },
             'city': {
                 name: 'Cité',
                 desc: 'Thème ville et routes.',
@@ -3253,6 +3277,8 @@
             const isRestricted = restrictedMats.includes(activeMat);
             const isCityMat = activeMat === 'city';
             const isTimeMat = activeMat === 'time';
+            const isEmotionsMat = activeMat === 'emotions';
+            const isSeasonsMat = activeMat === 'seasons';
             const gridColsSlider = document.getElementById('gridColsSlider');
             const gridRowsSlider = document.getElementById('gridRowsSlider');
 
@@ -3270,17 +3296,41 @@
                         gridRowsSlider.value = 6;
                         onGridSizeChanged();
                     }
-                } else if (isTimeMat) {
+                } else if (isTimeMat) {                
+                  gridRowsSlider.disabled = true;
+                  gridColsSlider.disabled = true;
+                  gridRowsSlider.parentElement.style.opacity = '0.5';  
+                  gridColsSlider.parentElement.style.opacity = '0.5';
+                  gridRowsSlider.parentElement.title = "Taille fixe de 4x6 pour ce tapis";
+                  gridColsSlider.parentElement.title = "Taille fixe de 4x6 pour ce tapis";
+                  if (GRID_COLS !== 4 || GRID_ROWS !== 6) {
+                        gridColsSlider.value = 4;
+                        gridRowsSlider.value = 6;
+                    gridColsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+                    }
+                } else if (isEmotionsMat) {
+                    gridRowsSlider.disabled = true;
+                  gridColsSlider.disabled = true;
+                  gridRowsSlider.parentElement.style.opacity = '0.5';  
+                  gridColsSlider.parentElement.style.opacity = '0.5';
+                  gridRowsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+                  gridColsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+                    if (GRID_COLS !== 4 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 4;
+                        gridRowsSlider.value = 4;
+                        onGridSizeChanged();
+                    }
+                } else if (isSeasonsMat) {
                     gridColsSlider.disabled = true;
                     gridRowsSlider.disabled = true;
                     gridColsSlider.parentElement.style.opacity = '0.5';
                     gridRowsSlider.parentElement.style.opacity = '0.5';
-                    gridColsSlider.parentElement.title = "Taille fixe de 4x6 pour ce tapis";
-                    gridRowsSlider.parentElement.title = "Taille fixe de 4x6 pour ce tapis";
+                    gridColsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
 
-                    if (GRID_COLS !== 4 || GRID_ROWS !== 6) {
-                        gridColsSlider.value = 4;
-                        gridRowsSlider.value = 6;
+                    if (GRID_COLS !== 5 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 5;
+                        gridRowsSlider.value = 4;
                         onGridSizeChanged();
                     }
                 } else if (isCityMat) {
@@ -5498,6 +5548,7 @@
             simState.targetRow = null;
             simState.targetCol = null;
 
+            generateMatContent(activeMat);
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
             randomizeSimulatorPosition();
 
