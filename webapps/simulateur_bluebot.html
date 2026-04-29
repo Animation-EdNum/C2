@@ -3162,6 +3162,30 @@
             'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
             'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
             'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+            'emotions': {
+                name: 'Émotions et sentiments',
+                desc: 'Reconnaître et nommer les émotions.',
+                example: 'Va sur le visage joyeux.',
+                icon: '🎭',
+                content: [
+                    '😀', '😢', '😡', '😨',
+                    '🤢', '😴', '🤔', '🤩',
+                    '😭', '🥳', '🥱', '🤐',
+                    '🤧', '🤒', '🤕', '🤑'
+                ]
+            },
+            'seasons': {
+                name: 'Saisons et météo',
+                desc: 'Les saisons et les différents types de météo.',
+                example: 'Va sur le soleil.',
+                icon: '☀️',
+                content: [
+                    '☀️', '🌧️', '⛅', '⛈️', '❄️',
+                    '⛄', '🍂', '🍁', '🌸', '🏖️',
+                    '🧥', '🧣', '🧤', '☂️', '🌈',
+                    '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
+                ]
+            },
             'city': {
                 name: 'Cité',
                 desc: 'Thème ville et routes.',
@@ -3254,6 +3278,8 @@
             const restrictedMats = ['alphabet', 'time'];
             const isRestricted = restrictedMats.includes(activeMat);
             const isCityMat = activeMat === 'city';
+            const isEmotionsMat = activeMat === 'emotions';
+            const isSeasonsMat = activeMat === 'seasons';
             const gridColsSlider = document.getElementById('gridColsSlider');
             const gridRowsSlider = document.getElementById('gridRowsSlider');
 
@@ -3269,6 +3295,32 @@
                     if (GRID_COLS !== 6 || GRID_ROWS !== 6) {
                         gridColsSlider.value = 6;
                         gridRowsSlider.value = 6;
+                        onGridSizeChanged();
+                    }
+                } else if (isEmotionsMat) {
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+
+                    if (GRID_COLS !== 4 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 4;
+                        gridRowsSlider.value = 4;
+                        onGridSizeChanged();
+                    }
+                } else if (isSeasonsMat) {
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
+
+                    if (GRID_COLS !== 5 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 5;
+                        gridRowsSlider.value = 4;
                         onGridSizeChanged();
                     }
                 } else if (isCityMat) {
