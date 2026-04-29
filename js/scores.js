@@ -125,9 +125,35 @@ const ScoreManager = {
         const diffStr = String(difficulty);
         if (upgrades[diffStr]) {
             const nextDiff = upgrades[diffStr];
-            const nextDiffLabel = this.DIFF_LABELS[nextDiff] || nextDiff;
-            this.showAdaptivePopup(nextDiff, nextDiffLabel, mode);
+            if (this.isDifficultySupported(nextDiff)) {
+                const nextDiffLabel = this.DIFF_LABELS[nextDiff] || nextDiff;
+                this.showAdaptivePopup(nextDiff, nextDiffLabel, mode);
+            }
         }
+    },
+
+    isDifficultySupported(nextDiff) {
+        if (document.querySelector(`[data-diff="${nextDiff}"]`)) return true;
+        const idMap = {
+            'easy': ['diff-easy', 'read-diff-easy'],
+            'medium': ['diff-medium', 'read-diff-medium'],
+            'hard': ['diff-hard', 'read-diff-hard'],
+            'extreme': ['diff-extreme', 'read-diff-extreme'],
+            '4': ['diff-easy'],
+            '6': ['diff-medium'],
+            '8': ['diff-hard'],
+            '10': ['diff-extreme'],
+            'grid4': ['diff-easy'],
+            'grid5': ['diff-medium'],
+            'grid6': ['diff-hard'],
+            'grid7': ['diff-extreme']
+        };
+        if (idMap[nextDiff]) {
+            for (const id of idMap[nextDiff]) {
+                if (document.getElementById(id)) return true;
+            }
+        }
+        return false;
     },
 
     showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
