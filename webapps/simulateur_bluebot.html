@@ -2932,13 +2932,24 @@
             if (!config) return;
             if (config.baseContent) {
                 if (matId === 'shapes') {
-                    // Duplicate enough times to fill a larger grid if needed (e.g. 10x10)
-                    let expandedContent = [];
                     const needed = GRID_ROWS * GRID_COLS;
-                    while (expandedContent.length < needed) {
-                        expandedContent = expandedContent.concat(config.baseContent);
+                    const neededPairs = Math.floor(needed / 2);
+                    let pairsContent = [];
+                    let baseIndex = 0;
+
+                    // Pick from baseContent in order (simpler first), duplicating each item for a pair
+                    while (pairsContent.length < neededPairs * 2) {
+                        const item = config.baseContent[baseIndex % config.baseContent.length];
+                        pairsContent.push(item, item);
+                        baseIndex++;
                     }
-                    config.content = shuffleArray(expandedContent).slice(0, needed);
+
+                    // If odd grid size, add one singleton
+                    if (needed % 2 !== 0) {
+                        pairsContent.push(config.baseContent[baseIndex % config.baseContent.length]);
+                    }
+
+                    config.content = shuffleArray(pairsContent);
                 } else if (matId === 'fairy_tale') {
                     config.content = shuffleArray([...config.baseContent]).slice(0, GRID_ROWS * GRID_COLS);
                 }
@@ -3171,10 +3182,14 @@
                 icon: '🔵',
                 content: [],
                 baseContent: [
-                    '🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '🟤', '⚫', '⚪',
-                    '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '🟫', '⬛', '⬜',
-                    '🔺', '🔻', '🔶', '🔷', '🔸', '🔹', '❤️', '🧡', '💛',
-                    '💚', '💙', '💜', '🤎', '🖤', '🤍', '🤎', '🩷', '🩵'
+                    // Simple shapes and primary/basic colors first
+                    '🔴', '🔵', '🟡', '🟩', '🟥', '🟦', '🟨', '🟢',
+                    // Secondary colors and simpler shapes
+                    '🟠', '🟣', '🟧', '🟪', '🔺', '🔻',
+                    // More complex colors/shapes
+                    '⚫', '⚪', '⬛', '⬜', '❤️', '💙', '💚', '💛',
+                    // Complex/less common shapes and colors
+                    '🔶', '🔷', '🔸', '🔹', '🟤', '🟫', '🤎', '🤍', '🩷', '🩵', '🖤', '🧡', '💜'
                 ]
             },
             'geo': {
