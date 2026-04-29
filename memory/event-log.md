@@ -28,3 +28,4 @@
 - **[2026-04-26]** [UI/UX] Replaced Blue-Bot skins modal with a sliding side drawer for better accessibility and mobile experience.
 - **[2026-04-26]** [Gamification] Added new robot skins (Pirate-Bot, F1, Locomotive) and related easter eggs/rewards to Blue-Bot Simulator.
 - **[2026-04-29]** [System] Updated `JULES.md` to restrict file modification tools to `write_to_file` only, prohibiting `replace_file_content`.
+- **[2026-04-29]** [Bugfix] Fixed grid dimensions for 'Reading time' mat in Blue-Bot simulator (forced 4x6 instead of 6x6).
