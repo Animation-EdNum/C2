@@ -3152,10 +3152,10 @@
             'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
             'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
             'city': {
-                name: 'Cité des directions',
-                desc: 'Thème ville et sécurité routière.',
-                example: 'Amène le robot au supermarché.',
-                icon: '🏙️'
+                name: 'L\'île aux découvertes',
+                desc: 'Explore les différents lieux : la ferme, le château, la plage...',
+                example: 'Amène le robot jusqu\'au phare ou à la caserne de pompiers.',
+                icon: '🗺️'
             },
             'math': {
                 name: 'Calcul mental',
@@ -3232,8 +3232,9 @@
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
         function updateGridSizeSlidersState() {
-            const restrictedMats = ['alphabet', 'city', 'time'];
+            const restrictedMats = ['alphabet', 'time'];
             const isRestricted = restrictedMats.includes(activeMat);
+            const isCityMat = activeMat === 'city';
             const gridColsSlider = document.getElementById('gridColsSlider');
             const gridRowsSlider = document.getElementById('gridRowsSlider');
 
@@ -3249,6 +3250,19 @@
                     if (GRID_COLS !== 6 || GRID_ROWS !== 6) {
                         gridColsSlider.value = 6;
                         gridRowsSlider.value = 6;
+                        onGridSizeChanged();
+                    }
+                } else if (isCityMat) {
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.title = "Taille fixe de 8x8 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 8x8 pour ce tapis";
+
+                    if (GRID_COLS !== 8 || GRID_ROWS !== 8) {
+                        gridColsSlider.value = 8;
+                        gridRowsSlider.value = 8;
                         onGridSizeChanged();
                     }
                 } else {
