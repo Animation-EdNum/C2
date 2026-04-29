@@ -3211,16 +3211,14 @@
                 ]
             },
             'time': {
-                name: 'Horloges et temps',
-                desc: 'Grille d\'horloges pour s\'entraîner avec les heures.',
+                name: 'Lecture de l\'heure',
+                desc: 'Apprendre à lire l\'heure sur une horloge analogique.',
                 icon: '⌚',
                 content: [
                     '🕛', '🕐', '🕑', '🕒', '🕓', '🕔',
                     '🕕', '🕖', '🕗', '🕘', '🕙', '🕚',
                     '🕧', '🕜', '🕝', '🕞', '🕟', '🕠',
-                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦',
-                    '☀️', '🌙', '🌅', '🌃', '⏰', '⏱️',
-                    '⏲️', '🕰️', '⌛', '⏳', '🗓️', '📅'
+                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦'
                 ]
             },
             'fairy_tale': {
@@ -3251,9 +3249,10 @@
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
         function updateGridSizeSlidersState() {
-            const restrictedMats = ['alphabet', 'time'];
+            const restrictedMats = ['alphabet'];
             const isRestricted = restrictedMats.includes(activeMat);
             const isCityMat = activeMat === 'city';
+            const isTimeMat = activeMat === 'time';
             const gridColsSlider = document.getElementById('gridColsSlider');
             const gridRowsSlider = document.getElementById('gridRowsSlider');
 
@@ -3268,6 +3267,19 @@
 
                     if (GRID_COLS !== 6 || GRID_ROWS !== 6) {
                         gridColsSlider.value = 6;
+                        gridRowsSlider.value = 6;
+                        onGridSizeChanged();
+                    }
+                } else if (isTimeMat) {
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.title = "Taille fixe de 4x6 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 4x6 pour ce tapis";
+
+                    if (GRID_COLS !== 4 || GRID_ROWS !== 6) {
+                        gridColsSlider.value = 4;
                         gridRowsSlider.value = 6;
                         onGridSizeChanged();
                     }
@@ -5490,10 +5502,12 @@
             randomizeSimulatorPosition();
 
             // If in challenge or read modes, reset them
-            if (activeTab === 'challenge') {
-                newChallenge();
-            } else if (activeTab === 'read') {
-                newReadChallenge();
+            if (typeof activeTab !== 'undefined') {
+                if (activeTab === 'challenge') {
+                    newChallenge();
+                } else if (activeTab === 'read') {
+                    newReadChallenge();
+                }
             }
         }
 
