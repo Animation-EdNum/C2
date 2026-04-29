@@ -21,6 +21,48 @@
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
+        /* Drawer slider interaction states */
+        .skins-drawer.slider-active-drawer {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        .skins-drawer.slider-active-drawer .skins-drawer-header {
+            background: #f9fafc !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+        }
+
+        #mats-drawer-overlay.slider-active-drawer {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        .skins-drawer.opacity-active #mats-list-container,
+        .skins-drawer.opacity-active #grid-size-container,
+        .skins-drawer.opacity-active #mats-drawer-title,
+        .skins-drawer.opacity-active #btn-close-mats,
+        .skins-drawer.opacity-active #btn-remove-mat {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
+        .skins-drawer.grid-size-active #mats-list-container,
+        .skins-drawer.grid-size-active #mat-opacity-container,
+        .skins-drawer.grid-size-active #mats-drawer-title,
+        .skins-drawer.grid-size-active #btn-close-mats,
+        .skins-drawer.grid-size-active #btn-remove-mat {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
         :root {
             --bg-gradient-start: #60a5fa;
             --bg-gradient-end: #0891b2;
@@ -1708,8 +1750,10 @@
                 padding: 30px;
             }
 
-            body.fullscreen-map #read-instruction, body.fullscreen-map #chal-instruction, body.fullscreen-map #sim-instruction {
-                font-size: 1.5em;
+            body.fullscreen-map #read-instruction,
+            body.fullscreen-map #chal-instruction,
+            body.fullscreen-map #sim-instruction {
+                font-size: 1.5em !important;
                 margin-top: 50px;
                 margin-right: 50px;
             }
@@ -2889,11 +2933,11 @@
                 `;
             }).join('');
 
-            // Re-append the custom upload at the end
+            // Prepend the custom upload at the beginning
             const customConfig = MAT_CONFIG['custom'];
             const isCustomActive = activeMat === 'custom';
             const customHtml = `
-                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-top: 15px; border-top: 1px solid var(--grid-border); border-radius: 0 0 12px 12px; padding-top: 15px;">
+                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-bottom: 15px; border-bottom: 1px solid var(--grid-border); border-radius: 12px 12px 0 0; padding-bottom: 15px;">
                     <div class="skin-item-avatar" style="font-size: 32px;">
                         ${customConfig.icon}
                     </div>
@@ -2912,7 +2956,7 @@
                     </div>
                 </div>
             `;
-            container.innerHTML += customHtml;
+            container.innerHTML = customHtml + container.innerHTML;
             lucide.createIcons();
 
             // Re-bind the upload listener here since the DOM is recreated
@@ -3162,6 +3206,30 @@
             'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
             'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
             'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+            'emotions': {
+                name: 'Émotions et sentiments',
+                desc: 'Reconnaître et nommer les émotions.',
+                example: 'Comment te sens-tu aujourd\'hui ?',
+                icon: '🎭',
+                content: [
+                    '😀', '😢', '😡', '😨',
+                    '🤢', '😴', '🤔', '🤩',
+                    '😭', '🥳', '🥱', '🤐',
+                    '🤧', '🤒', '🤕', '🤑'
+                ]
+            },
+            'seasons': {
+                name: 'Saisons et météo',
+                desc: 'Les saisons et les différents types de météo.',
+                example: 'Quel temps fait-il aujourd\'hui ?',
+                icon: '☀️',
+                content: [
+                    '☀️', '🌧️', '⛅', '⛈️', '❄️',
+                    '⛄', '🍂', '🍁', '🌸', '🏖️',
+                    '🧥', '🧣', '🧤', '☂️', '🌈',
+                    '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
+                ]
+            },
             'city': {
                 name: 'Cité',
                 desc: 'Thème ville et routes.',
@@ -3171,7 +3239,7 @@
             'math': {
                 name: 'Calcul mental',
                 desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
-                example: 'Va sur le résultat de 5 + 7.',
+                example: 'Quel est le résultat de 5 + 7 ?',
                 icon: '🔢',
                 content: Array.from({ length: 101 }, (_, i) => i.toString())
             },
@@ -3195,7 +3263,7 @@
             'geo': {
                 name: 'Géographie',
                 desc: 'Drapeaux du monde.',
-                example: 'Va sur le drapeau du Japon.',
+                example: 'Dans quel pays se trouve Tokyo ?',
                 icon: '🌍',
                 content: [
                     '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧', '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷',
@@ -3211,16 +3279,14 @@
                 ]
             },
             'time': {
-                name: 'Horloges et temps',
-                desc: 'Grille d\'horloges pour s\'entraîner avec les heures.',
+                name: 'Lecture de l\'heure',
+                desc: 'Wie spät ist es ?',
                 icon: '⌚',
                 content: [
                     '🕛', '🕐', '🕑', '🕒', '🕓', '🕔',
                     '🕕', '🕖', '🕗', '🕘', '🕙', '🕚',
                     '🕧', '🕜', '🕝', '🕞', '🕟', '🕠',
-                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦',
-                    '☀️', '🌙', '🌅', '🌃', '⏰', '⏱️',
-                    '⏲️', '🕰️', '⌛', '⏳', '🗓️', '📅'
+                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦'
                 ]
             },
             'fairy_tale': {
@@ -3251,9 +3317,12 @@
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
         function updateGridSizeSlidersState() {
-            const restrictedMats = ['alphabet', 'time'];
+            const restrictedMats = ['alphabet'];
             const isRestricted = restrictedMats.includes(activeMat);
             const isCityMat = activeMat === 'city';
+            const isTimeMat = activeMat === 'time';
+            const isEmotionsMat = activeMat === 'emotions';
+            const isSeasonsMat = activeMat === 'seasons';
             const gridColsSlider = document.getElementById('gridColsSlider');
             const gridRowsSlider = document.getElementById('gridRowsSlider');
 
@@ -3269,6 +3338,43 @@
                     if (GRID_COLS !== 6 || GRID_ROWS !== 6) {
                         gridColsSlider.value = 6;
                         gridRowsSlider.value = 6;
+                        onGridSizeChanged();
+                    }
+                } else if (isTimeMat) {
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.title = "Taille fixe de 6x4 pour ce tapis";
+                    gridColsSlider.parentElement.title = "Taille fixe de 6x4 pour ce tapis";
+                    if (GRID_COLS !== 6 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 6;
+                        gridRowsSlider.value = 4;
+                        onGridSizeChanged();
+                    }
+                } else if (isEmotionsMat) {
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+                    gridColsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
+                    if (GRID_COLS !== 4 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 4;
+                        gridRowsSlider.value = 4;
+                        onGridSizeChanged();
+                    }
+                } else if (isSeasonsMat) {
+                    gridColsSlider.disabled = true;
+                    gridRowsSlider.disabled = true;
+                    gridColsSlider.parentElement.style.opacity = '0.5';
+                    gridRowsSlider.parentElement.style.opacity = '0.5';
+                    gridColsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
+                    gridRowsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
+
+                    if (GRID_COLS !== 5 || GRID_ROWS !== 4) {
+                        gridColsSlider.value = 5;
+                        gridRowsSlider.value = 4;
                         onGridSizeChanged();
                     }
                 } else if (isCityMat) {
@@ -5469,6 +5575,14 @@
                 matOpacityValue.textContent = Math.round(val * 100) + '%';
                 localStorage.setItem('bb_mat_opacity', val);
             });
+            matOpacitySlider.addEventListener('mousedown', () => {
+                document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'opacity-active');
+                document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+            });
+            matOpacitySlider.addEventListener('touchstart', () => {
+                document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'opacity-active');
+                document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+            }, { passive: true });
         }
 
         // Grid Size Sliders
@@ -5491,17 +5605,39 @@
             randomizeSimulatorPosition();
 
             // If in challenge or read modes, reset them
-            if (activeTab === 'challenge') {
-                newChallenge();
-            } else if (activeTab === 'read') {
-                newReadChallenge();
+            if (typeof activeTab !== 'undefined') {
+                if (activeTab === 'challenge') {
+                    newChallenge();
+                } else if (activeTab === 'read') {
+                    newReadChallenge();
+                }
             }
         }
 
         if (gridColsSlider && gridRowsSlider) {
             gridColsSlider.addEventListener('input', onGridSizeChanged);
             gridRowsSlider.addEventListener('input', onGridSizeChanged);
+
+            [gridColsSlider, gridRowsSlider].forEach(slider => {
+                slider.addEventListener('mousedown', () => {
+                    document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'grid-size-active');
+                    document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+                });
+                slider.addEventListener('touchstart', () => {
+                    document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'grid-size-active');
+                    document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+                }, { passive: true });
+            });
         }
+
+        window.addEventListener('mouseup', () => {
+            document.getElementById('mats-drawer')?.classList.remove('slider-active-drawer', 'opacity-active', 'grid-size-active');
+            document.getElementById('mats-drawer-overlay')?.classList.remove('slider-active-drawer');
+        });
+        window.addEventListener('touchend', () => {
+            document.getElementById('mats-drawer')?.classList.remove('slider-active-drawer', 'opacity-active', 'grid-size-active');
+            document.getElementById('mats-drawer-overlay')?.classList.remove('slider-active-drawer');
+        }, { passive: true });
 
         window.handleCustomMatUpload = function (e) {
             const customMatStatus = document.getElementById('customMatStatus');
@@ -5608,42 +5744,6 @@
                     }
                 }
             });
-
-            // Drawers swipe to close
-            let drawerTouchStartX = 0;
-            let drawerTouchStartY = 0;
-            document.addEventListener('touchstart', (e) => {
-                drawerTouchStartX = e.changedTouches[0].screenX;
-                drawerTouchStartY = e.changedTouches[0].screenY;
-            }, { passive: true });
-
-            document.addEventListener('touchend', (e) => {
-                const touchEndX = e.changedTouches[0].screenX;
-                const touchEndY = e.changedTouches[0].screenY;
-                const dx = touchEndX - drawerTouchStartX;
-                const dy = touchEndY - drawerTouchStartY;
-
-                const matsDrawer = document.getElementById('mats-drawer');
-                const skinsDrawer = document.getElementById('skins-drawer');
-
-                const isMobile = window.innerWidth <= 600;
-
-                if (matsDrawer && matsDrawer.classList.contains('active')) {
-                    if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
-                        closeMatsModal(); // swipe down on mobile
-                    } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
-                        closeMatsModal(); // swipe right on desktop
-                    }
-                }
-
-                if (skinsDrawer && skinsDrawer.classList.contains('active')) {
-                    if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
-                        closeSkinsModal(); // swipe down on mobile
-                    } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
-                        closeSkinsModal(); // swipe right on desktop
-                    }
-                }
-            }, { passive: true });
 
             ScoreManager.init('simulateur_bluebot');
             updateExtremeVisibility();
