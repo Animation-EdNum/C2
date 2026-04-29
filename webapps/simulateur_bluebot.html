@@ -274,8 +274,8 @@
             box-shadow: var(--skin-grid-shadow, 0 10px 25px rgba(0, 0, 0, 0.1));
             background: var(--skin-grid-bg, var(--card-bg));
             width: 100%;
-            max-width: min(500px, 55vh);
-            aspect-ratio: 1 / 1;
+            max-width: min(100%, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6))));
+            aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);
             margin: 0 auto;
         }
 
@@ -338,7 +338,7 @@
         .trail-path {
             fill: none;
             stroke: #2563eb;
-            stroke-width: 1.2;
+            stroke-width: 7;
             stroke-linecap: round;
             stroke-linejoin: round;
             transition: stroke 0.3s;
@@ -352,7 +352,7 @@
         .start-marker-chevron {
             fill: none;
             stroke: white;
-            stroke-width: 0.8;
+            stroke-width: 5;
             stroke-linecap: round;
             stroke-linejoin: round;
         }
@@ -4164,9 +4164,8 @@
             states: {},
 
             _getCenter(row, col) {
-                const cw = 100 / GRID_COLS;
-                const ch = 100 / GRID_ROWS;
-                return { x: (col + 0.5) * cw, y: (row + 0.5) * ch };
+                // With viewBox = 0 0 (100*cols) (100*rows), each cell is exactly 100x100
+                return { x: (col + 0.5) * 100, y: (row + 0.5) * 100 };
             },
 
             initLayer(containerId) {
@@ -4174,10 +4173,13 @@
                 if (!layer) {
                     layer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     layer.setAttribute("class", "trail-layer");
-                    layer.setAttribute("viewBox", "0 0 100 100");
+                    layer.setAttribute("viewBox", `0 0 ${100 * GRID_COLS} ${100 * GRID_ROWS}`);
                     layer.setAttribute("preserveAspectRatio", "none");
                     layer.setAttribute("aria-hidden", "true");
                     document.getElementById(containerId).appendChild(layer);
+                } else {
+                    // Update viewBox in case grid size changed
+                    layer.setAttribute("viewBox", `0 0 ${100 * GRID_COLS} ${100 * GRID_ROWS}`);
                 }
                 return layer;
             },
@@ -4194,8 +4196,9 @@
                 path.setAttribute("class", "trail-path");
                 const d = `M ${pt.x} ${pt.y}`;
                 path.setAttribute("d", d);
+                layer.appendChild(path);
 
-                // Draw start marker
+                // Draw start marker (cell size is now 100x100 in the new viewBox)
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "start-marker");
 
@@ -4203,18 +4206,17 @@
                 circle.setAttribute("class", "start-marker-circle");
                 circle.setAttribute("cx", pt.x);
                 circle.setAttribute("cy", pt.y);
-                circle.setAttribute("r", "3");
+                circle.setAttribute("r", "18"); // scaled up from 3
 
                 const chevron = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 chevron.setAttribute("class", "start-marker-chevron");
-                chevron.setAttribute("d", `M ${pt.x - 1.5} ${pt.y + 1} L ${pt.x} ${pt.y - 1} L ${pt.x + 1.5} ${pt.y + 1}`);
+                chevron.setAttribute("d", `M ${pt.x - 9} ${pt.y + 6} L ${pt.x} ${pt.y - 6} L ${pt.x + 9} ${pt.y + 6}`);
                 chevron.setAttribute("transform", `rotate(${rot} ${pt.x} ${pt.y})`);
 
                 g.appendChild(circle);
                 g.appendChild(chevron);
 
-                layer.appendChild(path);
-                layer.appendChild(g); // Marker on top
+                layer.appendChild(g);
 
                 this.states[containerId] = {
                     points: [{ x: pt.x, y: pt.y }],
