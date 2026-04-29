@@ -21,6 +21,48 @@
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
+        /* Drawer slider interaction states */
+        .skins-drawer.slider-active-drawer {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        .skins-drawer.slider-active-drawer .skins-drawer-header {
+            background: #f9fafc !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+        }
+
+        #mats-drawer-overlay.slider-active-drawer {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        .skins-drawer.opacity-active #mats-list-container,
+        .skins-drawer.opacity-active #grid-size-container,
+        .skins-drawer.opacity-active #mats-drawer-title,
+        .skins-drawer.opacity-active #btn-close-mats,
+        .skins-drawer.opacity-active #btn-remove-mat {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
+        .skins-drawer.grid-size-active #mats-list-container,
+        .skins-drawer.grid-size-active #mat-opacity-container,
+        .skins-drawer.grid-size-active #mats-drawer-title,
+        .skins-drawer.grid-size-active #btn-close-mats,
+        .skins-drawer.grid-size-active #btn-remove-mat {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
         :root {
             --bg-gradient-start: #60a5fa;
             --bg-gradient-end: #0891b2;
@@ -2891,11 +2933,11 @@
                 `;
             }).join('');
 
-            // Re-append the custom upload at the end
+            // Prepend the custom upload at the beginning
             const customConfig = MAT_CONFIG['custom'];
             const isCustomActive = activeMat === 'custom';
             const customHtml = `
-                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-top: 15px; border-top: 1px solid var(--grid-border); border-radius: 0 0 12px 12px; padding-top: 15px;">
+                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-bottom: 15px; border-bottom: 1px solid var(--grid-border); border-radius: 12px 12px 0 0; padding-bottom: 15px;">
                     <div class="skin-item-avatar" style="font-size: 32px;">
                         ${customConfig.icon}
                     </div>
@@ -2914,7 +2956,7 @@
                     </div>
                 </div>
             `;
-            container.innerHTML += customHtml;
+            container.innerHTML = customHtml + container.innerHTML;
             lucide.createIcons();
 
             // Re-bind the upload listener here since the DOM is recreated
@@ -5533,6 +5575,14 @@
                 matOpacityValue.textContent = Math.round(val * 100) + '%';
                 localStorage.setItem('bb_mat_opacity', val);
             });
+            matOpacitySlider.addEventListener('mousedown', () => {
+                document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'opacity-active');
+                document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+            });
+            matOpacitySlider.addEventListener('touchstart', () => {
+                document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'opacity-active');
+                document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+            }, { passive: true });
         }
 
         // Grid Size Sliders
@@ -5567,7 +5617,27 @@
         if (gridColsSlider && gridRowsSlider) {
             gridColsSlider.addEventListener('input', onGridSizeChanged);
             gridRowsSlider.addEventListener('input', onGridSizeChanged);
+
+            [gridColsSlider, gridRowsSlider].forEach(slider => {
+                slider.addEventListener('mousedown', () => {
+                    document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'grid-size-active');
+                    document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+                });
+                slider.addEventListener('touchstart', () => {
+                    document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'grid-size-active');
+                    document.getElementById('mats-drawer-overlay').classList.add('slider-active-drawer');
+                }, { passive: true });
+            });
         }
+
+        window.addEventListener('mouseup', () => {
+            document.getElementById('mats-drawer')?.classList.remove('slider-active-drawer', 'opacity-active', 'grid-size-active');
+            document.getElementById('mats-drawer-overlay')?.classList.remove('slider-active-drawer');
+        });
+        window.addEventListener('touchend', () => {
+            document.getElementById('mats-drawer')?.classList.remove('slider-active-drawer', 'opacity-active', 'grid-size-active');
+            document.getElementById('mats-drawer-overlay')?.classList.remove('slider-active-drawer');
+        }, { passive: true });
 
         window.handleCustomMatUpload = function (e) {
             const customMatStatus = document.getElementById('customMatStatus');
@@ -5674,42 +5744,6 @@
                     }
                 }
             });
-
-            // Drawers swipe to close
-            let drawerTouchStartX = 0;
-            let drawerTouchStartY = 0;
-            document.addEventListener('touchstart', (e) => {
-                drawerTouchStartX = e.changedTouches[0].screenX;
-                drawerTouchStartY = e.changedTouches[0].screenY;
-            }, { passive: true });
-
-            document.addEventListener('touchend', (e) => {
-                const touchEndX = e.changedTouches[0].screenX;
-                const touchEndY = e.changedTouches[0].screenY;
-                const dx = touchEndX - drawerTouchStartX;
-                const dy = touchEndY - drawerTouchStartY;
-
-                const matsDrawer = document.getElementById('mats-drawer');
-                const skinsDrawer = document.getElementById('skins-drawer');
-
-                const isMobile = window.innerWidth <= 600;
-
-                if (matsDrawer && matsDrawer.classList.contains('active')) {
-                    if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
-                        closeMatsModal(); // swipe down on mobile
-                    } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
-                        closeMatsModal(); // swipe right on desktop
-                    }
-                }
-
-                if (skinsDrawer && skinsDrawer.classList.contains('active')) {
-                    if (isMobile && dy > 50 && Math.abs(dy) > Math.abs(dx)) {
-                        closeSkinsModal(); // swipe down on mobile
-                    } else if (!isMobile && dx > 50 && Math.abs(dx) > Math.abs(dy)) {
-                        closeSkinsModal(); // swipe right on desktop
-                    }
-                }
-            }, { passive: true });
 
             ScoreManager.init('simulateur_bluebot');
             updateExtremeVisibility();
