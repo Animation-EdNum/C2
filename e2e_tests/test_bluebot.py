@@ -132,6 +132,11 @@ def test_bluebot_challenge_difficulty_bar(page: Page):
     expect(page.locator("#diff-easy")).to_be_visible()
     expect(page.locator("#diff-medium")).to_be_visible()
     expect(page.locator("#diff-hard")).to_be_visible()
+    expect(page.locator("#diff-extreme")).to_be_hidden()
+
+    # Unlock extreme difficulty
+    page.evaluate("ScoreManager.addSuccess('chal', 'hard', 0)")
+    page.evaluate("updateExtremeVisibility()")
     expect(page.locator("#diff-extreme")).to_be_visible()
 
 
@@ -208,7 +213,7 @@ def test_bluebot_skins_drawer_has_items(page: Page):
     page.goto(BASE_URL)
     page.locator("#optionsMenuBtn").click()
     page.locator("#btn-open-skins").click()
-    cards = page.locator("#skins-list-container .skin-card")
+    cards = page.locator("#skins-list-container .skin-list-item")
     assert cards.count() >= 3, "Should have at least 3 visible skin cards"
 
 
