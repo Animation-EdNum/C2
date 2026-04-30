@@ -13,7 +13,7 @@ const ASSETS = [
     // JS
     './js/audio.js',
     './js/confetti.js',
-    './js/lucide.min.js',
+    './js/lucide-subset.js',
     './js/scores.js',
     './js/swipe.js',
     './js/theme.js',
