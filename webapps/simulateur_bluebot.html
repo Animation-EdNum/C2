@@ -36,6 +36,11 @@
             border-radius: 20px;
         }
 
+        body.dark .skins-drawer.slider-active-drawer .skins-drawer-header {
+            background: rgba(15, 23, 42, 0.95) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
         #mats-drawer-overlay.slider-active-drawer {
             opacity: 0 !important;
             pointer-events: none !important;
@@ -44,8 +49,6 @@
         }
 
         .skins-drawer.opacity-active #mats-list-container,
-        .skins-drawer.opacity-active #grid-size-container,
-        .skins-drawer.opacity-active #mats-drawer-title,
         .skins-drawer.opacity-active #btn-close-mats,
         .skins-drawer.opacity-active #btn-remove-mat {
             opacity: 0 !important;
@@ -54,8 +57,6 @@
         }
 
         .skins-drawer.grid-size-active #mats-list-container,
-        .skins-drawer.grid-size-active #mat-opacity-container,
-        .skins-drawer.grid-size-active #mats-drawer-title,
         .skins-drawer.grid-size-active #btn-close-mats,
         .skins-drawer.grid-size-active #btn-remove-mat {
             opacity: 0 !important;
@@ -934,7 +935,7 @@
         /* Traces spéciales */
         .trail-matrix-char {
             font-family: 'Courier New', monospace;
-            font-size: 8px;
+            font-size: 16px;
             fill: #00ff41;
             font-weight: bold;
             filter: drop-shadow(0 0 2px #00ff41);
@@ -3663,9 +3664,9 @@
 
         function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {
             let ov = document.getElementById(overlayId);
-            if (!ov) {
+            const isNew = !ov;
+            if (isNew) {
                 ov = document.createElement('div'); ov.id = overlayId; ov.className = extraClass || '';
-                document.getElementById(containerId).appendChild(ov);
             }
             if (content.includes('<svg')) {
                 ov.innerHTML = content;
@@ -3677,6 +3678,7 @@
             ov.style.transform = `translate(${col * 100}%, ${row * 100}%)`;
             ov.setAttribute('role', 'img');
             if (ariaLabel) ov.setAttribute('aria-label', ariaLabel);
+            if (isNew) document.getElementById(containerId).appendChild(ov);
         }
 
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
@@ -4032,8 +4034,8 @@
                     for (let i = 0; i < 2; i++) {
                         const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
                         t.setAttribute("class", "trail-matrix-char");
-                        const ox = (Math.random() - 0.5) * 8;
-                        const oy = (Math.random() - 0.5) * 8;
+                        const ox = (Math.random() - 0.5) * 20;
+                        const oy = (Math.random() - 0.5) * 20;
                         t.setAttribute("x", pt.x + ox);
                         t.setAttribute("y", pt.y + oy);
                         t.textContent = Math.random() > 0.5 ? "1" : "0";
@@ -4043,16 +4045,13 @@
                     for (let i = 0; i < persistCount; i++) {
                         const p = document.createElementNS("http://www.w3.org/2000/svg", "text");
                         p.setAttribute("class", "trail-matrix-persist");
-                        const ox = (Math.random() - 0.5) * 18;
-                        const oy = (Math.random() - 0.5) * 18;
+                        const ox = (Math.random() - 0.5) * 35;
+                        const oy = (Math.random() - 0.5) * 35;
                         p.setAttribute("x", pt.x + ox);
                         p.setAttribute("y", pt.y + oy);
                         p.textContent = Math.random() > 0.5 ? "1" : "0";
-                        // Légère rotation aléatoire pour un look "code glitché"
                         p.setAttribute("transform", `rotate(${(Math.random() - 0.5) * 20} ${pt.x + ox} ${pt.y + oy})`);
-                        // Taille variée
-                        p.style.fontSize = `${8 + Math.random() * 6}px`;
-                        // Opacité variée (certains plus visibles que d'autres)
+                        p.style.fontSize = `${14 + Math.random() * 8}px`;
                         p.style.opacity = 0.5 + Math.random() * 0.5;
                         layer.appendChild(p);
                     }
@@ -4061,17 +4060,16 @@
                     for (let i = 0; i < 6; i++) {
                         const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                         c.setAttribute("class", "trail-fire-particle");
-                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 6);
-                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 6);
-                        c.setAttribute("r", 1 + Math.random() * 2);
+                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 14);
+                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 14);
+                        c.setAttribute("r", 3 + Math.random() * 4);
                         c.setAttribute("fill", Math.random() > 0.5 ? "#f97316" : "#fef08a");
-                        c.style.setProperty("--dx", `${(Math.random() - 0.5) * 15}px`);
-                        c.style.setProperty("--dy", `${(Math.random() - 0.5) * 15}px`);
+                        c.style.setProperty("--dx", `${(Math.random() - 0.5) * 30}px`);
+                        c.style.setProperty("--dy", `${(Math.random() - 0.5) * 30}px`);
                         layer.appendChild(c);
                         setTimeout(() => c.remove(), 800);
                     }
                     // Coulée de lave persistante
-                    // 1) On trace un segment entre le point précédent et le point actuel
                     if (this.lastVolcanoPt) {
                         const seg = document.createElementNS("http://www.w3.org/2000/svg", "line");
                         seg.setAttribute("class", "trail-lava-segment");
@@ -4084,15 +4082,14 @@
                     }
                     this.lastVolcanoPt = { x: pt.x, y: pt.y };
 
-                    // 2) Braises incandescentes qui restent et pulsent
+                    // Braises incandescentes qui restent et pulsent
                     const emberCount = 2 + Math.floor(Math.random() * 2);
                     for (let i = 0; i < emberCount; i++) {
                         const e = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                         e.setAttribute("class", "trail-lava-ember");
-                        e.setAttribute("cx", pt.x + (Math.random() - 0.5) * 10);
-                        e.setAttribute("cy", pt.y + (Math.random() - 0.5) * 10);
-                        e.setAttribute("r", 1.5 + Math.random() * 2);
-                        // Délai d'animation aléatoire pour que les braises pulsent à contretemps
+                        e.setAttribute("cx", pt.x + (Math.random() - 0.5) * 20);
+                        e.setAttribute("cy", pt.y + (Math.random() - 0.5) * 20);
+                        e.setAttribute("r", 3 + Math.random() * 4);
                         e.style.animationDelay = `${Math.random() * 2}s`;
                         layer.appendChild(e);
                         setTimeout(() => { if (e && e.parentNode) e.remove(); }, 5000);
@@ -4116,12 +4113,12 @@
 
                     // Alterner les côtés
                     const side = (state.points.length % 2 === 0) ? 45 : -45;
-                    leaf.setAttribute("transform", `translate(${midX}, ${midY}) rotate(${angle + side}) scale(0.4)`);
+                    leaf.setAttribute("transform", `translate(${midX}, ${midY}) rotate(${angle + side}) scale(1.0)`);
                     layer.appendChild(leaf);
 
-                    // Ajouter une petite feuille à la fin
+                    // Ajouter une feuille à la fin
                     const endLeaf = leaf.cloneNode(true);
-                    endLeaf.setAttribute("transform", `translate(${pt.x}, ${pt.y}) rotate(${angle - side / 2}) scale(0.3)`);
+                    endLeaf.setAttribute("transform", `translate(${pt.x}, ${pt.y}) rotate(${angle - side / 2}) scale(0.7)`);
                     layer.appendChild(endLeaf);
                 } else if (activeSkin === 'unicorn') {
                     // Trace Arc-en-ciel
@@ -4129,9 +4126,9 @@
                     for (let i = 0; i < 8; i++) {
                         const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                         c.setAttribute("class", "trail-rainbow-particle");
-                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 8);
-                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 8);
-                        c.setAttribute("r", 1.5 + Math.random() * 2);
+                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 16);
+                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 16);
+                        c.setAttribute("r", 3 + Math.random() * 4);
                         c.setAttribute("fill", colors[Math.floor(Math.random() * colors.length)]);
                         c.style.color = c.getAttribute("fill");
                         layer.appendChild(c);
