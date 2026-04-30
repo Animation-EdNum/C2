@@ -84,6 +84,30 @@
 
         .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
 
+                .card-badge {
+            display: inline-block;
+            background: var(--badge-bg);
+            color: var(--badge-color);
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            align-self: flex-start;
+        }
+                .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 12px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            transition: 0.2s;
+            min-width: 0;
+            align-items: center;
+        }
         /* === TABS === */
         .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
@@ -159,6 +183,22 @@
 
 
 
+                .side-by-side {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            align-items: center;
+        }
+        @media (min-width: 900px) {
+            .side-by-side {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+                width: 100%;
+                align-items: center;
+            }
+        }
         /* Grid */
         .pixel-grid {
             display: grid;
@@ -174,8 +214,8 @@
 
 
         .pixel-cell {
-            width: 50px;
-            height: 50px;
+            width: clamp(35px, 10vw, 60px);
+            height: clamp(35px, 10vw, 60px);
             background: var(--c-noir); /* Par défaut noir = 00 */
             cursor: pointer;
             transition: transform 0.1s;
@@ -406,41 +446,48 @@
             <div class="legend-item"><div class="color-box" style="background: var(--c-jaune);"></div> 11</div>
         </div>
 
-        <!-- MODE CODAGE -->
+                <!-- MODE CODAGE -->
         <div id="mode-codage" class="mode-container active">
-            <div class="card" style="width: 100%; border-radius: 12px; padding: 18px; border: 1px solid var(--card-border); background: var(--card-bg); box-shadow: 0 4px 12px var(--card-shadow); display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <div class="card-badge" style="background: var(--badge-bg); color: var(--badge-color); padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; align-self: flex-start;">Codage</div>
-                <div class="card-instruction instructions" style="margin-bottom: 0;">Dessine sur la grille pour voir le code binaire se générer.</div>
+            <div class="card" style="width: 100%;">
+                <div class="card-badge">Codage</div>
+                <div class="instructions">Dessine sur la grille pour voir le code binaire se générer.</div>
 
-                <div class="pixel-grid" id="grid-codage"></div>
-
-                <div class="binary-container" style="width: 100%;">
-                    <div class="binary-text" id="output-codage">00000000000000000000000000000000000000000000000000</div>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button class="btn" id="btn-copy"><i data-lucide="copy"></i> Copier le code</button>
-                        <button class="btn" id="btn-clear-codage" style="background: var(--error);"><i data-lucide="trash-2"></i> Effacer</button>
+                <div class="side-by-side">
+                    <div class="grid-col">
+                        <div class="pixel-grid" id="grid-codage"></div>
+                    </div>
+                    <div class="binary-col">
+                        <div class="binary-container" style="width: 100%;">
+                            <div class="binary-text" id="output-codage">00000000000000000000000000000000000000000000000000</div>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="btn-copy"><i data-lucide="copy"></i> Copier le code</button>
+                                <button class="btn" id="btn-clear-codage" style="background: var(--error);"><i data-lucide="trash-2"></i> Effacer</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- MODE DECODAGE -->
-        <div id="mode-decodage" class="mode-container">
-            <div class="card" style="width: 100%; border-radius: 12px; padding: 18px; border: 1px solid var(--card-border); background: var(--card-bg); box-shadow: 0 4px 12px var(--card-shadow); display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                <div class="card-badge" style="background: var(--badge-bg); color: var(--badge-color); padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; align-self: flex-start;">Décodage</div>
-                <div class="card-instruction instructions" style="margin-bottom: 0;">Lis le code binaire et reproduis l'image sur la grille !</div>
 
-                <div class="binary-container" style="width: 100%;">
-                    <div class="binary-text" id="target-binary"></div>
+                <div id="mode-decodage" class="mode-container">
+            <div class="card" style="width: 100%;">
+                <div class="card-badge">Décodage</div>
+                <div class="instructions">Lis le code binaire et reproduis l'image sur la grille !</div>
+
+                <div class="side-by-side">
+                    <div class="binary-col">
+                        <div class="binary-container" style="width: 100%;">
+                            <div class="binary-text" id="target-binary"></div>
+                        </div>
+                    </div>
+                    <div class="grid-col" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                        <div class="pixel-grid" id="grid-decodage"></div>
+                        <div class="feedback" id="feedback-decodage" style="margin: 0; min-height: 28px;"></div>
+                        <button class="btn" id="btn-check"><i data-lucide="check-circle"></i> Valider</button>
+                    </div>
                 </div>
-
-                <div class="pixel-grid" id="grid-decodage"></div>
-
-                <div class="feedback" id="feedback-decodage" style="margin: 0;"></div>
-
-                <button class="btn" id="btn-check"><i data-lucide="check-circle"></i> Valider</button>
             </div>
-
 
             <div class="score-bar">
                 <div class="score-item">
