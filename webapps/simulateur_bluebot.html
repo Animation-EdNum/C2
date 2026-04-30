@@ -1549,45 +1549,6 @@
         }
 
 
-        #mats-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 10001;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        #mats-modal.active {
-            display: flex;
-            animation: fadeIn 0.3s forwards;
-        }
-
-        @media (max-width: 600px) {
-            #mats-modal {
-                align-items: flex-end;
-            }
-
-            #mats-modal.active .skins-content {
-                animation: slideUpBottomSheet 0.3s ease-out forwards;
-            }
-
-            #mats-modal .skins-content {
-                width: 100%;
-                max-width: none;
-                border-radius: 24px 24px 0 0;
-                margin: 0;
-                padding-bottom: max(24px, env(safe-area-inset-bottom));
-                border-bottom: none;
-            }
-        }
-
-
         .mat-content {
             position: absolute;
             inset: 0;
@@ -1682,41 +1643,6 @@
         }
 
 
-        .skins-content {
-            background: var(--card-bg);
-            border: var(--card-border) 1px solid;
-            border-radius: 20px;
-            padding: 24px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            color: var(--text-main);
-            position: relative;
-        }
-
-        @keyframes slideUpBottomSheet {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .skins-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .skins-header h2 {
-            margin: 0;
-            font-size: 24px;
-        }
 
         .btn-close-modal {
             position: absolute;
@@ -2494,6 +2420,137 @@
         /* ================================================================
            SVGS DES BOUTONS DU BLUE-BOT
            ================================================================ */
+        const MAT_CONFIG = {
+            'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
+            'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
+            'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+            'emotions': {
+                name: 'Émotions et sentiments',
+                desc: 'Reconnaître et nommer les émotions.',
+                example: 'Comment te sens-tu aujourd\'hui ?',
+                icon: '🎭',
+                content: [
+                    '😀', '😢', '😡', '😨',
+                    '🤢', '😴', '🤔', '🤩',
+                    '😭', '🥳', '🥱', '🤐',
+                    '🤧', '🤒', '🤕', '🤑'
+                ]
+            },
+            'seasons': {
+                name: 'Saisons et météo',
+                desc: 'Les saisons et les différents types de météo.',
+                example: 'Quel temps fait-il aujourd\'hui ?',
+                icon: '☀️',
+                content: [
+                    '☀️', '🌧️', '⛅', '⛈️', '❄️',
+                    '⛄', '🍂', '🍁', '🌸', '🏖️',
+                    '🧥', '🧣', '🧤', '☂️', '🌈',
+                    '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
+                ]
+            },
+            'city': {
+                name: 'Cité',
+                desc: 'Thème ville et routes.',
+                example: 'Amène le robot au supermarché.',
+                icon: '🗺️'
+            },
+            'math': {
+                name: 'Calcul mental',
+                desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
+                example: 'Quel est le résultat de 5 + 7 ?',
+                icon: '🔢',
+                content: Array.from({ length: 101 }, (_, i) => i.toString())
+            },
+            'shapes': {
+                name: 'Couleurs et formes',
+                desc: 'Formes géométriques colorées.',
+                example: 'Trouve le carré rouge.',
+                icon: '🔵',
+                content: [],
+                baseContent: [
+                    // Simple shapes and primary/basic colors first
+                    '🔴', '🔵', '🟡', '🟩', '🟥', '🟦', '🟨', '🟢',
+                    // Secondary colors and simpler shapes
+                    '🟠', '🟣', '🟧', '🟪', '🔺', '🔻',
+                    // More complex colors/shapes
+                    '⚫', '⚪', '⬛', '⬜', '❤️', '💙', '💚', '💛',
+                    // Complex/less common shapes and colors
+                    '🔶', '🔷', '🔸', '🔹', '🟤', '🟫', '🤎', '🤍', '🩷', '🩵', '🖤', '🧡', '💜'
+                ]
+            },
+            'geo': {
+                name: 'Géographie',
+                desc: 'Drapeaux du monde.',
+                example: 'Dans quel pays se trouve Tokyo ?',
+                icon: '🌍',
+                content: [
+                    '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧', '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷',
+                    '🇸🇪', '🇳🇴', '🇺🇸', '🇨🇦', '🇲🇽', '🇨🇭', '🇨🇴', '🇦🇷', '🇯🇵', '🇰🇷',
+                    '🇧🇷', '🇿🇦', '🇦🇺', '🇳🇿', '🇨🇳', '🇮🇳', '🇪🇬', '🇲🇦', '🇸🇳', '🇰🇪',
+                    '🇷🇺', '🇹🇷', '🇵🇱', '🇩🇰', '🇫🇮', '🇮🇪', '🇨🇿', '🇭🇺', '🇷🇴', '🇧🇬',
+                    '🇷🇸', '🇭🇷', '🇸🇮', '🇸🇰', '🇺🇦', '🇨🇱', '🇵🇪', '🇻🇪', '🇺🇾', '🇵🇾',
+                    '🇧🇴', '🇪🇨', '🇨🇺', '🇯🇲', '🇭🇹', '🇩🇴', '🇵🇷', '🇲🇬', '🇳🇬', '🇬🇭',
+                    '🇨🇮', '🇨🇲', '🇩🇿', '🇹🇳', '🇱🇾', '🇸🇩', '🇪🇹', '🇸🇴', '🇹🇿', '🇺🇬',
+                    '🇷🇼', '🇿🇲', '🇿🇼', '🇲🇿', '🇦🇴', '🇳🇦', '🇧🇼', '🇲🇾', '🇮🇩', '🇵🇭',
+                    '🇹🇭', '🇻🇳', '🇲🇲', '🇰🇭', '🇱🇦', '🇸🇬', '🇧🇩', '🇵🇰', '🇮🇷', '🇮🇶',
+                    '🇸🇦', '🇦🇪', '🇶🇦', '🇰🇼', '🇴🇲', '🇾🇪', '🇸🇾', '🇯🇴', '🇱🇧', '🇮🇱'
+                ]
+            },
+            'time': {
+                name: 'Lecture de l\'heure',
+                desc: 'Wie spät ist es ?',
+                icon: '⌚',
+                content: [
+                    '🕛', '🕐', '🕑', '🕒', '🕓', '🕔',
+                    '🕕', '🕖', '🕗', '🕘', '🕙', '🕚',
+                    '🕧', '🕜', '🕝', '🕞', '🕟', '🕠',
+                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦'
+                ]
+            },
+            'fairy_tale': {
+                name: 'Conte personnalisable',
+                desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
+                icon: '🧚',
+                content: [],
+                baseContent: [
+                    '👸', '🐉', '🧙', '🏰', '🌲', '💎', '👑', '🦄', '⚔️', '🛡️',
+                    '🗝️', '📜', '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️', '🧛‍♂️', '🧟‍♀️',
+                    '🧞‍♀️', '🪞', '🍎', '🍄', '🌼', '🌈', '⭐', '🌙', '☀️', '☁️',
+                    '⚡', '🔥', '💧', '🌊', '❄️', '🌪️', '🤴', '🦹', '🦸', '🐺',
+                    '🕷️', '🕸️', '🦇', '🥀', '🌹', '🏹', '🪄', '🔮', '🧪', '🩸',
+                    '🦴', '☠️', '👻', '👽', '👾', '🤖', '🎃', '🎭', '🎨', '🎻',
+                    '🎺', '🪘', '🥁', '⛺', '🛶', '⛵', '⚓', '🧭', '🗺️', '🏔️',
+                    '🌋', '🏕️', '🛤️', '🪙', '💰', '💸', '🏺', '💍', '🦅', '🦆',
+                    '🦢', '🦩', '🦚', '🦜', '🐊', '🐢', '🦎', '🐍', '🦕', '🦖',
+                    '🐳', '🐬', '🦭', '🐟', '🐠', '🐡', '🦈', '🐙',
+                    '🦉', '🦔', '🐿️', '🦡', '🦦', '🪲', '🦋', '🐌', '🐞', '🐜',
+                    '🪶', '🪺', '🪹', '🪨', '🪵', '🪴', '🌾', '💐', '🌷', '🪷',
+                    '🏵️', '🌸', '🌺', '🌻', '🪻', '🍄‍🟫', '🪸', '🪼',
+                    '🦀', '🦞', '🦐', '🦑', '🦪', '🐚'
+                ]
+            }
+        };
+
+        const SKIN_CONFIG = {
+            'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le robot que tu connais bien.' },
+            'beebot': { name: 'Bee-Bot', obstacle: '🌳', target: '🌻', desc: 'Utilise "Reculer" au moins une fois pour atteindre le trésor.' },
+            'thymio': { name: 'Thymio', obstacle: '🚧', target: '✏️', desc: 'Réussis un décodage (moyen) du premier coup.' },
+            'space': { name: 'Rocket', obstacle: '☄️', target: '💎', desc: 'Gagne un pilotage moyen pour débloquer.' },
+            'pirate': { name: 'Vaisseau pirate', obstacle: '🐙', target: '🪙', desc: 'Atteint le trésor du premier coup en utilisant plus de 10 instructions.' },
+            'f1': { name: 'Formule 1', obstacle: '🛞', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
+            'unicorn': { name: 'Licorne magique', obstacle: '⛈️', target: '🧁', desc: 'Tête qui tourne : Mystère...', hidden: true },
+            'train': { name: 'Loco', obstacle: '🛑', target: '🚉', desc: 'Parcours un total de 100 cases.' },
+            'volcano': {
+                name: 'Le sol est EN FEU !!!',
+                obstacle: '🧊',
+                target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coinGrad)"/><circle cx="70" cy="30" r="9" fill="url(#coinGrad)"/><circle cx="20" cy="55" r="8" fill="url(#coinGrad)"/><circle cx="80" cy="65" r="11" fill="url(#coinGrad)"/><circle cx="45" cy="75" r="12" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coinGrad)"/><circle cx="65" cy="50" r="13" fill="url(#coinGrad)"/><circle cx="35" cy="60" r="12" fill="url(#coinGrad)"/><circle cx="60" cy="70" r="9" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coinGrad)" filter="url(#goldGlow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#goldGlow)"/></g></g></svg>`,
+                desc: 'Réussis un décodage (extrême) du premier coup.'
+            },
+            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '👾', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
+            'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
+            'helicopter': { name: 'Hélicoptère', obstacle: '☁️', target: '🏥', desc: "Utilise un tapis." }
+        };
+
         const BB_SVGS = {
             forward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="5 11 12 4 19 11"/></svg>`,
             backward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"/><polyline points="19 13 12 20 5 13"/></svg>`,
@@ -2501,17 +2558,26 @@
             right: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6a4 4 0 0 1 4-4h12"/><polyline points="14 4 20 10 14 16"/></svg>`
         };
 
-        document.getElementById('pad-fwd').innerHTML = BB_SVGS.forward;
-        document.getElementById('pad-bwd').innerHTML = BB_SVGS.backward;
-        document.getElementById('pad-left').innerHTML = BB_SVGS.left;
-        document.getElementById('pad-right').innerHTML = BB_SVGS.right;
+        window.addEventListener('DOMContentLoaded', () => {
+            const padFwd = document.getElementById('pad-fwd');
+            if (padFwd) padFwd.innerHTML = BB_SVGS.forward;
+            const padBwd = document.getElementById('pad-bwd');
+            if (padBwd) padBwd.innerHTML = BB_SVGS.backward;
+            const padLeft = document.getElementById('pad-left');
+            if (padLeft) padLeft.innerHTML = BB_SVGS.left;
+            const padRight = document.getElementById('pad-right');
+            if (padRight) padRight.innerHTML = BB_SVGS.right;
 
-        document.getElementById('legend-container').innerHTML = `
+            const legendContainer = document.getElementById('legend-container');
+            if (legendContainer) {
+                legendContainer.innerHTML = `
         <div class="legend-item"><div class="legend-dot">${BB_SVGS.forward}</div> Avancer</div>
         <div class="legend-item"><div class="legend-dot">${BB_SVGS.backward}</div> Reculer</div>
         <div class="legend-item"><div class="legend-dot">${BB_SVGS.left}</div> Gauche 90°</div>
         <div class="legend-item"><div class="legend-dot">${BB_SVGS.right}</div> Droite 90°</div>
     `;
+            }
+        });
 
         /* ================================================================
            LOGIQUE GLOBALE
@@ -2526,25 +2592,67 @@
 
 
         function shuffleArray(array) {
-            let currentIndex = array.length, randomIndex;
+            let newArr = [...array];
+            let currentIndex = newArr.length, randomIndex;
             while (currentIndex !== 0) {
                 randomIndex = Math.floor(Math.random() * currentIndex);
                 currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                [newArr[currentIndex], newArr[randomIndex]] = [newArr[randomIndex], newArr[currentIndex]];
             }
-            return array;
+            return newArr;
+        }
+
+        let drawerTriggerElement = null;
+
+
+        const trapListeners = new WeakMap();
+
+        function setupFocusTrap(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusableElements.length === 0) return;
+
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (!trapListeners.has(modal)) {
+                const listener = function(e) {
+                    if (e.key === 'Tab') {
+                        if (e.shiftKey) {
+                            if (document.activeElement === firstElement) {
+                                lastElement.focus();
+                                e.preventDefault();
+                            }
+                        } else {
+                            if (document.activeElement === lastElement) {
+                                firstElement.focus();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                };
+                modal.addEventListener('keydown', listener);
+                trapListeners.set(modal, listener);
+            }
+
+            // Focus first element on open
+            setTimeout(() => firstElement.focus(), 50);
         }
 
         function openMatsModal() {
+            drawerTriggerElement = document.activeElement;
             playSound('click');
             renderMatsGrid();
             document.getElementById('mats-drawer').classList.add('active');
             document.getElementById('mats-drawer-overlay').classList.add('active');
             document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'false');
             document.getElementById('mats-drawer').setAttribute('aria-hidden', 'false');
+            setupFocusTrap('mats-drawer');
         }
 
         function closeMatsModal() {
+            if (drawerTriggerElement) drawerTriggerElement.focus();
             playSound('click');
             document.getElementById('mats-drawer').classList.remove('active');
             document.getElementById('mats-drawer-overlay').classList.remove('active');
@@ -2613,8 +2721,17 @@
         }
 
         function generateMatContent(matId) {
+            if (matId === 'custom') {
+                if (!localStorage.getItem('bb_custom_mat_image')) {
+                    console.warn("Custom mat selected but no image uploaded.");
+                }
+                return;
+            }
             const config = MAT_CONFIG[matId];
-            if (!config) return;
+            if (!config) {
+                console.warn(`Unknown matId: ${matId}`);
+                return;
+            }
             if (config.baseContent) {
                 if (matId === 'shapes') {
                     const needed = GRID_ROWS * GRID_COLS;
@@ -2680,15 +2797,18 @@
         }
 
         function openSkinsModal() {
+            drawerTriggerElement = document.activeElement;
             playSound('click');
             renderSkinsList();
             document.getElementById('skins-drawer').classList.add('active');
             document.getElementById('skins-drawer-overlay').classList.add('active');
             document.getElementById('skins-drawer-overlay').setAttribute('aria-hidden', 'false');
             document.getElementById('skins-drawer').setAttribute('aria-hidden', 'false');
+            setupFocusTrap('skins-drawer');
         }
 
         function closeSkinsModal() {
+            if (drawerTriggerElement) drawerTriggerElement.focus();
             playSound('click');
             document.getElementById('skins-drawer').classList.remove('active');
             document.getElementById('skins-drawer-overlay').classList.remove('active');
@@ -2843,116 +2963,7 @@
         }
 
 
-        const MAT_CONFIG = {
-            'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
-            'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
-            'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
-            'emotions': {
-                name: 'Émotions et sentiments',
-                desc: 'Reconnaître et nommer les émotions.',
-                example: 'Comment te sens-tu aujourd\'hui ?',
-                icon: '🎭',
-                content: [
-                    '😀', '😢', '😡', '😨',
-                    '🤢', '😴', '🤔', '🤩',
-                    '😭', '🥳', '🥱', '🤐',
-                    '🤧', '🤒', '🤕', '🤑'
-                ]
-            },
-            'seasons': {
-                name: 'Saisons et météo',
-                desc: 'Les saisons et les différents types de météo.',
-                example: 'Quel temps fait-il aujourd\'hui ?',
-                icon: '☀️',
-                content: [
-                    '☀️', '🌧️', '⛅', '⛈️', '❄️',
-                    '⛄', '🍂', '🍁', '🌸', '🏖️',
-                    '🧥', '🧣', '🧤', '☂️', '🌈',
-                    '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
-                ]
-            },
-            'city': {
-                name: 'Cité',
-                desc: 'Thème ville et routes.',
-                example: 'Amène le robot au supermarché.',
-                icon: '🗺️'
-            },
-            'math': {
-                name: 'Calcul mental',
-                desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
-                example: 'Quel est le résultat de 5 + 7 ?',
-                icon: '🔢',
-                content: Array.from({ length: 101 }, (_, i) => i.toString())
-            },
-            'shapes': {
-                name: 'Couleurs et formes',
-                desc: 'Formes géométriques colorées.',
-                example: 'Trouve le carré rouge.',
-                icon: '🔵',
-                content: [],
-                baseContent: [
-                    // Simple shapes and primary/basic colors first
-                    '🔴', '🔵', '🟡', '🟩', '🟥', '🟦', '🟨', '🟢',
-                    // Secondary colors and simpler shapes
-                    '🟠', '🟣', '🟧', '🟪', '🔺', '🔻',
-                    // More complex colors/shapes
-                    '⚫', '⚪', '⬛', '⬜', '❤️', '💙', '💚', '💛',
-                    // Complex/less common shapes and colors
-                    '🔶', '🔷', '🔸', '🔹', '🟤', '🟫', '🤎', '🤍', '🩷', '🩵', '🖤', '🧡', '💜'
-                ]
-            },
-            'geo': {
-                name: 'Géographie',
-                desc: 'Drapeaux du monde.',
-                example: 'Dans quel pays se trouve Tokyo ?',
-                icon: '🌍',
-                content: [
-                    '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧', '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷',
-                    '🇸🇪', '🇳🇴', '🇺🇸', '🇨🇦', '🇲🇽', '🇨🇭', '🇨🇴', '🇦🇷', '🇯🇵', '🇰🇷',
-                    '🇧🇷', '🇿🇦', '🇦🇺', '🇳🇿', '🇨🇳', '🇮🇳', '🇪🇬', '🇲🇦', '🇸🇳', '🇰🇪',
-                    '🇷🇺', '🇹🇷', '🇵🇱', '🇩🇰', '🇫🇮', '🇮🇪', '🇨🇿', '🇭🇺', '🇷🇴', '🇧🇬',
-                    '🇷🇸', '🇭🇷', '🇸🇮', '🇸🇰', '🇺🇦', '🇨🇱', '🇵🇪', '🇻🇪', '🇺🇾', '🇵🇾',
-                    '🇧🇴', '🇪🇨', '🇨🇺', '🇯🇲', '🇭🇹', '🇩🇴', '🇵🇷', '🇲🇬', '🇳🇬', '🇬🇭',
-                    '🇨🇮', '🇨🇲', '🇩🇿', '🇹🇳', '🇱🇾', '🇸🇩', '🇪🇹', '🇸🇴', '🇹🇿', '🇺🇬',
-                    '🇷🇼', '🇿🇲', '🇿🇼', '🇲🇿', '🇦🇴', '🇳🇦', '🇧🇼', '🇲🇾', '🇮🇩', '🇵🇭',
-                    '🇹🇭', '🇻🇳', '🇲🇲', '🇰🇭', '🇱🇦', '🇸🇬', '🇧🇩', '🇵🇰', '🇮🇷', '🇮🇶',
-                    '🇸🇦', '🇦🇪', '🇶🇦', '🇰🇼', '🇴🇲', '🇾🇪', '🇸🇾', '🇯🇴', '🇱🇧', '🇮🇱'
-                ]
-            },
-            'time': {
-                name: 'Lecture de l\'heure',
-                desc: 'Wie spät ist es ?',
-                icon: '⌚',
-                content: [
-                    '🕛', '🕐', '🕑', '🕒', '🕓', '🕔',
-                    '🕕', '🕖', '🕗', '🕘', '🕙', '🕚',
-                    '🕧', '🕜', '🕝', '🕞', '🕟', '🕠',
-                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦'
-                ]
-            },
-            'fairy_tale': {
-                name: 'Conte personnalisable',
-                desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
-                icon: '🧚',
-                content: [],
-                baseContent: [
-                    '👸', '🐉', '🧙', '🏰', '🌲', '💎', '👑', '🦄', '⚔️', '🛡️',
-                    '🗝️', '📜', '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️', '🧛‍♂️', '🧟‍♀️',
-                    '🧞‍♀️', '🪞', '🍎', '🍄', '🌼', '🌈', '⭐', '🌙', '☀️', '☁️',
-                    '⚡', '🔥', '💧', '🌊', '❄️', '🌪️', '🤴', '🦹', '🦸', '🐺',
-                    '🕷️', '🕸️', '🦇', '🥀', '🌹', '🏹', '🪄', '🔮', '🧪', '🩸',
-                    '🦴', '☠️', '👻', '👽', '👾', '🤖', '🎃', '🎭', '🎨', '🎻',
-                    '🎺', '🪘', '🥁', '⛺', '🛶', '⛵', '⚓', '🧭', '🗺️', '🏔️',
-                    '🌋', '🏕️', '🛤️', '🪙', '💰', '💸', '🏺', '💍', '🦅', '🦆',
-                    '🦢', '🦩', '🦚', '🦜', '🐊', '🐢', '🦎', '🐍', '🦕', '🦖',
-                    '🐳', '🐬', '🦭', '🐟', '🐠', '🐡', '🦈', '🐙',
-                    '🦉', '🦔', '🐿️', '🦡', '🦦', '🪲', '🦋', '🐌', '🐞', '🐜',
-                    '🪶', '🪺', '🪹', '🪨', '🪵', '🪴', '🌾', '💐', '🌷', '🪷',
-                    '🏵️', '🌸', '🌺', '🌻', '🪻', '🍄‍🟫', '🪸', '🪼',
-                    '🦀', '🦞', '🦐', '🦑', '🦪', '🐚'
-                ]
-            }
-        };
+
         let activeMat = localStorage.getItem('bb_active_mat') || 'none';
         generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
@@ -2985,25 +2996,7 @@
             }
         }
 
-        const SKIN_CONFIG = {
-            'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le robot que tu connais bien.' },
-            'beebot': { name: 'Bee-Bot', obstacle: '🌳', target: '🌻', desc: 'Utilise "Reculer" au moins une fois pour atteindre le trésor.' },
-            'thymio': { name: 'Thymio', obstacle: '🚧', target: '✏️', desc: 'Réussis un décodage (moyen) du premier coup.' },
-            'space': { name: 'Rocket', obstacle: '☄️', target: '💎', desc: 'Gagne un pilotage moyen pour débloquer.' },
-            'pirate': { name: 'Vaisseau pirate', obstacle: '🐙', target: '🪙', desc: 'Atteint le trésor du premier coup en utilisant plus de 10 instructions.' },
-            'f1': { name: 'Formule 1', obstacle: '🛞', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
-            'unicorn': { name: 'Licorne magique', obstacle: '⛈️', target: '🧁', desc: 'Tête qui tourne : Mystère...', hidden: true },
-            'train': { name: 'Loco', obstacle: '🛑', target: '🚉', desc: 'Parcours un total de 100 cases.' },
-            'volcano': {
-                name: 'Le sol est EN FEU !!!',
-                obstacle: '🧊',
-                target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coinGrad)"/><circle cx="70" cy="30" r="9" fill="url(#coinGrad)"/><circle cx="20" cy="55" r="8" fill="url(#coinGrad)"/><circle cx="80" cy="65" r="11" fill="url(#coinGrad)"/><circle cx="45" cy="75" r="12" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coinGrad)"/><circle cx="65" cy="50" r="13" fill="url(#coinGrad)"/><circle cx="35" cy="60" r="12" fill="url(#coinGrad)"/><circle cx="60" cy="70" r="9" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coinGrad)" filter="url(#goldGlow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#goldGlow)"/></g></g></svg>`,
-                desc: 'Réussis un décodage (extrême) du premier coup.'
-            },
-            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '👾', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
-            'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
-            'helicopter': { name: 'Hélicoptère', obstacle: '☁️', target: '🏥', desc: "Utilise un tapis." }
-        };
+
 
         let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
         let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
@@ -5254,6 +5247,44 @@
     <script>lucide.createIcons();</script>
     <script>
         window.addEventListener('load', () => {
+
+        // Tab key navigation
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tablist = document.querySelector('.tabs[role="tablist"]');
+        if (tablist && tabBtns.length > 0) {
+            tablist.addEventListener('keydown', (e) => {
+                const isLeft = e.key === 'ArrowLeft';
+                const isRight = e.key === 'ArrowRight';
+
+                if (isLeft || isRight) {
+                    e.preventDefault();
+                    let activeIndex = Array.from(tabBtns).findIndex(btn => btn === document.activeElement);
+                    if (activeIndex === -1) {
+                        activeIndex = Array.from(tabBtns).findIndex(btn => btn.classList.contains('active'));
+                    }
+                    if (activeIndex === -1) activeIndex = 0;
+
+                    let newIndex;
+                    if (isLeft) {
+                        newIndex = activeIndex === 0 ? tabBtns.length - 1 : activeIndex - 1;
+                    } else {
+                        newIndex = activeIndex === tabBtns.length - 1 ? 0 : activeIndex + 1;
+                    }
+
+                    tabBtns[newIndex].focus();
+                    // Optionally activate on focus: tabBtns[newIndex].click();
+                }
+            });
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => {
+                        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+                    });
+                });
+            });
+        }
+
             initApplication();
 
             // Drawers Escape key to close
