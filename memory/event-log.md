@@ -29,3 +29,7 @@
 - **[2026-04-26]** [Gamification] Added new robot skins (Pirate-Bot, F1, Locomotive) and related easter eggs/rewards to Blue-Bot Simulator.
 - **[2026-04-29]** [System] Updated `JULES.md` to restrict file modification tools to `write_to_file` only, prohibiting `replace_file_content`.
 - **[2026-04-29]** [Bugfix] Fixed grid dimensions for 'Reading time' mat in Blue-Bot simulator (forced 4x6 instead of 6x6).
+- **[2026-04-29]** [UI/UX] Added standard footers to alpha webapps and improved overall responsiveness and layout constraints for desktop vs mobile.
+- **[2026-04-30]** [UX/Gamification] Enhanced Simulateur Blue-Bot: added toggle to hide entered commands, added end execution content container.
+- **[2026-04-30]** [Testing] Added comprehensive E2E tests for `ScoreManager`.
+- **[2026-04-30]** [UI/UX] Standardized header icons across all web applications and optimized layout for interactive whiteboards (TBIs).
