@@ -43,6 +43,12 @@ const ScoreManager = {
         return (difficulty === null || difficulty === undefined) ? this._NO_DIFF : String(difficulty);
     },
 
+    _escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
     init(appId) {
         this.appId = appId;
         this.loadStats();
@@ -289,7 +295,7 @@ const ScoreManager = {
 
         let html = '';
         for (const mode in this.stats) {
-            const modeName = this.MODE_LABELS[mode] || mode;
+            const modeName = this.MODE_LABELS[mode] || this._escapeHtml(mode);
             const diffs = Object.keys(this.stats[mode]);
 
             // Aggregation for the chart
@@ -349,7 +355,7 @@ const ScoreManager = {
                 for (const diff in this.stats[mode]) {
                     if (diff === this._NO_DIFF) continue;
                     const st = this.stats[mode][diff];
-                    const diffName = this.DIFF_LABELS[diff] || diff;
+                    const diffName = this.DIFF_LABELS[diff] || this._escapeHtml(diff);
 
                     html += `<tr>
                                 <td><strong>${diffName}</strong></td>
