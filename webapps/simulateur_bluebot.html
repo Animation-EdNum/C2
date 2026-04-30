@@ -2357,9 +2357,17 @@
                     <div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>
                 </div>
 
+                <div id="sim-end-container" style="display: none; margin-top: 15px;">
+                    <div style="font-size: 0.9em; margin-bottom: 5px; color: var(--text-color); opacity: 0.8; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Éléments atteints :</span>
+                        <button id="btn-clear-end" class="btn btn-outline" style="padding: 2px 8px; font-size: 0.8em;">Effacer</button>
+                    </div>
+                    <div class="program-strip" id="sim-end-content" style="background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 50px;">
+                        <div class="empty-program" id="sim-end-empty">Le robot n'a encore rien atteint...</div>
+                    </div>
+                </div>
+
                 <div class="controls">
-                    <button class="btn btn-check" id="btnRun" title="Ex&eacute;cuter">▶ GO</button>
-                    <button class="btn btn-clear" id="btnClear">🗑 Effacer (X)</button>
                     <button class="btn btn-outline" id="btnReset" title="Placer l'automate à une position aléatoire">🎲
                         Position aléatoire</button>
                 </div>
@@ -2614,6 +2622,14 @@
 
         function generateMatContent(matId) {
             const config = MAT_CONFIG[matId];
+            const endContainer = document.getElementById('sim-end-container');
+            if (endContainer) {
+                if (config && config.content) {
+                    endContainer.style.display = 'block';
+                } else {
+                    endContainer.style.display = 'none';
+                }
+            }
             if (!config) return;
             if (config.baseContent) {
                 if (matId === 'shapes') {
@@ -4508,14 +4524,27 @@
                     simState.firstAttempt = false; // Exécution sans succès
                     showToast('Exécution terminée !', true);
                 }
+
+                // Ajouter le contenu de la case atteinte à la fin de l'exécution
+                if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                    const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
+                    if (cell && cell.textContent.trim()) {
+                        const endContent = document.getElementById('sim-end-content');
+                        const emptyEnd = document.getElementById('sim-end-empty');
+                        if (emptyEnd) emptyEnd.style.display = 'none';
+                        const el = document.createElement('div');
+                        el.className = 'program-cmd';
+                        el.textContent = cell.textContent.trim();
+                        endContent.appendChild(el);
+                    }
+                }
             }
             simState.running = false; toggleCmdButtons(false);
         }
 
         function toggleCmdButtons(disabled) {
             document.querySelectorAll('#sim-cmd-pad .cmd-btn').forEach(b => b.disabled = disabled);
-            document.getElementById('btnRun').disabled = disabled;
-            document.getElementById('btnClear').disabled = disabled;
+            document.getElementById('btnReset').disabled = disabled;
         }
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -5022,9 +5051,19 @@
 
         document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
 
-        document.getElementById('btnClear').addEventListener('click', clearProgram);
-        document.getElementById('btnRun').addEventListener('click', runProgram);
         document.getElementById('btnReset').addEventListener('click', randomizeSimulatorPosition);
+
+        const btnClearEnd = document.getElementById('btn-clear-end');
+        if (btnClearEnd) {
+            btnClearEnd.addEventListener('click', () => {
+                const endContent = document.getElementById('sim-end-content');
+                const emptyEnd = document.getElementById('sim-end-empty');
+                if (endContent) {
+                    Array.from(endContent.querySelectorAll('.program-cmd')).forEach(el => el.remove());
+                }
+                if (emptyEnd) emptyEnd.style.display = 'block';
+            });
+        }
 
         document.getElementById('btn-place-elements').addEventListener('click', () => {
             placeRandomSimTarget();
