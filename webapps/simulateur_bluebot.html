@@ -1084,6 +1084,42 @@
             position: relative;
         }
 
+        .program-strip.masked .empty-program {
+            opacity: 0;
+        }
+
+        .program-strip.masked .program-cmd svg {
+            display: none !important;
+        }
+
+        .program-strip.masked .program-cmd {
+            background: var(--text-muted) !important;
+            box-shadow: 0 2px 0 var(--border-color) !important;
+        }
+
+        .program-strip.masked .program-cmd:hover:not(.active-step):not(.error-step) {
+            background: var(--error) !important;
+            box-shadow: 0 2px 0 #991b1b !important;
+        }
+
+        .program-strip.masked .program-cmd:hover:not(.active-step):not(.error-step)::after {
+            content: '×';
+            font-size: 24px;
+            display: block;
+            position: absolute;
+            color: white;
+            font-weight: bold;
+        }
+
+        .program-strip.masked .program-cmd::after {
+            content: "?";
+            display: block;
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
         .program-cmd {
             width: 34px;
             height: 34px;
@@ -2227,11 +2263,6 @@
                             <i data-lucide="volume-x" id="icon-vol-off"></i>
                             <span id="audioToggleText">Activer le son</span>
                         </button>
-                        <button class="menu-item-btn" id="hideCmdToggleBtn" aria-label="Masquer/Afficher les commandes">
-                            <i data-lucide="eye-off" id="icon-eye-off"></i>
-                            <i data-lucide="eye" id="icon-eye" style="display:none;"></i>
-                            <span id="hideCmdToggleText">Masquer les commandes</span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -2286,6 +2317,14 @@
 
                 <div class="program-strip" id="sim-program">
                     <div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: -5px; margin-bottom: 10px;">
+                    <button id="hideCmdToggleBtn" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8em; display: flex; align-items: center; gap: 5px; background-color: var(--card-bg);" aria-label="Masquer/Afficher les commandes">
+                        <i data-lucide="eye-off" id="icon-eye-off" style="width: 14px; height: 14px;"></i>
+                        <i data-lucide="eye" id="icon-eye" style="display:none; width: 14px; height: 14px;"></i>
+                        <span id="hideCmdToggleText">Masquer commandes</span>
+                    </button>
                 </div>
 
                 <div id="sim-end-container" style="display: none; margin-top: 15px;">
@@ -3495,13 +3534,13 @@
             if (commandsVisible) {
                 if (iconEyeOff) iconEyeOff.style.display = 'block';
                 if (iconEye) iconEye.style.display = 'none';
-                if (toggleText) toggleText.textContent = 'Masquer les commandes';
-                if (simProgram) simProgram.style.display = 'flex';
+                if (toggleText) toggleText.textContent = 'Masquer commandes';
+                if (simProgram) simProgram.classList.remove('masked');
             } else {
                 if (iconEyeOff) iconEyeOff.style.display = 'none';
                 if (iconEye) iconEye.style.display = 'block';
-                if (toggleText) toggleText.textContent = 'Afficher les commandes';
-                if (simProgram) simProgram.style.display = 'none';
+                if (toggleText) toggleText.textContent = 'Afficher commandes';
+                if (simProgram) simProgram.classList.add('masked');
             }
         }
 
