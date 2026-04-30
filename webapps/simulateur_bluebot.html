@@ -450,22 +450,25 @@
             pointer-events: none;
         }
 
-        .trail-rainbow-particle {
+        .trail-glitter-particle {
             pointer-events: none;
-            opacity: 0.8;
-            filter: drop-shadow(0 0 3px currentColor);
-            animation: rainbowFade 2s forwards;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 2px currentColor);
+            animation: unicornGlitter 1.5s ease-out forwards;
         }
 
-        @keyframes rainbowFade {
+        @keyframes unicornGlitter {
             0% {
-                opacity: 0.8;
-                transform: scale(1);
+                opacity: 0.9;
+                transform: translate(0, 0) scale(1) rotate(0deg);
             }
-
+            50% {
+                opacity: 1;
+                transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(180deg);
+            }
             100% {
                 opacity: 0;
-                transform: scale(0.2);
+                transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) * 1.5)) scale(0.2) rotate(360deg);
             }
         }
 
@@ -4209,18 +4212,70 @@
                     endLeaf.setAttribute("transform", `translate(${pt.x}, ${pt.y}) rotate(${angle - side / 2}) scale(1.0)`);
                     layer.appendChild(endLeaf);
                 } else if (activeSkin === 'unicorn') {
-                    // Trace Arc-en-ciel
-                    const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
+                    // Trace Paillettes magiques
+                    const colors = ['#FFB6C1', '#87CEEB', '#FFFACD', '#E6E6FA', '#FF69B4', '#00FFFF', '#FFD700'];
+
+                    // Determine target position based on mode
+                    let tgtR = null, tgtC = null;
+                    if (containerId === 'sim-grid' && typeof simState !== 'undefined' && simState.targetRow !== null) {
+                        tgtR = simState.targetRow; tgtC = simState.targetCol;
+                    } else if (containerId === 'chal-grid' && typeof chalState !== 'undefined' && chalState.targetRow !== null) {
+                        tgtR = chalState.targetRow; tgtC = chalState.targetCol;
+                    } else if (containerId === 'read-grid' && typeof readState !== 'undefined' && readState.targetRow !== null) {
+                        tgtR = readState.targetRow; tgtC = readState.targetCol;
+                    }
+
+                    let targetPt = null;
+                    if (tgtR !== null && tgtC !== null) {
+                        targetPt = this._getCenter(tgtR, tgtC);
+                    }
+
                     for (let i = 0; i < 8; i++) {
-                        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        c.setAttribute("class", "trail-rainbow-particle");
-                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 24);
-                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 24);
-                        c.setAttribute("r", 3 + Math.random() * 4);
-                        c.setAttribute("fill", colors[Math.floor(Math.random() * colors.length)]);
-                        c.style.color = c.getAttribute("fill");
-                        layer.appendChild(c);
-                        setTimeout(() => { if (layer.contains(c)) layer.removeChild(c); }, 2000);
+                        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                        g.setAttribute("class", "trail-glitter-particle");
+
+                        // Create 4-point star using a path
+                        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        const size = 3 + Math.random() * 4;
+                        // Draw a star centered at 0,0
+                        path.setAttribute("d", `M 0 -${size} Q 0 0 ${size} 0 Q 0 0 0 ${size} Q 0 0 -${size} 0 Q 0 0 0 -${size} Z`);
+
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        path.setAttribute("fill", color);
+                        g.style.color = color;
+
+                        g.appendChild(path);
+
+                        // Calculate initial position
+                        const startX = pt.x + (Math.random() - 0.5) * 24;
+                        const startY = pt.y + (Math.random() - 0.5) * 24;
+
+                        // Determine movement vector
+                        let tx = 0, ty = 0;
+                        if (targetPt) {
+                            // Shoot towards target
+                            const dx = targetPt.x - startX;
+                            const dy = targetPt.y - startY;
+                            const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                            const speed = 30 + Math.random() * 40; // Pixels to travel
+                            tx = (dx / dist) * speed + (Math.random() - 0.5) * 20; // Add some spread
+                            ty = (dy / dist) * speed + (Math.random() - 0.5) * 20;
+                        } else {
+                            // Shoot outwards randomly
+                            const angle = Math.random() * Math.PI * 2;
+                            const speed = 30 + Math.random() * 40;
+                            tx = Math.cos(angle) * speed;
+                            ty = Math.sin(angle) * speed;
+                        }
+
+                        // Apply starting transform
+                        g.setAttribute("transform", `translate(${startX}, ${startY})`);
+                        // Set CSS variables for animation end state
+                        g.style.setProperty('--tx', `${tx}px`);
+                        g.style.setProperty('--ty', `${ty}px`);
+
+                        layer.appendChild(g);
+                        setTimeout(() => { if (layer.contains(g)) layer.removeChild(g); }, 1500);
                     }
                 }
             },
