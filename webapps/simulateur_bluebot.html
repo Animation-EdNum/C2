@@ -2301,6 +2301,11 @@
                             <i data-lucide="volume-x" id="icon-vol-off"></i>
                             <span id="audioToggleText">Activer le son</span>
                         </button>
+                        <button class="menu-item-btn" id="hideCmdToggleBtn" aria-label="Masquer/Afficher les commandes">
+                            <i data-lucide="eye-off" id="icon-eye-off"></i>
+                            <i data-lucide="eye" id="icon-eye" style="display:none;"></i>
+                            <span id="hideCmdToggleText">Masquer les commandes</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3481,6 +3486,31 @@
         let readGlobalStreak = 0;
 
         let currentSpeed = 900;
+
+        let commandsVisible = true;
+
+        function toggleCommands() {
+            playSound('click');
+            commandsVisible = !commandsVisible;
+
+            const iconEyeOff = document.getElementById('icon-eye-off');
+            const iconEye = document.getElementById('icon-eye');
+            const toggleText = document.getElementById('hideCmdToggleText');
+
+            const simProgram = document.getElementById('sim-program');
+
+            if (commandsVisible) {
+                if (iconEyeOff) iconEyeOff.style.display = 'block';
+                if (iconEye) iconEye.style.display = 'none';
+                if (toggleText) toggleText.textContent = 'Masquer les commandes';
+                if (simProgram) simProgram.style.display = 'flex';
+            } else {
+                if (iconEyeOff) iconEyeOff.style.display = 'none';
+                if (iconEye) iconEye.style.display = 'block';
+                if (toggleText) toggleText.textContent = 'Afficher les commandes';
+                if (simProgram) simProgram.style.display = 'none';
+            }
+        }
 
         function toggleSpeed() {
             playSound('click');
@@ -5039,6 +5069,7 @@
         document.getElementById('btn-close-skins').addEventListener('click', closeSkinsModal);
         document.getElementById('skins-drawer-overlay').addEventListener('click', closeSkinsModal);
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
+        document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
 
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
         document.getElementById('tab-challenge').addEventListener('click', (e) => switchTab(e, 'challenge'));
