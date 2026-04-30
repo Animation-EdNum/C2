@@ -2739,7 +2739,7 @@
             let tempState = { robotRow: state.startRow, robotCol: state.startCol, robotDir: state.startDir, obstacles: state.obstacles };
             for (let i = 0; i <= maxIndex; i++) {
                 let cmd = state.program[i];
-                let res = moveRobot(tempState, cmd, false);
+                let res = moveRobot(tempState, cmd);
                 if (res.robotRow !== tempState.robotRow || res.robotCol !== tempState.robotCol) {
                     TrailManager.addSegment(containerId, res.robotRow, res.robotCol);
                 }
@@ -2952,88 +2952,31 @@
         generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
+        const MAT_GRID_CONSTRAINTS = {
+            'alphabet': { cols: 6, rows: 6 },
+            'time':     { cols: 6, rows: 4 },
+            'emotions': { cols: 4, rows: 4 },
+            'seasons':  { cols: 5, rows: 4 },
+            'city':     { cols: 8, rows: 8 },
+        };
+
         function updateGridSizeSlidersState() {
-            const restrictedMats = ['alphabet'];
-            const isRestricted = restrictedMats.includes(activeMat);
-            const isCityMat = activeMat === 'city';
-            const isTimeMat = activeMat === 'time';
-            const isEmotionsMat = activeMat === 'emotions';
-            const isSeasonsMat = activeMat === 'seasons';
-            const gridColsSlider = document.getElementById('gridColsSlider');
-            const gridRowsSlider = document.getElementById('gridRowsSlider');
+            if (!gridColsSlider || !gridRowsSlider) return;
+            const constraint = MAT_GRID_CONSTRAINTS[activeMat];
+            const locked = !!constraint;
+            const title = locked ? `Taille fixe de ${constraint.cols}x${constraint.rows} pour ce tapis` : '';
 
-            if (gridColsSlider && gridRowsSlider) {
-                if (isRestricted) {
-                    gridColsSlider.disabled = true;
-                    gridRowsSlider.disabled = true;
-                    gridColsSlider.parentElement.style.opacity = '0.5';
-                    gridRowsSlider.parentElement.style.opacity = '0.5';
-                    gridColsSlider.parentElement.title = "Taille fixe de 6x6 pour ce tapis";
-                    gridRowsSlider.parentElement.title = "Taille fixe de 6x6 pour ce tapis";
+            gridColsSlider.disabled = locked;
+            gridRowsSlider.disabled = locked;
+            gridColsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
+            gridRowsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
+            gridColsSlider.parentElement.title = title;
+            gridRowsSlider.parentElement.title = title;
 
-                    if (GRID_COLS !== 6 || GRID_ROWS !== 6) {
-                        gridColsSlider.value = 6;
-                        gridRowsSlider.value = 6;
-                        onGridSizeChanged();
-                    }
-                } else if (isTimeMat) {
-                    gridRowsSlider.disabled = true;
-                    gridColsSlider.disabled = true;
-                    gridRowsSlider.parentElement.style.opacity = '0.5';
-                    gridColsSlider.parentElement.style.opacity = '0.5';
-                    gridRowsSlider.parentElement.title = "Taille fixe de 6x4 pour ce tapis";
-                    gridColsSlider.parentElement.title = "Taille fixe de 6x4 pour ce tapis";
-                    if (GRID_COLS !== 6 || GRID_ROWS !== 4) {
-                        gridColsSlider.value = 6;
-                        gridRowsSlider.value = 4;
-                        onGridSizeChanged();
-                    }
-                } else if (isEmotionsMat) {
-                    gridRowsSlider.disabled = true;
-                    gridColsSlider.disabled = true;
-                    gridRowsSlider.parentElement.style.opacity = '0.5';
-                    gridColsSlider.parentElement.style.opacity = '0.5';
-                    gridRowsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
-                    gridColsSlider.parentElement.title = "Taille fixe de 4x4 pour ce tapis";
-                    if (GRID_COLS !== 4 || GRID_ROWS !== 4) {
-                        gridColsSlider.value = 4;
-                        gridRowsSlider.value = 4;
-                        onGridSizeChanged();
-                    }
-                } else if (isSeasonsMat) {
-                    gridColsSlider.disabled = true;
-                    gridRowsSlider.disabled = true;
-                    gridColsSlider.parentElement.style.opacity = '0.5';
-                    gridRowsSlider.parentElement.style.opacity = '0.5';
-                    gridColsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
-                    gridRowsSlider.parentElement.title = "Taille fixe de 5x4 pour ce tapis";
-
-                    if (GRID_COLS !== 5 || GRID_ROWS !== 4) {
-                        gridColsSlider.value = 5;
-                        gridRowsSlider.value = 4;
-                        onGridSizeChanged();
-                    }
-                } else if (isCityMat) {
-                    gridColsSlider.disabled = true;
-                    gridRowsSlider.disabled = true;
-                    gridColsSlider.parentElement.style.opacity = '0.5';
-                    gridRowsSlider.parentElement.style.opacity = '0.5';
-                    gridColsSlider.parentElement.title = "Taille fixe de 8x8 pour ce tapis";
-                    gridRowsSlider.parentElement.title = "Taille fixe de 8x8 pour ce tapis";
-
-                    if (GRID_COLS !== 8 || GRID_ROWS !== 8) {
-                        gridColsSlider.value = 8;
-                        gridRowsSlider.value = 8;
-                        onGridSizeChanged();
-                    }
-                } else {
-                    gridColsSlider.disabled = false;
-                    gridRowsSlider.disabled = false;
-                    gridColsSlider.parentElement.style.opacity = '1';
-                    gridRowsSlider.parentElement.style.opacity = '1';
-                    gridColsSlider.parentElement.title = "";
-                    gridRowsSlider.parentElement.title = "";
-                }
+            if (locked && (GRID_COLS !== constraint.cols || GRID_ROWS !== constraint.rows)) {
+                gridColsSlider.value = constraint.cols;
+                gridRowsSlider.value = constraint.rows;
+                onGridSizeChanged();
             }
         }
 
@@ -3056,11 +2999,6 @@
             'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
             'helicopter': { name: 'Hélicoptère', obstacle: '☁️', target: '🏥', desc: "Utilise un tapis." }
         };
-
-        function launchMatrix() {
-            // Effet Matrix simple sur le toast ou la grille
-            showToast('WELCOME TO THE MATRIX 🕶️', true);
-        }
 
         let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
         let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
@@ -3716,32 +3654,6 @@
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
                     cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isObstacle ? SKIN_CONFIG[activeSkin].name + ' Obstacle' : 'Vide'}`);
-
-                    // Allow dropping onto cells
-                    cell.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                    });
-
-                    cell.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        const isSimObstacle = simState.obstacles && simState.obstacles.some(o => o.r === r && o.c === c);
-                        const isSimTarget = simState.targetRow === r && simState.targetCol === c;
-
-                        if (containerId === 'sim-grid' && !simState.running && !isSimObstacle) {
-                            playSound('click');
-                            simState.robotRow = r;
-                            simState.robotCol = c;
-                            simState.startRow = r;
-                            simState.startCol = c;
-                            simState.startDir = simState.robotDir;
-                            resetSimulatorPosition();
-
-                            if (isSimTarget) {
-                                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', true, true);
-                                placeRandomSimTarget(true);
-                            }
-                        }
-                    });
 
                     row.appendChild(cell);
                 }
@@ -4441,18 +4353,23 @@
             if (simState.program.length === 0) {
                 strip.innerHTML = '<div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>'; return;
             }
-            strip.innerHTML = simState.program.map((cmd, i) => {
-                let stateClass = '';
-                if (i === simState.stepIndex) {
-                    stateClass = simState.failed ? 'error-step' : 'active-step';
-                }
-                return `<div class="program-cmd ${stateClass}" tabindex="0" data-index="${i}" title="Cliquer pour supprimer">${BB_SVGS[cmd]}</div>`;
-            }).join('');
+            strip.innerHTML = simState.program.map((cmd, i) =>
+                `<div class="program-cmd" tabindex="0" data-index="${i}" title="Cliquer pour supprimer">${BB_SVGS[cmd]}</div>`
+            ).join('');
         }
 
-        function moveRobot(state, cmd, isRealMove = false) {
+        function renderProgramStep() {
+            const strip = document.getElementById('sim-program');
+            for (const el of strip.querySelectorAll('.active-step, .error-step')) {
+                el.classList.remove('active-step', 'error-step');
+            }
+            if (simState.stepIndex >= 0 && strip.children[simState.stepIndex]) {
+                strip.children[simState.stepIndex].classList.add(simState.failed ? 'error-step' : 'active-step');
+            }
+        }
+
+        function moveRobot(state, cmd) {
             let { robotRow: r, robotCol: c, robotDir: d, obstacles } = state;
-            let moved = false;
             if (cmd === 'left') { d = (d + 3) % 4; }
             else if (cmd === 'right') { d = (d + 1) % 4; }
             else {
@@ -4462,17 +4379,8 @@
                 if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
                     if (obstacles && obstacles.some(o => o.r === nr && o.c === nc)) return { ...state, robotDir: d, blocked: true };
                     r = nr; c = nc;
-                    moved = true;
                 } else { return { ...state, robotDir: d, blocked: true }; }
             }
-
-            if (moved && isRealMove) {
-                let totalSteps = parseInt(localStorage.getItem('bb_total_steps') || '0');
-                totalSteps++;
-                localStorage.setItem('bb_total_steps', totalSteps);
-                if (totalSteps >= 100) unlockSkin('train');
-            }
-
             return { ...state, robotRow: r, robotCol: c, robotDir: d, blocked: false };
         }
 
@@ -4486,19 +4394,20 @@
             TrailManager.clear('sim-grid');
             TrailManager.captureInitialState('sim-grid', simState.robotRow, simState.robotCol, simState.robotDir);
 
+            let stepsThisRun = 0;
             for (let i = 0; i < simState.program.length; i++) {
-                simState.stepIndex = i; renderProgram();
+                simState.stepIndex = i; renderProgramStep();
                 const cmd = simState.program[i];
 
-                const result = moveRobot(simState, cmd, true);
+                const result = moveRobot(simState, cmd);
                 simState.robotRow = result.robotRow; simState.robotCol = result.robotCol; simState.robotDir = result.robotDir;
+                if (!result.blocked && (cmd === 'forward' || cmd === 'backward')) stepsThisRun++;
 
-                // Déplacer le robot d'abord (déclenche la transition CSS)
                 renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
 
                 if (result.blocked) {
                     playSound('error');
-                    simState.failed = true; simState.firstAttempt = false; renderProgram();
+                    simState.failed = true; simState.firstAttempt = false; renderProgramStep();
                     simState.consecutiveMistakes++;
                     ScoreManager.addMistake('simulator', null);
                     if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
@@ -4523,8 +4432,14 @@
                 await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
             }
 
+            if (stepsThisRun > 0) {
+                const totalSteps = (parseInt(localStorage.getItem('bb_total_steps') || '0')) + stepsThisRun;
+                localStorage.setItem('bb_total_steps', totalSteps);
+                if (totalSteps >= 100) unlockSkin('train');
+            }
+
             if (!simState.failed) {
-                simState.stepIndex = -1; renderProgram();
+                simState.stepIndex = -1; renderProgramStep();
 
                 if (simState.targetRow !== null && simState.robotRow === simState.targetRow && simState.robotCol === simState.targetCol) {
                     playSound('success');
@@ -4532,7 +4447,7 @@
                     if (activeSkin === 'volcano') {
                         launchFire();
                     } else if (activeSkin === 'cyberbot') {
-                        launchMatrix();
+                        showToast('WELCOME TO THE MATRIX 🕶️', true);
                     } else {
                         launchConfetti();
                     }
@@ -4847,7 +4762,7 @@
                 let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
                 TrailManager.captureInitialState('read-grid', currR, currC, currD);
                 for (const cmd of readState.program) {
-                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd, true);
+                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd);
                     currR = res.robotRow; currC = res.robotCol; currD = res.robotDir;
                     renderRobot('read-grid', 'read-robot', currR, currC, currD);
 
@@ -4943,7 +4858,7 @@
             renderRobot('chal-grid', 'chal-robot', r, c, d);
 
             for (const cmd of option.cmds) {
-                const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd, true);
+                const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd);
                 r = result.robotRow; c = result.robotCol; d = result.robotDir;
 
                 // Déplacer le robot d'abord (déclenche la transition CSS)
@@ -5074,19 +4989,11 @@
             updateCustomMatUI();
 
             // Additional initializations
-            if (typeof ScoreManager !== 'undefined') {
-                ScoreManager.init('simulateur_bluebot');
-                updateExtremeVisibility();
-            }
+            ScoreManager.init('simulateur_bluebot');
+            updateExtremeVisibility();
 
-            if (activeSkin === 'pirate') {
-                if (typeof startOceanRipples === 'function') {
-                    startOceanRipples();
-                }
-            }
+            if (activeSkin === 'pirate') startOceanRipples();
         }
-
-        // Événements
 
         document.getElementById('btn-open-mats').addEventListener('click', openMatsModal);
         document.getElementById('btn-close-mats').addEventListener('click', closeMatsModal);
@@ -5113,7 +5020,6 @@
 
         document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
 
-        // Simulator controls
         document.getElementById('btnClear').addEventListener('click', clearProgram);
         document.getElementById('btnRun').addEventListener('click', runProgram);
         document.getElementById('btnReset').addEventListener('click', randomizeSimulatorPosition);
@@ -5126,7 +5032,27 @@
 
 
 
-        // Delegation pour les elements dynamiques
+        document.getElementById('sim-grid').addEventListener('dragover', (e) => { e.preventDefault(); });
+        document.getElementById('sim-grid').addEventListener('drop', (e) => {
+            e.preventDefault();
+            const cell = e.target.closest('.bot-cell');
+            if (!cell || simState.running) return;
+            const r = parseInt(cell.dataset.row);
+            const c = parseInt(cell.dataset.col);
+            const isSimObstacle = simState.obstacles && simState.obstacles.some(o => o.r === r && o.c === c);
+            if (isSimObstacle) return;
+            const isSimTarget = simState.targetRow === r && simState.targetCol === c;
+            playSound('click');
+            simState.robotRow = r; simState.robotCol = c;
+            simState.startRow = r; simState.startCol = c;
+            simState.startDir = simState.robotDir;
+            resetSimulatorPosition();
+            if (isSimTarget) {
+                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', true, true);
+                placeRandomSimTarget(true);
+            }
+        });
+
         document.getElementById('sim-program').addEventListener('click', (e) => {
             const cmdEl = e.target.closest('.program-cmd');
             if (cmdEl) removeSpecificCmd(parseInt(cmdEl.dataset.index));
@@ -5137,7 +5063,6 @@
             if (optEl) pickOption(parseInt(optEl.dataset.index));
         });
 
-        // Read Events
         document.getElementById('read-diff-easy').addEventListener('click', () => setReadDifficulty('easy'));
         document.getElementById('read-diff-medium').addEventListener('click', () => setReadDifficulty('medium'));
         document.getElementById('read-diff-hard').addEventListener('click', () => setReadDifficulty('hard'));
@@ -5159,7 +5084,6 @@
             if (skinId) selectSkin(skinId);
         });
 
-        // Pad controls
         ['fwd', 'bwd', 'left', 'right'].forEach(cmd => {
             const id = 'pad-' + cmd;
             const fullCmd = cmd === 'fwd' ? 'forward' : (cmd === 'bwd' ? 'backward' : cmd);
@@ -5168,7 +5092,6 @@
         document.getElementById('pad-go').addEventListener('click', runProgram);
         document.getElementById('pad-clear').addEventListener('click', clearProgram);
 
-        // Mat Opacity
         const matOpacitySlider = document.getElementById('matOpacitySlider');
         const matOpacityValue = document.getElementById('matOpacityValue');
         let savedOpacity = localStorage.getItem('bb_mat_opacity');
@@ -5196,29 +5119,22 @@
             }, { passive: true });
         }
 
-        // Grid Size Sliders
+        let _gridSizeDebounce = null;
         function onGridSizeChanged() {
             GRID_COLS = parseInt(gridColsSlider.value);
             GRID_ROWS = parseInt(gridRowsSlider.value);
             gridSizeValue.textContent = `${GRID_COLS}x${GRID_ROWS}`;
-
-            // Re-randomize the simulator position with new sizes
-            simState.obstacles = [];
-            simState.targetRow = null;
-            simState.targetCol = null;
-
-            generateMatContent(activeMat);
-            buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
-            randomizeSimulatorPosition();
-
-            // If in challenge or read modes, reset them
-            if (typeof activeTab !== 'undefined') {
-                if (activeTab === 'challenge') {
-                    newChallenge();
-                } else if (activeTab === 'read') {
-                    newReadChallenge();
-                }
-            }
+            clearTimeout(_gridSizeDebounce);
+            _gridSizeDebounce = setTimeout(() => {
+                simState.obstacles = [];
+                simState.targetRow = null;
+                simState.targetCol = null;
+                generateMatContent(activeMat);
+                buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
+                randomizeSimulatorPosition();
+                if (activeTab === 'challenge') newChallenge();
+                else if (activeTab === 'read') newReadChallenge();
+            }, 200);
         }
 
         if (gridColsSlider && gridRowsSlider) {
