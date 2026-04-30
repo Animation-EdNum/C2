@@ -45,18 +45,6 @@
         setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
     };
 
-    // Enregistrement global du Service Worker (PWA hors-ligne)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            const isRoot = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
-            const swPath = isRoot ? './sw.js' : '../sw.js';
-            navigator.serviceWorker.register(swPath).then(registration => {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }).catch(err => {
-                console.log('ServiceWorker registration failed: ', err);
-            });
-        });
-    }
 
     // Gestion des événements du Header
     document.addEventListener('DOMContentLoaded', () => {
@@ -101,10 +89,8 @@ if ('serviceWorker' in navigator) {
             rootPath = '../';
         }
 
-        navigator.serviceWorker.register(rootPath + 'sw.js').then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, err => {
-            console.log('ServiceWorker registration failed: ', err);
+        navigator.serviceWorker.register(rootPath + 'sw.js').catch(() => {
+            // silent fail
         });
     });
 }

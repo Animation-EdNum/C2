@@ -1,0 +1,30 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright playwright
+          playwright install chromium
+
+      - name: Start HTTP server
+        run: python -m http.server 8000 &
+
+      - name: Wait for server
+        run: sleep 2
+
+      - name: Run E2E tests
+        run: python -m pytest e2e_tests/ -v
