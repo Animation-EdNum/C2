@@ -117,6 +117,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        button,
+        .program-cmd,
+        .bot-cell,
+        .tab-btn,
+        .skin-card,
+        .skin-list-item {
             -webkit-user-select: none;
             user-select: none;
         }
@@ -270,7 +278,7 @@
             flex-direction: column;
             border: 3px solid var(--skin-grid-border, var(--grid-border));
             border-radius: 8px;
-            overflow: visible;
+            overflow: hidden;
             box-shadow: var(--skin-grid-shadow, 0 10px 25px rgba(0, 0, 0, 0.1));
             background: var(--skin-grid-bg, var(--card-bg));
             width: 100%;
@@ -338,7 +346,7 @@
         .trail-path {
             fill: none;
             stroke: #2563eb;
-            stroke-width: 7;
+            stroke-width: 12;
             stroke-linecap: round;
             stroke-linejoin: round;
             transition: stroke 0.3s;
@@ -425,13 +433,13 @@
 
         #diff-extreme.unlocked,
         #read-diff-extreme.unlocked {
-            display: inline-block;
+            display: flex;
         }
 
         /* Coulée de lave - le chemin lumineux */
         .trail-lava-segment {
             stroke: url(#lavaGradient);
-            stroke-width: 5;
+            stroke-width: 12;
             stroke-linecap: round;
             filter: drop-shadow(0 0 4px #f97316) drop-shadow(0 0 8px #dc2626) drop-shadow(0 0 12px #991b1b);
             opacity: 0;
@@ -468,7 +476,7 @@
 
             to {
                 opacity: 0.85;
-                stroke-width: 5;
+                stroke-width: 12;
             }
         }
 
@@ -531,7 +539,7 @@
         /* Skin Train */
         .bot-grid.skin-train .trail-path-ties {
             stroke: #8B4513;
-            stroke-width: 10;
+            stroke-width: 18;
             stroke-dasharray: 2 3;
             opacity: 0.9;
             fill: none;
@@ -541,7 +549,7 @@
 
         .bot-grid.skin-train .trail-path-rail-base {
             stroke: #555;
-            stroke-width: 8;
+            stroke-width: 14;
             opacity: 0.9;
             fill: none;
             stroke-linecap: butt;
@@ -556,7 +564,7 @@
         /* Skin F1 */
         .bot-grid.skin-f1 .trail-path-red {
             stroke: #ff0000;
-            stroke-width: 15;
+            stroke-width: 24;
             opacity: 0.9;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -565,7 +573,7 @@
 
         .bot-grid.skin-f1 .trail-path-border {
             stroke: #fff;
-            stroke-width: 15;
+            stroke-width: 24;
             stroke-dasharray: 6 6;
             opacity: 0.9;
             stroke-linecap: butt;
@@ -575,7 +583,7 @@
 
         .bot-grid.skin-f1 .trail-path {
             stroke: #666;
-            stroke-width: 11;
+            stroke-width: 18;
             opacity: 0.9;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -586,7 +594,7 @@
         /* Skin botanique */
         .bot-grid.skin-botanique .trail-path {
             stroke: #438b28;
-            stroke-width: 2;
+            stroke-width: 8;
             opacity: 0.8;
         }
 
@@ -596,7 +604,7 @@
 
         body.dark .bot-grid.skin-botanique .trail-path {
             stroke: #65a30d;
-            stroke-width: 2;
+            stroke-width: 8;
             opacity: 0.8;
         }
 
@@ -607,7 +615,7 @@
         /* Skin cyberbot */
         .bot-grid.skin-cyberbot .trail-path {
             stroke: #ff007f;
-            stroke-width: 3;
+            stroke-width: 10;
             filter: drop-shadow(0 0 5px #ff007f);
             opacity: 0.9;
         }
@@ -675,9 +683,12 @@
             justify-content: center;
             pointer-events: auto;
             z-index: 10;
-            transition: top 0.35s ease-in-out, left 0.35s ease-in-out;
+            transition: transform 0.35s ease-in-out;
+            will-change: transform;
             cursor: grab;
             overflow: visible;
+            top: 0;
+            left: 0;
         }
 
         .robot-overlay svg {
@@ -969,9 +980,12 @@
         /* PAD COMMANDES */
         .cmd-pad {
             display: grid;
-            grid-template-areas: ". up ." "left down right";
+            grid-template-areas:
+                ". up ."
+                "left go right"
+                "clear down .";
             grid-template-columns: 62px 62px 62px;
-            grid-template-rows: 62px 62px;
+            grid-template-rows: 62px 62px 62px;
             gap: 8px;
             justify-content: center;
             margin: 15px 0;
@@ -981,7 +995,6 @@
             width: 62px;
             height: 62px;
             border-radius: 50%;
-            border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1037,7 +1050,7 @@
             box-shadow: 0 4px 0 #16a34a;
             font-weight: bold;
             font-size: 1.2rem;
-            display: none;
+            display: flex;
         }
 
         .cmd-btn-clear {
@@ -1046,7 +1059,7 @@
             box-shadow: 0 4px 0 #2563eb;
             font-weight: bold;
             font-size: 1.2rem;
-            display: none;
+            display: flex;
         }
 
         /* STRIP PROGRAMME */
@@ -1438,8 +1451,8 @@
             bottom: auto;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.9);
-            background: var(--card-bg);
-            color: white;
+            background: var(--text-main);
+            color: var(--container-bg);
             padding: 12px 24px;
             border-radius: 30px;
             font-weight: 600;
@@ -1837,169 +1850,6 @@
             margin-left: 8px;
         }
 
-        #mats-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 10001;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        #mats-modal.active {
-            display: flex;
-            animation: fadeIn 0.3s forwards;
-        }
-
-        @media (max-width: 600px) {
-            #mats-modal {
-                align-items: flex-end;
-            }
-
-            #mats-modal.active .skins-content {
-                animation: slideUpBottomSheet 0.3s ease-out forwards;
-            }
-
-            #mats-modal .skins-content {
-                width: 100%;
-                max-width: none;
-                border-radius: 24px 24px 0 0;
-                margin: 0;
-                padding-bottom: max(24px, env(safe-area-inset-bottom));
-                border-bottom: none;
-            }
-        }
-
-
-        .mat-content {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(20px, 6vw, 40px);
-            font-weight: 800;
-            color: var(--text-muted);
-            opacity: var(--mat-opacity, 0.3);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body.dark .mat-content {
-            color: #94a3b8;
-            opacity: var(--mat-opacity, 0.2);
-        }
-
-        /* Skins UI */
-        /* Skins Modal */
-
-        /* Skins Drawer CSS */
-        .skins-drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9998;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .skins-drawer-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .skins-drawer {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 400px;
-            height: 100vh;
-            background: var(--card-bg);
-            z-index: 9999;
-            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
-            transition: right 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            color: var(--text-main);
-        }
-
-        @media (max-width: 600px) {
-            .skins-drawer {
-                width: 100%;
-                right: -100%;
-            }
-        }
-
-        .skins-drawer.active {
-            right: 0;
-        }
-
-        .skins-drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--grid-border);
-            flex-shrink: 0;
-        }
-
-        .skins-drawer-header h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .skins-list {
-            padding: 20px 24px;
-            overflow-y: auto;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .btn-close-modal {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.05);
-            border: none;
-            font-size: 20px;
-            color: var(--text-muted);
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s;
-            z-index: 10;
-        }
-
-        .btn-close-modal:hover {
-            background: rgba(0, 0, 0, 0.1);
-            color: var(--error);
-            transform: rotate(90deg) scale(1.1);
-        }
-
-        body.dark .btn-close-modal {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        body.dark .btn-close-modal:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
         .skin-card {
             border: 2px solid var(--grid-border);
             border-radius: 12px;
@@ -2341,7 +2191,7 @@
 
     <!-- Mats Drawer Component -->
     <div id="mats-drawer-overlay" class="skins-drawer-overlay" aria-hidden="true"></div>
-    <div id="mats-drawer" class="skins-drawer" aria-hidden="true" role="dialog" aria-labelledby="mats-drawer-title">
+    <div id="mats-drawer" class="skins-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="mats-drawer-title">
         <div class="skins-drawer-header"
             style="flex-direction: column; align-items: stretch; gap: 10px; padding: 15px 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -2393,7 +2243,7 @@
     <!-- Skins Modal -->
     <!-- Side Drawer Component -->
     <div id="skins-drawer-overlay" class="skins-drawer-overlay" aria-hidden="true"></div>
-    <div id="skins-drawer" class="skins-drawer" aria-hidden="true" role="dialog" aria-labelledby="skins-drawer-title">
+    <div id="skins-drawer" class="skins-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="skins-drawer-title">
         <div class="skins-drawer-header">
             <h2 id="skins-drawer-title">🎁 Personnalisation</h2>
             <button class="btn-close-modal" id="btn-close-skins" aria-label="Fermer">✖</button>
@@ -2452,13 +2302,13 @@
 
         </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" id="tab-simulator">🎮 Simulateur</button>
-            <button class="tab-btn" id="tab-challenge">🧩 Pilotage</button>
-            <button class="tab-btn" id="tab-read">📖 Décodage</button>
+        <div class="tabs" role="tablist">
+            <button class="tab-btn active" id="tab-simulator" role="tab" aria-selected="true" aria-controls="view-simulator">🎮 Simulateur</button>
+            <button class="tab-btn" id="tab-challenge" role="tab" aria-selected="false" aria-controls="view-challenge">🧩 Pilotage</button>
+            <button class="tab-btn" id="tab-read" role="tab" aria-selected="false" aria-controls="view-read">📖 Décodage</button>
         </div>
 
-        <div id="view-simulator" class="view active">
+        <div id="view-simulator" class="view active" role="tabpanel" aria-labelledby="tab-simulator">
 
 
             <div class="exercise-card">
@@ -2482,10 +2332,18 @@
                 </div>
 
                 <div class="cmd-pad" id="sim-cmd-pad">
-                    <button class="cmd-btn cmd-btn-forward" id="pad-fwd" aria-label="Avancer"></button>
-                    <button class="cmd-btn cmd-btn-left" id="pad-left" aria-label="Tourner à gauche"></button>
-                    <button class="cmd-btn cmd-btn-backward" id="pad-bwd" aria-label="Reculer"></button>
-                    <button class="cmd-btn cmd-btn-right" id="pad-right" aria-label="Tourner à droite"></button>
+                    <button class="cmd-btn cmd-btn-forward" id="pad-fwd" aria-label="Avancer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-left" id="pad-left" aria-label="Tourner à gauche">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-backward" id="pad-bwd" aria-label="Reculer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-right" id="pad-right" aria-label="Tourner à droite">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+                    </button>
                     <button class="cmd-btn cmd-btn-go" id="pad-go" aria-label="Go">GO</button>
                     <button class="cmd-btn cmd-btn-clear" id="pad-clear" aria-label="Effacer">X</button>
                 </div>
@@ -2516,7 +2374,7 @@
             </div>
         </div>
 
-        <div id="view-challenge" class="view">
+        <div id="view-challenge" class="view" role="tabpanel" aria-labelledby="tab-challenge">
 
             <div class="difficulty-bar">
                 <button class="diff-btn active" id="diff-easy" data-diff="easy">⭐ Facile</button>
@@ -2563,7 +2421,7 @@
             </div>
         </div>
 
-        <div id="view-read" class="view">
+        <div id="view-read" class="view" role="tabpanel" aria-labelledby="tab-read">
 
             <div class="difficulty-bar">
                 <button class="diff-btn active" id="read-diff-easy" data-diff="easy">⭐ Facile</button>
@@ -3904,8 +3762,7 @@
             }
             ov.style.width = (100 / GRID_COLS) + '%';
             ov.style.height = (100 / GRID_ROWS) + '%';
-            ov.style.top = (row * (100 / GRID_ROWS)) + '%';
-            ov.style.left = (col * (100 / GRID_COLS)) + '%';
+            ov.style.transform = `translate(${col * 100}%, ${row * 100}%)`;
             ov.setAttribute('role', 'img');
             if (ariaLabel) ov.setAttribute('aria-label', ariaLabel);
         }
@@ -5165,11 +5022,19 @@
            CONFETTI
            ================================================================ */
 
-        // Init
+        const gridColsSlider = document.getElementById('gridColsSlider');
+        const gridRowsSlider = document.getElementById('gridRowsSlider');
+        const gridSizeValue = document.getElementById('gridSizeValue');
 
-        // Initial button update
-        (function () {
-            const tg = SKIN_CONFIG[activeSkin].target;
+        function initApplication() {
+            // Restore active state
+            activeMat = localStorage.getItem('bb_active_mat') || 'none';
+            activeSkin = localStorage.getItem('bb_active_skin') || 'default';
+            if (!MAT_CONFIG[activeMat]) activeMat = 'none';
+            generateMatContent(activeMat);
+
+            // Initial button update
+            const tg = SKIN_CONFIG[activeSkin]?.target;
             const tgtBtn = document.getElementById('btn-target-icon');
             if (tgtBtn) {
                 if (tg && tg.includes('<svg')) {
@@ -5185,7 +5050,7 @@
                     tgtBtn.innerText = tg || '';
                 }
             }
-            const ob = SKIN_CONFIG[activeSkin].obstacle;
+            const ob = SKIN_CONFIG[activeSkin]?.obstacle;
             const obsBtn = document.getElementById('btn-obstacle-icon');
             if (obsBtn) {
                 if (ob && ob.includes('<svg')) {
@@ -5201,17 +5066,25 @@
                     obsBtn.innerText = ob || '';
                 }
             }
-        })();
 
-        const gridColsSlider = document.getElementById('gridColsSlider');
-        const gridRowsSlider = document.getElementById('gridRowsSlider');
-        const gridSizeValue = document.getElementById('gridSizeValue');
+            // Update UI/Grid
+            updateGridSizeSlidersState();
+            buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
+            randomizeSimulatorPosition();
+            updateCustomMatUI();
 
-        updateGridSizeSlidersState();
+            // Additional initializations
+            if (typeof ScoreManager !== 'undefined') {
+                ScoreManager.init('simulateur_bluebot');
+                updateExtremeVisibility();
+            }
 
-        buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
-
-        randomizeSimulatorPosition();
+            if (activeSkin === 'pirate') {
+                if (typeof startOceanRipples === 'function') {
+                    startOceanRipples();
+                }
+            }
+        }
 
         // Événements
 
@@ -5463,9 +5336,7 @@
     <script>lucide.createIcons();</script>
     <script>
         window.addEventListener('load', () => {
-            if (activeSkin === 'pirate') {
-                startOceanRipples();
-            }
+            initApplication();
 
             // Drawers Escape key to close
             document.addEventListener('keydown', (e) => {
@@ -5478,9 +5349,12 @@
                     }
                 }
             });
+        });
 
-            ScoreManager.init('simulateur_bluebot');
-            updateExtremeVisibility();
+        window.addEventListener('pageshow', (e) => {
+            if (e.persisted) {
+                initApplication();
+            }
         });
         window.addEventListener('c2_change_difficulty', (e) => {
             const nextDiff = e.detail.difficulty;
