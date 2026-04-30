@@ -565,7 +565,7 @@
         /* Skin F1 */
         .bot-grid.skin-f1 .trail-path-red {
             stroke: #ff0000;
-            stroke-width: 24;
+            stroke-width: 36;
             opacity: 0.9;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -574,7 +574,7 @@
 
         .bot-grid.skin-f1 .trail-path-border {
             stroke: #fff;
-            stroke-width: 24;
+            stroke-width: 36;
             stroke-dasharray: 6 6;
             opacity: 0.9;
             stroke-linecap: butt;
@@ -584,11 +584,53 @@
 
         .bot-grid.skin-f1 .trail-path {
             stroke: #666;
-            stroke-width: 18;
+            stroke-width: 28;
             opacity: 0.9;
             stroke-linecap: round;
             stroke-linejoin: round;
             fill: none;
+        }
+
+        /* Skin Bee-Bot */
+        .bot-grid.skin-beebot .trail-path {
+            stroke: #fbbf24;
+        }
+        .bot-grid.skin-beebot .start-marker-circle {
+            fill: #fbbf24;
+        }
+        body.dark .bot-grid.skin-beebot .trail-path {
+            stroke: #f59e0b;
+        }
+        body.dark .bot-grid.skin-beebot .start-marker-circle {
+            fill: #f59e0b;
+        }
+
+        /* Skin Unicorn */
+        @keyframes rainbowPath {
+            0% { stroke: #ff0000; }
+            17% { stroke: #ff7f00; }
+            33% { stroke: #ffff00; }
+            50% { stroke: #00ff00; }
+            67% { stroke: #0000ff; }
+            83% { stroke: #4b0082; }
+            100% { stroke: #9400d3; }
+        }
+        @keyframes rainbowFill {
+            0% { fill: #ff0000; }
+            17% { fill: #ff7f00; }
+            33% { fill: #ffff00; }
+            50% { fill: #00ff00; }
+            67% { fill: #0000ff; }
+            83% { fill: #4b0082; }
+            100% { fill: #9400d3; }
+        }
+        .bot-grid.skin-unicorn .trail-path {
+            animation: rainbowPath 3s linear infinite;
+            stroke-width: 14;
+            opacity: 0.9;
+        }
+        .bot-grid.skin-unicorn .start-marker-circle {
+            animation: rainbowFill 3s linear infinite;
         }
 
 
@@ -4095,7 +4137,7 @@
                         p.setAttribute("y", pt.y + oy);
                         p.textContent = Math.random() > 0.5 ? "1" : "0";
                         p.setAttribute("transform", `rotate(${(Math.random() - 0.5) * 20} ${pt.x + ox} ${pt.y + oy})`);
-                        p.style.fontSize = `${24 + Math.random() * 12}px`;
+                        p.style.fontSize = `${36 + Math.random() * 18}px`; // Increased size
                         p.style.opacity = 0.5 + Math.random() * 0.5;
                         layer.appendChild(p);
                     }
@@ -4157,27 +4199,13 @@
 
                     // Alterner les côtés
                     const side = (state.points.length % 2 === 0) ? 45 : -45;
-                    leaf.setAttribute("transform", `translate(${midX}, ${midY}) rotate(${angle + side}) scale(1.0)`);
+                    leaf.setAttribute("transform", `translate(${midX}, ${midY}) rotate(${angle + side}) scale(1.6)`); // Increased scale
                     layer.appendChild(leaf);
 
                     // Ajouter une feuille à la fin
                     const endLeaf = leaf.cloneNode(true);
-                    endLeaf.setAttribute("transform", `translate(${pt.x}, ${pt.y}) rotate(${angle - side / 2}) scale(0.7)`);
+                    endLeaf.setAttribute("transform", `translate(${pt.x}, ${pt.y}) rotate(${angle - side / 2}) scale(1.2)`); // Increased scale
                     layer.appendChild(endLeaf);
-                } else if (activeSkin === 'unicorn') {
-                    // Trace Arc-en-ciel
-                    const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3'];
-                    for (let i = 0; i < 8; i++) {
-                        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        c.setAttribute("class", "trail-rainbow-particle");
-                        c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 16);
-                        c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 16);
-                        c.setAttribute("r", 3 + Math.random() * 4);
-                        c.setAttribute("fill", colors[Math.floor(Math.random() * colors.length)]);
-                        c.style.color = c.getAttribute("fill");
-                        layer.appendChild(c);
-                        setTimeout(() => { if (layer.contains(c)) layer.removeChild(c); }, 2000);
-                    }
                 }
             },
 
