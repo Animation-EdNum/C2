@@ -33,3 +33,9 @@
 - **[2026-04-30]** [UX/Gamification] Enhanced Simulateur Blue-Bot: added toggle to hide entered commands, added end execution content container.
 - **[2026-04-30]** [Testing] Added comprehensive E2E tests for `ScoreManager`.
 - **[2026-04-30]** [UI/UX] Standardized header icons across all web applications and optimized layout for interactive whiteboards (TBIs).
+- **[2026-04-30]** [Security] Fixed XSS vulnerability in `js/scores.js` — added `_escapeHtml()` and sanitized `innerHTML` fallbacks in `renderModalContent`.
+- **[2026-04-30]** [Code Quality] Removed duplicate SW registration in `js/theme.js`, merged duplicate CSS in `css/shared.css`, removed `console.log` statements.
+- **[2026-04-30]** [Infrastructure] Created CI/CD workflow `.github/workflows/e2e-tests.yml` for Playwright tests on PRs.
+- **[2026-04-30]** [Testing] Created 25 E2E tests for Blue-Bot simulator in `e2e_tests/test_bluebot.py`.
+- **[2026-04-30]** [Optimization] Generated Lucide icon subset (`js/lucide-subset.js`) — reduced from 388 Ko to 15 Ko (-96%). Migrated all 15 HTML files and SW cache.
+- **[2026-04-30]** [Documentation] Created `CONTRIBUTING.md` with architecture overview and contribution guidelines. Updated `README.md` with architecture section.

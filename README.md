@@ -12,8 +12,10 @@ Ce dépôt regroupe des applications web interactives (webapps) et des ressource
 - [Démarrer / Utilisation](#démarrer--utilisation)
 - [Webapps (Applications pour les élèves)](#webapps-applications-pour-les-élèves)
 - [Ressources (Outils pour les enseignant·e·s)](#ressources-outils-pour-les-enseignantes)
+- [Architecture technique](#architecture-technique)
 - [Accessibilité & Qualité](#accessibilité--qualité)
 - [Contribuer](#contribuer)
+- [Changelog](#changelog)
 - [Contact / Support](#contact--support)
 - [Licence](#licence)
 
@@ -144,6 +146,37 @@ Le portail propose également des liens vers diverses ressources externes utiles
   - Gestion fine de la liste : exclusion temporaire (élèves absents) et remise en jeu des élèves déjà tirés par simple clic.
   - Génération et copie dans le presse-papiers d'un historique complet du tirage.
 
+## Architecture technique
+
+Le projet repose sur une architecture **Vanilla sans aucune dépendance** :
+
+| Principe | Détail |
+|---|---|
+| **Stack** | HTML / CSS / JS purs — aucun framework, aucun bundler, aucun `npm install` |
+| **Offline-First** | Service Worker (`sw.js`) pré-cache toutes les ressources pour un fonctionnement 100% hors-ligne |
+| **PWA** | Manifeste + SW permettant l'installation sur tous les appareils |
+| **Icônes** | Subset Lucide auto-généré (`lucide-subset.js`, 15 Ko) contenant uniquement les 59 icônes utilisées |
+| **Polices** | Auto-hébergées dans `fonts/` (Outfit, Inter, JetBrains Mono) |
+| **Audio** | Sons synthétiques via Web Audio API (`js/audio.js`), aucun fichier audio externe |
+
+### Fichiers partagés
+
+```
+css/shared.css       → Design system (variables, glassmorphism, dark mode, composants)
+js/theme.js          → Thème clair/sombre + enregistrement Service Worker
+js/scores.js         → ScoreManager (gamification, stats, difficulté adaptative)
+js/confetti.js       → Récompenses visuelles (confettis, feux d'artifice)
+js/audio.js          → Audio synthétique (Web Audio API)
+js/swipe.js          → Navigation tactile par swipe entre onglets
+js/lucide-subset.js  → Icônes vectorielles (auto-généré par scripts/generate_lucide_subset.js)
+```
+
+### CI/CD
+
+Un workflow GitHub Actions (`.github/workflows/e2e-tests.yml`) exécute automatiquement les tests E2E Playwright sur chaque Pull Request vers `main`.
+
+> Pour plus de détails sur l'architecture, voir le [Guide de contribution](CONTRIBUTING.md).
+
 ## Accessibilité & Qualité
 
 L'accessibilité est une priorité absolue de ce projet pour répondre aux besoins de tous les élèves et enseignant·e·s :
@@ -154,13 +187,22 @@ L'accessibilité est une priorité absolue de ce projet pour répondre aux besoi
 
 ## Contribuer
 
-Les contributions sont les bienvenues ! Que ce soit pour signaler un bug (Bug Reports), proposer de nouvelles fonctionnalités (Feature Requests) ou soumettre des améliorations (Pull Requests), n'hésitez pas à participer à ce projet éducatif.
+Les contributions sont les bienvenues ! Consultez le **[Guide de contribution](CONTRIBUTING.md)** pour les détails sur l'architecture, les conventions de code et le processus de soumission.
+
+En résumé :
+- 🐛 **Bug Reports** — Ouvrez une issue avec les étapes de reproduction
+- 💡 **Feature Requests** — Décrivez le besoin pédagogique et l'impact attendu
+- 🔧 **Pull Requests** — Forkez, créez une branche, testez, et soumettez
 
 ### Tests End-to-End (E2E)
 Pour exécuter la suite de tests Playwright locale :
 1. Installez les dépendances : `pip install pytest-playwright playwright && playwright install`
 2. Démarrez un serveur HTTP local à la racine : `python -m http.server 8000`
-3. Dans un autre terminal, lancez les tests : `python -m pytest e2e_tests/`
+3. Dans un autre terminal, lancez les tests : `python -m pytest e2e_tests/ -v`
+
+## Changelog
+
+L'historique détaillé des modifications est maintenu sous forme de journal agentique dans [`memory/event-log.md`](memory/event-log.md). Ce fichier sert de changelog vivant, mis à jour automatiquement à chaque session de développement assisté par IA.
 
 ## Contact / Support
 
