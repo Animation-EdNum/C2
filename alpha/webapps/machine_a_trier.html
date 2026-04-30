@@ -369,10 +369,18 @@
                     const bin = document.createElement('div');
                     bin.className = `bin`;
                     bin.dataset.accept = type.id;
-                    bin.innerHTML = `<div class="bin-label">
-                        <i data-lucide="palette" class="bin-icon color-${type.id}"></i>
-                        ${type.name}
-                    </div>`;
+
+                    const label = document.createElement('div');
+                    label.className = 'bin-label';
+
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-lucide', 'palette');
+                    icon.className = `bin-icon color-${type.id}`;
+
+                    label.appendChild(icon);
+                    label.appendChild(document.createTextNode(` ${type.name}`));
+                    bin.appendChild(label);
+
                     setupBinEvents(bin);
                     binsContainer.appendChild(bin);
                 });
@@ -386,10 +394,18 @@
                     const bin = document.createElement('div');
                     bin.className = `bin`;
                     bin.dataset.accept = type.id;
-                    bin.innerHTML = `<div class="bin-label">
-                        <i data-lucide="${type.icon}" class="bin-icon"></i>
-                        ${type.name}
-                    </div>`;
+
+                    const label = document.createElement('div');
+                    label.className = 'bin-label';
+
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-lucide', type.icon);
+                    icon.className = 'bin-icon';
+
+                    label.appendChild(icon);
+                    label.appendChild(document.createTextNode(` ${type.name}`));
+                    bin.appendChild(label);
+
                     setupBinEvents(bin);
                     binsContainer.appendChild(bin);
                 });
@@ -405,9 +421,15 @@
                     const bin = document.createElement('div');
                     bin.className = `bin`;
                     bin.dataset.accept = type.id;
-                    bin.innerHTML = `<div class="bin-label" style="font-size: 24px; font-weight: bold; font-family: monospace;">
-                        ${type.name}
-                    </div>`;
+
+                    const label = document.createElement('div');
+                    label.className = 'bin-label';
+                    label.style.fontSize = '24px';
+                    label.style.fontWeight = 'bold';
+                    label.style.fontFamily = 'monospace';
+                    label.textContent = type.name;
+
+                    bin.appendChild(label);
                     setupBinEvents(bin);
                     binsContainer.appendChild(bin);
                 });
@@ -423,9 +445,12 @@
                     const bin = document.createElement('div');
                     bin.className = `bin`;
                     bin.dataset.accept = type.id;
-                    bin.innerHTML = `<div class="bin-label">
-                        ${type.name}
-                    </div>`;
+
+                    const label = document.createElement('div');
+                    label.className = 'bin-label';
+                    label.textContent = type.name;
+
+                    bin.appendChild(label);
                     setupBinEvents(bin);
                     binsContainer.appendChild(bin);
                 });
@@ -469,13 +494,23 @@
                 item.draggable = true;
 
                 // Apparence de l'objet
+                const icon = document.createElement('i');
+                icon.className = 'shape-icon';
+                icon.style.color = itemData.color.hex;
+
                 if (currentMode === 'quantity') {
-                    item.innerHTML = `<i data-lucide="${itemData.quantity.icon}" class="shape-icon" style="color: ${itemData.color.hex}; width: 44px; height: 44px;"></i>`;
+                    icon.setAttribute('data-lucide', itemData.quantity.icon);
+                    icon.style.width = '44px';
+                    icon.style.height = '44px';
                 } else if (currentMode === 'size') {
-                    item.innerHTML = `<i data-lucide="${itemData.shape.icon}" class="shape-icon" style="color: ${itemData.color.hex}; fill: ${itemData.color.hex}; transform: scale(${itemData.scaleObj.scale});"></i>`;
+                    icon.setAttribute('data-lucide', itemData.shape.icon);
+                    icon.style.fill = itemData.color.hex;
+                    icon.style.transform = `scale(${itemData.scaleObj.scale})`;
                 } else {
-                    item.innerHTML = `<i data-lucide="${itemData.shape.icon}" class="shape-icon" style="color: ${itemData.color.hex}; fill: ${itemData.color.hex};"></i>`;
+                    icon.setAttribute('data-lucide', itemData.shape.icon);
+                    icon.style.fill = itemData.color.hex;
                 }
+                item.appendChild(icon);
 
                 setupItemEvents(item);
                 itemsContainer.appendChild(item);
