@@ -39,6 +39,7 @@ Les webapps partagent une interface unifiée basée sur un design **Glassmorphis
 - **Mode Sombre global** (Dark Mode) dont le choix est conservé en mémoire.
 - **Difficulté Adaptative** : Le système propose d'augmenter la difficulté de manière intelligente après plusieurs réussites parfaites.
 - **Visualisation des progrès** : Graphiques circulaires (Donut Charts) détaillés avec code couleur sémantique (Vert: Succès 1er coup, Ambre: Succès après essai, Rouge: Erreurs).
+- **Navigation unifiée** : Standardisation de la navigation mobile et desktop via des onglets supérieurs (`.tabs`).
 - **Historique et Navigation** : Accès rapide aux applications récemment consultées sur la page d'accueil. L'icône dans l'en-tête permet un retour rapide au menu principal.
 - **Typographie Outfit** pour une lisibilité optimale.
 
@@ -63,6 +64,7 @@ Les webapps disponibles sont :
   - **Tapis Pédagogiques :** Intégration de tapis prédéfinis (ex: formes géométriques, conte de fées) et possibilité de téléverser ses propres images pour créer des tapis personnalisés, avec un curseur d'opacité ajustable pour un apprentissage thématique.
   - **Mode Plein Écran :** Affichage optimisé avec carte et contrôles immersifs pour réduire les distractions.
   - **Feedback visuel immersif :** Effet de "shake" (secousse) de toute la fenêtre lors d'une collision et mise en évidence immédiate de la commande erronée (bouton noir/blanc contrasté).
+  - **Historique visuel :** Conteneur "Éléments atteints" listant dynamiquement les cibles/drapeaux récupérés lors des parcours complexes.
   - **Statistiques visuelles :** Suivi par mode et difficulté avec graphiques Donut animés pour une lecture immédiate de l'efficacité.
   - **Vitesse paramétrable :** Modes "Vitesse Normale" (900 ms avec pause) ou "Vitesse Rapide" (400 ms) avec tracé du parcours en temps réel.
 

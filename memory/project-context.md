@@ -34,8 +34,8 @@ The **suite EdNum** (by Animation-EdNum, HEP-VS) is a suite of interactive, high
 
 ## Current Sprint / Focus
 - **Blue-Bot Simulator – Feature Complete (2026-04-25):** All planned pedagogical and UX refinements have been implemented, including the new custom mat upload feature. The simulator is considered stable.
-- **Ongoing:** Screenshots refresh and README update to reflect all new features.
-- **Next:** Mobile optimization audit and final accessibility review across the full suite.
+- **Ongoing:** Mobile navigation standardization (moving away from `.nav-bar` to top `.tabs`) and final visual consistency polish across all webapps.
+- **Next:** Full suite visual audit for button border radiuses, unified toast notifications, and interactive layout bug squashing.
 
 
 ## Knowledge Base

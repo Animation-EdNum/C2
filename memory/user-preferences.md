@@ -23,7 +23,7 @@
 ## UI/UX Requirements
 - **Touch Targets:** Ensure buttons and interactive elements maintain a minimum hit area of 44x44px for touch accessibility.
 - **Assets:** Use local assets exclusively. Do not rely on external CDNs for fonts or icons.
-- **Mobile Navigation:** Primary navigation tabs should be presented as sticky bottom tab bars. Modals should be styled as sliding bottom sheets.
+- **Mobile Navigation:** Primary navigation tabs should be presented as top `.tabs` elements. Modals should be styled as side-panels.
 - **Frontend Verification:** User-visible modifications to the frontend UI must be visually verified by calling `frontend_verification_instructions`, capturing a local Playwright screenshot, and passing the image path to `frontend_verification_complete`.
 
 ## Verification & Environment Guidelines
