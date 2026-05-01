@@ -253,6 +253,17 @@
             background: rgba(30, 41, 59, 0.3);
         }
 
+        .cup-slot.active-slot {
+            background: rgba(245, 158, 11, 0.4);
+            border-color: rgba(245, 158, 11, 0.8);
+            transition: background 0.3s;
+        }
+
+        body.dark .cup-slot.active-slot {
+            background: rgba(245, 158, 11, 0.5);
+            border-color: rgba(245, 158, 11, 0.9);
+        }
+
         .cup.active-column {
             background: rgba(245, 158, 11, 0.15); /* light accent background */
             transition: background 0.3s;
@@ -678,6 +689,29 @@
             font-family: monospace;
         }
 
+        /* TOAST */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.3s var(--spring-easing);
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -1025,8 +1059,15 @@
             for (let i = 0; i < NUM_CUPS; i++) {
                 let cupEl = document.getElementById('cup-' + i);
                 if (cupEl) {
-                    if (i === craneState.pos) {
+                    let slots = cupEl.querySelectorAll('.cup-slot');
+                    // Remove highlights from all slots initially
+                    slots.forEach(slot => slot.classList.remove('active-slot'));
+
+                    if (isExecuting && i === craneState.pos) {
                         cupEl.classList.add('active-column');
+                        if (craneState.height >= 0 && craneState.height < slots.length) {
+                            slots[craneState.height].classList.add('active-slot');
+                        }
                     } else {
                         cupEl.classList.remove('active-column');
                     }
