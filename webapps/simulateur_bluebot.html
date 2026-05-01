@@ -2400,6 +2400,15 @@
                     <button class="btn btn-outline btn-small" id="btnReset" title="Placer l'automate à une position aléatoire">🎲 Position aléatoire</button>
                 </div>
 
+                <div id="sim-end-container" style="display: none; margin-bottom: 15px;">
+                    <div class="program-strip" id="sim-end-content" style="position: relative; padding-right: 40px; background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 50px;">
+                        <button id="btn-clear-end" class="btn btn-outline" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg); z-index: 10;" aria-label="Effacer" title="Effacer les éléments atteints">
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                        </button>
+                        <div class="empty-program" id="sim-end-empty">Éléments atteints...</div>
+                    </div>
+                </div>
+
                 <div class="grid-wrapper" style="margin-top: 0;">
                     <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                         class="bot-grid-container">
@@ -2424,26 +2433,13 @@
                     <button class="cmd-btn cmd-btn-clear" id="pad-clear" aria-label="Effacer">X</button>
                 </div>
 
-                <div class="program-strip" id="sim-program">
-                    <div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; margin-top: -5px; margin-bottom: 10px;">
-                    <button id="hideCmdToggleBtn" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.8em; display: flex; align-items: center; gap: 5px; background-color: var(--card-bg);" aria-label="Masquer/Afficher les commandes">
-                        <i data-lucide="eye-off" id="icon-eye-off" style="width: 14px; height: 14px;"></i>
-                        <i data-lucide="eye" id="icon-eye" style="display:none; width: 14px; height: 14px;"></i>
-                        <span id="hideCmdToggleText">Masquer commandes</span>
+                <div class="program-strip" id="sim-program" style="position: relative; padding-right: 36px;">
+                    <button id="hideCmdToggleBtn" class="btn btn-outline" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg); z-index: 10;" aria-label="Masquer/Afficher les commandes" title="Masquer les commandes">
+                        <i data-lucide="eye-off" id="icon-eye-off" style="width: 16px; height: 16px;"></i>
+                        <i data-lucide="eye" id="icon-eye" style="display:none; width: 16px; height: 16px;"></i>
+                        <span id="hideCmdToggleText" style="display:none;">Masquer commandes</span>
                     </button>
-                </div>
-
-                <div id="sim-end-container" style="display: none; margin-top: 15px;">
-                    <div style="font-size: 0.9em; margin-bottom: 5px; color: var(--text-color); opacity: 0.8; display: flex; justify-content: space-between; align-items: center;">
-                        <span>Éléments atteints :</span>
-                        <button id="btn-clear-end" class="btn btn-outline" style="padding: 2px 8px; font-size: 0.8em;">Effacer</button>
-                    </div>
-                    <div class="program-strip" id="sim-end-content" style="background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 50px;">
-                        <div class="empty-program" id="sim-end-empty">Le robot n'a encore rien atteint...</div>
-                    </div>
+                    <div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>
                 </div>
 
                 <div class="score-bar" id="sim-score-bar" style="display: none;">
@@ -3635,6 +3631,7 @@
             const iconEyeOff = document.getElementById('icon-eye-off');
             const iconEye = document.getElementById('icon-eye');
             const toggleText = document.getElementById('hideCmdToggleText');
+            const toggleBtn = document.getElementById('hideCmdToggleBtn');
 
             const simProgram = document.getElementById('sim-program');
 
@@ -3642,11 +3639,13 @@
                 if (iconEyeOff) iconEyeOff.style.display = 'block';
                 if (iconEye) iconEye.style.display = 'none';
                 if (toggleText) toggleText.textContent = 'Masquer commandes';
+                if (toggleBtn) toggleBtn.title = 'Masquer les commandes';
                 if (simProgram) simProgram.classList.remove('masked');
             } else {
                 if (iconEyeOff) iconEyeOff.style.display = 'none';
                 if (iconEye) iconEye.style.display = 'block';
                 if (toggleText) toggleText.textContent = 'Afficher commandes';
+                if (toggleBtn) toggleBtn.title = 'Afficher les commandes';
                 if (simProgram) simProgram.classList.add('masked');
             }
         }
