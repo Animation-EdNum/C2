@@ -33,11 +33,14 @@ Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagée
 - **Pour les enseignant·e·s :** Vous pouvez distribuer ces fichiers directement sur les ordinateurs de votre classe, ou les héberger facilement sur le site de votre école ou intranet. 
 
 ### 📱 Compatibilité Multi-Supports (Responsive Design)
-Nos applications sont pensées pour s'adapter à toutes les tailles d'écran (Mobile, Tablette, Desktop, et Ecrans larges). L'interface reste claire et utilisable sur tous les supports. Voici un exemple avec le simulateur d'automate :
+Nos applications sont pensées pour s'adapter à toutes les tailles d'écran (Mobile, Tablette, Desktop, et Ecrans larges). L'interface reste claire et utilisable sur tous les supports.
 
-| Mobile | Desktop | Écran large (Wide) |
-|:---:|:---:|:---:|
-| <img src="screenshots/simulateur_bluebot_mobile.png" height="250"> | <img src="screenshots/simulateur_bluebot_desktop.png" height="250"> | <img src="screenshots/simulateur_bluebot_widescreen.png" height="250"> |
+Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur de multiples supports :
+
+| Mobile | Écran large (Wide) |
+|:---:|:---:|
+| <img src="screenshots/simulateur_bluebot_mobile.png" height="350"> | <img src="screenshots/simulateur_bluebot_widescreen.png" height="350"> |
+| *Affichage vertical compact avec swipe* | *Exploitation complète de la largeur d'écran* |
 
 ## Webapps (Applications pour les élèves)
 Ce sont des jeux interactifs conçus pour les élèves de l'école primaire qui travaillent avec les manuels scolaires *Décodage*. Vous pouvez trouver plus d'informations sur les manuels sur [https://decodage.edu-vd.ch/](https://decodage.edu-vd.ch/).
