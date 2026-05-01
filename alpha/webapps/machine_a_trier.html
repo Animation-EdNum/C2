@@ -216,7 +216,6 @@
             <button class="diff-btn" id="diff-hard">🔴 Difficile</button>
         </div>
 
-        <div class="feedback" id="feedback-msg"></div>
 
         <!-- GAME AREA -->
         <div class="game-area">
@@ -299,7 +298,6 @@
         // UI Elements
         const itemsContainer = document.getElementById('items-container');
         const binsContainer = document.getElementById('bins-container');
-        const feedbackMsg = document.getElementById('feedback-msg');
 
         // Initialisation
         function init() {
@@ -582,7 +580,7 @@
             if (itemType === binAccept) {
                 // Correct !
                 playSound('success');
-                showFeedback('Bravo !', 'success');
+                showToast('Bravo !', 'success');
                 bin.appendChild(item);
                 item.draggable = false;
                 item.classList.remove('selected');
@@ -603,21 +601,13 @@
             } else {
                 // Incorrect
                 playSound('error');
-                showFeedback('Oups, essaie un autre bac !', 'error');
+                showToast('Oups, essaie un autre bac !', 'error');
                 item.classList.remove('selected');
                 selectedItem = null;
                 updateScore(false);
             }
         }
 
-        function showFeedback(msg, type) {
-            feedbackMsg.textContent = msg;
-            feedbackMsg.className = `feedback ${type}`;
-            setTimeout(() => {
-                feedbackMsg.textContent = '';
-                feedbackMsg.className = 'feedback';
-            }, 2000);
-        }
 
         function updateScore(correct) {
             if (correct) {
@@ -636,6 +626,7 @@
         window.addEventListener('load', init);
     </script>
     <script src="../../js/swipe.js"></script>
+    <script src="../../js/toast.js"></script>
     <script src="../../js/theme.js"></script>
 </body>
 </html>

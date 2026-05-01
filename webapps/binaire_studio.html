@@ -143,7 +143,7 @@ body {
             margin: 0 auto;
             background: rgba(248, 250, 252, 0.85);
             padding: 24px;
-            border-radius: 20px;
+            border-radius: var(--radius-2xl);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
@@ -213,7 +213,7 @@ body {
 
         .tab-btn {
             padding: 10px 20px;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 2px solid #e2e8f0;
             background: var(--card-bg);
             color: var(--text-muted);
@@ -249,7 +249,7 @@ body {
             flex-direction: column;
             touch-action: none;
             border: 2px solid #cbd5e1;
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
             overflow: hidden;
         }
 
@@ -325,7 +325,7 @@ body {
             font-size: 18px;
             padding: 6px 12px;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             width: 140px;
             letter-spacing: 6px;
             text-align: left;
@@ -367,7 +367,7 @@ body {
             overflow-x: auto;
             padding: 10px;
             background: var(--card-bg);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 1px solid #e2e8f0;
             min-height: 80px;
             align-items: center;
@@ -377,7 +377,7 @@ body {
             flex: 0 0 50px;
             height: 50px;
             background: var(--card-bg);
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 2px solid #cbd5e1;
             display: flex;
             align-items: center;
@@ -430,7 +430,7 @@ body {
         }
 
         .editor-output-area {
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 2px solid #1e293b;
             overflow: hidden;
             background: #0f172a;
@@ -475,7 +475,7 @@ body {
             border: 1px solid #334155;
             color: #64748b;
             padding: 4px 10px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -528,7 +528,7 @@ body {
 
         .btn {
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             padding: 10px 20px;
             font-size: 14px;
             font-weight: 700;
@@ -581,7 +581,7 @@ body {
         .btn-small {
             padding: 6px 12px;
             font-size: 14px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
         }
 
         .editor-content-wrapper {
@@ -979,7 +979,7 @@ body {
             if (correct) {
                 playSound('success');
                 addToGallery(currentPattern.data, currentPattern.name);
-                showToast('🎉 Bravo ! « ' + currentPattern.name + ' » décodé !');
+                showToast('Bravo ! « ' + currentPattern.name + ' » décodé !', 'success');
 
                 // Après 1.2 secondes, nouvelle image automatiquement
                 setTimeout(() => {
@@ -987,7 +987,7 @@ body {
                 }, 1200);
             } else {
                 playSound('error');
-                showToast('❌ Pas encore correct… Essaie encore !');
+                showToast('Pas encore correct… Essaie encore !', 'error');
 
                 // Réactiver après 1 seconde pour éviter le spam
                 setTimeout(() => {
@@ -1064,7 +1064,7 @@ body {
                     setTimeout(() => {
                         playSound('success');
                         addToGallery(currentPattern.data, currentPattern.name);
-                        showToast('🎉 Bravo ! « ' + currentPattern.name + ' » encodé !');
+                        showToast('Bravo ! « ' + currentPattern.name + ' » encodé !', 'success');
                         setTimeout(() => {
                             initEncode();
                         }, 1200);
@@ -1103,7 +1103,7 @@ body {
                 c.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${col + 1}, Blanc`);
             });
             updateEditorOutput();
-            showToast('🧹 Grille effacée');
+            showToast('Grille effacée', 'info');
         }
 
         function updateEditorOutput() {
@@ -1127,16 +1127,16 @@ body {
 
         function copyEditorOutput() {
             const output = document.getElementById('editor-output').value;
-            if (!output) { showToast('❌ Rien à copier'); return; }
+            if (!output) { showToast('Rien à copier', 'error'); return; }
             navigator.clipboard.writeText(output).then(() => {
-                showToast('📋 Code binaire copié !');
+                showToast('Code binaire copié !', 'success');
             }).catch(() => {
                 // Fallback
                 const ta = document.createElement('textarea');
                 ta.value = output; ta.style.position = 'fixed'; ta.style.opacity = '0';
                 document.body.appendChild(ta); ta.select();
-                try { document.execCommand('copy'); showToast('📋 Code binaire copié !'); }
-                catch { showToast('❌ Erreur lors de la copie'); }
+                try { document.execCommand('copy'); showToast('Code binaire copié !', 'success'); }
+                catch { showToast('Erreur lors de la copie', 'error'); }
                 document.body.removeChild(ta);
             });
         }
@@ -1144,7 +1144,7 @@ body {
         function exportImage() {
             const wrapper = document.getElementById('grid-editor');
             const rows = wrapper.querySelectorAll('.grid-row');
-            if (rows.length === 0) { showToast('❌ Aucune grille à exporter'); return; }
+            if (rows.length === 0) { showToast('Aucune grille à exporter', 'error'); return; }
 
             const size = rows.length;
             const scale = 40;
@@ -1173,7 +1173,7 @@ body {
             link.download = 'pixel-binaire-' + size + 'x' + size + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('💾 Image exportée !');
+            showToast('Image exportée !', 'success');
         }
 
         // ==========================================
