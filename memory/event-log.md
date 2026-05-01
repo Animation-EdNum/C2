@@ -39,3 +39,7 @@
 - **[2026-04-30]** [Testing] Created 25 E2E tests for Blue-Bot simulator in `e2e_tests/test_bluebot.py`.
 - **[2026-04-30]** [Optimization] Generated Lucide icon subset (`js/lucide-subset.js`) — reduced from 388 Ko to 15 Ko (-96%). Migrated all 15 HTML files and SW cache.
 - **[2026-04-30]** [Documentation] Created `CONTRIBUTING.md` with architecture overview and contribution guidelines. Updated `README.md` with architecture section.
+- **[2026-05-01]** [UI/UX] Standardized on top `.tabs` navigation across all webapps, explicitly deprecating `.nav-bar` and bottom tab bars.
+- **[2026-05-01]** [UI/UX] Refactored `binaire_studio.html` and `pixels_binaires.html` to align tab styling, container width (`margin: 0 auto;`), and button elements (`.btn-small`, border radius) with the project's visual guidelines.
+- **[2026-05-01]** [Layout] Fixed index.html mobile layout issues and applied global safe-area constraints.
+- **[2026-05-01]** [Bugfix] Fixed overlap issues in Blue-Bot Simulator by modifying `#hideCmdToggleBtn` and `#sim-end-container` clearing buttons to act as normal, relative flex items instead of absolutely positioned components within `.program-strip`.

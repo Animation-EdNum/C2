@@ -25,3 +25,5 @@
 - **[2026-04-30] Lucide Icon Subset:** Replaced the full `lucide.min.js` bundle (388 Ko) with a project-specific subset `lucide-subset.js` (15 Ko, -96%). The subset is auto-generated via `scripts/generate_lucide_subset.js` which scans HTML files for `data-lucide` attributes. Regenerate when new icons are added.
 - **[2026-04-30] CI/CD Pipeline:** GitHub Actions workflow (`.github/workflows/e2e-tests.yml`) runs Playwright E2E tests on every PR to `main`. Tests live in `e2e_tests/`.
 - **[2026-04-30] Service Worker Registration:** Single registration point in `js/theme.js` with path-agnostic logic. Duplicate registration blocks must not be added.
+- **[2026-05-01] Navigation Standardization:** Decided to exclusively use top `.tabs` elements for navigation across desktop and mobile, explicitly abandoning sticky bottom tab bars to prevent collision with mobile OS gesture areas.
+- **[2026-05-01] Embedded Controls Layout:** Decided to insert embedded auxiliary UI controls (like clear/hide buttons in dynamic lists) as standard relative flex items in the DOM flow rather than using absolute positioning, to eliminate clipping and overlap issues when lists expand.

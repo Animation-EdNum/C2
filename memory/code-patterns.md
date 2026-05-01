@@ -29,7 +29,6 @@ Every application follows this high-level HTML structure:
 - `head`: Must include Open Graph meta tags (`og:title`, `og:description`, `og:type`) and link to the shared `favicon.svg` at the repository root.
 - `header`: A unified `<header class="app-header">`. Action buttons (Scores, Theme, Audio, Settings) are grouped into a single 'Options' or 'Menu' hamburger dropdown (`.menu-item-btn`). The dropdown items must be wide, easily clickable, and use explicit text labels paired with icons instead of hidden title tooltips. Auxiliary action buttons should be positioned within the `.action-buttons` container inside the unified `.app-header`. When `.action-buttons` are not nested within the unified `.app-header` (e.g., in `index.html`), their top-right positioning is maintained via local CSS (`position: absolute; top: 15px; right: 15px;`).
 - `main`: The core interactive area (grid, simulator, etc.).
-- `nav`: Bottom tab bar for mobile navigation.
 - `footer`: All HTML files must use a uniform `<footer class="no-print">` containing exactly: "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec ❤️ et quelques neurones artificiels" and a source code link stating "Code 100% libre (AGPL-3.0)".
 - `confetti`: Accompanying `<canvas id="confetti-canvas"></canvas>` for the unified confetti engine.
 
@@ -58,7 +57,7 @@ Every application follows this high-level HTML structure:
 - **Swipe Gestures:** Mobile swipe functionality for tab navigation is centralized in `js/swipe.js`. It supports container classes (`.tabs`, `.tab-bar`) and button classes (`.tab-btn`). Ensure this script is explicitly included.
 - **Critical Successes:** 'Critical Successes' should trigger intense visual rewards using `launchFire()` from `js/confetti.js` and appending `.critical-success-overlay` to the DOM.
 
-- **Mobile Navigation Rule:** Navigation tabs must only be used to switch exercises within a webapp (`.tabs`, `.tab-bar`), never to select a difficulty level (`.difficulty-bar`). The `.nav-bar` class is deprecated.
+- **Mobile Navigation Rule:** Primary navigation must use top `.tabs` (or `.tab-bar`) across all platforms (desktop and mobile). Bottom tab bars are explicitly deprecated to avoid overlapping issues on mobile OS with bottom swiping gestures. Navigation tabs must only be used to switch exercises within a webapp (`.tabs`), never to select a difficulty level (`.difficulty-bar`). The `.nav-bar` class is deprecated.
 
 ## 6. Accessibility (A11y) Patterns
 - **Keyboard Navigation:** Custom interactive elements (e.g., `<div>` or `<span>` with `onclick`) must include `tabindex="0"` and an `onkeydown` handler that triggers on 'Enter' or 'Space' (`if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }`).
@@ -78,3 +77,5 @@ Every application follows this high-level HTML structure:
 ## 9. Gamification Specifics
 - **Explicit Conditions:** When implementing 'first try' conditions for gamification or unlock mechanisms, explicitly verify that the relevant mistake counter (e.g., `mistakes`) is exactly `0` or falsy.
 - **Consistent Styling:** Rewards (targets) in simulator grids use the `.target-overlay` CSS class and should feature a consistent glow effect implemented via `filter: drop-shadow`.
+
+- **Embedded UI Controls:** Auxiliary controls within dynamic lists (such as `#hideCmdToggleBtn` inside `#sim-program` in the Blue-Bot Simulator) should be appended as normal flex items in the DOM flow. Avoid absolutely positioning them, as this can cause them to obscure dynamically added content.
