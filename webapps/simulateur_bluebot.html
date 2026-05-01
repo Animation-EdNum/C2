@@ -3030,24 +3030,55 @@
             renderSkinsList();
             closeSkinsModal();
 
-            // Re-render grids to apply skin
-            buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+            // Met à jour les grilles sans réinitialiser leur état
+            const grids = ['sim-grid', 'chal-grid', 'read-grid'];
+            grids.forEach(gridId => {
+                const grid = document.getElementById(gridId);
+                if (!grid) return;
+
+                // Mettre à jour les classes
+                Array.from(grid.classList).forEach(cls => {
+                    if (cls.startsWith('skin-')) grid.classList.remove(cls);
+                });
+                if (activeSkin !== 'volcano') grid.classList.remove('ground-fire');
+                if (activeSkin !== 'pirate') grid.classList.remove('ground-ocean');
+                else grid.classList.add('ground-ocean');
+                grid.classList.add(`skin-${activeSkin}`);
+
+                // Mettre à jour les obstacles
+                const obstacles = grid.querySelectorAll('.obstacle');
+                const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
+                obstacles.forEach(cell => {
+                    if (obsSkin.includes('<svg')) {
+                        cell.innerHTML = obsSkin;
+                        delete cell.dataset.obstacle;
+                    } else {
+                        cell.innerHTML = '';
+                        cell.dataset.obstacle = obsSkin;
+                    }
+                });
+            });
+
+            // Mettre à jour les robots et cibles pour sim-grid
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-
-            if (TrailManager.states['sim-grid']) {
-                redrawTrail('sim-grid', simState);
-            } else {
-                TrailManager.clear('sim-grid');
-            }
-
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
+
+            // Mettre à jour les robots et cibles pour chal-grid
             if (chalState.robotRow !== null) {
-                buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
                 renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
-                TrailManager.clear('chal-grid');
-                if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+                if (chalState.targetRow !== null) {
+                    renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+                }
+            }
+
+            // Mettre à jour les robots et cibles pour read-grid
+            if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
+                renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
+                if (readState.targetRow !== null && readState.targetCol !== null) {
+                    renderTarget('read-grid', 'read-target', readState.targetRow, readState.targetCol);
+                }
             }
 
             const tgtBtn = document.getElementById('btn-target-icon');
