@@ -264,10 +264,10 @@ Purely visual inconsistency — see Section 1 for full context.
 
 | # | Issue | Severity | Effort |
 |---|---|---|---|
-| 3.2 | `@media print` missing brace causes global CSS bleed | 🔴 High | Trivial |
-| 3.1 | `var()` in `@media` — entire responsive block ignored | 🔴 High | Trivial |
-| 2 | `binaire_studio` toast invisible in light mode | 🟠 Medium | Low |
-| 2 | No unified `showToast` — 5 diverging implementations | 🟠 Medium | Medium (new `toast.js`) |
+| 3.2 | `@media print` missing brace causes global CSS bleed | ✅ Fixed | Trivial |
+| 3.1 | `var()` in `@media` — entire responsive block ignored | ✅ Fixed | Trivial |
+| 2 | `binaire_studio` toast invisible in light mode | ✅ Fixed | Low |
+| 2 | No unified `showToast` — 5 diverging implementations | ✅ Fixed | Medium (new `toast.js`) |
 | 1 | No `border-radius` token system | 🟡 Low | Medium (token migration) |
 | 3.4 | Bluebot toast blocks center clicks | ✅ Already fixed | — |
 | 3.5 | Tab bar border-radius clipping | 🟡 Low | Low |

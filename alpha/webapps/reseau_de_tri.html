@@ -522,7 +522,6 @@
             <button class="diff-btn" id="diff-hard">🔴 5 fils</button>
         </div>
 
-        <div class="feedback" id="feedback-msg"></div>
 
         <!-- GAME AREA -->
         <div class="game-area">
@@ -612,7 +611,6 @@
         const gridContainer = document.getElementById('network-grid');
         const svgContainer = document.getElementById('network-svg');
         const wrapper = document.getElementById('network-wrapper');
-        const feedbackMsg = document.getElementById('feedback-msg');
         const btnNextStep = document.getElementById('btn-next-step');
 
 
@@ -896,8 +894,6 @@
         }
 
         function startNewLevel() {
-            feedbackMsg.textContent = '';
-            feedbackMsg.className = 'feedback info';
             btnNextStep.disabled = false;
 
             networkDef = NETWORKS[numWires];
@@ -946,7 +942,7 @@
 
             if (!isCorrect) {
                 playSound('error');
-                showFeedback('Attention, des éléments sont mal triés sur les barres actives !', 'error');
+                showToast('Attention, des éléments sont mal triés sur les barres actives !', 'error');
                 updateScore(false);
                 return;
             }
@@ -966,7 +962,7 @@
                 setTimeout(() => {
                     launchConfetti();
                     playSound('win');
-                    showFeedback('Bravo ! Le réseau a trié tous les éléments !', 'success');
+                    showToast('Bravo ! Le réseau a trié tous les éléments !', 'success');
                     updateScore(true);
 
                     // Auto restart after a bit
@@ -975,14 +971,10 @@
                     }, 4000);
                 }, 500); // Wait for the transition to finish
             } else {
-                showFeedback('Étape validée !', 'success');
+                showToast('Étape validée !', 'success');
             }
         }
 
-        function showFeedback(msg, type) {
-            feedbackMsg.textContent = msg;
-            feedbackMsg.className = `feedback ${type}`;
-        }
 
         function updateScore(correct) {
             if (correct) {
@@ -1001,6 +993,7 @@
         window.addEventListener('load', init);
     </script>
     <script src="../../js/swipe.js"></script>
+    <script src="../../js/toast.js"></script>
     <script src="../../js/theme.js"></script>
 </body>
 
