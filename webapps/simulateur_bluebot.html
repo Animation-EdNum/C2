@@ -878,6 +878,44 @@
             filter: drop-shadow(10px -10px 8px rgba(0, 0, 0, 0.5));
         }
 
+        .trail-path-helicopter {
+            stroke: #64748b;
+            stroke-width: 6;
+            stroke-dasharray: 10 10;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.8;
+        }
+
+        .trail-path-helicopter-shadow {
+            stroke: rgba(0, 0, 0, 0.3);
+            stroke-width: 6;
+            stroke-dasharray: 10 10;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transform: translate(8px, 12px);
+            filter: blur(2px);
+        }
+
+        .trail-helicopter-cloud {
+            fill: #ffffff;
+            opacity: 0.6;
+            animation: cloud-fade 3s ease-out forwards;
+        }
+
+        @keyframes cloud-fade {
+            0% {
+                opacity: 0.8;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
         @keyframes search-spotlight {
             0% {
                 transform: translate(-50%, -50%);
@@ -4109,7 +4147,24 @@
                 };
 
                 // Add extra layered paths for specific skins
-                if (activeSkin === 'f1') {
+                if (activeSkin === 'helicopter') {
+                    const shadowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    shadowPath.setAttribute("class", "trail-path-helicopter-shadow");
+                    shadowPath.setAttribute("d", d);
+                    const heliPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    heliPath.setAttribute("class", "trail-path-helicopter");
+                    heliPath.setAttribute("d", d);
+
+                    // Insert before the main path
+                    // Render shadow first so it is underneath heliPath
+                    layer.insertBefore(heliPath, path);
+                    layer.insertBefore(shadowPath, heliPath);
+
+                    // Hide the default solid path
+                    path.style.display = 'none';
+
+                    this.states[containerId].extraPaths.push(shadowPath, heliPath);
+                } else if (activeSkin === 'f1') {
                     const borderPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     borderPath.setAttribute("class", "trail-path-border");
                     borderPath.setAttribute("d", d);
@@ -4196,7 +4251,30 @@
                 // Effets spéciaux de trace
                 const layer = this.initLayer(containerId);
 
-                if (activeSkin === 'cyberbot') {
+                if (activeSkin === 'helicopter') {
+                    // Souffle des pales (nuages qui s'estompent)
+                    const cloudCount = 2 + Math.floor(Math.random() * 2);
+                    for (let i = 0; i < cloudCount; i++) {
+                        const cloud = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        cloud.setAttribute("class", "trail-helicopter-cloud");
+                        // Position légèrement aléatoire autour du point
+                        const ox = (Math.random() - 0.5) * 30;
+                        const oy = (Math.random() - 0.5) * 30;
+                        cloud.setAttribute("cx", pt.x + ox);
+                        cloud.setAttribute("cy", pt.y + oy);
+                        cloud.setAttribute("r", 15 + Math.random() * 15);
+
+                        // Léger délai aléatoire
+                        cloud.style.animationDelay = `${Math.random() * 0.5}s`;
+
+                        layer.appendChild(cloud);
+
+                        // Nettoyage après l'animation (3s + délai max 0.5s)
+                        setTimeout(() => {
+                            if (cloud && cloud.parentNode) cloud.remove();
+                        }, 3500);
+                    }
+                } else if (activeSkin === 'cyberbot') {
                     // Trace Matrix (0 et 1)
                     for (let i = 0; i < 3; i++) {
                         const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
