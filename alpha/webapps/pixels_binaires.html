@@ -249,21 +249,31 @@
 
 
         /* Binary Output/Input */
-        .binary-container {
+
+        /* Centered square containers for binary code */
+        .binary-col {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
+        }
+
+        .binary-container {
+            width: clamp(250px, 100%, 350px) !important;
+            aspect-ratio: 1 / 1;
             display: flex;
             flex-direction: column;
             gap: 10px;
             align-items: center;
+            justify-content: center;
         }
-
-
-
-
 
         .binary-text {
             width: 100%;
-            min-height: 80px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 15px;
             background: var(--badge-bg);
             color: var(--badge-color);
@@ -277,7 +287,16 @@
             border: 1px dashed var(--accent);
             resize: none;
             letter-spacing: 2px;
+            box-sizing: border-box;
         }
+
+
+
+
+
+
+
+
 
 
         .binary-text:focus {
@@ -400,6 +419,30 @@
             height: 100%;
         }
 
+
+        /* TOAST */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.3s var(--spring-easing);
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -464,7 +507,7 @@
                     </div>
                     <div class="grid-col" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
                         <div class="pixel-grid" id="grid-decodage"></div>
-                        <div class="feedback" id="feedback-decodage" style="margin: 0; min-height: 28px;"></div>
+
                         <button class="btn" id="btn-check"><i data-lucide="check-circle"></i> Valider</button>
                     </div>
                 </div>
@@ -653,8 +696,18 @@
         // --- MODE DECODAGE ---
         const gridDecodage = document.getElementById('grid-decodage');
         const targetBinaryText = document.getElementById('target-binary');
-        const feedbackDecodage = document.getElementById('feedback-decodage');
+
         const btnCheck = document.getElementById('btn-check');
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerHTML = msg;
+            toast.style.background = isSuccess ? 'var(--success)' : 'var(--error)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
         let targetBinary = "";
         let stateDecodage = Array(25).fill(0);
 
@@ -733,54 +786,13 @@
         // 00=Black, 01=Green, 10=Blue, 11=Yellow
         // Each pattern MUST use all 4 colors at least once to ensure full decoding practice.
         const PATTERNS = [
-            // Smiley (Yellow face 11, black eyes/mouth 00, blue background 10, green hat 01)
-            "1010011010" +
-            "1111111111" +
-            "1100110011" +
-            "1100000011" +
-            "1011111110",
-
-            // Maison (Blue sky 10, Yellow roof 11, Green house 01, Black door 00)
-            "1010111010" +
-            "1011111110" +
-            "1001010110" +
-            "1001000110" +
-            "0101000101",
-
-            // Coeur (Yellow background 11, Black heart 00, Green leaf 01, Blue water drop 10)
-            "1100110011" +
-            "0000000000" +
-            "1100000001" +
-            "1111001111" +
-            "1110111111",
-
-            // Arbre (Blue background 10, Green leaves 01, Black trunk 00, Yellow sun 11)
-            "1110011010" +
-            "1001010110" +
-            "0101010101" +
-            "1010001010" +
-            "1010001010",
-
-            // Bateau (Blue water 10, Green boat 01, Yellow sail 11, Black flag 00)
-            "1010110010" +
-            "1010111110" +
-            "1010111110" +
-            "1001010110" +
-            "1010101010",
-
-            // Fleur (Green background 01, Yellow petals 11, Black center 00, Blue butterfly 10)
-            "0110011101" +
-            "1111111111" +
-            "0111001101" +
-            "0101110101" +
-            "0101010101",
-
-            // Monstre (Blue background 10, Green body 01, Yellow eye 11, Black mouth 00)
-            "1010101010" +
-            "1001010110" +
-            "0101110101" +
-            "0100000001" +
-            "1001100110"
+            { name: "Smiley", code: "1010011010" + "1111111111" + "1100110011" + "1100000011" + "1011111110" },
+            { name: "Maison", code: "1010111010" + "1011111110" + "1001010110" + "1001000110" + "0101000101" },
+            { name: "Coeur", code: "1100110011" + "0000000000" + "1100000001" + "1111001111" + "1110111111" },
+            { name: "Arbre", code: "1110011010" + "1001010110" + "0101010101" + "1010001010" + "1010001010" },
+            { name: "Bateau", code: "1010110010" + "1010111110" + "1010111110" + "1001010110" + "1010101010" },
+            { name: "Fleur", code: "0110011101" + "1111111111" + "0111001101" + "0101110101" + "0101010101" },
+            { name: "Monstre", code: "1010101010" + "1001010110" + "0101110101" + "0100000001" + "1001100110" }
         ];
 
         let collectedDrawings = new Set();
@@ -803,9 +815,12 @@
             });
         }
 
+        let currentPatternName = "";
         function initDecodageChallenge() {
             // Select random pattern
-            targetBinary = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
+            const pattern = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
+            targetBinary = pattern.code;
+            currentPatternName = pattern.name;
 
             // Chunk string into 5 lines for readability
             let formattedBinary = "";
@@ -818,34 +833,36 @@
             buildGridDecodage();
 
 
-
-
-
-            feedbackDecodage.textContent = "";
             btnCheck.disabled = false;
         }
 
         btnCheck.addEventListener('click', () => {
             const currentBinary = stateDecodage.map(val => COLORS[val].code).join('');
 
-
-
-
-
             if (currentBinary === targetBinary) {
-                feedbackDecodage.textContent = "🎉 Bravo ! Image décodée !";
-                feedbackDecodage.style.color = "var(--success)";
+                showToast("🎉 Bravo ! Image décodée ! (" + currentPatternName + ")", true);
                 if(window.AudioTools) AudioTools.play('success');
-                ScoreManager.addCorrect();
+
+                ScoreManager.addSuccess('decode', null, 0); // null means no specific difficulty
+
+                // Update UI scores directly or rely on scoremanager...
+                // We'll update the global correct and streak since they are present.
+                const globalCorrectEl = document.getElementById('global-correct');
+                const globalStreakEl = document.getElementById('global-streak');
+                if(globalCorrectEl) globalCorrectEl.textContent = parseInt(globalCorrectEl.textContent || '0') + 1;
+                if(globalStreakEl) globalStreakEl.textContent = parseInt(globalStreakEl.textContent || '0') + 1;
+
                 collectedDrawings.add(targetBinary);
                 renderCollection();
                 btnCheck.disabled = true;
                 setTimeout(initDecodageChallenge, 2500);
             } else {
-                feedbackDecodage.textContent = "❌ Il y a des erreurs, vérifie le code.";
-                feedbackDecodage.style.color = "var(--error)";
+                showToast("❌ Il y a des erreurs, vérifie le code.", false);
                 if(window.AudioTools) AudioTools.play('error');
-                ScoreManager.resetStreak();
+                ScoreManager.addMistake('decode', null);
+
+                const globalStreakEl = document.getElementById('global-streak');
+                if(globalStreakEl) globalStreakEl.textContent = '0';
             }
         });
 
@@ -882,5 +899,6 @@
 
     <script src="../../js/swipe.js"></script>
     <script src="../../js/theme.js"></script>
+    <div id="toast"></div>
 </body>
 </html>
