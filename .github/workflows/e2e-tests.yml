@@ -5,26 +5,146 @@ on:
     branches: [main]
 
 jobs:
-  test:
+
+  # ── Detect which files changed ─────────────────────────────────────────────
+  changes:
+    name: "Detect changed files"
+    runs-on: ubuntu-latest
+    outputs:
+      basic:         ${{ steps.filter.outputs.basic }}
+      scores:        ${{ steps.filter.outputs.scores }}
+      bluebot:       ${{ steps.filter.outputs.bluebot }}
+      binaire_codage: ${{ steps.filter.outputs.binaire_codage }}
+      alpha_webapps: ${{ steps.filter.outputs.alpha_webapps }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            basic:
+              - 'index.html'
+              - 'css/**'
+              - 'js/**'
+            scores:
+              - 'js/**'
+              - 'webapps/**'
+            bluebot:
+              - 'webapps/simulateur_bluebot.html'
+              - 'webapps/mats/**'
+            binaire_codage:
+              - 'webapps/binaire_codage.html'
+            alpha_webapps:
+              - 'alpha/webapps/**'
+
+  # ── Shared setup step (bash function to avoid repetition) ─────────────────
+
+  # ── Basic & Resources ──────────────────────────────────────────────────────
+  test-basic:
+    name: "Basic & Resources"
+    needs: changes
+    if: needs.changes.outputs.basic == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: |
           pip install pytest-playwright playwright
           playwright install chromium
-
       - name: Start HTTP server
         run: python -m http.server 8000 &
-
       - name: Wait for server
         run: sleep 2
+      - name: Run tests
+        run: python -m pytest e2e_tests/test_basic.py e2e_tests/test_ressources.py -v
 
-      - name: Run E2E tests
-        run: python -m pytest e2e_tests/ -v
+  # ── Scores ─────────────────────────────────────────────────────────────────
+  test-scores:
+    name: "Scores"
+    needs: changes
+    if: needs.changes.outputs.scores == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright playwright
+          playwright install chromium
+      - name: Start HTTP server
+        run: python -m http.server 8000 &
+      - name: Wait for server
+        run: sleep 2
+      - name: Run tests
+        run: python -m pytest e2e_tests/test_scores.py -v
+
+  # ── Blue-Bot Simulator ─────────────────────────────────────────────────────
+  test-bluebot:
+    name: "Blue-Bot Simulator"
+    needs: changes
+    if: needs.changes.outputs.bluebot == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright playwright
+          playwright install chromium
+      - name: Start HTTP server
+        run: python -m http.server 8000 &
+      - name: Wait for server
+        run: sleep 2
+      - name: Run tests
+        run: python -m pytest e2e_tests/test_bluebot.py -v
+
+  # ── Binaire Codage ─────────────────────────────────────────────────────────
+  test-binaire-codage:
+    name: "Binaire Codage"
+    needs: changes
+    if: needs.changes.outputs.binaire_codage == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright playwright
+          playwright install chromium
+      - name: Start HTTP server
+        run: python -m http.server 8000 &
+      - name: Wait for server
+        run: sleep 2
+      - name: Run tests
+        run: python -m pytest e2e_tests/test_binaire_codage.py -v
+
+  # ── Alpha Webapps (pixels_binaires, pixel_studio_rvb, etc.) ───────────────
+  test-alpha-webapps:
+    name: "Alpha Webapps"
+    needs: changes
+    if: needs.changes.outputs.alpha_webapps == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright playwright
+          playwright install chromium
+      - name: Start HTTP server
+        run: python -m http.server 8000 &
+      - name: Wait for server
+        run: sleep 2
+      - name: Run tests
+        run: python -m pytest e2e_tests/test_alpha_webapps.py -v
