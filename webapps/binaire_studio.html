@@ -60,22 +60,6 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
 
-        body.dark .nav-btn {
-            background: var(--card-bg);
-            border-color: #334155;
-            color: #94a3b8;
-         display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        body.dark .nav-btn:hover {
-            border-color: #475569;
-        }
-
-        body.dark .nav-btn.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
 
         body.dark .binary-row-field input {
             border-color: #334155;
@@ -201,47 +185,15 @@ body {
             border-color: #334155;
         }
 
-        /* NAVIGATION */
-        .nav-bar {
+        /* TABS NAVIGATION */
+        .tabs {
             display: flex;
-            flex-direction: row;
             justify-content: center;
-            gap: 10px;
-            flex-wrap: nowrap;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 15px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-            width: max-content;
-            max-width: 95vw;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
-        .nav-btn {
-            white-space: nowrap;
-         display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-
-        body.dark .nav-bar {
-            background: rgba(30, 41, 59, 0.9);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* Add padding to container so fixed nav doesn't overlap content at the very bottom */
-        .container {
-            margin-bottom: 80px;
-        }
-
-
-        .nav-btn {
+        .tab-btn {
             padding: 10px 20px;
             border-radius: 10px;
             border: 2px solid #e0e7ff;
@@ -251,18 +203,27 @@ body {
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-         display: flex; align-items: center; justify-content: center; gap: 8px;
+            outline: none;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
-        .nav-btn:hover {
-            border-color: #cbd5e1;
-        }
-
-        .nav-btn.active {
+        .tab-btn.active {
             background: var(--accent);
             color: white;
             border-color: var(--accent);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--badge-bg);
+        }
+
+        body.dark .tab-btn {
+            background: var(--card-bg);
+            border-color: #334155;
+            color: #94a3b8;
         }
 
         /* GRID SYSTEM */
@@ -763,10 +724,10 @@ body {
             </div>
         </header>
 
-        <div class="nav-bar">
-            <button class="nav-btn active" id="nav-decode"><i data-lucide="target"></i> Décoder</button>
-            <button class="nav-btn" id="nav-encode"><i data-lucide="edit-3"></i> Encoder</button>
-            <button class="nav-btn" id="nav-editor"><i data-lucide="palette"></i> Éditeur</button>
+        <div class="tabs">
+            <button class="tab-btn active" id="nav-decode"><i data-lucide="target"></i> Décoder</button>
+            <button class="tab-btn" id="nav-encode"><i data-lucide="edit-3"></i> Encoder</button>
+            <button class="tab-btn" id="nav-editor"><i data-lucide="palette"></i> Éditeur</button>
         </div>
 
         <!-- ==================== MODE DÉCODER ==================== -->
@@ -1275,8 +1236,8 @@ body {
         function switchMode(mode) {
             currentMode = mode;
 
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
                 const text = btn.textContent.toLowerCase();
                 if ((mode === 'decode' && text.includes('décoder')) ||
                     (mode === 'encode' && text.includes('encoder')) ||

@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Détection de balayage horizontal prédominant (filtrage du scrolling vertical)
         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-            const tabContainer = document.querySelector('.tabs, .nav-bar, .tab-bar');
+            const tabContainer = document.querySelector('.tabs, .tab-bar');
             if (!tabContainer) return; // Pas de système d'onglets sur cette page
 
-            const tabs = Array.from(tabContainer.querySelectorAll('.tab-btn, .nav-btn'));
+            const tabs = Array.from(tabContainer.querySelectorAll('.tab-btn'));
             if (tabs.length === 0) return;
 
             const activeIndex = tabs.findIndex(tab => tab.classList.contains('active'));

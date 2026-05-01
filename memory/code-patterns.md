@@ -55,10 +55,10 @@ Every application follows this high-level HTML structure:
 - **String Building:** When generating HTML dynamically inside loops, prefer collecting HTML strings in an array and using `.join('')` over iterative string concatenation (`+=`).
 - **ScoreManager Statistics:** Detailed game statistics are tracked globally via `js/scores.js`. When calculating performance percentages, the denominator must encompass all actions (e.g., `st.totalSuccess + st.mistakes`).
 - **Translations:** `ScoreManager` centralizes human-readable translations in `MODE_LABELS` and `DIFF_LABELS`. When rendering labels, use the lookup pattern `this.MODE_LABELS[key] || key`.
-- **Swipe Gestures:** Mobile swipe functionality for tab navigation is centralized in `js/swipe.js`. It supports container classes (`.tabs`, `.nav-bar`, `.tab-bar`) and button classes (`.tab-btn`, `.nav-btn`). Ensure this script is explicitly included.
+- **Swipe Gestures:** Mobile swipe functionality for tab navigation is centralized in `js/swipe.js`. It supports container classes (`.tabs`, `.tab-bar`) and button classes (`.tab-btn`). Ensure this script is explicitly included.
 - **Critical Successes:** 'Critical Successes' should trigger intense visual rewards using `launchFire()` from `js/confetti.js` and appending `.critical-success-overlay` to the DOM.
 
-- **Mobile Navigation Rule:** Bottom buttons/tabs must only be used to switch exercises within a webapp (`.tabs`, `.nav-bar`, `.tab-bar`), never to select a difficulty level (`.difficulty-bar`).
+- **Mobile Navigation Rule:** Navigation tabs must only be used to switch exercises within a webapp (`.tabs`, `.tab-bar`), never to select a difficulty level (`.difficulty-bar`). The `.nav-bar` class is deprecated.
 
 ## 6. Accessibility (A11y) Patterns
 - **Keyboard Navigation:** Custom interactive elements (e.g., `<div>` or `<span>` with `onclick`) must include `tabindex="0"` and an `onkeydown` handler that triggers on 'Enter' or 'Space' (`if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }`).
