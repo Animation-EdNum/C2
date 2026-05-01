@@ -203,11 +203,14 @@
         /* Grid */
         .pixel-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 2px;
-            background: var(--border-color);
-            border: 2px solid var(--border-color);
+            grid-template-columns: repeat(5, clamp(35px, 10vw, 60px));
+            grid-auto-rows: clamp(35px, 10vw, 60px);
+            width: fit-content;
+            gap: 0px;
+            background: var(--card-border);
+            border: 2px solid var(--card-border);
             margin-bottom: 20px;
+            touch-action: none;
         }
 
 
@@ -215,30 +218,19 @@
 
 
         .pixel-cell {
-            width: clamp(35px, 10vw, 60px);
-            height: clamp(35px, 10vw, 60px);
+            width: 100%;
+            height: 100%;
             background: var(--c-noir); /* Par défaut noir = 00 */
             cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-
-        .pixel-cell:active {
-            transform: scale(0.95);
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         @media (max-width: 400px) {
-            .pixel-cell { width: 40px; height: 40px; }
-        }
-
-
-
-        .pixel-cell:active {
-            transform: scale(0.95);
-        }
-
-        @media (max-width: 400px) {
-            .pixel-cell { width: 40px; height: 40px; }
+            .pixel-grid {
+                grid-template-columns: repeat(5, 40px);
+                grid-auto-rows: 40px;
+            }
         }
 
 
@@ -360,6 +352,47 @@
             font-family: monospace;
         }
 
+        /* Collection Section */
+        .collection-section {
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+
+        .collection-section h3 {
+            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #collection-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 10px);
+            grid-auto-rows: 10px;
+            gap: 1px;
+            background: var(--card-border);
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .mini-cell {
+            width: 100%;
+            height: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -400,8 +433,8 @@
         <p class="subtitle">Découvre comment un ordinateur code une image avec des 0 et des 1 !</p>
 
         <div class="tabs">
-            <button class="tab-btn active" id="nav-codage"><i data-lucide="edit-3"></i> Codage</button>
-            <button class="tab-btn" id="nav-decodage"><i data-lucide="eye"></i> Décodage</button>
+            <button class="tab-btn active" id="nav-decodage"><i data-lucide="eye"></i> Décodage</button>
+            <button class="tab-btn" id="nav-codage"><i data-lucide="edit-3"></i> Éditeur</button>
         </div>
 
         <div class="legend">
@@ -411,31 +444,7 @@
             <div class="legend-item"><div class="color-box" style="background: var(--c-jaune);"></div> 11</div>
         </div>
 
-                <!-- MODE CODAGE -->
-        <div id="mode-codage" class="mode-container active">
-            <div class="card" style="width: 100%;">
-                <div class="card-badge">Codage</div>
-                <div class="instructions">Dessine sur la grille pour voir le code binaire se générer.</div>
-
-                <div class="side-by-side">
-                    <div class="grid-col">
-                        <div class="pixel-grid" id="grid-codage"></div>
-                    </div>
-                    <div class="binary-col">
-                        <div class="binary-container" style="width: 100%;">
-                            <div class="binary-text" id="output-codage">00000000000000000000000000000000000000000000000000</div>
-                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                <button class="btn" id="btn-copy"><i data-lucide="copy"></i> Copier le code</button>
-                                <button class="btn" id="btn-clear-codage" style="background: var(--error);"><i data-lucide="trash-2"></i> Effacer</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-                <div id="mode-decodage" class="mode-container">
+        <div id="mode-decodage" class="mode-container active">
             <div class="card" style="width: 100%;">
                 <div class="card-badge">Décodage</div>
                 <div class="instructions">Lis le code binaire et reproduis l'image sur la grille !</div>
@@ -462,6 +471,34 @@
                 <div class="score-item">
                     <div class="score-label">Série 🔥</div>
                     <div class="score-value" id="global-streak">0</div>
+                </div>
+            </div>
+
+            <div class="collection-section">
+                <h3>Collection</h3>
+                <div id="collection-grid"></div>
+            </div>
+        </div>
+
+        <!-- MODE CODAGE -->
+        <div id="mode-codage" class="mode-container">
+            <div class="card" style="width: 100%;">
+                <div class="card-badge">Éditeur</div>
+                <div class="instructions">Dessine sur la grille pour voir le code binaire se générer.</div>
+
+                <div class="side-by-side">
+                    <div class="grid-col">
+                        <div class="pixel-grid" id="grid-codage"></div>
+                    </div>
+                    <div class="binary-col">
+                        <div class="binary-container" style="width: 100%;">
+                            <div class="binary-text" id="output-codage">00000000000000000000000000000000000000000000000000</div>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <button class="btn" id="btn-copy"><i data-lucide="copy"></i> Copier le code</button>
+                                <button class="btn" id="btn-clear-codage" style="background: var(--error);"><i data-lucide="trash-2"></i> Effacer</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -494,6 +531,11 @@
             initDecodageChallenge();
         });
 
+        // Initialize Decodage Mode as default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initDecodageChallenge();
+        });
+
         // Config 4 Colors
         // 00=Noir, 01=Vert, 10=Bleu, 11=Jaune
         const COLORS = [
@@ -502,6 +544,9 @@
             { code: '10', var: 'var(--c-bleu)' },
             { code: '11', var: 'var(--c-jaune)' }
         ];
+
+        let isDrawing = false;
+        window.addEventListener('mouseup', () => { isDrawing = false; });
 
         // --- MODE CODAGE ---
         const gridCodage = document.getElementById('grid-codage');
@@ -518,13 +563,18 @@
                 cell.dataset.index = i;
                 cell.style.background = COLORS[stateCodage[i]].var;
 
+                cell.addEventListener('mousedown', () => {
+                    isDrawing = true;
+                    cycleColorCodage(i);
+                });
 
+                cell.addEventListener('mouseenter', () => {
+                    if (isDrawing) cycleColorCodage(i);
+                });
 
-
-
-                cell.addEventListener('mousedown', () => cycleColorCodage(i));
                 cell.addEventListener('touchstart', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     cycleColorCodage(i);
                 }, {passive: false});
 
@@ -532,6 +582,28 @@
             }
             updateBinaryOutput();
         }
+
+        gridCodage.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const touch = e.touches[0];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (target && target.classList.contains('pixel-cell') && target.parentElement === gridCodage) {
+                const index = target.dataset.index;
+                // Only cycle if it's different to avoid rapid cycling while holding
+                // To make swipe-to-paint work well with cycle, we shouldn't cycle repeatedly on the same cell while moving
+                // We'll keep track of the last touched cell to avoid doing it multiple times
+                if (gridCodage._lastTouchedIndex !== index) {
+                    cycleColorCodage(index);
+                    gridCodage._lastTouchedIndex = index;
+                }
+            }
+        }, {passive: false});
+
+        gridCodage.addEventListener('touchend', (e) => {
+            e.stopPropagation();
+            gridCodage._lastTouchedIndex = null;
+        });
 
         function cycleColorCodage(index) {
             stateCodage[index] = (stateCodage[index] + 1) % 4;
@@ -541,12 +613,17 @@
         }
 
         function updateBinaryOutput() {
-            const binString = stateCodage.map(val => COLORS[val].code).join('');
-            outputCodage.textContent = binString;
+            let formattedBinary = "";
+            for(let i=0; i<5; i++) {
+                const lineCodes = stateCodage.slice(i*5, (i+1)*5).map(val => COLORS[val].code);
+                formattedBinary += lineCodes.join('') + "<br>";
+            }
+            outputCodage.innerHTML = formattedBinary;
         }
 
         btnCopy.addEventListener('click', () => {
-            navigator.clipboard.writeText(outputCodage.textContent).then(() => {
+            const rawBinary = stateCodage.map(val => COLORS[val].code).join('');
+            navigator.clipboard.writeText(rawBinary).then(() => {
                 const originalText = btnCopy.innerHTML;
                 btnCopy.innerHTML = '<i data-lucide="check"></i> Copié !';
                 lucide.createIcons();
@@ -582,13 +659,18 @@
                 cell.dataset.index = i;
                 cell.style.background = COLORS[stateDecodage[i]].var;
 
+                cell.addEventListener('mousedown', () => {
+                    isDrawing = true;
+                    cycleColorDecodage(i);
+                });
 
+                cell.addEventListener('mouseenter', () => {
+                    if (isDrawing) cycleColorDecodage(i);
+                });
 
-
-
-                cell.addEventListener('mousedown', () => cycleColorDecodage(i));
                 cell.addEventListener('touchstart', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     cycleColorDecodage(i);
                 }, {passive: false});
 
@@ -596,23 +678,127 @@
             }
         }
 
+        gridDecodage.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const touch = e.touches[0];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (target && target.classList.contains('pixel-cell') && target.parentElement === gridDecodage) {
+                const index = target.dataset.index;
+                if (gridDecodage._lastTouchedIndex !== index) {
+                    cycleColorDecodage(index);
+                    gridDecodage._lastTouchedIndex = index;
+                }
+            }
+        }, {passive: false});
+
+        gridDecodage.addEventListener('touchend', (e) => {
+            e.stopPropagation();
+            gridDecodage._lastTouchedIndex = null;
+        });
+
         function cycleColorDecodage(index) {
             stateDecodage[index] = (stateDecodage[index] + 1) % 4;
             gridDecodage.children[index].style.background = COLORS[stateDecodage[index]].var;
             if(window.AudioTools) AudioTools.play('click');
         }
 
+        const DRAWINGS = [
+            // Smiley
+            "11111110011111111001111111100001111101110111111111",
+            // Maison
+            "10100010101000000010000000000000110000110011000011",
+            // Coeur
+            "00010001000101010101000101010000000100000000010000",
+            // Arbre
+            "10100110101001010110100101101010100010101010001010",
+            // Bateau
+            "10101010101010001010100000101000000010000000000000",
+            // Fleur
+            "11111011111110001111111011111101010111010101110101",
+            // Fantôme
+            "00000000000000000000000100010000000000000000000000", // Will replace this with better one below
+            // Tête de chat
+            "00111111000000110000001111110011000011000011000000"
+        ];
+
+        // Let's redefine some nice drawings.
+        // 00=Black, 01=Green, 10=Blue, 11=Yellow
+        // Each pattern MUST use all 4 colors at least once to ensure full decoding practice.
+        const PATTERNS = [
+            // Smiley (Yellow face 11, black eyes/mouth 00, blue background 10, green hat 01)
+            "1010011010" +
+            "1111111111" +
+            "1100110011" +
+            "1100000011" +
+            "1011111110",
+
+            // Maison (Blue sky 10, Yellow roof 11, Green house 01, Black door 00)
+            "1010111010" +
+            "1011111110" +
+            "1001010110" +
+            "1001000110" +
+            "0101000101",
+
+            // Coeur (Yellow background 11, Black heart 00, Green leaf 01, Blue water drop 10)
+            "1100110011" +
+            "0000000000" +
+            "1100000001" +
+            "1111001111" +
+            "1110111111",
+
+            // Arbre (Blue background 10, Green leaves 01, Black trunk 00, Yellow sun 11)
+            "1110011010" +
+            "1001010110" +
+            "0101010101" +
+            "1010001010" +
+            "1010001010",
+
+            // Bateau (Blue water 10, Green boat 01, Yellow sail 11, Black flag 00)
+            "1010110010" +
+            "1010111110" +
+            "1010111110" +
+            "1001010110" +
+            "1010101010",
+
+            // Fleur (Green background 01, Yellow petals 11, Black center 00, Blue butterfly 10)
+            "0110011101" +
+            "1111111111" +
+            "0111001101" +
+            "0101110101" +
+            "0101010101",
+
+            // Monstre (Blue background 10, Green body 01, Yellow eye 11, Black mouth 00)
+            "1010101010" +
+            "1001010110" +
+            "0101110101" +
+            "0100000001" +
+            "1001100110"
+        ];
+
+        let collectedDrawings = new Set();
+        const collectionGrid = document.getElementById('collection-grid');
+
+        function renderCollection() {
+            collectionGrid.innerHTML = '';
+            collectedDrawings.forEach(binary => {
+                const miniGrid = document.createElement('div');
+                miniGrid.classList.add('mini-grid');
+                for(let i=0; i<25; i++) {
+                    const pair = binary.substring(i*2, i*2+2);
+                    const colorObj = COLORS.find(c => c.code === pair);
+                    const miniCell = document.createElement('div');
+                    miniCell.classList.add('mini-cell');
+                    miniCell.style.background = colorObj ? colorObj.var : 'var(--c-noir)';
+                    miniGrid.appendChild(miniCell);
+                }
+                collectionGrid.appendChild(miniGrid);
+            });
+        }
+
         function initDecodageChallenge() {
-            // Generate random 50 char string (25 pairs of 00,01,10,11)
-            targetBinary = "";
-            for(let i=0; i<25; i++) {
-                const r = Math.floor(Math.random() * 4);
-                targetBinary += COLORS[r].code;
-            }
-
-
-
-
+            // Select random pattern
+            targetBinary = PATTERNS[Math.floor(Math.random() * PATTERNS.length)];
 
             // Chunk string into 5 lines for readability
             let formattedBinary = "";
@@ -644,6 +830,8 @@
                 feedbackDecodage.style.color = "var(--success)";
                 if(window.AudioTools) AudioTools.play('success');
                 ScoreManager.addCorrect();
+                collectedDrawings.add(targetBinary);
+                renderCollection();
                 btnCheck.disabled = true;
                 setTimeout(initDecodageChallenge, 2500);
             } else {
@@ -675,14 +863,12 @@
 
     <footer class="no-print">
         <p>
-            Webapp conçue par l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/"
-                target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/"
+                target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
             <br>
             <span style="font-size: 0.9em; opacity: 0.85;">
-                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
-                    libre</a>
-                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
-                    rel="noopener noreferrer">AGPL-3.0</a>)
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
             </span>
         </p>
     </footer>
