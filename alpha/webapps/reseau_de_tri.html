@@ -592,8 +592,25 @@
             ]
         };
 
-        const GRID_SPACING_Y = 80; // Distance between horizontal wires
-        const GRID_SPACING_X = 140; // Distance between stages (vertical comparators)
+        let GRID_SPACING_Y = 80; // Distance between horizontal wires
+        let GRID_SPACING_X = 140; // Distance between stages (vertical comparators)
+
+        function updateGridSpacing() {
+            const isMobile = window.innerWidth <= 600;
+            if (isMobile) {
+                GRID_SPACING_Y = 65;
+                const numStages = networkDef && networkDef.length > 0 ? networkDef.length : 5;
+                const padding = 80; // Approximate left/right padding and margins
+                const availableWidth = window.innerWidth - padding;
+                // Total width is (numStages + 1) * GRID_SPACING_X
+                let optimalX = availableWidth / (numStages + 1);
+                // Cap between 60 and 140
+                GRID_SPACING_X = Math.max(60, Math.min(140, optimalX));
+            } else {
+                GRID_SPACING_Y = 80;
+                GRID_SPACING_X = 140;
+            }
+        }
 
         let currentMode = 'nombres'; // 'nombres' ou 'lettres'
         let currentDifficulty = 'medium'; // 'easy'=3, 'medium'=4, 'hard'=5
@@ -625,6 +642,22 @@
                 scrollContainer.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
                 scrollContainer.addEventListener('touchend', (e) => e.stopPropagation(), { passive: true });
             }
+
+            window.addEventListener('resize', () => {
+                const oldX = GRID_SPACING_X;
+                const oldY = GRID_SPACING_Y;
+                updateGridSpacing();
+                if (oldX !== GRID_SPACING_X || oldY !== GRID_SPACING_Y) {
+                    if (networkDef && networkDef.length > 0) {
+                        drawNetwork();
+                        // Reposition elements
+                        currentState.forEach(stateObj => {
+                            updateElementPosition(stateObj, currentStageIndex);
+                        });
+                        updateHighlights();
+                    }
+                }
+            });
         }
 
 
@@ -743,8 +776,9 @@
                     let offsetX = 0;
                     if (hasOverlap) {
                         // Spread them out slightly to avoid visual crossing
-                        if (compIdx === 0) offsetX = -15;
-                        else if (compIdx === 1) offsetX = 15;
+                        const shift = Math.min(15, GRID_SPACING_X * 0.15);
+                        if (compIdx === 0) offsetX = -shift;
+                        else if (compIdx === 1) offsetX = shift;
                     }
                     const x = (stageIdx + 1) * GRID_SPACING_X + offsetX;
                     const y1 = comp.w1 * GRID_SPACING_Y;
@@ -829,9 +863,8 @@
             // Place elements slightly after the previous comparator, or at the start
             // Comparators are at (stageIdx + 1) * GRID_SPACING_X
             // So comparator 0 is at 1 * 140 = 140.
-            // When stageIndex = 0, x should be 40.
-            // When stageIndex = 1, x should be 140 + 40 = 180.
-            const x = 40 + stageIndex * GRID_SPACING_X;
+            const baseOffset = Math.min(40, GRID_SPACING_X * 0.4);
+            const x = baseOffset + stageIndex * GRID_SPACING_X;
             const y = stateObj.currentWire * GRID_SPACING_Y;
             stateObj.domElement.style.left = `${x}px`;
             stateObj.domElement.style.top = `${y}px`;
@@ -898,6 +931,8 @@
 
             networkDef = NETWORKS[numWires];
             currentStageIndex = 0;
+
+            updateGridSpacing();
 
             // Generate values
             const initialValues = generateValues(numWires);
