@@ -56,6 +56,7 @@ Every application follows this high-level HTML structure:
 - **Translations:** `ScoreManager` centralizes human-readable translations in `MODE_LABELS` and `DIFF_LABELS`. When rendering labels, use the lookup pattern `this.MODE_LABELS[key] || key`.
 - **Swipe Gestures:** Mobile swipe functionality for tab navigation is centralized in `js/swipe.js`. It supports container classes (`.tabs`, `.tab-bar`) and button classes (`.tab-btn`). Ensure this script is explicitly included.
 - **Critical Successes:** 'Critical Successes' should trigger intense visual rewards using `launchFire()` from `js/confetti.js` and appending `.critical-success-overlay` to the DOM.
+- **Mobile Drag-and-Drop:** When implementing mobile touch-based drag-and-drop (to bypass HTML5 limitations), do not call `e.preventDefault()` in `touchstart` as it blocks native click events. Instead, track coordinates, create a `position: fixed` clone with `pointer-events: none` during `touchmove` (where `e.preventDefault()` is used to stop scrolling), and detect the drop zone using `document.elementFromPoint` in `touchend` only if movement occurred.
 
 - **Mobile Navigation Rule:** Primary navigation must use top `.tabs` (or `.tab-bar`) across all platforms (desktop and mobile). Bottom tab bars are explicitly deprecated to avoid overlapping issues on mobile OS with bottom swiping gestures. Navigation tabs must only be used to switch exercises within a webapp (`.tabs`), never to select a difficulty level (`.difficulty-bar`). The `.nav-bar` class is deprecated.
 
