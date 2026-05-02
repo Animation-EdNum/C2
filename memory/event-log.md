@@ -43,3 +43,4 @@
 - **[2026-05-01]** [UI/UX] Refactored `binaire_studio.html` and `pixels_binaires.html` to align tab styling, container width (`margin: 0 auto;`), and button elements (`.btn-small`, border radius) with the project's visual guidelines.
 - **[2026-05-01]** [Layout] Fixed index.html mobile layout issues and applied global safe-area constraints.
 - **[2026-05-01]** [Bugfix] Fixed overlap issues in Blue-Bot Simulator by modifying `#hideCmdToggleBtn` and `#sim-end-container` clearing buttons to act as normal, relative flex items instead of absolutely positioned components within `.program-strip`.
+- **[2026-05-02]** [UX] Enabled active touch-based drag-and-drop for mobile devices in Machine à Trier alpha webapp.
