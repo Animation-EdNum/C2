@@ -505,7 +505,99 @@
             lucide.createIcons();
         }
 
+
+        // --- Touch Events Support ---
+        let touchOffsetX = 0;
+        let touchOffsetY = 0;
+        let activeClone = null;
+        let currentTouchItem = null;
+        let touchHasMoved = false;
+
+        function handleTouchStart(e) {
+            const touch = e.touches[0];
+            currentTouchItem = this;
+            touchHasMoved = false;
+
+            const rect = this.getBoundingClientRect();
+            touchOffsetX = touch.clientX - rect.left;
+            touchOffsetY = touch.clientY - rect.top;
+
+            // Allow tap events but track touch coords
+            // e.preventDefault(); is removed to allow native click sequence
+            // but we might need to stop propagation depending on swipe.js conflicts
+            // Not preventing default here is the right way
+
+        }
+
+        function handleTouchMove(e) {
+            if (!currentTouchItem) return;
+            touchHasMoved = true;
+
+            if (e.cancelable) e.preventDefault();
+            e.stopPropagation();
+
+            const touch = e.touches[0];
+
+            if (!activeClone) {
+                activeClone = currentTouchItem.cloneNode(true);
+                activeClone.style.position = 'fixed';
+                activeClone.style.opacity = '0.8';
+                activeClone.style.zIndex = '1000';
+                activeClone.style.pointerEvents = 'none';
+                activeClone.style.margin = '0';
+                document.body.appendChild(activeClone);
+                currentTouchItem.style.opacity = '0.5';
+                selectItem(currentTouchItem);
+            }
+
+            activeClone.style.left = (touch.clientX - touchOffsetX) + 'px';
+            activeClone.style.top = (touch.clientY - touchOffsetY) + 'px';
+
+            const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+            if (elemBelow) {
+                const binBelow = elemBelow.closest('.bin');
+                if (binBelow) {
+                    binBelow.classList.add('drag-over');
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!currentTouchItem) return;
+            // Only stop propagation if we actually dragged, otherwise we might block click
+            if (touchHasMoved) {
+                e.stopPropagation();
+            }
+
+            if (touchHasMoved && activeClone) {
+                if (e.cancelable) e.preventDefault();
+                const touch = e.changedTouches[0];
+                const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+
+                document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+
+                if (elemBelow) {
+                    const binBelow = elemBelow.closest('.bin');
+                    if (binBelow) {
+                        handleDrop(currentTouchItem, binBelow);
+                    }
+                }
+
+                activeClone.remove();
+                activeClone = null;
+            }
+
+            if (currentTouchItem && currentTouchItem.style) {
+                currentTouchItem.style.opacity = '1';
+            }
+
+            currentTouchItem = null;
+            touchHasMoved = false;
+        }
+
         // --- Drag & Drop et Click Events ---
+
 
         function setupItemEvents(item) {
             item.addEventListener('dragstart', (e) => {
@@ -522,6 +614,11 @@
                 selectItem(item);
                 playSound('click');
             });
+
+            item.addEventListener('touchstart', handleTouchStart, {passive: false});
+            item.addEventListener('touchmove', handleTouchMove, {passive: false});
+            item.addEventListener('touchend', handleTouchEnd);
+            item.addEventListener('touchcancel', handleTouchEnd);
         }
 
         function selectItem(item) {
