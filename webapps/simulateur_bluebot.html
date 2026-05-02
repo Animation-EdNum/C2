@@ -1968,6 +1968,16 @@
             animation: emberTrail 0.6s ease forwards;
         }
 
+        .bot-cell.draw-target {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+            border: 2px dashed #93c5fd !important;
+        }
+
+        .bot-cell.visited-draw {
+            background-color: rgba(59, 130, 246, 0.4) !important;
+            border: 2px solid #3b82f6 !important;
+        }
+
         /* End New Styles */
 
         /* Mat Styles */
@@ -2251,6 +2261,7 @@
             <button class="tab-btn active" id="tab-simulator" role="tab" aria-selected="true" aria-controls="view-simulator"><i data-lucide="bot"></i> Simulateur</button>
             <button class="tab-btn" id="tab-challenge" role="tab" aria-selected="false" aria-controls="view-challenge"><i data-lucide="gamepad-2"></i> Pilotage</button>
             <button class="tab-btn" id="tab-read" role="tab" aria-selected="false" aria-controls="view-read"><i data-lucide="book-open"></i> Décodage</button>
+            <button class="tab-btn" id="tab-draw" role="tab" aria-selected="false" aria-controls="view-draw"><i data-lucide="pen"></i> Dessin</button>
         </div>
 
         <div id="view-simulator" class="view active" role="tabpanel" aria-labelledby="tab-simulator">
@@ -2369,6 +2380,67 @@
                     <div class="score-item">
                         <div class="score-label">Série 🔥</div>
                         <div class="score-value" id="global-streak">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-draw" class="view" role="tabpanel" aria-labelledby="tab-draw">
+
+            <div class="difficulty-bar">
+                <button class="diff-btn active" id="draw-diff-easy" data-diff="easy">⭐ Facile</button>
+                <button class="diff-btn" id="draw-diff-medium" data-diff="medium">⭐⭐ Moyen</button>
+                <button class="diff-btn" id="draw-diff-hard" data-diff="hard">⭐⭐⭐ Difficile</button>
+                <button class="diff-btn" id="draw-diff-extreme" data-diff="extreme">🔥🔥 Extrême</button>
+            </div>
+
+            <div class="exercise-card">
+                <div id="draw-instruction"
+                    style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                    Programme le robot pour tracer la forme demandée !
+                </div>
+
+                <div class="grid-wrapper">
+                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
+                        class="bot-grid-container">
+                        <div class="bot-grid" id="draw-grid" style="margin: 0; max-width: none;"></div>
+                    </div>
+                </div>
+
+                <div class="cmd-pad" id="draw-cmd-pad">
+                    <button class="cmd-btn cmd-btn-forward" id="draw-pad-fwd" aria-label="Avancer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-left" id="draw-pad-left" aria-label="Tourner à gauche">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-backward" id="draw-pad-bwd" aria-label="Reculer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-right" id="draw-pad-right" aria-label="Tourner à droite">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+                    </button>
+                    <button class="cmd-btn cmd-btn-go" id="draw-pad-go" aria-label="Go">GO</button>
+                    <button class="cmd-btn cmd-btn-clear" id="draw-pad-clear" aria-label="Effacer">X</button>
+                </div>
+
+                <div class="program-strip" id="draw-program" style="position: relative;">
+                    <div class="empty-program">Ajoute des commandes...</div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-new" id="btnNextDraw" style="display:none; margin: 0 auto;">➡ Dessin
+                        suivant</button>
+                </div>
+
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Victoires</div>
+                        <div class="score-value" id="draw-global-score">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Série 🔥</div>
+                        <div class="score-value" id="draw-global-streak">0</div>
                     </div>
                 </div>
             </div>
@@ -3521,6 +3593,13 @@
         let readGlobalScore = 0;
         let readGlobalStreak = 0;
 
+        let drawState = {
+            difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetCells: [],
+            program: [], locked: false, isAnimating: false, mistakes: 0
+        };
+        let drawGlobalScore = 0;
+        let drawGlobalStreak = 0;
+
         let currentSpeed = 900;
 
         let commandsVisible = true;
@@ -3598,6 +3677,7 @@
             activeTab = tab;
             if (tab === 'challenge') newChallenge();
             if (tab === 'read') newReadChallenge();
+            if (tab === 'draw') newDrawChallenge();
         }
 
 
@@ -4804,6 +4884,245 @@
             newReadChallenge();
         }
 
+        function setDrawDifficulty(diff) {
+            playSound('click'); drawState.difficulty = diff;
+            document.querySelectorAll('#view-draw .diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === diff));
+            newDrawChallenge();
+        }
+
+        function generateDrawChallenge(diff) {
+            const shapes = {
+                easy: [
+                    { name: 'Ligne Droite', path: ['forward', 'forward'] },
+                    { name: 'L', path: ['forward', 'forward', 'right', 'forward'] },
+                    { name: 'Petit U', path: ['forward', 'right', 'forward', 'right', 'forward'] }
+                ],
+                medium: [
+                    { name: 'Carré', path: ['forward', 'right', 'forward', 'right', 'forward', 'right', 'forward'] },
+                    { name: 'Escalier', path: ['forward', 'right', 'forward', 'left', 'forward', 'right', 'forward'] },
+                    { name: 'L Long', path: ['forward', 'forward', 'forward', 'right', 'forward', 'forward'] }
+                ],
+                hard: [
+                    { name: 'Spirale', path: ['forward', 'right', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'forward'] },
+                    { name: 'Rectangle', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'right', 'forward'] },
+                    { name: 'S', path: ['forward', 'right', 'forward', 'left', 'forward', 'left', 'forward', 'right', 'forward'] }
+                ],
+                extreme: [
+                    { name: 'ZigZag', path: ['forward', 'right', 'forward', 'left', 'forward', 'right', 'forward', 'left', 'forward'] },
+                    { name: 'Serpentin', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'left', 'forward', 'left', 'forward', 'forward'] },
+                    { name: 'U Imbriqué', path: ['forward', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'forward', 'right', 'forward', 'right', 'forward'] }
+                ]
+            };
+
+            for (let attempts = 0; attempts < 1000; attempts++) {
+                const shapeList = shapes[diff];
+                const shapeDef = shapeList[randomInt(0, shapeList.length - 1)];
+
+                let startR = randomInt(0, GRID_ROWS - 1);
+                let startC = randomInt(0, GRID_COLS - 1);
+                let startD = randomInt(0, 3); // 0: N, 1: E, 2: S, 3: W
+
+                let currR = startR;
+                let currC = startC;
+                let currD = startD;
+                let valid = true;
+
+                const targetCells = new Set([`${currR},${currC}`]);
+
+                for (let cmd of shapeDef.path) {
+                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: [] }, cmd);
+                    if (res.blocked) {
+                        valid = false;
+                        break;
+                    }
+                    currR = res.robotRow;
+                    currC = res.robotCol;
+                    currD = res.robotDir;
+                    targetCells.add(`${currR},${currC}`);
+                }
+
+                if (valid) {
+                    return {
+                        startR, startC, startD,
+                        targetCells: Array.from(targetCells).map(coord => {
+                            const [r, c] = coord.split(',').map(Number);
+                            return { r, c };
+                        }),
+                        name: shapeDef.name
+                    };
+                }
+            }
+            // Fallback if no shape fits (unlikely on empty grid)
+            return {
+                startR: 0, startC: 0, startD: 1,
+                targetCells: [{ r: 0, c: 0 }, { r: 0, c: 1 }],
+                name: 'Ligne'
+            };
+        }
+
+        function newDrawChallenge() {
+            if (drawState.isAnimating) return;
+            drawState.locked = false;
+            drawState.mistakes = 0;
+            drawState.program = [];
+            document.getElementById('btnNextDraw').style.display = 'none';
+
+            let chal = generateDrawChallenge(drawState.difficulty);
+
+            drawState.robotRow = chal.startR;
+            drawState.robotCol = chal.startC;
+            drawState.robotDir = chal.startD;
+            drawState.targetCells = chal.targetCells;
+
+            document.getElementById('draw-instruction').innerHTML = `Programme le robot pour tracer un <strong>${chal.name}</strong> !`;
+
+            buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []); // No obstacles in draw mode yet
+            renderRobot('draw-grid', 'draw-robot', chal.startR, chal.startC, chal.startD);
+            TrailManager.clear('draw-grid');
+            renderDrawProgram();
+
+            // Highlight target cells
+            for (const cell of drawState.targetCells) {
+                const el = document.querySelector(`#draw-grid .bot-cell[data-row="${cell.r}"][data-col="${cell.c}"]`);
+                if (el) {
+                    el.classList.add('draw-target');
+                }
+            }
+
+            // Re-render robot to ensure it is above the target cells
+            renderRobot('draw-grid', 'draw-robot', chal.startR, chal.startC, chal.startD);
+        }
+
+        function addDrawCommand(cmd) {
+            if (drawState.locked || drawState.isAnimating) return;
+            drawState.program.push(cmd);
+            playSound('click');
+            renderDrawProgram();
+        }
+
+        async function runDrawProgram() {
+            if (drawState.locked || drawState.isAnimating || drawState.program.length === 0) return;
+            drawState.isAnimating = true;
+            drawState.locked = true;
+
+            let currR = drawState.robotRow;
+            let currC = drawState.robotCol;
+            let currD = drawState.robotDir;
+
+            const visited = new Set([`${currR},${currC}`]);
+
+            TrailManager.captureInitialState('draw-grid', currR, currC, currD);
+
+            // Mark start cell as visited immediately
+            const startCell = document.querySelector(`#draw-grid .bot-cell[data-row="${currR}"][data-col="${currC}"]`);
+            if (startCell) startCell.classList.add('visited-draw');
+
+            for (const cmd of drawState.program) {
+                const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: [] }, cmd);
+                currR = res.robotRow;
+                currC = res.robotCol;
+                currD = res.robotDir;
+
+                renderRobot('draw-grid', 'draw-robot', currR, currC, currD);
+
+                if (res.blocked) {
+                    playSound('error');
+                    document.getElementById('draw-robot').classList.add('shake');
+                    setTimeout(() => document.getElementById('draw-robot').classList.remove('shake'), 350);
+                    break;
+                }
+
+                if (cmd === 'forward' || cmd === 'backward') {
+                    await sleep(350);
+                    TrailManager.addSegment('draw-grid', currR, currC);
+
+                    const cell = document.querySelector(`#draw-grid .bot-cell[data-row="${currR}"][data-col="${currC}"]`);
+                    if (cell) cell.classList.add('visited-draw');
+                    visited.add(`${currR},${currC}`);
+                }
+
+                await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
+            }
+
+            // Validation
+            const targetSet = new Set(drawState.targetCells.map(c => `${c.r},${c.c}`));
+            let isCorrect = true;
+
+            if (visited.size !== targetSet.size) {
+                isCorrect = false;
+            } else {
+                for (const v of visited) {
+                    if (!targetSet.has(v)) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                playSound('success');
+                launchConfetti();
+                showToast(`Forme réussie !`, true);
+
+                drawGlobalScore++;
+                drawGlobalStreak++;
+                ScoreManager.addSuccess("draw", drawState.difficulty, drawState.mistakes || 0);
+
+                document.getElementById('draw-global-score').textContent = drawGlobalScore;
+                document.getElementById('draw-global-streak').textContent = drawGlobalStreak;
+
+                if (drawGlobalStreak > 0 && drawGlobalStreak % 3 === 0) {
+                    if (activeSkin === 'volcano') launchFire();
+                    else launchConfetti();
+                }
+
+                document.getElementById('btnNextDraw').style.display = 'inline-flex';
+            } else {
+                playSound('error');
+                showToast(`La forme n'est pas exacte !`, false);
+                drawGlobalStreak = 0;
+                drawState.mistakes++;
+                ScoreManager.addMistake("draw", drawState.difficulty);
+                document.getElementById('draw-global-streak').textContent = drawGlobalStreak;
+
+                // Reset for retry
+                setTimeout(() => {
+                    if (activeTab === 'draw') {
+                        drawState.locked = false;
+                        // Reset robot position
+                        renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
+                        TrailManager.clear('draw-grid');
+                        // Remove visited classes
+                        document.querySelectorAll('#draw-grid .visited-draw').forEach(el => el.classList.remove('visited-draw'));
+                    }
+                }, 1500);
+            }
+
+            drawState.isAnimating = false;
+        }
+
+        function renderDrawProgram() {
+            const strip = document.getElementById('draw-program');
+            if (drawState.program.length === 0) {
+                strip.innerHTML = '<div class="empty-program">Ajoute des commandes...</div>';
+            } else {
+                strip.innerHTML = drawState.program.map((cmd, i) => {
+                    return `<div class="program-cmd" data-index="${i}">${BB_SVGS[cmd]}</div>`;
+                }).join('');
+
+                // Add delete listeners
+                strip.querySelectorAll('.program-cmd').forEach(cmdEl => {
+                    cmdEl.addEventListener('click', (e) => {
+                        if (drawState.locked || drawState.isAnimating) return;
+                        const idx = parseInt(e.currentTarget.dataset.index);
+                        drawState.program.splice(idx, 1);
+                        playSound('click');
+                        renderDrawProgram();
+                    });
+                });
+            }
+        }
+
         function newReadChallenge() {
             if (readState.isAnimating) return;
             readState.locked = false;
@@ -5128,6 +5447,7 @@
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
         document.getElementById('tab-challenge').addEventListener('click', (e) => switchTab(e, 'challenge'));
         document.getElementById('tab-read').addEventListener('click', (e) => switchTab(e, 'read'));
+        document.getElementById('tab-draw').addEventListener('click', (e) => switchTab(e, 'draw'));
 
         document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
         document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
@@ -5193,7 +5513,26 @@
         document.getElementById('read-diff-medium').addEventListener('click', () => setReadDifficulty('medium'));
         document.getElementById('read-diff-hard').addEventListener('click', () => setReadDifficulty('hard'));
         document.getElementById('read-diff-extreme').addEventListener('click', () => setReadDifficulty('extreme'));
+
+        document.getElementById('draw-diff-easy').addEventListener('click', () => setDrawDifficulty('easy'));
+        document.getElementById('draw-diff-medium').addEventListener('click', () => setDrawDifficulty('medium'));
+        document.getElementById('draw-diff-hard').addEventListener('click', () => setDrawDifficulty('hard'));
+        document.getElementById('draw-diff-extreme').addEventListener('click', () => setDrawDifficulty('extreme'));
         document.getElementById('btnNextRead').addEventListener('click', newReadChallenge);
+        document.getElementById('btnNextDraw').addEventListener('click', newDrawChallenge);
+
+        // Draw Command Pad
+        document.getElementById('draw-pad-fwd').addEventListener('click', () => addDrawCommand('forward'));
+        document.getElementById('draw-pad-bwd').addEventListener('click', () => addDrawCommand('backward'));
+        document.getElementById('draw-pad-left').addEventListener('click', () => addDrawCommand('left'));
+        document.getElementById('draw-pad-right').addEventListener('click', () => addDrawCommand('right'));
+        document.getElementById('draw-pad-go').addEventListener('click', runDrawProgram);
+        document.getElementById('draw-pad-clear').addEventListener('click', () => {
+            if (drawState.locked || drawState.isAnimating) return;
+            drawState.program = [];
+            playSound('click');
+            renderDrawProgram();
+        });
 
         document.getElementById('read-grid').addEventListener('click', (e) => {
             const cell = e.target.closest('.bot-cell');
