@@ -81,6 +81,47 @@
 
         body.dark .items-container { background: rgba(255,255,255,0.05); }
 
+        /* Factory Mode (Tapis roulant) */
+        .items-container.conveyor-mode {
+            position: relative;
+            overflow: hidden;
+            background: repeating-linear-gradient(
+                -45deg,
+                #e2e8f0,
+                #e2e8f0 20px,
+                #cbd5e1 20px,
+                #cbd5e1 40px
+            );
+            background-size: 56px 56px;
+            animation: moveBelt 2s linear infinite;
+            min-height: 100px;
+        }
+        body.dark .items-container.conveyor-mode {
+            background: repeating-linear-gradient(
+                -45deg,
+                #334155,
+                #334155 20px,
+                #1e293b 20px,
+                #1e293b 40px
+            );
+        }
+
+        @keyframes moveBelt {
+            0% { background-position: 0 0; }
+            100% { background-position: 56px 0; }
+        }
+
+        .items-container.conveyor-mode .item {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            /* Other transforms are handled by JS to prevent conflict */
+        }
+        .items-container.conveyor-mode .item:active,
+        .items-container.conveyor-mode .item.selected {
+            transform: translateY(-50%) scale(1.1);
+        }
+
         .item {
             width: 60px; height: 60px; border-radius: var(--radius-lg);
             display: flex; align-items: center; justify-content: center;
@@ -196,6 +237,12 @@
             <button class="tab-btn" id="tab-size"><i data-lucide="ruler"></i> Par taille</button>
         </div>
 
+        <!-- STYLE DE JEU -->
+        <div class="difficulty-bar" style="margin-bottom: 15px;">
+            <button class="diff-btn active" id="playstyle-classic"><i data-lucide="package" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Classique</button>
+            <button class="diff-btn" id="playstyle-factory"><i data-lucide="timer" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Usine (Tapis)</button>
+        </div>
+
         <!-- DIFFICULTÉ -->
         <div class="difficulty-bar">
             <button class="diff-btn" id="diff-easy">🟢 Facile</button>
@@ -275,12 +322,20 @@
 
         let currentMode = 'color'; // 'color', 'shape', 'quantity', 'size'
         let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
+        let isFactoryMode = false;
 
         let globalCorrect = 0;
         let globalStreak = 0;
         let globalBest = 0;
 
         let selectedItem = null;
+
+        // Variables pour mode Usine
+        let factoryAnimationId = null;
+        let factoryItemsQueue = []; // Objets en attente
+        let activeBeltItems = []; // Objets actuellement sur le tapis
+        let factoryLastSpawnTime = 0;
+        let isDragged = false; // Bloquer animation si objet draggué
 
         // UI Elements
         const itemsContainer = document.getElementById('items-container');
@@ -293,7 +348,24 @@
             ScoreManager.init('machine_a_trier');
         }
 
+        function setPlaystyle(style) {
+            isFactoryMode = (style === 'factory');
+            document.getElementById('playstyle-classic').classList.toggle('active', !isFactoryMode);
+            document.getElementById('playstyle-factory').classList.toggle('active', isFactoryMode);
+
+            if (isFactoryMode) {
+                itemsContainer.classList.add('conveyor-mode');
+            } else {
+                itemsContainer.classList.remove('conveyor-mode');
+            }
+            startNewLevel();
+        }
+
         function setupEventListeners() {
+            // Style de jeu
+            document.getElementById('playstyle-classic').addEventListener('click', () => setPlaystyle('classic'));
+            document.getElementById('playstyle-factory').addEventListener('click', () => setPlaystyle('factory'));
+
             // Tabs
             document.getElementById('tab-color').addEventListener('click', () => setMode('color'));
             document.getElementById('tab-shape').addEventListener('click', () => setMode('shape'));
@@ -330,6 +402,79 @@
             startNewLevel();
         }
 
+        // --- Factory Mode Loop ---
+        function startFactoryLoop() {
+            if (factoryAnimationId) cancelAnimationFrame(factoryAnimationId);
+            activeBeltItems = [];
+            factoryLastSpawnTime = performance.now();
+            factoryAnimationId = requestAnimationFrame(updateFactory);
+        }
+
+        function updateFactory(time) {
+            if (!isFactoryMode) return;
+
+            const spawnInterval = currentDifficulty === 'easy' ? 2000 : (currentDifficulty === 'medium' ? 1200 : 700);
+            const speed = currentDifficulty === 'easy' ? 1.5 : (currentDifficulty === 'medium' ? 2.5 : 4);
+
+            // Apparition de nouveaux objets
+            if (time - factoryLastSpawnTime > spawnInterval && factoryItemsQueue.length > 0) {
+                const itemData = factoryItemsQueue.shift();
+                spawnItemOnBelt(itemData);
+                factoryLastSpawnTime = time;
+            }
+
+            // Déplacement des objets
+            const beltRect = itemsContainer.getBoundingClientRect();
+
+            for (let i = activeBeltItems.length - 1; i >= 0; i--) {
+                const beltItem = activeBeltItems[i];
+                const el = document.getElementById(beltItem.id);
+
+                if (!el) {
+                    activeBeltItems.splice(i, 1);
+                    continue;
+                }
+
+                if (el === currentTouchItem || el === selectedItem || el.classList.contains('selected') || (el.style.opacity && parseFloat(el.style.opacity) < 1)) {
+                    // Object is currently being dragged or selected, skip moving it
+                    continue;
+                }
+
+                beltItem.x += speed;
+                el.style.left = beltItem.x + 'px';
+
+                // Vérifier si tombé du tapis
+                const elRect = el.getBoundingClientRect();
+                if (beltItem.x > beltRect.width - 20) { // Un peu avant la fin absolue pour l'effet visuel
+                    // Tombé
+                    playSound('error');
+                    showToast('Objet tombé !', 'error');
+                    updateScore(false);
+
+                    // Retirer du tapis et le remettre dans la queue
+                    el.remove();
+                    activeBeltItems.splice(i, 1);
+                    factoryItemsQueue.push(beltItem.data); // Le remettre à la fin
+                }
+            }
+
+            factoryAnimationId = requestAnimationFrame(updateFactory);
+        }
+
+        function spawnItemOnBelt(itemData) {
+            const item = createItemElement(itemData);
+            item.style.position = 'absolute';
+            item.style.left = '-60px'; // Démarrer hors écran à gauche
+            itemsContainer.appendChild(item);
+
+            activeBeltItems.push({
+                id: itemData.id,
+                x: -60,
+                data: itemData
+            });
+            lucide.createIcons();
+        }
+
         function getNumBins() {
             if (currentDifficulty === 'easy') return 2;
             if (currentDifficulty === 'medium') return 3;
@@ -341,6 +486,7 @@
             selectedItem = null;
             itemsContainer.innerHTML = '';
             binsContainer.innerHTML = '';
+            if (factoryAnimationId) cancelAnimationFrame(factoryAnimationId);
 
             const numBins = getNumBins();
             let availableTypes = [];
@@ -444,8 +590,8 @@
 
             lucide.createIcons();
 
-            // Générer des objets (ex: 2 objets par bac = numBins * 2)
-            const numItems = numBins * 2;
+            // Générer des objets (ex: 2 objets par bac, ou plus en mode usine)
+            const numItems = isFactoryMode ? numBins * 4 : numBins * 2;
             let items = [];
             for (let i = 0; i < numItems; i++) {
                 // Choisir un type valide parmi ceux des bacs
@@ -472,39 +618,47 @@
             // Mélanger les objets
             items.sort(() => 0.5 - Math.random());
 
-            items.forEach(itemData => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.id = itemData.id;
-                item.dataset.type = itemData.typeId;
-                item.draggable = true;
-
-                // Apparence de l'objet
-                const icon = document.createElement('i');
-                icon.className = 'shape-icon';
-                icon.style.color = itemData.color.hex;
-
-                if (currentMode === 'quantity') {
-                    icon.setAttribute('data-lucide', itemData.quantity.icon);
-                    icon.style.width = '44px';
-                    icon.style.height = '44px';
-                } else if (currentMode === 'size') {
-                    icon.setAttribute('data-lucide', itemData.shape.icon);
-                    icon.style.fill = itemData.color.hex;
-                    icon.style.transform = `scale(${itemData.scaleObj.scale})`;
-                } else {
-                    icon.setAttribute('data-lucide', itemData.shape.icon);
-                    icon.style.fill = itemData.color.hex;
-                }
-                item.appendChild(icon);
-
-                setupItemEvents(item);
-                itemsContainer.appendChild(item);
-            });
-
-            lucide.createIcons();
+            if (isFactoryMode) {
+                factoryItemsQueue = items;
+                startFactoryLoop();
+            } else {
+                items.forEach(itemData => {
+                    const item = createItemElement(itemData);
+                    itemsContainer.appendChild(item);
+                });
+                lucide.createIcons();
+            }
         }
 
+        function createItemElement(itemData) {
+            const item = document.createElement('div');
+            item.className = 'item';
+            item.id = itemData.id;
+            item.dataset.type = itemData.typeId;
+            item.draggable = true;
+
+            // Apparence de l'objet
+            const icon = document.createElement('i');
+            icon.className = 'shape-icon';
+            icon.style.color = itemData.color.hex;
+
+            if (currentMode === 'quantity') {
+                icon.setAttribute('data-lucide', itemData.quantity.icon);
+                icon.style.width = '44px';
+                icon.style.height = '44px';
+            } else if (currentMode === 'size') {
+                icon.setAttribute('data-lucide', itemData.shape.icon);
+                icon.style.fill = itemData.color.hex;
+                icon.style.transform = `scale(${itemData.scaleObj.scale})`;
+            } else {
+                icon.setAttribute('data-lucide', itemData.shape.icon);
+                icon.style.fill = itemData.color.hex;
+            }
+            item.appendChild(icon);
+
+            setupItemEvents(item);
+            return item;
+        }
 
         // --- Touch Events Support ---
         let touchOffsetX = 0;
@@ -601,12 +755,14 @@
 
         function setupItemEvents(item) {
             item.addEventListener('dragstart', (e) => {
+                isDragged = true;
                 e.dataTransfer.setData('text/plain', item.id);
                 item.style.opacity = '0.5';
                 selectItem(item);
             });
 
             item.addEventListener('dragend', () => {
+                isDragged = false;
                 item.style.opacity = '1';
             });
 
@@ -664,17 +820,31 @@
                 // Correct !
                 playSound('success');
                 showToast('Bravo !', 'success');
+
+                // Si en mode factory, retirer des objets actifs du tapis et réinitialiser son style
+                if (isFactoryMode) {
+                    const activeIndex = activeBeltItems.findIndex(bItem => bItem.id === item.id);
+                    if (activeIndex !== -1) {
+                        activeBeltItems.splice(activeIndex, 1);
+                    }
+                    item.style.position = 'static';
+                    item.style.left = 'auto';
+                    item.style.transform = 'none';
+                }
+
                 bin.appendChild(item);
                 item.draggable = false;
                 item.classList.remove('selected');
                 item.style.cursor = 'default';
                 item.style.pointerEvents = 'none';
                 selectedItem = null;
+                isDragged = false;
 
                 updateScore(true);
 
                 // Vérifier si niveau terminé
-                if (itemsContainer.children.length === 0) {
+                if ((!isFactoryMode && itemsContainer.children.length === 0) ||
+                    (isFactoryMode && activeBeltItems.length === 0 && factoryItemsQueue.length === 0)) {
                     setTimeout(() => {
                         launchConfetti();
                         playSound('win');
@@ -687,6 +857,7 @@
                 showToast('Oups, essaie un autre bac !', 'error');
                 item.classList.remove('selected');
                 selectedItem = null;
+                isDragged = false;
                 updateScore(false);
             }
         }
