@@ -64,6 +64,9 @@ Les webapps disponibles sont :
 - **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques.
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot**
 - **Demi-cycle concerné :** 3-4H
+- **Plus-value pédagogique des modes et difficultés :**
+  - Les différents modes offrent une progression logique : le *Simulateur* pour la prise en main libre et l'expérimentation, le *Pilotage* pour la résolution de problèmes et la planification spatiale, et le *Décodage* pour travailler l'anticipation mentale et l'identification de bugs.
+  - L'augmentation de la difficulté contraint les choix (interdiction de reculer) et ajoute des obstacles, poussant l'élève à chercher des chemins alternatifs et à complexifier sa pensée algorithmique.
 - **Fonctionnalités :**
   - **Modes de jeu variés :**
     - **Simulateur :** Exploration libre et apprentissage des commandes.
@@ -83,6 +86,9 @@ Les webapps disponibles sont :
 - **À quoi sert l'outil :** Un studio de codage interactif permettant de faire le lien entre des images matricielles (pixels) en noir et blanc et leur représentation binaire (0 pour le noir, 1 pour le blanc).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire**
 - **Demi-cycle concerné :** 5-6H
+- **Plus-value pédagogique des modes et difficultés :**
+  - Le mode *Décoder* permet d'appliquer mécaniquement l'algorithme de conversion, tandis que l' *Encoder* travaille l'abstraction. L' *Éditeur Libre* valorise l'expression créative en réinvestissant les acquis.
+  - L'agrandissement de la grille (de 5x5 à 10x10) augmente la charge cognitive et la longueur de la séquence binaire à traiter, travaillant ainsi la concentration.
 - **Fonctionnalités :**
   - 3 modes de jeu : *Décoder* (dessiner à partir du code binaire), *Encoder* (trouver le code à partir d'une image) et *Éditeur Libre* (création pure).
   - Tailles de grille modulables selon la difficulté (5x5, 8x8, 10x10).
@@ -94,6 +100,9 @@ Les webapps disponibles sont :
 - **À quoi sert l'outil :** Un jeu interactif pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)**
 - **Demi-cycle concerné :** 7-8H
+- **Plus-value pédagogique des modes et difficultés :**
+  - Les deux modes permettent d'aborder le codage sous deux angles : la création de données (Encoder) et l'interprétation d'un message chiffré (Décoder).
+  - L'augmentation de la difficulté élargit progressivement l'alphabet utilisé (de A-G à A-Z) et supprime les aides visuelles (somme des bits), accompagnant l'élève vers une automatisation du calcul binaire.
 - **Fonctionnalités :**
   - **Modes Encodeur et (Dé)codeur :** Permet de créer un message secret binaire à envoyer à un camarade ou de s'entraîner seul au décodage.
   - **Progression pédagogique :** 3 niveaux de difficulté (Facile/Moyen/Difficile) ajustant l'étendue de l'alphabet (A-G, A-O, A-Z) et les aides disponibles (alphabet complet, somme des bits ou rien).
@@ -104,6 +113,8 @@ Les webapps disponibles sont :
 - **À quoi sert l'outil :** Une simulation visuelle qui demande aux élèves de trouver le chemin le plus rapide pour acheminer un "paquet" d'un point A (ordinateur) à un point B (serveur) au travers d'un graphe.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 8 — Les réseaux, Niveau 2**
 - **Demi-cycle concerné :** 7-8H
+- **Plus-value pédagogique des modes et difficultés :**
+  - L'augmentation de la difficulté modifie la taille du réseau et accroît le nombre de nœuds et d'arêtes. Cela complexifie l'analyse combinatoire nécessaire pour identifier le chemin optimal, développant ainsi des stratégies d'optimisation et la pensée algorithmique.
 - **Fonctionnalités :**
   - 3 niveaux de difficulté modifiant la taille et la complexité du réseau (génération dynamique).
   - Interface basée sur un canvas vectoriel (SVG) avec icônes de routeurs Lucide pour une immersion accrue.
@@ -116,6 +127,9 @@ Les webapps disponibles sont :
 - **À quoi sert l'outil :** Une plateforme d'entraînement intensif au passage des nombres entiers (décimal) vers leur écriture en binaire, et inversément.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 1)**
 - **Demi-cycle concerné :** 7-8H
+- **Plus-value pédagogique des modes et difficultés :**
+  - Le travail bidirectionnel (décimal ↔ binaire) permet de consolider la compréhension de la mécanique de la base 2 sous différents angles de calcul.
+  - Le passage de 4 à 8 bits permet de manipuler des valeurs numériques de plus en plus grandes (jusqu'à un octet complet), exigeant des opérations mentales plus soutenues.
 - **Fonctionnalités :**
   - Exercices générés aléatoirement (conversion dans les deux sens).
   - **Aide proactive & Feedback Étayé :** La mini-calculatrice binaire "pulse" visuellement après quelques secondes d'inactivité. Un feedback progressif est fourni en cas d'erreur.
@@ -127,6 +141,9 @@ Les webapps disponibles sont :
 - **À quoi sert l'outil :** Un exercice ludique abordant la notion de parité afin de comprendre comment un ordinateur peut s'assurer qu'un message n'a pas été altéré lors d'une transmission.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs lors de la transmission de données ?**
 - **Demi-cycle concerné :** 7-8H
+- **Plus-value pédagogique des modes et difficultés :**
+  - Le mode *Entraînement* permet d'acquérir la règle logique de parité paire de manière répétitive, tandis que le mode *Tour de Magie* montre l'application concrète de cette règle pour la détection d'une erreur ciblée.
+  - L'agrandissement de la grille (de 4x4 à 6x6) démultiplie le nombre de lignes et de colonnes à vérifier, entraînant l'attention visuelle croisée.
 - **Fonctionnalités :**
   - Mode entraînement dynamique demandant de garantir la "parité paire" sur des grilles de bits.
   - 3 tailles de grilles pour adapter la complexité cognitive : 4x4, 5x5, ou 6x6.
