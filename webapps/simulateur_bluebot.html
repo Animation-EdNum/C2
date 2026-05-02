@@ -2422,9 +2422,16 @@
 
     <footer class="no-print">
         <p>
-            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
-            <br />
-            <a href="https://github.com/vepiney/C2" target="_blank" rel="noopener noreferrer">Code 100% libre (AGPL-3.0)</a>
+            Webapp conçue par Vivian de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                    libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
         </p>
     </footer>
 
@@ -2740,6 +2747,7 @@
         function generateMatContent(matId) {
             if (matId === 'custom') {
                 if (!localStorage.getItem('bb_custom_mat_image')) {
+                    console.warn("Custom mat selected but no image uploaded.");
                 }
                 return;
             }
@@ -2753,6 +2761,7 @@
                 }
             }
             if (!config) {
+                console.warn(`Unknown matId: ${matId}`);
                 return;
             }
             if (config.baseContent) {
@@ -5323,7 +5332,7 @@
                         customMatStatus.style.color = "var(--success)";
                         setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
                     } catch (err) {
-                        showToast("Erreur de sauvegarde de l'image (trop lourde)", 'error');
+                        console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
                         customMatStatus.textContent = "Erreur : image trop grande.";
                         customMatStatus.style.color = "var(--error)";
                     }
