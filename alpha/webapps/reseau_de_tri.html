@@ -364,6 +364,87 @@
                 display: none;
             }
         }
+
+        /* Race specific CSS */
+        .race-separator {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .race-separator::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 2px;
+            background: var(--card-border);
+            z-index: 1;
+        }
+
+        .race-separator span {
+            position: relative;
+            z-index: 2;
+            background: var(--card-bg);
+            padding: 0 15px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .bubble-sort-container {
+            display: none;
+            margin-top: 20px;
+            position: relative;
+            height: 80px; /* enough space for items */
+        }
+
+        .bubble-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .bubble-grid {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bubble-element {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: var(--element-bg);
+            border: 3px solid var(--element-border);
+            color: var(--element-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            transition: all 0.4s ease-in-out;
+            z-index: 20;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .bubble-element.comparing {
+            background: var(--badge-bg);
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .bubble-element.sorted {
+            background: var(--success);
+            border-color: #fff;
+            color: #fff;
+        }
     </style>
     <script src="../../js/scores.js"></script>
     <script src="../../js/audio.js"></script>
@@ -472,7 +553,21 @@
                 <button class="btn-primary" id="btn-next-step">
                     Valider l'étape <i data-lucide="arrow-right"></i>
                 </button>
+                <button class="btn-primary" id="btn-start-race" style="display: none; background: var(--success);">
+                    🏁 Lancer la course !
+                </button>
             </div>
+
+            <!-- RACE UI -->
+            <div class="race-separator" id="race-separator">
+                <span>VS Algorithme séquentiel (Tri à bulles)</span>
+            </div>
+            <div class="bubble-sort-container" id="bubble-sort-container">
+                <div class="bubble-grid" id="bubble-grid">
+                    <!-- Bubble sort elements generated dynamically -->
+                </div>
+            </div>
+
         </div>
 
         <div class="score-bar">
@@ -554,12 +649,19 @@
         let networkDef = [];
         let currentState = []; // array of { value, currentWire, domElement }
         let currentStageIndex = 0;
+        let levelInitialValues = [];
+
+        let raceInterval = null;
 
         // UI Elements
         const gridContainer = document.getElementById('network-grid');
         const svgContainer = document.getElementById('network-svg');
         const wrapper = document.getElementById('network-wrapper');
         const btnNextStep = document.getElementById('btn-next-step');
+        const btnStartRace = document.getElementById('btn-start-race');
+        const raceSeparator = document.getElementById('race-separator');
+        const bubbleSortContainer = document.getElementById('bubble-sort-container');
+        const bubbleGrid = document.getElementById('bubble-grid');
 
 
         function init() {
@@ -859,6 +961,15 @@
 
         function startNewLevel() {
             btnNextStep.disabled = false;
+            btnNextStep.style.display = 'inline-flex';
+            btnStartRace.style.display = 'none';
+            raceSeparator.style.display = 'none';
+            bubbleSortContainer.style.display = 'none';
+
+            if (raceInterval) {
+                clearInterval(raceInterval);
+                raceInterval = null;
+            }
 
             networkDef = NETWORKS[numWires];
             currentStageIndex = 0;
@@ -867,9 +978,11 @@
 
             // Generate values
             const initialValues = generateValues(numWires);
+            levelInitialValues = [...initialValues];
 
             // Clear grid HTML except SVG (which will be redrawn)
             gridContainer.innerHTML = '';
+            bubbleGrid.innerHTML = '';
 
             drawNetwork();
             createElements(initialValues);
@@ -931,16 +1044,192 @@
                     showToast('Bravo ! Le réseau a trié tous les éléments !', 'success');
                     updateScore(true);
 
-                    // Auto restart after a bit
-                    setTimeout(() => {
-                        startNewLevel();
-                    }, 4000);
+                    btnNextStep.style.display = 'none';
+                    btnStartRace.style.display = 'inline-flex';
+                    btnStartRace.onclick = startRace;
+
                 }, 500); // Wait for the transition to finish
             } else {
                 showToast('Étape validée !', 'success');
             }
         }
 
+
+        let bubbleState = [];
+        let bubbleSteps = [];
+        let currentBubbleStepIdx = 0;
+        let isParallelFinished = false;
+
+        function startRace() {
+            btnStartRace.style.display = 'none';
+            raceSeparator.style.display = 'block';
+            bubbleSortContainer.style.display = 'block';
+
+            // 1. Reset Parallel Network
+            currentStageIndex = 0;
+            createElements(levelInitialValues);
+            updateHighlights(); // Highlights currentStageIndex = 0 (disabling interactivity visually)
+
+            // Disable manual interaction on the grid
+            document.querySelectorAll('.comparator-btn').forEach(btn => {
+                btn.style.pointerEvents = 'none';
+                btn.classList.remove('active');
+            });
+
+            // 2. Initialize Bubble Sort
+            bubbleGrid.innerHTML = '';
+            bubbleState = levelInitialValues.map((val, idx) => {
+                const el = document.createElement('div');
+                el.className = 'bubble-element';
+                el.textContent = val;
+                bubbleGrid.appendChild(el);
+                return { value: val, domElement: el, pos: idx };
+            });
+
+            updateBubblePositions();
+
+            // Calculate bubble steps
+            bubbleSteps = [];
+            let tempArr = [...levelInitialValues];
+            let n = tempArr.length;
+            let swapped;
+            for (let i = 0; i < n - 1; i++) {
+                swapped = false;
+                for (let j = 0; j < n - i - 1; j++) {
+                    bubbleSteps.push({ type: 'compare', idx1: j, idx2: j + 1 });
+
+                    let v1 = tempArr[j];
+                    let v2 = tempArr[j + 1];
+                    let needsSwap = false;
+
+                    if (currentMode === 'nombres') {
+                        if (parseInt(v1) > parseInt(v2)) needsSwap = true;
+                    } else {
+                        if (v1 > v2) needsSwap = true;
+                    }
+
+                    if (needsSwap) {
+                        bubbleSteps.push({ type: 'swap', idx1: j, idx2: j + 1 });
+                        let t = tempArr[j];
+                        tempArr[j] = tempArr[j + 1];
+                        tempArr[j + 1] = t;
+                        swapped = true;
+                    }
+                }
+                if (!swapped) break;
+            }
+
+            currentBubbleStepIdx = 0;
+            isParallelFinished = false;
+
+            // Start Race Loop
+            raceInterval = setInterval(raceTick, 600);
+        }
+
+        function updateBubblePositions() {
+            const spacing = 60;
+            const totalWidth = (bubbleState.length - 1) * spacing;
+            const startX = -totalWidth / 2;
+
+            bubbleState.forEach(obj => {
+                obj.domElement.style.transform = `translate(calc(-50% + ${startX + obj.pos * spacing}px), -50%)`;
+                obj.domElement.classList.remove('comparing');
+            });
+        }
+
+        function raceTick() {
+            let activityHappened = false;
+
+            // --- Parallel Step ---
+            if (currentStageIndex < networkDef.length) {
+                activityHappened = true;
+                const stageComparators = networkDef[currentStageIndex];
+
+                // Do required swaps for this stage
+                stageComparators.forEach(comp => {
+                    let w1 = comp.w1;
+                    let w2 = comp.w2;
+
+                    let el1 = currentState.find(s => s.currentWire === w1);
+                    let el2 = currentState.find(s => s.currentWire === w2);
+
+                    if (el1 && el2) {
+                        let v1 = el1.value;
+                        let v2 = el2.value;
+                        let needsSwap = false;
+
+                        if (currentMode === 'nombres') {
+                            if (parseInt(v1) > parseInt(v2)) needsSwap = true;
+                        } else {
+                            if (v1 > v2) needsSwap = true;
+                        }
+
+                        if (needsSwap) {
+                            el1.currentWire = w2;
+                            el2.currentWire = w1;
+                        }
+                    }
+                });
+
+                currentStageIndex++;
+                currentState.forEach(stateObj => {
+                    updateElementPosition(stateObj, currentStageIndex);
+                });
+
+                // Update highlights visually without enabling interaction
+                const numStages = networkDef.length;
+                for (let i = 0; i < numStages; i++) {
+                    const isActive = (i === currentStageIndex);
+                    document.querySelectorAll(`line.stage-${i}`).forEach(el => {
+                        el.style.stroke = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
+                    });
+                    document.querySelectorAll(`circle.stage-${i}`).forEach(el => {
+                        el.style.fill = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
+                    });
+                }
+            } else {
+                if (!isParallelFinished) {
+                    isParallelFinished = true;
+                    // Add some visual cue that parallel won?
+                    // Could add a small crown icon or just make it glow
+                }
+            }
+
+            // --- Sequential Step ---
+            if (currentBubbleStepIdx < bubbleSteps.length) {
+                activityHappened = true;
+                let step = bubbleSteps[currentBubbleStepIdx];
+
+                updateBubblePositions(); // clear previous comparing highlights
+
+                let el1 = bubbleState.find(s => s.pos === step.idx1);
+                let el2 = bubbleState.find(s => s.pos === step.idx2);
+
+                if (step.type === 'compare') {
+                    if (el1) el1.domElement.classList.add('comparing');
+                    if (el2) el2.domElement.classList.add('comparing');
+                } else if (step.type === 'swap') {
+                    if (el1 && el2) {
+                        el1.pos = step.idx2;
+                        el2.pos = step.idx1;
+                        updateBubblePositions();
+                    }
+                }
+                currentBubbleStepIdx++;
+            } else {
+                 // Bubble sort finished
+                 bubbleState.forEach(obj => obj.domElement.classList.add('sorted'));
+            }
+
+            // Check if both are finished
+            if (!activityHappened) {
+                clearInterval(raceInterval);
+                raceInterval = null;
+                setTimeout(() => {
+                    startNewLevel();
+                }, 3000);
+            }
+        }
 
         function updateScore(correct) {
             if (correct) {
