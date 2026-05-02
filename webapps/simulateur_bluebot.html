@@ -33,7 +33,7 @@
         .skins-drawer.slider-active-drawer .skins-drawer-header {
             background: #f9fafc !important;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-radius: 20px;
+            border-radius: var(--radius-2xl);
         }
 
         body.dark .skins-drawer.slider-active-drawer .skins-drawer-header {
@@ -1024,7 +1024,7 @@
         .cmd-btn {
             width: 62px;
             height: 62px;
-            border-radius: 50%;
+            border-radius: var(--radius-full);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1643,7 +1643,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
+            border-radius: var(--radius-full);
             transition: all 0.2s;
             z-index: 10;
         }
@@ -1668,7 +1668,7 @@
             align-items: center;
             padding: 12px;
             border: 2px solid var(--grid-border);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             background: var(--grid-light);
             transition: all 0.2s;
             cursor: pointer;
@@ -1703,7 +1703,7 @@
             justify-content: center;
             align-items: center;
             background: rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             position: relative;
         }
 
@@ -1751,7 +1751,7 @@
             align-items: center;
             font-size: 16px;
             background: rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
         }
 
         body.dark .skin-item-mini {
@@ -1768,7 +1768,7 @@
 
         .skin-card {
             border: 2px solid var(--grid-border);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             padding: 16px;
             display: flex;
             flex-direction: column;
@@ -1814,7 +1814,7 @@
             margin: 10px 0;
             padding: 10px;
             background: rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             align-items: center;
         }
 
@@ -1919,7 +1919,7 @@
             --skin-grid-border: #991b1b;
             --skin-grid-shadow: 0 10px 30px rgba(220, 38, 38, 0.3), inset 0 0 20px rgba(153, 27, 27, 0.5);
             --skin-grid-bg: #1c1917;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
         }
 
         .skin-volcano .bot-cell {
@@ -1987,7 +1987,7 @@
             opacity: var(--mat-opacity, 0.3);
             pointer-events: none;
             z-index: 0;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             /* Match grid border-radius */
         }
 
@@ -2017,7 +2017,7 @@
             opacity: var(--mat-opacity, 0.3);
             pointer-events: none;
             z-index: 0;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             /* Match grid border-radius */
         }
 
@@ -2422,16 +2422,9 @@
 
     <footer class="no-print">
         <p>
-            Webapp conçue par Vivian de l'<a
-                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
-            <br>
-            <span style="font-size: 0.9em; opacity: 0.85;">
-                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
-                    libre</a>
-                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
-                    rel="noopener noreferrer">AGPL-3.0</a>)
-            </span>
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
+            <br />
+            <a href="https://github.com/vepiney/C2" target="_blank" rel="noopener noreferrer">Code 100% libre (AGPL-3.0)</a>
         </p>
     </footer>
 
@@ -2747,7 +2740,6 @@
         function generateMatContent(matId) {
             if (matId === 'custom') {
                 if (!localStorage.getItem('bb_custom_mat_image')) {
-                    console.warn("Custom mat selected but no image uploaded.");
                 }
                 return;
             }
@@ -2761,7 +2753,6 @@
                 }
             }
             if (!config) {
-                console.warn(`Unknown matId: ${matId}`);
                 return;
             }
             if (config.baseContent) {
@@ -3021,7 +3012,7 @@
                     launchConfetti();
                 }
 
-                showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, true);
+                showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, 'success');
                 selectSkin(skinId);
             }
         }
@@ -4252,7 +4243,7 @@
         function addCmd(cmd) {
             if (simState.running) return;
             playSound('click');
-            if (simState.program.length >= 24) { showToast('Mémoire pleine (24 commandes max)', false); return; }
+            if (simState.program.length >= 24) { showToast('Mémoire pleine (24 commandes max)', 'error'); return; }
             simState.program.push(cmd); renderProgram();
         }
         function removeSpecificCmd(index) {
@@ -4520,7 +4511,7 @@
                     // Shake global de la fenêtre
                     document.body.classList.add('window-shake');
                     setTimeout(() => document.body.classList.remove('window-shake'), 500);
-                    showToast('Attention ! Obstacle en vue. Exécution stoppée.', false);
+                    showToast('Attention ! Obstacle en vue. Exécution stoppée.', 'error');
                     break;
                 }
 
@@ -4549,7 +4540,7 @@
                     if (activeSkin === 'volcano') {
                         launchFire();
                     } else if (activeSkin === 'cyberbot') {
-                        showToast('WELCOME TO THE MATRIX 🕶️', true);
+                        showToast('WELCOME TO THE MATRIX 🕶️', 'success');
                     } else {
                         launchConfetti();
                     }
@@ -4577,9 +4568,9 @@
                             unlockSkin('unicorn');
                         }
 
-                        showToast('Trésor trouvé ! Félicitations !', true);
+                        showToast('Trésor trouvé ! Félicitations !', 'success');
                     } else {
-                        showToast('Bravo ! Tu as atteint la récompense !', true);
+                        showToast('Bravo ! Tu as atteint la récompense !', 'success');
                     }
 
                     const counterVal = document.getElementById('sim-star-counter-val');
@@ -4606,7 +4597,7 @@
 
                 } else {
                     simState.firstAttempt = false; // Exécution sans succès
-                    showToast('Exécution terminée !', true);
+                    showToast('Exécution terminée !', 'success');
                 }
 
                 // Ajouter le contenu de la case atteinte à la fin de l'exécution
@@ -4864,7 +4855,7 @@
                         document.getElementById('sim-grid').classList.add('ground-fire');
                         document.getElementById('chal-grid').classList.add('ground-fire');
                         document.getElementById('read-grid').classList.add('ground-fire');
-                        showToast('Le sol est maintenant EN FEU !', true);
+                        showToast('Le sol est maintenant EN FEU !', 'success');
                     }
                 }
 
@@ -4891,7 +4882,7 @@
 
                 playSound('success');
                 launchConfetti();
-                showToast(`Excellent ! C'est la bonne réponse !`, true);
+                showToast(`Excellent ! C'est la bonne réponse !`, 'success');
 
                 if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
                     if (activeSkin === 'volcano') launchFire(); else launchConfetti();
@@ -4908,7 +4899,7 @@
                 simState.consecutiveMistakes++;
                 ScoreManager.addMistake("read", readState.difficulty);
                 document.getElementById('read-global-streak').textContent = readGlobalStreak;
-                showToast('Faux. Essaie encore !', false);
+                showToast('Faux. Essaie encore !', 'error');
                 readState.locked = false;
             }
 
@@ -5025,7 +5016,7 @@
                     if (chalState.difficulty === 'easy') unlockSkin('beebot');
                     if (globalStreak >= 3) unlockSkin('f1');
 
-                    showToast(`Bravo ! Pilotage réussi !`, true);
+                    showToast(`Bravo ! Pilotage réussi !`, 'success');
                     el.classList.add('correct');
                     const target = document.getElementById('chal-target');
                     if (target) target.classList.add('pulse');
@@ -5037,7 +5028,7 @@
                     ScoreManager.addMistake("chal", chalState.difficulty);
                     document.getElementById('global-streak').textContent = globalStreak;
                     chalState.options.forEach((o, j) => { if (o.isCorrect) opts[j].classList.add('correct'); });
-                    showToast('Faux. Clique sur la proposition en vert pour voir la solution.', false);
+                    showToast('Faux. Clique sur la proposition en vert pour voir la solution.', 'error');
                 }
                 document.getElementById('btnNextChallenge').style.display = 'inline-flex';
             } else if (option.isCorrect) {
@@ -5174,7 +5165,7 @@
             simState.startDir = simState.robotDir;
             resetSimulatorPosition();
             if (isSimTarget) {
-                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', true, true);
+                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
                 placeRandomSimTarget(true);
             }
         });
@@ -5332,7 +5323,7 @@
                         customMatStatus.style.color = "var(--success)";
                         setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
                     } catch (err) {
-                        console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
+                        showToast("Erreur de sauvegarde de l'image (trop lourde)", 'error');
                         customMatStatus.textContent = "Erreur : image trop grande.";
                         customMatStatus.style.color = "var(--error)";
                     }
