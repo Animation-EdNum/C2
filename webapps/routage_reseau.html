@@ -426,20 +426,6 @@
             animation: none;
         }
 
-        .node-broken {
-            opacity: 0.5;
-            cursor: not-allowed !important;
-            animation: nodeBrokenFlash 0.5s ease-in-out 3;
-            border-color: #dc3545 !important;
-            background: #475569 !important;
-            color: #dc3545 !important;
-        }
-
-        @keyframes nodeBrokenFlash {
-            0%, 100% { opacity: 0.5; box-shadow: none; }
-            50% { opacity: 1; box-shadow: 0 0 15px rgba(220, 53, 69, 0.8); }
-        }
-
         /* ========== CHEMIN ========== */
         .path-display {
             background: #fff;
@@ -642,7 +628,6 @@
             <button class="diff-btn" id="diff-easy">🟢 Facile</button>
             <button class="diff-btn active" id="diff-medium">🟡 Moyen</button>
             <button class="diff-btn" id="diff-hard">🔴 Difficile</button>
-            <button class="diff-btn" id="diff-extreme" style="display:none">🔥 Extrême</button>
         </div>
 
         <details class="instructions">
@@ -762,16 +747,6 @@
                     nodes: [['src', 5, 50, 's'], ['R1', 16, 25, 'r'], ['R2', 16, 75, 'r'], ['R3', 32, 50, 'r'], ['R4', 48, 20, 'r'], ['R5', 48, 80, 'r'], ['R6', 64, 50, 'r'], ['R7', 80, 25, 'r'], ['R8', 80, 75, 'r'], ['dst', 95, 50, 'd']],
                     edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R3', 2], ['R2', 'R3', 5], ['R3', 'R4', 3], ['R3', 'R5', 6], ['R4', 'R6', 2], ['R5', 'R6', 1], ['R6', 'R7', 4], ['R6', 'R8', 3], ['R7', 'dst', 2], ['R8', 'dst', 5], ['R4', 'R7', 7], ['R5', 'R8', 2], ['R1', 'R4', 8]]
                 }
-            ],
-            extreme: [
-                { // Maillage extrême 1
-                    nodes: [['src', 5, 50, 's'], ['R1', 18, 18, 'r'], ['R2', 18, 82, 'r'], ['R3', 36, 50, 'r'], ['R4', 54, 18, 'r'], ['R5', 54, 50, 'r'], ['R6', 54, 82, 'r'], ['R7', 76, 35, 'r'], ['R8', 76, 70, 'r'], ['dst', 95, 50, 'd']],
-                    edges: [['src', 'R1', 2], ['src', 'R2', 3], ['R1', 'R3', 4], ['R2', 'R3', 2], ['R1', 'R4', 6], ['R3', 'R5', 3], ['R3', 'R6', 5], ['R2', 'R6', 7], ['R4', 'R5', 1], ['R4', 'R7', 4], ['R5', 'R7', 2], ['R5', 'R8', 5], ['R6', 'R8', 3], ['R7', 'dst', 3], ['R8', 'dst', 4], ['R1', 'R5', 5], ['R2', 'R5', 4]]
-                },
-                { // Maillage extrême 2
-                    nodes: [['src', 5, 50, 's'], ['R1', 16, 25, 'r'], ['R2', 16, 75, 'r'], ['R3', 32, 50, 'r'], ['R4', 48, 20, 'r'], ['R5', 48, 80, 'r'], ['R6', 64, 50, 'r'], ['R7', 80, 25, 'r'], ['R8', 80, 75, 'r'], ['dst', 95, 50, 'd']],
-                    edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R3', 2], ['R2', 'R3', 5], ['R3', 'R4', 3], ['R3', 'R5', 6], ['R4', 'R6', 2], ['R5', 'R6', 1], ['R6', 'R7', 4], ['R6', 'R8', 3], ['R7', 'dst', 2], ['R8', 'dst', 5], ['R4', 'R7', 7], ['R5', 'R8', 2], ['R1', 'R4', 8], ['R2', 'R5', 4], ['R4', 'R8', 6]]
-                }
             ]
         };
 
@@ -782,43 +757,6 @@
         let currentPath = [], isLocked = false, difficulty = 'medium';
         let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0, mistakesInCurrentNetwork = 0;
         let lastNetworkIndex = -1; // Anti-répétition 
-        let solarInterval = null;
-        let brokenNodes = [];
-        let saturatedEdges = [];
-
-        function triggerSolarFlare() {
-            if (isLocked) return;
-            const action = Math.random() < 0.5 ? 'break' : 'saturate';
-
-            if (action === 'break') {
-                const availableRouters = parsedNodes.filter(n => n.type === 'r' && !currentPath.includes(n.id) && !brokenNodes.includes(n.id));
-                if (availableRouters.length > 0) {
-                    const target = availableRouters[Math.floor(Math.random() * availableRouters.length)];
-                    brokenNodes.push(target.id);
-                    if (typeof showToast === 'function') showToast(`⚠️ Le routeur ${target.id} est tombé en panne !`, 'error', 3000);
-                    render();
-                }
-            } else {
-                const availableEdges = parsedEdges.filter(e => {
-                    const inPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1;
-                    return !inPath && !brokenNodes.includes(e.from) && !brokenNodes.includes(e.to);
-                });
-
-                if (availableEdges.length > 0) {
-                    const targetEdge = availableEdges[Math.floor(Math.random() * availableEdges.length)];
-                    const increase = Math.floor(Math.random() * 6) + 3; // +3 to +8
-                    targetEdge.weight += increase;
-
-                    // Update adjacency
-                    adjacency[targetEdge.from].find(adj => adj.to === targetEdge.to).weight = targetEdge.weight;
-                    adjacency[targetEdge.to].find(adj => adj.to === targetEdge.from).weight = targetEdge.weight;
-
-                    saturatedEdges.push(targetEdge);
-                    if (typeof showToast === 'function') showToast(`⚠️ Embouteillage ! Temps de connexion ${targetEdge.from}-${targetEdge.to} augmenté.`, 'warn', 3000);
-                    render();
-                }
-            }
-        }
 
         function parseNetwork(raw) {
             parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] }));
@@ -884,15 +822,8 @@
             parseNetwork(pool[idx]);
             currentPath = ['src'];
             isLocked = false; netCount++; mistakesInCurrentNetwork = 0;
-            brokenNodes = [];
-            saturatedEdges = [];
-            if (solarInterval) clearInterval(solarInterval);
-            if (difficulty === 'extreme') {
-                solarInterval = setInterval(triggerSolarFlare, 2500);
-            }
-
             document.getElementById('netNumber').textContent = netCount;
-            document.getElementById('card-subtitle').textContent = `Réseau ${difficulty === 'easy' ? 'facile' : difficulty === 'medium' ? 'moyen' : difficulty === 'hard' ? 'difficile' : 'extrême'}`;
+            document.getElementById('card-subtitle').textContent = `Réseau ${difficulty === 'easy' ? 'facile' : difficulty === 'medium' ? 'moyen' : 'difficile'}`;
             document.getElementById('feedback').className = 'feedback'; // Hide feedback 
             document.getElementById('btnNextChallenge').style.display = 'none';
             render();
@@ -913,36 +844,22 @@
 
             parsedEdges.forEach(e => {
                 const n1 = getNode(e.from), n2 = getNode(e.to);
-
-                // Si l'un des nœuds est cassé, on trace l'arête en gris très clair/transparent pour montrer qu'elle est morte
-                const isBroken = brokenNodes.includes(e.from) || brokenNodes.includes(e.to);
                 const isPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1;
-                const isSaturated = saturatedEdges.some(se => (se.from === e.from && se.to === e.to) || (se.from === e.to && se.to === e.from));
 
                 // Ligne 
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', `${n1.x}%`); line.setAttribute('y1', `${n1.y}%`);
                 line.setAttribute('x2', `${n2.x}%`); line.setAttribute('y2', `${n2.y}%`);
-                let strokeColor = isPath ? '#ff9800' : edgeColor;
-                if (isBroken) strokeColor = isDark ? '#1e293b' : '#f1f5f9';
-                if (isSaturated && !isPath && !isBroken) strokeColor = '#dc3545';
-
-                line.setAttribute('stroke', strokeColor);
+                line.setAttribute('stroke', isPath ? '#ff9800' : edgeColor);
                 line.setAttribute('stroke-width', isPath ? '5' : '2.5');
-                if (isBroken) line.setAttribute('opacity', '0.3');
                 svgEdges.appendChild(line);
 
-                // Cercle UTI (Poids)
+                // Cercle UTI (Poids) — toujours orange, plus grand
                 const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
                 circle.classList.add('weight-circle');
-                let circleFill = isPath ? '#e65100' : '#ff9800';
-                if (isBroken) circleFill = isDark ? '#334155' : '#cbd5e1';
-                if (isSaturated && !isPath && !isBroken) circleFill = '#dc3545';
-
-                circle.setAttribute('fill', circleFill);
-                if (isBroken) circle.setAttribute('opacity', '0.3');
+                circle.setAttribute('fill', isPath ? '#e65100' : '#ff9800');
                 svgWeights.appendChild(circle);
 
                 // Texte UTI 
@@ -952,7 +869,6 @@
                 text.setAttribute('font-weight', 'bold'); text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('dominant-baseline', 'central');
                 text.textContent = e.weight;
-                if (isBroken) text.setAttribute('opacity', '0.3');
                 svgWeights.appendChild(text);
             });
         }
@@ -962,10 +878,7 @@
             container.querySelectorAll('.node').forEach(n => n.remove());
 
             const last = currentPath[currentPath.length - 1];
-            const clickable = isLocked ? [] : adjacency[last]
-                .filter(e => !brokenNodes.includes(e.to)) // Prevent clicking broken nodes
-                .map(e => e.to)
-                .filter(id => !currentPath.includes(id));
+            const clickable = isLocked ? [] : adjacency[last].map(e => e.to).filter(id => !currentPath.includes(id));
 
             parsedNodes.forEach(n => {
                 const div = document.createElement('div');
@@ -973,8 +886,7 @@
                 div.style.left = `${n.x}%`; div.style.top = `${n.y}%`;
 
                 if (currentPath.includes(n.id)) div.classList.add('in-path');
-                if (brokenNodes.includes(n.id)) div.classList.add('node-broken');
-                if (clickable.includes(n.id) && !brokenNodes.includes(n.id)) div.classList.add('clickable-next');
+                if (clickable.includes(n.id)) div.classList.add('clickable-next');
                 if (isLocked) div.classList.add('locked');
 
                 const iconSpan = document.createElement('span');
@@ -1066,49 +978,26 @@
                 return;
             }
 
-            if (solarInterval) clearInterval(solarInterval);
-
             const userTime = calculateCurrentTime();
+            const optimalTime = getFastestPath();
 
-            if (difficulty === 'extreme') {
-                // Extreme mode: Just reaching the destination is a success
+            if (userTime === optimalTime) {
+                // SUCCÈS TOTAL 
                 fb.className = 'feedback show success';
-                fb.innerHTML = `<strong>✅ Vous avez survécu à la tempête !</strong><br>Le paquet est arrivé malgré les pannes ! Temps total : <strong>${userTime} UTI</strong>.`;
+                fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`;
                 isLocked = true; globalCorrect++;
                 ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                if (globalStreak >= 2) { launchConfetti(); }
+                if (difficulty === 'hard' && mistakesInCurrentNetwork === 0) { launchFire(); }
+                else if (globalStreak >= 2) { launchConfetti(); }
                 document.getElementById('btnNextChallenge').style.display = 'inline-block';
                 render();
             } else {
-                const optimalTime = getFastestPath();
-
-                if (userTime === optimalTime) {
-                    // SUCCÈS TOTAL
-                    fb.className = 'feedback show success';
-                    fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`;
-                    isLocked = true; globalCorrect++;
-                    ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                    if (difficulty === 'hard' && mistakesInCurrentNetwork === 0) {
-                        launchFire();
-                        const extBtn = document.getElementById('diff-extreme');
-                        if (extBtn && extBtn.style.display === 'none') {
-                            extBtn.style.display = 'inline-block';
-                            if (typeof showToast === 'function') {
-                                showToast("Mode dynamique Extrême débloqué !", "success", 4000);
-                            }
-                        }
-                    }
-                    else if (globalStreak >= 2) { launchConfetti(); }
-                    document.getElementById('btnNextChallenge').style.display = 'inline-block';
-                    render();
-                } else {
-                    // ARRIVÉ MAIS TROP LENT
-                    fb.className = 'feedback show warn';
-                    fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Reset" pour chercher une meilleure route.</em>`;
-                    mistakesInCurrentNetwork++;
-                    globalStreak = 0;
-                    ScoreManager.addMistake("path", difficulty);
-                }
+                // ARRIVÉ MAIS TROP LENT 
+                fb.className = 'feedback show warn';
+                fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${userTime} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${optimalTime} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Reset" pour chercher une meilleure route.</em>`;
+                mistakesInCurrentNetwork++;
+                globalStreak = 0;
+                ScoreManager.addMistake("path", difficulty);
             }
 
             document.getElementById('global-correct').textContent = globalCorrect;
@@ -1119,7 +1008,6 @@
         document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
         document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
         document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
-        document.getElementById('diff-extreme').addEventListener('click', () => setDifficulty('extreme'));
 
         document.getElementById('resetBtn').addEventListener('click', resetCurrentChallenge);
         document.getElementById('undoBtn').addEventListener('click', undoLastStep);
@@ -1136,7 +1024,6 @@
     <script src="../js/audio.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/confetti.js"></script>
-    <script src="../js/toast.js"></script>
     <script>
         window.addEventListener('load', () => ScoreManager.init('routage_reseau'));
         window.addEventListener('c2_change_difficulty', (e) => {
@@ -1145,9 +1032,6 @@
                 document.getElementById('diff-medium')?.click();
             } else if (nextDiff === 'hard') {
                 document.getElementById('diff-hard')?.click();
-            } else if (nextDiff === 'extreme') {
-                const extBtn = document.getElementById('diff-extreme');
-                if (extBtn && extBtn.style.display !== 'none') extBtn.click();
             }
         });
     </script>
