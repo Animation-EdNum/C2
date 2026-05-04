@@ -1,7 +1,7 @@
 /**
  * generate_lucide_subset.js
  * 
- * Script one-shot qui lit lucide.min.js et génère un fichier
+ * Script one-shot qui lit meta/ressources/lucide.min.js et génère un fichier
  * js/lucide-subset.js ne contenant que les icônes réellement
  * utilisées dans le projet.
  * 
@@ -14,7 +14,7 @@
  *    mais ne contenant que les icônes nécessaires.
  * 
  * Après exécution, remplacer dans chaque HTML :
- *   <script src="../js/lucide.min.js"></script>
+ *   <script src="../meta/ressources/lucide.min.js"></script>
  * par :
  *   <script src="../js/lucide-subset.js"></script>
  */
@@ -23,7 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const LUCIDE_SOURCE = path.join(ROOT, 'js', 'lucide.min.js');
+const LUCIDE_SOURCE = path.join(ROOT, 'meta', 'ressources', 'lucide.min.js');
 const OUTPUT_FILE = path.join(ROOT, 'js', 'lucide-subset.js');
 
 // Directories to scan for icon usage
@@ -272,4 +272,4 @@ console.log(`   Original: ${(oldSize / 1024).toFixed(0)} Ko`);
 console.log(`   Subset:   ${(newSize / 1024).toFixed(0)} Ko`);
 console.log(`   Saved:    ${saved}%`);
 console.log('');
-console.log('📝 Next step: Replace all <script src="../js/lucide.min.js"> with <script src="../js/lucide-subset.js">');
+console.log('📝 Next step: Replace all <script src="../meta/ressources/lucide.min.js"> with <script src="../js/lucide-subset.js">');

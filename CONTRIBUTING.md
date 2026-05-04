@@ -70,12 +70,14 @@ C2/
 │   ├── confetti.js         # Effets visuels de récompense
 │   ├── audio.js            # Audio synthétique (Web Audio API)
 │   ├── swipe.js            # Navigation tactile par swipe
-│   ├── lucide-subset.js    # Icônes Lucide (subset 15 Ko)
-│   └── lucide.min.js       # Bundle Lucide complet (source)
+│   └── lucide-subset.js    # Icônes Lucide (subset 15 Ko)
 │
 ├── fonts/                  # Polices auto-hébergées
 ├── screenshots/            # Captures pour le README
 ├── scripts/                # Scripts utilitaires (Node.js)
+├── meta/                   # Audits et ressources sources
+│   └── ressources/
+│       └── lucide.min.js   # Source pour la génération du subset
 ├── e2e_tests/              # Tests End-to-End Playwright
 ├── .github/workflows/      # CI/CD GitHub Actions
 └── memory/                 # Contexte agents IA

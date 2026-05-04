@@ -35,8 +35,10 @@ C2/
 │   ├── scores.js           ← ScoreManager global
 │   ├── audio.js            ← Web Audio API
 │   ├── confetti.js         ← Effets visuels
-│   ├── swipe.js            ← Gestes tactiles
-│   └── lucide.min.js       ← Icônes (397 Ko !)
+│   └── swipe.js            ← Gestes tactiles
+├── meta/                   ← Audits et ressources sources
+│   └── ressources/
+│       └── lucide.min.js   ← Icônes (397 Ko !)
 ├── fonts/                  ← Outfit + JetBrains Mono (auto-hébergés)
 ├── webapps/                ← 6 apps élèves
 ├── alpha/webapps/          ← 6 apps expérimentales
@@ -133,7 +135,7 @@ C2/
 
 | Fichier | Taille | Commentaire |
 |---|---|---|
-| `js/lucide.min.js` | **397 Ko** | 🔴 Principal goulot — toute la librairie Lucide bundlée |
+| `meta/ressources/lucide.min.js` | **397 Ko** | 🔴 Principal goulot — toute la librairie Lucide bundlée |
 | `webapps/simulateur_bluebot.html` | **237 Ko** | 🔴 Application monolithique très lourde |
 | `webapps/binaire_message.html` | 54 Ko | 🟡 Acceptable mais conséquent |
 | `webapps/binaire_studio.html` | 46 Ko | 🟡 |
@@ -288,7 +290,7 @@ Le système de 5 fichiers memory/ est remarquablement bien conçu :
 |---|---|---|---|---|
 | R1 | Double registration SW dans `theme.js` | Haute | Moyen | 🔴 **P1** |
 | R2 | Monolithe `simulateur_bluebot.html` (237 Ko) difficile à maintenir | Haute | Haut | 🔴 **P1** |
-| R3 | `lucide.min.js` (397 Ko) chargé intégralement sur chaque page | Haute | Haut | 🔴 **P1** |
+| R3 | `meta/ressources/lucide.min.js` (397 Ko) chargé intégralement sur chaque page | Haute | Haut | 🔴 **P1** |
 | R4 | XSS via `innerHTML` dans `scores.js` | Faible | Moyen | 🟡 **P2** |
 | R5 | Duplication `.stat-donut-container` dans `shared.css` | Haute | Faible | 🟡 **P2** |
 | R6 | Absence de CI/CD — régressions non détectées automatiquement | Haute | Haut | 🟡 **P2** |
@@ -304,7 +306,7 @@ Le système de 5 fichiers memory/ est remarquablement bien conçu :
 ### 🔴 Priorité 1 — À corriger immédiatement
 
 1. **Supprimer la double registration du Service Worker dans `theme.js`** (lignes 49-59 ou 88-110 — en garder une seule, préférer le bloc le plus complet lignes 88-110)
-2. **`lucide.min.js`** : Remplacer par des SVG inline ou un bundle tree-shaked — économie de 380 Ko par page
+2. **`meta/ressources/lucide.min.js`** : Remplacer par des SVG inline ou un bundle tree-shaked — économie de 380 Ko par page
 3. **`shared.css`** : Supprimer la définition dupliquée de `.stat-donut-container` (ligne 493)
 
 ### 🟡 Priorité 2 — Court terme (prochain sprint)
