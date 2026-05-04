@@ -57,7 +57,7 @@ C2/
 │   ├── pixels_binaires.html
 │   └── pixel_studio_rvb.html
 │
-├── ressources/             # Outils enseignant·e·s
+├── webapps/teacher/             # Outils enseignant·e·s
 │   ├── bareme.html
 │   └── tirage.html
 │

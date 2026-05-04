@@ -29,7 +29,7 @@ const OUTPUT_FILE = path.join(ROOT, 'js', 'lucide-subset.js');
 // Directories to scan for icon usage
 const SCAN_DIRS = [
     path.join(ROOT, 'webapps'),
-    path.join(ROOT, 'ressources'),
+    path.join(ROOT, 'webapps', 'teacher'),
     path.join(ROOT, 'alpha', 'webapps'),
 ];
 const SCAN_FILES = [path.join(ROOT, 'index.html')];

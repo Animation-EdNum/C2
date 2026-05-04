@@ -24,7 +24,7 @@ Ce dépôt regroupe des applications web interactives (webapps) et des ressource
 Nos outils sont conçus pour être le plus simple possible à utiliser et s'adaptent à vos besoins de déploiement :
 
 ### 📂 Structure du projet
-Les fichiers dans `webapps/` et `ressources/` utilisent des ressources partagées (CSS, JS, Fonts) situées dans les dossiers racines. C'est le mode idéal pour un hébergement sur un serveur web.
+Les fichiers dans `webapps/` et `webapps/teacher/` utilisent des ressources partagées (CSS, JS, Fonts) situées dans les dossiers racines. C'est le mode idéal pour un hébergement sur un serveur web.
 
 ### 🚀 Points forts
 - **Utilisation locale :** Il n'y a **pas besoin d'installer de serveur**. Il suffit de télécharger les fichiers et de double-cliquer dessus pour les ouvrir directement dans votre navigateur web, même sans connexion internet !
@@ -141,7 +141,7 @@ Les ressources disponibles sont :
 
 Le portail propose également des liens vers diverses ressources externes utiles pour le corps enseignant.
 
-### 7. Générateur de Barème (`ressources/bareme.html`)
+### 7. Générateur de Barème (`webapps/teacher/bareme.html`)
 ![Générateur de Barème](screenshots/bareme.png)
 - **À quoi sert l'outil :** Un petit utilitaire sans publicité permettant aux enseignants de générer instantanément un barème de points pour la correction de leurs évaluations.
 - **Fonctionnalités :**
@@ -149,7 +149,7 @@ Le portail propose également des liens vers diverses ressources externes utiles
   - Thème adaptable (Clair / Sombre) avec sauvegarde des préférences en `localStorage`.
   - Formatage spécifique pour l'impression ou l'exportation en PDF (affichage propre, masquage des menus de configuration).
 
-### 8. Tirage au Sort (`ressources/tirage.html`)
+### 8. Tirage au Sort (`webapps/teacher/tirage.html`)
 ![Tirage au Sort](screenshots/tirage.png)
 - **À quoi sert l'outil :** Un outil efficace et visuel pour désigner un·e élève au hasard lors d'activités en classe ou pour créer des dynamiques aléatoires.
 - **Fonctionnalités :**
