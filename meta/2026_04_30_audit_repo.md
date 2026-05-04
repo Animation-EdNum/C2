@@ -14,7 +14,7 @@
 | **Fichiers source (.html/.css/.js)** | 23 fichiers · ~1,2 Mo total |
 | **Webapps principales** | 6 (dans `webapps/`) |
 | **Webapps alpha** | 6 (dans `alpha/webapps/`) |
-| **Ressources enseignants** | 2 (dans `ressources/`) |
+| **Ressources enseignants** | 2 (dans `webapps/teacher/`) |
 | **Tests E2E** | 5 fichiers Playwright/pytest |
 | **Licence** | AGPL-3.0 |
 | **Stack** | HTML5 · Vanilla JS ES6+ · Vanilla CSS · PWA |
@@ -40,7 +40,7 @@ C2/
 ├── fonts/                  ← Outfit + JetBrains Mono (auto-hébergés)
 ├── webapps/                ← 6 apps élèves
 ├── alpha/webapps/          ← 6 apps expérimentales
-├── ressources/             ← 2 outils enseignants
+├── webapps/teacher/             ← 2 outils enseignants
 ├── e2e_tests/              ← Suite Playwright
 ├── memory/                 ← Mémoire agentique (5 fichiers)
 └── screenshots/            ← Documentation visuelle
@@ -50,7 +50,7 @@ C2/
 
 - **PWA offline-first** : Service Worker robuste, pas de CDN, tout auto-hébergé
 - **Stack zéro-dépendance** : Aucun `npm install`, ouvrable en double-clic
-- **Séparation claire** : `webapps/` / `alpha/` / `ressources/` / `js/` / `css/`
+- **Séparation claire** : `webapps/` / `alpha/` / `webapps/teacher/` / `js/` / `css/`
 - **Shared design system** : `css/shared.css` + tokens CSS variables bien centralisés
 - **Module ScoreManager** : Architecture singleton propre, persistance localStorage
 - **Mémoire agentique** : Système de 5 fichiers memory/ pour la continuité entre sessions IA
@@ -198,7 +198,7 @@ C2/
 | `test_basic.py` | Smoke test (structure HTML de base) |
 | `test_webapps.py` | Tests de chargement des 6 webapps |
 | `test_alpha_webapps.py` | Tests de chargement des 6 apps alpha |
-| `test_ressources.py` | Tests de chargement des 2 ressources |
+| `test_teacher.py` | Tests de chargement des 2 ressources |
 | `test_scores.py` | Tests fonctionnels ScoreManager (init, success, mistake, reset, adaptive) |
 
 ### 7.2 Forces

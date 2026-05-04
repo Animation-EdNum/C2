@@ -31,8 +31,8 @@ const ASSETS = [
     './webapps/simulateur_bluebot.html',
 
     // Ressources
-    './ressources/bareme.html',
-    './ressources/tirage.html'
+    './webapps/teacher/bareme.html',
+    './webapps/teacher/tirage.html'
 ];
 
 self.addEventListener('install', event => {

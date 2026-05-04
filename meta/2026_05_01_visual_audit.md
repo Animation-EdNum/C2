@@ -1,5 +1,5 @@
 # 🔍 Visual Audit — Suite C2
-**Date:** 2026-05-01 | **Scope:** `webapps/`, `alpha/webapps/`, `ressources/`
+**Date:** 2026-05-01 | **Scope:** `webapps/`, `alpha/webapps/`, `webapps/teacher/`
 
 ---
 

@@ -76,17 +76,15 @@
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         // Find the relative path to the root from the current page.
-        // Assuming all pages are either at root, or 1 level deep (e.g., webapps/, ressources/),
-        // or 2 levels deep (alpha/webapps/).
+        // Assuming all pages are either at root, or 1 level deep (e.g., webapps/),
+        // or 2 levels deep (alpha/webapps/, webapps/teacher/).
         let rootPath = './';
         if (window.location.pathname.includes('/webapps/')) {
-            if (window.location.pathname.includes('/alpha/')) {
+            if (window.location.pathname.includes('/alpha/') || window.location.pathname.includes('/teacher/')) {
                 rootPath = '../../';
             } else {
                 rootPath = '../';
             }
-        } else if (window.location.pathname.includes('/ressources/')) {
-            rootPath = '../';
         }
 
         navigator.serviceWorker.register(rootPath + 'sw.js').catch(() => {
