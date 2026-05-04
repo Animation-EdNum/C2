@@ -566,6 +566,16 @@
 
     <header>
         <div class="action-buttons">
+            <button class="icon-action-btn" id="clearDataBtn" title="Réinitialiser l'application" aria-label="Réinitialiser l'application">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </button>
             <button class="icon-action-btn" id="installBtn" title="Installer l'application"
                 aria-label="Installer l'application">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1266,6 +1276,46 @@
         document.getElementById('clearSearch').addEventListener('click', clearSearch);
         document.getElementById('searchInput').addEventListener('input', searchApps);
         document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+        document.getElementById('clearDataBtn').addEventListener('click', async () => {
+            if (confirm("Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")) {
+                // Clear localStorage and sessionStorage
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Clear cookies
+                document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+
+                // Clear caches
+                if ('caches' in window) {
+                    try {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                    } catch (e) {
+                        console.error('Error clearing caches', e);
+                    }
+                }
+
+                // Unregister service workers
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registrations = await navigator.serviceWorker.getRegistrations();
+                        for (let registration of registrations) {
+                            await registration.unregister();
+                        }
+                    } catch (e) {
+                        console.error('Error unregistering service workers', e);
+                    }
+                }
+
+                // Reload after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
+            }
+        });
 
         /* =========================================
            PWA - SERVICE WORKER ET INSTALLATION
