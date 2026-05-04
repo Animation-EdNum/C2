@@ -73,14 +73,15 @@ C2/
 │   └── lucide-subset.js    # Icônes Lucide (subset 15 Ko)
 │
 ├── fonts/                  # Polices auto-hébergées
-├── screenshots/            # Captures pour le README
-├── scripts/                # Scripts utilitaires (Node.js)
-├── meta/                   # Audits et ressources sources
-│   └── ressources/
-│       └── lucide.min.js   # Source pour la génération du subset
-├── e2e_tests/              # Tests End-to-End Playwright
-├── .github/workflows/      # CI/CD GitHub Actions
-└── memory/                 # Contexte agents IA
+├── meta/                   # Audits, tests, scripts et ressources non-déployées
+│   ├── audits/
+│   ├── meta/e2e_tests/          # Tests End-to-End Playwright
+│   ├── memory/             # Contexte agents IA
+│   ├── ressources/
+│   │   └── lucide.min.js   # Source pour la génération du subset
+│   ├── screenshots/        # Captures pour le README
+│   └── scripts/            # Scripts utilitaires (Node.js)
+└── .github/workflows/      # CI/CD GitHub Actions
 ```
 
 ### Fichiers partagés clés
@@ -103,7 +104,7 @@ Le fichier `sw.js` maintient un tableau `ASSETS` listant tous les fichiers à me
 
 Le projet utilise un **subset personnalisé** de Lucide Icons (15 Ko au lieu de 388 Ko). Pour ajouter une nouvelle icône :
 1. Ajoutez `data-lucide="nom-icone"` dans votre HTML
-2. Exécutez `node scripts/generate_lucide_subset.js` pour régénérer le subset
+2. Exécutez `node meta/scripts/generate_lucide_subset.js` pour régénérer le subset
 3. Vérifiez que l'icône s'affiche correctement
 
 ---
@@ -168,14 +169,14 @@ playwright install
 python -m http.server 8000
 
 # Terminal 2 : lancer les tests
-python -m pytest e2e_tests/ -v
+python -m pytest meta/meta/e2e_tests/ -v
 ```
 
 #### CI/CD
 Les tests sont automatiquement exécutés via GitHub Actions sur chaque Pull Request vers `main`. Le workflow est défini dans `.github/workflows/e2e-tests.yml`.
 
 #### Ajouter un test
-Les tests sont organisés par application dans `e2e_tests/`. Conventions :
+Les tests sont organisés par application dans `meta/e2e_tests/`. Conventions :
 - Nommer les fichiers `test_<nom_app>.py`
 - Utiliser `page.goto("http://localhost:8000/...")` comme base URL
 - Privilégier les sélecteurs par ID (`#mon-element`) pour la stabilité

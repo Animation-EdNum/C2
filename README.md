@@ -39,7 +39,7 @@ Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur d
 
 | Mobile | Écran large (Wide) |
 |:---:|:---:|
-| <img src="screenshots/simulateur_bluebot_mobile.png" height="350"> | <img src="screenshots/simulateur_bluebot_widescreen.png" height="350"> |
+| <img src="meta/screenshots/simulateur_bluebot_mobile.png" height="350"> | <img src="meta/screenshots/simulateur_bluebot_widescreen.png" height="350"> |
 | *Affichage vertical compact avec swipe* | *Exploitation complète de la largeur d'écran* |
 
 ## Webapps (Applications pour les élèves)
@@ -54,13 +54,13 @@ Les webapps partagent une interface unifiée basée sur un design **Glassmorphis
 - **Typographie Outfit** pour une lisibilité optimale.
 
 ### Portail d'accueil (`index.html`)
-![Portail d'accueil](screenshots/index.png)
+![Portail d'accueil](meta/screenshots/index.png)
 - **À quoi sert l'outil :** Un portail central permettant d'accéder facilement à toutes les webapps et ressources. Il inclut la gestion du mode sombre global et un accès rapide aux applications récemment consultées.
 
 Les webapps disponibles sont :
 
 ### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
-![Simulateur Blue-Bot](screenshots/simulateur_bluebot.png)
+![Simulateur Blue-Bot](meta/screenshots/simulateur_bluebot.png)
 - **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques.
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot**
 - **Demi-cycle concerné :** 3-4H
@@ -79,7 +79,7 @@ Les webapps disponibles sont :
   - **Vitesse paramétrable :** Modes "Vitesse Normale" (900 ms avec pause) ou "Vitesse Rapide" (400 ms) avec tracé du parcours en temps réel.
 
 ### 2. Pixel Studio (`webapps/binaire_studio.html`)
-![Pixel Studio](screenshots/binaire_studio.png)
+![Pixel Studio](meta/screenshots/binaire_studio.png)
 - **À quoi sert l'outil :** Un studio de codage interactif permettant de faire le lien entre des images matricielles (pixels) en noir et blanc et leur représentation binaire (0 pour le noir, 1 pour le blanc).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire**
 - **Demi-cycle concerné :** 5-6H
@@ -90,7 +90,7 @@ Les webapps disponibles sont :
   - Exportation technique de l'œuvre finale en format image PNG.
 
 ### 3. Mots secrets (`webapps/binaire_message.html`)
-![Mots secrets](screenshots/binaire_message.png)
+![Mots secrets](meta/screenshots/binaire_message.png)
 - **À quoi sert l'outil :** Un jeu interactif pour apprendre à chiffrer et déchiffrer des mots à l'aide de l'alphabet binaire.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)**
 - **Demi-cycle concerné :** 7-8H
@@ -100,7 +100,7 @@ Les webapps disponibles sont :
   - **Interface optimisée :** Saisie rapide au clavier ("Entrée") et feedback immédiat sur les erreurs de codage.
 
 ### 4. Routage Réseau (`webapps/routage_reseau.html`)
-![Routage Réseau](screenshots/routage_reseau.png)
+![Routage Réseau](meta/screenshots/routage_reseau.png)
 - **À quoi sert l'outil :** Une simulation visuelle qui demande aux élèves de trouver le chemin le plus rapide pour acheminer un "paquet" d'un point A (ordinateur) à un point B (serveur) au travers d'un graphe.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 8 — Les réseaux, Niveau 2**
 - **Demi-cycle concerné :** 7-8H
@@ -112,7 +112,7 @@ Les webapps disponibles sont :
   - Validateur d'optimalité qui compare le chemin de l'élève avec le chemin mathématiquement le plus court.
 
 ### 5. Codage binaire (`webapps/binaire_codage.html`)
-![Codage binaire](screenshots/binaire_codage.png)
+![Codage binaire](meta/screenshots/binaire_codage.png)
 - **À quoi sert l'outil :** Une plateforme d'entraînement intensif au passage des nombres entiers (décimal) vers leur écriture en binaire, et inversément.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 1)**
 - **Demi-cycle concerné :** 7-8H
@@ -123,7 +123,7 @@ Les webapps disponibles sont :
   - **Saisie optimisée :** Focus automatique sur le champ de réponse pour enchaîner les exercices sans utiliser la souris.
 
 ### 6. Bit de Parité (`webapps/bit_de_parite.html`)
-![Bit de Parité](screenshots/bit_de_parite.png)
+![Bit de Parité](meta/screenshots/bit_de_parite.png)
 - **À quoi sert l'outil :** Un exercice ludique abordant la notion de parité afin de comprendre comment un ordinateur peut s'assurer qu'un message n'a pas été altéré lors d'une transmission.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs lors de la transmission de données ?**
 - **Demi-cycle concerné :** 7-8H
@@ -142,7 +142,7 @@ Les ressources disponibles sont :
 Le portail propose également des liens vers diverses ressources externes utiles pour le corps enseignant.
 
 ### 7. Générateur de Barème (`webapps/teacher/bareme.html`)
-![Générateur de Barème](screenshots/bareme.png)
+![Générateur de Barème](meta/screenshots/bareme.png)
 - **À quoi sert l'outil :** Un petit utilitaire sans publicité permettant aux enseignants de générer instantanément un barème de points pour la correction de leurs évaluations.
 - **Fonctionnalités :**
   - Génération automatique des échelles de notes selon le total saisi.
@@ -150,7 +150,7 @@ Le portail propose également des liens vers diverses ressources externes utiles
   - Formatage spécifique pour l'impression ou l'exportation en PDF (affichage propre, masquage des menus de configuration).
 
 ### 8. Tirage au Sort (`webapps/teacher/tirage.html`)
-![Tirage au Sort](screenshots/tirage.png)
+![Tirage au Sort](meta/screenshots/tirage.png)
 - **À quoi sert l'outil :** Un outil efficace et visuel pour désigner un·e élève au hasard lors d'activités en classe ou pour créer des dynamiques aléatoires.
 - **Fonctionnalités :**
   - Sauvegarde locale automatique (`localStorage`) : la liste d'élèves et l'état du tirage restent en mémoire même si l'onglet est fermé.
@@ -180,7 +180,7 @@ js/scores.js         → ScoreManager (gamification, stats, difficulté adaptati
 js/confetti.js       → Récompenses visuelles (confettis, feux d'artifice)
 js/audio.js          → Audio synthétique (Web Audio API)
 js/swipe.js          → Navigation tactile par swipe entre onglets
-js/lucide-subset.js  → Icônes vectorielles (auto-généré par scripts/generate_lucide_subset.js)
+js/lucide-subset.js  → Icônes vectorielles (auto-généré par meta/scripts/generate_lucide_subset.js)
 ```
 
 ### CI/CD
@@ -210,11 +210,11 @@ En résumé :
 Pour exécuter la suite de tests Playwright locale :
 1. Installez les dépendances : `pip install pytest-playwright playwright && playwright install`
 2. Démarrez un serveur HTTP local à la racine : `python -m http.server 8000`
-3. Dans un autre terminal, lancez les tests : `python -m pytest e2e_tests/ -v`
+3. Dans un autre terminal, lancez les tests : `python -m pytest meta/e2e_tests/ -v`
 
 ## Changelog
 
-L'historique détaillé des modifications est maintenu sous forme de journal agentique dans [`memory/event-log.md`](memory/event-log.md). Ce fichier sert de changelog vivant, mis à jour automatiquement à chaque session de développement assisté par IA.
+L'historique détaillé des modifications est maintenu sous forme de journal agentique dans [`meta/memory/event-log.md`](meta/memory/event-log.md). Ce fichier sert de changelog vivant, mis à jour automatiquement à chaque session de développement assisté par IA.
 
 ## Contact / Support
 
