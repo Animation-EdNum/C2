@@ -3085,6 +3085,28 @@
                     obsBtn.innerText = ob || '';
                 }
             }
+
+            // Redraw trails to match new skin
+            if (simState.program.length > 0 || simState.running || simState.failed) {
+                redrawTrail('sim-grid', simState);
+            } else {
+                TrailManager.clear('sim-grid');
+            }
+            if (typeof drawState !== 'undefined' && drawState.program.length > 0) {
+                redrawTrail('draw-grid', drawState);
+            } else {
+                TrailManager.clear('draw-grid');
+            }
+            if (typeof readState !== 'undefined' && readState.program.length > 0 && readState.isAnimating) {
+                // Not perfectly redrawing read path because it uses obstacles in moveRobot which readState has.
+                redrawTrail('read-grid', readState);
+            } else if (typeof readState !== 'undefined' && !readState.isAnimating) {
+                TrailManager.clear('read-grid');
+            }
+            if (typeof chalState !== 'undefined') {
+                // Just clear since chal doesn't store current active program explicitly
+                TrailManager.clear('chal-grid');
+            }
         }
 
         function unlockSkin(skinId) {
