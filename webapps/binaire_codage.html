@@ -752,7 +752,7 @@
 
                 <div class="card-instruction">Ta réponse en base 10 :</div>
                 <div class="input-row">
-                    <input type="text" id="binDec-input" placeholder="ex. 20" autocomplete="off">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="binDec-input" placeholder="ex. 20" autocomplete="off">
                     <button class="btn btn-check" id="binDec-check-btn">Vérifier</button>
                     <button class="btn btn-new" id="btn-new-bin">Nouveau défi</button>
                 </div>
@@ -1004,6 +1004,17 @@
 
         // Event Listeners for binaire_codage
         document.addEventListener('DOMContentLoaded', () => {
+
+            const binDecInput = document.getElementById('binDec-input');
+            binDecInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '');
+                if (e.target.value !== '') {
+                    let val = parseInt(e.target.value, 10);
+                    if (val > 255) {
+                        e.target.value = '255';
+                    }
+                }
+            });
 
             initChallenges();
 
