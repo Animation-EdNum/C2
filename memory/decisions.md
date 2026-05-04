@@ -27,3 +27,5 @@
 - **[2026-04-30] Service Worker Registration:** Single registration point in `js/theme.js` with path-agnostic logic. Duplicate registration blocks must not be added.
 - **[2026-05-01] Navigation Standardization:** Decided to exclusively use top `.tabs` elements for navigation across desktop and mobile, explicitly abandoning sticky bottom tab bars to prevent collision with mobile OS gesture areas.
 - **[2026-05-01] Embedded Controls Layout:** Decided to insert embedded auxiliary UI controls (like clear/hide buttons in dynamic lists) as standard relative flex items in the DOM flow rather than using absolute positioning, to eliminate clipping and overlap issues when lists expand.
+- To maintain PWA offline functionality, new applications (including alpha apps) must be manually added to the `ASSETS` array in the `sw.js` Service Worker, and deleted files must be manually removed.
+- Alpha web applications (in `alpha/webapps/`) must use a specific footer stating: 'Webapp conçue par Vivian de l'AP EdNum avec ❤️ et quelques neurones artificiels' and 'Code 100% libre (AGPL-3.0)'. It includes the `.no-print` class.
