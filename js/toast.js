@@ -39,9 +39,9 @@ function showToast(msg, type = 'success', duration = 3000) {
         default:        iconName = toastType; // Use type as icon name if custom
     }
 
-    if (window.lucide && iconName) {
+    if (window.fa && iconName) {
         const iconWrapper = document.createElement('i');
-        iconWrapper.setAttribute('data-lucide', iconName);
+        iconWrapper.setAttribute('data-fa', iconName);
         iconWrapper.style.width = '18px';
         iconWrapper.style.height = '18px';
         toast.appendChild(iconWrapper);
@@ -54,8 +54,8 @@ function showToast(msg, type = 'success', duration = 3000) {
     container.appendChild(toast);
 
     // Initialize lucide icon if wrapper added
-    if (window.lucide) {
-        window.lucide.createIcons();
+    if (window.fa) {
+        window.fa.createIcons();
     }
 
     // Force reflow so the transition fires
