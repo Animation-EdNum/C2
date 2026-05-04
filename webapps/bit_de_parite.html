@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛡️ Bit de Parité – Entraînement & Détection</title>
-    <meta property="og:title" content="Bit de Parité – Entraînement & Détection">
+    <title>🛡️ Bit de parité – Entraînement & Détection</title>
+    <meta property="og:title" content="Bit de parité – Entraînement & Détection">
     <meta property="og:description"
         content="Exerce-toi à calculer les bits de parité et à détecter des erreurs de transmission.">
     <meta property="og:type" content="website">
@@ -39,6 +39,8 @@
             --parity-line-border: #fb923c;
             --parity-col-bg: #fdf4ff;
             --parity-col-border: #c084fc;
+            --corner-bg: #e0f2fe;
+            --corner-border: #38bdf8;
             --shadow-color: rgba(0, 0, 0, 0.3);
             --card-shadow: rgba(245, 158, 11, 0.15);
         }
@@ -65,8 +67,8 @@
             --parity-line-border: #c2410c;
             --parity-col-bg: #3b0764;
             --parity-col-border: #7e22ce;
-            --corner-bg: #0f172a;
-            --corner-border: #334155;
+            --corner-bg: #0c4a6e;
+            --corner-border: #0284c7;
             --shadow-color: rgba(0, 0, 0, 0.5);
             --card-shadow: rgba(0, 0, 0, 0.4);
         }
@@ -97,7 +99,7 @@
         }
 
         body.dark .cell.corner {
-            color: #94a3b8;
+            color: #7dd3fc;
         }
 
         body.dark .grid-wrapper .cell.cell-correct {
@@ -132,12 +134,6 @@
         body.dark .instructions {
             background: var(--card-bg);
             border-color: #4f46e5;
-            color: #cbd5e1;
-        }
-
-        body.dark .detect-header {
-            background: var(--card-bg);
-            border-color: #334155;
             color: #cbd5e1;
         }
 
@@ -271,6 +267,11 @@
             border-color: var(--parity-col-border);
         }
 
+        .legend-box.corner-box {
+            background: var(--corner-bg);
+            border-color: var(--corner-border);
+        }
+
         /* VUES */
         .view {
             display: none;
@@ -389,20 +390,20 @@
         }
 
         .cell.corner {
-            background: var(--corner-bg, #f8fafc);
-            border-color: var(--corner-border, #e2e8f0);
+            background: var(--corner-bg);
+            border-color: var(--corner-border);
             color: #cbd5e1;
             cursor: pointer;
         }
 
         .cell.corner:hover:not(.locked) {
             transform: scale(1.1);
-            box-shadow: 0 4px 10px rgba(148, 163, 184, 0.3);
-            color: #94a3b8;
+            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3);
+            color: #0284c7;
         }
 
         .cell.corner.filled {
-            color: #475569;
+            color: #0284c7;
         }
 
         .grid-wrapper .cell.locked {
@@ -500,23 +501,22 @@
             margin-top: 15px;
         }
 
-
-
-
-
-
-
-
-        /* Detect mode header banner */
-        .detect-header {
+        .chal-instruction {
             text-align: center;
             font-size: 15px;
+            font-weight: 600;
             color: var(--text-main);
             margin-bottom: 15px;
             background: #eff6ff;
             padding: 15px;
             border-radius: var(--radius-lg);
             border: 1px solid #bfdbfe;
+        }
+
+        body.dark .chal-instruction {
+            background: var(--card-bg);
+            border-color: #334155;
+            color: #cbd5e1;
         }
 
         /* SCORE */
@@ -557,6 +557,34 @@
             z-index: 9999;
         }
 
+        @media (min-width: 900px) {
+            .desktop-layout {
+                display: flex;
+                gap: 30px;
+                align-items: center;
+                justify-content: center;
+            }
+            .desktop-layout .exercise-card {
+                margin-bottom: 0;
+                flex: 1;
+                max-width: 600px;
+            }
+            .desktop-layout-side {
+                flex: 0 0 300px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .desktop-layout-side .legend {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .desktop-layout-side .score-bar {
+                margin-top: 30px;
+                padding-top: 30px;
+            }
+        }
+
         @media print {
             .no-print {
                 display: none;
@@ -584,7 +612,7 @@
                     <i data-lucide="shield-check"></i>
                 </a>
                 <div>
-                    <h1>Le Bit de Parité</h1>
+                    <h1>Bit de parité</h1>
                 </div>
             </div>
             <div class="action-buttons">
@@ -618,25 +646,6 @@
             <button class="tab-btn" id="tab-detect"><i data-lucide="search"></i> Trouve l'erreur</button>
         </div>
 
-        <!-- INSTRUCTIONS -->
-        <details class="instructions">
-            <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
-            <div style="margin-top:10px;">
-                <strong>Le principe :</strong> Un <strong>bit de parité</strong> est ajouté à chaque ligne et chaque
-                colonne d'un bloc de données pour que le nombre de <strong>1</strong> soit toujours
-                <strong>pair</strong>. Si un bit est altéré lors d'une transmission, certaines parités ne seront plus
-                respectées — on peut alors <em>localiser précisément</em> la cellule corrompue !<br><br>
-                <strong>📝 Mode Entraînement :</strong> La grille de données est générée aléatoirement. Complète les
-                cases de parité vides (en bordure) pour que chaque ligne et chaque colonne contienne un nombre
-                <strong>pair de 1</strong>. Survole une case de parité pour voir quelle ligne ou colonne elle
-                surveille.<br><br>
-                <strong><i data-lucide="search"></i> Trouve l'erreur :</strong> Un bit a été corrompu lors d'une transmission. Les bits de parité
-                corrects sont affichés en bordure. Les cases <strong>en orange ⚠️</strong> signalent une parité violée :
-                leur ligne ou colonne ne respecte plus la règle. <strong>L'intersection</strong> de la ligne et de la
-                colonne suspectes désigne le bit corrompu — clique dessus pour le corriger !
-            </div>
-        </details>
-
         <!-- MODE ENTRAÎNEMENT -->
         <div id="view-train" class="view active">
             <div class="difficulty-bar">
@@ -645,77 +654,107 @@
                 <button class="diff-btn" id="diff-hard">🔴 Difficile (6×6)</button>
             </div>
 
-            <div class="exercise-card">
-                <div class="grid-wrapper">
-                    <div class="grid" id="train-grid"></div>
+            <!-- INSTRUCTIONS -->
+            <details class="instructions">
+                <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
+                <div style="margin-top:10px;">
+                    <strong>Le but du jeu :</strong> Faire en sorte qu'il y ait toujours un nombre <strong>pair</strong> (0, 2, 4...) de "1" sur chaque ligne et chaque colonne.<br><br>
+                    <strong>Comment faire ?</strong> Compte les "1" dans une ligne ou une colonne. Si tu as un nombre impair de "1", ajoute un "1" dans la case de bordure pour rendre le total pair. Si le nombre est déjà pair, ajoute un "0".<br><br>
+                    <strong>Le bit du coin (Vérification) :</strong> La case tout en bas à droite est très spéciale ! Elle sert d'<strong>auto-correction</strong>. Elle compte les "1" des autres cases de bordure. Si tout est correct, elle sera aussi paire !
                 </div>
-                <div class="controls" style="align-items: center;">
-                    <span style="font-weight: 700; color: var(--text-main);">Complète les bits manquants.</span>
-                    <button class="btn btn-check" id="verifyBtn">✅ Vérifier</button>
-                </div>
-            </div>
+            </details>
 
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-box data-box"></div> Données
-                </div>
-                <div class="legend-item">
-                    <div class="legend-box parity-line-box"></div> Parité Ligne
-                </div>
-                <div class="legend-item">
-                    <div class="legend-box parity-col-box"></div> Parité Colonne
-                </div>
-            </div>
+            <div class="chal-instruction">Complète les bits manquants</div>
 
-            <div class="score-bar">
-                <div class="score-item">
-                    <div class="score-label">Victoires</div>
-                    <div class="score-value" id="global-correct">0</div>
+            <div class="desktop-layout">
+                <div class="exercise-card">
+                    <div class="grid-wrapper">
+                        <div class="grid" id="train-grid"></div>
+                    </div>
+                    <div class="controls" style="align-items: center;">
+                        <button class="btn btn-check" id="verifyBtn">✅ Vérifier</button>
+                    </div>
                 </div>
-                <div class="score-item">
-                    <div class="score-label">Série 🔥</div>
-                    <div class="score-value" id="global-streak">0</div>
+
+                <div class="desktop-layout-side">
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-box data-box"></div> Données
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box parity-line-box"></div> Parité Ligne
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box parity-col-box"></div> Parité Colonne
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box corner-box"></div> Coin (Vérification)
+                        </div>
+                    </div>
+
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="global-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="global-streak">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- MODE DÉTECTION D'ERREUR -->
         <div id="view-detect" class="view">
-            <div class="detect-header" id="detect-header">
-                🚨 <strong>Un bit a été corrompu lors de la transmission !</strong><br>
-                Analyse la grille et clique sur le bit que tu penses <strong>corrompu</strong>
-            </div>
+            <!-- INSTRUCTIONS -->
+            <details class="instructions">
+                <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
+                <div style="margin-top:10px;">
+                    <strong>Oh non !</strong> Un bit s'est cassé (corrompu) pendant l'envoi du message.<br><br>
+                    <strong>Comment le trouver ?</strong> Les cases de bordure <strong>oranges ⚠️</strong> t'indiquent quelles lignes ou colonnes ont un nombre impair de "1". Croise la ligne orange et la colonne orange pour trouver le bit cassé !
+                </div>
+            </details>
 
-            <div class="exercise-card">
-                <div class="card-title" id="detect-card-title">Défi n°1 – Trouve le bit corrompu !</div>
-                <div class="grid-wrapper">
-                    <div class="grid" id="detect-grid"></div>
-                </div>
-                <div class="controls">
-                    <button class="btn btn-new" id="newDetectBtn">🔄 Nouveau défi</button>
-                </div>
-            </div>
+            <div class="chal-instruction">Trouve le bit corrompu</div>
 
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-box data-box"></div> Données
+            <div class="desktop-layout">
+                <div class="exercise-card">
+                    <div class="grid-wrapper">
+                        <div class="grid" id="detect-grid"></div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn btn-new" id="newDetectBtn">🔄 Nouveau défi</button>
+                    </div>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-box parity-line-box"></div> Parité Ligne
-                </div>
-                <div class="legend-item">
-                    <div class="legend-box parity-col-box"></div> Parité Colonne
-                </div>
-            </div>
 
-            <div class="score-bar">
-                <div class="score-item">
-                    <div class="score-label">Victoires</div>
-                    <div class="score-value" id="detect-correct">0</div>
-                </div>
-                <div class="score-item">
-                    <div class="score-label">Série 🔥</div>
-                    <div class="score-value" id="detect-streak">0</div>
+                <div class="desktop-layout-side">
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-box data-box"></div> Données
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box parity-line-box"></div> Parité Ligne
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box parity-col-box"></div> Parité Colonne
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box corner-box"></div> Coin (Vérification)
+                        </div>
+                    </div>
+
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="detect-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="detect-streak">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -901,16 +940,11 @@
         let detectCorruptedR = -1, detectCorruptedC = -1;
         let detectLocked = false, detectAttempts = 0, detectHintsEnabled = false;
         let detectCorrect = 0, detectStreak = 0, detectBest = 0;
-        let detectExerciseCount = 0;
 
         function initDetectMode() {
             detectLocked = false;
             detectAttempts = 0;
             detectHintsEnabled = false;
-            detectExerciseCount++;
-            document.getElementById('detect-header').innerHTML =
-                '🔍 <strong>Un bit de données a été altéré lors d\'une transmission.</strong><br>' +
-                'Analyse la grille et clique sur le bit que tu penses <strong>corrompu</strong> !';
 
             detectData = [];
             for (let i = 0; i < DET_SIZE; i++) {
@@ -937,7 +971,6 @@
             detectCorruptedC = Math.floor(Math.random() * DET_SIZE);
             detectData[detectCorruptedR][detectCorruptedC] ^= 1;
 
-            document.getElementById('detect-card-title').textContent = `Défi n°${detectExerciseCount} – Trouve le bit corrompu !`;
             renderDetectGrid();
             updateDetectScoreDisplay();
         }
@@ -1059,10 +1092,6 @@
                 const firstHint = !detectHintsEnabled;
                 if (firstHint) {
                     detectHintsEnabled = true;
-                    document.getElementById('detect-header').innerHTML =
-                        '🚨 <strong>Un bit a été corrompu !</strong><br>' +
-                        'Les cases <strong>en orange ⚠️</strong> indiquent les parités violées — leur intersection pointe vers l\'erreur.<br>' +
-                        '<strong>Clique sur le bit corrompu pour le corriger !</strong>';
                     renderDetectGrid();
                 }
                 detectStreak = 0;
