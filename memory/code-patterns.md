@@ -22,7 +22,6 @@ const toggleTheme = () => {
     document.documentElement.setAttribute('data-theme', target);
     localStorage.setItem('theme', target);
 };
-```
 
 ## 3. App Shell Structure
 Every application follows this high-level HTML structure:
