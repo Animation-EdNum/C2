@@ -2998,7 +2998,7 @@
             closeSkinsModal();
 
             // Met à jour les grilles sans réinitialiser leur état
-            const grids = ['sim-grid', 'chal-grid', 'read-grid'];
+            const grids = ['sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
             grids.forEach(gridId => {
                 const grid = document.getElementById(gridId);
                 if (!grid) return;
@@ -3046,6 +3046,11 @@
                 if (readState.targetRow !== null && readState.targetCol !== null) {
                     renderTarget('read-grid', 'read-target', readState.targetRow, readState.targetCol);
                 }
+            }
+
+            // Mettre à jour les robots et cibles pour draw-grid
+            if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
+                renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
             }
 
             const tgtBtn = document.getElementById('btn-target-icon');
@@ -3708,7 +3713,7 @@
         function triggerRipple(row, col, delay) {
             setTimeout(() => {
                 // Trouver les cellules dans toutes les grilles possibles
-                const grids = ['sim-grid', 'chal-grid', 'read-grid'];
+                const grids = ['sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
                 grids.forEach(gridId => {
                     const cellId = `${gridId}-cell-${row}-${col}`;
                     const cell = document.getElementById(cellId);
@@ -3858,6 +3863,9 @@
                 overlay.onclick = (e) => {
                     // Prevent switching if the simulation is running
                     if (typeof simState !== 'undefined' && simState && simState.running) return;
+                    if (typeof chalState !== 'undefined' && chalState && chalState.isAnimating) return;
+                    if (typeof readState !== 'undefined' && readState && readState.isAnimating) return;
+                    if (typeof drawState !== 'undefined' && drawState && drawState.isAnimating) return;
                     e.preventDefault();
                     e.stopPropagation();
 
