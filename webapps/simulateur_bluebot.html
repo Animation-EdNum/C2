@@ -3651,22 +3651,46 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if (simState.running || !['simulator', 'challenge', 'read', 'draw'].includes(activeTab)) return;
-            switch (e.key) {
-                case 'ArrowUp': e.preventDefault(); addCmd('forward'); break;
-                case 'ArrowDown': e.preventDefault(); addCmd('backward'); break;
-                case 'ArrowLeft': e.preventDefault(); addCmd('left'); break;
-                case 'ArrowRight': e.preventDefault(); addCmd('right'); break;
-                case 'Backspace':
-                    e.preventDefault();
-                    if (simState.program.length > 0) {
-                        removeSpecificCmd(simState.program.length - 1);
-                    }
-                    break;
-                case 'Enter':
-                    e.preventDefault();
-                    runProgram();
-                    break;
+            if (!['simulator', 'challenge', 'read', 'draw'].includes(activeTab)) return;
+
+            if (activeTab === 'draw') {
+                if (drawState.isAnimating || drawState.locked) return;
+                switch (e.key) {
+                    case 'ArrowUp': e.preventDefault(); addDrawCommand('forward'); break;
+                    case 'ArrowDown': e.preventDefault(); addDrawCommand('backward'); break;
+                    case 'ArrowLeft': e.preventDefault(); addDrawCommand('left'); break;
+                    case 'ArrowRight': e.preventDefault(); addDrawCommand('right'); break;
+                    case 'Backspace':
+                        e.preventDefault();
+                        if (drawState.program.length > 0) {
+                            drawState.program.pop();
+                            playSound('click');
+                            renderDrawProgram();
+                        }
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        runDrawProgram();
+                        break;
+                }
+            } else {
+                if (simState.running) return;
+                switch (e.key) {
+                    case 'ArrowUp': e.preventDefault(); addCmd('forward'); break;
+                    case 'ArrowDown': e.preventDefault(); addCmd('backward'); break;
+                    case 'ArrowLeft': e.preventDefault(); addCmd('left'); break;
+                    case 'ArrowRight': e.preventDefault(); addCmd('right'); break;
+                    case 'Backspace':
+                        e.preventDefault();
+                        if (simState.program.length > 0) {
+                            removeSpecificCmd(simState.program.length - 1);
+                        }
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        runProgram();
+                        break;
+                }
             }
         });
 
