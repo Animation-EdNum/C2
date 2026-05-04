@@ -44,3 +44,4 @@
 - **[2026-05-01]** [Layout] Fixed index.html mobile layout issues and applied global safe-area constraints.
 - **[2026-05-01]** [Bugfix] Fixed overlap issues in Blue-Bot Simulator by modifying `#hideCmdToggleBtn` and `#sim-end-container` clearing buttons to act as normal, relative flex items instead of absolutely positioned components within `.program-strip`.
 - **[2026-05-02]** [UX] Enabled active touch-based drag-and-drop for mobile devices in Machine à Trier alpha webapp.
+- **[2026-05-02]** [System] Transferred accumulated memory items into categorized markdown files in the `memory/` directory to ensure knowledge persistence.
