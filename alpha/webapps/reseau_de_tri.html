@@ -552,11 +552,14 @@
             </div>
 
             <div class="action-row">
-                <button class="btn-primary" id="btn-next-step">
+                <button class="btn btn-primary" id="btn-next-step">
                     Valider l'étape <i data-fa="arrow-right"></i>
                 </button>
                 <button class="btn btn-success" id="btn-start-race" style="display: none;">
                     🏁 Lancer la course !
+                </button>
+                <button class="btn btn-primary" id="btn-next-level" style="display: none;">
+                    Niveau suivant <i data-fa="arrow-right"></i>
                 </button>
             </div>
 
@@ -661,11 +664,13 @@
         const wrapper = document.getElementById('network-wrapper');
         const btnNextStep = document.getElementById('btn-next-step');
         const btnStartRace = document.getElementById('btn-start-race');
+        const btnNextLevel = document.getElementById('btn-next-level');
         const raceSeparator = document.getElementById('race-separator');
         const bubbleSortContainer = document.getElementById('bubble-sort-container');
         const bubbleGrid = document.getElementById('bubble-grid');
 
         btnStartRace.addEventListener('click', startRace);
+        btnNextLevel.addEventListener('click', startNewLevel);
 
 
         function init() {
@@ -953,8 +958,9 @@
 
             // Update button text if at the end
             if (currentStageIndex >= networkDef.length) {
-                btnNextStep.innerHTML = `Terminé <i data-fa="circle-check"></i>`;
-                btnNextStep.disabled = true;
+                btnNextStep.style.display = "none";
+                btnStartRace.style.display = "inline-flex";
+
                 fa.createIcons();
             } else {
                 btnNextStep.innerHTML = `Valider l'étape <i data-fa="arrow-right"></i>`;
@@ -967,6 +973,7 @@
             btnNextStep.disabled = false;
             btnNextStep.style.display = 'inline-flex';
             btnStartRace.style.display = 'none';
+            btnNextLevel.style.display = 'none';
             raceSeparator.style.display = 'none';
             bubbleSortContainer.style.display = 'none';
 
@@ -1027,6 +1034,7 @@
                 playSound('error');
                 showToast('Attention, des éléments sont mal triés sur les barres actives !', 'error');
                 updateScore(false);
+                ScoreManager.addMistake(currentMode, currentDifficulty);
                 return;
             }
 
@@ -1229,9 +1237,8 @@
             if (!activityHappened) {
                 clearInterval(raceInterval);
                 raceInterval = null;
-                setTimeout(() => {
-                    startNewLevel();
-                }, 3000);
+                // Do not automatically start a new level after a race finishes
+                btnNextLevel.style.display = "inline-flex";
             }
         }
 
@@ -1246,7 +1253,7 @@
             document.getElementById('global-correct').textContent = globalCorrect;
             document.getElementById('global-streak').textContent = globalStreak;
 
-            ScoreManager.addMistake(currentMode, currentDifficulty);
+
         }
 
         window.addEventListener('load', init);

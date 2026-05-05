@@ -22,7 +22,7 @@
 
 ## UI/UX Requirements
 - **Touch Targets:** Ensure buttons and interactive elements maintain a minimum hit area of 44x44px for touch accessibility.
-- **Assets:** Use local assets exclusively. Do not rely on external CDNs for fonts or icons (use FontAwesome 7 Pro locally).
+- **Assets:** Use local assets exclusively. Do not rely on external CDNs for fonts or icons.
 - **Mobile Navigation:** Primary navigation tabs should be presented as top `.tabs` elements. Modals should be styled as side-panels.
 - **Frontend Verification:** User-visible modifications to the frontend UI must be visually verified by calling `frontend_verification_instructions`, capturing a local Playwright screenshot, and passing the image path to `frontend_verification_complete`.
 
@@ -35,7 +35,7 @@
   - When visually verifying local HTML files without a running dev server, construct an absolute file URI using `os.path.abspath()` (e.g., `filepath = os.path.abspath('path/to/file.html'); page.goto(f'file://{filepath}')`).
   - To test mobile touch gestures like swipes, configure the browser context with mobile emulation by passing `has_touch=True` and a mobile viewport (e.g., `viewport={'width': 375, 'height': 812}`).
   - When verifying XSS mitigations, inject malicious payloads (e.g., `<img src=x onerror=window.xssTriggered=true>`) directly into state variables via `page.evaluate()`, trigger a re-render, and assert the payload is safely displayed.
-  - FontAwesome icons (`<i data-fa="...">`) are dynamically replaced by SVG elements via `fa.createIcons()`. Do not cache DOM element references on script load.
+  - Lucide icons (`<i data-lucide="...">`) are dynamically replaced by SVG elements. To wait for them to render, use the selector `svg.lucide-{icon_name}` rather than the initial `<i>` tag.
   - When verifying if an element has a specific class within a list of classes, use `expect(element).to_have_class(re.compile(r'class_name'))` rather than a lambda function.
 - **Bash & Git Constraints:**
   - If git operations like `git revert` or `git diff` on older commits fail with bad revision errors, run `git fetch --unshallow` to retrieve the full history before proceeding.
@@ -46,4 +46,4 @@
 - **Playwright Screenshot Context:** When generating Playwright screenshots of webapps for documentation or previews, simulate user interactions (like filling inputs or clicking buttons) to capture the tool in an 'in use' state rather than just its empty initial state.
 - **Playwright Resizing Restrictions:** When generating full-page Playwright screenshots, first initialize a small viewport height to allow content to overflow, measure the true content height (via scrollHeight), and dynamically resize to match. However, for realistic mobile device screenshots, do NOT dynamically resize or use `full_page=True`; capture only a standard fixed viewport (e.g., 375x812) to avoid unrealistically long images.
 - **Playwright Automated Screenshots:** When generating automated visual screenshots of the web applications (e.g., using Playwright), inject CSS to disable animations, transitions, and force opacity to 1 (`* { animation: none !important; transition: none !important; opacity: 1 !important; }`) to prevent partial rendering or faded 'luminosité' effects from entrance animations. Hide footers if the user requests capturing just the 'full card'.
-- **Local Testing:** To run the E2E test suite locally, ensure Playwright dependencies are installed via `pip install -r meta/e2e_tests/requirements.txt && playwright install`, start a local HTTP server (`python -m http.server 8000 &`), wait a few seconds (e.g., `sleep 2`) to ensure the server is up and avoid race conditions, then execute `pytest meta/e2e_tests/`. Afterward, clean up by killing the server process (e.g., `kill $(lsof -t -i :8000) 2>/dev/null || true`) to prevent port conflicts.
+- **Local Testing:** To run the E2E test suite locally, ensure Playwright dependencies are installed via `pip install -r e2e_tests/requirements.txt && playwright install`, start a local HTTP server (`python -m http.server 8000 &`), wait a few seconds (e.g., `sleep 2`) to ensure the server is up and avoid race conditions, then execute `pytest e2e_tests/`. Afterward, clean up by killing the server process (e.g., `kill $(lsof -t -i :8000) 2>/dev/null || true`) to prevent port conflicts.
