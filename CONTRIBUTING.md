@@ -61,10 +61,10 @@ C2/
 │   ├── bareme.html
 │   └── tirage.html
 │
-├── css/
+├── assets/css/
 │   └── shared.css          # Styles partagés (design system)
 │
-├── js/
+├── assets/js/
 │   ├── theme.js            # Thème global + registration SW
 │   ├── scores.js           # ScoreManager (gamification)
 │   ├── confetti.js         # Effets visuels de récompense
@@ -72,7 +72,7 @@ C2/
 │   ├── swipe.js            # Navigation tactile par swipe
 │   └── lucide-subset.js    # Icônes Lucide (subset 15 Ko)
 │
-├── fonts/                  # Polices auto-hébergées
+├── assets/fonts/                  # Polices auto-hébergées
 ├── meta/                   # Audits, tests, scripts et ressources non-déployées
 │   ├── audits/
 │   ├── meta/e2e_tests/          # Tests End-to-End Playwright
@@ -88,13 +88,13 @@ C2/
 
 | Fichier | Rôle |
 |---|---|
-| `css/shared.css` | Design system complet : variables CSS, glassmorphism, dark mode, composants réutilisables |
-| `js/theme.js` | Gestion du thème clair/sombre, enregistrement du Service Worker, callback `__onThemeChange` |
-| `js/scores.js` | `ScoreManager` — suivi des scores, séries, records, difficulté adaptative, modale de stats |
-| `js/confetti.js` | Effets de confettis et récompenses visuelles (`launchConfetti()`, `launchFire()`) |
-| `js/audio.js` | Sons synthétiques via Web Audio API (`playSound('success')`, etc.) |
-| `js/swipe.js` | Navigation par swipe tactile entre onglets |
-| `js/lucide-subset.js` | 59 icônes Lucide (auto-généré, 15 Ko) — même API que `lucide.createIcons()` |
+| `assets/css/shared.css` | Design system complet : variables CSS, glassmorphism, dark mode, composants réutilisables |
+| `assets/js/theme.js` | Gestion du thème clair/sombre, enregistrement du Service Worker, callback `__onThemeChange` |
+| `assets/js/scores.js` | `ScoreManager` — suivi des scores, séries, records, difficulté adaptative, modale de stats |
+| `assets/js/confetti.js` | Effets de confettis et récompenses visuelles (`launchConfetti()`, `launchFire()`) |
+| `assets/js/audio.js` | Sons synthétiques via Web Audio API (`playSound('success')`, etc.) |
+| `assets/js/swipe.js` | Navigation par swipe tactile entre onglets |
+| `assets/js/lucide-subset.js` | 59 icônes Lucide (auto-généré, 15 Ko) — même API que `lucide.createIcons()` |
 
 ### Service Worker
 
@@ -133,8 +133,8 @@ Le projet utilise un **subset personnalisé** de Lucide Icons (15 Ko au lieu de 
 
 ### HTML
 - Structure standard : `header.app-header` → `main.container` → `footer.no-print`
-- Chaque page inclut `css/shared.css`, puis ses styles locaux dans un `<style>`
-- Les scripts partagés sont chargés via `<script src="../js/...">`
+- Chaque page inclut `assets/css/shared.css`, puis ses styles locaux dans un `<style>`
+- Les scripts partagés sont chargés via `<script src="../assets/js/...">`
 
 ### CSS
 - Utiliser les variables CSS (`var(--accent)`, `var(--text-main)`, `var(--glass-bg)`, etc.)
