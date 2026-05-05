@@ -355,6 +355,9 @@
         let globalStreak = 0;
         let globalBest = 0;
 
+        let perfectLevelsStreak = 0;
+        let mistakesInCurrentLevel = 0;
+
         let selectedItem = null;
 
         // Variables pour mode Usine
@@ -373,9 +376,11 @@
             setupEventListeners();
             startNewLevel();
             ScoreManager.init('machine_a_trier');
+            ScoreManager.checkAdaptiveDifficulty = function() {}; // Disable per-item popups
         }
 
         function setPlaystyle(style) {
+            perfectLevelsStreak = 0;
             isFactoryMode = (style === 'factory');
             document.getElementById('playstyle-classic').classList.toggle('active', !isFactoryMode);
             document.getElementById('playstyle-factory').classList.toggle('active', isFactoryMode);
@@ -407,13 +412,14 @@
             // Listen for global difficulty change
             window.addEventListener('c2_change_difficulty', (e) => {
                 const nextDiff = e.detail.difficulty;
-                if (nextDiff === '4') document.getElementById('diff-easy')?.click();
-                else if (nextDiff === '6') document.getElementById('diff-medium')?.click();
-                else if (nextDiff === '8') document.getElementById('diff-hard')?.click();
+                if (nextDiff === 'easy') document.getElementById('diff-easy')?.click();
+                else if (nextDiff === 'medium') document.getElementById('diff-medium')?.click();
+                else if (nextDiff === 'hard') document.getElementById('diff-hard')?.click();
             });
         }
 
         function setMode(mode) {
+            perfectLevelsStreak = 0;
             currentMode = mode;
             document.getElementById('tab-color').classList.toggle('active', mode === 'color');
             document.getElementById('tab-shape').classList.toggle('active', mode === 'shape');
@@ -423,6 +429,7 @@
         }
 
         function setDifficulty(diff) {
+            perfectLevelsStreak = 0;
             currentDifficulty = diff;
             document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`diff-${diff}`).classList.add('active');
@@ -510,6 +517,7 @@
         }
 
         function startNewLevel() {
+            mistakesInCurrentLevel = 0;
             selectedItem = null;
             itemsContainer.innerHTML = '';
             binsContainer.innerHTML = '';
@@ -872,6 +880,26 @@
                 // Vérifier si niveau terminé
                 if ((!isFactoryMode && itemsContainer.children.length === 0) ||
                     (isFactoryMode && activeBeltItems.length === 0 && factoryItemsQueue.length === 0)) {
+
+                    if (mistakesInCurrentLevel === 0) {
+                        perfectLevelsStreak++;
+                        if (perfectLevelsStreak >= 2) {
+                            perfectLevelsStreak = 0;
+                            const upgrades = {
+                                'easy': 'medium',
+                                'medium': 'hard'
+                            };
+                            const nextDiff = upgrades[currentDifficulty];
+                            if (nextDiff && ScoreManager.isDifficultySupported(nextDiff)) {
+                                setTimeout(() => {
+                                    ScoreManager.showAdaptivePopup(nextDiff, ScoreManager.DIFF_LABELS[nextDiff] || nextDiff, currentMode);
+                                }, 1500);
+                            }
+                        }
+                    } else {
+                        perfectLevelsStreak = 0;
+                    }
+
                     setTimeout(() => {
                         launchConfetti();
                         playSound('win');
@@ -880,6 +908,7 @@
                 }
             } else {
                 // Incorrect
+                mistakesInCurrentLevel++;
                 playSound('error');
                 showToast('Oups, essaie un autre bac !', 'error');
                 item.classList.remove('selected');
