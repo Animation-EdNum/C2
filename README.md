@@ -72,11 +72,12 @@ Les webapps disponibles sont :
   - **Masquage des commandes :** Option pour cacher le programme en cours de saisie, forçant les élèves à mémoriser et anticiper mentalement leur séquence ("blind coding").
   - **Skins de robots :** Choix entre plusieurs apparences (Blue-Bot, Bee-Bot, Thymio, Dragon, Pirate, F1, Train, Cyber-Bot) modifiant également les obstacles, le sillage laissé par le robot et les récompenses. Sélection via un tiroir latéral ("drawer").
   - **Tapis Pédagogiques :** Intégration de tapis prédéfinis (ex: formes géométriques, conte de fées) et possibilité de téléverser ses propres images pour créer des tapis personnalisés, avec un curseur d'opacité ajustable pour un apprentissage thématique.
-  - **Mode Plein Écran :** Affichage optimisé avec carte et contrôles immersifs pour réduire les distractions.
-  - **Feedback visuel immersif :** Effet de "shake" (secousse) de toute la fenêtre lors d'une collision et mise en évidence immédiate de la commande erronée (bouton noir/blanc contrasté).
-  - **Historique visuel :** Conteneur "Éléments atteints" listant dynamiquement les cibles/drapeaux récupérés lors des parcours complexes.
-  - **Statistiques visuelles :** Suivi par mode et difficulté avec graphiques Donut animés pour une lecture immédiate de l'efficacité.
-  - **Vitesse paramétrable :** Modes "Vitesse Normale" (900 ms avec pause) ou "Vitesse Rapide" (400 ms) avec tracé du parcours en temps réel.
+- **Valeur pédagogique :**
+  - Les différents modes offrent une progression logique : le *Simulateur* pour la prise en main libre et l'expérimentation, le *Pilotage* pour la pensée algorithmique et l'identification de bugs, le *Décodage* pour travailler l'anticipation mentale et le *Dessin* pour la planification spatiale.
+  - **Pensée algorithmique & Séquentialité :** L'élève doit décomposer une tâche complexe (atteindre une cible) en une série d'instructions élémentaires.
+  - **Décentration cognitive :** En programmant les rotations, l'élève apprend à adopter le point de vue du robot (droite/gauche relatives), une compétence spatiale fondamentale.
+  - **Anticipation & Débogage :** Le mode *Décodage* et l'option de *Blind Coding* forcent l'élève à construire une représentation mentale du programme avant son exécution, favorisant la précision et l'autocorrection.
+  - **Étayage progressif :** La restriction des commandes (pas de recul) en mode facile simplifie le modèle mental initial, tandis que les obstacles en mode difficile exigent des stratégies de détour plus complexes.
 
 ### 2. Pixel Studio (`webapps/binaire_studio.html`)
 ![Pixel Studio](meta/screenshots/binaire_studio.png)
@@ -87,7 +88,10 @@ Les webapps disponibles sont :
   - 3 modes de jeu : *Décoder* (dessiner à partir du code binaire), *Encoder* (trouver le code à partir d'une image) et *Éditeur Libre* (création pure).
   - Tailles de grille modulables selon la difficulté (5x5, 8x8, 10x10).
   - Sauvegarde locale d'une "Galerie" / "Collection" de ses créations.
-  - Exportation technique de l'œuvre finale en format image PNG.
+- **Valeur pédagogique :**
+  - Le mode *Décoder* permet d'appliquer mécaniquement l'algorithme de conversion, tandis que l'*Encoder* travaille l'abstraction. L'*Éditeur Libre* valorise l'expression créative en réinvestissant les acquis.
+  - **Abstraction de données :** L'outil matérialise le concept de "numérisation" en montrant comment une information visuelle complexe se traduit en une suite de 0 et de 1.
+  - **Dualité Encodeur/Décodeur :** En alternant entre la création d'images et la lecture de codes, l'élève comprend que le binaire est une convention de langage bidirectionnelle.
 
 ### 3. Mots secrets (`webapps/binaire_message.html`)
 ![Mots secrets](meta/screenshots/binaire_message.png)
@@ -97,7 +101,12 @@ Les webapps disponibles sont :
 - **Fonctionnalités :**
   - **Modes Encodeur et (Dé)codeur :** Permet de créer un message secret binaire à envoyer à un camarade ou de s'entraîner seul au décodage.
   - **Progression pédagogique :** 3 niveaux de difficulté (Facile/Moyen/Difficile) ajustant l'étendue de l'alphabet (A-G, A-O, A-Z) et les aides disponibles (alphabet complet, somme des bits ou rien).
-  - **Interface optimisée :** Saisie rapide au clavier ("Entrée") et feedback immédiat sur les erreurs de codage.
+- **Valeur pédagogique :**
+  - Les deux modes permettent d'aborder le codage sous deux angles : la création de données (Encoder) et l'interprétation d'un message chiffré (Décoder).
+  - **Représentation symbolique :** L'élève découvre que les lettres peuvent être représentées par des nombres, eux-mêmes encodés en binaire (prérequis au concept d'ASCII/Unicode).
+  - **Arithmétique binaire & Mémoire de travail :** Le calcul mental des puissances de 2 (1, 2, 4, 8, 16) pour former le rang d'une lettre stimule les compétences numériques.
+  - **Différenciation :** L'augmentation de la difficulté élargit progressivement l'alphabet utilisé (de A-G à A-Z) et supprime les aides visuelles (somme des bits), accompagnant l'élève vers une automatisation du calcul binaire.
+  - **Interaction sociale :** Le mode "décodeur" encourage la collaboration en classe par l'échange de messages chiffrés, donnant du sens aux apprentissages techniques.
 
 ### 4. Routage Réseau (`webapps/routage_reseau.html`)
 ![Routage Réseau](meta/screenshots/routage_reseau.png)
@@ -106,10 +115,12 @@ Les webapps disponibles sont :
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - 3 niveaux de difficulté modifiant la taille et la complexité du réseau (génération dynamique).
-  - Interface basée sur un canvas vectoriel (SVG) avec icônes de routeurs Lucide pour une immersion accrue.
-  - **Auto-vérification :** Le jeu s'arrête automatiquement à l'arrivée au serveur pour valider le parcours.
-  - Suivi en temps réel du coût du chemin (Unité de Temps/UTI).
-  - Validateur d'optimalité qui compare le chemin de l'élève avec le chemin mathématiquement le plus court.
+  - Validateur d'optimalité qui compare le chemin de l'élève avec le chemin mathématiquement le plus court (Dijkstra).
+- **Valeur pédagogique :**
+  - **Optimisation sous contraintes :** L'élève apprend que le chemin le plus court "visuellement" n'est pas forcément le plus efficace (notion de coût/poids des arêtes).
+  - **Heuristiques de recherche :** Face à des réseaux complexes (mode Difficile), l'élève doit développer des stratégies d'exploration de graphes, anticipant plusieurs nœuds à l'avance.
+  - **Sensibilisation aux infrastructures :** L'outil démystifie le fonctionnement d'Internet en montrant que les données transitent par des routeurs intermédiaires de manière décentralisée.
+  - **Différenciation :** Le passage d'un petit réseau simple (3 routeurs) à un réseau complexe (15 routeurs) accroît le nombre de nœuds et d'arêtes. Cela complexifie l'analyse combinatoire nécessaire pour identifier le chemin optimal, développant ainsi des stratégies d'optimisation et la pensée algorithmique.
 
 ### 5. Codage binaire (`webapps/binaire_codage.html`)
 ![Codage binaire](meta/screenshots/binaire_codage.png)
@@ -118,9 +129,13 @@ Les webapps disponibles sont :
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - Exercices générés aléatoirement (conversion dans les deux sens).
-  - **Aide proactive & Feedback Étayé :** La mini-calculatrice binaire "pulse" visuellement après quelques secondes d'inactivité. Un feedback progressif est fourni en cas d'erreur.
-  - **Système de tutorat :** En cas d'erreur, l'outil indique si la valeur est trop grande/petite et propose un indice ciblé sur le bit de poids erroné.
-  - **Saisie optimisée :** Focus automatique sur le champ de réponse pour enchaîner les exercices sans utiliser la souris.
+  - **Aide proactive & Feedback Étayé :** La mini-calculatrice binaire "pulse" visuellement après quelques secondes d'inactivité.
+- **Valeur pédagogique :**
+  - Le travail bidirectionnel (décimal ↔ binaire) permet de consolider la compréhension de la mécanique de la base 2 sous différents angles de calcul.
+  - **Maîtrise du système positionnel :** En manipulant les puissances de 2 sur 8 bits (jusqu'à 255), l'élève renforce sa compréhension de la numération de position, utile aussi pour la base 10.
+  - **Algorithmique de conversion :** Pour coder un grand nombre, l'élève doit appliquer une méthode systématique (ex: soustractions successives de la plus grande puissance possible), développant ainsi une pensée procédurale.
+  - **Autonomie & Persévérance :** Le feedback adaptatif ("trop grand", "trop petit") guide l'élève sans donner la solution, favorisant l'apprentissage par essai-erreur.
+  - **Différenciation :** L'augmentation de la difficulté élargit progressivement la plage des nombres à convertir (de 4 à 8 bits) et le nombre de bits à manipuler, ajustant le défi à la capacité de calcul mental et de mémorisation de l'élève.
 
 ### 6. Bit de Parité (`webapps/bit_de_parite.html`)
 ![Bit de Parité](meta/screenshots/bit_de_parite.png)
@@ -129,10 +144,13 @@ Les webapps disponibles sont :
 - **Demi-cycle concerné :** 7-8H
 - **Fonctionnalités :**
   - Mode entraînement dynamique demandant de garantir la "parité paire" sur des grilles de bits.
-  - 3 tailles de grilles pour adapter la complexité cognitive : 4x4, 5x5, ou 6x6.
-  - Mode "Tour de Magie" : simulation du tour de détection d'une cellule retournée (Activité 10 — Cartes magiques).
-  - Système de suivi des scores (victoires globales, série de victoires 🔥, meilleur score).
-  - **Assistance au survol :** Survoler une case de parité met en surbrillance la ligne ou la colonne correspondante pour aider à la visualisation du contrôle d'intégrité.
+- **Valeur pédagogique :**
+  - Le mode *Entraînement* permet d'acquérir la règle logique de parité paire de manière répétitive, tandis que le mode *Trouve l'erreur* montre l'application concrète de cette règle pour la détection d'une erreur ciblée.
+  - **Logique de validation :** L'élève comprend l'utilité des métadonnées (le bit de parité) pour garantir l'intégrité de l'information.
+  - **Repérage spatial & Coordonnées :** La détection d'une erreur à l'intersection d'une ligne et d'une colonne impaire entraîne l'élève à utiliser des systèmes de coordonnées bidimensionnels.
+  - **Esprit critique face aux données :** L'activité sensibilise au fait que les systèmes numériques sont faillibles et que l'informatique a développé des algorithmes ingénieux pour s'autocorriger.  
+  - **Gestion de la complexité :** Le passage d'une petite grille à une plus grande multiplie la quantité d'informations à traiter, entraînant l'élève à adopter des méthodes de travail systématiques et rigoureuses.
+  - **Différenciation :** L'augmentation de la taille de la grille (de 3×3 à 7×7), obligeant l'élève à gérer une quantité de bits plus importante et à entrainer son attention visuelle croisée pour localiser l'erreur.
 
 ## Ressources (Outils pour les enseignant·e·s)
 Ce sont des outils gratuits, sans publicité, simples et faciles à utiliser, conçus spécifiquement pour les enseignant·e·s.
