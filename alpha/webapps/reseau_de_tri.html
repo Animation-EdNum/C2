@@ -126,7 +126,7 @@
             font-size: 14px;
         }
 
-        .instructions {
+        .chal-instruction {
             background: var(--instructions-bg);
             padding: 15px 20px;
             border-radius: var(--radius-lg);
@@ -367,6 +367,7 @@
 
         /* Race specific CSS */
         .race-separator {
+            width: 100%;
             display: none;
             text-align: center;
             margin: 30px 0;
@@ -394,6 +395,7 @@
         }
 
         .bubble-sort-container {
+            width: 100%;
             display: none;
             margin-top: 20px;
             position: relative;
@@ -516,15 +518,15 @@
             </div>
         </header>
 
-        <div class="instructions">
+        <div class="chal-instruction">
             <p>Clique sur les barres verticales actives pour échanger les éléments si nécessaire, puis valide l'étape.
                 Le plus petit va en haut !</p>
         </div>
 
         <!-- TABS -->
         <div class="tabs">
-            <button class="tab-btn active" id="tab-nombres"><i data-fa="square-root-variable"></i> Nombres</button>
-            <button class="tab-btn" id="tab-lettres"><i data-fa="font"></i> Lettres</button>
+            <button class="tab-btn active" id="tab-nombres"><i data-fa="1"></i> Nombres</button>
+            <button class="tab-btn" id="tab-lettres"><i data-fa="a"></i> Lettres</button>
         </div>
 
         <!-- DIFFICULTÉ -->
@@ -553,7 +555,7 @@
                 <button class="btn-primary" id="btn-next-step">
                     Valider l'étape <i data-fa="arrow-right"></i>
                 </button>
-                <button class="btn-primary" id="btn-start-race" style="display: none; background: var(--success);">
+                <button class="btn btn-success" id="btn-start-race" style="display: none;">
                     🏁 Lancer la course !
                 </button>
             </div>
@@ -1044,7 +1046,7 @@
                     launchConfetti();
                     playSound('win');
                     showToast('Bravo ! Le réseau a trié tous les éléments !', 'success');
-                    ScoreManager.addSuccess(currentLevelData.id, 1, 0);
+                    ScoreManager.addSuccess(currentMode, currentDifficulty, 0);
 
                     btnNextStep.style.display = 'none';
                     btnStartRace.style.display = 'inline-flex';
@@ -1244,7 +1246,7 @@
             document.getElementById('global-correct').textContent = globalCorrect;
             document.getElementById('global-streak').textContent = globalStreak;
 
-            ScoreManager.updateScore(globalCorrect, globalStreak, globalBest);
+            ScoreManager.addMistake(currentMode, currentDifficulty);
         }
 
         window.addEventListener('load', init);
