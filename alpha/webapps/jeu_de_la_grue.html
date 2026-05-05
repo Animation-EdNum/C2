@@ -547,11 +547,17 @@
             box-shadow: 0 0 0 transparent;
         }
 
-        .instruction-btn.action-color {
-            color: var(--accent);
-            border-color: var(--accent);
-            box-shadow: 0 5px 0 var(--accent-dark), 0 6px 6px var(--card-shadow);
+
+        .up-color { color: #fff; background-color: #2980b9; border-color: #1a5276; box-shadow: 0 5px 0 #1a5276, 0 6px 6px var(--card-shadow); }
+        .down-color { color: #fff; background-color: #8e44ad; border-color: #5b2c6f; box-shadow: 0 5px 0 #5b2c6f, 0 6px 6px var(--card-shadow); }
+        .left-color { color: #fff; background-color: #f39c12; border-color: #a04000; box-shadow: 0 5px 0 #a04000, 0 6px 6px var(--card-shadow); }
+        .right-color { color: #fff; background-color: #27ae60; border-color: #145a32; box-shadow: 0 5px 0 #145a32, 0 6px 6px var(--card-shadow); }
+        .action-color { color: #fff; background-color: #e74c3c; border-color: #922b21; box-shadow: 0 5px 0 #922b21, 0 6px 6px var(--card-shadow); }
+
+        body.dark .up-color, body.dark .down-color, body.dark .left-color, body.dark .right-color, body.dark .action-color {
+            color: #fff;
         }
+
 
         .instruction-btn.action-color:hover {
             box-shadow: 0 7px 0 var(--accent-dark), 0 8px 8px var(--card-shadow);
@@ -704,6 +710,31 @@
                 display: none;
             }
         }
+
+        @media (min-width: 900px) {
+            .desktop-layout {
+                display: flex;
+                gap: 30px;
+                align-items: center;
+                justify-content: center;
+            }
+            .desktop-layout .game-boards {
+                flex: 1;
+                max-width: 800px;
+                margin-bottom: 0;
+            }
+            .desktop-layout-side {
+                flex: 0 0 300px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            .desktop-layout-side .score-bar {
+                margin-top: 30px;
+                padding-top: 30px;
+            }
+        }
+
     </style>
     <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
@@ -718,7 +749,7 @@
             <div class="header-title-wrapper">
                 <a href="../../index.html" class="header-icon" title="Retour à l'accueil"
                     aria-label="Retour à l'accueil">
-                    <i data-fa="up-from-bracket"></i>
+                    <i data-fa="arrow-up-from-square"></i>
                 </a>
                 <div>
                     <h1>Jeu de la grue</h1>
@@ -749,7 +780,7 @@
             </div>
         </header>
 
-        <p class="subtitle">Déplace la grue pour attraper et déplacer des objets !</p>
+        <div class="chal-instruction">Déplace la grue pour attraper et déplacer des objets !</div>
 
         <details class="instructions">
             <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
@@ -772,6 +803,7 @@
 
         <div class="feedback" id="feedback-msg"></div>
 
+        <div class="desktop-layout">
         <!-- GAME BOARDS -->
         <div class="game-boards">
             <div class="board-wrapper">
@@ -801,6 +833,7 @@
             </div>
         </div>
 
+        <div class="desktop-layout-side">
         <!-- PROGRAMMING AREA -->
         <div class="program-area">
             <div class="program-strip-wrapper">
@@ -811,16 +844,16 @@
 
             <div class="controls-panel">
                 <div class="instructions-group">
-                    <button class="instruction-btn" onclick="addInstruction('up')" aria-label="Haut"><i
+                    <button class="instruction-btn up-color" onclick="addInstruction('up')" aria-label="Haut"><i
                             data-fa="arrow-up"></i></button>
-                    <button class="instruction-btn" onclick="addInstruction('down')" aria-label="Bas"><i
+                    <button class="instruction-btn down-color" onclick="addInstruction('down')" aria-label="Bas"><i
                             data-fa="arrow-down"></i></button>
-                    <button class="instruction-btn" onclick="addInstruction('left')" aria-label="Gauche"><i
+                    <button class="instruction-btn left-color" onclick="addInstruction('left')" aria-label="Gauche"><i
                             data-fa="arrow-left"></i></button>
-                    <button class="instruction-btn" onclick="addInstruction('right')" aria-label="Droite"><i
+                    <button class="instruction-btn right-color" onclick="addInstruction('right')" aria-label="Droite"><i
                             data-fa="arrow-right"></i></button>
                     <button class="instruction-btn action-color" onclick="addInstruction('action')"
-                        aria-label="Action"><i data-fa="hand-holding"></i></button>
+                        aria-label="Action"><i data-fa="hand-fist" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i></button>
                 </div>
 
                 <div class="execution-group">
@@ -843,6 +876,8 @@
                 <div class="score-label">Série 🔥</div>
                 <div class="score-value" id="global-streak">0</div>
             </div>
+        </div>
+        </div>
         </div>
     </div>
 
@@ -1078,21 +1113,54 @@
             programStrip.innerHTML = '';
             program.forEach((inst, idx) => {
                 let stepEl = document.createElement('div');
-                stepEl.className = 'prog-step';
+                stepEl.className = 'prog-step ' + inst + '-color';
                 stepEl.id = `prog-step-${idx}`;
 
                 let icon = '';
+                let isFlipped = false;
                 if (inst === 'up') icon = 'arrow-up';
                 else if (inst === 'down') icon = 'arrow-down';
                 else if (inst === 'left') icon = 'arrow-left';
                 else if (inst === 'right') icon = 'arrow-right';
-                else if (inst === 'action') icon = 'hand-grab';
+                else if (inst === 'action') {
+                    // determine if holding at this point
+                    let simulatedHolding = false;
+                    for(let j=0; j<=idx; j++) {
+                        if (program[j] === 'action') {
+                            simulatedHolding = !simulatedHolding;
+                        }
+                    }
+                    if (simulatedHolding) {
+                        icon = 'hand-fist'; // action that just grabbed
+                    } else {
+                        icon = 'hand'; // action that just dropped
+                    }
+                    isFlipped = true;
+                }
 
-                stepEl.innerHTML = `<i data-fa="${icon}"></i>`;
+                if (isFlipped) {
+                    stepEl.innerHTML = `<i data-fa="${icon}" style="transform: rotate(180deg); display: inline-block;"></i>`;
+                } else {
+                    stepEl.innerHTML = `<i data-fa="${icon}"></i>`;
+                }
                 programStrip.appendChild(stepEl);
             });
             fa.createIcons();
             playBtn.disabled = program.length === 0 || isExecuting || isCooldown;
+
+            // Update the main action button based on final state
+            let finalHolding = false;
+            program.forEach(inst => {
+                if (inst === 'action') finalHolding = !finalHolding;
+            });
+            let actionIcon = document.getElementById('action-icon');
+            if (actionIcon) {
+                if (finalHolding) {
+                    actionIcon.setAttribute('data-fa', 'hand'); // next action will be drop
+                } else {
+                    actionIcon.setAttribute('data-fa', 'hand-fist'); // next action will be grab
+                }
+            }
         }
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
