@@ -70,32 +70,26 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Retourne la réponse du cache si trouvée
-                if (response) {
-                    return response;
+        caches.match(event.request).then(cachedResponse => {
+            const fetchPromise = fetch(event.request).then(networkResponse => {
+                if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, responseToCache);
+                    });
                 }
+                return networkResponse;
+            });
 
-                // Sinon, on fait la requête réseau
-                return fetch(event.request).then(
-                    function (response) {
-                        // On vérifie qu'on a bien reçu une réponse valide
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
+            // S'assurer que le service worker reste en vie jusqu'à la fin de la mise à jour du cache
+            event.waitUntil(
+                fetchPromise.catch(() => {
+                    // Ignorer les erreurs (ex: hors ligne)
+                })
+            );
 
-                        // On clone la réponse car elle ne peut être consommée qu'une fois
-                        var responseToCache = response.clone();
-
-                        caches.open(CACHE_NAME)
-                            .then(function (cache) {
-                                cache.put(event.request, responseToCache);
-                            });
-
-                        return response;
-                    }
-                );
-            })
+            // Retourner le cache s'il existe, sinon attendre la réponse réseau
+            return cachedResponse || fetchPromise;
+        })
     );
 });
