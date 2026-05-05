@@ -139,9 +139,9 @@
         }
 
         .bin {
-            width: 120px; height: 140px; border: 3px dashed #cbd5e1; border-radius: var(--radius-xl);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #f8fafc; transition: all 0.2s; gap: 10px;
+            width: 160px; min-height: 180px; border: 3px dashed #cbd5e1; border-radius: var(--radius-xl);
+            display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; justify-content: center;
+            background: #f8fafc; transition: all 0.2s; padding: 10px; gap: 5px;
             cursor: pointer; position: relative;
         }
         .bin:hover, .bin.drag-over {
@@ -149,9 +149,18 @@
             transform: translateY(-5px);
         }
         .bin-label {
+            width: 100%;
             font-weight: 600; font-size: 14px; text-transform: uppercase;
             text-align: center; color: var(--text-secondary); pointer-events: none;
             display: flex; flex-direction: column; align-items: center; gap: 5px;
+            margin-bottom: 10px;
+        }
+        .bin .item {
+            width: 40px; height: 40px;
+            min-width: 40px; min-height: 40px;
+        }
+        .bin .item svg {
+            width: 60% !important; height: 60% !important;
         }
         .bin-icon {
             width: 32px; height: 32px;
@@ -190,6 +199,24 @@
     <script src="../../assets/js/fa-subset.js"></script>
 </head>
 <body>
+    <!-- Preload icons for JS -->
+    <div style="display: none;">
+        <i data-fa="circle"></i>
+        <i data-fa="square"></i>
+        <i data-fa="triangle"></i>
+        <i data-fa="star"></i>
+        <i data-fa="hexagon"></i>
+        <i data-fa="dice-one"></i>
+        <i data-fa="dice-two"></i>
+        <i data-fa="dice-three"></i>
+        <i data-fa="dice-four"></i>
+        <i data-fa="dice-five"></i>
+        <i data-fa="dice-six"></i>
+        <i data-fa="palette"></i>
+        <i data-fa="ruler"></i>
+        <i data-fa="input-numeric"></i>
+    </div>
+
     <canvas id="confetti-canvas"></canvas>
 
     <div class="container">
@@ -305,12 +332,12 @@
         ];
 
         const QUANTITIES = [
-            { id: '1', name: '1', icon: 'dice-1' },
-            { id: '2', name: '2', icon: 'dice-2' },
-            { id: '3', name: '3', icon: 'dice-3' },
-            { id: '4', name: '4', icon: 'dice-4' },
-            { id: '5', name: '5', icon: 'dice-5' },
-            { id: '6', name: '6', icon: 'dice-6' }
+            { id: '1', name: '1', icon: 'dice-one' },
+            { id: '2', name: '2', icon: 'dice-two' },
+            { id: '3', name: '3', icon: 'dice-three' },
+            { id: '4', name: '4', icon: 'dice-four' },
+            { id: '5', name: '5', icon: 'dice-five' },
+            { id: '6', name: '6', icon: 'dice-six' }
         ];
 
         const SIZES = [
@@ -413,8 +440,8 @@
         function updateFactory(time) {
             if (!isFactoryMode) return;
 
-            const spawnInterval = currentDifficulty === 'easy' ? 2000 : (currentDifficulty === 'medium' ? 1200 : 700);
-            const speed = currentDifficulty === 'easy' ? 1.5 : (currentDifficulty === 'medium' ? 2.5 : 4);
+            const spawnInterval = currentDifficulty === 'easy' ? 2000 : (currentDifficulty === 'medium' ? 1600 : 1200);
+            const speed = currentDifficulty === 'easy' ? 1.5 : (currentDifficulty === 'medium' ? 2.0 : 2.5);
 
             // Apparition de nouveaux objets
             if (time - factoryLastSpawnTime > spawnInterval && factoryItemsQueue.length > 0) {
@@ -506,7 +533,7 @@
                     label.className = 'bin-label';
 
                     const icon = document.createElement('i');
-                    icon.setAttribute('data-lucide', 'palette');
+                    icon.setAttribute('data-fa', 'palette');
                     icon.className = `bin-icon color-${type.id}`;
 
                     label.appendChild(icon);
@@ -531,7 +558,7 @@
                     label.className = 'bin-label';
 
                     const icon = document.createElement('i');
-                    icon.setAttribute('data-lucide', type.icon);
+                    icon.setAttribute('data-fa', type.icon);
                     icon.className = 'bin-icon';
 
                     label.appendChild(icon);
@@ -643,15 +670,15 @@
             icon.style.color = itemData.color.hex;
 
             if (currentMode === 'quantity') {
-                icon.setAttribute('data-lucide', itemData.quantity.icon);
+                icon.setAttribute('data-fa', itemData.quantity.icon);
                 icon.style.width = '44px';
                 icon.style.height = '44px';
             } else if (currentMode === 'size') {
-                icon.setAttribute('data-lucide', itemData.shape.icon);
+                icon.setAttribute('data-fa', itemData.shape.icon);
                 icon.style.fill = itemData.color.hex;
                 icon.style.transform = `scale(${itemData.scaleObj.scale})`;
             } else {
-                icon.setAttribute('data-lucide', itemData.shape.icon);
+                icon.setAttribute('data-fa', itemData.shape.icon);
                 icon.style.fill = itemData.color.hex;
             }
             item.appendChild(icon);
