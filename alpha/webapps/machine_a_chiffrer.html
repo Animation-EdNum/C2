@@ -549,104 +549,108 @@
             </div>
         </header>
 
-        <p class="subtitle">Chiffre et déchiffre tes messages secrets !</p>
+        <main>
 
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab-btn active" id="tab-cesar"><i data-fa="arrow-right-arrow-left"></i> Code César</button>
-            <button class="tab-btn" id="tab-vigenere"><i data-fa="key-skeleton"></i> Code Vigenère</button>
-            <button class="tab-btn" id="tab-atbash"><i data-fa="repeat"></i> Atbash</button>
-            <button class="tab-btn" id="tab-morse"><i data-fa="radio"></i> Morse</button>
-            <button class="tab-btn" id="tab-hacker"><i data-fa="magnifying-glass-chart"></i> Hacker</button>
-        </div>
+            <p class="subtitle">Chiffre et déchiffre tes messages secrets !</p>
 
-        <div class="dynamic-explanation" id="dynamic-explanation">
-            <i data-fa="circle-info"></i>
-            <span id="explanation-text">Imagine une roue magique : on tourne l'alphabet pour remplacer chaque lettre par
-                une autre, un peu plus loin !</span>
-        </div>
-
-        <!-- GAME AREA -->
-        <div class="app-content">
-
-            <div class="textarea-container">
-                <div class="textarea-header">
-                    <i data-fa="message"></i> Message en clair
-                </div>
-
-                <textarea id="input-clear" placeholder="Tape ton message ici..."></textarea>
-                <div class="quick-actions">
-                    <button class="action-btn" onclick="copyText('input-clear')"><i data-fa="copy"></i>
-                        Copier</button>
-                    <button class="action-btn" onclick="clearText('input-clear')"><i data-fa="trash-can"></i>
-                        Effacer</button>
-                </div>
-
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-cesar"><i data-fa="arrow-right-arrow-left"></i> Code César</button>
+                <button class="tab-btn" id="tab-vigenere"><i data-fa="key-skeleton"></i> Code Vigenère</button>
+                <button class="tab-btn" id="tab-atbash"><i data-fa="repeat"></i> Atbash</button>
+                <button class="tab-btn" id="tab-morse"><i data-fa="radio"></i> Morse</button>
+                <button class="tab-btn" id="tab-hacker"><i data-fa="magnifying-glass-chart"></i> Hacker</button>
             </div>
 
-            <div class="controls-wrapper">
-                <div class="controls" id="controls-cesar">
-                    <div class="control-group">
-                        <label for="offset"><i data-fa="sliders"></i> Décalage: <span id="offset-val">0</span></label>
-                        <input type="range" id="offset" min="-25" max="25" value="3">
+            <div class="dynamic-explanation" id="dynamic-explanation">
+                <i data-fa="circle-info"></i>
+                <span id="explanation-text">Imagine une roue magique : on tourne l'alphabet pour remplacer chaque lettre par
+                    une autre, un peu plus loin !</span>
+            </div>
+
+            <!-- GAME AREA -->
+            <div class="app-content">
+
+                <div class="textarea-container">
+                    <div class="textarea-header">
+                        <i data-fa="message"></i> Message en clair
                     </div>
 
-                    <div class="mode-desc">Le code César décale chaque lettre de l'alphabet d'un nombre fixe.</div>
-                    <div class="caesar-wheel-container" id="caesar-wheel">
-                        <div class="wheel wheel-outer" id="wheel-outer"></div>
-                        <div class="wheel wheel-inner" id="wheel-inner"></div>
+                    <textarea id="input-clear" placeholder="Tape ton message ici..."></textarea>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="copyText('input-clear')"><i data-fa="copy"></i>
+                            Copier</button>
+                        <button class="action-btn" onclick="clearText('input-clear')"><i data-fa="trash-can"></i>
+                            Effacer</button>
                     </div>
 
                 </div>
 
-                <div class="controls" id="controls-vigenere" style="display: none;">
-                    <div class="control-group">
-                        <label for="keyword"><i data-fa="key-skeleton"></i> Mot clé:</label>
-                        <input type="text" id="keyword" placeholder="SECRET" value="SECRET">
+                <div class="controls-wrapper">
+                    <div class="controls" id="controls-cesar">
+                        <div class="control-group">
+                            <label for="offset"><i data-fa="sliders"></i> Décalage: <span id="offset-val">0</span></label>
+                            <input type="range" id="offset" min="-25" max="25" value="3">
+                        </div>
+
+                        <div class="mode-desc">Le code César décale chaque lettre de l'alphabet d'un nombre fixe.</div>
+                        <div class="caesar-wheel-container" id="caesar-wheel">
+                            <div class="wheel wheel-outer" id="wheel-outer"></div>
+                            <div class="wheel wheel-inner" id="wheel-inner"></div>
+                        </div>
+
                     </div>
-                    <div class="mode-desc">Le code Vigenère utilise un mot clé pour décaler chaque lettre différemment.
+
+                    <div class="controls" id="controls-vigenere" style="display: none;">
+                        <div class="control-group">
+                            <label for="keyword"><i data-fa="key-skeleton"></i> Mot clé:</label>
+                            <input type="text" id="keyword" placeholder="SECRET" value="SECRET">
+                        </div>
+                        <div class="mode-desc">Le code Vigenère utilise un mot clé pour décaler chaque lettre différemment.
+                        </div>
+                    </div>
+
+                    <div class="controls" id="controls-hacker" style="display: none;">
+                        <button class="action-btn" onclick="generateInterceptedMessage()" style="margin-bottom: 15px; font-weight: bold; background: var(--accent); color: white; border: none; padding: 10px 20px;">
+                            <i data-fa="walkie-talkie"></i> Intercepter un message
+                        </button>
+
+                        <div class="control-group">
+                            <label for="offset-hacker"><i data-fa="sliders"></i> Décalage (Brute-force): <span id="offset-val-hacker">0</span></label>
+                            <input type="range" id="offset-hacker" min="-25" max="25" value="0">
+                        </div>
+
+                        <div class="mode-desc">Tourne la molette pour aligner le pic de l'histogramme avec la lettre E.</div>
+
+                        <div class="histogram-container" id="histogram-container">
+                            <!-- Bars will be generated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="crack-container" id="crack-container">
+                        <button class="crack-btn" onclick="crackCode()"><i data-fa="lock-open"></i> Craquer le code (Brute
+                            Force)</button>
+                        <div class="crack-results" id="crack-results"></div>
                     </div>
                 </div>
 
-                <div class="controls" id="controls-hacker" style="display: none;">
-                    <button class="action-btn" onclick="generateInterceptedMessage()" style="margin-bottom: 15px; font-weight: bold; background: var(--accent); color: white; border: none; padding: 10px 20px;">
-                        <i data-fa="walkie-talkie"></i> Intercepter un message
-                    </button>
-
-                    <div class="control-group">
-                        <label for="offset-hacker"><i data-fa="sliders"></i> Décalage (Brute-force): <span id="offset-val-hacker">0</span></label>
-                        <input type="range" id="offset-hacker" min="-25" max="25" value="0">
+                <div class="textarea-container">
+                    <div class="textarea-header">
+                        <i data-fa="lock"></i> Message chiffré
                     </div>
 
-                    <div class="mode-desc">Tourne la molette pour aligner le pic de l'histogramme avec la lettre E.</div>
-
-                    <div class="histogram-container" id="histogram-container">
-                        <!-- Bars will be generated by JS -->
+                    <textarea id="input-cipher" placeholder="Le message secret apparaîtra ici..."></textarea>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="copyText('input-cipher')"><i data-fa="copy"></i>
+                            Copier</button>
+                        <button class="action-btn" onclick="clearText('input-cipher')"><i data-fa="trash-can"></i>
+                            Effacer</button>
                     </div>
-                </div>
 
-                <div class="crack-container" id="crack-container">
-                    <button class="crack-btn" onclick="crackCode()"><i data-fa="lock-open"></i> Craquer le code (Brute
-                        Force)</button>
-                    <div class="crack-results" id="crack-results"></div>
                 </div>
             </div>
 
-            <div class="textarea-container">
-                <div class="textarea-header">
-                    <i data-fa="lock"></i> Message chiffré
-                </div>
-
-                <textarea id="input-cipher" placeholder="Le message secret apparaîtra ici..."></textarea>
-                <div class="quick-actions">
-                    <button class="action-btn" onclick="copyText('input-cipher')"><i data-fa="copy"></i>
-                        Copier</button>
-                    <button class="action-btn" onclick="clearText('input-cipher')"><i data-fa="trash-can"></i>
-                        Effacer</button>
-                </div>
-
-            </div>
-        </div>
+        </main>
     </div>
 
 
