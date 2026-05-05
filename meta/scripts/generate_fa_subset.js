@@ -1,19 +1,23 @@
 /**
  * generate_fa_subset.js
  *
- * Script one-shot qui lit meta/ressources/regular_icons.js et génère un fichier
- * js/fa-subset.js ne contenant que les icônes réellement
- * utilisées dans le projet.
+ * Scanne les fichiers HTML du projet et génère assets/js/fa-subset.js
+ * contenant uniquement les icônes réellement utilisées, depuis deux sources :
+ *   - meta/ressources/solid_icons.js   → icônes solid (data-fa="name")
+ *   - meta/ressources/duotone.js       → icônes duotone (data-fa="dt-name")
+ *
+ * Usage : node meta/scripts/generate_fa_subset.js
  */
 
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
-const FA_SOURCE = path.join(ROOT, 'meta', 'ressources', 'regular_icons.js');
-const OUTPUT_FILE = path.join(ROOT, 'js', 'fa-subset.js');
+const SOLID_SOURCE  = path.join(ROOT, 'meta', 'ressources', 'solid_icons.js');
+const DUOTONE_SOURCE = path.join(ROOT, 'meta', 'ressources', 'duotone.js');
+const OUTPUT_FILE   = path.join(ROOT, 'assets', 'js', 'fa-subset.js');
 
-// Directories to scan for icon usage
+// Répertoires HTML à scanner
 const SCAN_DIRS = [
     path.join(ROOT, 'webapps'),
     path.join(ROOT, 'webapps', 'teacher'),
@@ -21,91 +25,113 @@ const SCAN_DIRS = [
 ];
 const SCAN_FILES = [path.join(ROOT, 'index.html')];
 
-// ── Step 1: Find all icon names used ──
+// Icônes solides toujours incluses (injectées dynamiquement en JS)
+const EXTRA_SOLID = ['circle-check', 'circle-xmark', 'triangle-exclamation', 'circle-info'];
+
+// ── Étape 1 : Détecter les icônes utilisées ─────────────────────────────────
+
 function findUsedIcons() {
-    const icons = new Set();
+    const solidSet   = new Set(EXTRA_SOLID);
+    const duotoneSet = new Set(); // noms sans le préfixe "dt-"
     const regex = /data-fa="([^"]+)"/g;
 
     function scanFile(filePath) {
         const content = fs.readFileSync(filePath, 'utf-8');
-        let match;
-        while ((match = regex.exec(content)) !== null) {
-            if (!match[1].startsWith('$')) {
-                icons.add(match[1]);
+        let m;
+        while ((m = regex.exec(content)) !== null) {
+            const name = m[1];
+            if (name.startsWith('$')) continue; // template JS, ignorer
+            if (name.startsWith('dt-')) {
+                duotoneSet.add(name.slice(3));   // strip "dt-"
+            } else {
+                solidSet.add(name);
             }
         }
     }
 
     for (const dir of SCAN_DIRS) {
         if (!fs.existsSync(dir)) continue;
-        const files = fs.readdirSync(dir).filter(f => f.endsWith('.html'));
-        for (const file of files) {
-            scanFile(path.join(dir, file));
+        for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.html'))) {
+            scanFile(path.join(dir, f));
         }
     }
     for (const file of SCAN_FILES) {
         if (fs.existsSync(file)) scanFile(file);
     }
 
-    // Add commonly used icons from JS if any
-    icons.add('circle-check');
-    icons.add('circle-xmark');
-    icons.add('triangle-exclamation');
-    icons.add('circle-info');
-
-    return [...icons].sort();
+    return {
+        solidIcons:   [...solidSet].sort(),
+        duotoneNames: [...duotoneSet].sort(),
+    };
 }
 
+// ── Étape 2 : Extraction robuste d'une entrée d'icône ───────────────────────
+// Lit le texte brut de la valeur (préserve tableaux, chaînes, virgules, etc.)
 
-// ── Step 3: Extract icon definitions from the full bundle ──
-function extractIconDefinitions(iconNames) {
-    const faCode = fs.readFileSync(FA_SOURCE, 'utf-8');
-    const extracted = {};
-    let missing = [];
+function extractIconEntry(code, name) {
+    const pattern = '"' + name + '": ';
+    const idx = code.indexOf(pattern);
+    if (idx < 0) return null;
 
-    const match = faCode.match(/const icons = (\{[\s\S]*?\});\s*bunker/);
-    let allIcons = {};
-    if (match) {
-        try {
-            allIcons = new Function("return " + match[1])();
-        } catch(e) {}
-    } else {
-        const match2 = faCode.match(/var icons = (\{[\s\S]*?\})[;\n]*\s*bunker/);
-        if(match2) {
-            try {
-                allIcons = new Function("return " + match2[1])();
-            } catch(e) {}
+    const valStart = idx + pattern.length;
+    let depth = 0, inString = false, i = valStart;
+
+    while (i < code.length) {
+        const c = code[i];
+        const prev = i > 0 ? code[i - 1] : '';
+        if (c === '"' && prev !== '\\') inString = !inString;
+        if (!inString) {
+            if (c === '[') depth++;
+            else if (c === ']') { depth--; if (depth === 0) { i++; break; } }
         }
+        i++;
     }
 
-    for (const name of iconNames) {
-        if (allIcons[name]) {
-            extracted[name] = JSON.stringify(allIcons[name]);
-        } else {
-            missing.push(name);
-        }
-    }
-
-    if (missing.length > 0) {
-        console.warn('⚠️  ' + missing.length + ' icons not found: ' + missing.join(', '));
-    }
-    return extracted;
+    return code.substring(valStart, i);
 }
 
-// ── Step 4: Generate the subset file ──
-function generateSubset(iconNames, iconDefinitions) {
-    const iconEntries = iconNames
-        .filter(name => iconDefinitions[name])
-        .map(name => {
-            return '  "' + name + '": ' + iconDefinitions[name] + ',';
-        })
+// ── Étape 3 : Extraire toutes les définitions nécessaires ───────────────────
+
+function extractAllIcons(solidIcons, duotoneNames) {
+    const solidCode   = fs.readFileSync(SOLID_SOURCE,   'utf-8');
+    const duotoneCode = fs.readFileSync(DUOTONE_SOURCE, 'utf-8');
+
+    const entries = [];
+    const missingSolid = [], missingDuotone = [];
+
+    for (const name of solidIcons) {
+        const data = extractIconEntry(solidCode, name);
+        if (!data) { missingSolid.push(name); continue; }
+        entries.push({ key: name, data });
+    }
+
+    for (const name of duotoneNames) {
+        const data = extractIconEntry(duotoneCode, name);
+        if (!data) { missingDuotone.push(name); continue; }
+        entries.push({ key: 'dt-' + name, data });
+    }
+
+    if (missingSolid.length)   console.warn('⚠️  Solid introuvables : '   + missingSolid.join(', '));
+    if (missingDuotone.length) console.warn('⚠️  Duotone introuvables : ' + missingDuotone.join(', '));
+
+    return entries;
+}
+
+// ── Étape 4 : Générer le fichier de sortie ───────────────────────────────────
+
+function generateSubset(entries) {
+    const iconEntries = entries
+        .map(({ key, data }) => '  "' + key + '": ' + data + ',')
         .join('\n');
 
-    const output = `/**
+    const nSolid   = entries.filter(e => !e.key.startsWith('dt-')).length;
+    const nDuotone = entries.filter(e =>  e.key.startsWith('dt-')).length;
+
+    return `/**
  * fa-subset.js — Subset of FontAwesome Pro 7 Icons
  *
  * Auto-generated by scripts/generate_fa_subset.js
- * Contains only the ${Object.keys(iconDefinitions).length} icons used in this project.
+ * ${nSolid} solid icons + ${nDuotone} duotone icons (préfixe dt-).
  */
 (function(root) {
   "use strict";
@@ -115,6 +141,14 @@ ${iconEntries}
   };
 
   function createIcons({ attrs = {}, nameAttr = "data-fa" } = {}) {
+    // Injecter le CSS duotone une seule fois
+    if (typeof document !== "undefined" && !document.getElementById("fa-duotone-styles")) {
+      var style = document.createElement("style");
+      style.id = "fa-duotone-styles";
+      style.textContent = ".fa-icon path.fa-secondary{fill:var(--fa-secondary,currentColor);opacity:var(--fa-secondary-opacity,.4)}.fa-icon path.fa-primary{fill:var(--fa-primary,currentColor);opacity:var(--fa-primary-opacity,1)}";
+      document.head.appendChild(style);
+    }
+
     const elements = document.querySelectorAll("[" + nameAttr + "]");
     elements.forEach(el => {
       const name = el.getAttribute(nameAttr);
@@ -125,10 +159,12 @@ ${iconEntries}
         return;
       }
 
-      // FA icon data is: [width, height, aliases, unicode, path]
-      const width = iconData[0];
-      const height = iconData[1];
+      // FA icon data : [width, height, aliases, unicode, path]
+      // path est une string (solid) ou [secondary, primary] (duotone)
+      const width    = iconData[0];
+      const height   = iconData[1];
       const pathData = iconData[4];
+      const isDuotone = Array.isArray(pathData);
 
       const existingAttrs = {};
       Array.from(el.attributes).forEach(a => { existingAttrs[a.name] = a.value; });
@@ -145,11 +181,11 @@ ${iconEntries}
         ...existingAttrs
       };
 
-      // Keep data-fa for reference
       mergedAttrs["data-fa"] = name;
 
-      // Build class
-      const classes = ["fa-icon", "fa-" + name];
+      const safeName = name.replace(/[^a-zA-Z0-9_-]/g, "-");
+      const classes = ["fa-icon", "fa-" + safeName];
+      if (isDuotone) classes.push("fa-duotone");
       if (existingAttrs.class) classes.push(existingAttrs.class);
       if (attrs.class) classes.push(typeof attrs.class === "string" ? attrs.class : attrs.class.join(" "));
       mergedAttrs.class = [...new Set(classes.filter(Boolean))].join(" ").trim();
@@ -157,9 +193,22 @@ ${iconEntries}
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       Object.keys(mergedAttrs).forEach(k => svg.setAttribute(k, String(mergedAttrs[k])));
 
-      const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      pathEl.setAttribute("d", pathData);
-      svg.appendChild(pathEl);
+      if (isDuotone) {
+        // Couche secondaire (index 0) — fond/ombre
+        const pathSecondary = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathSecondary.setAttribute("d", pathData[0]);
+        pathSecondary.setAttribute("class", "fa-secondary");
+        svg.appendChild(pathSecondary);
+        // Couche primaire (index 1) — détail/avant-plan
+        const pathPrimary = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathPrimary.setAttribute("d", pathData[1]);
+        pathPrimary.setAttribute("class", "fa-primary");
+        svg.appendChild(pathPrimary);
+      } else {
+        const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathEl.setAttribute("d", pathData);
+        svg.appendChild(pathEl);
+      }
 
       el.parentNode.replaceChild(svg, el);
     });
@@ -174,22 +223,24 @@ ${iconEntries}
   }
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this);
 `;
-    return output;
 }
 
-// ── Main ──
-console.log('🔍 Scanning HTML files for FA icon usage...');
-const usedIcons = findUsedIcons();
-console.log(`   Found ${usedIcons.length} unique icons: ${usedIcons.join(', ')}`);
+// ── Main ────────────────────────────────────────────────────────────────────
 
-console.log('📦 Extracting icon definitions from regular_icons.js...');
-const definitions = extractIconDefinitions(usedIcons);
-const foundCount = Object.keys(definitions).length;
-console.log(`   Extracted ${foundCount}/${usedIcons.length} icon definitions.`);
+console.log('🔍 Scan des fichiers HTML...');
+const { solidIcons, duotoneNames } = findUsedIcons();
+console.log(`   Solid   : ${solidIcons.length} — ${solidIcons.join(', ')}`);
+console.log(`   Duotone : ${duotoneNames.length} — ${duotoneNames.map(n => 'dt-' + n).join(', ')}`);
 
-console.log('✏️  Generating subset file...');
-const output = generateSubset(usedIcons, definitions);
+console.log('📦 Extraction des définitions...');
+const entries = extractAllIcons(solidIcons, duotoneNames);
+const nS = entries.filter(e => !e.key.startsWith('dt-')).length;
+const nD = entries.filter(e =>  e.key.startsWith('dt-')).length;
+console.log(`   Extraites : ${nS} solid + ${nD} duotone`);
+
+console.log('✏️  Génération du fichier subset...');
+const output = generateSubset(entries);
 fs.writeFileSync(OUTPUT_FILE, output, 'utf-8');
-const newSize = fs.statSync(OUTPUT_FILE).size;
-console.log(`✅ Written to ${OUTPUT_FILE}`);
-console.log(`   Subset:   ${(newSize / 1024).toFixed(0)} Ko`);
+const size = fs.statSync(OUTPUT_FILE).size;
+console.log(`✅ ${OUTPUT_FILE}`);
+console.log(`   Taille : ${(size / 1024).toFixed(0)} Ko  (${entries.length} icônes)`);
