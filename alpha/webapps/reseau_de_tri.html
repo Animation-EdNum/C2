@@ -552,7 +552,7 @@
             </div>
 
             <div class="action-row">
-                <button class="btn-primary" id="btn-next-step">
+                <button class="btn btn-primary" id="btn-next-step">
                     Valider l'étape <i data-fa="arrow-right"></i>
                 </button>
                 <button class="btn btn-success" id="btn-start-race" style="display: none;">
@@ -654,6 +654,7 @@
         let levelInitialValues = [];
 
         let raceInterval = null;
+        let raceTimeout = null;
 
         // UI Elements
         const gridContainer = document.getElementById('network-grid');
@@ -974,6 +975,10 @@
                 clearInterval(raceInterval);
                 raceInterval = null;
             }
+            if (raceTimeout) {
+                clearTimeout(raceTimeout);
+                raceTimeout = null;
+            }
 
             networkDef = NETWORKS[numWires];
             currentStageIndex = 0;
@@ -1050,7 +1055,6 @@
 
                     btnNextStep.style.display = 'none';
                     btnStartRace.style.display = 'inline-flex';
-                    btnStartRace.onclick = startRace;
 
                 }, 500); // Wait for the transition to finish
             } else {
@@ -1229,7 +1233,7 @@
             if (!activityHappened) {
                 clearInterval(raceInterval);
                 raceInterval = null;
-                setTimeout(() => {
+                raceTimeout = setTimeout(() => {
                     startNewLevel();
                 }, 3000);
             }
