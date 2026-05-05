@@ -46,3 +46,4 @@
 - **[2026-05-02]** [UX] Enabled active touch-based drag-and-drop for mobile devices in Machine à Trier alpha webapp.
 - **[2026-05-02]** [System] Transferred accumulated memory items into categorized markdown files in the `memory/` directory to ensure knowledge persistence.
 - **[2026-05-04]** [Maintenance] Relocated full `lucide.min.js` bundle to `meta/ressources/` and updated `scripts/generate_lucide_subset.js` to reflect the new source path. Updated documentation and code comments.
+- **[2026-05-05]** [System] Updated memory files (`user-preferences.md`, `project-context.md`, `code-patterns.md`) with latest gathered learnings including Playwright environment setup, architecture notes, app constraints, and UI/UX patterns.

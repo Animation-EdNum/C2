@@ -14,8 +14,7 @@
  */
 
 (function () {
-    const iconSun = document.getElementById('icon-sun');
-    const iconMoon= document.getElementById('icon-moon');
+
 
     function setTheme(theme) {
         if (theme === 'dark') {
@@ -25,6 +24,8 @@
         }
         localStorage.setItem('global_theme', theme);
 
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon= document.getElementById('icon-moon');
         if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
         if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
 
