@@ -17,10 +17,19 @@ const ASSETS = [
     './assets/js/scores.js',
     './assets/js/swipe.js',
     './assets/js/theme.js',
+    './assets/js/toast.js',
 
     // Fonts
     './assets/fonts/jetbrains-mono.woff2',
     './assets/fonts/outfit.woff2',
+
+    // Alpha Webapps
+    './alpha/webapps/jeu_de_la_grue.html',
+    './alpha/webapps/machine_a_chiffrer.html',
+    './alpha/webapps/machine_a_trier.html',
+    './alpha/webapps/pixel_studio_rvb.html',
+    './alpha/webapps/pixels_binaires.html',
+    './alpha/webapps/reseau_de_tri.html',
 
     // Webapps
     './webapps/binaire_codage.html',
