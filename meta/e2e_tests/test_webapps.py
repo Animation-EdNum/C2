@@ -15,7 +15,7 @@ def test_binaire_studio_has_correct_title(page: Page):
 
 def test_bit_de_parite_has_correct_title(page: Page):
     page.goto("http://localhost:8000/webapps/bit_de_parite.html")
-    expect(page).to_have_title(re.compile("Bit de Parité – Entraînement & Détection"))
+    expect(page).to_have_title(re.compile("Bit de parité – Entraînement & Détection"))
 
 def test_routage_reseau_has_correct_title(page: Page):
     page.goto("http://localhost:8000/webapps/routage_reseau.html")

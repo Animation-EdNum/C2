@@ -168,19 +168,19 @@ Le projet repose sur une architecture **Vanilla sans aucune dépendance** :
 | **Offline-First** | Service Worker (`sw.js`) pré-cache toutes les ressources pour un fonctionnement 100% hors-ligne |
 | **PWA** | Manifeste + SW permettant l'installation sur tous les appareils |
 | **Icônes** | Subset Lucide auto-généré (`lucide-subset.js`, 15 Ko) contenant uniquement les 59 icônes utilisées |
-| **Polices** | Auto-hébergées dans `fonts/` (Outfit, Inter, JetBrains Mono) |
-| **Audio** | Sons synthétiques via Web Audio API (`js/audio.js`), aucun fichier audio externe |
+| **Polices** | Auto-hébergées dans `assets/fonts/` (Outfit, Inter, JetBrains Mono) |
+| **Audio** | Sons synthétiques via Web Audio API (`assets/js/audio.js`), aucun fichier audio externe |
 
 ### Fichiers partagés
 
 ```
-css/shared.css       → Design system (variables, glassmorphism, dark mode, composants)
-js/theme.js          → Thème clair/sombre + enregistrement Service Worker
-js/scores.js         → ScoreManager (gamification, stats, difficulté adaptative)
-js/confetti.js       → Récompenses visuelles (confettis, feux d'artifice)
-js/audio.js          → Audio synthétique (Web Audio API)
-js/swipe.js          → Navigation tactile par swipe entre onglets
-js/lucide-subset.js  → Icônes vectorielles (auto-généré par meta/scripts/generate_lucide_subset.js)
+assets/css/shared.css       → Design system (variables, glassmorphism, dark mode, composants)
+assets/js/theme.js          → Thème clair/sombre + enregistrement Service Worker
+assets/js/scores.js         → ScoreManager (gamification, stats, difficulté adaptative)
+assets/js/confetti.js       → Récompenses visuelles (confettis, feux d'artifice)
+assets/js/audio.js          → Audio synthétique (Web Audio API)
+assets/js/swipe.js          → Navigation tactile par swipe entre onglets
+assets/js/lucide-subset.js  → Icônes vectorielles (auto-généré par meta/scripts/generate_lucide_subset.js)
 ```
 
 ### CI/CD

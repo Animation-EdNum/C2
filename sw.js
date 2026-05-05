@@ -3,24 +3,24 @@ const ASSETS = [
     './',
     './index.html',
     './manifest.json',
-    './favicon.svg',
-    './icon-192.png',
-    './icon-512.png',
+    './assets/favicon.svg',
+    './assets/icon-192.png',
+    './assets/icon-512.png',
 
     // CSS
-    './css/shared.css',
+    './assets/css/shared.css',
 
     // JS
-    './js/audio.js',
-    './js/confetti.js',
-    './js/fa-subset.js',
-    './js/scores.js',
-    './js/swipe.js',
-    './js/theme.js',
+    './assets/js/audio.js',
+    './assets/js/confetti.js',
+    './assets/js/fa-subset.js',
+    './assets/js/scores.js',
+    './assets/js/swipe.js',
+    './assets/js/theme.js',
 
     // Fonts
-    './fonts/jetbrains-mono.woff2',
-    './fonts/outfit.woff2',
+    './assets/fonts/jetbrains-mono.woff2',
+    './assets/fonts/outfit.woff2',
 
     // Webapps
     './webapps/binaire_codage.html',
