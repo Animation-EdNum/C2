@@ -157,6 +157,20 @@
             color: var(--text-main);
         }
 
+        @keyframes unlockChest {
+            0% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1.2) rotate(-10deg); }
+            40% { transform: scale(1.2) rotate(10deg); }
+            60% { transform: scale(1.2) rotate(-10deg); }
+            80% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .chest-unlocked {
+            animation: unlockChest 1s ease-in-out infinite;
+            color: #f1c40f; /* Or/Jaune */
+        }
+
         .container {
             max-width: var(--container-max-width, 1400px);
             margin: 0 auto;
@@ -656,6 +670,8 @@
 </head>
 
 <body>
+    <i data-fa="treasure-chest" style="display:none;"></i>
+    <i data-fa="box-open-full" style="display:none;"></i>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
     <canvas id="confetti-canvas"></canvas>
 
@@ -733,8 +749,8 @@
             <div class="tab-panel active" id="panel-dec-bin">
 
                 <div class="card" id="card-dec-bin">
-                    <div class="card-badge">Décimal → Binaire</div>
-                    <div class="card-instruction">Nombre à coder :</div>
+                    <div class="card-badge" id="chest-badge"><i data-fa="treasure-chest" id="chest-icon"></i> Trouver la combinaison pour ouvrir un coffre (nouveauté !)</div>
+                    <div class="chal-instruction">Nombre à coder :</div>
                     <div class="big-number" id="decBin-number">–</div>
 
                     <div class="bit-toggle-row" id="bit-toggles">
@@ -742,7 +758,7 @@
                     </div>
                     <div class="btn-row">
                         <button class="btn btn-check" id="decBin-check-btn">Vérifier</button>
-                        <button class="btn btn-new" id="btn-new-dec">Nouveau défi</button>
+
                     </div>
                     <div id="decBin-feedback" class="feedback"></div>
                 </div>
@@ -752,14 +768,14 @@
             <div class="tab-panel" id="panel-bin-dec">
                 <div class="card" id="card-bin-dec">
                     <div class="card-badge">Binaire → Décimal</div>
-                    <div class="card-instruction">Binaire à décoder :</div>
+                    <div class="chal-instruction">Binaire à décoder :</div>
                     <div class="big-number" id="binDec-binary" style="letter-spacing: 2px;">–</div>
 
-                    <div class="card-instruction">Ta réponse en base 10 :</div>
+                    <div class="chal-instruction">Ta réponse en base 10 :</div>
                     <div class="input-row">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="binDec-input" placeholder="ex. 20" autocomplete="off">
                         <button class="btn btn-check" id="binDec-check-btn">Vérifier</button>
-                        <button class="btn btn-new" id="btn-new-bin">Nouveau défi</button>
+
                     </div>
                     <div id="binDec-feedback" class="feedback"></div>
                 </div>
@@ -796,6 +812,8 @@
         let helpTimer = null;
         let decBinMistakes = 0;
         let binDecMistakes = 0;
+        let decBinConsecutiveSuccess = 0;
+        let binDecConsecutiveSuccess = 0;
 
         // UI GENERATION (Adaptative Bits) 
         function buildUI() {
@@ -831,11 +849,32 @@
         }
 
         // CALCULATRICE & SYNC 
-        function toggleCalc() {
+        function toggleCalc(forceState = null) {
             const body = document.getElementById('calc-body');
-            body.classList.toggle('visible');
-            document.getElementById('calc-toggle-icon').classList.toggle('open');
-            document.querySelector('.calc-header').classList.remove('pulse-help');
+            const isVisible = body.classList.contains('visible');
+
+            let shouldOpen = !isVisible;
+            if (forceState === 'open') shouldOpen = true;
+            if (forceState === 'close') shouldOpen = false;
+
+            if (shouldOpen && !isVisible) {
+                body.classList.add('visible');
+                document.getElementById('calc-toggle-icon').classList.add('open');
+                document.querySelector('.calc-header').classList.remove('pulse-help');
+            } else if (!shouldOpen && isVisible) {
+                body.classList.remove('visible');
+                document.getElementById('calc-toggle-icon').classList.remove('open');
+            }
+        }
+
+        function setCalcDisplay(visible) {
+            const section = document.querySelector('.calc-section');
+            if (visible) {
+                section.style.display = '';
+            } else {
+                section.style.display = 'none';
+                toggleCalc('close');
+            }
         }
 
         function toggleBitIndex(i) {
@@ -909,6 +948,14 @@
             resetCalc(); decBinLocked = false;
             document.getElementById('decBin-feedback').textContent = '';
             decBinMistakes = 0;
+
+            const chestIcon = document.getElementById('chest-icon');
+            if (chestIcon) {
+                chestIcon.setAttribute('data-fa', 'treasure-chest');
+                chestIcon.classList.remove('chest-unlocked');
+                if (typeof fa !== 'undefined') fa.createIcons();
+            }
+
             resetHelpTimer();
             resetValidationCooldown('decBin-check-btn');
         }
@@ -937,10 +984,37 @@
                 }
                 fb.className = 'feedback success'; fb.innerHTML = `✅ Parfait ! ${explainBinary(userBin)}.`;
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
-                decBinLocked = true; setTimeout(newDecToBin, 1500);
+
+                // Animation Coffre & Calculatrice
+                const chestIcon = document.getElementById('chest-icon');
+                if (chestIcon) {
+                    chestIcon.setAttribute('data-fa', 'box-open-full');
+                    chestIcon.classList.add('chest-unlocked');
+                    if (typeof fa !== 'undefined') fa.createIcons();
+                }
+
+                if (decBinMistakes === 0) {
+                    decBinConsecutiveSuccess++;
+                    if (decBinConsecutiveSuccess >= 2) {
+                        setCalcDisplay(false);
+                    }
+                } else {
+                    decBinConsecutiveSuccess = 0;
+                }
+
+                decBinLocked = true; setTimeout(newDecToBin, 5000);
             } else {
                 applyValidationCooldown('decBin-check-btn');
                 decBinMistakes++;
+                decBinConsecutiveSuccess = 0;
+
+                setCalcDisplay(true);
+                if (decBinMistakes === 1) {
+                    document.querySelector('.calc-header').classList.add('pulse-help');
+                } else if (decBinMistakes >= 2) {
+                    toggleCalc('open');
+                }
+
                 playSound('error'); updateGlobalScore(false);
                 ScoreManager.addMistake("dec_to_bin", currentBits);
                 fb.className = 'feedback error';
@@ -991,11 +1065,28 @@
                 }
                 fb.innerHTML = `✅ Exact ! ${explainBinary(currentBinString)}.`;
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
+
+                if (binDecMistakes === 0) {
+                    binDecConsecutiveSuccess++;
+                    if (binDecConsecutiveSuccess >= 2) setCalcDisplay(false);
+                } else {
+                    binDecConsecutiveSuccess = 0;
+                }
+
                 binDecLocked = true;
                 setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500); // Auto-focus 
             } else {
                 applyValidationCooldown('binDec-check-btn');
                 binDecMistakes++;
+                binDecConsecutiveSuccess = 0;
+
+                setCalcDisplay(true);
+                if (binDecMistakes === 1) {
+                    document.querySelector('.calc-header').classList.add('pulse-help');
+                } else if (binDecMistakes >= 2) {
+                    toggleCalc('open');
+                }
+
                 playSound('error'); updateGlobalScore(false);
                 ScoreManager.addMistake("bin_to_dec", currentBits);
                 fb.className = 'feedback error';
@@ -1030,10 +1121,8 @@
             document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
             document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
 
-            document.getElementById('calc-header').addEventListener('click', toggleCalc);
+            document.getElementById('calc-header').addEventListener('click', () => toggleCalc());
             document.getElementById('reset-calc-btn').addEventListener('click', resetCalc);
-            document.getElementById('btn-new-dec').addEventListener('click', newDecToBin);
-            document.getElementById('btn-new-bin').addEventListener('click', newBinToDec);
             document.getElementById('decBin-check-btn').addEventListener('click', checkDecToBin);
             document.getElementById('binDec-check-btn').addEventListener('click', checkBinToDec);
 
