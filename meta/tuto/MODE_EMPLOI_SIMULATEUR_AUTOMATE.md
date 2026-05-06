@@ -8,7 +8,7 @@ Ce simulateur permet aux élèves de s'entraîner à la programmation d'un autom
 
 ## 1. Mode Simulateur (Exploration Libre)
 
-![Mode Simulateur](meta/screenshots/sim_simulateur.png)
+![Mode Simulateur](../screenshots/sim_simulateur.png)
 
 Ce mode est idéal pour une première prise en main de l'automate et des déplacements dans l'espace.
 
@@ -24,7 +24,7 @@ Ce mode est idéal pour une première prise en main de l'automate et des déplac
 
 ## 2. Mode Pilotage (Défis)
 
-![Mode Pilotage](meta/screenshots/sim_pilotage.png)
+![Mode Pilotage](../screenshots/sim_pilotage.png)
 
 Ce mode propose des défis à résoudre : l'automate doit atteindre une cible précise (ex: une étoile, un drapeau) en suivant les règles imposées par la difficulté.
 
@@ -42,7 +42,7 @@ Ce mode propose des défis à résoudre : l'automate doit atteindre une cible pr
 
 ## 3. Mode Décodage (Lecture de code)
 
-![Mode Décodage](meta/screenshots/sim_decodage.png)
+![Mode Décodage](../screenshots/sim_decodage.png)
 
 Ce mode inverse la logique : le programme est déjà écrit, et vous devez deviner où l'automate va s'arrêter !
 
@@ -58,7 +58,7 @@ Ce mode inverse la logique : le programme est déjà écrit, et vous devez devin
 
 ## 4. Mode Dessin (Création géométrique)
 
-![Mode Dessin](meta/screenshots/sim_dessin.png)
+![Mode Dessin](../screenshots/sim_dessin.png)
 
 Dans ce mode, l'automate est équipé d'un stylo imaginaire et laisse une trace derrière lui. Le but est de reproduire des formes géométriques ou des motifs.
 
