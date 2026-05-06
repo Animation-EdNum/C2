@@ -490,11 +490,62 @@
             box-shadow: 0 4px 0 #334155;
         }
 
+        .prog-step:hover:not(.active):not(.error-step) {
+            transform: scale(1.1);
+            background: var(--error);
+            box-shadow: 0 2px 0 #991b1b;
+        }
+
+        .prog-step::after {
+            content: '×';
+            font-size: 24px;
+            display: none;
+            position: absolute;
+            color: white;
+            font-weight: bold;
+        }
+
+        .prog-step:hover:not(.active):not(.error-step) svg,
+        .prog-step:hover:not(.active):not(.error-step) i {
+            display: none;
+        }
+
+        .prog-step:hover:not(.active):not(.error-step)::after {
+            display: block;
+        }
+
         .prog-step.active {
             background: var(--accent);
             color: white;
             transform: scale(1.1) translateY(4px);
             box-shadow: 0 0 0 transparent;
+        }
+
+        .prog-step.error-step {
+            background: #1e293b;
+            color: #ffffff;
+            box-shadow: 0 2px 0 #0f172a;
+            transform: scale(1.25);
+            z-index: 2;
+            animation: errorPop 0.3s ease;
+        }
+
+        body.dark .prog-step.error-step {
+            background: #f8fafc;
+            color: #1e293b;
+            box-shadow: 0 2px 0 #cbd5e1;
+        }
+
+        @keyframes errorPop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.4);
+            }
+            100% {
+                transform: scale(1.25);
+            }
         }
 
         .controls-panel {
@@ -750,7 +801,7 @@
                 margin-bottom: 0;
             }
             .desktop-layout-side {
-                flex: 0 0 300px;
+                flex: 0 0 400px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -1134,6 +1185,13 @@
             playSound('click');
         }
 
+        function removeSpecificCmd(index) {
+            if (isExecuting) return;
+            program.splice(index, 1);
+            renderProgram();
+            playSound('click');
+        }
+
         function clearProgram() {
             if (isExecuting) return;
             program = [];
@@ -1146,6 +1204,9 @@
                 let stepEl = document.createElement('div');
                 stepEl.className = 'prog-step ' + inst + '-color';
                 stepEl.id = `prog-step-${idx}`;
+                stepEl.style.cursor = 'pointer';
+                stepEl.style.position = 'relative';
+                stepEl.onclick = () => removeSpecificCmd(idx);
 
                 let icon = '';
                 let isFlipped = false;
@@ -1164,7 +1225,7 @@
                     if (simulatedHolding) {
                         icon = 'hand-fist'; // action that just grabbed
                     } else {
-                        icon = 'hand-holding'; // action that just dropped
+                        icon = 'hand'; // action that just dropped
                     }
                     isFlipped = true;
                 }
@@ -1186,10 +1247,16 @@
             });
             let actionIcon = document.getElementById('action-icon');
             if (actionIcon) {
-                if (finalHolding) {
-                    actionIcon.setAttribute('data-fa', 'hand-holding'); // next action will be drop
-                } else {
-                    actionIcon.setAttribute('data-fa', 'hand-fist'); // next action will be grab
+                // Since fa.createIcons() detaches the original <i>, we might need to recreate it or just update the dataset and re-run.
+                // Re-creating is safer. Let's find its parent.
+                let actionBtn = actionIcon.parentElement;
+                if (actionBtn) {
+                    if (finalHolding) {
+                        actionBtn.innerHTML = '<i data-fa="hand" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i>';
+                    } else {
+                        actionBtn.innerHTML = '<i data-fa="hand-fist" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i>';
+                    }
+                    fa.createIcons(); // Need to re-run createIcons here because we replaced the HTML inside the button
                 }
             }
         }
@@ -1215,7 +1282,10 @@
             for (let i = 0; i < program.length; i++) {
                 if (!isExecuting) return; // Prevent old execution from continuing if reset
 
-                progSteps.forEach(el => el.classList.remove('active'));
+                progSteps.forEach(el => {
+                    el.classList.remove('active');
+                    el.classList.remove('error-step');
+                });
                 let currentStepEl = progSteps[i];
                 if (currentStepEl) currentStepEl.classList.add('active');
 
@@ -1224,6 +1294,7 @@
 
                 renderAll();
                 if (!valid) {
+                    if (currentStepEl) currentStepEl.classList.add('error-step');
                     // Don't play sound here, let checkWin() handle it to prevent overlap
                     break;
                 } else {
@@ -1233,7 +1304,11 @@
             }
 
             if (!isExecuting) return; // Prevent checkWin from firing if reset
-            progSteps.forEach(el => el.classList.remove('active'));
+            progSteps.forEach(el => {
+                if (!el.classList.contains('error-step')) {
+                    el.classList.remove('active');
+                }
+            });
             checkWin();
         }
 
@@ -1323,7 +1398,9 @@
                 showFeedback(`Erreur: ${errorReason} Réinitialisation dans ${seconds}s...`, 'error');
                 isExecuting = false;
                 isCooldown = true;
-                renderProgram(); // disable play button
+
+                // Keep the current program rendered so the error highlight stays visible
+                playBtn.disabled = true;
 
                 window.failInterval = setInterval(() => {
                     seconds--;
@@ -1376,7 +1453,7 @@
     <script src="../../assets/js/swipe.js"></script>
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
-<i data-fa="hand-holding" style="display:none;"></i>
+<i data-fa="hand" style="display:none;"></i>
 </body>
 
 </html>
