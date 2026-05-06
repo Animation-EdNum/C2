@@ -2257,234 +2257,238 @@
 
         </header>
 
-        <div class="tabs" role="tablist">
-            <button class="tab-btn active" id="tab-simulator" role="tab" aria-selected="true" aria-controls="view-simulator"><i data-fa="robot"></i> Simulateur</button>
-            <button class="tab-btn" id="tab-challenge" role="tab" aria-selected="false" aria-controls="view-challenge"><i data-fa="gamepad-modern"></i> Pilotage</button>
-            <button class="tab-btn" id="tab-read" role="tab" aria-selected="false" aria-controls="view-read"><i data-fa="book-open"></i> Décodage</button>
-            <button class="tab-btn" id="tab-draw" role="tab" aria-selected="false" aria-controls="view-draw"><i data-fa="pen"></i> Dessin</button>
-        </div>
+        <main>
 
-        <div id="view-simulator" class="view active" role="tabpanel" aria-labelledby="tab-simulator">
+            <div class="tabs" role="tablist">
+                <button class="tab-btn active" id="tab-simulator" role="tab" aria-selected="true" aria-controls="view-simulator"><i data-fa="robot"></i> Simulateur</button>
+                <button class="tab-btn" id="tab-challenge" role="tab" aria-selected="false" aria-controls="view-challenge"><i data-fa="gamepad-modern"></i> Pilotage</button>
+                <button class="tab-btn" id="tab-read" role="tab" aria-selected="false" aria-controls="view-read"><i data-fa="book-open"></i> Décodage</button>
+                <button class="tab-btn" id="tab-draw" role="tab" aria-selected="false" aria-controls="view-draw"><i data-fa="pen"></i> Dessin</button>
+            </div>
+
+            <div id="view-simulator" class="view active" role="tabpanel" aria-labelledby="tab-simulator">
 
 
-            <div class="exercise-card">
+                <div class="exercise-card">
 
-                <div id="sim-instruction"
-                    style="display:none; text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
-                    Ajoute des commandes avec les boutons ou le clavier...
-                </div>
+                    <div id="sim-instruction"
+                        style="display:none; text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                        Ajoute des commandes avec les boutons ou le clavier...
+                    </div>
 
-                <div class="sim-options"
-                    style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <button class="btn btn-new" id="btn-place-elements"><i data-fa="trophy-star" style="margin-right:5px; color:#f1c40f;"></i> Trésors & Obstacles</button>
-                    <button class="btn btn-outline-error" id="btn-clear-walls"><i data-fa="broom" style="margin-right: 5px;"></i> Nettoyer grille</button>
-                    <button class="btn btn-outline" id="btnReset" title="Placer l'automate à une position aléatoire"><i data-fa="dice" style="margin-right:5px;"></i> Position aléatoire</button>
-                </div>
+                    <div class="sim-options"
+                        style="display:flex; justify-content:center; gap:8px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-new" id="btn-place-elements"><i data-fa="trophy-star" style="margin-right:5px; color:#f1c40f;"></i> Trésors & Obstacles</button>
+                        <button class="btn btn-outline-error" id="btn-clear-walls"><i data-fa="broom" style="margin-right: 5px;"></i> Nettoyer grille</button>
+                        <button class="btn btn-outline" id="btnReset" title="Placer l'automate à une position aléatoire"><i data-fa="dice" style="margin-right:5px;"></i> Position aléatoire</button>
+                    </div>
 
-                <div id="sim-end-container" style="display: none; margin-bottom: 15px;">
-                    <div class="program-strip" id="sim-end-content" style="position: relative; background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 50px;">
-                        <button id="btn-clear-end" class="btn btn-outline" style="padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg);" aria-label="Effacer" title="Effacer les éléments atteints">
-                            <i data-fa="trash-can" style="width: 16px; height: 16px;"></i>
+                    <div id="sim-end-container" style="display: none; margin-bottom: 15px;">
+                        <div class="program-strip" id="sim-end-content" style="position: relative; background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 50px;">
+                            <button id="btn-clear-end" class="btn btn-outline" style="padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg);" aria-label="Effacer" title="Effacer les éléments atteints">
+                                <i data-fa="trash-can" style="width: 16px; height: 16px;"></i>
+                            </button>
+                            <div class="empty-program" id="sim-end-empty">Éléments atteints...</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-wrapper" style="margin-top: 0;">
+                        <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
+                            class="bot-grid-container">
+                            <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-pad" id="sim-cmd-pad">
+                        <button class="cmd-btn cmd-btn-forward" id="pad-fwd" aria-label="Avancer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
                         </button>
-                        <div class="empty-program" id="sim-end-empty">Éléments atteints...</div>
+                        <button class="cmd-btn cmd-btn-left" id="pad-left" aria-label="Tourner à gauche">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-backward" id="pad-bwd" aria-label="Reculer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-right" id="pad-right" aria-label="Tourner à droite">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-go" id="pad-go" aria-label="Go">GO</button>
+                        <button class="cmd-btn cmd-btn-clear" id="pad-clear" aria-label="Effacer">X</button>
                     </div>
-                </div>
 
-                <div class="grid-wrapper" style="margin-top: 0;">
-                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
-                        class="bot-grid-container">
-                        <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
+                    <div class="program-strip" id="sim-program" style="position: relative;">
+                        <button id="hideCmdToggleBtn" class="btn btn-outline" style="padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg);" aria-label="Masquer/Afficher les commandes" title="Masquer les commandes">
+                            <i data-fa="eye-slash" id="icon-eye-off" style="width: 16px; height: 16px;"></i>
+                            <i data-fa="eye" id="icon-eye" style="display:none; width: 16px; height: 16px;"></i>
+                            <span id="hideCmdToggleText" style="display:none;">Masquer commandes</span>
+                        </button>
+                        <div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>
                     </div>
-                </div>
 
-                <div class="cmd-pad" id="sim-cmd-pad">
-                    <button class="cmd-btn cmd-btn-forward" id="pad-fwd" aria-label="Avancer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-left" id="pad-left" aria-label="Tourner à gauche">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-backward" id="pad-bwd" aria-label="Reculer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-right" id="pad-right" aria-label="Tourner à droite">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-go" id="pad-go" aria-label="Go">GO</button>
-                    <button class="cmd-btn cmd-btn-clear" id="pad-clear" aria-label="Effacer">X</button>
-                </div>
-
-                <div class="program-strip" id="sim-program" style="position: relative;">
-                    <button id="hideCmdToggleBtn" class="btn btn-outline" style="padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg);" aria-label="Masquer/Afficher les commandes" title="Masquer les commandes">
-                        <i data-fa="eye-slash" id="icon-eye-off" style="width: 16px; height: 16px;"></i>
-                        <i data-fa="eye" id="icon-eye" style="display:none; width: 16px; height: 16px;"></i>
-                        <span id="hideCmdToggleText" style="display:none;">Masquer commandes</span>
-                    </button>
-                    <div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>
-                </div>
-
-                <div class="score-bar" id="sim-score-bar" style="display: none;">
-                    <div class="score-item">
-                        <div class="score-label">Victoires</div>
-                        <div class="score-value" id="sim-star-counter-val">0</div>
+                    <div class="score-bar" id="sim-score-bar" style="display: none;">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="sim-star-counter-val">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="sim-first-try-val">0</div>
+                        </div>
                     </div>
-                    <div class="score-item">
-                        <div class="score-label">Série 🔥</div>
-                        <div class="score-value" id="sim-first-try-val">0</div>
-                    </div>
+
+                    <div class="legend" id="legend-container"></div>
                 </div>
-
-                <div class="legend" id="legend-container"></div>
-            </div>
-        </div>
-
-        <div id="view-challenge" class="view" role="tabpanel" aria-labelledby="tab-challenge">
-
-            <div class="difficulty-bar">
-                <button class="diff-btn active" id="diff-easy" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
-                <button class="diff-btn" id="diff-medium" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
-                <button class="diff-btn" id="diff-hard" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
-                <button class="diff-btn" id="diff-extreme" data-diff="extreme"><i data-fa="fire" style="color: #e74c3c;"></i><i data-fa="fire" style="color: #e74c3c;"></i> Extrême</button>
             </div>
 
-            <div class="exercise-card">
-                <div id="chal-instruction"
-                    style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
-                    Trouve la bonne série de commandes pour atteindre la cible !
-                </div>
-                <div class="challenge-options" id="chal-options" style="margin-bottom: 15px;"></div>
+            <div id="view-challenge" class="view" role="tabpanel" aria-labelledby="tab-challenge">
 
-                <div class="grid-wrapper">
-                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
-                        class="bot-grid-container">
-                        <div class="bot-grid" id="chal-grid" style="margin: 0; max-width: none;"></div>
+                <div class="difficulty-bar">
+                    <button class="diff-btn active" id="diff-easy" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
+                    <button class="diff-btn" id="diff-medium" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
+                    <button class="diff-btn" id="diff-hard" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
+                    <button class="diff-btn" id="diff-extreme" data-diff="extreme"><i data-fa="fire" style="color: #e74c3c;"></i><i data-fa="fire" style="color: #e74c3c;"></i> Extrême</button>
+                </div>
+
+                <div class="exercise-card">
+                    <div id="chal-instruction"
+                        style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                        Trouve la bonne série de commandes pour atteindre la cible !
                     </div>
-                </div>
+                    <div class="challenge-options" id="chal-options" style="margin-bottom: 15px;"></div>
 
-                <div id="chal-hint"
-                    style="display:none; text-align:center; margin: 12px 0; padding: 10px 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warn); border-radius: var(--radius-lg); font-size: 15px; color: var(--warn); font-weight: 600;">
-                    💡 Rappel : L'automate peut aussi <strong>reculer</strong> !
-                </div>
-
-                <div class="controls">
-                    <button class="btn btn-new" id="btnNextChallenge" style="display:none;"><i data-fa="arrow-right" style="margin-right:5px;"></i> Pilotage suivant</button>
-
-                </div>
-
-                <div class="score-bar">
-                    <div class="score-item">
-                        <div class="score-label">Victoires</div>
-                        <div class="score-value" id="global-score">0</div>
+                    <div class="grid-wrapper">
+                        <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
+                            class="bot-grid-container">
+                            <div class="bot-grid" id="chal-grid" style="margin: 0; max-width: none;"></div>
+                        </div>
                     </div>
-                    <div class="score-item">
-                        <div class="score-label">Série 🔥</div>
-                        <div class="score-value" id="global-streak">0</div>
+
+                    <div id="chal-hint"
+                        style="display:none; text-align:center; margin: 12px 0; padding: 10px 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warn); border-radius: var(--radius-lg); font-size: 15px; color: var(--warn); font-weight: 600;">
+                        💡 Rappel : L'automate peut aussi <strong>reculer</strong> !
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-new" id="btnNextChallenge" style="display:none;"><i data-fa="arrow-right" style="margin-right:5px;"></i> Pilotage suivant</button>
+
+                    </div>
+
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="global-score">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="global-streak">0</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="view-draw" class="view" role="tabpanel" aria-labelledby="tab-draw">
+            <div id="view-draw" class="view" role="tabpanel" aria-labelledby="tab-draw">
 
-            <div class="difficulty-bar">
-                <button class="diff-btn active" id="draw-diff-easy" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
-                <button class="diff-btn" id="draw-diff-medium" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
-                <button class="diff-btn" id="draw-diff-hard" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
-                <button class="diff-btn" id="draw-diff-extreme" data-diff="extreme"><i data-fa="fire" style="color: #e74c3c;"></i><i data-fa="fire" style="color: #e74c3c;"></i> Extrême</button>
-            </div>
-
-            <div class="exercise-card">
-                <div id="draw-instruction"
-                    style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
-                    Programme le robot pour tracer la forme demandée !
+                <div class="difficulty-bar">
+                    <button class="diff-btn active" id="draw-diff-easy" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
+                    <button class="diff-btn" id="draw-diff-medium" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
+                    <button class="diff-btn" id="draw-diff-hard" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
+                    <button class="diff-btn" id="draw-diff-extreme" data-diff="extreme"><i data-fa="fire" style="color: #e74c3c;"></i><i data-fa="fire" style="color: #e74c3c;"></i> Extrême</button>
                 </div>
 
-                <div class="grid-wrapper">
-                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
-                        class="bot-grid-container">
-                        <div class="bot-grid" id="draw-grid" style="margin: 0; max-width: none;"></div>
+                <div class="exercise-card">
+                    <div id="draw-instruction"
+                        style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                        Programme le robot pour tracer la forme demandée !
                     </div>
-                </div>
 
-                <div class="cmd-pad" id="draw-cmd-pad">
-                    <button class="cmd-btn cmd-btn-forward" id="draw-pad-fwd" aria-label="Avancer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-left" id="draw-pad-left" aria-label="Tourner à gauche">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-backward" id="draw-pad-bwd" aria-label="Reculer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-right" id="draw-pad-right" aria-label="Tourner à droite">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
-                    </button>
-                    <button class="cmd-btn cmd-btn-go" id="draw-pad-go" aria-label="Go">GO</button>
-                    <button class="cmd-btn cmd-btn-clear" id="draw-pad-clear" aria-label="Effacer">X</button>
-                </div>
-
-                <div class="program-strip" id="draw-program" style="position: relative;">
-                    <div class="empty-program">Ajoute des commandes...</div>
-                </div>
-
-                <div class="controls">
-                    <button class="btn btn-new" id="btnNextDraw" style="display:none; margin: 0 auto;"><i data-fa="arrow-right" style="margin-right:5px;"></i> Dessin suivant</button>
-                </div>
-
-                <div class="score-bar">
-                    <div class="score-item">
-                        <div class="score-label">Victoires</div>
-                        <div class="score-value" id="draw-global-score">0</div>
+                    <div class="grid-wrapper">
+                        <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
+                            class="bot-grid-container">
+                            <div class="bot-grid" id="draw-grid" style="margin: 0; max-width: none;"></div>
+                        </div>
                     </div>
-                    <div class="score-item">
-                        <div class="score-label">Série 🔥</div>
-                        <div class="score-value" id="draw-global-streak">0</div>
+
+                    <div class="cmd-pad" id="draw-cmd-pad">
+                        <button class="cmd-btn cmd-btn-forward" id="draw-pad-fwd" aria-label="Avancer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-left" id="draw-pad-left" aria-label="Tourner à gauche">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-backward" id="draw-pad-bwd" aria-label="Reculer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-right" id="draw-pad-right" aria-label="Tourner à droite">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-go" id="draw-pad-go" aria-label="Go">GO</button>
+                        <button class="cmd-btn cmd-btn-clear" id="draw-pad-clear" aria-label="Effacer">X</button>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <div id="view-read" class="view" role="tabpanel" aria-labelledby="tab-read">
-
-            <div class="difficulty-bar">
-                <button class="diff-btn active" id="read-diff-easy" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
-                <button class="diff-btn" id="read-diff-medium" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
-                <button class="diff-btn" id="read-diff-hard" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
-                <button class="diff-btn" id="read-diff-extreme" data-diff="extreme"><i data-fa="fire" style="color: #e74c3c;"></i><i data-fa="fire" style="color: #e74c3c;"></i> Extrême</button>
-            </div>
-
-            <div class="exercise-card">
-                <div id="read-instruction"
-                    style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
-                </div>
-
-                <div class="program-strip" id="read-program" style="margin-top: 15px; margin-bottom: 15px;">
-                    <!-- Commands will be rendered here -->
-                </div>
-
-                <div class="grid-wrapper">
-                    <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
-                        class="bot-grid-container">
-                        <div class="bot-grid" id="read-grid" style="margin: 0; max-width: none;"></div>
+                    <div class="program-strip" id="draw-program" style="position: relative;">
+                        <div class="empty-program">Ajoute des commandes...</div>
                     </div>
-                </div>
 
-                <div class="controls">
-                    <button class="btn btn-new" id="btnNextRead" style="display:none; margin: 0 auto;"><i data-fa="arrow-right" style="margin-right:5px;"></i> Décodage suivant</button>
-                </div>
-
-                <div class="score-bar">
-                    <div class="score-item">
-                        <div class="score-label">Victoires</div>
-                        <div class="score-value" id="read-global-score">0</div>
+                    <div class="controls">
+                        <button class="btn btn-new" id="btnNextDraw" style="display:none; margin: 0 auto;"><i data-fa="arrow-right" style="margin-right:5px;"></i> Dessin suivant</button>
                     </div>
-                    <div class="score-item">
-                        <div class="score-label">Série 🔥</div>
-                        <div class="score-value" id="read-global-streak">0</div>
+
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="draw-global-score">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="draw-global-streak">0</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div id="view-read" class="view" role="tabpanel" aria-labelledby="tab-read">
+
+                <div class="difficulty-bar">
+                    <button class="diff-btn active" id="read-diff-easy" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
+                    <button class="diff-btn" id="read-diff-medium" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
+                    <button class="diff-btn" id="read-diff-hard" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
+                    <button class="diff-btn" id="read-diff-extreme" data-diff="extreme"><i data-fa="fire" style="color: #e74c3c;"></i><i data-fa="fire" style="color: #e74c3c;"></i> Extrême</button>
+                </div>
+
+                <div class="exercise-card">
+                    <div id="read-instruction"
+                        style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                    </div>
+
+                    <div class="program-strip" id="read-program" style="margin-top: 15px; margin-bottom: 15px;">
+                        <!-- Commands will be rendered here -->
+                    </div>
+
+                    <div class="grid-wrapper">
+                        <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
+                            class="bot-grid-container">
+                            <div class="bot-grid" id="read-grid" style="margin: 0; max-width: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-new" id="btnNextRead" style="display:none; margin: 0 auto;"><i data-fa="arrow-right" style="margin-right:5px;"></i> Décodage suivant</button>
+                    </div>
+
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="read-global-score">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="read-global-streak">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <script src="../assets/js/toast.js"></script>
