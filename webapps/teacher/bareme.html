@@ -382,30 +382,30 @@
 
 
 
+        .demarcation-bottom { border-bottom: 3px double var(--error) !important; }
+        .grade.failing { color: var(--error); }
+        .failing-row { background: rgba(239, 68, 68, 0.03) !important; }
+
         /* PRINT UI */
         .print-only { display: none; }
         @media print {
-            button {
-            min-width: 44px;
-            min-height: 44px;
-        }
-
-        body {
-            touch-action: manipulation; background: white !important; padding: 0; }
+            body { touch-action: manipulation; background: white !important; padding: 0; font-family: 'Outfit', sans-serif; zoom: var(--print-zoom, 1); }
             .no-print { display: none !important; }
             .app-shell { border: none; box-shadow: none; background: white; backdrop-filter: none; max-width: 100%; display: block; border-radius: 0; }
             .print-only { display: block !important; }
             .results-panel { padding: 0; }
             .table-container { border: none; overflow: visible; max-height: none; }
-            table { border: 2px solid black; }
-            th { background: #eee !important; color: black !important; border: 1px solid black; }
-            td { border: 1px solid black; color: black !important; padding: 4px; }
-            .col-end { border-right: 2px solid black; }
-            .passing-row { background: #f5f5f5 !important; }
+            table { border: 2px solid black; font-size: 10px; }
+            th { background: #f0f0f0 !important; color: black !important; border: 1px solid #999; font-size: 10px; padding: 4px 2px; }
+            td { border: 1px solid #ccc; color: black !important; padding: 3px 2px; text-align: center; }
+            .col-end { border-right: 2px solid black; font-weight: bold; }
+            .passing-row { background: #f0fdf4 !important; } /* Light green background for passing grades */
+            .failing-row { background: #fef2f2 !important; } /* Light red background for failing grades */
+            .demarcation-bottom { border-bottom: 3px double #000 !important; }
             
-            .print-header { text-align: center; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 5px; }
-            .print-header h2 { font-size: 1.25rem; text-transform: uppercase; }
-            .print-meta { display: flex; justify-content: center; gap: 2rem; font-size: 0.8rem; font-weight: bold; }
+            .print-header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid black; padding-bottom: 10px; }
+            .print-header h2 { font-size: 1.5rem; text-transform: uppercase; margin-bottom: 5px; }
+            .print-meta { display: flex; justify-content: center; gap: 2rem; font-size: 0.9rem; font-weight: bold; color: #333; }
         }
 
         .hidden { display: none !important; }
@@ -413,6 +413,7 @@
 </head>
 
 <body>
+    <i data-fa="image" style="display:none;"></i>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
     <div class="action-buttons no-print">
         <button class="icon-action-btn" id="themeToggleBtn" aria-label="Changer de thème" title="Changer de thème">
@@ -434,6 +435,10 @@
             </div>
 
             <div class="header-actions">
+                <button class="btn btn-secondary" onclick="exportImage()" title="Exporter en image">
+                    <i data-fa="image" style="width:18px;height:18px;"></i>
+                    <span>Image</span>
+                </button>
                 <button class="btn btn-secondary" onclick="copyTable()" title="Copier le tableau">
                     <i data-fa="copy" style="width:18px;height:18px;"></i>
                     <span>Copier</span>
@@ -609,6 +614,8 @@
                 }
 
                 let roundedGrade = Math.round(rawGrade / round) * round;
+                roundedGrade = Math.round(roundedGrade * 10) / 10;
+
                 if (roundedGrade > 6) roundedGrade = 6;
                 if (roundedGrade < 1) roundedGrade = 1;
 
@@ -692,16 +699,18 @@
 
                     if (index < data.length) {
                         const item = data[index];
-                        const pc = item.isPassing ? 'passing-row' : '';
+                        const isDemarcation = item.isPassing && (index + 1 < data.length && !data[index + 1].isPassing);
+                        const pc = item.isPassing ? 'passing-row' : 'failing-row';
                         const gc = item.isPassing ? 'passing' : 'failing';
+                        const dem = isDemarcation ? ' demarcation-bottom' : '';
                         const gd = parseFloat(item.grade.toFixed(2));
                         const lost = Math.round((totalPoints - item.points) * 100) / 100;
                         const ld = lost === 0 ? '0' : `-${lost}`;
 
                         let html = '';
-                        if (showMistakes) html += `<td class="${pc} mistake">${ld}</td>`;
-                        html += `<td class="${pc}">${item.points}</td>`;
-                        html += `<td class="grade ${gc} ${pc} col-end">${gd}</td>`;
+                        if (showMistakes) html += `<td class="${pc} mistake${dem}">${ld}</td>`;
+                        html += `<td class="${pc}${dem}">${item.points}</td>`;
+                        html += `<td class="grade ${gc} ${pc} col-end${dem}">${gd}</td>`;
                         tr.innerHTML += html;
                     } else {
                         if (showMistakes) tr.innerHTML += '<td></td>';
@@ -714,27 +723,191 @@
 
 
         // ==========================================
-        // COPIER LE TABLEAU
+        // COPIER LE TABLEAU (Format riche HTML)
         // ==========================================
         async function copyTable() {
             const table = document.getElementById('gradeTable');
+
+            // 1. Format Texte Brut (Tsv)
             let text = '';
             table.querySelectorAll('tr').forEach(r => {
                 const cols = Array.from(r.querySelectorAll('td, th'));
                 text += cols.map(c => c.innerText.trim()).join('\t') + '\n';
             });
 
+            // 2. Format HTML (avec styles en ligne)
+            const showMistakes = document.getElementById('showMistakes').checked;
+            const groupsPerRow = table.querySelector('tr').querySelectorAll('th.col-end').length;
+
+            let htmlString = `<table style="border-collapse: collapse; font-family: sans-serif; font-size: 11px; width: 100%;">\n`;
+
+            table.querySelectorAll('tr').forEach((r, rowIdx) => {
+                htmlString += `  <tr>\n`;
+                const cols = Array.from(r.querySelectorAll('td, th'));
+                cols.forEach(c => {
+                    let textContent = c.innerText.trim();
+                    let isTh = c.tagName.toLowerCase() === 'th';
+                    let isPassing = c.classList.contains('passing-row');
+                    let isFailing = c.classList.contains('failing-row');
+                    let isGrade = c.classList.contains('grade');
+                    let isColEnd = c.classList.contains('col-end');
+                    let isDemarcation = c.classList.contains('demarcation-bottom');
+
+                    let style = "padding: 4px 6px; text-align: center; border: 1px solid #ccc;";
+
+                    if (isTh) {
+                        style += " background-color: #f0f0f0; font-weight: bold;";
+                    } else {
+                        if (isPassing) style += " background-color: #f0fdf4;";
+                        else if (isFailing) style += " background-color: #fef2f2;";
+
+                        if (isGrade) {
+                            style += " font-weight: bold;";
+                            if (isPassing) style += " color: #10b981;";
+                            if (isFailing) style += " color: #ef4444;";
+                        }
+                    }
+
+                    if (isColEnd) style += " border-right: 2px solid #000;";
+                    if (isDemarcation) style += " border-bottom: 3px double #000;";
+
+                    if (textContent === "") textContent = "&nbsp;";
+
+                    let tag = isTh ? 'th' : 'td';
+                    htmlString += `    <${tag} style="${style}">${textContent}</${tag}>\n`;
+                });
+                htmlString += `  </tr>\n`;
+            });
+            htmlString += `</table>`;
+
             try {
-                await navigator.clipboard.writeText(text);
-                showToast('Tableau copié dans le presse-papier', 'success');
-            } catch {
+                const clipboardItem = new ClipboardItem({
+                    'text/plain': new Blob([text], { type: 'text/plain' }),
+                    'text/html': new Blob([htmlString], { type: 'text/html' })
+                });
+                await navigator.clipboard.write([clipboardItem]);
+                showToast('Tableau copié (format compatible Word/Excel)', 'success');
+            } catch (err) {
+                console.warn("ClipboardItem API failed, falling back to text copy", err);
                 const ta = document.createElement('textarea');
                 ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
                 document.body.appendChild(ta); ta.select();
-                try { document.execCommand('copy'); showToast('Tableau copié dans le presse-papier', 'success'); }
+                try { document.execCommand('copy'); showToast('Tableau copié (format texte uniquement)', 'success'); }
                 catch { showToast('Erreur lors de la copie', 'error'); }
                 document.body.removeChild(ta);
             }
+        }
+
+        // ==========================================
+        // EXPORTER EN IMAGE
+        // ==========================================
+        function exportImage() {
+            const table = document.getElementById('gradeTable');
+            const showMistakes = document.getElementById('showMistakes').checked;
+            const groupsPerRow = table.querySelector('tr').querySelectorAll('th.col-end').length;
+
+            let htmlString = `<table xmlns="http://www.w3.org/1999/xhtml" style="border-collapse: collapse; font-family: sans-serif; font-size: 14px; width: 100%; background: white;">\n`;
+
+            table.querySelectorAll('tr').forEach((r, rowIdx) => {
+                htmlString += `  <tr>\n`;
+                const cols = Array.from(r.querySelectorAll('td, th'));
+                cols.forEach(c => {
+                    let textContent = c.innerText.trim();
+                    let isTh = c.tagName.toLowerCase() === 'th';
+                    let isPassing = c.classList.contains('passing-row');
+                    let isFailing = c.classList.contains('failing-row');
+                    let isGrade = c.classList.contains('grade');
+                    let isColEnd = c.classList.contains('col-end');
+                    let isDemarcation = c.classList.contains('demarcation-bottom');
+
+                    let style = "padding: 6px 8px; text-align: center; border: 1px solid #ccc;";
+
+                    if (isTh) {
+                        style += " background-color: #f0f0f0; font-weight: bold;";
+                    } else {
+                        if (isPassing) style += " background-color: #f0fdf4;";
+                        else if (isFailing) style += " background-color: #fef2f2;";
+
+                        if (isGrade) {
+                            style += " font-weight: bold;";
+                            if (isPassing) style += " color: #10b981;";
+                            if (isFailing) style += " color: #ef4444;";
+                        }
+                    }
+
+                    if (isColEnd) style += " border-right: 2px solid #000;";
+                    if (isDemarcation) style += " border-bottom: 3px double #000;";
+
+                    if (textContent === "") textContent = "&nbsp;";
+
+                    let tag = isTh ? 'th' : 'td';
+                    htmlString += `    <${tag} style="${style}">${textContent}</${tag}>\n`;
+                });
+                htmlString += `  </tr>\n`;
+            });
+            htmlString += `</table>`;
+
+            const title = document.getElementById('displayTitle').innerText;
+            const formula = document.getElementById('displayFormula').innerText;
+
+            // Escape HTML characters to prevent SVG parsing errors
+            const escapeHtml = (unsafe) => {
+                return unsafe
+                     .replace(/&/g, "&amp;")
+                     .replace(/</g, "&lt;")
+                     .replace(/>/g, "&gt;")
+                     .replace(/"/g, "&quot;")
+                     .replace(/'/g, "&#039;");
+            };
+
+            const safeTitle = escapeHtml(title);
+            const safeFormula = escapeHtml(formula);
+
+            const finalHtml = `
+                <div xmlns="http://www.w3.org/1999/xhtml" style="background: white; padding: 20px; font-family: sans-serif;">
+                    <h2 style="text-align: center; margin-top: 0;">${safeTitle}</h2>
+                    <p style="text-align: center; font-size: 12px; color: #666; margin-bottom: 20px;">${safeFormula}</p>
+                    ${htmlString}
+                </div>
+            `;
+
+            // Calculate approximate dimensions
+            const estWidth = 150 + (groupsPerRow * (showMistakes ? 180 : 130));
+            const estHeight = 100 + (table.querySelectorAll('tr').length * 30);
+
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="${estWidth}" height="${estHeight}">
+                    <foreignObject width="100%" height="100%">
+                        ${finalHtml}
+                    </foreignObject>
+                </svg>
+            `;
+
+            const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = estWidth;
+                canvas.height = estHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                URL.revokeObjectURL(url);
+
+                const pngUrl = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = pngUrl;
+                a.download = `bareme_${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                showToast('Image exportée avec succès', 'success');
+            };
+            img.src = url;
         }
 
         // ==========================================
