@@ -6,17 +6,17 @@
 
 ## 🎯 Présentation du projet
 
-Bienvenue dans la **Suite EdNum**, un projet développé avec passion par l'Animation Pédagogique Éducation Numérique (HEP-VS).
+Bienvenue dans la **Suite EdNum**, un projet développé par l'Animation Pédagogique Éducation Numérique (HEP-VS).
 
-Ce dépôt regroupe des **applications web interactives** (webapps) et des **outils pédagogiques**, entièrement gratuits, sans publicité, et créés spécifiquement pour accompagner l'enseignement de la science informatique à l'école primaire (en complément des manuels valaisans et vaudois [Décodage](https://decodage.edu-vd.ch/)).
+Ce dépôt regroupe des **applications web interactives** (webapps) et des **outils pédagogiques**, sans publicité, et créés spécifiquement pour accompagner l'enseignement de la science informatique à l'école primaire (en complément des manuels valaisans et vaudois [Décodage](https://decodage.edu-vd.ch/)).
 
-Notre mission est de fournir des outils numériques de qualité, autonomes et accessibles. La philosophie pédagogique repose sur des interfaces épurées, une progression adaptative, de la gamification et une utilisation garantie **100% hors-ligne** pour permettre aux élèves et aux enseignant·e·s de se concentrer sur l'apprentissage.
+Le but de ce projet est de fournir des outils numériques de qualité, autonomes et accessibles. La philosophie pédagogique repose sur des interfaces épurées, une progression adaptative, de la gamification et une utilisation garantie **100% hors-ligne** pour permettre aux élèves et aux enseignant·e·s de se concentrer sur l'apprentissage.
 
 ---
 
 ## 🍎 Pour les enseignant·e·s (Utilisation simple)
 
-Vous n'êtes pas un pro de l'informatique ? Aucun problème ! Ces outils sont conçus pour fonctionner de la manière la plus simple possible, directement dans le navigateur (Chrome, Firefox, Safari, Edge) de votre ordinateur de classe ou de votre tablette.
+Ces outils sont conçus pour fonctionner de la manière la plus simple possible, directement dans le navigateur (Chrome, Firefox, Safari, Edge) de votre ordinateur de classe ou de votre tablette.
 
 ### ✨ Les avantages pour votre classe
 *   **Zéro installation :** Pas de serveur, pas de logiciel lourd. Téléchargez le dossier, double-cliquez sur `index.html` et c'est parti !
@@ -91,55 +91,55 @@ Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automat
 
 ---
 
-## 💻 Pour les Geeks et les Contributeurs (Développeurs)
+## 💻 For Developers and Contributors
 
-Vous aimez le code propre, sans fioritures et extrêmement performant ? Ce projet est fait pour vous.
-Nous avons fait le choix radical du **Vanilla 100%**. Pas de React, pas de Tailwind, pas de npm install pour compiler la production. Le code source *est* le code de production.
+Do you like clean, lean, and extremely performant code? This project is for you.
+We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no npm install to compile production. The source code *is* the production code.
 
-### 🏗️ Architecture technique
-*   **Stack :** HTML / CSS (Variables natives) / JS (ES6).
-*   **Offline-First & PWA :** Un Service Worker robuste (`sw.js`) met en cache le dossier `assets/` (fichiers CSS, JS partagés, et polices locales) et tous les HTML.
-*   **Design System partagé :** Tout le Glassmorphism, le Dark Mode, et les composants UI (`.btn`, `.tabs`, `.card`) se trouvent dans `assets/css/shared.css`.
-*   **Gestionnaires globaux :**
-    *   Scores et Gamification : `assets/js/scores.js` (ScoreManager).
-    *   Sons (Web Audio API) : `assets/js/audio.js` (aucun fichier .mp3 externe).
-    *   Swipe Mobile : `assets/js/swipe.js`.
-    *   Toasts & Particules : `assets/js/toast.js` et `assets/js/confetti.js`.
-*   **Icônes Vectorielles (FontAwesome) :** Nous utilisons **FontAwesome 7 Pro (Solid & Duotone)**. Au lieu de charger un énorme fichier de police, un script Node.js (`meta/scripts/generate_fa_subset.js`) parse le HTML et génère dynamiquement `assets/js/fa-subset.js` (moins de 20ko !).
+### 🏗️ Technical Architecture
+*   **Stack:** HTML / CSS (Native Variables) / JS (ES6).
+*   **Offline-First & PWA:** A robust Service Worker (`sw.js`) caches the `assets/` folder (shared CSS, JS files, and local fonts) and all HTML files.
+*   **Shared Design System:** All Glassmorphism, Dark Mode, and UI components (`.btn`, `.tabs`, `.card`) are located in `assets/css/shared.css`.
+*   **Global Managers:**
+    *   Scores and Gamification: `assets/js/scores.js` (ScoreManager).
+    *   Sounds (Web Audio API): `assets/js/audio.js` (no external .mp3 files).
+    *   Mobile Swipe: `assets/js/swipe.js`.
+    *   Toasts & Particles: `assets/js/toast.js` and `assets/js/confetti.js`.
+*   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, a Node.js script (`meta/scripts/generate_fa_subset.js`) parses the HTML and dynamically generates `assets/js/fa-subset.js` (under 20kb!).
 
-### 🤝 Comment contribuer ?
-Les contributions (nouvelles apps, corrections de bugs, ou optimisations UI) sont très appréciées !
-Consultez le **[Guide de contribution](CONTRIBUTING.md)** pour tout savoir.
+### 🤝 How to contribute?
+Contributions (new apps, bug fixes, or UI optimizations) are highly appreciated!
+Check out the **[Contributing Guide](CONTRIBUTING.md)** to learn more.
 
-1.  **Forkez** le projet et clonez votre repo.
-2.  Créez une branche (`feature/nouvelle-app`).
-3.  Faites vos modifications en respectant les **Patterns du projet** (voir `meta/memory/code-patterns.md`).
-4.  Lancez les **tests E2E** Playwright avant de soumettre.
-5.  Ouvrez une **Pull Request** vers `main`.
+1.  **Fork** the project and clone your repo.
+2.  Create a branch (`feature/new-app`).
+3.  Make your changes while respecting the **Project Patterns** (see `meta/memory/code-patterns.md`).
+4.  Run the Playwright **E2E tests** before submitting.
+5.  Open a **Pull Request** to `main`.
 
-### 🧪 Tests End-to-End (E2E)
-Notre pipeline CI (`.github/workflows/e2e-tests.yml`) vérifie chaque PR avec Playwright.
-Pour lancer les tests localement :
+### 🧪 End-to-End (E2E) Tests
+Our CI pipeline (`.github/workflows/e2e-tests.yml`) checks every PR with Playwright.
+To run the tests locally:
 ```bash
-# 1. Installer les dépendances Python
+# 1. Install Python dependencies
 pip install -r meta/e2e_tests/requirements.txt && playwright install
 
-# 2. Démarrer un serveur local (en tâche de fond)
+# 2. Start a local server (in background)
 python -m http.server 8000 &
 
-# 3. Lancer les tests E2E
+# 3. Run E2E tests
 pytest meta/e2e_tests/
 
-# 4. Tuer le serveur une fois terminé
+# 4. Kill the server when finished
 kill $(lsof -t -i :8000) 2>/dev/null || true
 ```
 
-## 📜 Changelog et Documentation Interne
-Tout notre processus de développement (décisions d'architecture, logs) est archivé dans le dossier `meta/memory/`. Si vous modifiez l'architecture globale, pensez à mettre à jour `project-context.md` ou `event-log.md`.
+## 📜 Changelog and Internal Documentation
+Our entire development process (architecture decisions, logs) is archived in the `meta/memory/` folder. If you modify the global architecture, remember to update `project-context.md` or `event-log.md`.
 
 ## 📬 Contact / Support
-Pour toute question pédagogique ou technique, vous pouvez me contacter :
+For any pedagogical or technical questions, you can contact me:
 📧 **vivian.epiney [at] hepvs.ch**
 
-## ⚖️ Licence
-Ce projet est libre et open-source. Code 100% distribué sous la licence **[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html)**. Partagez, modifiez, mais gardez-le libre !
+## ⚖️ License
+This project is free and open-source. 100% of the code is distributed under the **[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html)** license. Share, modify, but keep it free!
