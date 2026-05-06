@@ -27,7 +27,7 @@ def test_binaire_codage_dec_to_bin(page: Page):
 
     # Check
     page.locator("#decBin-check-btn").click()
-    expect(page.locator("#decBin-feedback")).to_contain_text(re.compile("Parfait", re.IGNORECASE))
+    expect(page.locator("#decBin-feedback")).to_contain_text(re.compile("DÉVERROUILLÉ", re.IGNORECASE))
 
 def test_binaire_codage_bin_to_dec(page: Page):
     """Test the binary to decimal conversion feature."""
