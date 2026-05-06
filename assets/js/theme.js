@@ -18,20 +18,24 @@
 
     function setTheme(theme) {
         if (theme === 'dark') {
-            document.body.classList.add('dark');
+            document.body.classList.remove('high-contrast'); document.body.classList.add('dark');
         } else {
-            document.body.classList.remove('dark');
+            if (theme === 'high-contrast') { document.body.classList.remove('dark'); document.body.classList.add('high-contrast'); } else { document.body.classList.remove('dark', 'high-contrast'); }
         }
         localStorage.setItem('global_theme', theme);
 
         const iconSun = document.getElementById('icon-sun');
         const iconMoon= document.getElementById('icon-moon');
+        const iconEye = document.getElementById('icon-eye');
         if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
-        if (iconMoon) iconMoon.style.display = theme === 'dark' ? 'none'  : 'block';
+        if (iconMoon) iconMoon.style.display = theme === 'light' ? 'block' : 'none';
+        if (iconEye)  iconEye.style.display  = theme === 'high-contrast' ? 'block' : 'none';
 
         const themeToggleText = document.getElementById('themeToggleText');
         if (themeToggleText) {
-            themeToggleText.textContent = theme === 'dark' ? 'Mode Clair' : 'Mode Sombre';
+            if (theme === 'dark') themeToggleText.textContent = 'Mode Contraste';
+            else if (theme === 'high-contrast') themeToggleText.textContent = 'Mode Clair';
+            else themeToggleText.textContent = 'Mode Sombre';
         }
 
         if (typeof window.__onThemeChange === 'function') {
@@ -43,7 +47,13 @@
     setTheme(saved);
 
     window.toggleTheme = function () {
-        setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+        if (document.body.classList.contains('dark')) {
+            setTheme('high-contrast');
+        } else if (document.body.classList.contains('high-contrast')) {
+            setTheme('light');
+        } else {
+            setTheme('dark');
+        }
     };
 
 
