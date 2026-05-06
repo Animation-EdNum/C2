@@ -1,34 +1,34 @@
 # Project Context
 
 ## Overview & Mission
-La **Suite EdNum** (par Animation-EdNum, HEP-VS) est une collection d'applications web éducatives interactives de haute qualité, destinées aux élèves de l'école primaire en Suisse (Hautes Écoles Pédagogiques - HEP-VS). Ces outils complètent les manuels **Décodages** et sont alignés sur le Plan d'Études Romand (PER) pour les cycles 1-2H, 3-4H, 5-6H et 7-8H. L'objectif est d'enseigner des concepts informatiques tels que les algorithmes, le codage binaire, les réseaux et la logique.
+The **Suite EdNum** (by Animation-EdNum, HEP-VS) is a collection of high-quality, interactive educational web applications aimed at primary school students in Switzerland (Hautes Écoles Pédagogiques - HEP-VS). These tools complement the **Décodages** teaching materials and align with the Swiss "Plan d'Études Romand" (PER) for cycles 1-2H, 3-4H, 5-6H, and 7-8H. The goal is to teach computer science concepts such as algorithms, binary encoding, networks, and logic.
 
 ## Application Categories
-Les applications sont structurées en deux catégories principales :
-- **Student Tools (`webapps/`) :** Simulateur Blue-Bot, Pixel Studio, Mots secrets, Routage Réseau, Codage binaire, Bit de Parité, etc.
-- **Teacher Tools (`webapps/teacher/`) :** Générateur de Barème, Tirage au Sort. *(Anciennement dans `ressources/`)*
+The applications are structured into two main categories:
+- **Student Tools (`webapps/`):** Simulateur Blue-Bot, Pixel Studio, Mots secrets, Routage Réseau, Codage binaire, Bit de Parité, etc.
+- **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. *(Formerly located in `ressources/`)*
 
 ## Technical Philosophy & Architecture
-- **Offline-First / PWA (Critical) :** Le projet fonctionne comme une Progressive Web App (PWA) installable. Il n'y a aucune dépendance à Internet ; tous les éléments (polices, icônes FontAwesome, logique) sont locaux. Le Service Worker (`sw.js`) met en cache les dossiers `webapps/`, `webapps/teacher/`, `assets/css/`, `assets/js/`, et `assets/fonts/` pour garantir une fonctionnalité hors ligne totale.
-- **Vanilla Stack :** Pur HTML, CSS, et JS (Vanilla). Aucun framework (React, Vue, Tailwind) pour assurer la longévité, la maintenabilité et l'absence d'étape de build.
-- **Premium Aesthetics & A11y :** Design moderne "Glassmorphism", typographie soignée ("Outfit"), micro-animations fluides, conformité WCAG AA (support complet du clavier, ARIA).
-- **Structure de Dépôt :**
-  - **Dossier `standalone/` :** Intentionnellement supprimé. Ne pas essayer de créer de versions standalone.
-  - **Dossier `alpha/webapps/` :** Contient les applications expérimentales. Doivent y rester, rester cachées par défaut (recherche du mot-clé 'alpha' requise dans `index.html`) et ne pas être documentées dans le README.
+- **Offline-First / PWA (Critical):** The project functions as an installable Progressive Web App (PWA). There is zero internet dependency; all assets (fonts, FontAwesome icons, logic) are local. The Service Worker (`sw.js`) caches the `webapps/`, `webapps/teacher/`, `assets/css/`, `assets/js/`, and `assets/fonts/` folders to guarantee complete offline functionality.
+- **Vanilla Stack:** Pure HTML, CSS, and JS (Vanilla). No frameworks (React, Vue, Tailwind) to ensure longevity, maintainability, and no build-step overhead.
+- **Premium Aesthetics & A11y:** Modern "Glassmorphism" design, clean typography ("Outfit"), smooth micro-animations, and WCAG AA compliance (full keyboard support, ARIA semantics).
+- **Repository Structure:**
+  - **`standalone/` Folder:** Intentionally removed. Do not attempt to create standalone versions.
+  - **`alpha/webapps/` Folder:** Contains experimental applications. They must remain here, stay hidden by default (requiring the 'alpha' keyword search in `index.html`), and must not be documented in the README.
 
 ## Documentation & Assets
-- **Screenshots & README :** Le fichier `README.md` doit impérativement conserver les explications des différentes webapps (très utile pour les enseignants) et inclure une capture d'écran pour chaque application, ressource, et le portail `index.html` (Desktop et Mobile). Les captures sont stockées dans `meta/screenshots/`.
-- **Cartes d'Application (`index.html`) :**
-  - Les descriptions (`.card-desc`) doivent comporter une seule phrase (max 12 mots), expliquant objectivement l'outil (ex: "Un outil pour...").
-  - Tags (`.card-tags`) : Maximum 4 tags, réutilisés pour la cohérence, avec le domaine éducatif en dernier (ex: `#Maths`, `#Transversal`). Ne pas utiliser le tag `#Jeu`.
-  - Ressources externes : Placées après les ressources internes, stylées de manière neutre (`.card.external`, gris), avec une icône FontAwesome unique.
-  - Badges : Les badges secondaires/anciens cycles utilisent `.badge.grey`. Les ressources enseignants utilisent `.badge.prof`.
+- **Screenshots & README:** The `README.md` file must strictly preserve the explanations of the different webapps (as they are highly useful for teachers) and include a screenshot for every application, resource, and the `index.html` portal (Desktop and Mobile). Screenshots are stored in `meta/screenshots/`.
+- **Application Cards (`index.html`):**
+  - Descriptions (`.card-desc`) must be a single sentence (max 12 words), objectively explaining the tool (e.g., "An educational tool to...").
+  - Tags (`.card-tags`): Maximum of 4 tags, reused for consistency, with the educational domain placed last (e.g., `#Maths`, `#Transversal`). Do not use the `#Jeu` tag.
+  - External Resources: Placed after internal resources, styled neutrally (`.card.external`, grey elements), with a unique FontAwesome icon.
+  - Badges: Secondary/older cycle badges use `.badge.grey`. Teacher resources use `.badge.prof`.
 
 ## License, Attribution & Support
-- **Attribution (Critical) :** TOUS les fichiers HTML doivent utiliser un pied de page uniforme (`<footer class="no-print">`) contenant exactement : "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec ❤️ et quelques neurones artificiels" (le lien doit être uniquement sur "AP EdNum") et un lien vers le code source : "Code 100% libre (AGPL-3.0)".
-- **License :** Code source sous licence AGPL-3.0.
-- **Support :** Contact principal : vivian.epiney@hepvs.ch.
+- **Attribution (Critical):** ALL HTML files must use a uniform footer (`<footer class="no-print">`) containing exactly: "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec ❤️ et quelques neurones artificiels" (the link must be strictly on "AP EdNum") and a source code link: "Code 100% libre (AGPL-3.0)".
+- **License:** Source code licensed under AGPL-3.0.
+- **Support:** Primary contact: vivian.epiney@hepvs.ch.
 
 ## Current Sprint Focus
-- **Simulateur Blue-Bot :** Stable, fonctionnalités complètes.
-- **Ongoing :** Standardisation de la navigation mobile (abandon des barres inférieures au profit des onglets supérieurs `.tabs`), notifications toast unifiées, et audit visuel (border-radius, interactions).
+- **Simulateur Blue-Bot:** Stable, feature complete.
+- **Ongoing:** Standardization of mobile navigation (moving away from bottom tab bars to top `.tabs`), unified toast notifications, and visual UI audits (border-radius, interactions).
