@@ -32,10 +32,10 @@ function showToast(msg, type = 'success', duration = 3000) {
     // Determine icon
     let iconName = '';
     switch(toastType) {
-        case 'success': iconName = 'check-circle'; break;
-        case 'error':   iconName = 'alert-circle'; break;
-        case 'warn':    iconName = 'alert-triangle'; break;
-        case 'info':    iconName = 'info'; break;
+        case 'success': iconName = 'circle-check'; break;
+        case 'error':   iconName = 'circle-xmark'; break;
+        case 'warn':    iconName = 'triangle-exclamation'; break;
+        case 'info':    iconName = 'circle-info'; break;
         default:        iconName = toastType; // Use type as icon name if custom
     }
 
