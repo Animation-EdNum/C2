@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function applyUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
 
+    if (window.location.search.length > 0) {
+        window.isSharedApp = true;
+    }
+
     // 1. Interface & Navigation Hiding
     if (urlParams.get('only') === '1') {
         const tabs = document.querySelector('.tabs');
@@ -27,7 +31,12 @@ function applyUrlParameters() {
 
     if (urlParams.get('noHome') === '1') {
         const homeBtn = document.querySelector('a[href*="index.html"]');
-        if (homeBtn) homeBtn.style.display = 'none';
+        if (homeBtn) {
+            homeBtn.removeAttribute('href');
+            homeBtn.removeAttribute('title');
+            homeBtn.removeAttribute('aria-label');
+            homeBtn.classList.add('unlinked');
+        }
     }
 
     if (urlParams.get('noSettings') === '1') {
@@ -130,18 +139,23 @@ function applyUrlParameters() {
 }
 
 function initShareModal() {
-    // Check if share button exists, if not, create it in action-buttons
+    if (window.isSharedApp) {
+        return; // Hide on Shared Apps
+    }
+
+    // Check if share button exists, if not, create it in settings-dropdown-content
     let shareBtn = document.getElementById('btn-share');
     if (!shareBtn) {
-        const actionBtns = document.querySelector('.action-buttons');
-        if (actionBtns) {
+        const settingsDropdown = document.querySelector('.settings-dropdown-content');
+        if (settingsDropdown) {
             shareBtn = document.createElement('button');
-            shareBtn.className = 'icon-action-btn';
+            shareBtn.className = 'menu-item-btn';
             shareBtn.id = 'btn-share';
             shareBtn.title = 'Partager';
             shareBtn.setAttribute('aria-label', 'Partager');
-            shareBtn.innerHTML = '<i data-fa="share-nodes"></i>';
-            actionBtns.insertBefore(shareBtn, actionBtns.firstChild);
+            shareBtn.innerHTML = '<i data-fa="share-nodes"></i> Partager l\'activité';
+            // Insert at the top of the settings menu
+            settingsDropdown.insertBefore(shareBtn, settingsDropdown.firstChild);
             // Must create icon after insertion
             if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
         } else {
@@ -164,13 +178,20 @@ function initShareModal() {
                 <div class="share-url-container">
                     <input type="text" id="share-url-input" readonly>
                     <button class="btn btn-primary" id="btn-copy-share"><i data-fa="clipboard"></i> Copier</button>
+                    <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> Afficher le QR Code</button>
+                </div>
+                <div id="share-qr-container" style="display: none; text-align: center; margin-top: 15px;">
+                    <canvas id="share-qr-canvas"></canvas>
                 </div>
             </div>
 
             <div class="share-advanced">
-                <button id="btn-toggle-advanced" class="btn-advanced-toggle">
-                    Options Avancées <i data-fa="chevron-down"></i>
-                </button>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button id="btn-toggle-advanced" class="btn-advanced-toggle">
+                        Options Avancées <i data-fa="chevron-down"></i>
+                    </button>
+                    <button id="btn-reset-share" class="btn btn-small" style="display: none;"><i data-fa="rotate-left"></i> Réinitialiser</button>
+                </div>
 
                 <div id="share-advanced-options" class="advanced-options-content" style="display: none;">
                     <div class="options-grid">
@@ -204,31 +225,31 @@ function initShareModal() {
                                 <input type="checkbox" id="opt-lockDiff">
                                 <span>Verrouiller le niveau actuel</span>
                             </label>
-                            <label class="share-checkbox">
+                            <label class="share-checkbox" id="lbl-lockMat">
                                 <input type="checkbox" id="opt-lockMat">
                                 <span>Verrouiller le tapis</span>
                             </label>
-                            <label class="share-checkbox">
+                            <label class="share-checkbox" id="lbl-lockSkin">
                                 <input type="checkbox" id="opt-lockSkin">
                                 <span>Verrouiller le skin</span>
                             </label>
-                            <label class="share-checkbox">
+                            <label class="share-checkbox" id="lbl-lockSpeed">
                                 <input type="checkbox" id="opt-lockSpeed">
                                 <span>Verrouiller la vitesse</span>
                             </label>
                         </div>
 
-                        <div class="options-column">
+                        <div class="options-column" id="col-behavior">
                             <h3>Comportement</h3>
-                            <label class="share-checkbox">
+                            <label class="share-checkbox" id="lbl-noCmdToggle">
                                 <input type="checkbox" id="opt-noCmdToggle">
                                 <span>Masquer commandes Blue-Bot</span>
                             </label>
-                            <label class="share-checkbox">
+                            <label class="share-checkbox" id="lbl-noDrag">
                                 <input type="checkbox" id="opt-noDrag">
                                 <span>Désactiver le glisser-déposer</span>
                             </label>
-                            <label class="share-checkbox">
+                            <label class="share-checkbox" id="lbl-noRandom">
                                 <input type="checkbox" id="opt-noRandom">
                                 <span>Masquer les boutons hasard</span>
                             </label>
@@ -243,12 +264,32 @@ function initShareModal() {
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
 
+    // Context-Aware Options: Hide options for features not in the current app
+    if (!document.getElementById('btn-open-mats')) document.getElementById('lbl-lockMat').style.display = 'none';
+    if (!document.getElementById('btn-open-skins')) document.getElementById('lbl-lockSkin').style.display = 'none';
+    if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) document.getElementById('lbl-lockSpeed').style.display = 'none';
+    if (!document.getElementById('btn-toggle-cmds')) document.getElementById('lbl-noCmdToggle').style.display = 'none';
+    if (!document.querySelector('#btn-random, .btn-random')) document.getElementById('lbl-noRandom').style.display = 'none';
+    if (!document.querySelector('[draggable="true"], .draggable') && typeof window.noDragParam === 'undefined') document.getElementById('lbl-noDrag').style.display = 'none';
+
+    // Hide behavior column if all its children are hidden
+    const behaviorLabels = document.querySelectorAll('#col-behavior .share-checkbox');
+    let anyBehaviorVisible = false;
+    behaviorLabels.forEach(lbl => {
+        if (lbl.style.display !== 'none') anyBehaviorVisible = true;
+    });
+    if (!anyBehaviorVisible) document.getElementById('col-behavior').style.display = 'none';
+
     // Event Listeners
     const modalOverlay = document.getElementById('share-modal-overlay');
     const btnClose = document.getElementById('btn-close-share');
     const btnCopy = document.getElementById('btn-copy-share');
+    const btnQrShare = document.getElementById('btn-qr-share');
+    const qrContainer = document.getElementById('share-qr-container');
+    const qrCanvas = document.getElementById('share-qr-canvas');
     const urlInput = document.getElementById('share-url-input');
     const btnToggleAdvanced = document.getElementById('btn-toggle-advanced');
+    const btnResetShare = document.getElementById('btn-reset-share');
     const advancedOptions = document.getElementById('share-advanced-options');
 
     const checkboxes = document.querySelectorAll('.share-checkbox input');
@@ -315,8 +356,14 @@ function initShareModal() {
     btnToggleAdvanced.addEventListener('click', () => {
         const isVisible = advancedOptions.style.display === 'block';
         advancedOptions.style.display = isVisible ? 'none' : 'block';
+        btnResetShare.style.display = isVisible ? 'none' : 'block';
         btnToggleAdvanced.innerHTML = `Options Avancées <i data-fa="chevron-${isVisible ? 'down' : 'up'}"></i>`;
         if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+    });
+
+    btnResetShare.addEventListener('click', () => {
+        checkboxes.forEach(cb => cb.checked = false);
+        updateShareUrl();
     });
 
     checkboxes.forEach(cb => {
@@ -334,4 +381,55 @@ function initShareModal() {
             }
         });
     });
+
+    btnQrShare.addEventListener('click', () => {
+        if (qrContainer.style.display === 'block') {
+            qrContainer.style.display = 'none';
+            return;
+        }
+
+        // Dynamically load QRious if not present
+        if (typeof QRious === 'undefined') {
+            const script = document.createElement('script');
+            script.src = (window.location.pathname.includes('alpha/') ? '../' : '') + '../assets/js/vendor/qrious.min.js';
+            // Adjust path based on relative location
+            let basePath = '../assets/js/vendor/qrious.min.js';
+            if (window.location.pathname.includes('/alpha/webapps/')) {
+                basePath = '../../assets/js/vendor/qrious.min.js';
+            } else if (!window.location.pathname.includes('webapps/')) {
+                basePath = 'assets/js/vendor/qrious.min.js';
+            }
+            script.src = basePath;
+            script.onload = () => {
+                generateQrCode();
+            };
+            document.body.appendChild(script);
+        } else {
+            generateQrCode();
+        }
+    });
+
+    function generateQrCode() {
+        qrContainer.style.display = 'block';
+        new QRious({
+            element: qrCanvas,
+            value: urlInput.value,
+            size: 200
+        });
+    }
+
+    // Re-generate QR if URL changes and QR is visible
+    urlInput.addEventListener('change', () => {
+        if (qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
+            generateQrCode();
+        }
+    });
+    // Or simpler, just hook into updateShareUrl, but it's simpler to do it here
+    const originalUpdateShareUrl = updateShareUrl;
+    updateShareUrl = function() {
+        originalUpdateShareUrl();
+        if (qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
+            generateQrCode();
+        }
+    }
 }
