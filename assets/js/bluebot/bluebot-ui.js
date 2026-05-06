@@ -119,11 +119,85 @@ let commandsVisible = true;
         const gridRowsSlider = document.getElementById('gridRowsSlider');
         const gridSizeValue = document.getElementById('gridSizeValue');
 
-        function initApplication() {
+
+window.getAppShareState = function() {
+    let diff = 'easy';
+    if (activeTab === 'chal') diff = currentDifficulty;
+    if (activeTab === 'read') diff = readCurrentDifficulty;
+    if (activeTab === 'draw') diff = drawCurrentDifficulty;
+
+    return {
+        tab: activeTab,
+        diff: diff,
+        mat: activeMat,
+        skin: activeSkin,
+        speed: (typeof SPEED_MULTIPLIER !== 'undefined' && SPEED_MULTIPLIER === 2) ? '2' : '1'
+    };
+};
+
+function applyUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Tab
+    const tabParam = params.get('tab');
+    if (tabParam && ['simulator', 'chal', 'read', 'draw'].includes(tabParam)) {
+        const tabBtn = document.getElementById(`tab-${tabParam}`);
+        if (tabBtn) tabBtn.click();
+    }
+
+    // Difficulty
+    const diffParam = params.get('diff');
+    if (diffParam && ['easy', 'medium', 'hard', 'extreme'].includes(diffParam)) {
+        // Ensure difficulty is set depending on active tab
+        setTimeout(() => {
+            if (activeTab === 'chal' && document.getElementById(`diff-${diffParam}`)) {
+                document.getElementById(`diff-${diffParam}`).click();
+            } else if (activeTab === 'read' && document.getElementById(`read-diff-${diffParam}`)) {
+                document.getElementById(`read-diff-${diffParam}`).click();
+            } else if (activeTab === 'draw' && document.getElementById(`draw-diff-${diffParam}`)) {
+                document.getElementById(`draw-diff-${diffParam}`).click();
+            }
+        }, 100);
+    }
+
+    // Mat
+    const matParam = params.get('mat');
+    if (matParam && MAT_CONFIG[matParam]) {
+        activeMat = matParam;
+    }
+
+    // Skin
+    const skinParam = params.get('skin');
+    if (skinParam && SKIN_CONFIG[skinParam]) {
+        activeSkin = skinParam;
+    }
+
+    // Speed
+    const speedParam = params.get('speed');
+    if (speedParam === '2') {
+        SPEED_MULTIPLIER = 2;
+        document.getElementById('icon-speed-1x').style.display = 'none';
+        document.getElementById('icon-speed-2x').style.display = '';
+    }
+
+    // specific flags
+    if (params.get('noCmdToggle') === '1') {
+        const toggleCmdBtn = document.getElementById('toggleCmdsBtn');
+        if (toggleCmdBtn) toggleCmdBtn.style.display = 'none';
+        // force hide
+        const pnl = document.getElementById('control-panel');
+        if (pnl && !pnl.classList.contains('hidden-panel')) {
+            pnl.classList.add('hidden-panel');
+        }
+    }
+}
+
+function initApplication() {
             // Restore active state
             activeMat = localStorage.getItem('bb_active_mat') || 'none';
             activeSkin = localStorage.getItem('bb_active_skin') || 'default';
             if (!MAT_CONFIG[activeMat]) activeMat = 'none';
+            applyUrlParams();
             generateMatContent(activeMat);
 
             // Initial button update
@@ -224,6 +298,7 @@ let commandsVisible = true;
 
         document.getElementById('sim-grid').addEventListener('dragover', (e) => { e.preventDefault(); });
         document.getElementById('sim-grid').addEventListener('drop', (e) => {
+            if (new URLSearchParams(window.location.search).get('noDrag') === '1') return;
             e.preventDefault();
             const cell = e.target.closest('.bot-cell');
             if (!cell || simState.running) return;
@@ -338,7 +413,8 @@ let commandsVisible = true;
                 simState.obstacles = [];
                 simState.targetRow = null;
                 simState.targetCol = null;
-                generateMatContent(activeMat);
+                applyUrlParams();
+            generateMatContent(activeMat);
                 buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
                 randomizeSimulatorPosition();
                 if (activeTab === 'challenge') newChallenge();

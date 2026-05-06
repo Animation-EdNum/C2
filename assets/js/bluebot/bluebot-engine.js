@@ -1635,7 +1635,9 @@ let simState = {
             }
 
             if (overlay && containerId === 'sim-grid') {
-                overlay.setAttribute('draggable', 'true');
+                if (new URLSearchParams(window.location.search).get('noDrag') !== '1') {
+                    overlay.setAttribute('draggable', 'true');
+                }
                 overlay.addEventListener('dragstart', (e) => {
                     if (simState.running) {
                         e.preventDefault();
@@ -1774,7 +1776,9 @@ let simState = {
             }
 
             if (overlay && containerId === 'sim-grid') {
-                overlay.setAttribute('draggable', 'true');
+                if (new URLSearchParams(window.location.search).get('noDrag') !== '1') {
+                    overlay.setAttribute('draggable', 'true');
+                }
                 overlay.ondragstart = (e) => {
                     if (simState.running) {
                         e.preventDefault();
