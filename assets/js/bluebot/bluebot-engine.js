@@ -1573,7 +1573,7 @@ let simState = {
                     if (isObstacle) {
                         cell.classList.add('obstacle');
                         const obs = SKIN_CONFIG[activeSkin].obstacle;
-                        if (obs.includes('<svg')) {
+                        if (obs.includes('<svg') || obs.includes('<i')) {
                             cell.innerHTML = obs;
                         } else {
                             cell.dataset.obstacle = obs;
@@ -1595,6 +1595,9 @@ let simState = {
                     row.appendChild(cell);
                 }
                 grid.appendChild(row);
+            }
+            if (window.fa && typeof window.fa.createIcons === 'function') {
+                window.fa.createIcons();
             }
         }
 
