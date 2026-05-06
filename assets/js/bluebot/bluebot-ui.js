@@ -343,6 +343,7 @@ let commandsVisible = true;
                 randomizeSimulatorPosition();
                 if (activeTab === 'challenge') newChallenge();
                 else if (activeTab === 'read') newReadChallenge();
+                else if (activeTab === 'draw') newDrawChallenge();
             }, 200);
         }
 
