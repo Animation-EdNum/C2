@@ -1,49 +1,43 @@
-# User Preferences
+# User Preferences & Testing Guidelines
 
-## Design & UI
-- **Aesthetic First:** Highly values "premium" and "modern" designs. Specifically fond of Glassmorphism and rich HSL color palettes.
-- **Micro-Animations:** Prefers interfaces that feel "alive" with hover effects, transitions, and interactive feedback (e.g., success confettis, error shakes).
-- **Typography:** Strong preference for modern sans-serif fonts like **Outfit** for headers and **Inter** for body text.
+## Aesthetics & Design Philosophy
+- **Visual Style:** Strong preference for the "Glassmorphism" design (semi-transparent backgrounds, blur effects), providing a "Premium", modern aesthetic similar to recent operating systems.
+- **Micro-Animations:** The interface must feel "alive". Prioritize hover effects, elastic transitions (spring animations), and playful interactive feedback (confetti on success, shaking on error).
+- **Typography:** Strict use of modern sans-serif fonts (e.g., **Outfit** for headings, **Inter** for body text).
+- **Text Formatting (UI):** Always use the true typographic ellipsis character (`…`) in HTML text intended for users, rather than three consecutive dots (`...`). However, take care to maintain the correct syntax (`...`) for the JavaScript spread operator.
 
-## Technical Implementation
-- **Vanilla over Frameworks:** Strong preference for pure HTML/CSS/JS to ensure offline reliability and zero build-step overhead.
-- **Offline-First:** All solutions must work without an internet connection. No external CDNs (scripts, styles, or icons).
-- **Accessibility:** High standard for WCAG AA compliance and semantic HTML.
-- **Conciseness:** Prefers code that is clean, well-commented, but not overly verbose.
+## Code Style & Communication
+- **Code:** Always use curly braces `{}` for control structures (if, else), even for single-line statements or nested conditions, to maximize readability. Avoid overly verbose code but include clear comments.
+- **Communication with the Agent:**
+  - **Conciseness:** Responses should be brief with actionable summaries. Prefer clear Markdown (GitHub style).
+  - **Proactive Execution:** The agent is expected to execute commands and modifications directly as soon as the task is clear, without systematically waiting for intermediate validation.
 
-## Communication
-- **Concise Responses:** Values brief, actionable summaries.
-- **Proactive Execution:** Expects the agent to run commands and make changes directly when the task is clear.
-- **Markdown Formatting:** Prefers clear GitHub-style markdown.
+## E2E Testing Guidelines (Playwright & Local)
+### Local E2E Test Execution
+To run the E2E test suite locally, the following steps must be strictly followed:
+1. Install dependencies: `pip install -r meta/e2e_tests/requirements.txt && playwright install`
+2. Start a local HTTP server (in the background): `python -m http.server 8000 &`
+3. Wait for the server to initialize (e.g., `sleep 5`) to avoid connection race conditions.
+4. Run the suite: `pytest meta/e2e_tests/`
+5. Cleanly kill the process: `kill $(lsof -t -i :8000) 2>/dev/null || true`
 
-## Code Style & Formatting
-- **Control Structures:** Always use curly braces `{}` for control structures (like `if` and `else`), even for single-line statements or nested conditions, to ensure readability.
-- **Typography:** Prefer using the proper typographic ellipsis character (`…`) instead of three consecutive periods (`...`) for user-facing HTML text, taking care to preserve JavaScript spread syntax.
+### Frontend Visual Verification (Screenshots)
+Any modification affecting the user-facing UI MUST be visually verified via the integrated Playwright tools (`frontend_verification_instructions` and `frontend_verification_complete`).
+- **Prerequisites:** The local dev server must be running before starting a Playwright script. Build URIs using `os.path.abspath('path/to/file.html'); page.goto(f'file://{filepath}')` if a server is not used.
+- **Implicit Waits:** After navigating, explicitly **wait** (e.g., `time.sleep(4)` or network idle) to allow client assets (FontAwesome icons, shared CSS styles, local fonts) and entrance animations to fully load.
+- **Render Animations:** When generating automated screenshots with Playwright, inject this CSS to force a complete display without transitions: `* { animation: none !important; transition: none !important; opacity: 1 !important; }`.
+- **Viewport Settings:**
+  - **Mobile:** To simulate mobile and test touch interactions (e.g., swipes), set `has_touch=True` and a fixed viewport (e.g., `viewport={'width': 375, 'height': 812}`). NEVER use `full_page=True` for mobile screenshots, as it generates unrealistically long images.
+  - **Fixed Elements:** Avoid `full_page=True` if elements use `position: fixed`, as it misplaces them at the bottom of the extended page.
+  - **Global Screenshots:** Use `device_scale_factor=1` (light mode) to prevent overly large image files.
+- **Advanced Playwright Interactions:**
+  - **Dimensions:** Before checking the bounding box of an element (e.g., via `.bounding_box()`) undergoing a CSS transition, always wait for the transition to end.
+  - **Visibility:** Always scroll the element into view (`element.scroll_into_view_if_needed()`) before taking a screenshot.
+  - **Games & Randomization:** To test gamification systems without randomness, directly inject the desired states via `localStorage` using `page.evaluate()`.
+  - **Class Assertions:** Use regular expressions to verify specific classes within long lists: `expect(element).to_have_class(re.compile(r'class_name'))`.
+  - **Security Verification (XSS):** To verify that XSS protections work, manually inject the malicious payload into the state variables (via `page.evaluate()`), trigger a render, and certify that the payload is displayed without executing.
+  - **"In Use" State:** When creating screenshots for documentation, Playwright must simulate a real user interaction (filling a field, clicking) rather than capturing the fully empty application.
 
-## UI/UX Requirements
-- **Touch Targets:** Ensure buttons and interactive elements maintain a minimum hit area of 44x44px for touch accessibility.
-- **Assets:** Use local assets exclusively. Do not rely on external CDNs for fonts or icons (use FontAwesome 7 Pro locally).
-- **Mobile Navigation:** Primary navigation tabs should be presented as top `.tabs` elements. Modals should be styled as side-panels.
-- **Frontend Verification:** User-visible modifications to the frontend UI must be visually verified by calling `frontend_verification_instructions`, capturing a local Playwright screenshot, and passing the image path to `frontend_verification_complete`.
-
-## Verification & Environment Guidelines
-- **Playwright Testing:**
-  - When verifying exact DOM element dimensions or coordinates (e.g., via `.bounding_box()`) on elements with CSS transitions, explicitly wait for the transition duration to complete before measuring.
-  - When verifying specific UI elements located off-screen, explicitly scroll the element into view (e.g., `element.scroll_into_view_if_needed()`) before capturing screenshots.
-  - Avoid using `full_page=True` for screenshots of dynamically positioned `position: fixed` elements, as it expands the captured viewport to the total scroll height, visually misplacing elements anchored to the bottom.
-  - Bypass randomness in gamification elements by directly injecting state into `localStorage` via `page.evaluate()`.
-  - When visually verifying local HTML files without a running dev server, construct an absolute file URI using `os.path.abspath()` (e.g., `filepath = os.path.abspath('path/to/file.html'); page.goto(f'file://{filepath}')`).
-  - To test mobile touch gestures like swipes, configure the browser context with mobile emulation by passing `has_touch=True` and a mobile viewport (e.g., `viewport={'width': 375, 'height': 812}`).
-  - When verifying XSS mitigations, inject malicious payloads (e.g., `<img src=x onerror=window.xssTriggered=true>`) directly into state variables via `page.evaluate()`, trigger a re-render, and assert the payload is safely displayed.
-  - FontAwesome icons (`<i data-fa="...">`) are dynamically replaced by SVG elements via `fa.createIcons()`. Do not cache DOM element references on script load.
-  - When verifying if an element has a specific class within a list of classes, use `expect(element).to_have_class(re.compile(r'class_name'))` rather than a lambda function.
-- **Bash & Git Constraints:**
-  - If git operations like `git revert` or `git diff` on older commits fail with bad revision errors, run `git fetch --unshallow` to retrieve the full history before proceeding.
-  - Tool outputs for commands like `cat` or `grep` are typically truncated. To read exact structures in large files, use Python scripts to slice and print specifically bounded sections.
-  - Ensure that any temporary helper scripts created during development are completely removed from the filesystem and unstaged before creating a final commit.
-
-- **Frontend Verification Details:** When verifying frontend changes visually using the `frontend_verification_instructions` tool, first start the local development server, then write a temporary Playwright Python script (e.g., in `/home/jules/verification/`) to navigate to the page, wait for the required selectors, take a screenshot, and pass the screenshot's file path to the `frontend_verification_complete` tool.
-- **Playwright Screenshot Context:** When generating Playwright screenshots of webapps for documentation or previews, simulate user interactions (like filling inputs or clicking buttons) to capture the tool in an 'in use' state rather than just its empty initial state.
-- **Playwright Resizing Restrictions:** When generating full-page Playwright screenshots, first initialize a small viewport height to allow content to overflow, measure the true content height (via scrollHeight), and dynamically resize to match. However, for realistic mobile device screenshots, do NOT dynamically resize or use `full_page=True`; capture only a standard fixed viewport (e.g., 375x812) to avoid unrealistically long images.
-- **Playwright Automated Screenshots:** When generating automated visual screenshots of the web applications (e.g., using Playwright), inject CSS to disable animations, transitions, and force opacity to 1 (`* { animation: none !important; transition: none !important; opacity: 1 !important; }`) to prevent partial rendering or faded 'luminosité' effects from entrance animations. Hide footers if the user requests capturing just the 'full card'.
-- **Local Testing:** To run the E2E test suite locally, ensure Playwright dependencies are installed via `pip install -r meta/e2e_tests/requirements.txt && playwright install`, start a local HTTP server (`python -m http.server 8000 &`), wait a few seconds (e.g., `sleep 2`) to ensure the server is up and avoid race conditions, then execute `pytest meta/e2e_tests/`. Afterward, clean up by killing the server process (e.g., `kill $(lsof -t -i :8000) 2>/dev/null || true`) to prevent port conflicts.
+## Cleanup & Git
+- Before the final commit, all temporary Python scripts used for Playwright or tests must be completely deleted from the disk and index (`git rm --cached`).
+- If Git commands behave poorly (revision errors), force `git fetch --unshallow` to retrieve the full history.
