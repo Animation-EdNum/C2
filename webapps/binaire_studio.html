@@ -117,7 +117,7 @@ body {
 
         .container {
             width: 100%;
-            max-width: var(--container-max-width, 1400px);
+            max-width: var(--container-max-width, 1000px);
             margin: 0 auto;
             background: rgba(248, 250, 252, 0.85);
             padding: 24px;
@@ -208,8 +208,8 @@ body {
         }
 
         .grid-cell {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border: 1px solid #e2e8f0;
             background: var(--cell-off);
             cursor: crosshair;
@@ -243,7 +243,7 @@ body {
         }
 
         .row-label {
-            height: 36px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: flex-end;
@@ -486,14 +486,14 @@ body {
             align-items: center;
         }
 
-        @media (max-width: 1400px) {
+        @media (max-width: 1000px) {
             .grid-cell {
-                width: 28px;
-                height: 28px;
+                width: 36px;
+                height: 36px;
             }
 
             .row-label {
-                height: 28px;
+                height: 36px;
                 font-size: 14px;
             }
 
@@ -540,13 +540,13 @@ body {
             }
 
             .grid-cell {
-                width: 40px;
-                height: 40px;
+                width: 52px;
+                height: 52px;
             }
 
             .row-label {
-                height: 40px;
-                font-size: 16px;
+                height: 52px;
+                font-size: 18px;
             }
 
             .gallery-item {
@@ -611,7 +611,11 @@ body {
             <div class="tabs">
                 <button class="tab-btn active" id="tab-decode"><i data-fa="bullseye"></i> Décoder</button>
                 <button class="tab-btn" id="tab-encode"><i data-fa="pencil"></i> Encoder</button>
-                <button class="tab-btn" id="tab-editor"><i data-fa="palette"></i> Éditeur</button>
+                <button class="tab-btn" id="tab-editor" disabled><i data-fa="lock"></i> Éditeur</button>
+            </div>
+
+            <div id="editor-lock-message" style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                <i data-fa="lock"></i> L'éditeur sera débloqué après 3 décodages et 3 encodages réussis (<span id="unlock-progress">0/3</span>).
             </div>
 
             <!-- ==================== MODE DÉCODER ==================== -->
@@ -729,6 +733,31 @@ body {
         let editorSize = 5;
 
         let usedIndices = [];
+
+        let decodeSuccessCount = 0;
+        let encodeSuccessCount = 0;
+        let editorUnlocked = false;
+
+        function checkUnlockEditor() {
+            if (editorUnlocked) return;
+
+            const minCount = Math.min(decodeSuccessCount, encodeSuccessCount);
+            const progress = document.getElementById('unlock-progress');
+            if (progress) {
+                progress.textContent = `${minCount}/3`;
+            }
+
+            if (decodeSuccessCount >= 3 && encodeSuccessCount >= 3) {
+                editorUnlocked = true;
+                const editorTab = document.getElementById('tab-editor');
+                editorTab.disabled = false;
+                editorTab.innerHTML = '<i data-fa="palette"></i> Éditeur';
+                const lockMsg = document.getElementById('editor-lock-message');
+                if (lockMsg) lockMsg.style.display = 'none';
+                showToast('Éditeur débloqué !', 'info', 4000);
+                if (window.fa) window.fa.createIcons();
+            }
+        }
 
         // ==========================================
         // AUDIO (Web Audio API)
@@ -881,6 +910,8 @@ body {
                 playSound('success');
                 addToGallery(currentPattern.data, currentPattern.name);
                 showToast('Bravo ! « ' + currentPattern.name + ' » décodé !', 'success');
+                decodeSuccessCount++;
+                checkUnlockEditor();
 
                 // Après 1.2 secondes, nouvelle image automatiquement
                 setTimeout(() => {
@@ -966,6 +997,8 @@ body {
                         playSound('success');
                         addToGallery(currentPattern.data, currentPattern.name);
                         showToast('Bravo ! « ' + currentPattern.name + ' » encodé !', 'success');
+                        encodeSuccessCount++;
+                        checkUnlockEditor();
                         setTimeout(() => {
                             initEncode();
                         }, 1200);
