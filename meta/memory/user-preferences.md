@@ -9,16 +9,18 @@
 ## Code Style & Communication
 - **Code:** Always use curly braces `{}` for control structures (if, else), even for single-line statements or nested conditions, to maximize readability. Avoid overly verbose code but include clear comments.
 - **Communication with the Agent:**
-  - **Conciseness:** Responses should be brief with actionable summaries. Prefer clear Markdown (GitHub style).
-  - **Proactive Execution:** The agent is expected to execute commands and modifications directly as soon as the task is clear, without systematically waiting for intermediate validation.
+  - **Conciseness:** Responses should be brief, actionable summaries in French using GitHub-style Markdown.
+  - **Proactive Execution:** The user prefers proactive execution of tasks without waiting for intermediate validation. The agent is expected to execute commands and modifications directly.
+  - **Execution Plans:** When creating an execution plan, ensure verification steps use concrete tool calls (e.g., `read_file` or `run_in_bash_session`) rather than vague summaries. Always include a distinct step to run all relevant tests (such as the E2E suite) immediately before the pre-commit step.
+  - **Pre-commit Phrasing:** When creating an execution plan, the description for the pre-commit step must exactly match the required phrasing: 'Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.'
 
 ## E2E Testing Guidelines (Playwright & Local)
 ### Local E2E Test Execution
 To run the E2E test suite locally, the following steps must be strictly followed:
-1. Install dependencies: `pip install -r meta/e2e_tests/requirements.txt && playwright install`
-2. Start a local HTTP server (in the background): `python -m http.server 8000 &`
+1. Ensure dependencies are installed (e.g., via `python3 -m pip install playwright pytest-playwright` and `playwright install`).
+2. Start a local HTTP server (in the background): `python3 -m http.server 8000 &`
 3. Wait for the server to initialize (e.g., `sleep 5`) to avoid connection race conditions.
-4. Run the suite: `pytest meta/e2e_tests/`
+4. Run the suite: `python3 -m pytest meta/e2e_tests/`
 5. Cleanly kill the process: `kill $(lsof -t -i :8000) 2>/dev/null || true`
 
 ### Frontend Visual Verification (Screenshots)
