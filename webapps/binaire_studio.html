@@ -565,6 +565,12 @@ body {
                 margin-bottom: 0;
             }
         }
+
+        .locked-tab {
+            opacity: 0.5;
+            filter: grayscale(100%);
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -611,11 +617,11 @@ body {
             <div class="tabs">
                 <button class="tab-btn active" id="tab-decode"><i data-fa="bullseye"></i> Décoder</button>
                 <button class="tab-btn" id="tab-encode"><i data-fa="pencil"></i> Encoder</button>
-                <button class="tab-btn" id="tab-editor" disabled><i data-fa="lock"></i> Éditeur</button>
+                <button class="tab-btn locked-tab" id="tab-editor" disabled><i data-fa="palette"></i> Éditeur</button>
             </div>
 
             <div id="editor-lock-message" style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
-                <i data-fa="lock"></i> L'éditeur sera débloqué après 3 décodages et 3 encodages réussis (<span id="unlock-progress">0/3</span>).
+                <i data-fa="lock"></i> L'éditeur sera débloqué après 3 décodages (<span id="unlock-progress-decode">0/3</span>) et 3 encodages (<span id="unlock-progress-encode">0/3</span>) réussis.
             </div>
 
             <!-- ==================== MODE DÉCODER ==================== -->
@@ -741,17 +747,21 @@ body {
         function checkUnlockEditor() {
             if (editorUnlocked) return;
 
-            const minCount = Math.min(decodeSuccessCount, encodeSuccessCount);
-            const progress = document.getElementById('unlock-progress');
-            if (progress) {
-                progress.textContent = `${minCount}/3`;
+            const decodeProgress = document.getElementById('unlock-progress-decode');
+            const encodeProgress = document.getElementById('unlock-progress-encode');
+
+            if (decodeProgress) {
+                decodeProgress.textContent = `${Math.min(decodeSuccessCount, 3)}/3`;
+            }
+            if (encodeProgress) {
+                encodeProgress.textContent = `${Math.min(encodeSuccessCount, 3)}/3`;
             }
 
             if (decodeSuccessCount >= 3 && encodeSuccessCount >= 3) {
                 editorUnlocked = true;
                 const editorTab = document.getElementById('tab-editor');
                 editorTab.disabled = false;
-                editorTab.innerHTML = '<i data-fa="palette"></i> Éditeur';
+                editorTab.classList.remove('locked-tab');
                 const lockMsg = document.getElementById('editor-lock-message');
                 if (lockMsg) lockMsg.style.display = 'none';
                 showToast('Éditeur débloqué !', 'info', 4000);
