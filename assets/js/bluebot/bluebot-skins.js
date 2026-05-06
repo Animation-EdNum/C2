@@ -113,23 +113,23 @@
         };
 
         const SKIN_CONFIG = {
-            'default': { name: 'Blue-Bot', obstacle: '🧱', target: '⭐', desc: 'Le robot que tu connais bien.' },
-            'beebot': { name: 'Bee-Bot', obstacle: '🌳', target: '🌻', desc: 'Utilise "Reculer" au moins une fois pour atteindre le trésor.' },
-            'thymio': { name: 'Thymio', obstacle: '🚧', target: '✏️', desc: 'Réussis un décodage (moyen) du premier coup.' },
-            'space': { name: 'Rocket', obstacle: '☄️', target: '💎', desc: 'Gagne un pilotage moyen pour débloquer.' },
-            'pirate': { name: 'Vaisseau pirate', obstacle: '🐙', target: '🪙', desc: 'Atteint le trésor du premier coup en utilisant plus de 10 instructions.' },
-            'f1': { name: 'Formule 1', obstacle: '🛞', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
-            'unicorn': { name: 'Licorne magique', obstacle: '⛈️', target: '🧁', desc: 'Tête qui tourne : Mystère...', hidden: true },
-            'train': { name: 'Loco', obstacle: '🛑', target: '🚉', desc: 'Parcours un total de 100 cases.' },
+            'default': { name: 'Blue-Bot', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
+            'beebot': { name: 'Bee-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'Utilise "Reculer" au moins une fois pour atteindre le trésor.' },
+            'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Réussis un décodage (moyen) du premier coup.' },
+            'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Gagne un pilotage moyen pour débloquer.' },
+            'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteint le trésor du premier coup en utilisant plus de 10 instructions.' },
+            'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
+            'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Tête qui tourne : Mystère...', hidden: true },
+            'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
             'volcano': {
                 name: 'Le sol est EN FEU !!!',
-                obstacle: '🧊',
+                obstacle: '<i data-fa="snowflake" style="color: #3498db;"></i>',
                 target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coinGrad)"/><circle cx="70" cy="30" r="9" fill="url(#coinGrad)"/><circle cx="20" cy="55" r="8" fill="url(#coinGrad)"/><circle cx="80" cy="65" r="11" fill="url(#coinGrad)"/><circle cx="45" cy="75" r="12" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coinGrad)"/><circle cx="65" cy="50" r="13" fill="url(#coinGrad)"/><circle cx="35" cy="60" r="12" fill="url(#coinGrad)"/><circle cx="60" cy="70" r="9" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coinGrad)" filter="url(#goldGlow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#goldGlow)"/></g></g></svg>`,
                 desc: 'Réussis un décodage (extrême) du premier coup.'
             },
-            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '👾', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
-            'botanique': { name: 'Bot-anique', obstacle: '🍄', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
-            'helicopter': { name: 'Hélicoptère', obstacle: '☁️', target: '🏥', desc: "Utilise un tapis." }
+            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
+            'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
+            'helicopter': { name: 'Hélicoptère', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." }
         };
 
         const BB_SVGS = {
@@ -506,7 +506,7 @@
                 const obstacles = grid.querySelectorAll('.obstacle');
                 const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
                 obstacles.forEach(cell => {
-                    if (obsSkin.includes('<svg')) {
+                    if (obsSkin.includes('<svg') || obsSkin.includes('<i')) {
                         cell.innerHTML = obsSkin;
                         delete cell.dataset.obstacle;
                     } else {
@@ -515,6 +515,9 @@
                     }
                 });
             });
+            if (window.fa && typeof window.fa.createIcons === 'function') {
+                window.fa.createIcons();
+            }
 
             // Mettre à jour les robots et cibles pour sim-grid
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
@@ -560,8 +563,11 @@
             const obsBtn = document.getElementById('btn-obstacle-icon');
             if (obsBtn) {
                 const ob = SKIN_CONFIG[activeSkin].obstacle;
-                if (ob && ob.includes('<svg')) {
+                if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
                     obsBtn.innerHTML = ob;
+                    if (window.fa && typeof window.fa.createIcons === 'function') {
+                        window.fa.createIcons();
+                    }
                     const svg = obsBtn.querySelector('svg');
                     if (svg) {
                         svg.style.width = '1.2em';

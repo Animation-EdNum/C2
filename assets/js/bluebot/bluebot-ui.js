@@ -146,8 +146,11 @@ let commandsVisible = true;
             const ob = SKIN_CONFIG[activeSkin]?.obstacle;
             const obsBtn = document.getElementById('btn-obstacle-icon');
             if (obsBtn) {
-                if (ob && ob.includes('<svg')) {
+                if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
                     obsBtn.innerHTML = ob;
+                    if (window.fa && typeof window.fa.createIcons === 'function') {
+                        window.fa.createIcons();
+                    }
                     const svg = obsBtn.querySelector('svg');
                     if (svg) {
                         svg.style.width = '1.2em';
