@@ -675,7 +675,11 @@ let simState = {
 
                 } else {
                     simState.firstAttempt = false; // Exécution sans succès
-                    showToast('Exécution terminée !', 'success');
+                    if (simState.targetRow !== null && simState.targetCol !== null) {
+                        showToast("Exécution terminée mais tu n'es pas arrivé sur le trésor", 'warn');
+                    } else {
+                        showToast("Exécution terminée !", 'success');
+                    }
                 }
 
                 // Ajouter le contenu de la case atteinte à la fin de l'exécution
@@ -1059,6 +1063,8 @@ let simState = {
             renderRobot('draw-grid', 'draw-robot', chal.startR, chal.startC, chal.startD);
         }
 
+        window.newDrawChallenge = newDrawChallenge;
+
         function addDrawCommand(cmd) {
             if (drawState.locked || drawState.isAnimating) return;
             drawState.program.push(cmd);
@@ -1151,6 +1157,7 @@ let simState = {
                 }
 
                 document.getElementById('btnNextDraw').style.display = 'inline-flex';
+                if (isCorrect) setTimeout(() => { if (document.getElementById('btnNextDraw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
             } else {
                 playSound('error');
                 showToast(errorMsg, false);
@@ -1196,6 +1203,8 @@ let simState = {
                 });
             }
         }
+
+        window.newReadChallenge = newReadChallenge;
 
         function newReadChallenge() {
             if (readState.isAnimating) return;
@@ -1305,7 +1314,10 @@ let simState = {
                 readState.locked = false;
             }
 
-            if (isCorrect) document.getElementById('btnNextRead').style.display = 'inline-flex';
+            if (isCorrect) {
+                document.getElementById('btnNextRead').style.display = 'inline-flex';
+                setTimeout(() => { if (document.getElementById('btnNextRead').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
+            }
             readState.isAnimating = false;
         }
 
@@ -1338,6 +1350,8 @@ let simState = {
             const hintEl = document.getElementById('chal-hint');
             if (hintEl) hintEl.style.display = chalState.difficulty === 'extreme' ? 'block' : 'none';
         }
+
+        window.newChallenge = newChallenge;
 
         function renderChallengeOptions() {
             const container = document.getElementById('chal-options'); const labels = ['A', 'B', 'C'];
@@ -1433,6 +1447,7 @@ let simState = {
                     showToast('Faux. Clique sur la proposition en vert pour voir la solution.', 'error');
                 }
                 document.getElementById('btnNextChallenge').style.display = 'inline-flex';
+                if (option.isCorrect) setTimeout(() => { if (document.getElementById('btnNextChallenge').style.display !== 'none' && activeTab === 'challenge') newChallenge(); }, 3000);
             } else if (option.isCorrect) {
                 playSound('success');
                 const target = document.getElementById('chal-target');

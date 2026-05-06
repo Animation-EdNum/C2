@@ -44,4 +44,4 @@ All web applications must follow this strict semantic structure:
 - **Réseau de Tri:** Parallel animations via `currentStageIndex`. `offsetX` shifts only for guaranteed vertical overlaps. Dynamic `GRID_SPACING_X` calculations on `window.resize`.
 - **Machine à Trier:** Ascending sort required for "Quantité" (dice) and "Taille" modes.
 - **Machine à Chiffrer:** Circular container (`aspect-ratio: 1/1`), % internal heights, `transform-origin: bottom center`.
-- **Routage Réseau:** Extreme mode uses `solarInterval` for real-time breakdowns (`brokenNodes`).
+- **Routage Réseau:** Extreme mode uses `solarInterval` for real-time breakdowns (`brokenNodes`).- For toast notifications in webapps, the `assets/js/toast.js` unified utility handles the display logic with the signature `showToast(msg, type = 'success', duration = 3000)`. It supports types like 'success' (maps to 'circle-check' FA7 icon), 'error' ('circle-xmark'), 'warn' ('triangle-exclamation'), and 'info' ('circle-info'). The container `#c2-toast-container` is auto-created if absent.
