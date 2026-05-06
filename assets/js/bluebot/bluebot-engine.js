@@ -1059,6 +1059,8 @@ let simState = {
             renderRobot('draw-grid', 'draw-robot', chal.startR, chal.startC, chal.startD);
         }
 
+        window.newDrawChallenge = newDrawChallenge;
+
         function addDrawCommand(cmd) {
             if (drawState.locked || drawState.isAnimating) return;
             drawState.program.push(cmd);
@@ -1196,6 +1198,8 @@ let simState = {
                 });
             }
         }
+
+        window.newReadChallenge = newReadChallenge;
 
         function newReadChallenge() {
             if (readState.isAnimating) return;
@@ -1338,6 +1342,8 @@ let simState = {
             const hintEl = document.getElementById('chal-hint');
             if (hintEl) hintEl.style.display = chalState.difficulty === 'extreme' ? 'block' : 'none';
         }
+
+        window.newChallenge = newChallenge;
 
         function renderChallengeOptions() {
             const container = document.getElementById('chal-options'); const labels = ['A', 'B', 'C'];

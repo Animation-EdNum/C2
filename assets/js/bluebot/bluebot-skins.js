@@ -374,6 +374,16 @@
                 TrailManager.clear('chal-grid');
                 if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
             }
+            if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
+                buildGrid('read-grid', GRID_ROWS, GRID_COLS, readState.obstacles || []);
+                renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
+                TrailManager.clear('read-grid');
+            }
+            if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
+                buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
+                renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
+                TrailManager.clear('draw-grid');
+            }
 
             if (matId !== 'none') {
                 unlockSkin('helicopter');
