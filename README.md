@@ -45,6 +45,7 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot** (Demi-cycle 3-4H)
 - **Fonctionnalités :** Explorez librement le robot, résolvez des puzzles avec règles strictes (Facile, Moyen, Difficile), prédisez les parcours et trouvez des bugs dans les programmes. Créez aussi vos propres défis sur des tapis modulables.
 - **Valeur pédagogique :** Travaille la pensée algorithmique, la décomposition de problèmes, la décentration cognitive (droite/gauche relatives au robot) et favorise l'anticipation par la programmation à l'aveugle.
+- **Remarque technique :** L'application est actuellement monolithique, ce qui la rend impossible à tester unitairement.
 
 #### 2. Pixel Studio (`webapps/binaire_studio.html`)
 ![Pixel Studio](meta/screenshots/binaire_studio.png)
