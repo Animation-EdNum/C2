@@ -53,11 +53,6 @@ const ScoreManager = {
         this.appId = appId;
         this.loadStats();
         this.injectModalHtml();
-
-        const statsBtn = document.getElementById('score-manager-btn');
-        if (statsBtn) {
-            statsBtn.addEventListener('click', () => this.showModal());
-        }
     },
 
     loadStats() {
