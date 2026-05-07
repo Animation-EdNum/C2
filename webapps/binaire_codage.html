@@ -997,6 +997,10 @@
         let decBinConsecutiveSuccess = 0;
         let binDecConsecutiveSuccess = 0;
 
+        let cachedCalcBits = [];
+        let cachedCalcBoxes = [];
+        let cachedTogs = [];
+
         // UI GENERATION (Adaptative Bits) 
         function buildUI() {
             // Calc Table 
@@ -1022,6 +1026,12 @@
 
             document.getElementById('calc-table').innerHTML = `<tr>${trBits}</tr><tr>${trPow}</tr><tr>${trVals}</tr>`;
             document.getElementById('bit-toggles').innerHTML = togglesHtml;
+
+            for (let i = 0; i < 8; i++) {
+                cachedCalcBits[i] = document.getElementById(`calc-bit-${i}`);
+                cachedCalcBoxes[i] = document.getElementById(`calc-box-${i}`);
+                cachedTogs[i] = document.getElementById(`tog-${i}`);
+            }
         }
 
         function setDifficulty(lvl) {
@@ -1066,9 +1076,9 @@
             calcState[i] = calcState[i] ? 0 : 1;
 
             // Sync UI (Calc + Exercice) 
-            const cBit = document.getElementById(`calc-bit-${i}`);
-            const cBox = document.getElementById(`calc-box-${i}`);
-            const tog = document.getElementById(`tog-${i}`);
+            const cBit = cachedCalcBits[i];
+            const cBox = cachedCalcBoxes[i];
+            const tog = cachedTogs[i];
 
             if (calcState[i]) {
                 if (cBit) { cBit.textContent = '1'; cBit.classList.add('active'); cBox.classList.add('selected'); }
@@ -1085,9 +1095,9 @@
         function resetCalc() {
             calcState = [0, 0, 0, 0, 0, 0, 0, 0];
             for (let i = 0; i < 8; i++) {
-                const cBit = document.getElementById(`calc-bit-${i}`);
-                const cBox = document.getElementById(`calc-box-${i}`);
-                const tog = document.getElementById(`tog-${i}`);
+                const cBit = cachedCalcBits[i];
+                const cBox = cachedCalcBoxes[i];
+                const tog = cachedTogs[i];
                 if (cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); }
                 if (tog) { tog.textContent = '0'; tog.classList.remove('active'); }
             }
