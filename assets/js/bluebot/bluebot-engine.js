@@ -978,9 +978,11 @@ let simState = {
             const stats = ScoreManager.stats;
             const chalHardSuccess = stats['chal'] && stats['chal']['hard'] && stats['chal']['hard'].totalSuccess > 0;
             const readHardSuccess = stats['read'] && stats['read']['hard'] && stats['read']['hard'].totalSuccess > 0;
+            const drawHardSuccess = stats['draw'] && stats['draw']['hard'] && stats['draw']['hard'].totalSuccess > 0;
 
             if (chalHardSuccess) document.getElementById('diff-extreme')?.classList.add('unlocked');
             if (readHardSuccess) document.getElementById('read-diff-extreme')?.classList.add('unlocked');
+            if (drawHardSuccess) document.getElementById('draw-diff-extreme')?.classList.add('unlocked');
         }
 
         function setDifficulty(diff) {
@@ -1443,6 +1445,7 @@ let simState = {
                 drawGlobalScore++;
                 drawGlobalStreak++;
                 ScoreManager.addSuccess("draw", drawState.difficulty, drawState.mistakes || 0);
+                updateExtremeVisibility();
 
                 document.getElementById('draw-global-score').textContent = drawGlobalScore;
                 document.getElementById('draw-global-streak').textContent = drawGlobalStreak;
