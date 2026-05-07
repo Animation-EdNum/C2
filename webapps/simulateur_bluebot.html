@@ -2114,7 +2114,26 @@
                 height: 32px;
             }
         }
-    </style>
+
+        /* Memory game - paire trouvée dans le panneau */
+        .end-item.memory-matched {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+            animation: memoryPop 0.5s ease;
+            transform: scale(1.15);
+        }
+        @keyframes memoryPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1.15); }
+        }
+        /* Memory game - case résolue sur la grille */
+        .bot-cell.memory-cleared {
+            opacity: 0.3;
+            transition: opacity 0.5s ease;
+        }
+</style>
     <script src="../assets/js/scores.js"></script>
     <script src="../assets/js/audio.js"></script>
 </head>
@@ -2192,6 +2211,16 @@
                     style="white-space: nowrap; font-size: 0.9em;">
                     <i data-fa="trash-can" style="width: 16px; height: 16px; margin-right: 5px;"></i>Aucun tapis
                 </button>
+            </div>
+
+                        <div id="memory-mode-container" style="display: flex; align-items: center; gap: 10px; padding-top: 10px;">
+                <label class="share-toggle" style="margin-bottom: 0;" for="toggle-memory-mode">
+                    <input type="checkbox" id="toggle-memory-mode">
+                    <span class="share-toggle-slider"></span>
+                </label>
+                <label for="toggle-memory-mode" style="font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex;">
+                    🃏 Mode Memory
+                </label>
             </div>
 
             <div id="mat-opacity-container" style="display: flex; flex-direction: column; gap: 5px;">
@@ -2290,14 +2319,14 @@
         <main>
 
             <div class="tabs" role="tablist">
-                <button class="tab-btn active" id="tab-explore" role="tab" aria-selected="true" aria-controls="view-explore"><i data-fa="compass"></i> Exploration</button>
-                <button class="tab-btn" id="tab-simulator" role="tab" aria-selected="false" aria-controls="view-simulator"><i data-fa="robot"></i> Simulateur</button>
+                <button class="tab-btn" id="tab-explore" role="tab" aria-selected="true" aria-controls="view-explore"><i data-fa="compass"></i> Exploration</button>
+                <button class="tab-btn active" id="tab-simulator" role="tab" aria-selected="false" aria-controls="view-simulator"><i data-fa="robot"></i> Simulateur</button>
                 <button class="tab-btn" id="tab-challenge" role="tab" aria-selected="false" aria-controls="view-challenge"><i data-fa="gamepad-modern"></i> Pilotage</button>
                 <button class="tab-btn" id="tab-read" role="tab" aria-selected="false" aria-controls="view-read"><i data-fa="book-open"></i> Décodage</button>
                 <button class="tab-btn" id="tab-draw" role="tab" aria-selected="false" aria-controls="view-draw"><i data-fa="pen"></i> Dessin</button>
             </div>
 
-            <div id="view-explore" class="view active" role="tabpanel" aria-labelledby="tab-explore">
+            <div id="view-explore" class="view" role="tabpanel" aria-labelledby="tab-explore">
                 <div class="exercise-card">
                     <div id="explore-instruction" style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
                         Appuie sur les boutons pour déplacer directement le robot !
@@ -2333,7 +2362,7 @@
                 </div>
             </div>
 
-            <div id="view-simulator" class="view" role="tabpanel" aria-labelledby="tab-simulator">
+            <div id="view-simulator" class="view active" role="tabpanel" aria-labelledby="tab-simulator">
 
 
                 <div class="exercise-card">

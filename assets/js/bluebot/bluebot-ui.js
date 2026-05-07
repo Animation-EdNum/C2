@@ -140,7 +140,30 @@ window.commandsVisible = commandsVisible;
         const gridRowsSlider = document.getElementById('gridRowsSlider');
         const gridSizeValue = document.getElementById('gridSizeValue');
 
+
         function initApplication() {
+            const memoryToggle = document.getElementById('toggle-memory-mode');
+            if (memoryToggle) {
+                memoryToggle.checked = typeof memoryMode !== 'undefined' ? memoryMode : false;
+                memoryToggle.addEventListener('change', (e) => {
+                    if (typeof memoryMode !== 'undefined') {
+                        memoryMode = e.target.checked;
+                        localStorage.setItem('bb_memory_mode', memoryMode);
+                    }
+                    if (typeof generateMatContent === 'function') generateMatContent(activeMat);
+                    if (typeof buildGrid === 'function') buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+                    if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+                    if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
+
+                    const endContent = document.getElementById('sim-end-content');
+                    if (endContent) {
+                        Array.from(endContent.querySelectorAll('.end-item')).forEach(el => el.remove());
+                        const emptyEnd = document.getElementById('sim-end-empty');
+                        if (emptyEnd) emptyEnd.style.display = 'block';
+                    }
+                });
+            }
+
             // Restore active state
             activeMat = localStorage.getItem('bb_active_mat') || 'none';
             activeSkin = localStorage.getItem('bb_active_skin') || 'default';
@@ -186,6 +209,7 @@ window.commandsVisible = commandsVisible;
 
             // Update UI/Grid
             updateGridSizeSlidersState();
+            if (typeof updateMemoryToggleVisibility === 'function') updateMemoryToggleVisibility();
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
             randomizeSimulatorPosition();
             buildGrid('explore-grid', GRID_ROWS, GRID_COLS);

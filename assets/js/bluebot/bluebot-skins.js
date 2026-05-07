@@ -296,6 +296,7 @@
             }
         }
 
+
         function generateMatContent(matId) {
             if (matId === 'custom') {
                 if (!localStorage.getItem('bb_custom_mat_image')) {
@@ -316,7 +317,30 @@
                 console.warn(`Unknown matId: ${matId}`);
                 return;
             }
-            if (config.baseContent) {
+
+            const needed = GRID_ROWS * GRID_COLS;
+            if (memoryMode && matId !== 'none' && matId !== 'custom' && matId !== 'city') {
+                const pool = config.baseContent || config.content;
+                if (pool && pool.length > 0) {
+                    const neededPairs = Math.floor(needed / 2);
+                    let pairsContent = [];
+                    const shuffledPool = shuffleArray([...pool]);
+
+                    for (let i = 0; i < neededPairs; i++) {
+                        const item = shuffledPool[i % shuffledPool.length];
+                        pairsContent.push(item, item);
+                    }
+
+                    if (needed % 2 !== 0) {
+                        pairsContent.push(shuffledPool[neededPairs % shuffledPool.length]);
+                    }
+
+                    config.content = shuffleArray(pairsContent);
+                    return;
+                }
+            }
+
+if (config.baseContent) {
                 if (matId === 'shapes') {
                     const needed = GRID_ROWS * GRID_COLS;
                     const neededPairs = Math.floor(needed / 2);
@@ -342,6 +366,18 @@
             }
         }
 
+
+        function updateMemoryToggleVisibility() {
+            const memoryContainer = document.getElementById('memory-mode-container');
+            if (!memoryContainer) return;
+            const config = MAT_CONFIG[activeMat];
+            if (activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent)) {
+                memoryContainer.style.display = 'flex';
+            } else {
+                memoryContainer.style.display = 'none';
+            }
+        }
+
         function selectMat(matId) {
             if (matId === 'custom' && !localStorage.getItem('bb_custom_mat_image')) {
                 // If user selects custom mat but no image uploaded yet, prompt upload
@@ -360,6 +396,7 @@
             renderMatsGrid();
             closeMatsModal();
             updateGridSizeSlidersState();
+            updateMemoryToggleVisibility();
 
             // Re-render grids to apply mat
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
@@ -648,6 +685,8 @@
 
 
 
+
+        let memoryMode = localStorage.getItem('bb_memory_mode') === 'true';
         let activeMat = localStorage.getItem('bb_active_mat') || 'none';
         generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
