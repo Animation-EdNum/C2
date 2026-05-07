@@ -483,8 +483,9 @@ let simState = {
             simState.robotCol = newCol;
             simState.startRow = newRow;
             simState.startCol = newCol;
-            simState.robotDir = 0;
-            simState.startDir = 0;
+            let randomDir = Math.floor(Math.random() * 4) * 90;
+            simState.robotDir = randomDir;
+            simState.startDir = randomDir;
             simState.stepIndex = -1;
             simState.failed = false;
 
