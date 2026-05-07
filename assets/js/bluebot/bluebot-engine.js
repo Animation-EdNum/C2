@@ -1,5 +1,3 @@
-const createSVG = (tag) => document.createElementNS("http://www.w3.org/2000/svg", tag);
-
 let GRID_ROWS = 6, GRID_COLS = 6;
 let globalScore = 0, globalStreak = 0;
 let simState = {
@@ -41,7 +39,7 @@ let simState = {
             initLayer(containerId) {
                 let layer = document.querySelector(`#${containerId} .trail-layer`);
                 if (!layer) {
-                    layer = createSVG("svg");
+                    layer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     layer.setAttribute("class", "trail-layer");
                     layer.setAttribute("viewBox", `0 0 ${100 * GRID_COLS} ${100 * GRID_ROWS}`);
                     layer.setAttribute("preserveAspectRatio", "none");
@@ -62,23 +60,23 @@ let simState = {
                 const rot = dirIndex * 90;
 
                 // Create path element
-                const path = createSVG("path");
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute("class", "trail-path");
                 const d = `M ${pt.x} ${pt.y}`;
                 path.setAttribute("d", d);
                 layer.appendChild(path);
 
                 // Draw start marker (cell size is now 100x100 in the new viewBox)
-                const g = createSVG("g");
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "start-marker");
 
-                const circle = createSVG("circle");
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 circle.setAttribute("class", "start-marker-circle");
                 circle.setAttribute("cx", pt.x);
                 circle.setAttribute("cy", pt.y);
                 circle.setAttribute("r", "18"); // scaled up from 3
 
-                const chevron = createSVG("path");
+                const chevron = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 chevron.setAttribute("class", "start-marker-chevron");
                 chevron.setAttribute("d", `M ${pt.x - 9} ${pt.y + 6} L ${pt.x} ${pt.y - 6} L ${pt.x + 9} ${pt.y + 6}`);
                 chevron.setAttribute("transform", `rotate(${rot} ${pt.x} ${pt.y})`);
@@ -97,10 +95,10 @@ let simState = {
 
                 // Add extra layered paths for specific skins
                 if (activeSkin === 'helicopter') {
-                    const shadowPath = createSVG("path");
+                    const shadowPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     shadowPath.setAttribute("class", "trail-path-helicopter-shadow");
                     shadowPath.setAttribute("d", d);
-                    const heliPath = createSVG("path");
+                    const heliPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     heliPath.setAttribute("class", "trail-path-helicopter");
                     heliPath.setAttribute("d", d);
 
@@ -114,10 +112,10 @@ let simState = {
 
                     this.states[containerId].extraPaths.push(shadowPath, heliPath);
                 } else if (activeSkin === 'f1') {
-                    const borderPath = createSVG("path");
+                    const borderPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     borderPath.setAttribute("class", "trail-path-border");
                     borderPath.setAttribute("d", d);
-                    const redPath = createSVG("path");
+                    const redPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     redPath.setAttribute("class", "trail-path-red");
                     redPath.setAttribute("d", d);
 
@@ -138,21 +136,21 @@ let simState = {
 
                         let defs = layer.querySelector('defs');
                         if (!defs) {
-                            defs = createSVG("defs");
+                            defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
                             layer.insertBefore(defs, layer.firstChild);
                         }
 
-                        mask = createSVG("mask");
+                        mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
                         mask.setAttribute("id", maskId);
                         mask.setAttribute("maskUnits", "userSpaceOnUse");
-                        let rect = createSVG("rect");
+                        let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
                         rect.setAttribute("width", "200%");
                         rect.setAttribute("height", "200%");
                         rect.setAttribute("x", "-50%");
                         rect.setAttribute("y", "-50%");
                         rect.setAttribute("fill", "white");
 
-                        maskPath = createSVG("path");
+                        maskPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         maskPath.setAttribute("class", "rail-mask-path");
                         maskPath.setAttribute("stroke", "black");
                         maskPath.setAttribute("stroke-width", "16");
@@ -167,10 +165,10 @@ let simState = {
 
                     if (maskPath) maskPath.setAttribute("d", d);
 
-                    const tiesPath = createSVG("path");
+                    const tiesPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     tiesPath.setAttribute("class", "trail-path-ties");
                     tiesPath.setAttribute("d", d);
-                    const railBasePath = createSVG("path");
+                    const railBasePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     railBasePath.setAttribute("class", "trail-path-rail-base");
                     railBasePath.setAttribute("d", d);
                     railBasePath.setAttribute("mask", `url(#${maskId})`);
@@ -203,7 +201,7 @@ let simState = {
                 if (activeSkin === 'cyberbot') {
                     // Trace Matrix (0 et 1)
                     for (let i = 0; i < 3; i++) {
-                        const t = createSVG("text");
+                        const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
                         t.setAttribute("class", "trail-matrix-char");
                         const ox = (Math.random() - 0.5) * 40;
                         const oy = (Math.random() - 0.5) * 40;
@@ -214,7 +212,7 @@ let simState = {
                     }
                     const persistCount = 3 + Math.floor(Math.random() * 2); // 3 ou 4 chiffres
                     for (let i = 0; i < persistCount; i++) {
-                        const p = createSVG("text");
+                        const p = document.createElementNS("http://www.w3.org/2000/svg", "text");
                         p.setAttribute("class", "trail-matrix-persist");
                         const ox = (Math.random() - 0.5) * 50;
                         const oy = (Math.random() - 0.5) * 50;
@@ -229,7 +227,7 @@ let simState = {
                 } else if (activeSkin === 'volcano') {
                     // Trace de feu (particules)
                     for (let i = 0; i < 6; i++) {
-                        const c = createSVG("circle");
+                        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                         c.setAttribute("class", "trail-fire-particle");
                         c.setAttribute("cx", pt.x + (Math.random() - 0.5) * 16);
                         c.setAttribute("cy", pt.y + (Math.random() - 0.5) * 16);
@@ -242,7 +240,7 @@ let simState = {
                     }
                     // Coulée de lave persistante
                     if (this.lastVolcanoPt) {
-                        const seg = createSVG("line");
+                        const seg = document.createElementNS("http://www.w3.org/2000/svg", "line");
                         seg.setAttribute("class", "trail-lava-segment");
                         seg.setAttribute("x1", this.lastVolcanoPt.x);
                         seg.setAttribute("y1", this.lastVolcanoPt.y);
@@ -256,7 +254,7 @@ let simState = {
                     // Braises incandescentes qui restent et pulsent
                     const emberCount = 2 + Math.floor(Math.random() * 2);
                     for (let i = 0; i < emberCount; i++) {
-                        const e = createSVG("circle");
+                        const e = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                         e.setAttribute("class", "trail-lava-ember");
                         e.setAttribute("cx", pt.x + (Math.random() - 0.5) * 24);
                         e.setAttribute("cy", pt.y + (Math.random() - 0.5) * 24);
@@ -276,7 +274,7 @@ let simState = {
                     const midX = (prevPt.x + pt.x) / 2;
                     const midY = (prevPt.y + pt.y) / 2;
 
-                    const leaf = createSVG("path");
+                    const leaf = document.createElementNS("http://www.w3.org/2000/svg", "path");
                     leaf.setAttribute("d", "M 0 0 C 5 -10 15 -10 20 0 C 15 10 5 10 0 0 Z");
                     leaf.setAttribute("fill", "#65a30d");
                     leaf.setAttribute("stroke", "#3f6212");

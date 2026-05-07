@@ -988,7 +988,7 @@
         const programStrip = document.getElementById('program-strip');
         const playBtn = document.getElementById('play-btn');
 
-        let cachedCups = [];
+        let cachedCupEls = [];
 
         function init() {
             setupEventListeners();
@@ -1084,13 +1084,13 @@
 
         function renderBoard(boardState, container, isTarget) {
             container.innerHTML = '';
-            if (!isTarget) cachedCups = [];
+            if (!isTarget) cachedCupEls = [];
             for (let i = 0; i < NUM_CUPS; i++) {
                 let cupEl = document.createElement('div');
                 cupEl.className = 'cup';
-                let cupSlots = [];
                 if (!isTarget) {
                     cupEl.id = `cup-${i}`;
+                    cachedCupEls[i] = cupEl;
                 }
 
                 // Add background slots for visual guidance
@@ -1100,13 +1100,8 @@
                     let slotEl = document.createElement('div');
                     slotEl.className = 'cup-slot';
                     slotsContainer.appendChild(slotEl);
-                    cupSlots.push(slotEl);
                 }
                 cupEl.appendChild(slotsContainer);
-
-                if (!isTarget) {
-                    cachedCups[i] = { el: cupEl, slots: cupSlots };
-                }
 
                 let blocksContainer = document.createElement('div');
                 blocksContainer.className = 'cup-blocks';
@@ -1145,14 +1140,11 @@
             }
 
             for (let i = 0; i < NUM_CUPS; i++) {
-                let cup = cachedCups[i];
-                if (cup) {
-                    let cupEl = cup.el;
-                    let slots = cup.slots;
+                let cupEl = cachedCupEls[i];
+                if (cupEl) {
+                    let slots = cupEl.querySelectorAll('.cup-slot');
                     // Remove highlights from all slots initially
-                    for (let s = 0; s < slots.length; s++) {
-                        slots[s].classList.remove('active-slot');
-                    }
+                    slots.forEach(slot => slot.classList.remove('active-slot'));
 
                     if (i === craneState.pos) {
                         cupEl.classList.add('active-column');
@@ -1307,35 +1299,6 @@
         }
 
 
-        function buildToastNode(mainIcon, msgText) {
-            let container = document.createElement('div');
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.style.gap = '8px';
-
-            let stackSpan = document.createElement('span');
-            stackSpan.className = 'fa-stack fa-2x';
-            stackSpan.style.fontSize = '1em';
-            stackSpan.style.verticalAlign = 'middle';
-
-            let i1 = document.createElement('i');
-            i1.className = 'fa-stack-1x';
-            i1.setAttribute('data-fa', mainIcon);
-
-            let i2 = document.createElement('i');
-            i2.className = 'fa-stack-2x';
-            i2.setAttribute('data-fa', 'ban');
-            i2.style.color = 'Tomato';
-
-            stackSpan.appendChild(i1);
-            stackSpan.appendChild(i2);
-
-            let textNode = document.createTextNode(msgText);
-
-            container.appendChild(stackSpan);
-            container.appendChild(textNode);
-            return container;
-        }
 
         function processInstruction(inst) {
             if (inst === 'left') {
@@ -1343,13 +1306,13 @@
                     craneState.pos--;
                     return { valid: true };
                 }
-                return { valid: false, reason: buildToastNode('arrow-left', 'La grue est déjà au maximum à gauche !') };
+                return { valid: false, reason: 'La grue est déjà au maximum à gauche !' };
             } else if (inst === 'right') {
                 if (craneState.pos < NUM_CUPS - 1) {
                     craneState.pos++;
                     return { valid: true };
                 }
-                return { valid: false, reason: buildToastNode('arrow-right', 'La grue est déjà au maximum à droite !') };
+                return { valid: false, reason: 'La grue est déjà au maximum à droite !' };
             } else if (inst === 'down') {
                 let currentStack = cups[craneState.pos];
                 let blocksInCup = currentStack.length;
@@ -1361,15 +1324,15 @@
                     return { valid: true };
                 }
                 if (craneState.height === maxPossibleHeight && blocksInCup > 0) {
-                    return { valid: false, reason: buildToastNode('arrow-down', 'La grue ne peut pas descendre plus bas ! Il y a un objet en dessous.') };
+                    return { valid: false, reason: 'La grue ne peut pas descendre plus bas ! Il y a un objet en dessous.' };
                 }
-                return { valid: false, reason: buildToastNode('arrow-down', 'La grue est tout en bas !') };
+                return { valid: false, reason: 'La grue est tout en bas !' };
             } else if (inst === 'up') {
                 if (craneState.height > 0) {
                     craneState.height--;
                     return { valid: true };
                 }
-                return { valid: false, reason: buildToastNode('arrow-up', 'La grue est déjà tout en haut !') };
+                return { valid: false, reason: 'La grue est déjà tout en haut !' };
             } else if (inst === 'action') {
                 let currentStack = cups[craneState.pos];
                 let blocksInCup = currentStack.length;
@@ -1385,9 +1348,9 @@
                         return { valid: true };
                     }
                     if (blocksInCup >= MAX_STACK) {
-                        return { valid: false, reason: buildToastNode('arrow-up-from-square', 'La colonne est pleine !') };
+                        return { valid: false, reason: 'La colonne est pleine !' };
                     }
-                    return { valid: false, reason: buildToastNode('arrow-up-from-square', 'La grue doit descendre juste au-dessus de la cible pour relâcher l\'objet !') };
+                    return { valid: false, reason: 'La grue doit descendre juste au-dessus de la cible pour relâcher l\'objet !' };
                 } else {
                     // Try to grab
                     let requiredHeightForGrab = MAX_STACK - blocksInCup;
@@ -1396,12 +1359,12 @@
                         return { valid: true };
                     }
                     if (blocksInCup === 0) {
-                        return { valid: false, reason: buildToastNode('hand-fist', 'Il n\'y a pas d\'objet à attraper ici !') };
+                        return { valid: false, reason: 'Il n\'y a pas d\'objet à attraper ici !' };
                     }
-                    return { valid: false, reason: buildToastNode('hand-fist', 'La grue est trop haute pour attraper cet objet !') };
+                    return { valid: false, reason: 'La grue est trop haute pour attraper cet objet !' };
                 }
             }
-            return { valid: false, reason: buildToastNode('question', 'Action inconnue.') };
+            return { valid: false, reason: 'Action inconnue.' };
         }
 
         function checkWin() {
@@ -1427,9 +1390,9 @@
                 // Add specific error messages based on state
                 let errorReason;
                 if (craneState.holding) {
-                    errorReason = buildToastNode('hand-fist', "La grue tient encore un objet.");
+                    errorReason = "La grue tient encore un objet.";
                 } else {
-                    errorReason = buildToastNode('shapes', "La disposition ne correspond pas.");
+                    errorReason = "La disposition ne correspond pas.";
                 }
 
                 showToast(errorReason, 'error', 5000);
@@ -1469,8 +1432,6 @@
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
 <i data-fa="hand" style="display:none;"></i>
-<i data-fa="shapes" style="display:none;"></i>
-<i data-fa="ban" style="display:none;"></i>
     <script src="../../assets/js/url-params.js"></script>
 </body>
 

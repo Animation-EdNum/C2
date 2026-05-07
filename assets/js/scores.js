@@ -15,9 +15,7 @@ const ScoreManager = {
         'chal': 'Pilotage',
         'read': 'Décodage',
         'detect': 'Détection d\'erreur',
-        'simulator': 'Simulateur',
-        'draw': 'Dessin',
-        'jeu_de_la_grue': 'Jeu de la grue'
+        'simulator': 'Simulateur'
     },
 
     DIFF_LABELS: {
@@ -55,6 +53,11 @@ const ScoreManager = {
         this.appId = appId;
         this.loadStats();
         this.injectModalHtml();
+
+        const statsBtn = document.getElementById('score-manager-btn');
+        if (statsBtn) {
+            statsBtn.addEventListener('click', () => this.showModal());
+        }
     },
 
     loadStats() {
