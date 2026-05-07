@@ -604,6 +604,10 @@
         }
 
         function unlockSkin(skinId) {
+            // Check if skin unlocking is disabled by URL parameter
+            if (typeof window.isSkinUnlockDisabled !== 'undefined' && window.isSkinUnlockDisabled) {
+                return;
+            }
             if (!unlockedSkins.includes(skinId)) {
                 unlockedSkins.push(skinId);
                 localStorage.setItem('bb_unlocked_skins', JSON.stringify(unlockedSkins));
