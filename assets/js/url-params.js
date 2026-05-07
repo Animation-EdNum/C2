@@ -395,16 +395,6 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                            <div class="share-option" id="lbl-lockSize" style="display: none;">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSize">Verrouiller la taille de la grille</label>
-                                    <div class="share-option-desc">Force l'élève à utiliser la taille de grille actuelle.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-lockSize">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
                             <div class="share-option" id="lbl-lockTopology" style="display: none;">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-lockTopology">Verrouiller la carte réseau</label>
@@ -465,10 +455,6 @@ function initShareModal() {
     let hasSpecificOption = false;
     if (document.querySelector('.alpha-section')) {
         document.getElementById('lbl-hideDict').style.display = 'flex';
-        hasSpecificOption = true;
-    }
-    if (window.location.pathname.includes('binaire_studio.html')) {
-        document.getElementById('lbl-lockSize').style.display = 'flex';
         hasSpecificOption = true;
     }
     if (window.location.pathname.includes('routage_reseau.html')) {
