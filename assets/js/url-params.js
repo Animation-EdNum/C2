@@ -214,6 +214,7 @@ function initShareModal() {
                     <input type="text" id="share-url-input" readonly>
                     <button class="btn btn-primary" id="btn-copy-share"><i data-fa="clipboard"></i> Copier</button>
                     <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> Afficher le QR Code</button>
+                    <button class="btn btn-primary" id="btn-download-qr" style="display: none;"><i data-fa="download"></i> Télécharger le QR</button>
                 </div>
                 <div id="share-qr-container" style="display: none; text-align: center; margin-top: 15px;">
                     <canvas id="share-qr-canvas"></canvas>
@@ -335,6 +336,7 @@ function initShareModal() {
     const btnClose = document.getElementById('btn-close-share');
     const btnCopy = document.getElementById('btn-copy-share');
     const btnQrShare = document.getElementById('btn-qr-share');
+    const btnDownloadQr = document.getElementById('btn-download-qr');
     const qrContainer = document.getElementById('share-qr-container');
     const qrCanvas = document.getElementById('share-qr-canvas');
     const urlInput = document.getElementById('share-url-input');
@@ -459,6 +461,7 @@ function initShareModal() {
     btnQrShare.addEventListener('click', () => {
         if (qrContainer.style.display === 'block') {
             qrContainer.style.display = 'none';
+            if (btnDownloadQr) btnDownloadQr.style.display = 'none';
             return;
         }
 
@@ -485,10 +488,24 @@ function initShareModal() {
 
     function generateQrCode() {
         qrContainer.style.display = 'block';
+        if (btnDownloadQr) btnDownloadQr.style.display = 'inline-block';
         new QRious({
             element: qrCanvas,
             value: urlInput.value,
             size: 200
+        });
+    }
+
+    if (btnDownloadQr) {
+        btnDownloadQr.addEventListener('click', () => {
+            if (!qrCanvas) return;
+            const dataUrl = qrCanvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = 'qrcode.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         });
     }
 
