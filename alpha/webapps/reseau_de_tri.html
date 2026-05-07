@@ -658,6 +658,7 @@
         let currentState = []; // array of { value, currentWire, domElement }
         let currentStageIndex = 0;
         let levelInitialValues = [];
+        let cachedStageElements = [];
 
         let raceInterval = null;
         let raceTimeout = null;
@@ -779,6 +780,7 @@
 
         function drawNetwork() {
             svgContainer.innerHTML = '';
+            cachedStageElements = [];
 
             const numStages = networkDef.length;
             const totalWidth = (numStages + 1) * GRID_SPACING_X;
@@ -802,6 +804,8 @@
 
             // Draw comparators
             networkDef.forEach((stage, stageIdx) => {
+                cachedStageElements[stageIdx] = { lines: [], circles: [], buttons: [] };
+
                 // Check if any comparators in this stage overlap vertically
                 let hasOverlap = false;
                 for (let a = 0; a < stage.length; a++) {
@@ -836,17 +840,20 @@
                     line.setAttribute("y2", y2);
                     line.setAttribute("class", `svg-comp-line stage-${stageIdx}`);
                     svgContainer.appendChild(line);
+                    cachedStageElements[stageIdx].lines.push(line);
 
                     // Nodes (dots at intersections)
                     const node1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     node1.setAttribute("cx", x); node1.setAttribute("cy", y1); node1.setAttribute("r", "5");
                     node1.setAttribute("class", `svg-comp-node stage-${stageIdx}`);
                     svgContainer.appendChild(node1);
+                    cachedStageElements[stageIdx].circles.push(node1);
 
                     const node2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     node2.setAttribute("cx", x); node2.setAttribute("cy", y2); node2.setAttribute("r", "5");
                     node2.setAttribute("class", `svg-comp-node stage-${stageIdx}`);
                     svgContainer.appendChild(node2);
+                    cachedStageElements[stageIdx].circles.push(node2);
 
                     // Clickable overlay button for the comparator
                     const btn = document.createElement('div');
@@ -857,6 +864,7 @@
                     btn.dataset.stage = stageIdx;
                     btn.dataset.w1 = comp.w1;
                     btn.dataset.w2 = comp.w2;
+                    cachedStageElements[stageIdx].buttons.push(btn);
 
                     btn.addEventListener('click', () => {
                         if (currentStageIndex == stageIdx) {
@@ -933,19 +941,21 @@
             const numStages = networkDef.length;
             for (let i = 0; i < numStages; i++) {
                 const isActive = (i === currentStageIndex);
+                const stageEls = cachedStageElements[i];
+                if (!stageEls) continue;
 
                 // SVG lines
-                document.querySelectorAll(`line.stage-${i}`).forEach(el => {
+                stageEls.lines.forEach(el => {
                     el.style.stroke = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
                 });
 
                 // SVG nodes
-                document.querySelectorAll(`circle.stage-${i}`).forEach(el => {
+                stageEls.circles.forEach(el => {
                     el.style.fill = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
                 });
 
                 // HTML buttons
-                document.querySelectorAll(`div.comparator-btn.stage-${i}`).forEach(el => {
+                stageEls.buttons.forEach(el => {
                     if (isActive) {
                         el.classList.add('active');
                         el.style.cursor = 'pointer';
@@ -1194,10 +1204,12 @@
                 const numStages = networkDef.length;
                 for (let i = 0; i < numStages; i++) {
                     const isActive = (i === currentStageIndex);
-                    document.querySelectorAll(`line.stage-${i}`).forEach(el => {
+                    const stageEls = cachedStageElements[i];
+                    if (!stageEls) continue;
+                    stageEls.lines.forEach(el => {
                         el.style.stroke = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
                     });
-                    document.querySelectorAll(`circle.stage-${i}`).forEach(el => {
+                    stageEls.circles.forEach(el => {
                         el.style.fill = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
                     });
                 }
