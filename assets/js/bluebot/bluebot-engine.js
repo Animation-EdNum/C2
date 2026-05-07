@@ -1150,31 +1150,45 @@ let simState = {
         }
 
         function generateDrawChallenge(diff) {
+            const easyShapes = [
+                { name: 'bâton', path: ['forward', 'forward'] },
+                { name: 'ligne droite', fem: true, path: ['forward', 'forward', 'forward'] },
+                { name: 'longue ligne', fem: true, path: ['forward', 'forward', 'forward', 'forward'] },
+                { name: 'coin', path: ['forward', 'right', 'forward'] },
+                { name: 'coin gauche', path: ['forward', 'left', 'forward'] },
+                { name: 'petit L', path: ['forward', 'forward', 'right', 'forward'] },
+                { name: 'L inversé', path: ['forward', 'forward', 'left', 'forward'] },
+                { name: 'petit U', path: ['forward', 'right', 'forward', 'right', 'forward'] },
+                { name: 'U inversé', path: ['forward', 'left', 'forward', 'left', 'forward'] },
+                { name: 'crochet', path: ['forward', 'right', 'forward', 'left', 'forward'] },
+            ];
+            const mediumShapes = [
+                { name: 'carré', path: ['forward', 'right', 'forward', 'right', 'forward', 'right', 'forward'], closed: true },
+                { name: 'escalier', path: ['forward', 'right', 'forward', 'left', 'forward', 'right', 'forward'] },
+                { name: 'L long', path: ['forward', 'forward', 'forward', 'right', 'forward', 'forward'] },
+                { name: 'grand L', path: ['forward', 'forward', 'right', 'forward', 'forward'] },
+                { name: 'J', path: ['forward', 'forward', 'forward', 'left', 'forward'] },
+                { name: 'créneau', path: ['forward', 'right', 'forward', 'right', 'forward', 'left', 'forward', 'left', 'forward'] },
+                { name: 'rectangle', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'right', 'forward'], closed: true },
+                { name: 'pont', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward'] },
+                { name: 'toboggan', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward'] },
+                { name: 'vague', fem: true, path: ['forward', 'right', 'forward', 'left', 'forward', 'left', 'forward', 'right', 'forward'] },
+            ];
             const shapes = {
-                easy: [
-                    { name: 'Ligne Droite', path: ['forward', 'forward', 'forward'] },
-                    { name: 'Petit L', path: ['forward', 'forward', 'right', 'forward'] },
-                    { name: 'Petit U', path: ['forward', 'right', 'forward', 'right', 'forward'] },
-                    { name: 'Crochet', path: ['forward', 'forward', 'right', 'forward'] }
-                ],
-                medium: [
-                    { name: 'Carré', path: ['forward', 'right', 'forward', 'right', 'forward', 'right', 'forward'], closed: true },
-                    { name: 'Escalier', path: ['forward', 'right', 'forward', 'left', 'forward', 'right', 'forward'] },
-                    { name: 'L Long', path: ['forward', 'forward', 'forward', 'right', 'forward', 'forward'] },
-                    { name: 'Tétris', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward'] }
-                ],
-                hard: [
-                    { name: 'Rectangle', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'right', 'forward'], closed: true },
-                    { name: 'Spirale Courte', path: ['forward', 'right', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward'] },
-                    { name: 'S', path: ['forward', 'forward', 'left', 'forward', 'forward', 'left', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward'] },
-                    { name: 'Créneau', path: ['forward', 'right', 'forward', 'right', 'forward', 'left', 'forward', 'left', 'forward'] }
-                ],
+                easy: easyShapes,
+                medium: mediumShapes,
+                hard: [...easyShapes, ...mediumShapes],
                 extreme: [
-                    { name: 'Grand Carré', path: ['forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward'], closed: true },
-                    { name: 'ZigZag Long', path: ['forward', 'right', 'forward', 'left', 'forward', 'right', 'forward', 'left', 'forward', 'right', 'forward'] },
-                    { name: 'Serpentin', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'left', 'forward', 'left', 'forward', 'forward'] },
-                    { name: 'U Imbriqué', path: ['forward', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'forward', 'right', 'forward', 'right', 'forward'] },
-                    { name: 'Labyrinthe', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'left', 'forward', 'left', 'forward', 'forward'] }
+                    { name: 'grand carré', path: ['forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward'], closed: true },
+                    { name: 'serpentin', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'left', 'forward', 'left', 'forward', 'forward'] },
+                    { name: 'U imbriqué', path: ['forward', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'forward', 'right', 'forward', 'right', 'forward'] },
+                    { name: 'labyrinthe', path: ['forward', 'forward', 'right', 'forward', 'right', 'forward', 'left', 'forward', 'left', 'forward', 'forward'] },
+                    { name: 'spirale', fem: true, path: ['forward', 'right', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward', 'forward'] },
+                    { name: 'grand rectangle', path: ['forward', 'forward', 'forward', 'right', 'forward', 'right', 'forward', 'forward', 'forward', 'right', 'forward'], closed: true },
+                    { name: 'S', path: ['forward', 'forward', 'left', 'forward', 'forward', 'left', 'forward', 'forward', 'right', 'forward', 'forward', 'right', 'forward', 'forward'] },
+                    { name: 'double créneau', path: ['forward', 'right', 'forward', 'right', 'forward', 'left', 'forward', 'left', 'forward', 'right', 'forward', 'right', 'forward'] },
+                    { name: 'escalier long', path: ['forward', 'right', 'forward', 'left', 'forward', 'right', 'forward', 'left', 'forward', 'right', 'forward'] },
+                    { name: 'clé', fem: true, path: ['forward', 'forward', 'forward', 'right', 'forward', 'right', 'forward', 'left', 'forward', 'left', 'forward'] },
                 ]
             };
 
@@ -1213,6 +1227,7 @@ let simState = {
                             return { r, c };
                         }),
                         name: shapeDef.name,
+                        fem: shapeDef.fem || false,
                         path: shapeDef.path,
                         closed: shapeDef.closed || false
                     };
@@ -1222,7 +1237,7 @@ let simState = {
             return {
                 startR: 0, startC: 0, startD: 1,
                 targetCells: [{ r: 0, c: 0 }, { r: 0, c: 1 }],
-                name: 'Ligne',
+                name: 'ligne', fem: true,
                 path: ['forward'],
                 closed: false
             };
@@ -1314,7 +1329,8 @@ let simState = {
             drawState.startR = chal.startR;
             drawState.startC = chal.startC;
 
-            let instructionHTML = `Programme le robot pour tracer un <strong>${chal.name}</strong> !<br>`;
+            const article = chal.fem ? 'une' : 'un';
+            let instructionHTML = `Programme le robot pour tracer ${article} <strong>${chal.name}</strong> !<br>`;
             instructionHTML += generateShapeThumbnail(chal.path, chal.startD);
 
             if (drawState.difficulty === 'hard' || drawState.difficulty === 'extreme') {
