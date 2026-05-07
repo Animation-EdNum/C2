@@ -673,12 +673,6 @@ let simState = {
                     } else {
                         showToast('Bravo ! Tu as atteint la récompense !', 'success');
                     }
-                } else {
-                    // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
-                    if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
-                        unlockSkin('space');
-                    }
-                }
 
                     const counterVal = document.getElementById('sim-star-counter-val');
                     if (counterVal) counterVal.textContent = simState.starCount;
@@ -703,6 +697,11 @@ let simState = {
                     }
 
                 } else {
+                    // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
+                    if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
+                        unlockSkin('space');
+                    }
+
                     simState.firstAttempt = false; // Exécution sans succès
                     if (simState.targetRow !== null && simState.targetCol !== null) {
                         showToast("Exécution terminée mais tu n'es pas arrivé sur le trésor", 'warn');
