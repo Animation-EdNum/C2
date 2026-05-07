@@ -1940,6 +1940,11 @@
             overflow: visible;
         }
 
+        .bot-grid.no-grid-lines .bot-cell {
+            border-color: transparent !important;
+            background: transparent !important;
+        }
+
         /* Dalles de roche volcanique */
         .skin-volcano .bot-cell.cell-light {
             background: #292524;
@@ -2171,6 +2176,14 @@
                     style="white-space: nowrap; font-size: 0.9em;">
                     <i data-fa="trash-can" style="width: 16px; height: 16px; margin-right: 5px;"></i>Aucun tapis
                 </button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid-border);">
+                <label class="share-toggle" style="margin-bottom: 0;" for="toggle-hide-grid">
+                    <input type="checkbox" id="toggle-hide-grid">
+                    <span class="share-toggle-slider"></span>
+                </label>
+                <label for="toggle-hide-grid" style="font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex;">Masquer le quadrillage</label>
             </div>
 
             <div id="grid-size-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
@@ -2590,6 +2603,30 @@
                 if (nextDiff === 'medium') document.getElementById('draw-diff-medium')?.click();
                 if (nextDiff === 'hard') document.getElementById('draw-diff-hard')?.click();
                 if (nextDiff === 'extreme') document.getElementById('draw-diff-extreme')?.click();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('hideGrid') === '1') {
+                document.querySelectorAll('.bot-grid').forEach(grid => {
+                    grid.classList.add('no-grid-lines');
+                });
+                const toggleBtn = document.getElementById('toggle-hide-grid');
+                if (toggleBtn) {
+                    toggleBtn.checked = true;
+                }
+            }
+
+            const toggleHideGrid = document.getElementById('toggle-hide-grid');
+            if (toggleHideGrid) {
+                toggleHideGrid.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.add('no-grid-lines'));
+                    } else {
+                        document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.remove('no-grid-lines'));
+                    }
+                });
             }
         });
     </script>
