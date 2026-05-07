@@ -84,6 +84,8 @@ function applyUrlParameters() {
     if (urlParams.get('lockSpeed') === '1') {
         const speedBtn = document.getElementById('btn-speed');
         if (speedBtn) speedBtn.style.display = 'none';
+        const speedToggleBtn = document.getElementById('speedToggleBtn');
+        if (speedToggleBtn) speedToggleBtn.style.display = 'none';
     }
 
     if (urlParams.get('noCmdToggle') === '1') {
