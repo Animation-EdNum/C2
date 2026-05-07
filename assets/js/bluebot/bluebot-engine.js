@@ -438,6 +438,10 @@ let simState = {
                     el.className = 'end-item';
                     el.textContent = cell.textContent.trim();
                     endContent.appendChild(el);
+                    // Remove emoji from grid cell (collected)
+                    const gridCell = cell.closest('.bot-cell');
+                    cell.remove();
+                    if (gridCell) gridCell.classList.add('cell-collected');
                 }
             }
 
@@ -960,6 +964,10 @@ let simState = {
                         el.className = 'end-item';
                         el.textContent = cell.textContent.trim();
                         endContent.appendChild(el);
+                        // Remove emoji from grid cell (collected)
+                        const gridCell = cell.closest('.bot-cell');
+                        cell.remove();
+                        if (gridCell) gridCell.classList.add('cell-collected');
                         addedItem = true;
                     }
                 }
