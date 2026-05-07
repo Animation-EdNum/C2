@@ -961,6 +961,7 @@ let simState = {
                         el.textContent = cell.textContent.trim();
                         endContent.appendChild(el);
                         addedItem = true;
+                        checkMemoryPair('sim-grid', cell.textContent.trim());
                     }
                 }
             }
@@ -968,6 +969,61 @@ let simState = {
             if (addedItem) {
                 clearProgram();
             }
+        }
+
+
+        function checkMemoryPair(gridId, content) {
+            if (!memoryMode) return false;
+
+            const endContent = document.getElementById('sim-end-content');
+            const items = Array.from(endContent.querySelectorAll('.end-item:not(.memory-matched)'));
+
+            const lastItem = items[items.length - 1];
+            if (!lastItem) return false;
+
+            const match = items.slice(0, -1).find(el => el.textContent.trim() === content);
+
+            if (match) {
+                match.classList.add('memory-matched');
+                lastItem.classList.add('memory-matched');
+
+                playSound('success');
+                launchConfetti();
+                showToast('Paire trouvée ! 🎉', 'success');
+
+                const allCells = document.querySelectorAll(`#${gridId} .bot-cell .mat-content`);
+                let removed = 0;
+                allCells.forEach(cell => {
+                    if (cell.textContent.trim() === content && removed < 2) {
+                        cell.closest('.bot-cell').classList.add('memory-cleared');
+                        cell.remove();
+                        removed++;
+                    }
+                });
+
+                setTimeout(() => {
+                    match.remove();
+                    lastItem.remove();
+
+                    const remaining = endContent.querySelectorAll('.end-item');
+                    if (remaining.length === 0) {
+                        const emptyEnd = document.getElementById('sim-end-empty');
+                        if (emptyEnd) emptyEnd.style.display = 'block';
+                    }
+
+                    const remainingContent = document.querySelectorAll(
+                        `#${gridId} .bot-cell .mat-content`
+                    );
+                    if (remainingContent.length === 0) {
+                        launchFire();
+                        showToast('🔥 Toutes les paires trouvées ! Champion !', 'success');
+                    }
+                }, 600);
+
+                return true;
+            }
+
+            return false;
         }
 
         function toggleCmdButtons(disabled) {
