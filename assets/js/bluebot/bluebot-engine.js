@@ -860,6 +860,7 @@ let simState = {
                 if (totalSteps >= 100) unlockSkin('train');
             }
 
+            let addedItem = false;
             if (!simState.failed) {
                 simState.stepIndex = -1; renderProgramStep();
 
@@ -959,10 +960,14 @@ let simState = {
                         el.className = 'end-item';
                         el.textContent = cell.textContent.trim();
                         endContent.appendChild(el);
+                        addedItem = true;
                     }
                 }
             }
             simState.running = false; toggleCmdButtons(false);
+            if (addedItem) {
+                clearProgram();
+            }
         }
 
         function toggleCmdButtons(disabled) {
