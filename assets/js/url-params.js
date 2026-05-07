@@ -14,6 +14,16 @@ function applyUrlParameters() {
         window.isSharedApp = true;
     }
 
+
+    if (urlParams.get('highContrast') === '1') {
+        localStorage.setItem('global_theme', 'high-contrast');
+        if (typeof setTheme === 'function') setTheme('high-contrast');
+        else {
+            document.body.classList.remove('dark');
+            document.body.classList.add('high-contrast');
+        }
+    }
+
     // 1. Interface & Navigation Hiding
     if (urlParams.get('only') === '1') {
         const tabs = document.querySelector('.tabs');

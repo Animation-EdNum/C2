@@ -26,15 +26,12 @@
 
         const iconSun = document.getElementById('icon-sun');
         const iconMoon= document.getElementById('icon-moon');
-        const iconEye = document.getElementById('icon-eye');
         if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
         if (iconMoon) iconMoon.style.display = theme === 'light' ? 'block' : 'none';
-        if (iconEye)  iconEye.style.display  = theme === 'high-contrast' ? 'block' : 'none';
 
         const themeToggleText = document.getElementById('themeToggleText');
         if (themeToggleText) {
-            if (theme === 'dark') themeToggleText.textContent = 'Mode Contraste';
-            else if (theme === 'high-contrast') themeToggleText.textContent = 'Mode Clair';
+            if (theme === 'dark') themeToggleText.textContent = 'Mode Clair';
             else themeToggleText.textContent = 'Mode Sombre';
         }
 
@@ -48,7 +45,7 @@
 
     window.toggleTheme = function () {
         if (document.body.classList.contains('dark')) {
-            setTheme('high-contrast');
+            setTheme('light');
         } else if (document.body.classList.contains('high-contrast')) {
             setTheme('light');
         } else {
