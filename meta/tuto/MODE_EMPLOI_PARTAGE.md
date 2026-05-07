@@ -1,80 +1,79 @@
-# 🔗 Tutoriel : Partager l'activité (Mode Enseignant)
+# Partager une activité avec ses élèves
 
-La Suite EdNum propose une fonctionnalité avancée permettant aux enseignant·e·s de préparer un exercice spécifique et de le distribuer facilement aux élèves. 
-
-Ce système génère un lien (ou un QR Code) qui contient la configuration exacte que vous souhaitez imposer : niveau de difficulté, tapis, options bloquées, etc. L'élève n'aura plus qu'à cliquer sur le lien pour arriver directement dans l'activité préparée.
+Ce tutoriel décrit la procédure pour transmettre une activité paramétrée à une classe via un lien ou un QR Code.
 
 ---
 
-## 1. Accéder au menu de partage
+## 1. Ouvrir le menu de partage
 
-Pour partager une activité, commencez par ouvrir l'application souhaitée (par exemple, le *Simulateur d'automate*).
+Depuis l'application concernée (ex. *Simulateur d'automate*) :
 
-1. Cliquez sur l'icône **Engrenage (⚙)** située en haut à droite de l'écran pour ouvrir le menu des options.
-2. Dans le menu déroulant, cliquez sur **« Partager l'activité »**.
+1. Cliquer sur l'icône **Engrenage ⚙** en haut à droite.
+2. Sélectionner **« Partager l'activité »**.
 
 ![Menu Paramètres](../screenshots/share_settings.png)
 
 ---
 
-## 2. L'interface de partage (Options de base)
+## 2. Fenêtre de partage
 
-Une fenêtre (modale) s'ouvre au centre de l'écran. 
+Une fenêtre modale s'ouvre. Le lien généré intègre automatiquement :
+
+- **L'onglet actif** (mode de jeu, ex. *Décodage*, *Pilotage*).
+- **Le niveau de difficulté** sélectionné.
 
 ![Modale de partage basique](../screenshots/share_basic.png)
 
-Par défaut, le lien généré (affiché dans la barre de texte) enregistre :
-- L'onglet (le mode de jeu) sur lequel vous vous trouvez (ex: *Décodage* ou *Pilotage*).
-- Le niveau de difficulté actuellement sélectionné.
+Trois boutons sont disponibles :
 
-Vous disposez de plusieurs boutons :
-- **Tester le lien** : Ouvre un nouvel onglet avec le lien généré pour vérifier le résultat.
-- **Copier** : Copie le lien dans votre presse-papiers pour l'envoyer par email ou via votre plateforme scolaire.
-- **Afficher le QR Code** : Génère un QR Code que les élèves pourront flasher avec leur tablette (voir section 4).
+| Bouton | Fonction |
+|---|---|
+| **Tester le lien** | Ouvre le lien dans un nouvel onglet pour vérifier le rendu côté élève. |
+| **Copier** | Copie le lien dans le presse-papiers. |
+| **Afficher le QR Code** | Génère un QR Code (voir § 4). |
 
 ---
 
-## 3. Options Avancées (Créer un cadre restrictif)
+## 3. Options avancées
 
-Le véritable pouvoir du partage réside dans les options avancées. En cliquant sur **« Options Avancées »**, vous dévoilez un panneau de contrôle complet permettant de brider l'interface de l'élève.
+Un clic sur **« Options Avancées »** donne accès à des paramètres supplémentaires, regroupés en trois catégories.
 
 ![Options avancées](../screenshots/share_advanced.png)
 
-Les options sont classées par catégories :
+#### A. Interface & Navigation
+- **Forcer le mode actuel** : masque les autres onglets.
+- **Masquer le retour à l'accueil** : empêche la sortie vers le portail.
+- **Masquer le menu réglages** : désactive le changement de tapis, de skin et du son.
 
-**A. Interface & Navigation**
-Ces options permettent d'épuré l'écran de l'élève pour qu'il se concentre uniquement sur la tâche :
-- *Forcer le mode actuel* : Cache tous les autres onglets de l'application.
-- *Masquer le retour à l'accueil* : Désactive le bouton pour revenir au portail principal.
-- *Masquer le menu réglages* : Empêche l'élève de changer de tapis, de skin, ou d'activer le son.
+#### B. Verrouillage & Difficulté
+- **Verrouiller le niveau actuel** : grise les boutons de difficulté.
+- **Forcer le tapis actuel** : charge le tapis sélectionné.
+- **Désactiver les tapis / skins** : empêche la personnalisation.
 
-**B. Verrouillage & Difficulté**
-Ces options empêchent l'élève de changer la difficulté de l'exercice :
-- *Verrouiller le niveau actuel* : Les boutons de difficulté sont grisés, l'élève ne peut pas baisser la difficulté s'il bloque.
-- *Forcer le tapis actuel* : Charge obligatoirement le tapis que vous avez choisi.
-- *Désactiver les tapis / skins* : Empêche l'élève de perdre du temps à personnaliser le robot.
-
-**C. Comportement & Pédagogie**
-Ces options changent les règles du jeu :
-- *Commandes masquées par défaut* : L'œil est fermé d'entrée de jeu, l'élève doit le rouvrir s'il veut s'aider.
-- *Forcer le mode aveugle* : Empêche l'élève d'afficher la séquence de commandes (défi de mémorisation pur).
-- *Masquer les boutons hasard* : L'élève ne peut pas changer de puzzle s'il n'y arrive pas.
+#### C. Comportement & Pédagogie
+- **Commandes masquées par défaut** : la séquence est cachée au démarrage ; l'élève doit l'ouvrir manuellement.
+- **Forcer le mode aveugle (Blindcoding)** : l'affichage de la séquence est impossible.
+- **Masquer les boutons hasard** : empêche de passer à un autre puzzle aléatoire.
 
 ![Options cochées](../screenshots/share_checked.png)
 
-*Exemple : En cochant "Forcer le mode actuel" et "Verrouiller le niveau actuel", le lien généré s'allonge pour intégrer ces paramètres de configuration (ex: `&only=1&lockDiff=1`).*
+> **Remarque :** chaque option cochée ajoute un paramètre à l'URL (ex. `&only=1&lockDiff=1`).
 
 ---
 
-## 4. Distribuer l'activité par QR Code
+## 4. Diffusion par QR Code
 
-Si vos élèves utilisent des tablettes (iPad, Android), la méthode la plus rapide est le QR Code.
+Procédure :
 
-1. Configurez vos options avancées.
-2. Cliquez sur **« Afficher le QR Code »**.
-3. Le QR Code apparaît à l'écran.
-4. Cliquez sur **« Télécharger le QR »** pour enregistrer l'image sur votre ordinateur.
+1. Régler les options avancées.
+2. Cliquer sur **« Afficher le QR Code »**.
+3. Cliquer sur **« Télécharger le QR »** pour enregistrer l'image.
 
 ![Génération QR Code](../screenshots/share_qr.png)
 
-Vous pouvez imprimer ce QR code, l'afficher au tableau blanc interactif (TBI), ou l'insérer dans un document de cours. Dès que l'élève le scannera avec l'appareil photo de sa tablette, l'application s'ouvrira directement dans le mode et la configuration que vous avez préparés !
+Le QR Code peut ensuite être :
+- imprimé et distribué aux élèves ;
+- affiché au TBI ;
+- inséré dans un document (polycopié, fiche, support numérique).
+
+Une fois scanné, le QR Code ouvre directement l'application dans la configuration définie par l'enseignant.
