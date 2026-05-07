@@ -50,7 +50,7 @@ window.commandsVisible = commandsVisible;
         }
 
         document.addEventListener('keydown', (e) => {
-            if (!['simulator', 'challenge', 'read', 'draw'].includes(activeTab)) return;
+            if (!['explore', 'simulator', 'challenge', 'read', 'draw'].includes(activeTab)) return;
 
             if (activeTab === 'draw') {
                 if (drawState.isAnimating || drawState.locked) return;
@@ -71,6 +71,14 @@ window.commandsVisible = commandsVisible;
                         e.preventDefault();
                         runDrawProgram();
                         break;
+                }
+            } else if (activeTab === 'explore') {
+                if (exploreState.running) return;
+                switch (e.key) {
+                    case 'ArrowUp': e.preventDefault(); runSingleCommandExploration('forward'); break;
+                    case 'ArrowDown': e.preventDefault(); runSingleCommandExploration('backward'); break;
+                    case 'ArrowLeft': e.preventDefault(); runSingleCommandExploration('left'); break;
+                    case 'ArrowRight': e.preventDefault(); runSingleCommandExploration('right'); break;
                 }
             } else {
                 if (simState.running) return;
@@ -93,14 +101,21 @@ window.commandsVisible = commandsVisible;
             }
         });
 
-        let activeTab = 'simulator';
+        let activeTab = 'explore';
 
         function switchTab(event, tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
             document.getElementById(`view-${tab}`).classList.add('active');
             activeTab = tab;
+            if (tab === 'explore') {
+                if (!document.getElementById('explore-grid').innerHTML) {
+                    buildGrid('explore-grid', GRID_ROWS, GRID_COLS, []);
+                    renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                    TrailManager.clear('explore-grid');
+                }
+            }
             if (tab === 'challenge') newChallenge();
             if (tab === 'read') newReadChallenge();
             if (tab === 'draw') newDrawChallenge();
@@ -173,6 +188,8 @@ window.commandsVisible = commandsVisible;
             updateGridSizeSlidersState();
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
             randomizeSimulatorPosition();
+            buildGrid('explore-grid', GRID_ROWS, GRID_COLS);
+            randomizeExplorePosition();
             updateCustomMatUI();
 
             // Additional initializations
@@ -208,6 +225,7 @@ window.commandsVisible = commandsVisible;
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
         document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
 
+        document.getElementById('tab-explore').addEventListener('click', (e) => switchTab(e, 'explore'));
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
         document.getElementById('tab-challenge').addEventListener('click', (e) => switchTab(e, 'challenge'));
         document.getElementById('tab-read').addEventListener('click', (e) => switchTab(e, 'read'));
@@ -221,6 +239,18 @@ window.commandsVisible = commandsVisible;
         document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
 
         document.getElementById('btnReset').addEventListener('click', randomizeSimulatorPosition);
+
+        document.getElementById('btn-explore-reset').addEventListener('click', randomizeExplorePosition);
+        document.getElementById('btn-explore-place-elements').addEventListener('click', () => {
+            placeRandomExploreTarget();
+            randomizeExploreWalls();
+        });
+        document.getElementById('btn-explore-clear-walls').addEventListener('click', clearExploreWalls);
+
+        document.getElementById('explore-pad-fwd').addEventListener('click', () => runSingleCommandExploration('forward'));
+        document.getElementById('explore-pad-bwd').addEventListener('click', () => runSingleCommandExploration('backward'));
+        document.getElementById('explore-pad-left').addEventListener('click', () => runSingleCommandExploration('left'));
+        document.getElementById('explore-pad-right').addEventListener('click', () => runSingleCommandExploration('right'));
 
         const btnClearEnd = document.getElementById('btn-clear-end');
         if (btnClearEnd) {
@@ -260,6 +290,33 @@ window.commandsVisible = commandsVisible;
             if (isSimTarget) {
                 showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
                 placeRandomSimTarget(true);
+            }
+        });
+
+        document.getElementById('explore-grid').addEventListener('dragover', (e) => { e.preventDefault(); });
+        document.getElementById('explore-grid').addEventListener('drop', (e) => {
+            e.preventDefault();
+            const cell = e.target.closest('.bot-cell');
+            if (!cell || exploreState.running) return;
+            const r = parseInt(cell.dataset.row);
+            const c = parseInt(cell.dataset.col);
+            const isExploreObstacle = exploreState.obstacles && exploreState.obstacles.some(o => o.r === r && o.c === c);
+            if (isExploreObstacle) return;
+            const isExploreTarget = exploreState.targetRow === r && exploreState.targetCol === c;
+            playSound('click');
+            exploreState.robotRow = r; exploreState.robotCol = c;
+            exploreState.startRow = r; exploreState.startCol = c;
+            exploreState.absoluteStartRow = r; exploreState.absoluteStartCol = c;
+            exploreState.startDir = exploreState.robotDir;
+            exploreState.history = [];
+            exploreState.stepsThisRun = 0;
+
+            TrailManager.clear('explore-grid');
+            renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+
+            if (isExploreTarget) {
+                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+                placeRandomExploreTarget(true);
             }
         });
 
@@ -358,9 +415,14 @@ window.commandsVisible = commandsVisible;
                 simState.obstacles = [];
                 simState.targetRow = null;
                 simState.targetCol = null;
+                exploreState.obstacles = [];
+                exploreState.targetRow = null;
+                exploreState.targetCol = null;
                 generateMatContent(activeMat);
                 buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
+                buildGrid('explore-grid', GRID_ROWS, GRID_COLS);
                 randomizeSimulatorPosition();
+                randomizeExplorePosition();
                 if (activeTab === 'challenge') newChallenge();
                 else if (activeTab === 'read') newReadChallenge();
                 else if (activeTab === 'draw') newDrawChallenge();

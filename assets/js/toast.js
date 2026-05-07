@@ -48,7 +48,11 @@ function showToast(msg, type = 'success', duration = 3000) {
     }
 
     const textSpan = document.createElement('span');
-    textSpan.textContent = msg;
+    if (msg instanceof HTMLElement) {
+        textSpan.appendChild(msg);
+    } else {
+        textSpan.textContent = msg;
+    }
     toast.appendChild(textSpan);
     
     container.appendChild(toast);

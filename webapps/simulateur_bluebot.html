@@ -2157,20 +2157,19 @@
     <div id="mats-drawer-overlay" class="skins-drawer-overlay" aria-hidden="true"></div>
     <div id="mats-drawer" class="skins-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="mats-drawer-title">
         <div class="skins-drawer-header"
-            style="flex-direction: column; align-items: stretch; gap: 10px; padding: 15px 20px;">
+            style="flex-direction: column; align-items: stretch; gap: 15px; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 id="mats-drawer-title"><i data-fa="map"></i> Tapis</h2>
                 <button class="btn-close-modal" id="btn-close-mats" aria-label="Fermer"><i data-fa="xmark"></i></button>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                <div id="mat-opacity-container" style="flex-grow: 1; display: flex; flex-direction: column; gap: 5px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.9em; font-weight: 600;">
-                        <span>Opacité</span>
-                        <span id="matOpacityValue">30%</span>
-                    </div>
-                    <input type="range" id="matOpacitySlider" aria-label="Opacité du tapis pédagogique" min="0.1"
-                        max="1" step="0.1" value="0.3" style="width: 100%;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--grid-border);">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label class="share-toggle" style="margin-bottom: 0;" for="toggle-hide-grid">
+                        <input type="checkbox" id="toggle-hide-grid">
+                        <span class="share-toggle-slider"></span>
+                    </label>
+                    <label for="toggle-hide-grid" style="font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex;">Masquer le quadrillage</label>
                 </div>
                 <button class="btn btn-outline btn-small" id="btn-remove-mat"
                     style="white-space: nowrap; font-size: 0.9em;">
@@ -2178,12 +2177,13 @@
                 </button>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--grid-border);">
-                <label class="share-toggle" style="margin-bottom: 0;" for="toggle-hide-grid">
-                    <input type="checkbox" id="toggle-hide-grid">
-                    <span class="share-toggle-slider"></span>
-                </label>
-                <label for="toggle-hide-grid" style="font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex;">Masquer le quadrillage</label>
+            <div id="mat-opacity-container" style="display: flex; flex-direction: column; gap: 5px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; font-weight: 600;">
+                    <span>Opacité</span>
+                    <span id="matOpacityValue">30%</span>
+                </div>
+                <input type="range" id="matOpacitySlider" aria-label="Opacité du tapis pédagogique" min="0.1"
+                    max="1" step="0.1" value="0.3" style="width: 100%;">
             </div>
 
             <div id="grid-size-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
@@ -2273,13 +2273,50 @@
         <main>
 
             <div class="tabs" role="tablist">
-                <button class="tab-btn active" id="tab-simulator" role="tab" aria-selected="true" aria-controls="view-simulator"><i data-fa="robot"></i> Simulateur</button>
+                <button class="tab-btn active" id="tab-explore" role="tab" aria-selected="true" aria-controls="view-explore"><i data-fa="compass"></i> Exploration</button>
+                <button class="tab-btn" id="tab-simulator" role="tab" aria-selected="false" aria-controls="view-simulator"><i data-fa="robot"></i> Simulateur</button>
                 <button class="tab-btn" id="tab-challenge" role="tab" aria-selected="false" aria-controls="view-challenge"><i data-fa="gamepad-modern"></i> Pilotage</button>
                 <button class="tab-btn" id="tab-read" role="tab" aria-selected="false" aria-controls="view-read"><i data-fa="book-open"></i> Décodage</button>
                 <button class="tab-btn" id="tab-draw" role="tab" aria-selected="false" aria-controls="view-draw"><i data-fa="pen"></i> Dessin</button>
             </div>
 
-            <div id="view-simulator" class="view active" role="tabpanel" aria-labelledby="tab-simulator">
+            <div id="view-explore" class="view active" role="tabpanel" aria-labelledby="tab-explore">
+                <div class="exercise-card">
+                    <div id="explore-instruction" style="text-align:center; font-size: 1.1em; font-weight: 600; margin-bottom: 15px; color: var(--text-main);">
+                        Appuie sur les boutons pour déplacer directement le robot !
+                    </div>
+
+                    <div class="grid-wrapper" style="margin-top: 0;">
+                        <div style="display: flex; gap: 10px; align-items: flex-start; justify-content: center; width: 100%;">
+                            <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);" class="bot-grid-container">
+                                <div class="bot-grid" id="explore-grid" style="margin: 0; max-width: none;"></div>
+                            </div>
+                            <div class="grid-toolbar" style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="icon-action-btn btn-new" id="btn-explore-place-elements" title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
+                                <button class="icon-action-btn" id="btn-explore-reset" title="Position aléatoire"><i data-fa="dice"></i></button>
+                                <button class="icon-action-btn btn-outline-error" id="btn-explore-clear-walls" title="Nettoyer grille"><i data-fa="broom"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-pad" id="explore-cmd-pad">
+                        <button class="cmd-btn cmd-btn-forward" id="explore-pad-fwd" aria-label="Avancer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-left" id="explore-pad-left" aria-label="Tourner à gauche">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-backward" id="explore-pad-bwd" aria-label="Reculer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                        </button>
+                        <button class="cmd-btn cmd-btn-right" id="explore-pad-right" aria-label="Tourner à droite">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-simulator" class="view" role="tabpanel" aria-labelledby="tab-simulator">
 
 
                 <div class="exercise-card">
@@ -2306,9 +2343,15 @@
                     </div>
 
                     <div class="grid-wrapper" style="margin-top: 0;">
-                        <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); margin: 0 auto; display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
-                            class="bot-grid-container">
-                            <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
+                        <div style="display: flex; gap: 10px; align-items: flex-start; justify-content: center; width: 100%;">
+                            <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);" class="bot-grid-container">
+                                <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
+                            </div>
+                            <div class="grid-toolbar" style="display: flex; flex-direction: column; gap: 8px;">
+                                <button class="icon-action-btn btn-new" id="btn-place-elements" title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
+                                <button class="icon-action-btn" id="btnReset" title="Position aléatoire"><i data-fa="dice"></i></button>
+                                <button class="icon-action-btn btn-outline-error" id="btn-clear-walls" title="Nettoyer grille"><i data-fa="broom"></i></button>
+                            </div>
                         </div>
                     </div>
 

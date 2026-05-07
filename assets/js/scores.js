@@ -15,7 +15,9 @@ const ScoreManager = {
         'chal': 'Pilotage',
         'read': 'Décodage',
         'detect': 'Détection d\'erreur',
-        'simulator': 'Simulateur'
+        'simulator': 'Simulateur',
+        'draw': 'Dessin',
+        'jeu_de_la_grue': 'Jeu de la grue'
     },
 
     DIFF_LABELS: {

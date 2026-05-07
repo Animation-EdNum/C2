@@ -886,13 +886,16 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isStrict = urlParams.get('strictMode') === '1';
 
+            let errorCells = [];
+            let correctCells = [];
+
             for (let i = 0; i < gridSize; i++) {
                 let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0);
                 if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) {
                     hasError = true;
-                    if (!isStrict) getCell(i, gridSize).classList.add('cell-error');
+                    errorCells.push(getCell(i, gridSize));
                 } else {
-                    getCell(i, gridSize).classList.add('cell-correct');
+                    correctCells.push(getCell(i, gridSize));
                 }
             }
 
@@ -901,9 +904,9 @@
                 for (let i = 0; i < gridSize; i++) sum += trainData[i][j];
                 if (trainAnswers[gridSize][j] === null || sum % 2 !== 0) {
                     hasError = true;
-                    if (!isStrict) getCell(gridSize, j).classList.add('cell-error');
+                    errorCells.push(getCell(gridSize, j));
                 } else {
-                    getCell(gridSize, j).classList.add('cell-correct');
+                    correctCells.push(getCell(gridSize, j));
                 }
             }
 
@@ -913,9 +916,16 @@
             let cornerVal = trainAnswers[gridSize][gridSize];
             if (cornerVal === null || (rowSum + cornerVal) % 2 !== 0 || (colSum + cornerVal) % 2 !== 0) {
                 hasError = true;
-                if (!isStrict) getCell(gridSize, gridSize).classList.add('cell-error');
+                errorCells.push(getCell(gridSize, gridSize));
             } else {
-                getCell(gridSize, gridSize).classList.add('cell-correct');
+                correctCells.push(getCell(gridSize, gridSize));
+            }
+
+            if (!hasError) {
+                correctCells.forEach(cell => cell.classList.add('cell-correct'));
+            } else if (!isStrict) {
+                errorCells.forEach(cell => cell.classList.add('cell-error'));
+                correctCells.forEach(cell => cell.classList.add('cell-correct'));
             }
 
             if (!hasError) {
