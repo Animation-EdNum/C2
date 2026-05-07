@@ -5,6 +5,7 @@ let simState = {
             running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
             firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0
         };
+        window.simState = simState;
 
         let chalState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
@@ -320,16 +321,23 @@ let simState = {
            ================================================================ */
         function addCmd(cmd) {
             if (simState.running) return;
+            if (window.commandsVisible === true) {
+                simState.blindRunAborted = true;
+            }
             playSound('click');
             if (simState.program.length >= 24) { showToast('Mémoire pleine (24 commandes max)', 'error'); return; }
             simState.program.push(cmd); renderProgram();
         }
         function removeSpecificCmd(index) {
             if (simState.running) return;
+            if (window.commandsVisible === true) {
+                simState.blindRunAborted = true;
+            }
             playSound('click'); simState.program.splice(index, 1); renderProgram();
         }
         function clearProgram() {
             if (simState.running) return;
+            simState.blindRunAborted = false;
             playSound('click'); simState.program = []; simState.stepIndex = -1; simState.failed = false; renderProgram();
         }
 
@@ -557,6 +565,10 @@ let simState = {
 
         async function runProgram() {
             if (simState.running || simState.program.length === 0) return;
+            simState.wasBlindRun = false;
+            if (window.commandsVisible === false && !simState.blindRunAborted) {
+                simState.wasBlindRun = true;
+            }
             playSound('click'); simState.running = true; simState.failed = false; toggleCmdButtons(true);
 
             // Nouvelle origine du ghost à l'endroit où le robot démarre
@@ -582,6 +594,7 @@ let simState = {
                     simState.consecutiveMistakes++;
                     ScoreManager.addMistake('simulator', null);
                     if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
+
 
                     // Shake du robot
                     document.getElementById('sim-robot').classList.add('shake');
@@ -631,25 +644,41 @@ let simState = {
                         simState.consecutiveMistakes = 0; // Reset
 
                         // Déblocage Bee-Bot
-                        if (simState.obstacles.length > 0 && simState.program.includes('backward')) {
+                        let zigzagOk = true;
+                        if (simState.program.length < 2) {
+                            zigzagOk = false;
+                        } else {
+                            for (let idx = 1; idx < simState.program.length; idx++) {
+                                if (simState.program[idx] === simState.program[idx-1]) {
+                                    zigzagOk = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (zigzagOk) {
                             unlockSkin('beebot');
                         }
 
                         // Déblocage Pirate-Bot
-                        if (simState.program.length > 10 && simState.firstAttempt) {
+                        if (simState.wasBlindRun) {
                             unlockSkin('pirate');
                         }
 
-                        // Déblocage Unicorn
-                        const progStr = simState.program.join(',');
-                        if (progStr.includes('left,left,left,left') || progStr.includes('right,right,right,right')) {
-                            unlockSkin('unicorn');
+                        // Déblocage Thymio
+                        if (!simState.program.includes('forward')) {
+                            unlockSkin('thymio');
                         }
 
                         showToast('Trésor trouvé ! Félicitations !', 'success');
                     } else {
                         showToast('Bravo ! Tu as atteint la récompense !', 'success');
                     }
+                } else {
+                    // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
+                    if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
+                        unlockSkin('space');
+                    }
+                }
 
                     const counterVal = document.getElementById('sim-star-counter-val');
                     if (counterVal) counterVal.textContent = simState.starCount;
@@ -1156,6 +1185,10 @@ let simState = {
                     else launchConfetti();
                 }
 
+                if (drawState.difficulty === 'extreme' && (!drawState.mistakes || drawState.mistakes === 0)) {
+                    unlockSkin('unicorn');
+                }
+
                 document.getElementById('btnNextDraw').style.display = 'inline-flex';
                 if (isCorrect) setTimeout(() => { if (document.getElementById('btnNextDraw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
             } else {
@@ -1258,9 +1291,7 @@ let simState = {
                 updateExtremeVisibility();
 
                 // Déblocages
-                if (readState.difficulty === 'medium' && (!readState.mistakes || readState.mistakes === 0)) {
-                    unlockSkin('thymio');
-                } else if (readState.difficulty === 'extreme') {
+                if (readState.difficulty === 'extreme') {
                     if (readState.mistakes === 0) {
                         unlockSkin('volcano');
                         document.getElementById('sim-grid').classList.add('ground-fire');
@@ -1427,9 +1458,7 @@ let simState = {
                     }
 
                     // Déblocages
-                    if (chalState.difficulty === 'medium' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('space');
                     if (chalState.difficulty === 'extreme' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('cyberbot');
-                    if (chalState.difficulty === 'easy') unlockSkin('beebot');
                     if (globalStreak >= 3) unlockSkin('f1');
 
                     showToast(`Bravo ! Pilotage réussi !`, 'success');

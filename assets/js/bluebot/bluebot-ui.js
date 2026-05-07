@@ -1,4 +1,5 @@
 let commandsVisible = true;
+window.commandsVisible = commandsVisible;
 
         function toggleCommands() {
             playSound('click');
@@ -10,6 +11,11 @@ let commandsVisible = true;
             const toggleBtn = document.getElementById('hideCmdToggleBtn');
 
             const simProgram = document.getElementById('sim-program');
+
+            window.commandsVisible = commandsVisible;
+            if (window.simState && window.simState.program && window.simState.program.length > 0) {
+                window.simState.blindRunAborted = true;
+            }
 
             if (commandsVisible) {
                 if (iconEyeOff) iconEyeOff.style.display = 'block';
