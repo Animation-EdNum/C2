@@ -878,19 +878,28 @@
             const cells = document.getElementById('train-grid').children;
             const getCell = (r, c) => cells[r * (gridSize + 1) + c];
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const isStrict = urlParams.get('strictMode') === '1';
+
             for (let i = 0; i < gridSize; i++) {
                 let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0);
                 if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) {
-                    hasError = true; getCell(i, gridSize).classList.add('cell-error');
-                } else { getCell(i, gridSize).classList.add('cell-correct'); }
+                    hasError = true;
+                    if (!isStrict) getCell(i, gridSize).classList.add('cell-error');
+                } else {
+                    getCell(i, gridSize).classList.add('cell-correct');
+                }
             }
 
             for (let j = 0; j < gridSize; j++) {
                 let sum = trainAnswers[gridSize][j] || 0;
                 for (let i = 0; i < gridSize; i++) sum += trainData[i][j];
                 if (trainAnswers[gridSize][j] === null || sum % 2 !== 0) {
-                    hasError = true; getCell(gridSize, j).classList.add('cell-error');
-                } else { getCell(gridSize, j).classList.add('cell-correct'); }
+                    hasError = true;
+                    if (!isStrict) getCell(gridSize, j).classList.add('cell-error');
+                } else {
+                    getCell(gridSize, j).classList.add('cell-correct');
+                }
             }
 
             let rowSum = 0, colSum = 0;
@@ -898,8 +907,11 @@
             for (let i = 0; i < gridSize; i++) colSum += (trainAnswers[i][gridSize] || 0);
             let cornerVal = trainAnswers[gridSize][gridSize];
             if (cornerVal === null || (rowSum + cornerVal) % 2 !== 0 || (colSum + cornerVal) % 2 !== 0) {
-                hasError = true; getCell(gridSize, gridSize).classList.add('cell-error');
-            } else { getCell(gridSize, gridSize).classList.add('cell-correct'); }
+                hasError = true;
+                if (!isStrict) getCell(gridSize, gridSize).classList.add('cell-error');
+            } else {
+                getCell(gridSize, gridSize).classList.add('cell-correct');
+            }
 
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
@@ -914,8 +926,16 @@
                 isFirstAttempt = false;
                 playSound('error');
                 ScoreManager.addMistake("train", 'grid' + gridSize); globalStreak = 0;
-                showToast("❌ Il y a des erreurs en rouge.", 'error');
-                setTimeout(() => document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error')), 1000);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const isStrict = urlParams.get('strictMode') === '1';
+
+                if (isStrict) {
+                    showToast("❌ Il y a une ou plusieurs erreurs.", 'error');
+                } else {
+                    showToast("❌ Il y a des erreurs en rouge.", 'error');
+                    setTimeout(() => document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error')), 1000);
+                }
             }
 
             document.getElementById('global-correct').textContent = globalCorrect;
@@ -1079,7 +1099,10 @@
                 updateDetectScoreDisplay();
                 setTimeout(initDetectMode, 2000);
             } else {
-                const firstHint = !detectHintsEnabled;
+                const urlParams = new URLSearchParams(window.location.search);
+                const isStrict = urlParams.get('strictMode') === '1';
+
+                const firstHint = !detectHintsEnabled && !isStrict; // Do not enable hints in strict mode
                 if (firstHint) {
                     detectHintsEnabled = true;
                     renderDetectGrid();
@@ -1089,10 +1112,20 @@
                 playSound('error');
                 // Get cell from potentially re-rendered grid
                 const errCell = document.getElementById('detect-grid').children[r * (DET_SIZE + 1) + c];
-                errCell.classList.add('cell-error');
+
+                if (!isStrict) {
+                    errCell.classList.add('cell-error');
+                }
                 errCell.classList.add('toggled');
-                setTimeout(() => errCell.classList.remove('cell-error'), 600);
-                showToast(firstHint ? "❌ Pas ce bit ! Les parités en orange t'indiquent où chercher." : "❌ Pas ce bit ! Consulte les parités en orange.", 'error');
+                if (!isStrict) {
+                    setTimeout(() => errCell.classList.remove('cell-error'), 600);
+                }
+
+                if (isStrict) {
+                    showToast("❌ Pas ce bit ! Cherche encore.", 'error');
+                } else {
+                    showToast(firstHint ? "❌ Pas ce bit ! Les parités en orange t'indiquent où chercher." : "❌ Pas ce bit ! Consulte les parités en orange.", 'error');
+                }
                 updateDetectScoreDisplay();
             }
         }
