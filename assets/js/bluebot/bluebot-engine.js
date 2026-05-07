@@ -1273,12 +1273,16 @@ let simState = {
             const startX = points[0].x * cellSize + offsetX;
             const startY = points[0].y * cellSize + offsetY;
 
-            // Make the SVG larger and more visible
+            const displaySize = size * 20;
+
+            const arrowSize = 6;
+            const arrowPath = `M ${startX} ${startY - arrowSize} L ${startX + arrowSize*0.7} ${startY + arrowSize*0.7} L ${startX - arrowSize*0.7} ${startY + arrowSize*0.7} Z`;
+
             return `
-                <svg width="120" height="120" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" style="background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 8px; margin-top: 10px; display: inline-block; box-shadow: var(--card-shadow);">
+                <svg width="${displaySize}" height="${displaySize}" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" style="background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 8px; margin-top: 10px; display: inline-block; box-shadow: var(--card-shadow);">
                     <path d="${gridPath}" stroke="var(--border)" stroke-width="1" stroke-dasharray="2 2" fill="none" opacity="0.5" />
                     <polyline points="${polylinePoints}" stroke="var(--accent, #2563eb)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                    <circle cx="${startX}" cy="${startY}" r="5" fill="var(--error)" />
+                    <path d="${arrowPath}" fill="var(--error)" stroke="var(--error)" stroke-linejoin="round" />
                 </svg>
             `;
         }
