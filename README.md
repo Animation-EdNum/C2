@@ -97,6 +97,7 @@ Do you like clean, lean, and extremely performant code? This project is for you.
 We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no npm install to compile production. The source code *is* the production code.
 
 ### 🏗️ Technical Architecture
+*   **Monolithic Constraints:** The `simulateur_bluebot.html` application is structurally monolithic, making it difficult to maintain and impossible to unit test. This is a known architectural constraint.
 *   **Stack:** HTML / CSS (Native Variables) / JS (ES6).
 *   **Offline-First & PWA:** A robust Service Worker (`sw.js`) caches the `assets/` folder (shared CSS, JS files, and local fonts) and all HTML files.
 *   **Shared Design System:** All Glassmorphism, Dark Mode, and UI components (`.btn`, `.tabs`, `.card`) are located in `assets/css/shared.css`.
