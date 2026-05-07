@@ -347,7 +347,7 @@ function initShareModal() {
         if (typeof window.currentDifficulty !== 'undefined') {
             currentDiff = window.currentDifficulty;
         } else {
-            const activeDiff = document.querySelector('.diff-btn.active');
+            const activeDiff = document.querySelector('.view.active .diff-btn.active') || document.querySelector('.diff-btn.active');
             if(activeDiff) currentDiff = activeDiff.dataset.diff || activeDiff.id.split('-').pop();
             else if(document.getElementById('difficulty-select')) currentDiff = document.getElementById('difficulty-select').value;
         }
