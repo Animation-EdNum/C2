@@ -41,9 +41,9 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 #### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
 ![Simulateur Blue-Bot](meta/screenshots/simulateur_bluebot.png)
-- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques. [Mode d'emploi détaillé (Manuel Utilisateur)](meta/tuto/MODE_EMPLOI_SIMULATEUR_AUTOMATE.md).
+- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_AUTOMATE.md) | [Tutoriel de partage](meta/tuto/MODE_EMPLOI_PARTAGE.md).
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot** (Demi-cycle 3-4H)
-- **Fonctionnalités :** 4 modes principaux (*Simulateur*, *Pilotage*, *Décodage*, et *Dessin*). Explorez librement le robot, résolvez des puzzles avec règles strictes (Facile, Moyen, Difficile), prédisez les parcours et trouvez des bugs dans les programmes. Créez aussi vos propres défis sur des tapis modulables.
+- **Fonctionnalités :** 5 modes principaux (*Exploration*, *Simulateur*, *Pilotage*, *Décodage*, et *Dessin*). Explorez librement le robot en le déplaçant case par case, résolvez des puzzles avec règles strictes (Facile, Moyen, Difficile, Extrême), prédisez les parcours et trouvez des bugs dans les programmes. Créez aussi vos propres défis sur des tapis modulables.
 - **Valeur pédagogique :** Travaille la pensée algorithmique, la décomposition de problèmes, la décentration cognitive (droite/gauche relatives au robot) et favorise l'anticipation par la programmation à l'aveugle.
 
 #### 2. Pixel Studio (`webapps/binaire_studio.html`)
