@@ -35,15 +35,15 @@ Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur d
 
 ### 🎮 Nos Webapps pour les élèves (Jeux pédagogiques)
 
-Toutes nos applications intègrent une interface unifiée (design "Glassmorphism" moderne), un mode clair/sombre, une difficulté adaptative intelligente, et des graphiques circulaires pour visualiser les progrès. L'application portail d'accueil (`index.html`) permet un accès facile et rapide à chaque outil.
+Toutes nos applications intègrent une interface unifiée (design "Glassmorphism" moderne), un mode clair/sombre/contraste élevé, une difficulté adaptative intelligente, et des graphiques circulaires pour visualiser les progrès. L'application portail d'accueil (`index.html`) permet un accès facile et rapide à chaque outil.
 
 ![Portail d'accueil](meta/screenshots/index.png)
 
 #### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
 ![Simulateur Blue-Bot](meta/screenshots/simulateur_bluebot.png)
-- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques.
+- **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques. [Mode d'emploi détaillé (Manuel Utilisateur)](meta/tuto/MODE_EMPLOI_SIMULATEUR_AUTOMATE.md).
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot** (Demi-cycle 3-4H)
-- **Fonctionnalités :** Explorez librement le robot, résolvez des puzzles avec règles strictes (Facile, Moyen, Difficile), prédisez les parcours et trouvez des bugs dans les programmes. Créez aussi vos propres défis sur des tapis modulables.
+- **Fonctionnalités :** 4 modes principaux (*Simulateur*, *Pilotage*, *Décodage*, et *Dessin*). Explorez librement le robot, résolvez des puzzles avec règles strictes (Facile, Moyen, Difficile), prédisez les parcours et trouvez des bugs dans les programmes. Créez aussi vos propres défis sur des tapis modulables.
 - **Valeur pédagogique :** Travaille la pensée algorithmique, la décomposition de problèmes, la décentration cognitive (droite/gauche relatives au robot) et favorise l'anticipation par la programmation à l'aveugle.
 
 #### 2. Pixel Studio (`webapps/binaire_studio.html`)
@@ -122,13 +122,14 @@ Our CI pipeline (`.github/workflows/e2e-tests.yml`) checks every PR with Playwri
 To run the tests locally:
 ```bash
 # 1. Install Python dependencies
-pip install -r meta/e2e_tests/requirements.txt && playwright install
+python3 -m pip install -r meta/e2e_tests/requirements.txt && playwright install
 
-# 2. Start a local server (in background)
-python -m http.server 8000 &
+# 2. Start a local server (in background) and wait a bit
+python3 -m http.server 8000 &
+sleep 5
 
 # 3. Run E2E tests
-pytest meta/e2e_tests/
+python3 -m pytest meta/e2e_tests/
 
 # 4. Kill the server when finished
 kill $(lsof -t -i :8000) 2>/dev/null || true
