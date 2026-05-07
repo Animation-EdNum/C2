@@ -245,6 +245,16 @@ function initShareModal() {
                             <h3>Interface & Navigation</h3>
                             <div class="share-option">
                                 <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-highContrast">Mode contraste élevé</label>
+                                    <div class="share-option-desc">Active automatiquement le thème à fort contraste.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-highContrast">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option">
+                                <div class="share-option-text">
                                     <label class="share-option-label" for="opt-only">Forcer le mode actuel</label>
                                     <div class="share-option-desc">Verrouille l'application sur le mode actuel pour éviter toute distraction.</div>
                                 </div>
