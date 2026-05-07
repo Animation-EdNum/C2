@@ -646,6 +646,8 @@ function initShareModal() {
         if (qrContainer.style.display === 'block') {
             qrContainer.style.display = 'none';
             if (btnDownloadQr) btnDownloadQr.style.display = 'none';
+            btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Afficher le QR Code';
+            if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
             return;
         }
 
@@ -673,6 +675,8 @@ function initShareModal() {
     function generateQrCode() {
         qrContainer.style.display = 'block';
         if (btnDownloadQr) btnDownloadQr.style.display = 'inline-block';
+        btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Masquer le QR Code';
+        if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
         new QRious({
             element: qrCanvas,
             value: urlInput.value,
