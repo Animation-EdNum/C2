@@ -5,6 +5,7 @@ let simState = {
             running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
             firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0
         };
+        window.simState = simState;
 
         let chalState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
@@ -320,16 +321,23 @@ let simState = {
            ================================================================ */
         function addCmd(cmd) {
             if (simState.running) return;
+            if (window.commandsVisible === true) {
+                simState.blindRunAborted = true;
+            }
             playSound('click');
             if (simState.program.length >= 24) { showToast('Mémoire pleine (24 commandes max)', 'error'); return; }
             simState.program.push(cmd); renderProgram();
         }
         function removeSpecificCmd(index) {
             if (simState.running) return;
+            if (window.commandsVisible === true) {
+                simState.blindRunAborted = true;
+            }
             playSound('click'); simState.program.splice(index, 1); renderProgram();
         }
         function clearProgram() {
             if (simState.running) return;
+            simState.blindRunAborted = false;
             playSound('click'); simState.program = []; simState.stepIndex = -1; simState.failed = false; renderProgram();
         }
 
@@ -557,6 +565,10 @@ let simState = {
 
         async function runProgram() {
             if (simState.running || simState.program.length === 0) return;
+            simState.wasBlindRun = false;
+            if (window.commandsVisible === false && !simState.blindRunAborted) {
+                simState.wasBlindRun = true;
+            }
             playSound('click'); simState.running = true; simState.failed = false; toggleCmdButtons(true);
 
             // Nouvelle origine du ghost à l'endroit où le robot démarre
@@ -583,15 +595,6 @@ let simState = {
                     ScoreManager.addMistake('simulator', null);
                     if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
 
-                    // Easter Egg Rocket: Check if it's a boundary block (not an obstacle)
-                    let d = simState.robotDir;
-                    let step = cmd === 'forward' ? 1 : -1;
-                    let dr = [-1, 0, 1, 0], dc = [0, 1, 0, -1];
-                    let nr = simState.robotRow + dr[d] * step, nc = simState.robotCol + dc[d] * step;
-                    let isBoundary = nr < 0 || nr >= GRID_ROWS || nc < 0 || nc >= GRID_COLS;
-                    if (isBoundary) {
-                        unlockSkin('space');
-                    }
 
                     // Shake du robot
                     document.getElementById('sim-robot').classList.add('shake');
@@ -641,21 +644,23 @@ let simState = {
                         simState.consecutiveMistakes = 0; // Reset
 
                         // Déblocage Bee-Bot
-                        let visitedSet = new Set();
-                        let tempR = simState.startRow, tempC = simState.startCol, tempD = simState.startDir;
-                        visitedSet.add(`${tempR},${tempC}`);
-                        for (const cmd of simState.program) {
-                            let res = moveRobot({robotRow: tempR, robotCol: tempC, robotDir: tempD, obstacles: simState.obstacles}, cmd);
-                            tempR = res.robotRow; tempC = res.robotCol; tempD = res.robotDir;
-                            visitedSet.add(`${tempR},${tempC}`);
-                            if (res.blocked) break;
+                        let zigzagOk = true;
+                        if (simState.program.length < 2) {
+                            zigzagOk = false;
+                        } else {
+                            for (let idx = 1; idx < simState.program.length; idx++) {
+                                if (simState.program[idx] === simState.program[idx-1]) {
+                                    zigzagOk = false;
+                                    break;
+                                }
+                            }
                         }
-                        if (visitedSet.size >= 10) {
+                        if (zigzagOk) {
                             unlockSkin('beebot');
                         }
 
                         // Déblocage Pirate-Bot
-                        if (simState.program.length > 10 && simState.firstAttempt) {
+                        if (simState.wasBlindRun) {
                             unlockSkin('pirate');
                         }
 
@@ -668,6 +673,12 @@ let simState = {
                     } else {
                         showToast('Bravo ! Tu as atteint la récompense !', 'success');
                     }
+                } else {
+                    // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
+                    if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
+                        unlockSkin('space');
+                    }
+                }
 
                     const counterVal = document.getElementById('sim-star-counter-val');
                     if (counterVal) counterVal.textContent = simState.starCount;

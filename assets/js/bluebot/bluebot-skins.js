@@ -114,10 +114,10 @@
 
         const SKIN_CONFIG = {
             'default': { name: 'Blue-Bot', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
-            'beebot': { name: 'Bee-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'Visite au moins 10 cases différentes avant de trouver le trésor.' },
+            'beebot': { name: 'Bee-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
             'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
-            'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Fonce dans un mur pour essayer de sortir de la grille ! (Vers l\'infini et au-delà !)', hidden: true },
-            'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteint le trésor du premier coup en utilisant plus de 10 instructions.' },
+            'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens exactement sur ta case de départ après avoir fait un parcours d\'au moins 15 cases (sans attraper le trésor).', hidden: false },
+            'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
             'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
             'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
             'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
