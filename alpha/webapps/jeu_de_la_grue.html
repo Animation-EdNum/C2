@@ -988,7 +988,7 @@
         const programStrip = document.getElementById('program-strip');
         const playBtn = document.getElementById('play-btn');
 
-        let cachedCupEls = [];
+        let cachedCups = [];
 
         function init() {
             setupEventListeners();
@@ -1084,13 +1084,13 @@
 
         function renderBoard(boardState, container, isTarget) {
             container.innerHTML = '';
-            if (!isTarget) cachedCupEls = [];
+            if (!isTarget) cachedCups = [];
             for (let i = 0; i < NUM_CUPS; i++) {
                 let cupEl = document.createElement('div');
                 cupEl.className = 'cup';
+                let cupSlots = [];
                 if (!isTarget) {
                     cupEl.id = `cup-${i}`;
-                    cachedCupEls[i] = cupEl;
                 }
 
                 // Add background slots for visual guidance
@@ -1100,8 +1100,13 @@
                     let slotEl = document.createElement('div');
                     slotEl.className = 'cup-slot';
                     slotsContainer.appendChild(slotEl);
+                    cupSlots.push(slotEl);
                 }
                 cupEl.appendChild(slotsContainer);
+
+                if (!isTarget) {
+                    cachedCups[i] = { el: cupEl, slots: cupSlots };
+                }
 
                 let blocksContainer = document.createElement('div');
                 blocksContainer.className = 'cup-blocks';
@@ -1140,11 +1145,14 @@
             }
 
             for (let i = 0; i < NUM_CUPS; i++) {
-                let cupEl = cachedCupEls[i];
-                if (cupEl) {
-                    let slots = cupEl.querySelectorAll('.cup-slot');
+                let cup = cachedCups[i];
+                if (cup) {
+                    let cupEl = cup.el;
+                    let slots = cup.slots;
                     // Remove highlights from all slots initially
-                    slots.forEach(slot => slot.classList.remove('active-slot'));
+                    for (let s = 0; s < slots.length; s++) {
+                        slots[s].classList.remove('active-slot');
+                    }
 
                     if (i === craneState.pos) {
                         cupEl.classList.add('active-column');

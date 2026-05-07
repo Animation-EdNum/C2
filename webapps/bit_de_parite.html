@@ -606,10 +606,6 @@
                         <i data-fa="gear"></i>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" id="score-manager-btn" aria-label="Voir mes statistiques">
-                            <i data-fa="chart-simple"></i>
-                            <span>Voir mes statistiques</span>
-                        </button>
                         <button class="menu-item-btn" id="themeToggleBtn" aria-label="Changer de thème">
                             <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
                             <i data-fa="moon" id="icon-moon"></i>
@@ -647,8 +643,11 @@
                     <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
                     <div style="margin-top:10px;">
                         <strong>Le but du jeu :</strong> Faire en sorte qu'il y ait toujours un nombre <strong>pair</strong> (0, 2, 4...) de "1" sur chaque ligne et chaque colonne.<br><br>
-                        <strong>Comment faire ?</strong> Compte les "1" dans une ligne ou une colonne. Si tu as un nombre impair de "1", ajoute un "1" dans la case de bordure pour rendre le total pair. Si le nombre est déjà pair, ajoute un "0".<br><br>
-                        <strong>Le bit du coin (Vérification) :</strong> La case tout en bas à droite est très spéciale ! Elle sert d'<strong>auto-correction</strong>. Elle compte les "1" des autres cases de bordure. Si tout est correct, elle sera aussi paire !
+                    <strong>📝 Mode Entraînement :</strong> La grille de données est générée aléatoirement. Complète les
+                    cases de parité vides (en bordure) pour respecter le but du jeu.
+                    <strong><i data-fa="magnifying-glass"></i> Trouve l'erreur :</strong> Un bit a été corrompu lors d'une transmission. Les bits de parité
+                    corrects sont affichés en bordure. <strong>L'intersection</strong> de la ligne et de la
+                    colonne suspectes désigne le bit corrompu — clique dessus pour le corriger !
                     </div>
                 </details>
 
@@ -680,14 +679,17 @@
                             </div>
                         </div>
 
-                        <div class="score-bar">
-                            <div class="score-item">
-                                <div class="score-label">Victoires</div>
-                                <div class="score-value" id="global-correct">0</div>
-                            </div>
-                            <div class="score-item">
-                                <div class="score-label">Série 🔥</div>
-                                <div class="score-value" id="global-streak">0</div>
+                        <div class="card-footer">
+                            <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" onclick="ScoreManager.showModal()"><i data-fa="chart-pie"></i></button>
+                            <div class="score-bar">
+                                <div class="score-item">
+                                    <div class="score-label">Victoires</div>
+                                    <div class="score-value" id="global-correct">0</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-label">Série 🔥</div>
+                                    <div class="score-value" id="global-streak">0</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -733,14 +735,17 @@
                             </div>
                         </div>
 
-                        <div class="score-bar">
-                            <div class="score-item">
-                                <div class="score-label">Victoires</div>
-                                <div class="score-value" id="detect-correct">0</div>
-                            </div>
-                            <div class="score-item">
-                                <div class="score-label">Série 🔥</div>
-                                <div class="score-value" id="detect-streak">0</div>
+                        <div class="card-footer">
+                            <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" onclick="ScoreManager.showModal()"><i data-fa="chart-pie"></i></button>
+                            <div class="score-bar">
+                                <div class="score-item">
+                                    <div class="score-label">Victoires</div>
+                                    <div class="score-value" id="detect-correct">0</div>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-label">Série 🔥</div>
+                                    <div class="score-value" id="detect-streak">0</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -878,19 +883,31 @@
             const cells = document.getElementById('train-grid').children;
             const getCell = (r, c) => cells[r * (gridSize + 1) + c];
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const isStrict = urlParams.get('strictMode') === '1';
+
+            let errorCells = [];
+            let correctCells = [];
+
             for (let i = 0; i < gridSize; i++) {
                 let sum = trainData[i].reduce((a, b) => a + b, 0) + (trainAnswers[i][gridSize] || 0);
                 if (trainAnswers[i][gridSize] === null || sum % 2 !== 0) {
-                    hasError = true; getCell(i, gridSize).classList.add('cell-error');
-                } else { getCell(i, gridSize).classList.add('cell-correct'); }
+                    hasError = true;
+                    errorCells.push(getCell(i, gridSize));
+                } else {
+                    correctCells.push(getCell(i, gridSize));
+                }
             }
 
             for (let j = 0; j < gridSize; j++) {
                 let sum = trainAnswers[gridSize][j] || 0;
                 for (let i = 0; i < gridSize; i++) sum += trainData[i][j];
                 if (trainAnswers[gridSize][j] === null || sum % 2 !== 0) {
-                    hasError = true; getCell(gridSize, j).classList.add('cell-error');
-                } else { getCell(gridSize, j).classList.add('cell-correct'); }
+                    hasError = true;
+                    errorCells.push(getCell(gridSize, j));
+                } else {
+                    correctCells.push(getCell(gridSize, j));
+                }
             }
 
             let rowSum = 0, colSum = 0;
@@ -898,8 +915,18 @@
             for (let i = 0; i < gridSize; i++) colSum += (trainAnswers[i][gridSize] || 0);
             let cornerVal = trainAnswers[gridSize][gridSize];
             if (cornerVal === null || (rowSum + cornerVal) % 2 !== 0 || (colSum + cornerVal) % 2 !== 0) {
-                hasError = true; getCell(gridSize, gridSize).classList.add('cell-error');
-            } else { getCell(gridSize, gridSize).classList.add('cell-correct'); }
+                hasError = true;
+                errorCells.push(getCell(gridSize, gridSize));
+            } else {
+                correctCells.push(getCell(gridSize, gridSize));
+            }
+
+            if (!hasError) {
+                correctCells.forEach(cell => cell.classList.add('cell-correct'));
+            } else if (!isStrict) {
+                errorCells.forEach(cell => cell.classList.add('cell-error'));
+                correctCells.forEach(cell => cell.classList.add('cell-correct'));
+            }
 
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
@@ -914,8 +941,16 @@
                 isFirstAttempt = false;
                 playSound('error');
                 ScoreManager.addMistake("train", 'grid' + gridSize); globalStreak = 0;
-                showToast("❌ Il y a des erreurs en rouge.", 'error');
-                setTimeout(() => document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error')), 1000);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const isStrict = urlParams.get('strictMode') === '1';
+
+                if (isStrict) {
+                    showToast("❌ Il y a une ou plusieurs erreurs.", 'error');
+                } else {
+                    showToast("❌ Il y a des erreurs en rouge.", 'error');
+                    setTimeout(() => document.querySelectorAll('.cell-error').forEach(c => c.classList.remove('cell-error')), 1000);
+                }
             }
 
             document.getElementById('global-correct').textContent = globalCorrect;
@@ -1079,7 +1114,10 @@
                 updateDetectScoreDisplay();
                 setTimeout(initDetectMode, 2000);
             } else {
-                const firstHint = !detectHintsEnabled;
+                const urlParams = new URLSearchParams(window.location.search);
+                const isStrict = urlParams.get('strictMode') === '1';
+
+                const firstHint = !detectHintsEnabled && !isStrict; // Do not enable hints in strict mode
                 if (firstHint) {
                     detectHintsEnabled = true;
                     renderDetectGrid();
@@ -1089,10 +1127,20 @@
                 playSound('error');
                 // Get cell from potentially re-rendered grid
                 const errCell = document.getElementById('detect-grid').children[r * (DET_SIZE + 1) + c];
-                errCell.classList.add('cell-error');
+
+                if (!isStrict) {
+                    errCell.classList.add('cell-error');
+                }
                 errCell.classList.add('toggled');
-                setTimeout(() => errCell.classList.remove('cell-error'), 600);
-                showToast(firstHint ? "❌ Pas ce bit ! Les parités en orange t'indiquent où chercher." : "❌ Pas ce bit ! Consulte les parités en orange.", 'error');
+                if (!isStrict) {
+                    setTimeout(() => errCell.classList.remove('cell-error'), 600);
+                }
+
+                if (isStrict) {
+                    showToast("❌ Pas ce bit ! Cherche encore.", 'error');
+                } else {
+                    showToast(firstHint ? "❌ Pas ce bit ! Les parités en orange t'indiquent où chercher." : "❌ Pas ce bit ! Consulte les parités en orange.", 'error');
+                }
                 updateDetectScoreDisplay();
             }
         }
