@@ -1228,10 +1228,10 @@ let simState = {
             };
         }
 
-        function generateShapeThumbnail(path) {
+        function generateShapeThumbnail(path, startD = 0) {
             let x = 0;
             let y = 0;
-            let dir = 0; // 0: N, 1: E, 2: S, 3: W
+            let dir = startD; // Use actual start direction (0: N, 1: E, 2: S, 3: W)
             const points = [{x, y}];
 
             let minX = 0, maxX = 0, minY = 0, maxY = 0;
@@ -1252,26 +1252,35 @@ let simState = {
                 }
             }
 
-            const width = Math.max(2, maxX - minX + 2);
-            const height = Math.max(2, maxY - minY + 2);
-            const size = Math.max(width, height);
+            const width = Math.max(2, maxX - minX + 1);
+            const height = Math.max(2, maxY - minY + 1);
+            const size = Math.max(width + 2, height + 2); // Add padding of 1 cell on all sides minimum
 
             const cellSize = 20;
             const viewBoxSize = size * cellSize;
 
-            const offsetX = ((size - (maxX - minX + 1)) / 2 - minX + 0.5) * cellSize;
-            const offsetY = ((size - (maxY - minY + 1)) / 2 - minY + 0.5) * cellSize;
+            const padX = Math.floor((size - width) / 2);
+            const padY = Math.floor((size - height) / 2);
 
-            let gridPath = '';
-            for (let i = 0; i <= size; i++) {
-                gridPath += `M ${i * cellSize} 0 L ${i * cellSize} ${viewBoxSize} `;
-                gridPath += `M 0 ${i * cellSize} L ${viewBoxSize} ${i * cellSize} `;
+            let gridRects = '';
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const isDark = (r + c) % 2 === 1;
+                    const fillOpacity = isDark ? '0.08' : '0.03';
+                    gridRects += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="currentColor" fill-opacity="${fillOpacity}" stroke="var(--border)" stroke-width="1" />`;
+                }
             }
 
-            const polylinePoints = points.map(p => `${p.x * cellSize + offsetX},${p.y * cellSize + offsetY}`).join(' ');
+            const polylinePoints = points.map(p => {
+                const c = p.x - minX + padX;
+                const r = p.y - minY + padY;
+                return `${c * cellSize + cellSize / 2},${r * cellSize + cellSize / 2}`;
+            }).join(' ');
 
-            const startX = points[0].x * cellSize + offsetX;
-            const startY = points[0].y * cellSize + offsetY;
+            const startC = points[0].x - minX + padX;
+            const startR = points[0].y - minY + padY;
+            const startX = startC * cellSize + cellSize / 2;
+            const startY = startR * cellSize + cellSize / 2;
 
             const displaySize = size * 20;
 
@@ -1279,10 +1288,11 @@ let simState = {
             const arrowPath = `M ${startX} ${startY - arrowSize} L ${startX + arrowSize*0.7} ${startY + arrowSize*0.7} L ${startX - arrowSize*0.7} ${startY + arrowSize*0.7} Z`;
 
             return `
-                <svg width="${displaySize}" height="${displaySize}" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" style="background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 8px; margin-top: 10px; display: inline-block; box-shadow: var(--card-shadow);">
-                    <path d="${gridPath}" stroke="var(--border)" stroke-width="1" stroke-dasharray="2 2" fill="none" opacity="0.5" />
+                <svg width="${displaySize}" height="${displaySize}" viewBox="0 0 ${viewBoxSize} ${viewBoxSize}" style="background: var(--card-bg); color: var(--text-main); border: 2px solid var(--card-border); border-radius: 8px; margin-top: 10px; display: inline-block; box-shadow: var(--card-shadow); overflow: hidden;">
+                    ${gridRects}
                     <polyline points="${polylinePoints}" stroke="var(--accent, #2563eb)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                    <path d="${arrowPath}" fill="var(--error)" stroke="var(--error)" stroke-linejoin="round" />
+                    <circle cx="${startX}" cy="${startY}" r="3" fill="var(--error)" />
+                    <path d="${arrowPath}" fill="var(--error)" stroke="var(--error)" stroke-linejoin="round" transform="rotate(${startD * 90}, ${startX}, ${startY})" />
                 </svg>
             `;
         }
@@ -1305,7 +1315,7 @@ let simState = {
             drawState.startC = chal.startC;
 
             let instructionHTML = `Programme le robot pour tracer un <strong>${chal.name}</strong> !<br>`;
-            instructionHTML += generateShapeThumbnail(chal.path);
+            instructionHTML += generateShapeThumbnail(chal.path, chal.startD);
 
             if (drawState.difficulty === 'hard' || drawState.difficulty === 'extreme') {
                 instructionHTML += `<div style="font-size: 0.9em; margin-top: 5px; color: var(--text-muted);"><i data-fa="eye-slash" style="width: 16px; height: 16px; vertical-align: middle;"></i> Pas d'aide sur la grille !</div>`;
