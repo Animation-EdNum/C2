@@ -52,3 +52,4 @@
 - Refactored url-params.js to use the '.unlinked' CSS class instead of display: none for header navigation disabling.\n- Implemented context-aware generation for the share URL modal, scanning DOM to display relevant options.\n- Added QR code generation support in url-params via local vendor script integration.
 - Refactored `toast.js` to correctly map toast notification types to their corresponding valid FontAwesome 6/7 icon names (`circle-check`, `circle-xmark`, `triangle-exclamation`, `circle-info`).
 - Implemented a 3000ms delay auto-advance logic in `simulateur_bluebot.html` using timeouts in the success blocks, avoiding duplicate triggers by ensuring the correct UI tab is visible.
+- Updated unlock conditions for Blue-Bot simulator skins (Thymio, Bee-Bot, Rocket, Unicorn) in `bluebot-engine.js` and `bluebot-skins.js`.
