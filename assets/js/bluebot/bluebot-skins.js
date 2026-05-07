@@ -118,7 +118,7 @@
             'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Réussis un décodage (moyen) du premier coup.' },
             'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Gagne un pilotage moyen pour débloquer.' },
             'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteint le trésor du premier coup en utilisant plus de 10 instructions.' },
-            'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
+            'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 45%; height: 45%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
             'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Tête qui tourne : Mystère...', hidden: true },
             'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
             'volcano': {
