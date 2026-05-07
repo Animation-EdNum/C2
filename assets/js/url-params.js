@@ -68,6 +68,13 @@ function applyUrlParameters() {
         if(diffSelect) diffSelect.disabled = true;
     }
 
+    if (urlParams.has('forceMat')) {
+        const forcedMat = urlParams.get('forceMat');
+        if (forcedMat && forcedMat !== 'custom') {
+            localStorage.setItem('bb_active_mat', forcedMat);
+        }
+    }
+
     if (urlParams.get('lockMat') === '1') {
         const matBtn = document.getElementById('btn-open-mats');
         if (matBtn) matBtn.style.display = 'none';
@@ -255,11 +262,15 @@ function initShareModal() {
                             </label>
                             <label class="share-checkbox" id="lbl-lockMat">
                                 <input type="checkbox" id="opt-lockMat">
-                                <span>Verrouiller le tapis</span>
+                                <span>Désactiver les tapis</span>
+                            </label>
+                            <label class="share-checkbox" id="lbl-forceMat">
+                                <input type="checkbox" id="opt-forceMat">
+                                <span>Forcer le tapis actuel</span>
                             </label>
                             <label class="share-checkbox" id="lbl-lockSkin">
                                 <input type="checkbox" id="opt-lockSkin">
-                                <span>Verrouiller le skin</span>
+                                <span>Désactiver les skins</span>
                             </label>
                             <label class="share-checkbox" id="lbl-lockSpeed">
                                 <input type="checkbox" id="opt-lockSpeed">
@@ -298,6 +309,10 @@ function initShareModal() {
 
     // Context-Aware Options: Hide options for features not in the current app
     if (!document.getElementById('btn-open-mats')) document.getElementById('lbl-lockMat').style.display = 'none';
+    if (!document.getElementById('btn-open-mats')) {
+        const lblForceMat = document.getElementById('lbl-forceMat');
+        if (lblForceMat) lblForceMat.style.display = 'none';
+    }
     if (!document.getElementById('btn-open-skins')) document.getElementById('lbl-lockSkin').style.display = 'none';
     if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) document.getElementById('lbl-lockSpeed').style.display = 'none';
     if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
@@ -364,6 +379,22 @@ function initShareModal() {
             }
         });
 
+        // Handle forceMat specifically if it exists and is checked
+        const forceMatCb = document.getElementById('opt-forceMat');
+        if (forceMatCb && forceMatCb.checked) {
+            // we don't want the default behavior (forceMat=1) that was added by the loop
+            url.searchParams.delete('forceMat');
+
+            // we need to set it to the actual activeMat
+            // Attempt to get activeMat from localStorage as it's the standard way in this app
+            let currentMat = localStorage.getItem('bb_active_mat') || 'none';
+            if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
+
+            if (currentMat && currentMat !== 'custom') {
+                url.searchParams.set('forceMat', currentMat);
+            }
+        }
+
         urlInput.value = url.toString();
 
         // Reset copy button state
@@ -373,6 +404,21 @@ function initShareModal() {
     }
 
     shareBtn.addEventListener('click', () => {
+        const forceMatCb = document.getElementById('opt-forceMat');
+        if (forceMatCb) {
+            let currentMat = localStorage.getItem('bb_active_mat') || 'none';
+            if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
+            if (currentMat === 'custom') {
+                forceMatCb.disabled = true;
+                forceMatCb.checked = false;
+                document.getElementById('lbl-forceMat').style.opacity = '0.5';
+                document.getElementById('lbl-forceMat').title = 'Impossible de forcer un tapis personnalisé';
+            } else {
+                forceMatCb.disabled = false;
+                document.getElementById('lbl-forceMat').style.opacity = '1';
+                document.getElementById('lbl-forceMat').title = '';
+            }
+        }
         updateShareUrl();
         modalOverlay.classList.add('active');
     });
