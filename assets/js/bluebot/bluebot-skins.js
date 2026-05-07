@@ -368,6 +368,15 @@
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
+
+            if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+                buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
+                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                TrailManager.clear('explore-grid');
+                if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+                    renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+                }
+            }
             if (chalState.robotRow !== null) {
                 buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
                 renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
@@ -488,7 +497,7 @@
             closeSkinsModal();
 
             // Met à jour les grilles sans réinitialiser leur état
-            const grids = ['sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
+            const grids = ['sim-grid', 'explore-grid', 'chal-grid', 'read-grid', 'draw-grid'];
             grids.forEach(gridId => {
                 const grid = document.getElementById(gridId);
                 if (!grid) return;
@@ -523,6 +532,14 @@
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             if (simState.targetRow !== null && simState.targetCol !== null) {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+            }
+
+            // Mettre à jour les robots et cibles pour explore-grid
+            if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+                    renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+                }
             }
 
             // Mettre à jour les robots et cibles pour chal-grid
@@ -585,6 +602,12 @@
                 redrawTrail('sim-grid', simState);
             } else {
                 TrailManager.clear('sim-grid');
+            }
+            if (typeof exploreState !== 'undefined' && exploreState.history && exploreState.history.length > 0) {
+                // Explore doesn't have a program queue, so we just clear or keep the trail depending on state. For now, clear is safer.
+                TrailManager.clear('explore-grid');
+            } else {
+                TrailManager.clear('explore-grid');
             }
             if (typeof drawState !== 'undefined' && drawState.program.length > 0) {
                 redrawTrail('draw-grid', drawState);

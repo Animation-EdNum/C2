@@ -9,6 +9,14 @@ let simState = {
         };
         window.simState = simState;
 
+        let exploreState = {
+            robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
+            absoluteStartRow: 5, absoluteStartCol: 0,
+            running: false, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
+            firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0, history: [], stepsThisRun: 0
+        };
+        window.exploreState = exploreState;
+
         let chalState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
             correctProgram: [], options: [], locked: false, obstacles: [], isAnimating: false
@@ -330,6 +338,111 @@ let simState = {
             if (simState.program.length >= 24) { showToast('Mémoire pleine (24 commandes max)', 'error'); return; }
             simState.program.push(cmd); renderProgram();
         }
+
+        async function runSingleCommandExploration(cmd) {
+            if (exploreState.running) return;
+            playSound('click'); 
+            exploreState.running = true; 
+            exploreState.failed = false; 
+
+            // Track history for rendering or future needs (but NO SKIN UNLOCKS)
+            if (!exploreState.history) exploreState.history = [];
+            exploreState.history.push(cmd);
+            if (!exploreState.stepsThisRun) exploreState.stepsThisRun = 0;
+
+            exploreState.startRow = exploreState.robotRow; 
+            exploreState.startCol = exploreState.robotCol; 
+            exploreState.startDir = exploreState.robotDir;
+
+            if (!TrailManager.states['explore-grid']) {
+                TrailManager.captureInitialState('explore-grid', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+            }
+
+            const result = moveRobot(exploreState, cmd);
+            exploreState.robotRow = result.robotRow; 
+            exploreState.robotCol = result.robotCol; 
+            exploreState.robotDir = result.robotDir;
+
+            if (!result.blocked && (cmd === 'forward' || cmd === 'backward')) exploreState.stepsThisRun++;
+
+            renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+
+            if (result.blocked) {
+                playSound('error');
+                exploreState.failed = true;
+                exploreState.firstAttempt = false;
+                exploreState.consecutiveMistakes++;
+                ScoreManager.addMistake('simulator', null);
+
+                document.getElementById('explore-robot').classList.add('shake');
+                setTimeout(() => document.getElementById('explore-robot').classList.remove('shake'), 350);
+                document.body.classList.add('window-shake');
+                setTimeout(() => document.body.classList.remove('window-shake'), 500);
+                showToast('Attention ! Obstacle en vue. Exécution stoppée.', 'error');
+            } else {
+                if (cmd === 'forward' || cmd === 'backward') {
+                    await sleep(350);
+                    TrailManager.addSegment('explore-grid', exploreState.robotRow, exploreState.robotCol);
+                } else {
+                    await sleep(150);
+                }
+            }
+
+            // Update global total steps (but we don't unlock skins here)
+            if (exploreState.stepsThisRun > 0 && (cmd === 'forward' || cmd === 'backward') && !result.blocked) {
+                const totalSteps = (parseInt(localStorage.getItem('bb_total_steps') || '0')) + 1;
+                localStorage.setItem('bb_total_steps', totalSteps);
+            }
+
+            if (!exploreState.failed && exploreState.targetRow !== null && exploreState.robotRow === exploreState.targetRow && exploreState.robotCol === exploreState.targetCol) {
+                playSound('success');
+                if (activeSkin === 'volcano') launchFire();
+                else if (activeSkin === 'cyberbot') showToast('WELCOME TO THE MATRIX 🕶️', 'success');
+                else launchConfetti();
+
+                ScoreManager.addSuccess('simulator', null, exploreState.firstAttempt ? 0 : 1);
+                exploreState.starCount++;
+                exploreState.firstTryCount += exploreState.firstAttempt ? 1 : 0;
+                exploreState.consecutiveMistakes = 0;
+
+                showToast('Trésor trouvé ! Félicitations !', 'success');
+                
+                const counterVal = document.getElementById('sim-star-counter-val');
+                if (counterVal) counterVal.textContent = exploreState.starCount;
+                const firstTryVal = document.getElementById('sim-first-try-val');
+                if (firstTryVal) firstTryVal.textContent = exploreState.firstTryCount;
+
+                const target = document.getElementById('explore-target');
+                if (target) {
+                    target.classList.add('pulse');
+                    setTimeout(() => {
+                        target.classList.remove('pulse');
+                        target.remove();
+                        exploreState.targetRow = null;
+                        exploreState.targetCol = null;
+                        exploreState.firstAttempt = true;
+                        exploreState.history = [];
+                        exploreState.stepsThisRun = 0;
+                        placeRandomExploreTarget(true);
+                    }, 500);
+                }
+            }
+            
+            if (!exploreState.failed && MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                const cell = document.querySelector(`#explore-grid .bot-cell[data-row="${exploreState.robotRow}"][data-col="${exploreState.robotCol}"] .mat-content`);
+                if (cell && cell.textContent.trim()) {
+                    const endContent = document.getElementById('sim-end-content');
+                    const emptyEnd = document.getElementById('sim-end-empty');
+                    if (emptyEnd) emptyEnd.style.display = 'none';
+                    const el = document.createElement('div');
+                    el.className = 'end-item';
+                    el.textContent = cell.textContent.trim();
+                    endContent.appendChild(el);
+                }
+            }
+
+            exploreState.running = false; 
+        }
         function removeSpecificCmd(index) {
             if (simState.running) return;
             if (window.commandsVisible === true) {
@@ -507,6 +620,129 @@ let simState = {
                 renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
             }
             renderProgram();
+        }
+
+        function randomizeExploreWalls() {
+            if (exploreState.running) return;
+            playSound('click');
+            let attempts = 0;
+            let bestObstacles = [];
+            let maxReachable = 0;
+            let success = false;
+
+            do {
+                let tempObstacles = [];
+                for (let r = 0; r < GRID_ROWS; r++) {
+                    for (let c = 0; c < GRID_COLS; c++) {
+                        if (r === exploreState.robotRow && c === exploreState.robotCol) continue;
+                        if (exploreState.targetRow !== null && r === exploreState.targetRow && c === exploreState.targetCol) continue;
+                        if (Math.random() < 0.18) tempObstacles.push({ r, c });
+                    }
+                }
+                attempts++;
+
+                if (exploreState.targetRow !== null) {
+                    let path = findShortestPath(exploreState.robotRow, exploreState.robotCol, exploreState.robotDir, exploreState.targetRow, exploreState.targetCol, tempObstacles);
+                    if (path !== null) {
+                        bestObstacles = tempObstacles;
+                        success = true;
+                    }
+                } else {
+                    let reachable = countReachable(exploreState.robotRow, exploreState.robotCol, exploreState.robotDir, tempObstacles);
+                    if (reachable > maxReachable) {
+                        maxReachable = reachable;
+                        bestObstacles = tempObstacles;
+                    }
+                    if (reachable >= 15) {
+                        success = true;
+                    }
+                }
+            } while (!success && attempts < 50);
+
+            exploreState.obstacles = bestObstacles;
+            buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles);
+            renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+
+            if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+                renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+            }
+            TrailManager.clear('explore-grid');
+        }
+
+        function placeRandomExploreTarget(silent = false) {
+            if (exploreState.running) return;
+            if (!silent) playSound('click');
+
+            let attempts = 0;
+            let targetR, targetC;
+
+            do {
+                targetR = Math.floor(Math.random() * GRID_ROWS);
+                targetC = Math.floor(Math.random() * GRID_COLS);
+                attempts++;
+            } while (attempts < 100 && (
+                exploreState.obstacles.some(o => o.r === targetR && o.c === targetC) ||
+                (Math.abs(targetR - exploreState.robotRow) <= 1 && Math.abs(targetC - exploreState.robotCol) <= 1) ||
+                findShortestPath(exploreState.robotRow, exploreState.robotCol, exploreState.robotDir, targetR, targetC, exploreState.obstacles) === null
+            ));
+
+            if (attempts < 100) {
+                exploreState.targetRow = targetR;
+                exploreState.targetCol = targetC;
+                exploreState.firstAttempt = true;
+                renderTarget('explore-grid', 'explore-target', targetR, targetC);
+            }
+        }
+
+        function clearExploreWalls() {
+            if (exploreState.running) return;
+            playSound('click');
+            exploreState.obstacles = [];
+            exploreState.targetRow = null;
+            exploreState.targetCol = null;
+            exploreState.starCount = 0;
+            exploreState.firstTryCount = 0;
+            exploreState.firstAttempt = true;
+            exploreState.history = [];
+            exploreState.stepsThisRun = 0;
+
+            buildGrid('explore-grid', GRID_ROWS, GRID_COLS, []);
+            renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+            TrailManager.clear('explore-grid');
+
+            const target = document.getElementById('explore-target');
+            if (target) target.remove();
+        }
+
+        function randomizeExplorePosition() {
+            if (exploreState.running) return;
+            playSound('click');
+
+            let newRow, newCol;
+            let attempts = 0;
+            do {
+                newRow = Math.floor(Math.random() * GRID_ROWS);
+                newCol = Math.floor(Math.random() * GRID_COLS);
+                attempts++;
+            } while (attempts < 100 && (
+                exploreState.obstacles.some(o => o.r === newRow && o.c === newCol) ||
+                (exploreState.targetRow !== null && newRow === exploreState.targetRow && newCol === exploreState.targetCol)
+            ));
+
+            exploreState.robotRow = newRow;
+            exploreState.robotCol = newCol;
+            exploreState.startRow = newRow;
+            exploreState.startCol = newCol;
+            exploreState.absoluteStartRow = newRow;
+            exploreState.absoluteStartCol = newCol;
+            exploreState.robotDir = 0;
+            exploreState.startDir = 0;
+            exploreState.failed = false;
+            exploreState.history = [];
+            exploreState.stepsThisRun = 0;
+
+            TrailManager.clear('explore-grid');
+            renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
         }
 
         function renderProgram() {
@@ -1682,15 +1918,17 @@ let simState = {
                 };
             }
 
-            if (overlay && containerId === 'sim-grid') {
+            if (overlay && (containerId === 'sim-grid' || containerId === 'explore-grid')) {
                 overlay.setAttribute('draggable', 'true');
-                overlay.addEventListener('dragstart', (e) => {
-                    if (simState.running) {
+                overlay.ondragstart = (e) => {
+                    const isExplore = containerId === 'explore-grid';
+                    if ((isExplore && typeof exploreState !== 'undefined' && exploreState.running) || 
+                        (!isExplore && typeof simState !== 'undefined' && simState.running)) {
                         e.preventDefault();
                         return;
                     }
                     e.dataTransfer.setData('text/plain', 'robot');
-                });
+                };
             }
 
             // Clear previous volcano loops if any (only if we're not using the volcano skin, so we don't break moving animation)
