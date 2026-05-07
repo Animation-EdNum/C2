@@ -122,27 +122,47 @@ function applyUrlParameters() {
     const diff = urlParams.get('diff');
     if (diff) {
         setTimeout(() => {
-            const diffBtn = document.querySelector(`.diff-btn[data-diff="${diff}"]`) ||
-                            document.getElementById(`diff-${diff}`) ||
-                            document.getElementById(`read-diff-${diff}`);
-            if (diffBtn && !diffBtn.classList.contains('locked')) {
-                // Remove lock temporarily if locked to set the initial value
-                const wasLocked = diffBtn.disabled;
-                diffBtn.disabled = false;
-                diffBtn.click();
-                if(wasLocked) diffBtn.disabled = true;
-            } else if (document.getElementById('difficulty-select')) {
-                 const select = document.getElementById('difficulty-select');
-                 select.value = diff;
-                 select.dispatchEvent(new Event('change'));
-            } else if (typeof setDifficulty === 'function') {
-                setDifficulty(diff);
-            } else if (typeof window.currentDifficulty !== 'undefined') {
-                window.currentDifficulty = diff;
-                if(typeof generateSequence === 'function') generateSequence();
-                if(typeof initLevel === 'function') initLevel();
+            const diffBtns = document.querySelectorAll(`.diff-btn[data-diff="${diff}"]`);
+            let clicked = false;
+
+            if (diffBtns.length > 0) {
+                diffBtns.forEach(btn => {
+                    if (!btn.classList.contains('locked')) {
+                        const wasLocked = btn.disabled;
+                        btn.disabled = false;
+                        btn.click();
+                        if(wasLocked) btn.disabled = true;
+                        clicked = true;
+                    }
+                });
             }
-        }, 50);
+
+            if (!clicked) {
+                const diffBtn = document.getElementById(`diff-${diff}`) ||
+                                document.getElementById(`read-diff-${diff}`);
+                if (diffBtn && !diffBtn.classList.contains('locked')) {
+                    const wasLocked = diffBtn.disabled;
+                    diffBtn.disabled = false;
+                    diffBtn.click();
+                    if(wasLocked) diffBtn.disabled = true;
+                    clicked = true;
+                }
+            }
+
+            if (!clicked) {
+                if (document.getElementById('difficulty-select')) {
+                    const select = document.getElementById('difficulty-select');
+                    select.value = diff;
+                    select.dispatchEvent(new Event('change'));
+                } else if (typeof setDifficulty === 'function') {
+                    setDifficulty(diff);
+                } else if (typeof window.currentDifficulty !== 'undefined') {
+                    window.currentDifficulty = diff;
+                    if(typeof generateSequence === 'function') generateSequence();
+                    if(typeof initLevel === 'function') initLevel();
+                }
+            }
+        }, 150);
     }
 }
 
