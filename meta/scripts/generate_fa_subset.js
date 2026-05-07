@@ -188,7 +188,9 @@ ${iconEntries}
       if (isDuotone) classes.push("fa-duotone");
       if (existingAttrs.class) classes.push(existingAttrs.class);
       if (attrs.class) classes.push(typeof attrs.class === "string" ? attrs.class : attrs.class.join(" "));
-      mergedAttrs.class = [...new Set(classes.filter(Boolean))].join(" ").trim();
+
+      const allClassNames = classes.filter(Boolean).join(" ").split(/\\s+/);
+      mergedAttrs.class = [...new Set(allClassNames)].join(" ").trim();
 
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       Object.keys(mergedAttrs).forEach(k => svg.setAttribute(k, String(mergedAttrs[k])));
