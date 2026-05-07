@@ -191,6 +191,13 @@ let commandsVisible = true;
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
         document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
 
+        // Apply force blindcode if parameter is set
+        if (window.forceBlindcode) {
+            const toggleBtn = document.getElementById('hideCmdToggleBtn');
+            if (toggleBtn) toggleBtn.style.display = 'none';
+            if (commandsVisible) toggleCommands(); // trigger hiding if currently visible
+        }
+
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
         document.getElementById('tab-challenge').addEventListener('click', (e) => switchTab(e, 'challenge'));
         document.getElementById('tab-read').addEventListener('click', (e) => switchTab(e, 'read'));

@@ -76,6 +76,9 @@ function applyUrlParameters() {
     if (urlParams.get('lockSkin') === '1') {
         const skinBtn = document.getElementById('btn-open-skins');
         if (skinBtn) skinBtn.style.display = 'none';
+
+        // Disable skin unlocking entirely
+        window.isSkinUnlockDisabled = true;
     }
 
     if (urlParams.get('lockSpeed') === '1') {
@@ -86,6 +89,10 @@ function applyUrlParameters() {
     if (urlParams.get('noCmdToggle') === '1') {
         const cmdToggleBtn = document.getElementById('btn-toggle-cmds');
         if (cmdToggleBtn) cmdToggleBtn.style.display = 'none';
+    }
+
+    if (urlParams.get('blindcode') === '1') {
+        window.forceBlindcode = true;
     }
 
     if (urlParams.get('noDrag') === '1') {
@@ -190,7 +197,7 @@ function initShareModal() {
                     <button id="btn-toggle-advanced" class="btn-advanced-toggle">
                         Options Avancées <i data-fa="chevron-down"></i>
                     </button>
-                    <button id="btn-reset-share" class="btn btn-small" style="display: none;"><i data-fa="rotate-left"></i> Réinitialiser</button>
+
                 </div>
 
                 <div id="share-advanced-options" class="advanced-options-content" style="display: none;">
@@ -199,7 +206,7 @@ function initShareModal() {
                             <h3>Interface & Navigation</h3>
                             <label class="share-checkbox">
                                 <input type="checkbox" id="opt-only">
-                                <span>Masquer les autres onglets</span>
+                                <span>Masquer les autres modes</span>
                             </label>
                             <label class="share-checkbox">
                                 <input type="checkbox" id="opt-noHome">
@@ -245,6 +252,10 @@ function initShareModal() {
                                 <input type="checkbox" id="opt-noCmdToggle">
                                 <span>Masquer commandes Blue-Bot</span>
                             </label>
+                            <label class="share-checkbox" id="lbl-blindcode">
+                                <input type="checkbox" id="opt-blindcode">
+                                <span>Forcer le mode aveugle (Blindcoding)</span>
+                            </label>
                             <label class="share-checkbox" id="lbl-noDrag">
                                 <input type="checkbox" id="opt-noDrag">
                                 <span>Désactiver le glisser-déposer</span>
@@ -268,7 +279,10 @@ function initShareModal() {
     if (!document.getElementById('btn-open-mats')) document.getElementById('lbl-lockMat').style.display = 'none';
     if (!document.getElementById('btn-open-skins')) document.getElementById('lbl-lockSkin').style.display = 'none';
     if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) document.getElementById('lbl-lockSpeed').style.display = 'none';
-    if (!document.getElementById('btn-toggle-cmds')) document.getElementById('lbl-noCmdToggle').style.display = 'none';
+    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
+        if (document.getElementById('lbl-noCmdToggle')) document.getElementById('lbl-noCmdToggle').style.display = 'none';
+        if (document.getElementById('lbl-blindcode')) document.getElementById('lbl-blindcode').style.display = 'none';
+    }
     if (!document.querySelector('#btn-random, .btn-random')) document.getElementById('lbl-noRandom').style.display = 'none';
     if (!document.querySelector('[draggable="true"], .draggable') && typeof window.noDragParam === 'undefined') document.getElementById('lbl-noDrag').style.display = 'none';
 
@@ -289,7 +303,6 @@ function initShareModal() {
     const qrCanvas = document.getElementById('share-qr-canvas');
     const urlInput = document.getElementById('share-url-input');
     const btnToggleAdvanced = document.getElementById('btn-toggle-advanced');
-    const btnResetShare = document.getElementById('btn-reset-share');
     const advancedOptions = document.getElementById('share-advanced-options');
 
     const checkboxes = document.querySelectorAll('.share-checkbox input');
@@ -356,14 +369,8 @@ function initShareModal() {
     btnToggleAdvanced.addEventListener('click', () => {
         const isVisible = advancedOptions.style.display === 'block';
         advancedOptions.style.display = isVisible ? 'none' : 'block';
-        btnResetShare.style.display = isVisible ? 'none' : 'block';
         btnToggleAdvanced.innerHTML = `Options Avancées <i data-fa="chevron-${isVisible ? 'down' : 'up'}"></i>`;
         if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
-    });
-
-    btnResetShare.addEventListener('click', () => {
-        checkboxes.forEach(cb => cb.checked = false);
-        updateShareUrl();
     });
 
     checkboxes.forEach(cb => {
