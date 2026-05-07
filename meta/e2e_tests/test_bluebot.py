@@ -20,19 +20,20 @@ def test_bluebot_loads_with_correct_title(page: Page):
     expect(page).to_have_title(re.compile("Simulateur d'automate"))
 
 
-def test_bluebot_has_three_tabs(page: Page):
-    """Verify the three main navigation tabs exist."""
+def test_bluebot_has_four_tabs(page: Page):
+    """Verify the four main navigation tabs exist."""
     page.goto(BASE_URL)
+    expect(page.locator("#tab-explore")).to_be_visible()
     expect(page.locator("#tab-simulator")).to_be_visible()
     expect(page.locator("#tab-challenge")).to_be_visible()
     expect(page.locator("#tab-read")).to_be_visible()
 
 
-def test_bluebot_simulator_tab_active_by_default(page: Page):
-    """The Simulator tab should be active on load."""
+def test_bluebot_explore_tab_active_by_default(page: Page):
+    """The Explore tab should be active on load."""
     page.goto(BASE_URL)
-    expect(page.locator("#tab-simulator")).to_have_class(re.compile("active"))
-    expect(page.locator("#view-simulator")).to_be_visible()
+    expect(page.locator("#tab-explore")).to_have_class(re.compile("active"))
+    expect(page.locator("#view-explore")).to_be_visible()
 
 
 def test_bluebot_has_header_with_home_link(page: Page):
@@ -85,6 +86,7 @@ def test_bluebot_switch_back_to_simulator(page: Page):
 def test_bluebot_sim_grid_rendered(page: Page):
     """The simulator grid should contain cells after load."""
     page.goto(BASE_URL)
+    page.locator("#tab-simulator").click()
     cells = page.locator("#sim-grid .bot-cell")
     expect(cells.first).to_be_visible()
     # Default is 6x6 = 36 cells
@@ -94,6 +96,7 @@ def test_bluebot_sim_grid_rendered(page: Page):
 def test_bluebot_sim_command_pad_visible(page: Page):
     """The command pad buttons should be visible in simulator mode."""
     page.goto(BASE_URL)
+    page.locator("#tab-simulator").click()
     expect(page.locator("#pad-fwd")).to_be_visible()
     expect(page.locator("#pad-left")).to_be_visible()
     expect(page.locator("#pad-right")).to_be_visible()
@@ -105,6 +108,7 @@ def test_bluebot_sim_command_pad_visible(page: Page):
 def test_bluebot_sim_add_command(page: Page):
     """Clicking a command button should add a command to the program strip."""
     page.goto(BASE_URL)
+    page.locator("#tab-simulator").click()
     page.locator("#pad-fwd").click()
     # The program strip should now have at least one command element
     cmds = page.locator("#sim-program .program-cmd")
@@ -114,6 +118,7 @@ def test_bluebot_sim_add_command(page: Page):
 def test_bluebot_sim_clear_commands(page: Page):
     """Clicking the X button should clear all commands from the strip."""
     page.goto(BASE_URL)
+    page.locator("#tab-simulator").click()
     page.locator("#pad-fwd").click()
     page.locator("#pad-fwd").click()
     page.locator("#pad-clear").click()
