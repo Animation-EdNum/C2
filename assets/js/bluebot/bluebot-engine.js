@@ -864,6 +864,7 @@ let simState = {
                 if (totalSteps >= 100) unlockSkin('train');
             }
 
+            let addedItem = false;
             if (!simState.failed) {
                 simState.stepIndex = -1; renderProgramStep();
 
@@ -967,10 +968,14 @@ let simState = {
                         const gridCell = cell.closest('.bot-cell');
                         cell.remove();
                         if (gridCell) gridCell.classList.add('cell-collected');
+                        addedItem = true;
                     }
                 }
             }
             simState.running = false; toggleCmdButtons(false);
+            if (addedItem) {
+                clearProgram();
+            }
         }
 
         function toggleCmdButtons(disabled) {
