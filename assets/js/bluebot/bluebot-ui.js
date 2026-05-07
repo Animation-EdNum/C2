@@ -181,6 +181,10 @@ window.commandsVisible = commandsVisible;
 
             if (activeSkin === 'pirate') startOceanRipples();
 
+            if (window.cmdsHiddenByDefault && commandsVisible && !window.forceBlindcode) {
+                toggleCommands();
+            }
+
             // Apply force blindcode if parameter is set
             if (window.forceBlindcode) {
                 const toggleBtn = document.getElementById('hideCmdToggleBtn');

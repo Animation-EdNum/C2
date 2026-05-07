@@ -89,8 +89,7 @@ function applyUrlParameters() {
     }
 
     if (urlParams.get('noCmdToggle') === '1') {
-        const cmdToggleBtn = document.getElementById('btn-toggle-cmds');
-        if (cmdToggleBtn) cmdToggleBtn.style.display = 'none';
+        window.cmdsHiddenByDefault = true;
     }
 
     if (urlParams.get('blindcode') === '1') {
@@ -252,7 +251,7 @@ function initShareModal() {
                             <h3>Comportement</h3>
                             <label class="share-checkbox" id="lbl-noCmdToggle">
                                 <input type="checkbox" id="opt-noCmdToggle">
-                                <span>Masquer commandes Blue-Bot</span>
+                                <span>Commandes masquées par défaut</span>
                             </label>
                             <label class="share-checkbox" id="lbl-blindcode">
                                 <input type="checkbox" id="opt-blindcode">
