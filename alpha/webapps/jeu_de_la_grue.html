@@ -1003,6 +1003,8 @@
         const programStrip = document.getElementById('program-strip');
         const playBtn = document.getElementById('play-btn');
 
+        let cachedCupEls = [];
+
         function init() {
             setupEventListeners();
             startNewLevel();
@@ -1101,10 +1103,14 @@
 
         function renderBoard(boardState, container, isTarget) {
             container.innerHTML = '';
+            if (!isTarget) cachedCupEls = [];
             for (let i = 0; i < NUM_CUPS; i++) {
                 let cupEl = document.createElement('div');
                 cupEl.className = 'cup';
-                if (!isTarget) cupEl.id = `cup-${i}`;
+                if (!isTarget) {
+                    cupEl.id = `cup-${i}`;
+                    cachedCupEls[i] = cupEl;
+                }
 
                 // Add background slots for visual guidance
                 let slotsContainer = document.createElement('div');
@@ -1153,7 +1159,7 @@
             }
 
             for (let i = 0; i < NUM_CUPS; i++) {
-                let cupEl = document.getElementById('cup-' + i);
+                let cupEl = cachedCupEls[i];
                 if (cupEl) {
                     let slots = cupEl.querySelectorAll('.cup-slot');
                     // Remove highlights from all slots initially
