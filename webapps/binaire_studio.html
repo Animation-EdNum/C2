@@ -681,7 +681,7 @@ body {
                             <span class="editor-output-label">Code binaire</span>
                             <button class="btn-copy-output" id="btn-copy-editor"><i data-fa="clipboard" style="margin-right:5px;"></i> Copier</button>
                         </div>
-                        <textarea id="editor-output" readonly placeholder="Dessine pour générer le code…"></textarea>
+                        <textarea id="editor-output" placeholder="Dessine ou colle un code binaire…"></textarea>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -1054,6 +1054,65 @@ body {
             showToast('Grille effacée', 'info');
         }
 
+        function applyEditorOutput(e) {
+            const ta = e.target;
+            // Ne garder que 0, 1 et retours à la ligne
+            let val = ta.value.replace(/[^01\n]/g, '');
+            if (ta.value !== val) {
+                const cursor = ta.selectionStart - (ta.value.length - val.length);
+                ta.value = val;
+                ta.setSelectionRange(cursor, cursor);
+            }
+
+            const lines = val.split('\n');
+
+            // Détection automatique de la taille de grille la plus adaptée (5, 8, ou 10)
+            const maxLineLen = Math.max(...lines.map(l => l.length));
+            const numLines = lines.length;
+            const requiredSize = Math.max(maxLineLen, numLines);
+            let targetSize = editorSize;
+
+            if (requiredSize > 8) targetSize = 10;
+            else if (requiredSize > 5) targetSize = 8;
+            else if (requiredSize > 0 && requiredSize <= 5) targetSize = 5;
+
+            // Si on doit changer la taille, on reconstruit la grille sans toucher au textarea
+            if (targetSize !== editorSize) {
+                editorSize = targetSize;
+                buildGrid('grid-editor', editorSize, null, false);
+                document.querySelectorAll('.editor-size-btn').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById('btn-editor-' + editorSize);
+                if (activeBtn) activeBtn.classList.add('active');
+            }
+
+            const wrapper = document.getElementById('grid-editor');
+            const rows = wrapper.querySelectorAll('.grid-row');
+
+            if (rows.length === 0) return;
+            const size = rows.length;
+
+            rows.forEach((row, r) => {
+                const line = lines[r] || '';
+                for (let c = 0; c < size; c++) {
+                    const cell = row.children[c];
+                    if (c < line.length) {
+                        if (line[c] === '0') {
+                            cell.classList.add('on');
+                        } else {
+                            cell.classList.remove('on');
+                        }
+                    } else {
+                        // Si le caractère est manquant, on remet à "blanc" (1)
+                        cell.classList.remove('on');
+                    }
+                    const r_idx = parseInt(cell.dataset.r, 10);
+                    const col_idx = parseInt(cell.dataset.c, 10);
+                    const state = cell.classList.contains('on') ? 'Noir' : 'Blanc';
+                    cell.setAttribute('aria-label', `Ligne ${r_idx + 1}, colonne ${col_idx + 1}, ${state}`);
+                }
+            });
+        }
+
         function updateEditorOutput() {
             const wrapper = document.getElementById('grid-editor');
             const rows = wrapper.querySelectorAll('.grid-row');
@@ -1200,6 +1259,7 @@ body {
         document.getElementById('btn-copy-editor').addEventListener('click', copyEditorOutput);
         document.getElementById('btn-clear-editor').addEventListener('click', clearEditor);
         document.getElementById('btn-export-editor').addEventListener('click', exportImage);
+        document.getElementById('editor-output').addEventListener('input', applyEditorOutput);
     </script>
     <script src="../assets/js/audio.js"></script>
     <script src="../assets/js/theme.js"></script>
