@@ -384,6 +384,7 @@ body {
             border: 2px solid #1e293b;
             overflow: hidden;
             background: #0f172a;
+            min-width: 380px;
         }
 
         .editor-output-header {
@@ -502,6 +503,9 @@ body {
         }
 
         @media (max-width: 1000px) {
+            .editor-output-area {
+                min-width: 100%;
+            }
             #grid-editor {
                 width: 360px;
                 height: 360px;
@@ -550,22 +554,12 @@ body {
         }
 
         @media (min-width: 1200px) {
-            #grid-editor {
-                width: 520px;
-                height: 520px;
-            }
-
             h1 {
                 font-size: 32px;
             }
 
             .editor-output-label {
                 font-size: 16px;
-            }
-
-            .grid-cell {
-                width: 52px;
-                height: 52px;
             }
 
             .row-label {
@@ -680,11 +674,7 @@ body {
 
             <!-- ==================== MODE ÉDITEUR ==================== -->
             <div id="mode-editor" class="card">
-                <div class="game-instruction">Dessine librement. Le code binaire se génère en temps réel.</div>
-                <div class="convention-row">
-                    <span class="convention-pill pill-dark">⬛ Noir = 0</span>
-                    <span class="convention-pill pill-light">⬜ Blanc = 1</span>
-                </div>
+                <div class="game-instruction">Dessine librement. Le code binaire se génère en temps réel. Tu peux aussi coller ton code binaire dans la zone de texte !</div>
                 <div class="editor-toolbar">
                     <div class="editor-size-group">
                         <button class="btn btn-outline btn-small editor-size-btn" id="btn-editor-10">10×10</button>
@@ -1090,15 +1080,15 @@ body {
 
             const lines = val.split('\n');
 
-            // Détection automatique de la taille de grille la plus adaptée (5, 8, ou 10)
-            const maxLineLen = Math.max(...lines.map(l => l.length));
+            // Détection automatique de la taille de grille la plus adaptée (10, 15, ou 20)
+            const maxLineLen = Math.max(...lines.map(l => l.replace(/\s/g, '').length));
             const numLines = lines.length;
             const requiredSize = Math.max(maxLineLen, numLines);
             let targetSize = editorSize;
 
-            if (requiredSize > 8) targetSize = 10;
-            else if (requiredSize > 5) targetSize = 8;
-            else if (requiredSize > 0 && requiredSize <= 5) targetSize = 5;
+            if (requiredSize > 15) targetSize = 20;
+            else if (requiredSize > 10) targetSize = 15;
+            else targetSize = 10;
 
             // Si on doit changer la taille, on reconstruit la grille sans toucher au textarea
             if (targetSize !== editorSize) {
