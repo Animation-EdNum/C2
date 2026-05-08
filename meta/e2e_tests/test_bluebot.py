@@ -210,7 +210,7 @@ def test_bluebot_skins_drawer_opens(page: Page):
     # Open the options menu first
     page.locator("#optionsMenuBtn").click()
     page.locator("#btn-open-skins").click()
-    expect(page.locator("#skins-drawer")).to_have_attribute("aria-hidden", "false")
+    expect(page.locator("#ui-panel")).to_have_attribute("aria-hidden", "false")
 
 
 def test_bluebot_skins_drawer_has_items(page: Page):
@@ -228,7 +228,7 @@ def test_bluebot_skins_drawer_closes(page: Page):
     page.locator("#optionsMenuBtn").click()
     page.locator("#btn-open-skins").click()
     page.locator("#btn-close-skins").click()
-    expect(page.locator("#skins-drawer")).to_have_attribute("aria-hidden", "true")
+    expect(page.locator("#ui-panel")).to_have_attribute("aria-hidden", "true")
 
 
 # ==============================================================

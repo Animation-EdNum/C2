@@ -11,7 +11,7 @@
     --radius-md:  8px;   /* Default: .btn, .menu-item-btn */
     --radius-lg:  12px;  /* Medium: .tab-btn, .skin-list-item, dropdowns */
     --radius-xl:  16px;  /* Large: .exercise-card, stat wrappers */
-    --radius-2xl: 20px;  /* Panel: .container, .modal-content */
+    --radius-2xl: 20px;  /* Panel: .container, .ui-modal-content */
     --radius-pill: 30px; /* Pill: toasts, .diff-btn */
     --radius-full: 50%;  /* Circle: icon buttons */
 }
@@ -244,7 +244,7 @@ footer a:hover {
 /* ============================================================
    Modal Statistiques détaillées (ScoreManager)
    ============================================================ */
-.modal-overlay {
+.ui-modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     background: oklch(0 0 0 / 0.4);
@@ -258,12 +258,12 @@ footer a:hover {
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.modal-overlay.active {
+.ui-modal-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
-.modal-content {
+.ui-modal-content {
     background: var(--card-bg, oklch(1 0 0 / 0.95));
     border: var(--glass-border);
     box-shadow: var(--glass-shadow);
@@ -279,7 +279,7 @@ footer a:hover {
     color: var(--text-color, #1a202c);
 }
 
-body.dark .modal-content {
+body.dark .ui-modal-content {
     background: #2d3748;
     color: #f7fafc;
 }
@@ -287,34 +287,13 @@ body.dark .modal-content {
 
 
 
-.modal-overlay.active .modal-content {
+.ui-modal-overlay.active .ui-modal-content {
     transform: scale(1) translateY(0);
 }
 
-.btn-close-modal {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-color, #1a202c);
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s, transform 0.2s;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-full);
-}
 
-.btn-close-modal:hover {
-    opacity: 1;
-    transform: scale(1.1);
-    background: oklch(0 0 0 / 0.05);
-}
+
+
 
 .btn-reset-scores {
     margin-top: 25px;
@@ -374,9 +353,6 @@ body.dark .modal-content {
 /* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
 
 
-body.dark .btn-close-modal {
-    color: #f7fafc;
-}
 
 body.dark .stat-table th, body.dark .stat-table td {
     border-bottom: 1px solid oklch(1 0 0 / 0.1);
@@ -937,7 +913,7 @@ body.high-contrast .icon-action-btn:hover {
 }
 
 body.high-contrast .container,
-body.high-contrast .modal-content,
+body.high-contrast .ui-modal-content,
 body.high-contrast .settings-dropdown-content {
     border: 4px solid #000000 !important;
     background-color: #ffffff !important;
@@ -1520,30 +1496,124 @@ input:checked + .share-toggle-slider:before {
 }
 
 /* Modal Prompt (Popups and Alerts) */
-.modal-overlay.z-top {
+.ui-modal-overlay.z-top {
     z-index: 10001;
 }
 
-.modal-content.modal-prompt {
+.ui-modal-content.ui-modal-prompt {
     max-width: 400px;
     text-align: center;
 }
 
-.modal-prompt h2 {
+.ui-modal-prompt h2 {
     margin-bottom: 15px;
 }
 
-.modal-prompt p {
+.ui-modal-prompt p {
     margin-bottom: 20px;
 }
 
-.modal-prompt-actions {
+.ui-modal-prompt-actions {
     display: flex;
     gap: 10px;
     justify-content: center;
 }
 
-.modal-prompt-actions .btn {
+.ui-modal-prompt-actions .btn {
     flex: 1;
     justify-content: center;
+}
+
+.ui-btn-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    font-size: 20px;
+    color: var(--text-muted, #777);
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full, 9999px);
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.ui-btn-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--error, #ef4444);
+    transform: rotate(90deg) scale(1.1);
+}
+
+body.dark .ui-btn-close {
+    background: rgba(255, 255, 255, 0.08);
+    color: #f7fafc;
+}
+
+body.dark .ui-btn-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* UI Panels (Side Drawers) */
+.ui-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.ui-panel-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ui-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 400px;
+    height: 100vh;
+    background: var(--card-bg, #ffffff);
+    z-index: 9999;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-main, #333);
+}
+
+@media (max-width: 600px) {
+    .ui-panel {
+        width: 100%;
+        right: -100%;
+    }
+}
+
+.ui-panel.active {
+    right: 0;
+}
+
+.ui-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--grid-border, #e2e8f0);
+    flex-shrink: 0;
+}
+
+.ui-panel-header h2 {
+    margin: 0;
+    font-size: 24px;
 }
