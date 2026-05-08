@@ -189,9 +189,9 @@ window.commandsVisible = commandsVisible;
                 tabTimer = null;
             }
             if (tab === 'explore' && !popupsShown.explore) {
-                tabTimer = setTimeout(() => showTimePopup('explore'), 120000);
+                tabTimer = setTimeout(() => showTimePopup('explore'), 240000);
             } else if (tab === 'simulator' && !popupsShown.simulator) {
-                tabTimer = setTimeout(() => showTimePopup('simulator'), 180000);
+                tabTimer = setTimeout(() => showTimePopup('simulator'), 360000);
             }
         }
 
