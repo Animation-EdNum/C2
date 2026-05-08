@@ -1927,22 +1927,30 @@ let simState = {
            ================================================================ */
 
         // --- Effet Océan ---
-        let oceanRippleInterval = null;
+        let oceanRippleAnimFrame = null;
+        let lastRippleTime = 0;
 
         function startOceanRipples() {
-            if (oceanRippleInterval) clearInterval(oceanRippleInterval);
-            oceanRippleInterval = setInterval(() => {
-                if (activeSkin !== 'pirate') return;
-                const row = Math.floor(Math.random() * GRID_ROWS);
-                const col = Math.floor(Math.random() * GRID_COLS);
-                triggerRipple(row, col, 0);
-            }, 2000);
+            if (oceanRippleAnimFrame) cancelAnimationFrame(oceanRippleAnimFrame);
+
+            function animateOcean(timestamp) {
+                if (activeSkin === 'pirate' && timestamp - lastRippleTime >= 2000) {
+                    const row = Math.floor(Math.random() * GRID_ROWS);
+                    const col = Math.floor(Math.random() * GRID_COLS);
+                    triggerRipple(row, col, 0);
+                    lastRippleTime = timestamp;
+                }
+
+                oceanRippleAnimFrame = requestAnimationFrame(animateOcean);
+            }
+
+            oceanRippleAnimFrame = requestAnimationFrame(animateOcean);
         }
 
         function stopOceanRipples() {
-            if (oceanRippleInterval) {
-                clearInterval(oceanRippleInterval);
-                oceanRippleInterval = null;
+            if (oceanRippleAnimFrame) {
+                cancelAnimationFrame(oceanRippleAnimFrame);
+                oceanRippleAnimFrame = null;
             }
         }
 
@@ -1952,7 +1960,7 @@ let simState = {
                 const grids = ['sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
                 grids.forEach(gridId => {
                     const cellId = `${gridId}-cell-${row}-${col}`;
-                    const cell = document.getElementById(cellId);
+                    const cell = window.domCache ? window.domCache.getElement(cellId) : document.getElementById(cellId);
                     if (cell) {
                         cell.classList.add('ripple');
                         cell.classList.remove('ripple-fade');
@@ -1997,6 +2005,26 @@ let simState = {
             });
         }
 
+        window.domCache = window.domCache || {
+            elements: {},
+            getElement: function(id) {
+                if (!this.elements[id] || !document.contains(this.elements[id])) {
+                    this.elements[id] = document.getElementById(id);
+                }
+                return this.elements[id];
+            },
+            setElement: function(id, el) {
+                this.elements[id] = el;
+            },
+            clearElements: function(prefix) {
+                for (let key in this.elements) {
+                    if (key.startsWith(prefix)) {
+                        delete this.elements[key];
+                    }
+                }
+            }
+        };
+
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
             grid.innerHTML = ''; grid.style.position = 'relative';
@@ -2004,6 +2032,7 @@ let simState = {
             grid.setAttribute('aria-label', `Grille ${rows}x${cols}`);
 
             updateGridContainersAspectRatio();
+            if (window.domCache) window.domCache.clearElements(containerId);
 
             // Appliquer la classe du skin à la grille pour le CSS
             Array.from(grid.classList).forEach(cls => {
@@ -2027,6 +2056,7 @@ let simState = {
                 grid.classList.add(`mat-${activeMat}`);
             }
 
+            const fragment = document.createDocumentFragment();
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
                 row.setAttribute('role', 'row');
@@ -2056,19 +2086,21 @@ let simState = {
                         }
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
+                    if (window.domCache) window.domCache.setElement(cell.id, cell);
                     cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isObstacle ? SKIN_CONFIG[activeSkin].name + ' Obstacle' : 'Vide'}`);
 
                     row.appendChild(cell);
                 }
-                grid.appendChild(row);
+                fragment.appendChild(row);
             }
+            grid.appendChild(fragment);
             if (window.fa && typeof window.fa.createIcons === 'function') {
                 window.fa.createIcons();
             }
         }
 
         function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {
-            let ov = document.getElementById(overlayId);
+            let ov = window.domCache ? window.domCache.getElement(overlayId) : document.getElementById(overlayId);
             const isNew = !ov;
             if (isNew) {
                 ov = document.createElement('div'); ov.id = overlayId; ov.className = extraClass || '';
@@ -2083,7 +2115,10 @@ let simState = {
             ov.style.transform = `translate(${col * 100}%, ${row * 100}%)`;
             ov.setAttribute('role', 'img');
             if (ariaLabel) ov.setAttribute('aria-label', ariaLabel);
-            if (isNew) document.getElementById(containerId).appendChild(ov);
+            if (isNew) {
+                const container = window.domCache ? window.domCache.getElement(containerId) : document.getElementById(containerId);
+                if (container) container.appendChild(ov);
+            }
         }
 
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
