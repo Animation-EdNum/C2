@@ -250,6 +250,15 @@ window.commandsVisible = commandsVisible;
                     if (typeof buildGrid === 'function') buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
                     if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
                     if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
+                    if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+                        if (typeof buildGrid === 'function') buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
+                        if (typeof renderRobot === 'function') renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                        if (typeof TrailManager !== 'undefined') TrailManager.clear('explore-grid');
+                        const exploreTarget = document.getElementById('explore-target');
+                        if (exploreTarget && exploreState.targetRow !== null && exploreState.targetCol !== null) {
+                            if (typeof renderTarget === 'function') renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+                        }
+                    }
 
                     const endContent = document.getElementById('sim-end-content');
                     if (endContent) {
@@ -271,6 +280,15 @@ window.commandsVisible = commandsVisible;
                     if (typeof buildGrid === 'function') buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
                     if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
                     if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
+                    if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+                        if (typeof buildGrid === 'function') buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
+                        if (typeof renderRobot === 'function') renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                        if (typeof TrailManager !== 'undefined') TrailManager.clear('explore-grid');
+                        const exploreTarget = document.getElementById('explore-target');
+                        if (exploreTarget && exploreState.targetRow !== null && exploreState.targetCol !== null) {
+                            if (typeof renderTarget === 'function') renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+                        }
+                    }
 
                     const endContent = document.getElementById('sim-end-content');
                     if (endContent) {
