@@ -343,23 +343,16 @@
 if (config.baseContent) {
                 if (matId === 'shapes') {
                     const needed = GRID_ROWS * GRID_COLS;
-                    const neededPairs = Math.floor(needed / 2);
-                    let pairsContent = [];
+                    let content = [];
                     let baseIndex = 0;
 
-                    // Pick from baseContent in order (simpler first), duplicating each item for a pair
-                    while (pairsContent.length < neededPairs * 2) {
-                        const item = config.baseContent[baseIndex % config.baseContent.length];
-                        pairsContent.push(item, item);
+                    // Pick from baseContent in order (simpler first) to fill the grid
+                    while (content.length < needed) {
+                        content.push(config.baseContent[baseIndex % config.baseContent.length]);
                         baseIndex++;
                     }
 
-                    // If odd grid size, add one singleton
-                    if (needed % 2 !== 0) {
-                        pairsContent.push(config.baseContent[baseIndex % config.baseContent.length]);
-                    }
-
-                    config.content = shuffleArray(pairsContent);
+                    config.content = shuffleArray(content);
                 } else if (matId === 'fairy_tale') {
                     config.content = shuffleArray([...config.baseContent]).slice(0, GRID_ROWS * GRID_COLS);
                 }
