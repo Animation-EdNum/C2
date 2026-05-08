@@ -1294,6 +1294,22 @@
                     document.querySelector('.calc-header').classList.add('pulse-help');
                 } else if (binDecMistakes >= 2) {
                     toggleCalc('open');
+                    // Set calculator bits to the correct answer
+                    const paddedBinStr = currentBinString.padStart(8, '0');
+                    for (let i = 0; i < 8; i++) {
+                        calcState[i] = paddedBinStr[i] === '1' ? 1 : 0;
+                        const cBit = cachedCalcBits[i];
+                        const cBox = cachedCalcBoxes[i];
+                        const tog = cachedTogs[i];
+                        if (calcState[i]) {
+                            if (cBit) { cBit.textContent = '1'; cBit.classList.add('active'); cBox.classList.add('selected'); }
+                            if (tog) { tog.textContent = '1'; tog.classList.add('active'); }
+                        } else {
+                            if (cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); }
+                            if (tog) { tog.textContent = '0'; tog.classList.remove('active'); }
+                        }
+                    }
+                    updateCalcResult();
                 }
 
                 playSound('error'); updateGlobalScore(false);
