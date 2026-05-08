@@ -740,6 +740,9 @@ if (config.baseContent) {
 
 
         let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
+        if (typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) {
+            unlockedSkins = Object.keys(SKIN_CONFIG);
+        }
         let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
         if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 

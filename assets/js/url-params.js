@@ -98,6 +98,10 @@ function applyUrlParameters() {
         window.isSkinUnlockDisabled = true;
     }
 
+    if (urlParams.get('unlockAllSkins') === '1') {
+        window.unlockAllSkins = true;
+    }
+
     if (urlParams.get('lockSpeed') === '1') {
         const speedBtn = document.getElementById('btn-speed');
         if (speedBtn) speedBtn.style.display = 'none';
