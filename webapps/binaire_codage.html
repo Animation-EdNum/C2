@@ -449,62 +449,6 @@
         }
 
         /* SIDE PANEL CALCULATRICE */
-        .calc-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .calc-backdrop.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .calc-side-panel {
-            position: fixed;
-            top: 0;
-            right: -450px;
-            width: 100%;
-            max-width: 400px;
-            height: 100%;
-            background: var(--card-bg);
-            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
-            z-index: 101;
-            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid var(--card-border);
-        }
-
-        .calc-side-panel.open {
-            right: 0;
-        }
-
-        .calc-panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid var(--card-border);
-            background: var(--instructions-bg);
-        }
-
-        .calc-panel-header h2 {
-            font-size: 18px;
-            color: var(--badge-color);
-            margin: 0;
-            text-align: left;
-        }
-
         .calc-panel-body {
             padding: 20px;
             flex-grow: 1;
@@ -569,7 +513,7 @@
 
         .calc-bit,
         .calc-box {
-            width: clamp(35px, 8vw, 50px);
+            width: clamp(28px, 6vw, 50px);
             height: 44px;
             display: flex;
             align-items: center;
@@ -586,7 +530,7 @@
             border: 2px solid #d1d5db;
             background: #f3f4f6;
             color: #9ca3af;
-            font-size: clamp(16px, 5vw, 22px);
+            font-size: clamp(14px, 4vw, 22px);
             min-width: 0;
             min-height: 44px;
         }
@@ -906,6 +850,14 @@
             }
         }
 
+
+      @media (max-width: 500px) {
+        .calc-grid { grid-template-columns: 1fr; gap: 6px; justify-items: center; }
+        .calc-label { text-align: center; margin-bottom: 2px; margin-top: 6px; }
+        .calc-row { justify-content: center; width: 100%; }
+        .calc-bit, .calc-box { width: clamp(30px, 8vw, 40px); height: clamp(35px, 9vw, 45px); font-size: clamp(14px, 4vw, 18px); }
+      }
+
     </style>
     <script src="../assets/js/scores.js"></script>
     <script src="../assets/js/audio.js"></script>
@@ -974,28 +926,6 @@
                 </button>
             </div>
 
-            <div class="calc-backdrop" id="calc-backdrop"></div>
-
-            <div class="calc-side-panel" id="calc-side-panel">
-                <div class="calc-panel-header">
-                    <h2>🧮 Mini-calculatrice binaire</h2>
-                    <button class="icon-action-btn" id="calc-close-btn" title="Fermer" aria-label="Fermer">
-                        <i data-fa="xmark"></i>
-                    </button>
-                </div>
-                <div class="calc-panel-body">
-                    <div class="calc-table-wrapper">
-                        <table class="calc-table" id="calc-table">
-                            <!-- Généré en JS -->
-                        </table>
-                    </div>
-                    <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
-                    <div style="text-align: center;">
-                        <button class="btn" style="background: var(--badge-bg); color: var(--badge-color);" id="reset-calc-btn">Remise à zéro</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- PANEL DEC -> BIN -->
             <div class="tab-panel active" id="panel-dec-bin">
                 <div class="vault-container" id="card-dec-bin">
@@ -1053,6 +983,26 @@
             </div>
 
         </main>
+    </div>
+
+    <div class="modal-overlay z-top" id="calc-modal-overlay">
+        <div class="modal-content" id="calc-modal-content" style="max-width: 650px; text-align: center;">
+            <button class="btn-close-modal" id="calc-close-btn" title="Fermer" aria-label="Fermer">
+                <i data-fa="xmark"></i>
+            </button>
+            <h2 style="margin-top:0; color: var(--badge-color);">🧮 Mini-calculatrice binaire</h2>
+            <div class="calc-panel-body" style="background: transparent;">
+                <div class="calc-table-wrapper">
+                    <table class="calc-table" id="calc-table">
+                        <!-- Généré en JS -->
+                    </table>
+                </div>
+                <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
+                <div style="text-align: center;">
+                    <button class="btn" style="background: var(--badge-bg); color: var(--badge-color);" id="reset-calc-btn">Remise à zéro</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1122,21 +1072,18 @@
 
         // CALCULATRICE & SYNC 
         function toggleCalc(forceState = null) {
-            const panel = document.getElementById('calc-side-panel');
-            const backdrop = document.getElementById('calc-backdrop');
-            const isOpen = panel.classList.contains('open');
+            const modalOverlay = document.getElementById('calc-modal-overlay');
+            const isOpen = modalOverlay.classList.contains('active');
 
             let shouldOpen = !isOpen;
             if (forceState === 'open') shouldOpen = true;
             if (forceState === 'close') shouldOpen = false;
 
             if (shouldOpen && !isOpen) {
-                panel.classList.add('open');
-                backdrop.classList.add('visible');
+                modalOverlay.classList.add('active');
                 document.getElementById('calc-open-btn').classList.remove('pulse-help');
             } else if (!shouldOpen && isOpen) {
-                panel.classList.remove('open');
-                backdrop.classList.remove('visible');
+                modalOverlay.classList.remove('active');
             }
         }
 
@@ -1439,7 +1386,9 @@
 
             document.getElementById('calc-open-btn').addEventListener('click', () => toggleCalc('open'));
             document.getElementById('calc-close-btn').addEventListener('click', () => toggleCalc('close'));
-            document.getElementById('calc-backdrop').addEventListener('click', () => toggleCalc('close'));
+            document.getElementById('calc-modal-overlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) toggleCalc('close');
+            });
             document.getElementById('reset-calc-btn').addEventListener('click', resetCalc);
             document.getElementById('decBin-check-btn').addEventListener('click', checkDecToBin);
             document.getElementById('binDec-check-btn').addEventListener('click', checkBinToDec);
@@ -1580,7 +1529,7 @@
             clearTimeout(helpTimer);
             document.getElementById('calc-open-btn').classList.remove('pulse-help');
             helpTimer = setTimeout(() => {
-                if (!document.getElementById('calc-side-panel').classList.contains('open')) {
+                if (!document.getElementById('calc-modal-overlay').classList.contains('active')) {
                     document.getElementById('calc-open-btn').classList.add('pulse-help');
                 }
             }, 8000); // Pulse après 8 secondes d'inactivité 
