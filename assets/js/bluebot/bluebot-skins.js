@@ -453,20 +453,20 @@ if (config.baseContent) {
             drawerTriggerElement = document.activeElement;
             playSound('click');
             renderSkinsList();
-            document.getElementById('skins-drawer').classList.add('active');
-            document.getElementById('skins-drawer-overlay').classList.add('active');
-            document.getElementById('skins-drawer-overlay').setAttribute('aria-hidden', 'false');
-            document.getElementById('skins-drawer').setAttribute('aria-hidden', 'false');
-            setupFocusTrap('skins-drawer');
+            document.getElementById('ui-panel').classList.add('active');
+            document.getElementById('ui-panel-overlay').classList.add('active');
+            document.getElementById('ui-panel-overlay').setAttribute('aria-hidden', 'false');
+            document.getElementById('ui-panel').setAttribute('aria-hidden', 'false');
+            setupFocusTrap('ui-panel');
         }
 
         function closeSkinsModal() {
             if (drawerTriggerElement) drawerTriggerElement.focus();
             playSound('click');
-            document.getElementById('skins-drawer').classList.remove('active');
-            document.getElementById('skins-drawer-overlay').classList.remove('active');
-            document.getElementById('skins-drawer-overlay').setAttribute('aria-hidden', 'true');
-            document.getElementById('skins-drawer').setAttribute('aria-hidden', 'true');
+            document.getElementById('ui-panel').classList.remove('active');
+            document.getElementById('ui-panel-overlay').classList.remove('active');
+            document.getElementById('ui-panel-overlay').setAttribute('aria-hidden', 'true');
+            document.getElementById('ui-panel').setAttribute('aria-hidden', 'true');
         }
 
         function renderSkinsList() {
@@ -740,6 +740,9 @@ if (config.baseContent) {
 
 
         let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
+        if (typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) {
+            unlockedSkins = Object.keys(SKIN_CONFIG);
+        }
         let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
         if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 

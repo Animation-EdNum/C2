@@ -11,9 +11,9 @@ Border-radius values are scattered with **no shared token** — every webapp def
 
 | Value | Where it appears | Role |
 |---|---|---|
-| `50%` | `.icon-action-btn`, `.btn-close-modal`, `.program-cmd`, `.mini-cmd`, `.legend-dot` | Circular icon buttons |
+| `50%` | `.icon-action-btn`, `.ui-btn-close`, `.program-cmd`, `.mini-cmd`, `.legend-dot` | Circular icon buttons |
 | `30px` | `#toast` (bluebot, bit_de_parite) | Pill toast |
-| `20px` | `.container`, `.modal-content`, `.challenge-option` (some), `.result-stage` (tirage) | Panel / card containers |
+| `20px` | `.container`, `.ui-modal-content`, `.challenge-option` (some), `.result-stage` (tirage) | Panel / card containers |
 | `16px` | `.exercise-card` (bit_de_parite), `.stat-chart-wrapper` | Sub-cards |
 | `14px` | `.settings-dropdown-content`, `.challenge-option` (bluebot) | Dropdowns, medium cards |
 | `12px` | `.tab-btn`, `.skin-list-item`, `.skin-card`, `.tab-btn`, `.gallery` | Tab buttons, list items |
@@ -46,7 +46,7 @@ Add to `:root` in `shared.css`:
     --radius-md:  8px;   /* Default: .btn, .menu-item-btn */
     --radius-lg:  12px;  /* Medium: .tab-btn, .skin-list-item, dropdowns */
     --radius-xl:  16px;  /* Large: .exercise-card, stat wrappers */
-    --radius-2xl: 20px;  /* Panel: .container, .modal-content */
+    --radius-2xl: 20px;  /* Panel: .container, .ui-modal-content */
     --radius-pill: 30px; /* Pill: toasts, .diff-btn */
     --radius-full: 50%;  /* Circle: icon buttons */
 }
