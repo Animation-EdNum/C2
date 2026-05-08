@@ -117,11 +117,11 @@ window.commandsVisible = commandsVisible;
             let popup = document.getElementById('time-popup');
             if (!popup) {
                 const popupHtml = `
-                    <div id="time-popup" class="modal-overlay z-top" aria-hidden="true" role="dialog">
-                        <div class="modal-content modal-prompt">
+                    <div id="time-popup" class="ui-modal-overlay z-top" aria-hidden="true" role="dialog">
+                        <div class="ui-modal-content ui-modal-prompt">
                             <h2 id="time-popup-title"></h2>
                             <p id="time-popup-msg"></p>
-                            <div class="modal-prompt-actions">
+                            <div class="ui-modal-prompt-actions">
                                 <button id="btn-time-popup-yes" class="btn btn-new"></button>
                                 <button id="btn-time-popup-no" class="btn btn-outline-error"></button>
                             </div>
@@ -423,7 +423,7 @@ window.commandsVisible = commandsVisible;
         });
         document.getElementById('btn-open-skins').addEventListener('click', openSkinsModal);
         document.getElementById('btn-close-skins').addEventListener('click', closeSkinsModal);
-        document.getElementById('skins-drawer-overlay').addEventListener('click', closeSkinsModal);
+        document.getElementById('ui-panel-overlay').addEventListener('click', closeSkinsModal);
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
         document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
 

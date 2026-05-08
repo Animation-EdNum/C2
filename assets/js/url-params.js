@@ -98,7 +98,11 @@ function applyUrlParameters() {
         window.isSkinUnlockDisabled = true;
     }
 
-    if (urlParams.has('lockSpeed')) {
+    if (urlParams.get('unlockAllSkins') === '1') {
+        window.unlockAllSkins = true;
+    }
+
+    if (urlParams.get('lockSpeed') === '1') {
         const speedBtn = document.getElementById('btn-speed');
         if (speedBtn) speedBtn.style.display = 'none';
         const speedToggleBtn = document.getElementById('speedToggleBtn');
@@ -214,9 +218,9 @@ function initShareModal() {
 
     // Create Modal HTML
     const modalHTML = `
-    <div id="share-modal-overlay" class="modal-overlay" aria-hidden="true">
-        <div id="share-modal" class="modal-content" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
-            <button class="btn-close-modal" id="btn-close-share" aria-label="Fermer"><i data-fa="xmark"></i></button>
+    <div id="share-modal-overlay" class="ui-modal-overlay" aria-hidden="true">
+        <div id="share-modal" class="ui-modal-content" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+            <button class="ui-btn-close" id="btn-close-share" aria-label="Fermer"><i data-fa="xmark"></i></button>
 
             <div class="share-header">
                 <h2 id="share-modal-title"><i data-fa="share-nodes"></i> Partager l'activité</h2>
@@ -451,19 +455,27 @@ function initShareModal() {
     if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
 
     // Context-Aware Options: Hide options for features not in the current app
-    if (!document.getElementById('btn-open-mats')) document.getElementById('lbl-lockMat').style.display = 'none';
     if (!document.getElementById('btn-open-mats')) {
+        const lblLockMat = document.getElementById('lbl-lockMat');
         const lblForceMat = document.getElementById('lbl-forceMat');
+        if (lblLockMat) lblLockMat.style.display = 'none';
         if (lblForceMat) lblForceMat.style.display = 'none';
     }
-    if (!document.getElementById('btn-open-skins')) document.getElementById('lbl-lockSkin').style.display = 'none';
-    if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) document.getElementById('lbl-lockSpeed').style.display = 'none';
-    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
-        if (document.getElementById('lbl-noCmdToggle')) document.getElementById('lbl-noCmdToggle').style.display = 'none';
-        if (document.getElementById('lbl-blindcode')) document.getElementById('lbl-blindcode').style.display = 'none';
+    if (!document.getElementById('btn-open-skins')) {
+        const lblLockSkin = document.getElementById('lbl-lockSkin');
+        if (lblLockSkin) lblLockSkin.style.display = 'none';
     }
-    if (!document.querySelector('#btn-random, .btn-random')) document.getElementById('lbl-noRandom').style.display = 'none';
-    if (!document.querySelector('[draggable="true"], .draggable') && typeof window.noDragParam === 'undefined') document.getElementById('lbl-noDrag').style.display = 'none';
+    if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) {
+        const lblLockSpeed = document.getElementById('lbl-lockSpeed');
+        if (lblLockSpeed) lblLockSpeed.style.display = 'none';
+    }
+    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
+        const lblNoCmdToggle = document.getElementById('lbl-noCmdToggle');
+        const lblBlindcode = document.getElementById('lbl-blindcode');
+        if (lblNoCmdToggle) lblNoCmdToggle.style.display = 'none';
+        if (lblBlindcode) lblBlindcode.style.display = 'none';
+    }
+
 
     // Specific Options Logic
     let hasSpecificOption = false;
