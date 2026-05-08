@@ -143,6 +143,36 @@ window.commandsVisible = commandsVisible;
 
         function initApplication() {
             const memoryToggle = document.getElementById('toggle-memory-mode');
+            const collectToggle = document.getElementById('toggle-collect-mode');
+
+            if (collectToggle) {
+                collectToggle.checked = typeof collectMode !== 'undefined' ? collectMode : false;
+                collectToggle.addEventListener('change', (e) => {
+                    if (typeof collectMode !== 'undefined') {
+                        collectMode = e.target.checked;
+                        localStorage.setItem('bb_collect_mode', collectMode);
+                    }
+                    if (!collectMode && typeof memoryMode !== 'undefined') {
+                        memoryMode = false;
+                        localStorage.setItem('bb_memory_mode', false);
+                        if (memoryToggle) memoryToggle.checked = false;
+                    }
+
+                    if (typeof updateMemoryToggleVisibility === 'function') updateMemoryToggleVisibility();
+                    if (typeof generateMatContent === 'function') generateMatContent(activeMat);
+                    if (typeof buildGrid === 'function') buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+                    if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+                    if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
+
+                    const endContent = document.getElementById('sim-end-content');
+                    if (endContent) {
+                        Array.from(endContent.querySelectorAll('.end-item')).forEach(el => el.remove());
+                        const emptyEnd = document.getElementById('sim-end-empty');
+                        if (emptyEnd) emptyEnd.style.display = 'block';
+                    }
+                });
+            }
+
             if (memoryToggle) {
                 memoryToggle.checked = typeof memoryMode !== 'undefined' ? memoryMode : false;
                 memoryToggle.addEventListener('change', (e) => {
