@@ -309,10 +309,10 @@ const ScoreManager = {
 
             for (const diff in this.stats[mode]) {
                 const st = this.stats[mode][diff];
-                aggSuccess1st += st.firstTrySuccess;
-                aggSuccessMore += (st.totalSuccess - st.firstTrySuccess);
-                aggMistakes += st.mistakes;
-                totalSuccess += st.totalSuccess;
+                aggSuccess1st += Number(st.firstTrySuccess) || 0;
+                aggSuccessMore += (Number(st.totalSuccess) || 0) - (Number(st.firstTrySuccess) || 0);
+                aggMistakes += Number(st.mistakes) || 0;
+                totalSuccess += Number(st.totalSuccess) || 0;
             }
 
             const totalActions = totalSuccess + aggMistakes;
@@ -325,17 +325,17 @@ const ScoreManager = {
                                 <div class="stat-legend-item">
                                     <div class="stat-legend-color color-success-1st"></div>
                                     <span class="stat-legend-label">Réussite (1er coup)</span>
-                                    <span class="stat-legend-value">${aggSuccess1st}</span>
+                                    <span class="stat-legend-value">${this._escapeHtml(String(aggSuccess1st))}</span>
                                 </div>
                                 <div class="stat-legend-item">
                                     <div class="stat-legend-color color-success-more"></div>
                                     <span class="stat-legend-label">Réussite (après essai)</span>
-                                    <span class="stat-legend-value">${aggSuccessMore}</span>
+                                    <span class="stat-legend-value">${this._escapeHtml(String(aggSuccessMore))}</span>
                                 </div>
                                 <div class="stat-legend-item">
                                     <div class="stat-legend-color color-mistakes"></div>
                                     <span class="stat-legend-label">Erreurs (clics)</span>
-                                    <span class="stat-legend-value">${aggMistakes}</span>
+                                    <span class="stat-legend-value">${this._escapeHtml(String(aggMistakes))}</span>
                                 </div>
                                 <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); font-size: 12px; opacity: 0.8;">
                                     <strong>Efficacité globale :</strong> ${totalActions > 0 ? Math.round((totalSuccess / totalActions) * 100) : 0}%
@@ -362,9 +362,9 @@ const ScoreManager = {
 
                     html += `<tr>
                                 <td><strong>${diffName}</strong></td>
-                                <td>${st.firstTrySuccess}</td>
-                                <td>${st.totalSuccess}</td>
-                                <td>${st.mistakes}</td>
+                                <td>${this._escapeHtml(String(st.firstTrySuccess))}</td>
+                                <td>${this._escapeHtml(String(st.totalSuccess))}</td>
+                                <td>${this._escapeHtml(String(st.mistakes))}</td>
                              </tr>`;
                 }
                 html += `</tbody></table></div>`;
@@ -420,7 +420,7 @@ const ScoreManager = {
                     ${drawSegment(p3, ((p1+p2)/100)*circ, 'color-mistakes')}
                 </svg>
                 <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; line-height:1;">
-                    <div style="font-size:24px; font-weight:800;">${s1+s2}</div>
+                    <div style="font-size:24px; font-weight:800;">${this._escapeHtml(String(s1+s2))}</div>
                     <div style="font-size:10px; text-transform:uppercase; opacity:0.6;">Succès</div>
                 </div>
             </div>
