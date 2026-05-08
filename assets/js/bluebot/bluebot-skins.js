@@ -343,23 +343,16 @@
 if (config.baseContent) {
                 if (matId === 'shapes') {
                     const needed = GRID_ROWS * GRID_COLS;
-                    const neededPairs = Math.floor(needed / 2);
-                    let pairsContent = [];
+                    let content = [];
                     let baseIndex = 0;
 
-                    // Pick from baseContent in order (simpler first), duplicating each item for a pair
-                    while (pairsContent.length < neededPairs * 2) {
-                        const item = config.baseContent[baseIndex % config.baseContent.length];
-                        pairsContent.push(item, item);
+                    // Pick from baseContent in order (simpler first) to fill the grid
+                    while (content.length < needed) {
+                        content.push(config.baseContent[baseIndex % config.baseContent.length]);
                         baseIndex++;
                     }
 
-                    // If odd grid size, add one singleton
-                    if (needed % 2 !== 0) {
-                        pairsContent.push(config.baseContent[baseIndex % config.baseContent.length]);
-                    }
-
-                    config.content = shuffleArray(pairsContent);
+                    config.content = shuffleArray(content);
                 } else if (matId === 'fairy_tale') {
                     config.content = shuffleArray([...config.baseContent]).slice(0, GRID_ROWS * GRID_COLS);
                 }
@@ -368,13 +361,32 @@ if (config.baseContent) {
 
 
         function updateMemoryToggleVisibility() {
+            const collectContainer = document.getElementById('collect-mode-container');
             const memoryContainer = document.getElementById('memory-mode-container');
-            if (!memoryContainer) return;
             const config = MAT_CONFIG[activeMat];
-            if (activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent)) {
-                memoryContainer.style.display = 'flex';
-            } else {
-                memoryContainer.style.display = 'none';
+            const hasContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+
+            if (collectContainer) {
+                if (hasContent) {
+                    collectContainer.style.display = 'flex';
+                } else {
+                    collectContainer.style.display = 'none';
+                }
+            }
+
+            if (memoryContainer) {
+                if (hasContent) {
+                    memoryContainer.style.display = 'flex';
+                    if (!collectMode) {
+                        memoryContainer.style.opacity = '0.5';
+                        memoryContainer.style.pointerEvents = 'none';
+                    } else {
+                        memoryContainer.style.opacity = '1';
+                        memoryContainer.style.pointerEvents = 'auto';
+                    }
+                } else {
+                    memoryContainer.style.display = 'none';
+                }
             }
         }
 
@@ -686,7 +698,12 @@ if (config.baseContent) {
 
 
 
+        let collectMode = localStorage.getItem('bb_collect_mode') === 'true';
         let memoryMode = localStorage.getItem('bb_memory_mode') === 'true';
+        if (!collectMode) {
+            memoryMode = false;
+        }
+
         let activeMat = localStorage.getItem('bb_active_mat') || 'none';
         generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
