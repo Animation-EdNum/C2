@@ -532,27 +532,7 @@ if (config.baseContent) {
             }
         }
 
-        function selectSkin(skinId) {
-            if (!unlockedSkins.includes(skinId)) return;
-            playSound('click');
-            activeSkin = skinId;
-            localStorage.setItem('bb_active_skin', skinId);
-
-            // Cyber-Bot and Volcano force Dark Mode
-            if (skinId === 'cyberbot' || skinId === 'volcano') {
-                if (!document.body.classList.contains('dark')) toggleTheme();
-            }
-
-            if (skinId === 'pirate') {
-                startOceanRipples();
-            } else {
-                stopOceanRipples();
-            }
-
-            renderSkinsList();
-            closeSkinsModal();
-
-            // Met à jour les grilles sans réinitialiser leur état
+        function updateSkinGrids() {
             const grids = ['sim-grid', 'explore-grid', 'chal-grid', 'read-grid', 'draw-grid'];
             grids.forEach(gridId => {
                 const grid = document.getElementById(gridId);
@@ -583,7 +563,9 @@ if (config.baseContent) {
             if (window.fa && typeof window.fa.createIcons === 'function') {
                 window.fa.createIcons();
             }
+        }
 
+        function updateSkinEntities() {
             // Mettre à jour les robots et cibles pour sim-grid
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             if (simState.targetRow !== null && simState.targetCol !== null) {
@@ -616,7 +598,9 @@ if (config.baseContent) {
             if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
                 renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
             }
+        }
 
+        function updateSkinButtons() {
             const tgtBtn = document.getElementById('btn-target-icon');
             if (tgtBtn) {
                 const tg = SKIN_CONFIG[activeSkin].target;
@@ -652,7 +636,9 @@ if (config.baseContent) {
                     obsBtn.innerText = ob || '';
                 }
             }
+        }
 
+        function updateSkinTrails() {
             // Redraw trails to match new skin
             if (simState.program.length > 0 || simState.running || simState.failed) {
                 redrawTrail('sim-grid', simState);
@@ -680,6 +666,33 @@ if (config.baseContent) {
                 // Just clear since chal doesn't store current active program explicitly
                 TrailManager.clear('chal-grid');
             }
+        }
+
+        function selectSkin(skinId) {
+            if (!unlockedSkins.includes(skinId)) return;
+            playSound('click');
+            activeSkin = skinId;
+            localStorage.setItem('bb_active_skin', skinId);
+
+            // Cyber-Bot and Volcano force Dark Mode
+            if (skinId === 'cyberbot' || skinId === 'volcano') {
+                if (!document.body.classList.contains('dark')) toggleTheme();
+            }
+
+            if (skinId === 'pirate') {
+                startOceanRipples();
+            } else {
+                stopOceanRipples();
+            }
+
+            renderSkinsList();
+            closeSkinsModal();
+
+            // Met à jour les grilles sans réinitialiser leur état
+            updateSkinGrids();
+            updateSkinEntities();
+            updateSkinButtons();
+            updateSkinTrails();
         }
 
         function unlockSkin(skinId) {
