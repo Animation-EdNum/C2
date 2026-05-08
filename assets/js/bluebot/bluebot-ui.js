@@ -34,9 +34,13 @@ window.commandsVisible = commandsVisible;
 
         function toggleSpeed() {
             playSound('click');
+            window.setSpeedLevel(currentSpeed === 900 ? 2 : 1);
+        }
+
+        window.setSpeedLevel = function(level) {
             const iconSpd1 = document.getElementById('icon-speed-1x');
             const iconSpd2 = document.getElementById('icon-speed-2x');
-            if (currentSpeed === 900) {
+            if (level === 2) {
                 currentSpeed = 400;
                 if (iconSpd1) iconSpd1.style.display = 'none';
                 if (iconSpd2) iconSpd2.style.display = 'block';
@@ -47,7 +51,11 @@ window.commandsVisible = commandsVisible;
                 if (iconSpd2) iconSpd2.style.display = 'none';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Vitesse Normale';
             }
-        }
+        };
+
+        window.getCurrentSpeed = function() {
+            return currentSpeed;
+        };
 
         document.addEventListener('keydown', (e) => {
             if (!['explore', 'simulator', 'challenge', 'read', 'draw'].includes(activeTab)) return;

@@ -107,6 +107,10 @@ function applyUrlParameters() {
         if (speedBtn) speedBtn.style.display = 'none';
         const speedToggleBtn = document.getElementById('speedToggleBtn');
         if (speedToggleBtn) speedToggleBtn.style.display = 'none';
+
+        if (typeof window.setSpeedLevel === 'function') {
+            window.setSpeedLevel(parseInt(urlParams.get('lockSpeed'), 10));
+        }
     }
 
     if (urlParams.get('noCmdToggle') === '1') {
@@ -555,7 +559,16 @@ function initShareModal() {
         checkboxes.forEach(cb => {
             if (cb.checked) {
                 const param = cb.id.replace('opt-', '');
-                url.searchParams.set(param, '1');
+
+                if (param === 'lockSpeed') {
+                    let speedLevel = '1';
+                    if (typeof window.getCurrentSpeed === 'function' && window.getCurrentSpeed() === 400) {
+                        speedLevel = '2';
+                    }
+                    url.searchParams.set(param, speedLevel);
+                } else {
+                    url.searchParams.set(param, '1');
+                }
 
                 // Special handling for lockTopology
                 if (param === 'lockTopology') {
