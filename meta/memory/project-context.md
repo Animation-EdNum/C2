@@ -15,8 +15,9 @@ The applications are structured into two main categories:
 - **Premium Aesthetics & A11y:** Modern "Glassmorphism" design, clean typography ("Outfit"), smooth micro-animations, and WCAG AA compliance (full keyboard support, ARIA semantics).
 - **Assets Centralization:** All static assets including JS scripts, CSS stylesheets, fonts, mat images, and favicons are strictly centralized within the `/assets/` directory.
 - **Repository Structure:**
+  - **Git Branching:** The main branch in the repository is 'main', not 'master'. Attempting to pull or checkout 'master' will result in git pathspec errors.
   - **`standalone/` Folder:** Intentionally removed. Do not attempt to create standalone versions.
-  - **`alpha/webapps/` Folder:** Contains experimental applications. They must remain here (as 'alpha' status) and not be promoted to the main `webapps/` folder unless explicitly instructed by the user, even if their UI/UX is being standardized. They must stay hidden by default and must not be documented in the README.
+  - **`alpha/webapps/` Folder:** Contains experimental or performance-optimized versions of pedagogical applications (e.g., `jeu_de_la_grue.html`) that are distinct from the stable versions in the root `webapps/` directory. They must remain here (as 'alpha' status) and not be promoted to the main `webapps/` folder unless explicitly instructed by the user, even if their UI/UX is being standardized. They must stay hidden by default and must not be documented in the README.
 
 ## Documentation & Assets
 - **Screenshots & README:** The `README.md` file must strictly preserve the explanations of the different webapps (as they are highly useful for teachers) and include a screenshot for every application, resource, and the `index.html` portal (Desktop and Mobile). Screenshots are stored in `meta/screenshots/`.
