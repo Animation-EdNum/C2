@@ -94,6 +94,33 @@ const ScoreManager = {
         }
     },
 
+    addStat(mode, diff, isFirstTrySuccess, mistakesCount) {
+        diff = diff || this._NO_DIFF;
+        if (!this.stats[mode]) this.stats[mode] = {};
+        if (!this.stats[mode][diff]) {
+            this.stats[mode][diff] = {
+                totalAttempts: 0,
+                totalSuccess: 0,
+                firstTrySuccess: 0,
+                mistakes: 0,
+                streak: 0
+            };
+        }
+
+        const st = this.stats[mode][diff];
+        st.totalAttempts++;
+        st.totalSuccess++;
+        if (isFirstTrySuccess) {
+            st.firstTrySuccess++;
+            st.streak = (st.streak || 0) + 1;
+        } else {
+            st.streak = 0;
+        }
+        st.mistakes += mistakesCount || 0;
+
+        this.saveStats();
+    },
+
     addSuccess(mode, difficulty, mistakesMade) {
         this.ensurePath(mode, difficulty);
         const st = this.stats[mode][this._diffKey(difficulty)];

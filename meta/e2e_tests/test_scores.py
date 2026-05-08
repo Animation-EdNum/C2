@@ -57,3 +57,33 @@ def test_score_manager_reset_scores(page: Page):
 
     stats = page.evaluate("ScoreManager.stats")
     assert stats == {}
+
+def test_score_manager_add_stat(page: Page):
+    """Verify addStat correctly updates arbitrary stats."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+    page.evaluate("localStorage.clear()")
+    page.reload()
+
+    # Try calling addStat, which handles arbitrary diffs
+    page.evaluate("ScoreManager.addStat('custom_mode', 'easy', true, 0)")
+
+    stats = page.evaluate("ScoreManager.stats")
+
+    # Assert stat exists and has correct values
+    assert stats['custom_mode']['easy']['totalAttempts'] == 1
+    assert stats['custom_mode']['easy']['totalSuccess'] == 1
+    assert stats['custom_mode']['easy']['firstTrySuccess'] == 1
+    assert stats['custom_mode']['easy']['mistakes'] == 0
+    assert stats['custom_mode']['easy']['streak'] == 1
+
+    # Try a non-first try success
+    page.evaluate("ScoreManager.addStat('custom_mode', 'easy', false, 2)")
+
+    stats = page.evaluate("ScoreManager.stats")
+
+    # Assert stat was updated correctly
+    assert stats['custom_mode']['easy']['totalAttempts'] == 2
+    assert stats['custom_mode']['easy']['totalSuccess'] == 2
+    assert stats['custom_mode']['easy']['firstTrySuccess'] == 1
+    assert stats['custom_mode']['easy']['mistakes'] == 2
+    assert stats['custom_mode']['easy']['streak'] == 0
