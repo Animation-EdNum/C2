@@ -970,6 +970,8 @@
             }
         }
 
+        const histBarCache = {};
+
         function initHistogram() {
             const container = document.getElementById('histogram-container');
             container.innerHTML = '';
@@ -996,6 +998,8 @@
                 wrapper.appendChild(bar);
                 wrapper.appendChild(letter);
                 container.appendChild(wrapper);
+
+                histBarCache[char] = bar;
             }
         }
 
@@ -1020,7 +1024,7 @@
 
             for (let i = 0; i < 26; i++) {
                 const char = String.fromCharCode(65 + i);
-                const bar = document.getElementById(`hist-bar-${char}`);
+                const bar = histBarCache[char];
                 if (bar) {
                     const heightPercentage = maxCount > 0 ? (counts[char] / maxCount) * 100 : 0;
                     bar.style.height = `${Math.max(1, heightPercentage)}%`;
