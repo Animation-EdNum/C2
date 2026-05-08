@@ -428,7 +428,7 @@ let simState = {
                 }
             }
             
-            if (!exploreState.failed && MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+            if (!exploreState.failed && MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#explore-grid .bot-cell[data-row="${exploreState.robotRow}"][data-col="${exploreState.robotCol}"] .mat-content`);
                 if (cell && cell.textContent.trim()) {
                     const endContent = document.getElementById('sim-end-content');
@@ -611,7 +611,7 @@ let simState = {
             simState.robotCol = newCol;
             simState.startRow = newRow;
             simState.startCol = newCol;
-            let randomDir = Math.floor(Math.random() * 4) * 90;
+            let randomDir = Math.floor(Math.random() * 4);
             simState.robotDir = randomDir;
             simState.startDir = randomDir;
             simState.stepIndex = -1;
@@ -751,7 +751,7 @@ let simState = {
             exploreState.startCol = newCol;
             exploreState.absoluteStartRow = newRow;
             exploreState.absoluteStartCol = newCol;
-            let randomDir = Math.floor(Math.random() * 4) * 90;
+            let randomDir = Math.floor(Math.random() * 4);
             exploreState.robotDir = randomDir;
             exploreState.startDir = randomDir;
             exploreState.failed = false;
@@ -991,7 +991,7 @@ let simState = {
                 }
 
                 // Ajouter le contenu de la case atteinte à la fin de l'exécution
-                if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                     const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
                     if (cell && cell.textContent.trim()) {
                         const endContent = document.getElementById('sim-end-content');
