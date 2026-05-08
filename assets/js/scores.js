@@ -17,7 +17,18 @@ const ScoreManager = {
         'detect': 'Détection d\'erreur',
         'simulator': 'Simulateur',
         'draw': 'Dessin',
-        'jeu_de_la_grue': 'Jeu de la grue'
+        'jeu_de_la_grue': 'Jeu de la grue',
+        'color': 'Par couleur',
+        'shape': 'Par forme',
+        'quantity': 'Par quantité',
+        'size': 'Par taille',
+        'nombres': 'Nombres',
+        'lettres': 'Lettres',
+        'cesar': 'César',
+        'vigenere': 'Vigenère',
+        'atbash': 'Atbash',
+        'morse': 'Morse',
+        'hacker': 'Hacker'
     },
 
     DIFF_LABELS: {
