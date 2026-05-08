@@ -121,13 +121,13 @@
             background: #0f172a;
         }
 
-        body.dark .calc-header {
+        body.dark .calc-panel-header {
             background: var(--card-bg);
-            color: var(--badge-color);
+            border-bottom-color: #334155;
         }
 
-        body.dark .calc-header:hover {
-            background: #334155;
+        body.dark .calc-panel-body {
+            background: #0f172a;
         }
 
         body.dark .calc-power-cell {
@@ -448,61 +448,79 @@
             background: var(--badge-bg);
         }
 
-        .calc-section {
-            margin-bottom: 25px;
-            border: 2px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
+        /* SIDE PANEL CALCULATRICE */
+        .calc-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
-        .calc-header {
-            background: var(--instructions-bg);
-            padding: 12px 18px;
-            cursor: pointer;
+        .calc-backdrop.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .calc-side-panel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: var(--card-bg);
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
+            z-index: 101;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--card-border);
+        }
+
+        .calc-side-panel.open {
+            right: 0;
+        }
+
+        .calc-panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 600;
+            padding: 20px;
+            border-bottom: 1px solid var(--card-border);
+            background: var(--instructions-bg);
+        }
+
+        .calc-panel-header h2 {
+            font-size: 18px;
             color: var(--badge-color);
-            font-size: 15px;
-            user-select: none;
-            transition: 0.3s;
+            margin: 0;
+            text-align: left;
         }
 
-        .calc-header:hover {
-            background: var(--input-border);
-        }
-
-        .calc-toggle-icon {
-            transition: transform 0.3s;
-            font-size: 14px;
-        }
-
-        .calc-toggle-icon.open {
-            transform: rotate(90deg);
-        }
-
-        .calc-body {
-            padding: 18px;
+        .calc-panel-body {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
             background: var(--badge-bg);
-            display: none;
         }
 
-        .calc-body.visible {
-            display: block;
-            animation: fadeIn 0.3s ease;
+        .calc-open-btn {
+            background: var(--instructions-bg);
+            color: var(--badge-color);
+            border: 2px solid var(--input-border);
+            transition: all 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .calc-open-btn:hover {
+            background: var(--input-border);
         }
 
         /* Animation d'aide */
@@ -878,9 +896,6 @@
                 gap: 30px;
                 align-items: start;
             }
-            .calc-section {
-                grid-column: 1;
-            }
             .tab-panel {
                 grid-column: 2;
                 grid-row: 1 / span 2;
@@ -953,20 +968,31 @@
             </div>
 
             <!-- CALCULATRICE -->
-            <div class="calc-section">
-                <div class="calc-header" tabindex="0" id="calc-header">
-                    <span>🧮 Mini-calculatrice binaire (Aide)</span>
-                    <span class="calc-toggle-icon" id="calc-toggle-icon">▶</span>
+            <div id="calc-open-container" style="text-align: center; margin-bottom: 25px;">
+                <button class="btn calc-open-btn" id="calc-open-btn">
+                    <i data-fa="calculator"></i> Ouvrir la mini-calculatrice
+                </button>
+            </div>
+
+            <div class="calc-backdrop" id="calc-backdrop"></div>
+
+            <div class="calc-side-panel" id="calc-side-panel">
+                <div class="calc-panel-header">
+                    <h2>🧮 Mini-calculatrice binaire</h2>
+                    <button class="icon-action-btn" id="calc-close-btn" title="Fermer" aria-label="Fermer">
+                        <i data-fa="xmark"></i>
+                    </button>
                 </div>
-                <div class="calc-body" id="calc-body">
+                <div class="calc-panel-body">
                     <div class="calc-table-wrapper">
                         <table class="calc-table" id="calc-table">
                             <!-- Généré en JS -->
                         </table>
                     </div>
                     <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
-                    <div style="text-align: center;"><button class="btn" style="background: var(--badge-bg); color: var(--badge-color);"
-                            id="reset-calc-btn">Remise à zéro</button></div>
+                    <div style="text-align: center;">
+                        <button class="btn" style="background: var(--badge-bg); color: var(--badge-color);" id="reset-calc-btn">Remise à zéro</button>
+                    </div>
                 </div>
             </div>
 
@@ -1096,29 +1122,30 @@
 
         // CALCULATRICE & SYNC 
         function toggleCalc(forceState = null) {
-            const body = document.getElementById('calc-body');
-            const isVisible = body.classList.contains('visible');
+            const panel = document.getElementById('calc-side-panel');
+            const backdrop = document.getElementById('calc-backdrop');
+            const isOpen = panel.classList.contains('open');
 
-            let shouldOpen = !isVisible;
+            let shouldOpen = !isOpen;
             if (forceState === 'open') shouldOpen = true;
             if (forceState === 'close') shouldOpen = false;
 
-            if (shouldOpen && !isVisible) {
-                body.classList.add('visible');
-                document.getElementById('calc-toggle-icon').classList.add('open');
-                document.querySelector('.calc-header').classList.remove('pulse-help');
-            } else if (!shouldOpen && isVisible) {
-                body.classList.remove('visible');
-                document.getElementById('calc-toggle-icon').classList.remove('open');
+            if (shouldOpen && !isOpen) {
+                panel.classList.add('open');
+                backdrop.classList.add('visible');
+                document.getElementById('calc-open-btn').classList.remove('pulse-help');
+            } else if (!shouldOpen && isOpen) {
+                panel.classList.remove('open');
+                backdrop.classList.remove('visible');
             }
         }
 
         function setCalcDisplay(visible) {
-            const section = document.querySelector('.calc-section');
+            const container = document.getElementById('calc-open-container');
             if (visible) {
-                section.style.display = '';
+                container.style.display = 'block';
             } else {
-                section.style.display = 'none';
+                container.style.display = 'none';
                 toggleCalc('close');
             }
         }
@@ -1267,7 +1294,7 @@
 
                 setCalcDisplay(true);
                 if (decBinMistakes === 1) {
-                    document.querySelector('.calc-header').classList.add('pulse-help');
+                    document.getElementById('calc-open-btn').classList.add('pulse-help');
                 } else if (decBinMistakes >= 2) {
                     toggleCalc('open');
                 }
@@ -1343,7 +1370,7 @@
 
                 setCalcDisplay(true);
                 if (binDecMistakes === 1) {
-                    document.querySelector('.calc-header').classList.add('pulse-help');
+                    document.getElementById('calc-open-btn').classList.add('pulse-help');
                 } else if (binDecMistakes >= 2) {
                     toggleCalc('open');
                     // Set calculator bits to the correct answer
@@ -1398,7 +1425,9 @@
             document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
             document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
 
-            document.getElementById('calc-header').addEventListener('click', () => toggleCalc());
+            document.getElementById('calc-open-btn').addEventListener('click', () => toggleCalc('open'));
+            document.getElementById('calc-close-btn').addEventListener('click', () => toggleCalc('close'));
+            document.getElementById('calc-backdrop').addEventListener('click', () => toggleCalc('close'));
             document.getElementById('reset-calc-btn').addEventListener('click', resetCalc);
             document.getElementById('decBin-check-btn').addEventListener('click', checkDecToBin);
             document.getElementById('binDec-check-btn').addEventListener('click', checkBinToDec);
@@ -1524,10 +1553,10 @@
 
         function resetHelpTimer() {
             clearTimeout(helpTimer);
-            document.querySelector('.calc-header').classList.remove('pulse-help');
+            document.getElementById('calc-open-btn').classList.remove('pulse-help');
             helpTimer = setTimeout(() => {
-                if (!document.getElementById('calc-body').classList.contains('visible')) {
-                    document.querySelector('.calc-header').classList.add('pulse-help');
+                if (!document.getElementById('calc-side-panel').classList.contains('open')) {
+                    document.getElementById('calc-open-btn').classList.add('pulse-help');
                 }
             }, 8000); // Pulse après 8 secondes d'inactivité 
         }
