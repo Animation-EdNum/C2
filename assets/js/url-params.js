@@ -75,7 +75,7 @@ function applyUrlParameters() {
             btn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); return false; };
         });
         const diffSelect = document.getElementById('difficulty-select');
-        if(diffSelect) diffSelect.disabled = true;
+        if (diffSelect) diffSelect.disabled = true;
     }
 
     if (urlParams.has('forceMat')) {
@@ -148,7 +148,7 @@ function applyUrlParameters() {
                         const wasLocked = btn.disabled;
                         btn.disabled = false;
                         btn.click();
-                        if(wasLocked) btn.disabled = true;
+                        if (wasLocked) btn.disabled = true;
                         clicked = true;
                     }
                 });
@@ -156,12 +156,12 @@ function applyUrlParameters() {
 
             if (!clicked) {
                 const diffBtn = document.getElementById(`diff-${diff}`) ||
-                                document.getElementById(`read-diff-${diff}`);
+                    document.getElementById(`read-diff-${diff}`);
                 if (diffBtn && !diffBtn.classList.contains('locked')) {
                     const wasLocked = diffBtn.disabled;
                     diffBtn.disabled = false;
                     diffBtn.click();
-                    if(wasLocked) diffBtn.disabled = true;
+                    if (wasLocked) diffBtn.disabled = true;
                     clicked = true;
                 }
             }
@@ -175,8 +175,8 @@ function applyUrlParameters() {
                     setDifficulty(diff);
                 } else if (typeof window.currentDifficulty !== 'undefined') {
                     window.currentDifficulty = diff;
-                    if(typeof generateSequence === 'function') generateSequence();
-                    if(typeof initLevel === 'function') initLevel();
+                    if (typeof generateSequence === 'function') generateSequence();
+                    if (typeof initLevel === 'function') initLevel();
                 }
             }
         }, 150);
@@ -202,7 +202,7 @@ function initShareModal() {
             // Insert at the top of the settings menu
             settingsDropdown.insertBefore(shareBtn, settingsDropdown.firstChild);
             // Must create icon after insertion
-            if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+            if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
         } else {
             return; // Nowhere to put it
         }
@@ -245,8 +245,8 @@ function initShareModal() {
                             <h3>Interface & Navigation</h3>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-highContrast">Mode contraste élevé</label>
-                                    <div class="share-option-desc">Active automatiquement le thème à fort contraste.</div>
+                                    <label class="share-option-label" for="opt-highContrast">Contraste élevé</label>
+                                    <div class="share-option-desc">Active le thème à fort contraste.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-highContrast">
@@ -255,8 +255,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-only">Forcer le mode actuel</label>
-                                    <div class="share-option-desc">Verrouille l'application sur le mode actuel pour éviter toute distraction.</div>
+                                    <label class="share-option-label" for="opt-only">Mode actuel</label>
+                                    <div class="share-option-desc">Bloque l'application sur le mode actuel.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-only">
@@ -265,8 +265,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noHome">Masquer le retour à l'accueil</label>
-                                    <div class="share-option-desc">Empêche l'élève de quitter l'activité en cours via le bouton "Home".</div>
+                                    <label class="share-option-label" for="opt-noHome">Pas de lien vers l'accueil</label>
+                                    <div class="share-option-desc">Empêche de quitter l'activité.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noHome">
@@ -275,8 +275,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noSettings">Masquer le menu réglages</label>
-                                    <div class="share-option-desc">Empêche l'accès aux réglages du projet.</div>
+                                    <label class="share-option-label" for="opt-noSettings">Pas de réglages</label>
+                                    <div class="share-option-desc">Bloque l'accès aux paramètres.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noSettings">
@@ -285,8 +285,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noAudio">Masquer le bouton son</label>
-                                    <div class="share-option-desc">Désactive la possibilité de couper ou activer le son.</div>
+                                    <label class="share-option-label" for="opt-noAudio">Pas de son</label>
+                                    <div class="share-option-desc">Désactive le son.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noAudio">
@@ -295,8 +295,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noInstructions">Masquer les textes d'aide</label>
-                                    <div class="share-option-desc">Retire les consignes pour un challenge plus brut.</div>
+                                    <label class="share-option-label" for="opt-noInstructions">Masquer les instructions</label>
+                                    <div class="share-option-desc">Retire les textes d'aide.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noInstructions">
@@ -309,8 +309,8 @@ function initShareModal() {
                             <h3>Verrouillage & Difficulté</h3>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockDiff">Verrouiller le niveau actuel</label>
-                                    <div class="share-option-desc">Désactive les boutons de difficulté. L'élève doit réussir le niveau imposé.</div>
+                                    <label class="share-option-label" for="opt-lockDiff">Difficulté verrouillée</label>
+                                    <div class="share-option-desc">Impose le niveau de difficulté actuel.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockDiff">
@@ -319,8 +319,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockMat">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockMat">Désactiver les tapis</label>
-                                    <div class="share-option-desc">Empêche le changement de tapis.</div>
+                                    <label class="share-option-label" for="opt-lockMat">Sans tapis</label>
+                                    <div class="share-option-desc">Désactive le choix de tapis.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockMat">
@@ -329,8 +329,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-forceMat">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-forceMat">Forcer le tapis actuel</label>
-                                    <div class="share-option-desc">Charge automatiquement le tapis actuellement sélectionné.</div>
+                                    <label class="share-option-label" for="opt-forceMat">Tapis imposé</label>
+                                    <div class="share-option-desc">Charge le tapis actuellement sélectionné.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-forceMat">
@@ -339,8 +339,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockSkin">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSkin">Désactiver les skins</label>
-                                    <div class="share-option-desc">Empêche la personnalisation visuelle.</div>
+                                    <label class="share-option-label" for="opt-lockSkin">Pas de skins</label>
+                                    <div class="share-option-desc">Pas de personnalisation visuelle du robot.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockSkin">
@@ -349,8 +349,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockSpeed">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSpeed">Verrouiller la vitesse</label>
-                                    <div class="share-option-desc">Empêche de modifier la vitesse du robot.</div>
+                                    <label class="share-option-label" for="opt-lockSpeed">Vitesse imposée</label>
+                                    <div class="share-option-desc">Charge la vitesse actuellement sélectionnée.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockSpeed">
@@ -364,7 +364,7 @@ function initShareModal() {
                             <div class="share-option" id="lbl-noCmdToggle">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-noCmdToggle">Commandes masquées par défaut</label>
-                                    <div class="share-option-desc">L'élève devra révéler les commandes lui-même.</div>
+                                    <div class="share-option-desc">L'élève peut afficher les commandes.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noCmdToggle">
@@ -373,31 +373,11 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-blindcode">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-blindcode">Forcer le mode aveugle (Blindcoding)</label>
-                                    <div class="share-option-desc">Oblige l'élève à programmer de tête sans voir la trace des commandes.</div>
+                                    <label class="share-option-label" for="opt-blindcode">Mode aveugle</label>
+                                    <div class="share-option-desc">L'élève programme de tête sans voir la trace des commandes ("Blindcoding").</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-blindcode">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="share-option" id="lbl-noDrag">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noDrag">Désactiver le glisser-déposer</label>
-                                    <div class="share-option-desc">Désactive la réorganisation des commandes par glisser-déposer.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-noDrag">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="share-option" id="lbl-noRandom">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noRandom">Masquer les boutons hasard</label>
-                                    <div class="share-option-desc">Empêche de générer un nouveau challenge aléatoire.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-noRandom">
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
@@ -407,8 +387,8 @@ function initShareModal() {
                             <h3>Spécifique à l'application</h3>
                             <div class="share-option" id="lbl-hideDict" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-hideDict">Masquer le dictionnaire ASCII</label>
-                                    <div class="share-option-desc">Désactive l'aide visuelle. L'élève doit se débrouiller avec son support papier.</div>
+                                    <label class="share-option-label" for="opt-hideDict">Pas de dictionnaire ASCII</label>
+                                    <div class="share-option-desc">Désactive l'aide visuelle.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-hideDict">
@@ -417,8 +397,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockTopology" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockTopology">Verrouiller la carte réseau</label>
-                                    <div class="share-option-desc">Fige la carte aléatoire. Tous les élèves auront la même.</div>
+                                    <label class="share-option-label" for="opt-lockTopology">Carte réseau fixe</label>
+                                    <div class="share-option-desc">Même réseau pour tous les élèves.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockTopology">
@@ -428,7 +408,7 @@ function initShareModal() {
                             <div class="share-option" id="lbl-strictMode" style="display: none;">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-strictMode">Mode strict</label>
-                                    <div class="share-option-desc">Ne surligne pas l'erreur en rouge immédiatement.</div>
+                                    <div class="share-option-desc">N'indique pas où sont les erreurs.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-strictMode">
@@ -437,7 +417,7 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-hideGrid" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-hideGrid">Masquer le quadrillage</label>
+                                    <label class="share-option-label" for="opt-hideGrid">Pas de quadrillage</label>
                                     <div class="share-option-desc">Désactive les lignes pour estimer les distances sans repère.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -448,7 +428,7 @@ function initShareModal() {
                             <div class="share-option" id="lbl-unlockEditor" style="display: none;">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-unlockEditor">Débloquer l'éditeur</label>
-                                    <div class="share-option-desc">Rend l'éditeur libre accessible immédiatement.</div>
+                                    <div class="share-option-desc">Mode "Éditeur" accessible immédiatement.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-unlockEditor">
@@ -464,7 +444,7 @@ function initShareModal() {
     `;
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+    if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
 
     // Context-Aware Options: Hide options for features not in the current app
     if (!document.getElementById('btn-open-mats')) document.getElementById('lbl-lockMat').style.display = 'none';
@@ -551,8 +531,8 @@ function initShareModal() {
             currentDiff = window.currentDifficulty;
         } else {
             const activeDiff = document.querySelector('.view.active .diff-btn.active') || document.querySelector('.diff-btn.active');
-            if(activeDiff) currentDiff = activeDiff.dataset.diff || activeDiff.id.split('-').pop();
-            else if(document.getElementById('difficulty-select')) currentDiff = document.getElementById('difficulty-select').value;
+            if (activeDiff) currentDiff = activeDiff.dataset.diff || activeDiff.id.split('-').pop();
+            else if (document.getElementById('difficulty-select')) currentDiff = document.getElementById('difficulty-select').value;
         }
 
         if (currentDiff) {
@@ -602,7 +582,7 @@ function initShareModal() {
         // Reset copy button state
         btnCopy.innerHTML = '<i data-fa="clipboard"></i> Copier';
         btnCopy.classList.remove('btn-success');
-        if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+        if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
     }
 
     shareBtn.addEventListener('click', () => {
@@ -639,7 +619,7 @@ function initShareModal() {
         const isVisible = advancedOptions.style.display === 'block';
         advancedOptions.style.display = isVisible ? 'none' : 'block';
         btnToggleAdvanced.innerHTML = `Options Avancées <i data-fa="chevron-${isVisible ? 'down' : 'up'}"></i>`;
-        if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+        if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
     });
 
     checkboxes.forEach(cb => {
@@ -654,7 +634,7 @@ function initShareModal() {
         navigator.clipboard.writeText(urlInput.value).then(() => {
             btnCopy.innerHTML = '<i data-fa="check"></i> Copié !';
             btnCopy.classList.add('btn-success');
-            if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+            if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
 
             if (typeof showToast === 'function') {
                 showToast("Lien copié dans le presse-papiers !", true);
@@ -667,7 +647,7 @@ function initShareModal() {
             qrContainer.style.display = 'none';
             if (btnDownloadQr) btnDownloadQr.style.display = 'none';
             btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Afficher le QR Code';
-            if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+            if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
             return;
         }
 
@@ -696,7 +676,7 @@ function initShareModal() {
         qrContainer.style.display = 'block';
         if (btnDownloadQr) btnDownloadQr.style.display = 'inline-block';
         btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Masquer le QR Code';
-        if(window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+        if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
         new QRious({
             element: qrCanvas,
             value: urlInput.value,
@@ -725,7 +705,7 @@ function initShareModal() {
     });
     // Or simpler, just hook into updateShareUrl, but it's simpler to do it here
     const originalUpdateShareUrl = updateShareUrl;
-    updateShareUrl = function() {
+    updateShareUrl = function () {
         originalUpdateShareUrl();
         if (qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
             generateQrCode();
