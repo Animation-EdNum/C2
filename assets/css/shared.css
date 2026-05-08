@@ -11,7 +11,7 @@
     --radius-md:  8px;   /* Default: .btn, .menu-item-btn */
     --radius-lg:  12px;  /* Medium: .tab-btn, .skin-list-item, dropdowns */
     --radius-xl:  16px;  /* Large: .exercise-card, stat wrappers */
-    --radius-2xl: 20px;  /* Panel: .container, .modal-content */
+    --radius-2xl: 20px;  /* Panel: .container, .ui-modal-box */
     --radius-pill: 30px; /* Pill: toasts, .diff-btn */
     --radius-full: 50%;  /* Circle: icon buttons */
 }
@@ -244,7 +244,7 @@ footer a:hover {
 /* ============================================================
    Modal Statistiques détaillées (ScoreManager)
    ============================================================ */
-.modal-overlay {
+.ui-modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     background: oklch(0 0 0 / 0.4);
@@ -258,12 +258,12 @@ footer a:hover {
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.modal-overlay.active {
+.ui-modal-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
-.modal-content {
+.ui-modal-box {
     background: var(--card-bg, oklch(1 0 0 / 0.95));
     border: var(--glass-border);
     box-shadow: var(--glass-shadow);
@@ -279,7 +279,7 @@ footer a:hover {
     color: var(--text-color, #1a202c);
 }
 
-body.dark .modal-content {
+body.dark .ui-modal-box {
     background: #2d3748;
     color: #f7fafc;
 }
@@ -287,33 +287,33 @@ body.dark .modal-content {
 
 
 
-.modal-overlay.active .modal-content {
+.ui-modal-overlay.active .ui-modal-box {
     transform: scale(1) translateY(0);
 }
 
 .btn-close-modal {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
+    top: 12px;
+    right: 12px;
+    background: oklch(0 0 0 / 0.05);
     border: none;
-    font-size: 24px;
-    color: var(--text-color, #1a202c);
+    font-size: 20px;
+    color: var(--text-muted, #777);
     cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s, transform 0.2s;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-full);
+    transition: all 0.2s;
+    z-index: 10;
 }
 
 .btn-close-modal:hover {
-    opacity: 1;
-    transform: scale(1.1);
-    background: oklch(0 0 0 / 0.05);
+    background: oklch(0 0 0 / 0.1);
+    color: var(--error, #ef4444);
+    transform: rotate(90deg) scale(1.1);
 }
 
 .btn-reset-scores {
@@ -375,7 +375,12 @@ body.dark .modal-content {
 
 
 body.dark .btn-close-modal {
+    background: rgba(255, 255, 255, 0.08);
     color: #f7fafc;
+}
+
+body.dark .btn-close-modal:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 body.dark .stat-table th, body.dark .stat-table td {
@@ -937,7 +942,7 @@ body.high-contrast .icon-action-btn:hover {
 }
 
 body.high-contrast .container,
-body.high-contrast .modal-content,
+body.high-contrast .ui-modal-box,
 body.high-contrast .settings-dropdown-content {
     border: 4px solid #000000 !important;
     background-color: #ffffff !important;
@@ -1517,4 +1522,59 @@ input:checked + .share-toggle-slider:before {
 
 .instructions strong {
     color: var(--accent);
+}
+
+/* ============================================================
+   Side Panel Styles
+   ============================================================ */
+.ui-side-panel-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: oklch(0 0 0 / 0.5);
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.ui-side-panel-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.ui-side-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 400px;
+    height: 100vh;
+    background: var(--card-bg, oklch(1 0 0 / 0.95));
+    z-index: 9999;
+    box-shadow: -5px 0 25px oklch(0 0 0 / 0.5);
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color, #1a202c);
+    border-left: 1px solid var(--card-border, oklch(0.9 0.05 250));
+}
+
+.ui-side-panel.active {
+    right: 0;
+}
+
+@media (max-width: 600px) {
+    .ui-side-panel {
+        width: 100%;
+        right: -100%;
+    }
+    .ui-side-panel.active {
+        right: 0;
+    }
 }

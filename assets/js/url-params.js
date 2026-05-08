@@ -210,8 +210,8 @@ function initShareModal() {
 
     // Create Modal HTML
     const modalHTML = `
-    <div id="share-modal-overlay" class="modal-overlay" aria-hidden="true">
-        <div id="share-modal" class="modal-content" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+    <div id="share-modal-overlay" class="ui-modal-overlay" aria-hidden="true">
+        <div id="share-modal" class="ui-modal-box" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
             <button class="btn-close-modal" id="btn-close-share" aria-label="Fermer"><i data-fa="xmark"></i></button>
 
             <div class="share-header">

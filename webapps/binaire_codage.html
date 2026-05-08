@@ -449,46 +449,6 @@
         }
 
         /* SIDE PANEL CALCULATRICE */
-        .calc-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .calc-backdrop.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .calc-side-panel {
-            position: fixed;
-            top: 0;
-            right: -450px;
-            width: 100%;
-            max-width: 400px;
-            height: 100%;
-            background: var(--card-bg);
-            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
-            z-index: 101;
-            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid var(--card-border);
-        }
-
-        .calc-side-panel.open {
-            right: 0;
-        }
-
         .calc-panel-header {
             display: flex;
             justify-content: space-between;
@@ -974,9 +934,9 @@
                 </button>
             </div>
 
-            <div class="calc-backdrop" id="calc-backdrop"></div>
+            <div class="ui-side-panel-backdrop" id="calc-backdrop"></div>
 
-            <div class="calc-side-panel" id="calc-side-panel">
+            <div class="ui-side-panel calc-side-panel" id="calc-side-panel">
                 <div class="calc-panel-header">
                     <h2>🧮 Mini-calculatrice binaire</h2>
                     <button class="icon-action-btn" id="calc-close-btn" title="Fermer" aria-label="Fermer">
@@ -1124,19 +1084,19 @@
         function toggleCalc(forceState = null) {
             const panel = document.getElementById('calc-side-panel');
             const backdrop = document.getElementById('calc-backdrop');
-            const isOpen = panel.classList.contains('open');
+            const isOpen = panel.classList.contains('active');
 
             let shouldOpen = !isOpen;
             if (forceState === 'open') shouldOpen = true;
             if (forceState === 'close') shouldOpen = false;
 
             if (shouldOpen && !isOpen) {
-                panel.classList.add('open');
-                backdrop.classList.add('visible');
+                panel.classList.add('active');
+                backdrop.classList.add('active');
                 document.getElementById('calc-open-btn').classList.remove('pulse-help');
             } else if (!shouldOpen && isOpen) {
-                panel.classList.remove('open');
-                backdrop.classList.remove('visible');
+                panel.classList.remove('active');
+                backdrop.classList.remove('active');
             }
         }
 
@@ -1555,7 +1515,7 @@
             clearTimeout(helpTimer);
             document.getElementById('calc-open-btn').classList.remove('pulse-help');
             helpTimer = setTimeout(() => {
-                if (!document.getElementById('calc-side-panel').classList.contains('open')) {
+                if (!document.getElementById('calc-side-panel').classList.contains('active')) {
                     document.getElementById('calc-open-btn').classList.add('pulse-help');
                 }
             }, 8000); // Pulse après 8 secondes d'inactivité 

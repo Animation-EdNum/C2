@@ -163,8 +163,8 @@ const ScoreManager = {
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
             const popupHtml = `
-                <div id="adaptive-difficulty-popup" class="modal-overlay" aria-hidden="true" role="dialog" style="z-index: 10001;">
-                    <div class="modal-content" style="max-width: 400px; text-align: center;">
+                <div id="adaptive-difficulty-popup" class="ui-modal-overlay" aria-hidden="true" role="dialog" style="z-index: 10001;">
+                    <div class="ui-modal-box" style="max-width: 400px; text-align: center;">
                         <h2 style="margin-bottom: 15px;">🌟 Niveau maîtrisé !</h2>
                         <p style="margin-bottom: 20px;">Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
                         <div style="display: flex; gap: 10px; justify-content: center;">
@@ -217,8 +217,8 @@ const ScoreManager = {
         if (document.getElementById('score-details-modal')) return;
 
         const modalHtml = `
-            <div id="score-details-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
-                <div class="modal-content" id="score-modal-content">
+            <div id="score-details-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
+                <div class="ui-modal-box" id="score-modal-content">
                     <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
                     <button class="btn-close-modal" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
                     <div id="score-modal-body"></div>
