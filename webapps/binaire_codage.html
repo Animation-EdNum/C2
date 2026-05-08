@@ -1063,6 +1063,7 @@
 
         let currentBits = 4; // Easy default
         let calcState = [0, 0, 0, 0, 0, 0, 0, 0]; // 0=MSB(128), 7=LSB(1) 
+        let vaultState = [0, 0, 0, 0, 0, 0, 0, 0];
         let decBinLocked = false;
         let binDecLocked = false;
         let currentDecNumber = null;
@@ -1150,31 +1151,43 @@
             }
         }
 
-        function toggleBitIndex(i) {
-            if (decBinLocked) return;
+        function toggleCalcBitIndex(i) {
             playSound('click'); resetHelpTimer();
 
             calcState[i] = calcState[i] ? 0 : 1;
 
-            // Sync UI (Calc + Exercice) 
             const cBit = cachedCalcBits[i];
             const cBox = cachedCalcBoxes[i];
-            const tog = cachedTogs[i];
 
             if (calcState[i]) {
                 if (cBit) { cBit.textContent = '1'; cBit.classList.add('active'); cBox.classList.add('selected'); }
-                if (tog) { tog.textContent = '1'; tog.classList.add('active'); }
             } else {
                 if (cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); }
-                if (tog) { tog.textContent = '0'; tog.classList.remove('active'); }
             }
 
             updateCalcResult();
+        }
+
+        function toggleVaultBitIndex(i) {
+            if (decBinLocked) return;
+            playSound('click'); resetHelpTimer();
+
+            vaultState[i] = vaultState[i] ? 0 : 1;
+
+            const tog = cachedTogs[i];
+
+            if (vaultState[i]) {
+                if (tog) { tog.textContent = '1'; tog.classList.add('active'); }
+            } else {
+                if (tog) { tog.textContent = '0'; tog.classList.remove('active'); }
+            }
+
             document.getElementById('decBin-feedback').textContent = '';
         }
 
         function resetCalc() {
             calcState = [0, 0, 0, 0, 0, 0, 0, 0];
+            vaultState = [0, 0, 0, 0, 0, 0, 0, 0];
             for (let i = 0; i < 8; i++) {
                 const cBit = cachedCalcBits[i];
                 const cBox = cachedCalcBoxes[i];
@@ -1243,7 +1256,7 @@
             if (decBinLocked || currentDecNumber === null || document.getElementById('decBin-check-btn').disabled) return;
             resetHelpTimer();
 
-            const userBin = calcState.slice(8 - currentBits).join('');
+            const userBin = vaultState.slice(8 - currentBits).join('');
             const expectedBin = currentDecNumber.toString(2).padStart(currentBits, '0');
             const fb = document.getElementById('decBin-feedback');
             const card = document.getElementById('card-dec-bin');
@@ -1438,23 +1451,36 @@
 
             // Event delegation for dynamically generated bits
             document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('calc-bit') || e.target.classList.contains('bit-toggle') || e.target.classList.contains('calc-box')) {
+                if (e.target.classList.contains('calc-bit') || e.target.classList.contains('calc-box')) {
                     const id = e.target.id;
                     const match = id.match(/-(\d+)$/);
                     if (match) {
-                        toggleBitIndex(parseInt(match[1], 10));
+                        toggleCalcBitIndex(parseInt(match[1], 10));
+                    }
+                } else if (e.target.classList.contains('bit-toggle')) {
+                    const id = e.target.id;
+                    const match = id.match(/-(\d+)$/);
+                    if (match) {
+                        toggleVaultBitIndex(parseInt(match[1], 10));
                     }
                 }
             });
 
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                    if (e.target.classList.contains('calc-box')) {
+                    if (e.target.classList.contains('calc-box') || e.target.classList.contains('calc-bit')) {
                         e.preventDefault();
                         const id = e.target.id;
                         const match = id.match(/-(\d+)$/);
                         if (match) {
-                            toggleBitIndex(parseInt(match[1], 10));
+                            toggleCalcBitIndex(parseInt(match[1], 10));
+                        }
+                    } else if (e.target.classList.contains('bit-toggle')) {
+                        e.preventDefault();
+                        const id = e.target.id;
+                        const match = id.match(/-(\d+)$/);
+                        if (match) {
+                            toggleVaultBitIndex(parseInt(match[1], 10));
                         }
                     }
                 }
