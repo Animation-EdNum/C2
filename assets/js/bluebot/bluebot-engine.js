@@ -895,6 +895,9 @@ let simState = {
                 simState.stopped = false;
                 toggleCmdButtons(false);
                 // Reset robot position
+                simState.robotRow = simState.startRow;
+                simState.robotCol = simState.startCol;
+                simState.robotDir = simState.startDir;
                 renderRobot('sim-grid', 'sim-robot', simState.startRow, simState.startCol, simState.startDir);
                 TrailManager.clear('sim-grid');
                 clearProgram();
@@ -1568,6 +1571,9 @@ let simState = {
                 drawState.stopped = false;
                 drawState.locked = false;
                 // Reset robot position & trail
+                drawState.robotRow = drawState.startR;
+                drawState.robotCol = drawState.startC;
+                drawState.robotDir = drawState.startD;
                 renderRobot('draw-grid', 'draw-robot', drawState.startR, drawState.startC, drawState.startD);
                 TrailManager.clear('draw-grid');
                 document.querySelectorAll('#draw-grid .visited-draw').forEach(el => el.classList.remove('visited-draw'));
