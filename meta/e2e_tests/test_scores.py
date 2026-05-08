@@ -51,9 +51,24 @@ def test_score_manager_reset_scores(page: Page):
     page.reload()
     page.evaluate("ScoreManager.addSuccess('dec_to_bin', 6, 0)")
 
-    # Handle confirm dialog
-    page.on("dialog", lambda dialog: dialog.accept())
+    # Mock window.confirm to return true
+    page.evaluate("window.confirm = () => true;")
     page.evaluate("ScoreManager.resetScores()")
 
     stats = page.evaluate("ScoreManager.stats")
     assert stats == {}
+
+def test_score_manager_reset_scores_dismiss(page: Page):
+    """Verify resetScores does not clear stats if confirmation is dismissed."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+    page.evaluate("localStorage.clear()")
+    page.reload()
+    page.evaluate("ScoreManager.addSuccess('dec_to_bin', 6, 0)")
+
+    # Mock window.confirm to return false
+    page.evaluate("window.confirm = () => false;")
+    page.evaluate("ScoreManager.resetScores()")
+
+    stats = page.evaluate("ScoreManager.stats")
+    assert stats != {}
+    assert 'dec_to_bin' in stats
