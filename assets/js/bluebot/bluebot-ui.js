@@ -109,13 +109,13 @@ window.commandsVisible = commandsVisible;
             let popup = document.getElementById('time-popup');
             if (!popup) {
                 const popupHtml = `
-                    <div id="time-popup" class="modal-overlay" aria-hidden="true" role="dialog" style="z-index: 10001;">
-                        <div class="modal-content" style="max-width: 400px; text-align: center;">
-                            <h2 id="time-popup-title" style="margin-bottom: 15px;"></h2>
-                            <p id="time-popup-msg" style="margin-bottom: 20px;"></p>
-                            <div style="display: flex; gap: 10px; justify-content: center;">
-                                <button id="btn-time-popup-yes" class="btn btn-new" style="flex: 1; justify-content: center;"></button>
-                                <button id="btn-time-popup-no" class="btn btn-outline-error" style="flex: 1; justify-content: center;"></button>
+                    <div id="time-popup" class="modal-overlay z-top" aria-hidden="true" role="dialog">
+                        <div class="modal-content modal-prompt">
+                            <h2 id="time-popup-title"></h2>
+                            <p id="time-popup-msg"></p>
+                            <div class="modal-prompt-actions">
+                                <button id="btn-time-popup-yes" class="btn btn-new"></button>
+                                <button id="btn-time-popup-no" class="btn btn-outline-error"></button>
                             </div>
                         </div>
                     </div>
