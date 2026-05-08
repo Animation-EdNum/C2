@@ -4,7 +4,7 @@ let GRID_ROWS = 6, GRID_COLS = 6;
 let globalScore = 0, globalStreak = 0;
 let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
-            running: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
+            running: false, paused: false, stopped: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
             firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0
         };
         window.simState = simState;
@@ -31,7 +31,7 @@ let simState = {
 
         let drawState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetCells: [],
-            program: [], locked: false, isAnimating: false, mistakes: 0
+            program: [], locked: false, isAnimating: false, paused: false, stopped: false, mistakes: 0
         };
         let drawGlobalScore = 0;
         let drawGlobalStreak = 0;
@@ -455,9 +455,18 @@ let simState = {
             playSound('click'); simState.program.splice(index, 1); renderProgram();
         }
         function clearProgram() {
-            if (simState.running) return;
+            if (simState.running) {
+                simState.stopped = true;
+                return;
+            }
             simState.blindRunAborted = false;
             playSound('click'); simState.program = []; simState.stepIndex = -1; simState.failed = false; renderProgram();
+        }
+
+        function pauseProgram() {
+            if (!simState.running) return;
+            playSound('click');
+            simState.paused = !simState.paused;
         }
 
 
@@ -808,12 +817,17 @@ let simState = {
         }
 
         async function runProgram() {
+            if (simState.running && simState.paused) {
+                simState.paused = false;
+                playSound('click');
+                return;
+            }
             if (simState.running || simState.program.length === 0) return;
             simState.wasBlindRun = false;
             if (window.commandsVisible === false && !simState.blindRunAborted) {
                 simState.wasBlindRun = true;
             }
-            playSound('click'); simState.running = true; simState.failed = false; toggleCmdButtons(true);
+            playSound('click'); simState.running = true; simState.paused = false; simState.stopped = false; simState.failed = false; toggleCmdButtons(true);
 
             // Nouvelle origine du ghost à l'endroit où le robot démarre
             simState.startRow = simState.robotRow; simState.startCol = simState.robotCol; simState.startDir = simState.robotDir;
@@ -823,6 +837,13 @@ let simState = {
 
             let stepsThisRun = 0;
             for (let i = 0; i < simState.program.length; i++) {
+                while (simState.paused && !simState.stopped) {
+                    await sleep(100);
+                }
+                if (simState.stopped) {
+                    break;
+                }
+
                 simState.stepIndex = i; renderProgramStep();
                 const cmd = simState.program[i];
 
@@ -864,6 +885,18 @@ let simState = {
                 const totalSteps = (parseInt(localStorage.getItem('bb_total_steps') || '0')) + stepsThisRun;
                 localStorage.setItem('bb_total_steps', totalSteps);
                 if (totalSteps >= 100) unlockSkin('train');
+            }
+
+            if (simState.stopped) {
+                simState.running = false;
+                simState.paused = false;
+                simState.stopped = false;
+                toggleCmdButtons(false);
+                // Reset robot position
+                renderRobot('sim-grid', 'sim-robot', simState.startRow, simState.startCol, simState.startDir);
+                TrailManager.clear('sim-grid');
+                clearProgram();
+                return;
             }
 
             let addedItem = false;
@@ -975,7 +1008,10 @@ let simState = {
                     }
                 }
             }
-            simState.running = false; toggleCmdButtons(false);
+            simState.running = false;
+            simState.paused = false;
+            simState.stopped = false;
+            toggleCmdButtons(false);
             if (addedItem) {
                 clearProgram();
             }
@@ -1037,7 +1073,13 @@ let simState = {
         }
 
         function toggleCmdButtons(disabled) {
-            document.querySelectorAll('#sim-cmd-pad .cmd-btn').forEach(b => b.disabled = disabled);
+            document.querySelectorAll('#sim-cmd-pad .cmd-btn').forEach(b => {
+                if (b.id === 'pad-pause' || b.id === 'pad-clear' || b.id === 'pad-go') {
+                    b.disabled = false;
+                } else {
+                    b.disabled = disabled;
+                }
+            });
             document.getElementById('btnReset').disabled = disabled;
         }
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -1441,9 +1483,33 @@ let simState = {
             renderDrawProgram();
         }
 
+        function pauseDrawProgram() {
+            if (!drawState.isAnimating) return;
+            playSound('click');
+            drawState.paused = !drawState.paused;
+        }
+
+        function clearDrawProgram() {
+            if (drawState.isAnimating) {
+                drawState.stopped = true;
+                return;
+            }
+            if (drawState.locked) return;
+            drawState.program = [];
+            playSound('click');
+            renderDrawProgram();
+        }
+
         async function runDrawProgram() {
+            if (drawState.isAnimating && drawState.paused) {
+                drawState.paused = false;
+                playSound('click');
+                return;
+            }
             if (drawState.locked || drawState.isAnimating || drawState.program.length === 0) return;
             drawState.isAnimating = true;
+            drawState.paused = false;
+            drawState.stopped = false;
             drawState.locked = true;
 
             let currR = drawState.robotRow;
@@ -1459,6 +1525,13 @@ let simState = {
             if (startCell) startCell.classList.add('visited-draw');
 
             for (const cmd of drawState.program) {
+                while (drawState.paused && !drawState.stopped) {
+                    await sleep(100);
+                }
+                if (drawState.stopped) {
+                    break;
+                }
+
                 const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: [] }, cmd);
                 currR = res.robotRow;
                 currC = res.robotCol;
@@ -1483,6 +1556,19 @@ let simState = {
                 }
 
                 await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
+            }
+
+            if (drawState.stopped) {
+                drawState.isAnimating = false;
+                drawState.paused = false;
+                drawState.stopped = false;
+                drawState.locked = false;
+                // Reset robot position & trail
+                renderRobot('draw-grid', 'draw-robot', drawState.startR, drawState.startC, drawState.startD);
+                TrailManager.clear('draw-grid');
+                document.querySelectorAll('#draw-grid .visited-draw').forEach(el => el.classList.remove('visited-draw'));
+                clearDrawProgram();
+                return;
             }
 
             // Validation

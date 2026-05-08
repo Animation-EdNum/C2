@@ -372,12 +372,8 @@ window.commandsVisible = commandsVisible;
         document.getElementById('draw-pad-left').addEventListener('click', () => addDrawCommand('left'));
         document.getElementById('draw-pad-right').addEventListener('click', () => addDrawCommand('right'));
         document.getElementById('draw-pad-go').addEventListener('click', runDrawProgram);
-        document.getElementById('draw-pad-clear').addEventListener('click', () => {
-            if (drawState.locked || drawState.isAnimating) return;
-            drawState.program = [];
-            playSound('click');
-            renderDrawProgram();
-        });
+        document.getElementById('draw-pad-pause').addEventListener('click', pauseDrawProgram);
+        document.getElementById('draw-pad-clear').addEventListener('click', clearDrawProgram);
 
         document.getElementById('read-grid').addEventListener('click', (e) => {
             const cell = e.target.closest('.bot-cell');
@@ -400,6 +396,7 @@ window.commandsVisible = commandsVisible;
             document.getElementById(id).addEventListener('click', () => addCmd(fullCmd));
         });
         document.getElementById('pad-go').addEventListener('click', runProgram);
+        document.getElementById('pad-pause').addEventListener('click', pauseProgram);
         document.getElementById('pad-clear').addEventListener('click', clearProgram);
 
         const matOpacitySlider = document.getElementById('matOpacitySlider');
