@@ -451,19 +451,27 @@ function initShareModal() {
     if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
 
     // Context-Aware Options: Hide options for features not in the current app
-    if (!document.getElementById('btn-open-mats')) document.getElementById('lbl-lockMat').style.display = 'none';
     if (!document.getElementById('btn-open-mats')) {
+        const lblLockMat = document.getElementById('lbl-lockMat');
         const lblForceMat = document.getElementById('lbl-forceMat');
+        if (lblLockMat) lblLockMat.style.display = 'none';
         if (lblForceMat) lblForceMat.style.display = 'none';
     }
-    if (!document.getElementById('btn-open-skins')) document.getElementById('lbl-lockSkin').style.display = 'none';
-    if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) document.getElementById('lbl-lockSpeed').style.display = 'none';
-    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
-        if (document.getElementById('lbl-noCmdToggle')) document.getElementById('lbl-noCmdToggle').style.display = 'none';
-        if (document.getElementById('lbl-blindcode')) document.getElementById('lbl-blindcode').style.display = 'none';
+    if (!document.getElementById('btn-open-skins')) {
+        const lblLockSkin = document.getElementById('lbl-lockSkin');
+        if (lblLockSkin) lblLockSkin.style.display = 'none';
     }
-    if (!document.querySelector('#btn-random, .btn-random')) document.getElementById('lbl-noRandom').style.display = 'none';
-    if (!document.querySelector('[draggable="true"], .draggable') && typeof window.noDragParam === 'undefined') document.getElementById('lbl-noDrag').style.display = 'none';
+    if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) {
+        const lblLockSpeed = document.getElementById('lbl-lockSpeed');
+        if (lblLockSpeed) lblLockSpeed.style.display = 'none';
+    }
+    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
+        const lblNoCmdToggle = document.getElementById('lbl-noCmdToggle');
+        const lblBlindcode = document.getElementById('lbl-blindcode');
+        if (lblNoCmdToggle) lblNoCmdToggle.style.display = 'none';
+        if (lblBlindcode) lblBlindcode.style.display = 'none';
+    }
+
 
     // Specific Options Logic
     let hasSpecificOption = false;
