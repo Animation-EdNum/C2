@@ -445,6 +445,16 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
+                            <div class="share-option" id="lbl-unlockEditor" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-unlockEditor">Débloquer l'éditeur</label>
+                                    <div class="share-option-desc">Rend l'éditeur libre accessible immédiatement.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-unlockEditor">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -487,6 +497,10 @@ function initShareModal() {
     }
     if (window.location.pathname.includes('simulateur_bluebot.html')) {
         document.getElementById('lbl-hideGrid').style.display = 'flex';
+        hasSpecificOption = true;
+    }
+    if (window.location.pathname.includes('binaire_studio.html')) {
+        document.getElementById('lbl-unlockEditor').style.display = 'flex';
         hasSpecificOption = true;
     }
 
