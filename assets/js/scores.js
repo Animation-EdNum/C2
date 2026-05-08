@@ -163,11 +163,11 @@ const ScoreManager = {
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
             const popupHtml = `
-                <div id="adaptive-difficulty-popup" class="modal-overlay z-top" aria-hidden="true" role="dialog">
-                    <div class="modal-content modal-prompt">
+                <div id="adaptive-difficulty-popup" class="ui-modal-overlay z-top" aria-hidden="true" role="dialog">
+                    <div class="ui-modal-content ui-modal-prompt">
                         <h2>🌟 Niveau maîtrisé !</h2>
                         <p>Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
-                        <div class="modal-prompt-actions">
+                        <div class="ui-modal-prompt-actions">
                             <button id="btn-adaptive-yes" class="btn btn-new">Oui, allons-y !</button>
                             <button id="btn-adaptive-no" class="btn btn-outline-error">Non, je reste ici</button>
                         </div>
@@ -217,10 +217,10 @@ const ScoreManager = {
         if (document.getElementById('score-details-modal')) return;
 
         const modalHtml = `
-            <div id="score-details-modal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
-                <div class="modal-content" id="score-modal-content">
+            <div id="score-details-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
+                <div class="ui-modal-content" id="score-modal-content">
                     <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
-                    <button class="btn-close-modal" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
+                    <button class="ui-btn-close" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
                     <div id="score-modal-body"></div>
                     <button class="btn-reset-scores" onclick="ScoreManager.resetScores()">Réinitialiser les scores</button>
                 </div>
