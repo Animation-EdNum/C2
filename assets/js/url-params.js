@@ -102,7 +102,7 @@ function applyUrlParameters() {
         window.unlockAllSkins = true;
     }
 
-    if (urlParams.get('lockSpeed') === '1') {
+    if (urlParams.has('lockSpeed')) {
         const speedBtn = document.getElementById('btn-speed');
         if (speedBtn) speedBtn.style.display = 'none';
         const speedToggleBtn = document.getElementById('speedToggleBtn');
