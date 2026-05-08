@@ -12,7 +12,6 @@ The applications are structured into two main categories:
 ## Technical Philosophy & Architecture
 - **Offline-First / PWA (Critical):** The project functions as an installable Progressive Web App (PWA). There is zero internet dependency; all assets (fonts, FontAwesome icons, logic) are local. The Service Worker (`sw.js`) caches the `webapps/`, `webapps/teacher/`, `assets/css/`, `assets/js/`, and `assets/fonts/` folders to guarantee complete offline functionality.
 - **Vanilla Stack:** Pure HTML, CSS, and JS (Vanilla). No frameworks (React, Vue, Tailwind) to ensure longevity, maintainability, and no build-step overhead.
-- **Monolithic Applications:** The `simulateur_bluebot.html` application is structurally monolithic, making it difficult to maintain and impossible to unit test. This is a known architectural constraint.
 - **Premium Aesthetics & A11y:** Modern "Glassmorphism" design, clean typography ("Outfit"), smooth micro-animations, and WCAG AA compliance (full keyboard support, ARIA semantics).
 - **Assets Centralization:** All static assets including JS scripts, CSS stylesheets, fonts, mat images, and favicons are strictly centralized within the `/assets/` directory.
 - **Repository Structure:**
