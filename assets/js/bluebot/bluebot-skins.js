@@ -257,6 +257,9 @@
                     </div>
                 `;
             }).join('');
+            if (window.fa && typeof window.fa.createIcons === 'function') {
+                window.fa.createIcons();
+            }
 
             // Prepend the custom upload at the beginning
             const customConfig = MAT_CONFIG['custom'];
@@ -506,6 +509,9 @@ if (config.baseContent) {
                     </div>
                 `;
             }).join('');
+            if (window.fa && typeof window.fa.createIcons === 'function') {
+                window.fa.createIcons();
+            }
         }
 
         function redrawTrail(containerId, state) {
@@ -740,7 +746,7 @@ if (config.baseContent) {
 
 
         let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
-        if (typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) {
+        if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || new URLSearchParams(window.location.search).get('unlockAllSkins') === '1') {
             unlockedSkins = Object.keys(SKIN_CONFIG);
         }
         let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
