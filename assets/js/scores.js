@@ -23,12 +23,7 @@ const ScoreManager = {
         'quantity': 'Par quantité',
         'size': 'Par taille',
         'nombres': 'Nombres',
-        'lettres': 'Lettres',
-        'cesar': 'César',
-        'vigenere': 'Vigenère',
-        'atbash': 'Atbash',
-        'morse': 'Morse',
-        'hacker': 'Hacker'
+        'lettres': 'Lettres'
     },
 
     DIFF_LABELS: {
