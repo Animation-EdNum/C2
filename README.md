@@ -125,7 +125,7 @@ To run the tests locally:
 python3 -m pip install -r meta/e2e_tests/requirements.txt && playwright install
 
 # 2. Start a local server (in background) and wait a bit
-python3 -m http.server 8000 &
+python3 -m http.server 8000 > server.log 2>&1 &
 sleep 5
 
 # 3. Run E2E tests
