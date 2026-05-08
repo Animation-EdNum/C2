@@ -368,13 +368,32 @@ if (config.baseContent) {
 
 
         function updateMemoryToggleVisibility() {
+            const collectContainer = document.getElementById('collect-mode-container');
             const memoryContainer = document.getElementById('memory-mode-container');
-            if (!memoryContainer) return;
             const config = MAT_CONFIG[activeMat];
-            if (activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent)) {
-                memoryContainer.style.display = 'flex';
-            } else {
-                memoryContainer.style.display = 'none';
+            const hasContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+
+            if (collectContainer) {
+                if (hasContent) {
+                    collectContainer.style.display = 'flex';
+                } else {
+                    collectContainer.style.display = 'none';
+                }
+            }
+
+            if (memoryContainer) {
+                if (hasContent) {
+                    memoryContainer.style.display = 'flex';
+                    if (!collectMode) {
+                        memoryContainer.style.opacity = '0.5';
+                        memoryContainer.style.pointerEvents = 'none';
+                    } else {
+                        memoryContainer.style.opacity = '1';
+                        memoryContainer.style.pointerEvents = 'auto';
+                    }
+                } else {
+                    memoryContainer.style.display = 'none';
+                }
             }
         }
 
@@ -686,7 +705,12 @@ if (config.baseContent) {
 
 
 
+        let collectMode = localStorage.getItem('bb_collect_mode') === 'true';
         let memoryMode = localStorage.getItem('bb_memory_mode') === 'true';
+        if (!collectMode) {
+            memoryMode = false;
+        }
+
         let activeMat = localStorage.getItem('bb_active_mat') || 'none';
         generateMatContent(activeMat);
         if (!MAT_CONFIG[activeMat]) activeMat = 'none';
