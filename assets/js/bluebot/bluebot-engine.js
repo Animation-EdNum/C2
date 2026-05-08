@@ -1661,16 +1661,7 @@ let simState = {
                     return `<div class="program-cmd" data-index="${i}">${BB_SVGS[cmd]}</div>`;
                 }).join('');
 
-                // Add delete listeners
-                strip.querySelectorAll('.program-cmd').forEach(cmdEl => {
-                    cmdEl.addEventListener('click', (e) => {
-                        if (drawState.locked || drawState.isAnimating) return;
-                        const idx = parseInt(e.currentTarget.dataset.index);
-                        drawState.program.splice(idx, 1);
-                        playSound('click');
-                        renderDrawProgram();
-                    });
-                });
+
             }
         }
 

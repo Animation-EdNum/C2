@@ -514,10 +514,23 @@ window.commandsVisible = commandsVisible;
             }
         });
 
+
         document.getElementById('sim-program').addEventListener('click', (e) => {
             const cmdEl = e.target.closest('.program-cmd');
             if (cmdEl) removeSpecificCmd(parseInt(cmdEl.dataset.index));
         });
+
+        document.getElementById('draw-program').addEventListener('click', (e) => {
+            if (drawState && (drawState.locked || drawState.isAnimating)) return;
+            const cmdEl = e.target.closest('.program-cmd');
+            if (cmdEl) {
+                const idx = parseInt(cmdEl.dataset.index);
+                drawState.program.splice(idx, 1);
+                playSound('click');
+                renderDrawProgram();
+            }
+        });
+
 
         document.getElementById('chal-options').addEventListener('click', (e) => {
             const optEl = e.target.closest('.challenge-option');
