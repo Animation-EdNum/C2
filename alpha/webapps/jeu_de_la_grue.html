@@ -1309,6 +1309,45 @@
         }
 
 
+        function buildToastNode(mainIcon, msgText) {
+            let container = document.createElement('div');
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.style.gap = '8px';
+
+            let stackSpan = document.createElement('span');
+            stackSpan.style.display = 'inline-flex';
+            stackSpan.style.alignItems = 'center';
+            stackSpan.style.justifyContent = 'center';
+            stackSpan.style.position = 'relative';
+            stackSpan.style.width = '24px';
+            stackSpan.style.height = '24px';
+
+            let i1 = document.createElement('i');
+            i1.setAttribute('data-fa', mainIcon);
+            i1.style.position = 'absolute';
+            i1.style.width = '14px';
+            i1.style.height = '14px';
+            i1.style.zIndex = '1';
+
+            let i2 = document.createElement('i');
+            i2.setAttribute('data-fa', 'ban');
+            i2.style.color = '#fff';
+            i2.style.position = 'absolute';
+            i2.style.width = '24px';
+            i2.style.height = '24px';
+            i2.style.zIndex = '2';
+
+            stackSpan.appendChild(i1);
+            stackSpan.appendChild(i2);
+
+            let textNode = document.createTextNode(msgText);
+
+            container.appendChild(stackSpan);
+            container.appendChild(textNode);
+            return container;
+        }
+
         function processInstruction(inst) {
             if (inst === 'left') {
                 if (craneState.pos > 0) {
@@ -1317,13 +1356,13 @@
                     if (craneState.holding) destMaxHeight -= 1;
 
                     if (craneState.height > destMaxHeight) {
-                        return { valid: false, reason: 'Chemin bloqué !' };
+                        return { valid: false, reason: buildToastNode('cubes', 'Chemin bloqué !') };
                     }
 
                     craneState.pos--;
                     return { valid: true };
                 }
-                return { valid: false, reason: 'Mur !' };
+                return { valid: false, reason: buildToastNode('arrow-left', 'Mur !') };
             } else if (inst === 'right') {
                 if (craneState.pos < NUM_CUPS - 1) {
                     let destStack = cups[craneState.pos + 1];
@@ -1331,13 +1370,13 @@
                     if (craneState.holding) destMaxHeight -= 1;
 
                     if (craneState.height > destMaxHeight) {
-                        return { valid: false, reason: 'Chemin bloqué !' };
+                        return { valid: false, reason: buildToastNode('cubes', 'Chemin bloqué !') };
                     }
 
                     craneState.pos++;
                     return { valid: true };
                 }
-                return { valid: false, reason: 'Mur !' };
+                return { valid: false, reason: buildToastNode('arrow-right', 'Mur !') };
             } else if (inst === 'down') {
                 let currentStack = cups[craneState.pos];
                 let blocksInCup = currentStack.length;
@@ -1349,15 +1388,15 @@
                     return { valid: true };
                 }
                 if (craneState.height === maxPossibleHeight && blocksInCup > 0) {
-                    return { valid: false, reason: 'Bloc en dessous !' };
+                    return { valid: false, reason: buildToastNode('cubes', 'Bloc en dessous !') };
                 }
-                return { valid: false, reason: 'Sol !' };
+                return { valid: false, reason: buildToastNode('arrow-down', 'Sol !') };
             } else if (inst === 'up') {
                 if (craneState.height > 0) {
                     craneState.height--;
                     return { valid: true };
                 }
-                return { valid: false, reason: 'Plafond !' };
+                return { valid: false, reason: buildToastNode('arrow-up', 'Plafond !') };
             } else if (inst === 'action') {
                 let currentStack = cups[craneState.pos];
                 let blocksInCup = currentStack.length;
@@ -1373,9 +1412,9 @@
                         return { valid: true };
                     }
                     if (blocksInCup >= MAX_STACK) {
-                        return { valid: false, reason: 'Colonne pleine !' };
+                        return { valid: false, reason: buildToastNode('layer-group', 'Colonne pleine !') };
                     }
-                    return { valid: false, reason: 'Trop haut !' };
+                    return { valid: false, reason: buildToastNode('arrow-down', 'Trop haut !') };
                 } else {
                     // Try to grab
                     let requiredHeightForGrab = MAX_STACK - blocksInCup;
@@ -1384,12 +1423,12 @@
                         return { valid: true };
                     }
                     if (blocksInCup === 0) {
-                        return { valid: false, reason: 'Rien ici !' };
+                        return { valid: false, reason: buildToastNode('hand-fist', 'Rien ici !') };
                     }
-                    return { valid: false, reason: 'Trop haut !' };
+                    return { valid: false, reason: buildToastNode('arrow-down', 'Trop haut !') };
                 }
             }
-            return { valid: false, reason: 'Action inconnue.' };
+            return { valid: false, reason: buildToastNode('question', 'Action inconnue.') };
         }
 
         function checkWin() {
@@ -1415,9 +1454,9 @@
                 // Add specific error messages based on state
                 let errorReason;
                 if (craneState.holding) {
-                    errorReason = "Objet non posé !";
+                    errorReason = buildToastNode('hand-fist', "Objet non posé !");
                 } else {
-                    errorReason = "Faux !";
+                    errorReason = buildToastNode('shapes', "Faux !");
                 }
 
                 showToast(errorReason, 'error', 5000);
