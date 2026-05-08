@@ -101,6 +101,92 @@ window.commandsVisible = commandsVisible;
             }
         });
 
+
+        let tabTimer = null;
+        const popupsShown = { explore: false, simulator: false };
+
+        function showTimePopup(tab) {
+            let popup = document.getElementById('time-popup');
+            if (!popup) {
+                const popupHtml = `
+                    <div id="time-popup" class="modal-overlay" aria-hidden="true" role="dialog" style="z-index: 10001;">
+                        <div class="modal-content" style="max-width: 400px; text-align: center;">
+                            <h2 id="time-popup-title" style="margin-bottom: 15px;"></h2>
+                            <p id="time-popup-msg" style="margin-bottom: 20px;"></p>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button id="btn-time-popup-yes" class="btn btn-new" style="flex: 1; justify-content: center;"></button>
+                                <button id="btn-time-popup-no" class="btn btn-outline-error" style="flex: 1; justify-content: center;"></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', popupHtml);
+                popup = document.getElementById('time-popup');
+            }
+
+            const titleEl = document.getElementById('time-popup-title');
+            const msgEl = document.getElementById('time-popup-msg');
+            const btnYes = document.getElementById('btn-time-popup-yes');
+            const btnNo = document.getElementById('btn-time-popup-no');
+
+            // Clone to remove old listeners
+            const newBtnYes = btnYes.cloneNode(true);
+            btnYes.parentNode.replaceChild(newBtnYes, btnYes);
+            const newBtnNo = btnNo.cloneNode(true);
+            btnNo.parentNode.replaceChild(newBtnNo, btnNo);
+
+            if (tab === 'explore') {
+                titleEl.textContent = "Mode Simulateur";
+                msgEl.textContent = "Tu explores depuis un moment ! Veux-tu essayer le mode Simulateur pour programmer plusieurs actions d'un coup ?";
+                newBtnYes.textContent = "Oui, allons-y !";
+                newBtnNo.textContent = "Non, je reste ici";
+
+                newBtnYes.addEventListener('click', () => {
+                    popupsShown.explore = true;
+                    popup.classList.remove('active');
+                    popup.setAttribute('aria-hidden', 'true');
+                    document.getElementById('tab-simulator').click();
+                });
+                newBtnNo.addEventListener('click', () => {
+                    popupsShown.explore = true;
+                    popup.classList.remove('active');
+                    popup.setAttribute('aria-hidden', 'true');
+                });
+            } else if (tab === 'simulator') {
+                titleEl.textContent = "Défi sans écran";
+                msgEl.textContent = "Tu maîtrises bien le simulateur ! Veux-tu essayer le 'Défi sans écran' pour coder de tête sans voir les commandes ?";
+                newBtnYes.textContent = "Oui, je relève le défi !";
+                newBtnNo.textContent = "Non, pas encore";
+
+                newBtnYes.addEventListener('click', () => {
+                    popupsShown.simulator = true;
+                    popup.classList.remove('active');
+                    popup.setAttribute('aria-hidden', 'true');
+                    if (window.commandsVisible) toggleCommands();
+                });
+                newBtnNo.addEventListener('click', () => {
+                    popupsShown.simulator = true;
+                    popup.classList.remove('active');
+                    popup.setAttribute('aria-hidden', 'true');
+                });
+            }
+
+            popup.classList.add('active');
+            popup.setAttribute('aria-hidden', 'false');
+        }
+
+        function startTabTimer(tab) {
+            if (tabTimer) {
+                clearTimeout(tabTimer);
+                tabTimer = null;
+            }
+            if (tab === 'explore' && !popupsShown.explore) {
+                tabTimer = setTimeout(() => showTimePopup('explore'), 120000);
+            } else if (tab === 'simulator' && !popupsShown.simulator) {
+                tabTimer = setTimeout(() => showTimePopup('simulator'), 180000);
+            }
+        }
+
         let activeTab = 'explore';
 
         function switchTab(event, tab) {
@@ -109,6 +195,7 @@ window.commandsVisible = commandsVisible;
             event.currentTarget.classList.add('active');
             document.getElementById(`view-${tab}`).classList.add('active');
             activeTab = tab;
+            startTabTimer(tab);
             if (tab === 'explore') {
                 if (!document.getElementById('explore-grid').innerHTML) {
                     buildGrid('explore-grid', GRID_ROWS, GRID_COLS, []);
@@ -248,6 +335,7 @@ window.commandsVisible = commandsVisible;
 
             // Additional initializations
             ScoreManager.init('simulateur_bluebot');
+            startTabTimer(activeTab);
             updateExtremeVisibility();
 
             if (activeSkin === 'pirate') startOceanRipples();
