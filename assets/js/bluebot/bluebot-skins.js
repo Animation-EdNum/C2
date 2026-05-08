@@ -364,10 +364,11 @@ if (config.baseContent) {
             const collectContainer = document.getElementById('collect-mode-container');
             const memoryContainer = document.getElementById('memory-mode-container');
             const config = MAT_CONFIG[activeMat];
-            const hasContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+            const hasMemoryContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+            const hasCollectContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
 
             if (collectContainer) {
-                if (hasContent) {
+                if (hasCollectContent) {
                     collectContainer.style.display = 'flex';
                 } else {
                     collectContainer.style.display = 'none';
@@ -375,7 +376,7 @@ if (config.baseContent) {
             }
 
             if (memoryContainer) {
-                if (hasContent) {
+                if (hasMemoryContent) {
                     memoryContainer.style.display = 'flex';
                     if (!collectMode) {
                         memoryContainer.style.opacity = '0.5';
