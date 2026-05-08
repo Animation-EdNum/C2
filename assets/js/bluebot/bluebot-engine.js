@@ -818,6 +818,134 @@ let simState = {
             return { ...state, robotRow: r, robotCol: c, robotDir: d, blocked: false };
         }
 
+
+        function handleObstacleCollision() {
+            playSound('error');
+            simState.failed = true; simState.firstAttempt = false; renderProgramStep();
+            simState.consecutiveMistakes++;
+            ScoreManager.addMistake('simulator', null);
+            if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
+
+            // Shake du robot
+            document.getElementById('sim-robot').classList.add('shake');
+            setTimeout(() => document.getElementById('sim-robot').classList.remove('shake'), 350);
+            // Shake global de la fenêtre
+            document.body.classList.add('window-shake');
+            setTimeout(() => document.body.classList.remove('window-shake'), 500);
+            showToast('Attention ! Obstacle en vue. Exécution stoppée.', 'error');
+        }
+
+        function handleTargetReached() {
+            playSound('success');
+
+            if (activeSkin === 'volcano') {
+                launchFire();
+            } else if (activeSkin === 'cyberbot') {
+                showToast('WELCOME TO THE MATRIX 🕶️', 'success');
+            } else {
+                launchConfetti();
+            }
+
+            // Statistiques en mode simulateur
+            if (simState.targetRow !== null) {
+                ScoreManager.addSuccess('simulator', null, simState.firstAttempt ? 0 : 1);
+                simState.starCount++;
+                simState.firstTryCount += simState.firstAttempt ? 1 : 0;
+                simState.consecutiveMistakes = 0; // Reset
+
+                // Déblocage Bee-Bot
+                let zigzagOk = true;
+                if (simState.program.length < 2) {
+                    zigzagOk = false;
+                } else {
+                    for (let idx = 1; idx < simState.program.length; idx++) {
+                        if (simState.program[idx] === simState.program[idx-1]) {
+                            zigzagOk = false;
+                            break;
+                        }
+                    }
+                }
+                if (zigzagOk) {
+                    unlockSkin('beebot');
+                }
+
+                // Déblocage Pirate-Bot
+                if (simState.wasBlindRun) {
+                    unlockSkin('pirate');
+                }
+
+                // Déblocage Thymio
+                if (!simState.program.includes('forward')) {
+                    unlockSkin('thymio');
+                }
+
+                showToast('Trésor trouvé ! Félicitations !', 'success');
+            } else {
+                showToast('Bravo ! Tu as atteint la récompense !', 'success');
+            }
+
+            const counterVal = document.getElementById('sim-star-counter-val');
+            if (counterVal) counterVal.textContent = simState.starCount;
+            const firstTryVal = document.getElementById('sim-first-try-val');
+            if (firstTryVal) firstTryVal.textContent = simState.firstTryCount;
+
+            const target = document.getElementById('sim-target');
+            if (target) {
+                target.classList.add('pulse');
+                setTimeout(() => {
+                    target.classList.remove('pulse');
+                    target.remove();
+                    simState.targetRow = null;
+                    simState.targetCol = null;
+                    simState.program = [];
+                    simState.stepIndex = -1;
+                    simState.failed = false;
+                    simState.firstAttempt = true;
+                    renderProgram();
+                    placeRandomSimTarget(true);
+                }, 500);
+            }
+        }
+
+        function handleTargetMissed(stepsThisRun) {
+            // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
+            if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
+                unlockSkin('space');
+            }
+
+            simState.firstAttempt = false; // Exécution sans succès
+            if (simState.targetRow !== null && simState.targetCol !== null) {
+                showToast("Exécution terminée mais tu n'es pas arrivé sur le trésor", 'warn');
+            } else {
+                showToast("Exécution terminée !", 'success');
+            }
+        }
+
+        function collectCellContent() {
+            let addedItem = false;
+            if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
+                const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
+                if (cell && cell.textContent.trim()) {
+                    const endContent = document.getElementById('sim-end-content');
+                    const emptyEnd = document.getElementById('sim-end-empty');
+                    if (emptyEnd) emptyEnd.style.display = 'none';
+                    const el = document.createElement('div');
+                    el.className = 'end-item';
+                    el.textContent = cell.textContent.trim();
+                    endContent.appendChild(el);
+                    if (typeof collectMode !== 'undefined' && collectMode) {
+                        // Remove emoji from grid cell (collected)
+                        const gridCell = cell.closest('.bot-cell');
+                        cell.remove();
+                        if (gridCell) gridCell.classList.add('cell-collected');
+                    }
+                    addedItem = true;
+                    checkMemoryPair('sim-grid', cell.textContent.trim());
+                }
+            }
+            return addedItem;
+        }
+
         async function runProgram() {
             if (simState.running && simState.paused) {
                 simState.paused = false;
@@ -856,20 +984,7 @@ let simState = {
                 renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
 
                 if (result.blocked) {
-                    playSound('error');
-                    simState.failed = true; simState.firstAttempt = false; renderProgramStep();
-                    simState.consecutiveMistakes++;
-                    ScoreManager.addMistake('simulator', null);
-                    if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
-
-
-                    // Shake du robot
-                    document.getElementById('sim-robot').classList.add('shake');
-                    setTimeout(() => document.getElementById('sim-robot').classList.remove('shake'), 350);
-                    // Shake global de la fenêtre
-                    document.body.classList.add('window-shake');
-                    setTimeout(() => document.body.classList.remove('window-shake'), 500);
-                    showToast('Attention ! Obstacle en vue. Exécution stoppée.', 'error');
+                    handleObstacleCollision();
                     break;
                 }
 
@@ -909,110 +1024,14 @@ let simState = {
                 simState.stepIndex = -1; renderProgramStep();
 
                 if (simState.targetRow !== null && simState.robotRow === simState.targetRow && simState.robotCol === simState.targetCol) {
-                    playSound('success');
-
-                    if (activeSkin === 'volcano') {
-                        launchFire();
-                    } else if (activeSkin === 'cyberbot') {
-                        showToast('WELCOME TO THE MATRIX 🕶️', 'success');
-                    } else {
-                        launchConfetti();
-                    }
-
-                    // Statistiques en mode simulateur
-                    if (simState.targetRow !== null) {
-                        ScoreManager.addSuccess('simulator', null, simState.firstAttempt ? 0 : 1);
-                        simState.starCount++;
-                        simState.firstTryCount += simState.firstAttempt ? 1 : 0;
-                        simState.consecutiveMistakes = 0; // Reset
-
-                        // Déblocage Bee-Bot
-                        let zigzagOk = true;
-                        if (simState.program.length < 2) {
-                            zigzagOk = false;
-                        } else {
-                            for (let idx = 1; idx < simState.program.length; idx++) {
-                                if (simState.program[idx] === simState.program[idx-1]) {
-                                    zigzagOk = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (zigzagOk) {
-                            unlockSkin('beebot');
-                        }
-
-                        // Déblocage Pirate-Bot
-                        if (simState.wasBlindRun) {
-                            unlockSkin('pirate');
-                        }
-
-                        // Déblocage Thymio
-                        if (!simState.program.includes('forward')) {
-                            unlockSkin('thymio');
-                        }
-
-                        showToast('Trésor trouvé ! Félicitations !', 'success');
-                    } else {
-                        showToast('Bravo ! Tu as atteint la récompense !', 'success');
-                    }
-
-                    const counterVal = document.getElementById('sim-star-counter-val');
-                    if (counterVal) counterVal.textContent = simState.starCount;
-                    const firstTryVal = document.getElementById('sim-first-try-val');
-                    if (firstTryVal) firstTryVal.textContent = simState.firstTryCount;
-
-                    const target = document.getElementById('sim-target');
-                    if (target) {
-                        target.classList.add('pulse');
-                        setTimeout(() => {
-                            target.classList.remove('pulse');
-                            target.remove();
-                            simState.targetRow = null;
-                            simState.targetCol = null;
-                            simState.program = [];
-                            simState.stepIndex = -1;
-                            simState.failed = false;
-                            simState.firstAttempt = true;
-                            renderProgram();
-                            placeRandomSimTarget(true);
-                        }, 500);
-                    }
-
+                    handleTargetReached();
                 } else {
-                    // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
-                    if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
-                        unlockSkin('space');
-                    }
-
-                    simState.firstAttempt = false; // Exécution sans succès
-                    if (simState.targetRow !== null && simState.targetCol !== null) {
-                        showToast("Exécution terminée mais tu n'es pas arrivé sur le trésor", 'warn');
-                    } else {
-                        showToast("Exécution terminée !", 'success');
-                    }
+                    handleTargetMissed(stepsThisRun);
                 }
 
                 // Ajouter le contenu de la case atteinte à la fin de l'exécution
-                if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
-                    const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
-                    if (cell && cell.textContent.trim()) {
-                        const endContent = document.getElementById('sim-end-content');
-                        const emptyEnd = document.getElementById('sim-end-empty');
-                        if (emptyEnd) emptyEnd.style.display = 'none';
-                        const el = document.createElement('div');
-                        el.className = 'end-item';
-                        el.textContent = cell.textContent.trim();
-                        endContent.appendChild(el);
-                        if (typeof collectMode !== 'undefined' && collectMode) {
-                            // Remove emoji from grid cell (collected)
-                            const gridCell = cell.closest('.bot-cell');
-                            cell.remove();
-                            if (gridCell) gridCell.classList.add('cell-collected');
-                        }
-                        addedItem = true;
-                        checkMemoryPair('sim-grid', cell.textContent.trim());
-                    }
+                if (collectCellContent()) {
+                    addedItem = true;
                 }
             }
             simState.running = false;
