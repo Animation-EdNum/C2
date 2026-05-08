@@ -163,13 +163,13 @@ const ScoreManager = {
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
             const popupHtml = `
-                <div id="adaptive-difficulty-popup" class="modal-overlay" aria-hidden="true" role="dialog" style="z-index: 10001;">
-                    <div class="modal-content" style="max-width: 400px; text-align: center;">
-                        <h2 style="margin-bottom: 15px;">🌟 Niveau maîtrisé !</h2>
-                        <p style="margin-bottom: 20px;">Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
-                        <div style="display: flex; gap: 10px; justify-content: center;">
-                            <button id="btn-adaptive-yes" class="btn btn-new" style="flex: 1; justify-content: center;">Oui, allons-y !</button>
-                            <button id="btn-adaptive-no" class="btn btn-outline-error" style="flex: 1; justify-content: center;">Non, je reste ici</button>
+                <div id="adaptive-difficulty-popup" class="modal-overlay z-top" aria-hidden="true" role="dialog">
+                    <div class="modal-content modal-prompt">
+                        <h2>🌟 Niveau maîtrisé !</h2>
+                        <p>Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
+                        <div class="modal-prompt-actions">
+                            <button id="btn-adaptive-yes" class="btn btn-new">Oui, allons-y !</button>
+                            <button id="btn-adaptive-no" class="btn btn-outline-error">Non, je reste ici</button>
                         </div>
                     </div>
                 </div>
