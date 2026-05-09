@@ -53,9 +53,14 @@ def test_launch_fire_canvas(page: Page):
 
     arc_called = page.evaluate("window.mockArcCalled")
     fill_called = page.evaluate("window.mockFillCalled")
+    dimensions_match = page.evaluate("""
+        const cvs = document.getElementById('confetti-canvas');
+        cvs && cvs.width === window.innerWidth && cvs.height === window.innerHeight;
+    """)
 
     assert arc_called is True
     assert fill_called is True
+    assert dimensions_match is True
 
 def test_launch_confetti_canvas(page: Page):
     """Verify launchConfetti interacts with canvas correctly (fillRect)."""
@@ -89,5 +94,32 @@ def test_launch_confetti_canvas(page: Page):
     page.wait_for_timeout(500)
 
     fillrect_called = page.evaluate("window.mockFillRectCalled")
+    dimensions_match = page.evaluate("""
+        const cvs = document.getElementById('confetti-canvas');
+        cvs && cvs.width === window.innerWidth && cvs.height === window.innerHeight;
+    """)
 
     assert fillrect_called is True
+    assert dimensions_match is True
+
+def test_launch_confetti_no_canvas(page: Page):
+    """Verify launchConfetti exits safely if no #confetti-canvas element is found."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+
+    # Remove the canvas element
+    page.evaluate("""
+        const cvs = document.getElementById('confetti-canvas');
+        if (cvs) cvs.remove();
+    """)
+
+    # Call the function, it should return early without throwing an error
+    error_thrown = page.evaluate("""
+        try {
+            launchConfetti();
+            false;
+        } catch (e) {
+            true;
+        }
+    """)
+
+    assert error_thrown is False
