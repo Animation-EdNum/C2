@@ -6,6 +6,16 @@ Ce simulateur permet aux élèves de s'entraîner à la programmation d'un autom
 
 ---
 
+## 🌟 Enjeux Pédagogiques (Utilité en classe)
+
+L'utilisation de ce simulateur en classe va bien au-delà du simple jeu. Il développe des compétences clés chez l'élève :
+- **Pensée algorithmique :** Décomposer un problème complexe (un cheminement) en une suite d'instructions simples et ordonnées.
+- **Décentration cognitive :** Apprendre à distinguer la gauche et la droite relatives au robot, indépendamment de sa propre position (essentiel dans les modes Pilotage et Décodage).
+- **Repérage spatial et géométrie :** Évaluer des distances (nombre de cases) et appréhender des concepts géométriques comme les angles et les périmètres (particulièrement dans le mode Dessin).
+- **Anticipation et mémoire de travail :** Planifier mentalement une séquence complète avant son exécution, en s'appuyant sur des fonctionnalités comme le **Blindcoding** (programmation à l'aveugle ou mode mémoire).
+
+---
+
 ## 1. Mode Exploration (Déplacement direct)
 
 Ce mode permet de comprendre le comportement de l'automate sans avoir à anticiper une séquence complète. Le robot se déplace immédiatement à chaque appui sur une touche.
@@ -87,7 +97,11 @@ Dans ce mode, l'automate est équipé d'un stylo imaginaire et **laisse une trac
 
 Le menu **Options** (icône engrenage ⚙ en haut à droite) donne accès à plusieurs réglages  :
 
-- **Partager l'activité** 🔗 : ouvre une modale permettant de générer un lien spécifique pour les élèves (cf. [Tutoriel de partage](MODE_EMPLOI_PARTAGE.md)).
+- **Partager l'activité** 🔗 : ouvre une modale permettant de générer un lien spécifique pour les élèves. Cette fonctionnalité est **cruciale en classe**, car ses options avancées permettent de :
+  - **Canaliser l'attention :** Forcer un mode de jeu spécifique, masquer le retour à l'accueil et verrouiller le menu des réglages pour éviter que les élèves ne s'éparpillent.
+  - **Différencier l'apprentissage :** Verrouiller un niveau de difficulté adapté à chaque groupe d'élèves, ou imposer un tapis pédagogique particulier.
+  - **Stimuler la mémorisation :** Activer le mode aveugle (Blindcoding) ou masquer les commandes par défaut pour forcer l'élève à anticiper et mémoriser l'ensemble du parcours, empêchant ainsi la résolution par essais-erreurs.
+  *(cf. [Tutoriel de partage détaillé](MODE_EMPLOI_PARTAGE.md))*
 - **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité** et de régler la **taille de la grille** (de 4×4 à 10×10).
 - **Changer de skin** 🎨 : permet de personnaliser l'apparence du robot et de la piste (Bee-Bot, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.). Certains skins se débloquent en progressant.
 - **Voir mes statistiques** 📊 : accès au tableau de bord des scores.
