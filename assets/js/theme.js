@@ -31,8 +31,8 @@
 
         const themeToggleText = document.getElementById('themeToggleText');
         if (themeToggleText) {
-            if (theme === 'dark') themeToggleText.textContent = 'Mode Clair';
-            else themeToggleText.textContent = 'Mode Sombre';
+            if (theme === 'dark') themeToggleText.textContent = 'Clair';
+            else themeToggleText.textContent = 'Sombre';
         }
 
         if (typeof window.__onThemeChange === 'function') {
