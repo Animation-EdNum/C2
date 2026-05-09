@@ -1,133 +1,98 @@
-# 🏗️ Mode d'emploi : Jeu de la grue
+# 🤖 Mode d'emploi : Simulateur Blue-Bot
 
-Bienvenue dans le guide d'utilisation du **Jeu de la grue**, une application web interactive conçue pour initier les élèves à la **pensée algorithmique** et à la **programmation séquentielle**.
+Bienvenue dans le guide d'utilisation du **Simulateur Blue-Bot**, une application web interactive conçue pour initier les élèves à la **pensée algorithmique**, au **repérage spatial** et à la **programmation séquentielle**.
 
-Ce simulateur permet de s'entraîner à programmer les déplacements et les actions d'une grue pour déplacer des cubes entre trois colonnes, selon **3 niveaux de difficulté progressifs**.
-
----
-
-## 📖 But du jeu
-
-Observez attentivement la zone **Objectif** (à gauche). Vous devez utiliser la grue pour déplacer les cubes dans la **Zone de travail** (à droite) afin de reproduire **exactement** la même disposition.
-
-> ⚠️ **Attention :** une machine ne devine rien ! Vous devez lui fournir une **suite complète d'instructions à l'avance**. Ce n'est pas du pilotage direct : la grue n'agira qu'une fois le programme lancé.
-
-Un bandeau dépliable **« 📖 Comment ça marche ? »** est disponible en haut de la page pour rappeler les règles aux élèves à tout moment.
+Ce simulateur reproduit le comportement du célèbre robot de sol éducatif, permettant aux élèves de s'entraîner virtuellement sur différents tapis, de relever des défis et de créer leurs propres parcours.
 
 ---
 
-## 🕹️ Comment l'utiliser ?
+## 🎯 Intérêts pédagogiques et apports en classe
 
-### 1. Analyser l'objectif
-Comparez la disposition des cubes dans la *Zone de travail* avec celle demandée dans la zone *Objectif*. Identifiez quels cubes doivent bouger, et dans quel ordre.
+Le Simulateur Blue-Bot est un outil puissant pour développer des compétences transversales chez l'élève :
 
-### 2. Programmer la grue
-Utilisez le panneau de contrôle pour ajouter les instructions, qui s'affichent sous forme de **cartes colorées** dans la barre du programme. Chaque instruction a sa propre couleur pour faciliter le repérage visuel :
-
-| Bouton | Couleur | Action |
-|---|---|---|
-| ⬆️ **Haut** | Bleu | Remonter la pince |
-| ⬇️ **Bas** | Violet | Descendre la pince |
-| ⬅️ **Gauche** | Orange | Déplacer la grue d'une colonne vers la gauche |
-| ➡️ **Droite** | Vert | Déplacer la grue d'une colonne vers la droite |
-| ✊ / ✋ **Action** | Rouge | Fermer la pince pour attraper, ou l'ouvrir pour relâcher |
-
-> 🔎 L'icône du bouton *Action* change selon l'état : **poing fermé** quand la grue est vide, **main ouverte** quand elle tient un cube.
-
-### 3. Gérer le programme
-- **Cliquer sur une carte** dans la barre du programme la **supprime** directement (un ✕ apparaît au survol).
-- Le bouton **« Effacer »** (corbeille) retire la **dernière** instruction ajoutée.
-- Le bouton **« Tout vider »** (rouge) réinitialise complètement le programme.
-
-### 4. Exécuter
-Appuyez sur le bouton **« ▶ Exécuter »** (vert) pour lancer l'animation. La grue réalise la séquence **étape par étape**, et l'instruction en cours est mise en évidence dans la bande.
-
-> 🔒 Pendant l'exécution, les boutons sont désactivés : impossible de modifier le programme en cours de route.
-
-- ✅ Si la disposition finale correspond à l'objectif : **🎉 confettis** et message de réussite !
-- ❌ Sinon, le jeu indique précisément où se situe le problème (voir ci-dessous).
+*   **Pensée algorithmique et logique :** L'élève apprend à décomposer un problème complexe (aller d'un point A à un point B) en une suite d'instructions simples. Il comprend que la machine exécute *exactement* ce qu'on lui demande, dans l'ordre donné.
+*   **Repérage et structuration spatiale :** Contrairement aux déplacements absolus (haut, bas, gauche, droite sur une feuille), le robot utilise un repère **relatif** (avancer, reculer, pivoter sur soi-même). Cela oblige l'élève à se "mettre à la place" du robot (décentration), une compétence spatiale fondamentale.
+*   **Anticipation et planification :** L'élève doit prévoir mentalement le trajet complet avant de l'exécuter. Il passe d'une logique d'essai-erreur immédiat à une logique de planification globale.
+*   **Analyse d'erreurs (débogage) :** Quand le robot n'arrive pas au but, l'élève doit relire son programme, trouver l'instruction fautive et la corriger. L'erreur devient une simple étape de construction, dédramatisée et constructive.
+*   **Flexibilité didactique :** Utilisable en collectif (TBI) pour la découverte, en binômes pour favoriser la verbalisation ("programmeur" / "vérificateur"), ou en autonomie pour l'entraînement.
 
 ---
 
-## 🧯 Gestion des erreurs
+## 🕹️ Comment utiliser le simulateur ?
 
-Le retour visuel est conçu pour favoriser l'**analyse d'erreurs** en autonomie :
+L'application propose 5 modes de travail (onglets), adaptés à différents objectifs pédagogiques :
 
-- La **carte fautive** apparaît en **noir agrandi** dans la bande du programme.
-- Un **message explicite** s'affiche, par exemple :
-  - *« La grue est déjà au maximum à gauche ! »*
-  - *« La grue doit descendre juste au-dessus de la cible pour relâcher l'objet ! »*
-  - *« La grue tient encore un objet »* (exécution terminée mais pince non vidée)
-  - *« La disposition ne correspond pas »* (programme terminé sans correspondance)
-- Un **délai de 5 secondes** s'écoule avant le redémarrage possible, pour laisser le temps d'analyser l'erreur.
+### 1. 🧭 Exploration (Mode Libre)
+C'est le bac à sable. L'élève place le robot et la cible (le drapeau) où il veut sur le tapis en cliquant sur les cases.
+*   **But :** Créer son propre programme pour rejoindre la cible.
+*   **Idéal pour :** La prise en main libre, ou pour reproduire un exercice donné sur fiche papier par l'enseignant.
 
----
+### 2. 🤖 Simulateur (Reproduction de parcours)
+L'élève doit programmer le robot pour tracer un chemin précis, indiqué en surbrillance sur le tapis.
+*   **But :** Suivre une trajectoire imposée.
+*   **Idéal pour :** Travailler la précision et s'assurer que le cheminement exact est respecté.
 
-## 🚦 Niveaux de difficulté
+### 3. 🎮 Pilotage (Défis aléatoires)
+Le jeu génère automatiquement une position de départ et une cible. L'élève choisit la difficulté (nombre de mouvements nécessaires).
+*   **But :** Résoudre des défis générés à la volée.
+*   **Idéal pour :** L'entraînement en autonomie. La difficulté ajustable permet de différencier le travail.
 
-La difficulté se choisit via la barre située au-dessus du jeu. Changer de niveau génère automatiquement un nouveau défi :
+### 4. 📖 Décodage (Lecture de programme)
+Le jeu affiche un programme complet. L'élève doit "lire" le code mentalement et cliquer sur la case d'arrivée correspondante.
+*   **But :** Inverser la logique : passer de la lecture du code à l'anticipation du résultat.
+*   **Idéal pour :** Vérifier la compréhension profonde des instructions (surtout les pivots).
 
-- 🟢 **Facile :** 1 seul cube à déplacer — idéal pour comprendre les commandes de base (déplacement et action de la pince).
-- 🟡 **Moyen :** 2 cubes — nécessite d'anticiper les déplacements multiples et la gestion de la superposition.
-- 🔴 **Difficile :** 3 cubes — les piles rendent les mouvements plus complexes : il faut souvent **déplacer temporairement un cube** dans une colonne d'attente pour accéder à celui situé en dessous.
-
----
-
-## 📊 Statistiques et suivi
-
-L'application enregistre les réussites de l'élève. Une barre de score affiche en permanence :
-
-- **Victoires :** nombre total de défis réussis.
-- **Série 🔥 :** nombre de victoires consécutives sans erreur. Une **animation renforcée** se déclenche toutes les 3 victoires d'affilée.
-
-L'icône **Statistiques** (Camembert 📊) ouvre un **tableau de bord détaillé** des scores.
-
-> ⏱ Après une réussite, un nouveau défi est automatiquement généré au bout de **4 secondes**.
+### 5. ✏️ Dessin (Pixel Art)
+Le robot agit comme un stylo. Les déplacements dessinent sur la grille.
+*   **But :** Créer des formes ou reproduire un modèle en programmant le tracé.
+*   **Idéal pour :** Lier géométrie, arts visuels et programmation.
 
 ---
 
-## 🎨 Personnalisation et options
+## ⌨️ Programmer le robot
 
-Le menu **Options** (icône engrenage ⚙ en haut à droite) donne accès aux réglages :
+Le panneau de contrôle reproduit les touches du vrai Blue-Bot :
 
-- **Partager l'activité** 🔗 : ouvre une modale permettant de générer un lien spécifique pour les élèves, en bloquant par exemple le niveau de difficulté (cf. [Tutoriel de partage](MODE_EMPLOI_PARTAGE.md)).
-- **Thème clair / sombre** 🌙 : bascule entre les deux modes d'affichage pour le confort visuel.
-- **Son** 🔊 : active ou désactive les effets sonores (clic, victoire, erreur).
+| Bouton | Action |
+|---|---|
+| ⬆️ **Avancer** | Le robot avance d'une case dans la direction où il regarde. |
+| ⬇️ **Reculer** | Le robot recule d'une case. |
+| ↩️ **Pivoter Gauche** | Le robot tourne de 90° sur lui-même vers *sa* gauche (il reste sur la même case). |
+| ↪️ **Pivoter Droite** | Le robot tourne de 90° sur lui-même vers *sa* droite. |
+| ⏸️ **Pause** | Ajoute un temps d'arrêt d'une seconde dans le programme. |
+| 🗑️ **Effacer (Croix)** | Supprime le **dernier** ordre ajouté. |
+| 🔴 **Tout vider (X)** | Efface **tout** le programme actuel. |
+| ▶️ **GO !** | Lance l'exécution du programme. |
+
+> 💡 **Astuce :** Vous pouvez supprimer une instruction spécifique en cliquant directement dessus dans la barre de programme en bas de l'écran.
 
 ---
 
-## 🏫 Conseils d'utilisation en classe
+## ⚙️ Options et Partage Avancé pour la classe
 
-### Publics cibles
-- **Cycle 1 (4–8 ans)** : en collectif au TBI ou en binômes, niveau **Facile** privilégié.
-- **Cycle 2 (8–12 ans)** : en autonomie, progression Facile → Moyen → Difficile.
+Le menu **Options** (engrenage ⚙️ en haut à droite) est crucial pour les enseignants. Il permet non seulement de personnaliser l'interface (thème clair/sombre, son, choix du tapis et du skin du robot), mais surtout de **partager des activités sur mesure** avec les élèves.
 
-### Modalités de travail efficaces
-- **Binôme « programmeur / vérificateur »** : l'un construit la séquence, l'autre la lit à voix haute avant d'appuyer sur ▶.
-- **Phase débranchée préalable** : au sol, un élève joue la grue, les autres donnent les ordres avec des cartes-flèches. Cela ancre le principe : *« Une machine ne devine rien. »*
-- **Verbaliser l'objectif** avant de programmer : *« Quel cube doit bouger ? D'où vers où ? »*
+En cliquant sur **"Partager l'activité"**, puis sur **"Options Avancées"**, vous pouvez générer un lien ou un QR Code qui configure l'application selon vos besoins pédagogiques stricts :
 
-### Points d'attention pédagogiques
-- Valoriser l'**essai-erreur** : la carte noire qui s'affiche est une **information précieuse**, pas un échec.
-- Ne pas corriger trop vite : laisser l'élève lire le message et comprendre par lui-même.
-- Pour le niveau Difficile, accompagner la découverte de la **colonne d'attente** (déplacer un cube « en intermédiaire »).
+### Options de Partage (Les plus importantes en classe)
+
+*   **Verrouiller l'onglet actuel :** Si vous voulez que les élèves fassent uniquement du "Décodage", cochez cette option. Ils ne verront pas les autres onglets et ne s'éparpilleront pas.
+*   **Verrouiller la difficulté actuelle :** Empêche l'élève de changer le niveau de difficulté (par exemple, forcer le niveau "Difficile").
+*   **Désactiver les paramètres / tapis :** Empêche les élèves de jouer avec les options visuelles (changer le tapis, le skin du robot) pour garantir leur concentration sur la tâche algorithmique.
+*   **Cacher la séquence (Blindcoding) :** *Excellente option pour les élèves avancés.* Le programme est caché. L'élève doit tout planifier mentalement de mémoire. Cela pousse la capacité d'abstraction à son maximum.
+*   **Mode "Ramassage" (si activé dans vos options locales) :** Demande de passer sur certains éléments du tapis pour les "récolter".
+
+*(Pour plus de détails sur la procédure de partage, consultez le [Tutoriel de partage](MODE_EMPLOI_PARTAGE.md)).*
 
 ---
 
 ## 💡 Astuces supplémentaires
 
-- **Accessibilité clavier :** le jeu est entièrement jouable au clavier.
-  - **Flèches directionnelles** : ajouter une instruction de déplacement.
-  - **Barre d'Espace** : ajouter l'instruction Action (attraper/lâcher).
-  - **Entrée** : exécuter le programme.
-  - **Retour arrière (Backspace)** : effacer la dernière instruction.
-- **Utilisation hors-ligne :** une fois chargée, l'application fonctionne **sans connexion Internet**.
-- **Limites mécaniques à connaître :**
-  - La grue ne peut pas descendre s'il y a déjà un cube juste en dessous.
-  - Une colonne ne peut contenir qu'un **maximum de 3 cubes**.
-  - La pince doit être descendue **exactement** au bon niveau (juste au-dessus du cube à saisir, ou juste au-dessus de la position de dépôt) pour attraper ou relâcher.
-  - Tenter d'attraper dans le vide ou de relâcher à une mauvaise hauteur déclenche une erreur.
+*   **Mode Mémoire (Memory Mode) :** Dans les options, vous pouvez activer le mode Mémoire. Comme sur le robot "Tale-Bot", ce mode permet de mémoriser des sous-séquences et de les rejouer avec une seule touche. C'est une excellente initiation aux *fonctions* en programmation.
+*   **Mode Collecte :** Si activé, le robot interagit avec les éléments dessinés sur certains tapis (comme le tapis "Formes et Couleurs").
+*   **Utilisation hors-ligne :** L'application fonctionne sans connexion Internet une fois chargée dans le navigateur.
+*   **Accessibilité :** Les boutons de commande peuvent être activés au clavier (Flèches pour pivoter/avancer/reculer, Espace pour GO, Retour arrière pour effacer).
 
 ---
 
-*Bon jeu, et surtout : laissez vos élèves se tromper, recommencer… et savourer leur première victoire de « programmeur de grue » ! 🏗️🎉*
+*Faites chauffer les neurones de vos élèves et bon codage ! 🤖🚀*
