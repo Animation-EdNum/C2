@@ -23,7 +23,7 @@ const SCAN_DIRS = [
     path.join(ROOT, 'webapps', 'teacher'),
     path.join(ROOT, 'alpha', 'webapps'),
 ];
-const SCAN_FILES = [path.join(ROOT, 'index.html')];
+const SCAN_FILES = [path.join(ROOT, 'index.html'), path.join(ROOT, 'indexC1.html')];
 
 // Icônes solides toujours incluses (injectées dynamiquement en JS)
 const EXTRA_SOLID = ['circle-check', 'circle-xmark', 'triangle-exclamation', 'circle-info'];
