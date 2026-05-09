@@ -91,3 +91,19 @@ def test_launch_confetti_canvas(page: Page):
     fillrect_called = page.evaluate("window.mockFillRectCalled")
 
     assert fillrect_called is True
+
+def test_launch_confetti_no_exceptions(page: Page):
+    """Verify that launchConfetti executes without throwing exceptions."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+    page.evaluate("launchConfetti()")
+
+def test_edge_case_no_canvas(page: Page):
+    """Verify edge case safety: handle the absence of #confetti-canvas gracefully."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+    page.evaluate("""
+        const cvs = document.getElementById('confetti-canvas');
+        if (cvs) cvs.remove();
+    """)
+    # Call functions, should not throw
+    page.evaluate("launchConfetti()")
+    page.evaluate("launchFire()")
