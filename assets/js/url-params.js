@@ -301,7 +301,7 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                            <div class="share-option">
+                            <div class="share-option" id="lbl-noInstructions" style="display: none;">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-noInstructions">Masquer les instructions</label>
                                     <div class="share-option-desc">Retire les textes d'aide.</div>
@@ -476,6 +476,11 @@ function initShareModal() {
         if (lblBlindcode) lblBlindcode.style.display = 'none';
     }
 
+
+    const hasInstructions = document.querySelectorAll('.instructions, .chal-instruction').length > 0;
+    if (hasInstructions) {
+        document.getElementById('lbl-noInstructions').style.display = 'flex';
+    }
 
     // Specific Options Logic
     let hasSpecificOption = false;
