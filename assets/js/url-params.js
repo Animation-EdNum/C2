@@ -223,7 +223,7 @@ function initShareModal() {
             <button class="ui-btn-close" id="btn-close-share" aria-label="Fermer"><i data-fa="xmark"></i></button>
 
             <div class="share-header">
-                <h2 id="share-modal-title"><i data-fa="share-nodes"></i> Partager</h2>
+                <h2 id="share-modal-title"><i data-fa="share-nodes"></i> Partager l'activité</h2>
                 <p>Générez un lien préconfiguré pour vos élèves.</p>
             </div>
 
