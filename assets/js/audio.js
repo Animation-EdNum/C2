@@ -79,7 +79,7 @@ function updateAudioUI() {
 
     const audioText = document.getElementById('audioToggleText');
     if (audioText) {
-        audioText.textContent = isMuted ? 'Activer le son' : 'Couper le son';
+        audioText.textContent = isMuted ? 'Activer son' : 'Couper son';
     }
 }
 

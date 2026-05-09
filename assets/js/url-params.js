@@ -206,7 +206,7 @@ function initShareModal() {
             shareBtn.id = 'btn-share';
             shareBtn.title = 'Partager';
             shareBtn.setAttribute('aria-label', 'Partager');
-            shareBtn.innerHTML = '<i data-fa="share-nodes"></i> Partager l\'activité';
+            shareBtn.innerHTML = '<i data-fa="share-nodes"></i> Partager';
             // Insert at the top of the settings menu
             settingsDropdown.insertBefore(shareBtn, settingsDropdown.firstChild);
             // Must create icon after insertion

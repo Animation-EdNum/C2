@@ -44,12 +44,12 @@ window.commandsVisible = commandsVisible;
                 currentSpeed = 400;
                 if (iconSpd1) iconSpd1.style.display = 'none';
                 if (iconSpd2) iconSpd2.style.display = 'block';
-                if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Vitesse Rapide';
+                if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
             } else {
                 currentSpeed = 900;
                 if (iconSpd1) iconSpd1.style.display = 'block';
                 if (iconSpd2) iconSpd2.style.display = 'none';
-                if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Vitesse Normale';
+                if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Lent';
             }
         };
 
