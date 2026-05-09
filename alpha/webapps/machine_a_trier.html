@@ -196,6 +196,45 @@
 
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
 
+        /* Animation d'aide */
+        .pulse-help {
+            animation: pulseAnim 2s infinite;
+        }
+
+        @keyframes pulseAnim {
+            0% {
+                background: transparent;
+                box-shadow: inset 0 0 0 rgba(102, 126, 234, 0);
+            }
+            50% {
+                background: #eef2ff;
+                box-shadow: inset 0 0 10px rgba(102, 126, 234, 0.8), 0 0 15px rgba(102, 126, 234, 0.6);
+            }
+            100% {
+                background: transparent;
+                box-shadow: inset 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+
+        body.dark .pulse-help {
+            animation: pulseAnimDark 2s infinite;
+        }
+
+        @keyframes pulseAnimDark {
+            0% {
+                background: transparent;
+                box-shadow: inset 0 0 0 rgba(99, 102, 241, 0);
+            }
+            50% {
+                background: rgba(99, 102, 241, 0.2);
+                box-shadow: inset 0 0 10px rgba(99, 102, 241, 0.8), 0 0 15px rgba(99, 102, 241, 0.6);
+            }
+            100% {
+                background: transparent;
+                box-shadow: inset 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
         @media print { .no-print { display: none !important; } }
     </style>
     <script src="../../assets/js/scores.js"></script>
@@ -375,6 +414,8 @@
         let factoryLastSpawnTime = 0;
         let isDragged = false; // Bloquer animation si objet draggué
 
+        let modeTimer = null; // Timer d'inactivité du mode
+
         // UI Elements
         const itemsContainer = document.getElementById('items-container');
         const binsContainer = document.getElementById('bins-container');
@@ -383,6 +424,7 @@
         function init() {
             setupEventListeners();
             startNewLevel();
+            resetModeTimer();
             ScoreManager.init('machine_a_trier');
             ScoreManager.checkAdaptiveDifficulty = function() {}; // Disable per-item popups
         }
@@ -434,6 +476,7 @@
             document.getElementById('tab-quantity').classList.toggle('active', mode === 'quantity');
             document.getElementById('tab-size').classList.toggle('active', mode === 'size');
             startNewLevel();
+            resetModeTimer();
         }
 
         function setDifficulty(diff) {
@@ -927,6 +970,15 @@
             }
         }
 
+
+        function resetModeTimer() {
+            clearTimeout(modeTimer);
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('pulse-help'));
+
+            modeTimer = setTimeout(() => {
+                document.querySelectorAll('.tab-btn:not(.active)').forEach(btn => btn.classList.add('pulse-help'));
+            }, 4 * 60 * 1000); // 4 minutes
+        }
 
         function updateScore(correct) {
             if (correct) {
