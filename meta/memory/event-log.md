@@ -53,3 +53,8 @@
 - **[2026-05-07]** [Bugfix] Fixed icon mapping in `toast.js` for FontAwesome 7 compatibility.
 - **[2026-05-07]** [UX] Implemented auto-advance logic in `simulateur_bluebot.html` with correct tab-based trigger handling.
 - **[2026-05-08]** [Maintenance] Performed repository cleanup: deleted banned `server.log` file and created root `.gitignore` to maintain cleanliness.
+- **[2026-05-08]** [UI/UX] Converted the binary calculator panel in `binaire_codage.html` to a full-page modal to ensure it fits perfectly on narrow mobile screens.
+- **[2026-05-09]** [UI/UX] Added a visual inactivity pulse animation to the mode tabs in `machine_a_trier.html` (alpha).
+- **[2026-05-09]** [Feature] Created `indexC1.html`, a simplified portal specifically designed for younger children (4-7 years old, Cycle 1).
+- **[2026-05-09]** [Pedagogy] Added `unlockAllSkins` URL parameter to bypass skin progression.
+- **[2026-05-10]** [Pedagogy] Added `coloredCmds` URL parameter and simulator setting to apply Crane Game colors to commands, aiding non-lateralized children in the Blue-Bot simulator.

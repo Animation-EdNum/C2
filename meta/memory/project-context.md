@@ -4,7 +4,7 @@
 The **Suite EdNum** (by Animation-EdNum, HEP-VS) is a collection of high-quality, interactive educational web applications aimed at primary school students in Switzerland (Hautes Écoles Pédagogiques - HEP-VS). These tools complement the **Décodages** teaching materials and align with the Swiss "Plan d'Études Romand" (PER) for cycles 1-2H, 3-4H, 5-6H, and 7-8H. The goal is to teach computer science concepts such as algorithms, binary encoding, networks, and logic.
 
 ## Application Categories & Specific Webapps
-The applications are structured into two main categories:
+The applications are structured into two main categories, and accessible via two main portals (`index.html` for general use, and `indexC1.html` simplified for 4-7 year olds):
 - **Student Tools (`webapps/`):** Simulateur Blue-Bot, Pixel Studio, Mots secrets (located at `webapps/binaire_message.html`), Routage Réseau, Codage binaire, Bit de Parité, etc.
   - The 'simulateur automate' refers to `webapps/simulateur_bluebot.html`, featuring 4 modes: Simulateur, Pilotage, Décodage, and Dessin. Its user manual is at `MODE_EMPLOI_SIMULATEUR_AUTOMATE.md`.
 - **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. They use a distinct style and layout compared to student apps, sharing a dedicated stylesheet (`assets/css/teacher.css`). Avoid extracting their shared styles into the global `shared.css` and avoid redundant local `<style>` overrides within them.
