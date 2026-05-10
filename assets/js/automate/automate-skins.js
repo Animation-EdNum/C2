@@ -130,7 +130,7 @@ const SKIN_CONFIG = {
     'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
     'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." },
-    'pedago': { name: 'Péda-Bot', obstacle: '<i data-fa="gift" style="color: #f6b64b;"></i>', target: '🎨', desc: 'Skin pédagogique avec couleurs (pour aider avec la latéralisation).', hidden: true }
+    'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Associe les couleurs aux directions et navigue comme un pro !', hidden: true }
 };
 
 const AT_SVGS = {
