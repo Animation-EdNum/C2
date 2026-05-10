@@ -289,8 +289,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-coloredCmds" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-coloredCmds">Couleurs imposées <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Colorie les commandes de manière distinctive pour les personnes non latéralisées.</div>
+                                    <label class="share-option-label" for="opt-coloredCmds">Commandes colorées <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Colorie les commandes de manière distinctive. Utile pour les personnes non latéralisées.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-coloredCmds">
