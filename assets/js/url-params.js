@@ -250,9 +250,9 @@ function initShareModal() {
             </div>
 
             <div class="share-presets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
-                <button class="btn btn-preset" id="btn-preset-encadre" style="flex: 1;"><i data-fa="lock"></i> Encadré</button>
-                <button class="btn btn-preset" id="btn-preset-presentation" style="flex: 1;"><i data-fa="eye"></i> Présent.</button>
-                <button class="btn btn-preset" id="btn-preset-libre" style="flex: 1;"><i data-fa="puzzle-piece"></i> Libre</button>
+                <button class="btn btn-preset" id="btn-preset-mission" style="flex: 1;" title="Mes élèves font exactement ce que j'ai préparé"><i data-fa="bullseye"></i> Mission</button>
+                <button class="btn btn-preset" id="btn-preset-entrainement" style="flex: 1;" title="Je leur donne l'outil, ils explorent / refont à leur rythme"><i data-fa="dumbbell"></i> Entraînement</button>
+                <button class="btn btn-preset" id="btn-preset-inclusif" style="flex: 1;" title="J'ai un·e élève dys, TSA, ou non-latéralisé·e dans le groupe"><i data-fa="hand-holding-heart"></i> Inclusif</button>
             </div>
 
             <div class="share-advanced">
@@ -653,9 +653,9 @@ function initShareModal() {
 
 
     // Presets Logic
-    const btnPresetEncadre = document.getElementById('btn-preset-encadre');
-    const btnPresetPresentation = document.getElementById('btn-preset-presentation');
-    const btnPresetLibre = document.getElementById('btn-preset-libre');
+    const btnPresetMission = document.getElementById('btn-preset-mission');
+    const btnPresetEntrainement = document.getElementById('btn-preset-entrainement');
+    const btnPresetInclusif = document.getElementById('btn-preset-inclusif');
 
     function resetAllCheckboxes() {
         checkboxes.forEach(cb => {
@@ -663,42 +663,47 @@ function initShareModal() {
         });
     }
 
-    if (btnPresetEncadre) {
-        btnPresetEncadre.addEventListener('click', () => {
+    if (btnPresetMission) {
+        btnPresetMission.addEventListener('click', () => {
             resetAllCheckboxes();
-            const toCheck = ['opt-noHome', 'opt-noSettings', 'opt-lockDiff', 'opt-only'];
+            const toCheck = ['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'];
             toCheck.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.checked = true;
             });
             updateShareUrl();
             if (typeof showToast === 'function') {
-                showToast("Mode Encadré appliqué");
+                showToast("Mode Mission appliqué");
             }
         });
     }
 
-    if (btnPresetPresentation) {
-        btnPresetPresentation.addEventListener('click', () => {
+    if (btnPresetEntrainement) {
+        btnPresetEntrainement.addEventListener('click', () => {
             resetAllCheckboxes();
-            const toCheck = ['opt-only', 'opt-noSettings', 'opt-noAudio'];
+            const toCheck = ['opt-noHome', 'opt-only'];
             toCheck.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.checked = true;
             });
             updateShareUrl();
             if (typeof showToast === 'function') {
-                showToast("Mode Présentation appliqué");
+                showToast("Mode Entraînement appliqué");
             }
         });
     }
 
-    if (btnPresetLibre) {
-        btnPresetLibre.addEventListener('click', () => {
+    if (btnPresetInclusif) {
+        btnPresetInclusif.addEventListener('click', () => {
             resetAllCheckboxes();
+            const toCheck = ['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'];
+            toCheck.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.checked = true;
+            });
             updateShareUrl();
             if (typeof showToast === 'function') {
-                showToast("Mode Libre appliqué");
+                showToast("Mode Inclusif appliqué");
             }
         });
     }
