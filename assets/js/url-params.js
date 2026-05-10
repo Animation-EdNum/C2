@@ -59,6 +59,12 @@ function applyUrlParameters() {
         if (audioBtn) audioBtn.style.display = 'none';
     }
 
+    if (urlParams.get('coloredCmds') === '1') {
+        document.body.classList.add('colored-cmds');
+        const toggleBtn = document.getElementById('coloredCmdsToggleBtn');
+        if (toggleBtn) toggleBtn.style.display = 'none';
+    }
+
     if (urlParams.get('noInstructions') === '1') {
         const instructions = document.querySelectorAll('.instructions, .chal-instruction');
         instructions.forEach(el => el.style.display = 'none');
@@ -301,6 +307,17 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
+                            <div class="share-option" id="lbl-coloredCmds" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-coloredCmds">Couleurs imposées</label>
+                                    <div class="share-option-desc">Active les commandes colorées.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-coloredCmds">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+
                             <div class="share-option" id="lbl-noInstructions" style="display: none;">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-noInstructions">Masquer les instructions</label>
