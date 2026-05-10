@@ -1646,14 +1646,14 @@
             font-size: clamp(20px, 6vw, 40px);
             font-weight: 800;
             color: var(--text-muted);
-            opacity: var(--mat-opacity, 0.3);
+            opacity: var(--mat-opacity, 0.5);
             pointer-events: none;
             z-index: 0;
         }
 
         body.dark .mat-content {
             color: #94a3b8;
-            opacity: var(--mat-opacity, 0.2);
+            opacity: var(--mat-opacity, 0.5);
         }
 
 
@@ -2011,7 +2011,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: var(--mat-opacity, 0.3);
+            opacity: var(--mat-opacity, 0.5);
             pointer-events: none;
             z-index: 0;
             border-radius: var(--radius-md);
@@ -2041,7 +2041,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: var(--mat-opacity, 0.3);
+            opacity: var(--mat-opacity, 0.5);
             pointer-events: none;
             z-index: 0;
             border-radius: var(--radius-md);
@@ -2349,10 +2349,10 @@
             <div id="mat-opacity-container" style="display: flex; flex-direction: column; gap: 5px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.9em; font-weight: 600;">
                     <span>Opacité</span>
-                    <span id="matOpacityValue">30%</span>
+                    <span id="matOpacityValue">50%</span>
                 </div>
                 <input type="range" id="matOpacitySlider" aria-label="Opacité du tapis pédagogique" min="0.1" max="1"
-                    step="0.1" value="0.3" style="width: 100%;">
+                    step="0.1" value="0.5" style="width: 100%;">
             </div>
 
             <div id="grid-size-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
@@ -2477,12 +2477,11 @@
                                 <div class="bot-grid" id="explore-grid" style="margin: 0; max-width: none;"></div>
                             </div>
                             <div class="grid-toolbar" style="display: flex; flex-direction: column; gap: 8px;">
-                                <button class="icon-action-btn btn-new" id="btn-explore-place-elements"
-                                    title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
-                                <button class="icon-action-btn" id="btn-explore-reset" title="Position aléatoire"><i
-                                        data-fa="dice"></i></button>
-                                <button class="icon-action-btn btn-outline-error" id="btn-explore-clear-walls"
-                                    title="Nettoyer grille"><i data-fa="broom"></i></button>
+                                <button class="icon-action-btn btn-new" id="btn-explore-place-elements" title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
+                                <button class="icon-action-btn" id="btn-explore-reset" title="Position aléatoire"><i data-fa="dice"></i></button>
+                                <button class="icon-action-btn btn-outline-error" id="btn-explore-clear-walls" title="Nettoyer grille"><i data-fa="broom"></i></button>
+                                <button class="icon-action-btn" id="btn-explore-cycle-mat" title="Changer de tapis"><i data-fa="map"></i></button>
+                                <button class="icon-action-btn" id="btn-explore-open-skins" title="Changer de skin" style="display: none;"><i data-fa="gift"></i></button>
                             </div>
                         </div>
                     </div>
@@ -2550,12 +2549,11 @@
                                 <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
                             </div>
                             <div class="grid-toolbar" style="display: flex; flex-direction: column; gap: 8px;">
-                                <button class="icon-action-btn btn-new" id="btn-place-elements"
-                                    title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
-                                <button class="icon-action-btn" id="btnReset" title="Position aléatoire"><i
-                                        data-fa="dice"></i></button>
-                                <button class="icon-action-btn btn-outline-error" id="btn-clear-walls"
-                                    title="Nettoyer grille"><i data-fa="broom"></i></button>
+                                <button class="icon-action-btn btn-new" id="btn-place-elements" title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
+                                <button class="icon-action-btn" id="btnReset" title="Position aléatoire"><i data-fa="dice"></i></button>
+                                <button class="icon-action-btn btn-outline-error" id="btn-clear-walls" title="Nettoyer grille"><i data-fa="broom"></i></button>
+                                <button class="icon-action-btn" id="btn-sim-cycle-mat" title="Changer de tapis"><i data-fa="map"></i></button>
+                                <button class="icon-action-btn" id="btn-sim-open-skins" title="Changer de skin" style="display: none;"><i data-fa="gift"></i></button>
                             </div>
                         </div>
                     </div>
@@ -2888,6 +2886,9 @@
                 if (localStorage.getItem('at_colored_cmds') === '1') {
                     document.body.classList.add('colored-cmds');
                     coloredCmdsBtn.style.color = 'var(--accent)';
+                    if (typeof unlockSkin === 'function') unlockSkin('pedago');
+                } else {
+                    coloredCmdsBtn.style.color = '';
                 }
             }
 

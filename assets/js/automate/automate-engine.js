@@ -585,6 +585,13 @@ let simState = {
             const counter = document.getElementById('sim-score-bar');
             if (counter) counter.style.display = 'none';
 
+            // Remove mat
+            if (typeof selectMat === 'function') selectMat('none');
+            // Specifically clear custom mat if user requested it
+            localStorage.removeItem('at_custom_mat_image');
+            document.documentElement.style.setProperty('--custom-mat-url', 'none');
+            if (typeof updateCustomMatUI === 'function') updateCustomMatUI();
+
             buildGrid('sim-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
             TrailManager.clear('sim-grid');
@@ -721,6 +728,13 @@ let simState = {
             exploreState.firstAttempt = true;
             exploreState.history = [];
             exploreState.stepsThisRun = 0;
+
+            // Remove mat
+            if (typeof selectMat === 'function') selectMat('none');
+            // Specifically clear custom mat if user requested it
+            localStorage.removeItem('at_custom_mat_image');
+            document.documentElement.style.setProperty('--custom-mat-url', 'none');
+            if (typeof updateCustomMatUI === 'function') updateCustomMatUI();
 
             buildGrid('explore-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
