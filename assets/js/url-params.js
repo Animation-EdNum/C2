@@ -213,8 +213,11 @@ function initShareModal() {
             shareBtn.title = 'Partager';
             shareBtn.setAttribute('aria-label', 'Partager');
             shareBtn.innerHTML = '<i data-fa="share-nodes"></i> Partager';
-            // Insert at the top of the settings menu
-            settingsDropdown.insertBefore(shareBtn, settingsDropdown.firstChild);
+            // Insert at the bottom of the settings menu
+            const divider = document.createElement('div');
+            divider.className = 'dropdown-divider';
+            settingsDropdown.appendChild(divider);
+            settingsDropdown.appendChild(shareBtn);
             // Must create icon after insertion
             if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
         } else {
