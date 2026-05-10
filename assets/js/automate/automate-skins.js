@@ -395,6 +395,30 @@ function updateMemoryToggleVisibility() {
     }
 }
 
+
+function updateSkinToolbarButtonsVisibility() {
+    const btnExplore = document.getElementById('btn-explore-open-skins');
+    const btnSim = document.getElementById('btn-sim-open-skins');
+    const hasMultipleSkins = unlockedSkins.filter(skin => skin !== 'default').length > 0;
+    if (btnExplore) btnExplore.style.display = hasMultipleSkins ? '' : 'none';
+    if (btnSim) btnSim.style.display = hasMultipleSkins ? '' : 'none';
+}
+
+function cycleMat() {
+    const matKeys = Object.keys(MAT_CONFIG).filter(key => {
+        if (key === 'custom' && !localStorage.getItem('at_custom_mat_image')) {
+            return false;
+        }
+        return true;
+    });
+
+    let currentIndex = matKeys.indexOf(activeMat);
+    if (currentIndex === -1) currentIndex = 0;
+
+    const nextIndex = (currentIndex + 1) % matKeys.length;
+    selectMat(matKeys[nextIndex]);
+}
+
 function selectMat(matId) {
     if (matId === 'custom' && !localStorage.getItem('at_custom_mat_image')) {
         // If user selects custom mat but no image uploaded yet, prompt upload
@@ -703,6 +727,7 @@ function unlockSkin(skinId) {
     }
     if (!unlockedSkins.includes(skinId)) {
         unlockedSkins.push(skinId);
+        updateSkinToolbarButtonsVisibility();
         localStorage.setItem('at_unlocked_skins', JSON.stringify(unlockedSkins));
 
         if (activeSkin === 'volcano') {
@@ -763,6 +788,12 @@ let unlockedSkins = JSON.parse(localStorage.getItem('at_unlocked_skins') || '["d
 if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || new URLSearchParams(window.location.search).get('unlockAllSkins') === '1') {
     unlockedSkins = Object.keys(SKIN_CONFIG);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof updateSkinToolbarButtonsVisibility === 'function') {
+        updateSkinToolbarButtonsVisibility();
+    }
+});
 let activeSkin = localStorage.getItem('at_active_skin') || 'default';
 if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
