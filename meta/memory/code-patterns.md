@@ -66,3 +66,5 @@ All web applications must follow this strict semantic structure:
 - **Machine à Trier:** Ascending sort required for "Quantité" (dice) and "Taille" modes.
 - **Machine à Chiffrer:** Circular container (`aspect-ratio: 1/1`), % internal heights, `transform-origin: bottom center`.
 - **Routage Réseau:** Extreme mode uses `solarInterval` for real-time breakdowns (`brokenNodes`). Clicking the last added node should trigger an 'undo' action rather than resetting the path.
+
+- **Index Colors Synchronization:** Application cards in `index.html` should use the default blue icon colors (`--fa-primary:#2980b9;--fa-secondary:#3498db`). Customized application theme colors are strictly reserved for the simplified portal `indexC1.html`.
