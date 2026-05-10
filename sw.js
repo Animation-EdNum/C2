@@ -23,6 +23,9 @@ const ASSETS = [
     './assets/fonts/jetbrains-mono.woff2',
     './assets/fonts/outfit.woff2',
 
+    // Images & Mats
+    './assets/img/mats/city.png',
+
     // Alpha Webapps
     './alpha/webapps/jeu_de_la_grue.html',
     './alpha/webapps/machine_a_chiffrer.html',
