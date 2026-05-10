@@ -21,6 +21,6 @@ def test_routage_reseau_has_correct_title(page: Page):
     page.goto("http://localhost:8000/webapps/routage_reseau.html")
     expect(page).to_have_title(re.compile("Routage réseau - Temps et UTI"))
 
-def test_simulateur_bluebot_has_correct_title(page: Page):
-    page.goto("http://localhost:8000/webapps/simulateur_bluebot.html")
+def test_simulateur_automate_has_correct_title(page: Page):
+    page.goto("http://localhost:8000/webapps/simulateur_automate.html")
     expect(page).to_have_title(re.compile("Simulateur d'automate"))
