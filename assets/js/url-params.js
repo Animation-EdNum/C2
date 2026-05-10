@@ -236,14 +236,20 @@ function initShareModal() {
             <div class="share-main">
                 <div class="share-url-container">
                     <input type="text" id="share-url-input" readonly>
-                    <button class="btn btn-primary" id="btn-test-link"><i data-fa="external-link"></i> Tester le lien</button>
+                    <button class="btn btn-primary" id="btn-test-link"><i data-fa="external-link"></i> Tester</button>
                     <button class="btn btn-primary" id="btn-copy-share"><i data-fa="clipboard"></i> Copier</button>
-                    <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> Afficher le QR Code</button>
+                    <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> QR</button>
                     <button class="btn btn-primary" id="btn-download-qr" style="display: none;"><i data-fa="download"></i> Télécharger le QR</button>
                 </div>
                 <div id="share-qr-container" style="display: none; text-align: center; margin-top: 15px;">
                     <canvas id="share-qr-canvas"></canvas>
                 </div>
+            </div>
+
+            <div class="share-presets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+                <button class="btn btn-preset" id="btn-preset-encadre" style="flex: 1;"><i data-fa="lock"></i> Encadré</button>
+                <button class="btn btn-preset" id="btn-preset-presentation" style="flex: 1;"><i data-fa="eye"></i> Présent.</button>
+                <button class="btn btn-preset" id="btn-preset-libre" style="flex: 1;"><i data-fa="puzzle-piece"></i> Libre</button>
             </div>
 
             <div class="share-advanced">
@@ -254,9 +260,10 @@ function initShareModal() {
                 </div>
 
                 <div id="share-advanced-options" class="advanced-options-content" style="display: none;">
-                    <div class="options-grid">
-                        <div class="options-column">
-                            <h3>Interface & Navigation</h3>
+                    <div class="options-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+
+                        <div class="options-column" id="col-apparence-pedagogie">
+                            <h3>🎨 Apparence</h3>
                             <div class="share-option">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-highContrast">Contraste élevé</label>
@@ -269,7 +276,103 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-only">Mode actuel</label>
+                                    <label class="share-option-label" for="opt-noAudio">Pas de son</label>
+                                    <div class="share-option-desc">Désactive le son.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-noAudio">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-coloredCmds" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-coloredCmds">Couleurs imposées <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Colorie les commandes de manière distinctive pour les personnes non latéralisées.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-coloredCmds">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-noInstructions" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-noInstructions">Masquer les instructions</label>
+                                    <div class="share-option-desc">Retire les textes d'aide.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-noInstructions">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-hideGrid" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-hideGrid">Pas de quadrillage <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Désactive les lignes pour estimer les distances sans repère.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-hideGrid">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <h3 style="margin-top: 20px;">🧠 Pédagogie</h3>
+                            <div class="share-option" id="lbl-noCmdToggle">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-noCmdToggle">Commandes masquées</label>
+                                    <div class="share-option-desc">L'élève peut afficher les commandes manuellement.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-noCmdToggle">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-blindcode">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-blindcode">Mode aveugle (Blindcoding)</label>
+                                    <div class="share-option-desc">L'élève programme de tête sans voir la trace des commandes.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-blindcode">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-hideDict" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-hideDict">Pas de dictionnaire ASCII <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Désactive l'aide visuelle.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-hideDict">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-strictMode" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-strictMode">Mode strict <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">N'indique pas où sont les erreurs.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-strictMode">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="options-column" id="col-restrictions">
+                            <h3>🔐 Restrictions</h3>
+                            <div class="share-option">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-lockDiff">Difficulté verrouillée</label>
+                                    <div class="share-option-desc">Impose le niveau de difficulté actuel.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-lockDiff">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-only">Mode actuel uniquement</label>
                                     <div class="share-option-desc">Bloque l'application sur le mode actuel.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -279,7 +382,7 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noHome">Pas de lien vers l'accueil</label>
+                                    <label class="share-option-label" for="opt-noHome">Pas de lien accueil</label>
                                     <div class="share-option-desc">Empêche de quitter l'activité.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -297,48 +400,13 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                            <div class="share-option">
+                            <div class="share-option" id="lbl-lockSkin">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noAudio">Pas de son</label>
-                                    <div class="share-option-desc">Désactive le son.</div>
+                                    <label class="share-option-label" for="opt-lockSkin">Pas de skins</label>
+                                    <div class="share-option-desc">Pas de personnalisation visuelle du robot.</div>
                                 </div>
                                 <label class="share-toggle">
-                                    <input type="checkbox" id="opt-noAudio">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="share-option" id="lbl-coloredCmds" style="display: none;">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-coloredCmds">Commandes multicolores</label>
-                                    <div class="share-option-desc">Colorie les commandes de manière distinctive pour les personnes non latéralisées.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-coloredCmds">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-
-                            <div class="share-option" id="lbl-noInstructions" style="display: none;">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noInstructions">Masquer les instructions</label>
-                                    <div class="share-option-desc">Retire les textes d'aide.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-noInstructions">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="options-column">
-                            <h3>Verrouillage & Difficulté</h3>
-                            <div class="share-option">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockDiff">Difficulté verrouillée</label>
-                                    <div class="share-option-desc">Impose le niveau de difficulté actuel.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-lockDiff">
+                                    <input type="checkbox" id="opt-lockSkin">
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
@@ -362,16 +430,6 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                            <div class="share-option" id="lbl-lockSkin">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSkin">Pas de skins</label>
-                                    <div class="share-option-desc">Pas de personnalisation visuelle du robot.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-lockSkin">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
                             <div class="share-option" id="lbl-lockSpeed">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-lockSpeed">Vitesse imposée</label>
@@ -382,47 +440,9 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                        </div>
-
-                        <div class="options-column" id="col-behavior">
-                            <h3>Comportement & Pédagogie</h3>
-                            <div class="share-option" id="lbl-noCmdToggle">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noCmdToggle">Commandes masquées par défaut</label>
-                                    <div class="share-option-desc">L'élève peut afficher les commandes.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-noCmdToggle">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="share-option" id="lbl-blindcode">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-blindcode">Mode aveugle</label>
-                                    <div class="share-option-desc">L'élève programme de tête sans voir la trace des commandes ("Blindcoding").</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-blindcode">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="options-column" id="col-specific" style="display: none;">
-                            <h3>Spécifique à l'application</h3>
-                            <div class="share-option" id="lbl-hideDict" style="display: none;">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-hideDict">Pas de dictionnaire ASCII</label>
-                                    <div class="share-option-desc">Désactive l'aide visuelle.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-hideDict">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
                             <div class="share-option" id="lbl-lockTopology" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockTopology">Carte réseau fixe</label>
+                                    <label class="share-option-label" for="opt-lockTopology">Carte réseau fixe <span class="badge-specific" title="Spécifique à l'application">*</span></label>
                                     <div class="share-option-desc">Même réseau pour tous les élèves.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -430,29 +450,9 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                            <div class="share-option" id="lbl-strictMode" style="display: none;">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-strictMode">Mode strict</label>
-                                    <div class="share-option-desc">N'indique pas où sont les erreurs.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-strictMode">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="share-option" id="lbl-hideGrid" style="display: none;">
-                                <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-hideGrid">Pas de quadrillage</label>
-                                    <div class="share-option-desc">Désactive les lignes pour estimer les distances sans repère.</div>
-                                </div>
-                                <label class="share-toggle">
-                                    <input type="checkbox" id="opt-hideGrid">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                            </div>
                             <div class="share-option" id="lbl-unlockEditor" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-unlockEditor">Débloquer l'éditeur</label>
+                                    <label class="share-option-label" for="opt-unlockEditor">Débloquer l'éditeur <span class="badge-specific" title="Spécifique à l'application">*</span></label>
                                     <div class="share-option-desc">Mode "Éditeur" accessible immédiatement.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -462,11 +462,13 @@ function initShareModal() {
                             </div>
                         </div>
                     </div>
+                    <div style="text-align: right; margin-top: 10px; font-size: 0.85em; color: var(--text-secondary, #4a5568);">
+                        * = spécifique à l'application
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    `;
+    </div>`
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
@@ -500,40 +502,23 @@ function initShareModal() {
     }
 
     // Specific Options Logic
-    let hasSpecificOption = false;
     if (document.querySelector('.alpha-section')) {
         document.getElementById('lbl-hideDict').style.display = 'flex';
-        hasSpecificOption = true;
     }
     if (window.location.pathname.includes('routage_reseau.html')) {
         document.getElementById('lbl-lockTopology').style.display = 'flex';
-        hasSpecificOption = true;
     }
     if (window.location.pathname.includes('bit_de_parite.html')) {
         document.getElementById('lbl-strictMode').style.display = 'flex';
-        hasSpecificOption = true;
     }
     if (window.location.pathname.includes('simulateur_bluebot.html')) {
         document.getElementById('lbl-hideGrid').style.display = 'flex';
         document.getElementById('lbl-coloredCmds').style.display = 'flex';
-        hasSpecificOption = true;
     }
     if (window.location.pathname.includes('binaire_studio.html')) {
         document.getElementById('lbl-unlockEditor').style.display = 'flex';
-        hasSpecificOption = true;
     }
 
-    if (hasSpecificOption) {
-        document.getElementById('col-specific').style.display = 'block';
-    }
-
-    // Hide behavior column if all its children are hidden
-    const behaviorLabels = document.querySelectorAll('#col-behavior .share-option');
-    let anyBehaviorVisible = false;
-    behaviorLabels.forEach(lbl => {
-        if (lbl.style.display !== 'none') anyBehaviorVisible = true;
-    });
-    if (!anyBehaviorVisible) document.getElementById('col-behavior').style.display = 'none';
 
     // Event Listeners
     const modalOverlay = document.getElementById('share-modal-overlay');
@@ -662,6 +647,58 @@ function initShareModal() {
             modalOverlay.classList.remove('active');
         }
     });
+
+
+    // Presets Logic
+    const btnPresetEncadre = document.getElementById('btn-preset-encadre');
+    const btnPresetPresentation = document.getElementById('btn-preset-presentation');
+    const btnPresetLibre = document.getElementById('btn-preset-libre');
+
+    function resetAllCheckboxes() {
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+        });
+    }
+
+    if (btnPresetEncadre) {
+        btnPresetEncadre.addEventListener('click', () => {
+            resetAllCheckboxes();
+            const toCheck = ['opt-noHome', 'opt-noSettings', 'opt-lockDiff', 'opt-only'];
+            toCheck.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.checked = true;
+            });
+            updateShareUrl();
+            if (typeof showToast === 'function') {
+                showToast("Mode Encadré appliqué");
+            }
+        });
+    }
+
+    if (btnPresetPresentation) {
+        btnPresetPresentation.addEventListener('click', () => {
+            resetAllCheckboxes();
+            const toCheck = ['opt-only', 'opt-noSettings', 'opt-noAudio'];
+            toCheck.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.checked = true;
+            });
+            updateShareUrl();
+            if (typeof showToast === 'function') {
+                showToast("Mode Présentation appliqué");
+            }
+        });
+    }
+
+    if (btnPresetLibre) {
+        btnPresetLibre.addEventListener('click', () => {
+            resetAllCheckboxes();
+            updateShareUrl();
+            if (typeof showToast === 'function') {
+                showToast("Mode Libre appliqué");
+            }
+        });
+    }
 
     btnToggleAdvanced.addEventListener('click', () => {
         const isVisible = advancedOptions.style.display === 'block';
