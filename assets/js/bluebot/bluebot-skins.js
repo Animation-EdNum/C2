@@ -152,12 +152,12 @@
             const legendContainer = document.getElementById('legend-container');
             if (legendContainer) {
                 legendContainer.innerHTML = `
-        <div class="legend-item"><div class="legend-dot">${BB_SVGS.forward}</div> Avancer</div>
-        <div class="legend-item"><div class="legend-dot">${BB_SVGS.backward}</div> Reculer</div>
-        <div class="legend-item"><div class="legend-dot">${BB_SVGS.left}</div> Gauche 90°</div>
-        <div class="legend-item"><div class="legend-dot">${BB_SVGS.right}</div> Droite 90°</div>
-        <div class="legend-item"><div class="legend-dot" style="background: #22c55e; font-size: 10px; font-weight: bold;">GO</div> Démarrer</div>
-        <div class="legend-item"><div class="legend-dot" style="background: #3b82f6; font-size: 10px; font-weight: bold;">X</div> Effacer</div>
+        <div class="legend-item"><div class="legend-dot fwd">${BB_SVGS.forward}</div> Avancer</div>
+        <div class="legend-item"><div class="legend-dot bwd">${BB_SVGS.backward}</div> Reculer</div>
+        <div class="legend-item"><div class="legend-dot left">${BB_SVGS.left}</div> Gauche 90°</div>
+        <div class="legend-item"><div class="legend-dot right">${BB_SVGS.right}</div> Droite 90°</div>
+        <div class="legend-item"><div class="legend-dot go" style="font-size: 10px; font-weight: bold;">GO</div> Démarrer</div>
+        <div class="legend-item"><div class="legend-dot clear" style="font-size: 10px; font-weight: bold;">X</div> Effacer</div>
     `;
             }
         });
