@@ -2070,6 +2070,23 @@
             opacity: 0.3;
             transition: opacity 0.5s ease;
         }
+
+        /* Commandes colorées (mode enfants non latéralisés) */
+        body.colored-cmds .cmd-btn-forward, body.colored-cmds .program-cmd.fwd { background-color: #2980b9 !important; color: white !important; }
+        body.colored-cmds .cmd-btn-forward, body.colored-cmds .program-cmd.fwd:not(.active-step) { border-color: #1a5276 !important; box-shadow: 0 4px 0 #1a5276 !important; }
+
+        body.colored-cmds .cmd-btn-backward, body.colored-cmds .program-cmd.bwd { background-color: #8e44ad !important; color: white !important; }
+        body.colored-cmds .cmd-btn-backward, body.colored-cmds .program-cmd.bwd:not(.active-step) { border-color: #5b2c6f !important; box-shadow: 0 4px 0 #5b2c6f !important; }
+
+        body.colored-cmds .cmd-btn-left, body.colored-cmds .program-cmd.left { background-color: #f39c12 !important; color: white !important; }
+        body.colored-cmds .cmd-btn-left, body.colored-cmds .program-cmd.left:not(.active-step) { border-color: #a04000 !important; box-shadow: 0 4px 0 #a04000 !important; }
+
+        body.colored-cmds .cmd-btn-right, body.colored-cmds .program-cmd.right { background-color: #27ae60 !important; color: white !important; }
+        body.colored-cmds .cmd-btn-right, body.colored-cmds .program-cmd.right:not(.active-step) { border-color: #145a32 !important; box-shadow: 0 4px 0 #145a32 !important; }
+
+        body.colored-cmds .cmd-btn-go { background-color: #e74c3c !important; border-color: #922b21 !important; color: white !important; box-shadow: 0 4px 0 #922b21 !important; }
+
+        body.colored-cmds .program-cmd.fwd svg, body.colored-cmds .program-cmd.bwd svg, body.colored-cmds .program-cmd.left svg, body.colored-cmds .program-cmd.right svg { color: white !important; stroke: white !important; }
 </style>
     <script src="../assets/js/scores.js"></script>
     <script src="../assets/js/audio.js"></script>
@@ -2251,6 +2268,10 @@
                             <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
                             <i data-fa="moon" id="icon-moon"></i>
                             <span id="themeToggleText">Sombre</span>
+                        </button>
+                        <button class="menu-item-btn" id="coloredCmdsToggleBtn" aria-label="Activer/Désactiver les commandes colorées">
+                            <i data-fa="children"></i>
+                            <span id="coloredCmdsToggleText">Couleurs</span>
                         </button>
                         <button class="menu-item-btn" id="audioToggleBtn" aria-label="Activer/Désactiver le son">
                             <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
@@ -2596,6 +2617,27 @@
     <script>fa.createIcons();</script>
     <script>
         window.addEventListener('load', () => {
+
+        const coloredCmdsBtn = document.getElementById('coloredCmdsToggleBtn');
+        if (coloredCmdsBtn) {
+            coloredCmdsBtn.addEventListener('click', () => {
+                document.body.classList.toggle('colored-cmds');
+                const isActive = document.body.classList.contains('colored-cmds');
+                localStorage.setItem('bb_colored_cmds', isActive ? '1' : '0');
+
+                if (isActive) {
+                    coloredCmdsBtn.style.color = 'var(--accent)';
+                } else {
+                    coloredCmdsBtn.style.color = '';
+                }
+            });
+
+            if (localStorage.getItem('bb_colored_cmds') === '1') {
+                document.body.classList.add('colored-cmds');
+                coloredCmdsBtn.style.color = 'var(--accent)';
+            }
+        }
+
 
         // Tab key navigation
         const tabBtns = document.querySelectorAll('.tab-btn');
