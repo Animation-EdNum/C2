@@ -129,7 +129,8 @@
             },
             'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
             'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
-            'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." }
+            'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." },
+            'colors': { name: 'Couleurs', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Spécialement conçu pour les enfants non latéralisés.', hidden: true }
         };
 
         const BB_SVGS = {
@@ -714,6 +715,7 @@ if (config.baseContent) {
                 selectSkin(skinId);
             }
         }
+        window.unlockSkin = unlockSkin;
 
 
 
@@ -766,6 +768,26 @@ if (config.baseContent) {
         if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
         const ROBOT_SVGS = {
+
+            'colors': `
+<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
+
+    <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+    <circle cx="72" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+    <circle cx="28" cy="12" r="3" fill="#1e293b"/>
+    <circle cx="72" cy="12" r="3" fill="#1e293b"/>
+
+    <circle cx="50" cy="35" r="7" fill="#28a0e8" />
+    <circle cx="50" cy="65" r="7" fill="#794bc1" />
+    <circle cx="32" cy="50" r="7" fill="#f6b64b" />
+    <circle cx="68" cy="50" r="7" fill="#3acc5a" />
+
+    <circle cx="50" cy="50" r="8" fill="#e13c9e" />
+
+    <circle cx="35" cy="75" r="6" fill="#f14d35" />
+    <circle cx="65" cy="75" r="6" fill="#2acbd8" />
+</svg>`,
             'pirate': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
