@@ -515,6 +515,7 @@ function initShareModal() {
     }
     if (window.location.pathname.includes('simulateur_bluebot.html')) {
         document.getElementById('lbl-hideGrid').style.display = 'flex';
+        document.getElementById('lbl-coloredCmds').style.display = 'flex';
         hasSpecificOption = true;
     }
     if (window.location.pathname.includes('binaire_studio.html')) {
