@@ -87,7 +87,7 @@ function applyUrlParameters() {
     if (urlParams.has('forceMat')) {
         const forcedMat = urlParams.get('forceMat');
         if (forcedMat && forcedMat !== 'custom') {
-            localStorage.setItem('bb_active_mat', forcedMat);
+            localStorage.setItem('at_active_mat', forcedMat);
         }
     }
 
@@ -514,7 +514,7 @@ function initShareModal() {
     if (window.location.pathname.includes('bit_de_parite.html')) {
         document.getElementById('lbl-strictMode').style.display = 'flex';
     }
-    if (window.location.pathname.includes('simulateur_bluebot.html')) {
+    if (window.location.pathname.includes('simulateur_automate.html')) {
         document.getElementById('lbl-hideGrid').style.display = 'flex';
         document.getElementById('lbl-coloredCmds').style.display = 'flex';
     }
@@ -605,7 +605,7 @@ function initShareModal() {
 
             // we need to set it to the actual activeMat
             // Attempt to get activeMat from localStorage as it's the standard way in this app
-            let currentMat = localStorage.getItem('bb_active_mat') || 'none';
+            let currentMat = localStorage.getItem('at_active_mat') || 'none';
             if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
 
             if (currentMat && currentMat !== 'custom') {
@@ -624,7 +624,7 @@ function initShareModal() {
     shareBtn.addEventListener('click', () => {
         const forceMatCb = document.getElementById('opt-forceMat');
         if (forceMatCb) {
-            let currentMat = localStorage.getItem('bb_active_mat') || 'none';
+            let currentMat = localStorage.getItem('at_active_mat') || 'none';
             if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
             if (currentMat === 'custom') {
                 forceMatCb.disabled = true;

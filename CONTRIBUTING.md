@@ -42,7 +42,7 @@ C2/
 ├── manifest.json           # Manifeste PWA
 │
 ├── webapps/                # Applications élèves (6 apps)
-│   ├── simulateur_bluebot.html
+│   ├── simulateur_automate.html
 │   ├── binaire_studio.html
 │   ├── binaire_message.html
 │   ├── binaire_codage.html
@@ -186,7 +186,7 @@ Les tests sont organisés par application dans `meta/e2e_tests/`. Conventions :
 ## Soumettre une contribution
 
 1. **Forkez** le dépôt
-2. **Créez une branche** descriptive : `fix/bluebot-collision` ou `feat/new-webapp`
+2. **Créez une branche** descriptive : `fix/automate-collision` ou `feat/new-webapp`
 3. **Commitez** avec des messages clairs en français ou anglais
 4. **Testez** localement (vérification visuelle + tests E2E)
 5. **Ouvrez une Pull Request** vers `main` avec une description détaillée

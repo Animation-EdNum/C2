@@ -30,7 +30,7 @@ Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur d
 
 | Mobile | Écran large (Wide) |
 |:---:|:---:|
-| <img src="meta/screenshots/simulateur_bluebot_mobile.png" height="350"> | <img src="meta/screenshots/simulateur_bluebot_widescreen.png" height="350"> |
+| <img src="meta/screenshots/simulateur_automate_mobile.png" height="350"> | <img src="meta/screenshots/simulateur_automate_widescreen.png" height="350"> |
 | *Affichage vertical compact avec swipe* | *Exploitation complète de la largeur d'écran* |
 
 ### 🎮 Nos Webapps pour les élèves (Jeux pédagogiques)
@@ -39,8 +39,8 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 ![Portail d'accueil](meta/screenshots/index.png)
 
-#### 1. Simulateur Blue-Bot (`webapps/simulateur_bluebot.html`)
-![Simulateur Blue-Bot](meta/screenshots/simulateur_bluebot.png)
+#### 1. Simulateur Automate (`webapps/simulateur_automate.html`)
+![Simulateur Automate](meta/screenshots/simulateur_automate.png)
 - **À quoi sert l'outil :** Un simulateur de robot programmable permettant aux élèves de découvrir les bases de la robotique et de la pensée algorithmique à travers des parcours libres et des puzzles de cheminement dynamiques. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_AUTOMATE.md) | [Tutoriel de partage](meta/tuto/MODE_EMPLOI_PARTAGE.md).
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates · Blue-Bot** (Demi-cycle 3-4H)
 - **Fonctionnalités :** 5 modes principaux (*Exploration*, *Simulateur*, *Pilotage*, *Décodage*, et *Dessin*). Explorez librement le robot en le déplaçant case par case, résolvez des puzzles avec règles strictes (Facile, Moyen, Difficile, Extrême), prédisez les parcours et trouvez des bugs dans les programmes. Créez aussi vos propres défis sur des tapis modulables.

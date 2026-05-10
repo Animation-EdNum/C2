@@ -113,8 +113,8 @@ const MAT_CONFIG = {
 };
 
 const SKIN_CONFIG = {
-    'default': { name: 'Blue-Bot', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
-    'beebot': { name: 'Bee-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
+    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
+    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
     'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
     'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens exactement sur ta case de départ après avoir fait un parcours d\'au moins 15 cases (sans attraper le trésor).', hidden: false },
     'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
@@ -132,7 +132,7 @@ const SKIN_CONFIG = {
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." }
 };
 
-const BB_SVGS = {
+const AT_SVGS = {
     forward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="5 11 12 4 19 11"/></svg>`,
     backward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"/><polyline points="19 13 12 20 5 13"/></svg>`,
     left: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20v-6a4 4 0 0 0-4-4H4"/><polyline points="10 4 4 10 10 16"/></svg>`,
@@ -141,21 +141,21 @@ const BB_SVGS = {
 
 window.addEventListener('DOMContentLoaded', () => {
     const padFwd = document.getElementById('pad-fwd');
-    if (padFwd) padFwd.innerHTML = BB_SVGS.forward;
+    if (padFwd) padFwd.innerHTML = AT_SVGS.forward;
     const padBwd = document.getElementById('pad-bwd');
-    if (padBwd) padBwd.innerHTML = BB_SVGS.backward;
+    if (padBwd) padBwd.innerHTML = AT_SVGS.backward;
     const padLeft = document.getElementById('pad-left');
-    if (padLeft) padLeft.innerHTML = BB_SVGS.left;
+    if (padLeft) padLeft.innerHTML = AT_SVGS.left;
     const padRight = document.getElementById('pad-right');
-    if (padRight) padRight.innerHTML = BB_SVGS.right;
+    if (padRight) padRight.innerHTML = AT_SVGS.right;
 
     const legendContainer = document.getElementById('legend-container');
     if (legendContainer) {
         legendContainer.innerHTML = `
-        <div class="legend-item"><div class="legend-dot fwd">${BB_SVGS.forward}</div> Avancer</div>
-        <div class="legend-item"><div class="legend-dot bwd">${BB_SVGS.backward}</div> Reculer</div>
-        <div class="legend-item"><div class="legend-dot left">${BB_SVGS.left}</div> Gauche 90°</div>
-        <div class="legend-item"><div class="legend-dot right">${BB_SVGS.right}</div> Droite 90°</div>
+        <div class="legend-item"><div class="legend-dot fwd">${AT_SVGS.forward}</div> Avancer</div>
+        <div class="legend-item"><div class="legend-dot bwd">${AT_SVGS.backward}</div> Reculer</div>
+        <div class="legend-item"><div class="legend-dot left">${AT_SVGS.left}</div> Gauche 90°</div>
+        <div class="legend-item"><div class="legend-dot right">${AT_SVGS.right}</div> Droite 90°</div>
         <div class="legend-item"><div class="legend-dot go" style="font-size: 10px; font-weight: bold;">GO</div> Démarrer</div>
         <div class="legend-item"><div class="legend-dot clear" style="font-size: 10px; font-weight: bold;">X</div> Effacer</div>
     `;
@@ -302,7 +302,7 @@ function renderMatsGrid() {
 
 function generateMatContent(matId) {
     if (matId === 'custom') {
-        if (!localStorage.getItem('bb_custom_mat_image')) {
+        if (!localStorage.getItem('at_custom_mat_image')) {
             console.warn("Custom mat selected but no image uploaded.");
         }
         return;
@@ -395,7 +395,7 @@ function updateMemoryToggleVisibility() {
 }
 
 function selectMat(matId) {
-    if (matId === 'custom' && !localStorage.getItem('bb_custom_mat_image')) {
+    if (matId === 'custom' && !localStorage.getItem('at_custom_mat_image')) {
         // If user selects custom mat but no image uploaded yet, prompt upload
         const uploadInput = document.getElementById('customMatUpload');
         if (uploadInput) {
@@ -406,7 +406,7 @@ function selectMat(matId) {
 
     playSound('click');
     activeMat = matId;
-    localStorage.setItem('bb_active_mat', matId);
+    localStorage.setItem('at_active_mat', matId);
     generateMatContent(matId);
 
     renderMatsGrid();
@@ -672,7 +672,7 @@ function selectSkin(skinId) {
     if (!unlockedSkins.includes(skinId)) return;
     playSound('click');
     activeSkin = skinId;
-    localStorage.setItem('bb_active_skin', skinId);
+    localStorage.setItem('at_active_skin', skinId);
 
     // Cyber-Bot and Volcano force Dark Mode
     if (skinId === 'cyberbot' || skinId === 'volcano') {
@@ -702,7 +702,7 @@ function unlockSkin(skinId) {
     }
     if (!unlockedSkins.includes(skinId)) {
         unlockedSkins.push(skinId);
-        localStorage.setItem('bb_unlocked_skins', JSON.stringify(unlockedSkins));
+        localStorage.setItem('at_unlocked_skins', JSON.stringify(unlockedSkins));
 
         if (activeSkin === 'volcano') {
             launchFire();
@@ -718,13 +718,13 @@ function unlockSkin(skinId) {
 
 
 
-let collectMode = localStorage.getItem('bb_collect_mode') === 'true';
-let memoryMode = localStorage.getItem('bb_memory_mode') === 'true';
+let collectMode = localStorage.getItem('at_collect_mode') === 'true';
+let memoryMode = localStorage.getItem('at_memory_mode') === 'true';
 if (!collectMode) {
     memoryMode = false;
 }
 
-let activeMat = localStorage.getItem('bb_active_mat') || 'none';
+let activeMat = localStorage.getItem('at_active_mat') || 'none';
 generateMatContent(activeMat);
 if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
@@ -758,11 +758,11 @@ function updateGridSizeSlidersState() {
 
 
 
-let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
+let unlockedSkins = JSON.parse(localStorage.getItem('at_unlocked_skins') || '["default"]');
 if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || new URLSearchParams(window.location.search).get('unlockAllSkins') === '1') {
     unlockedSkins = Object.keys(SKIN_CONFIG);
 }
-let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
+let activeSkin = localStorage.getItem('at_active_skin') || 'default';
 if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
 const ROBOT_SVGS = {

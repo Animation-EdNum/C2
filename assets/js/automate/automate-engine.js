@@ -390,8 +390,8 @@ let simState = {
 
             // Update global total steps (but we don't unlock skins here)
             if (exploreState.stepsThisRun > 0 && (cmd === 'forward' || cmd === 'backward') && !result.blocked) {
-                const totalSteps = (parseInt(localStorage.getItem('bb_total_steps') || '0')) + 1;
-                localStorage.setItem('bb_total_steps', totalSteps);
+                const totalSteps = (parseInt(localStorage.getItem('at_total_steps') || '0')) + 1;
+                localStorage.setItem('at_total_steps', totalSteps);
             }
 
             if (!exploreState.failed && exploreState.targetRow !== null && exploreState.robotRow === exploreState.targetRow && exploreState.robotCol === exploreState.targetCol) {
@@ -778,7 +778,7 @@ let simState = {
 
             const cmdsHtml = simState.program.map((cmd, i) => {
                 const cls = cmd === 'forward' ? 'fwd' : cmd === 'backward' ? 'bwd' : cmd;
-                return `<div class="program-cmd ${cls}" tabindex="0" data-index="${i}" title="Cliquer pour supprimer">${BB_SVGS[cmd]}</div>`;
+                return `<div class="program-cmd ${cls}" tabindex="0" data-index="${i}" title="Cliquer pour supprimer">${AT_SVGS[cmd]}</div>`;
             }).join('');
             strip.insertAdjacentHTML('beforeend', cmdsHtml);
 
@@ -1000,8 +1000,8 @@ let simState = {
             }
 
             if (stepsThisRun > 0) {
-                const totalSteps = (parseInt(localStorage.getItem('bb_total_steps') || '0')) + stepsThisRun;
-                localStorage.setItem('bb_total_steps', totalSteps);
+                const totalSteps = (parseInt(localStorage.getItem('at_total_steps') || '0')) + stepsThisRun;
+                localStorage.setItem('at_total_steps', totalSteps);
                 if (totalSteps >= 100) unlockSkin('train');
             }
 
@@ -1678,7 +1678,7 @@ let simState = {
                 strip.innerHTML = '<div class="empty-program">Ajoute des commandes...</div>';
             } else {
                 strip.innerHTML = drawState.program.map((cmd, i) => {
-                    return `<div class="program-cmd" data-index="${i}">${BB_SVGS[cmd]}</div>`;
+                    return `<div class="program-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
                 }).join('');
 
                 // Add delete listeners
@@ -1727,7 +1727,7 @@ let simState = {
         function renderReadProgram() {
             const strip = document.getElementById('read-program');
             strip.innerHTML = readState.program.map((cmd, i) => {
-                return `<div class="program-cmd read-only-cmd" data-index="${i}">${BB_SVGS[cmd]}</div>`;
+                return `<div class="program-cmd read-only-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
             }).join('');
         }
 
@@ -1844,7 +1844,7 @@ let simState = {
         function renderChallengeOptions() {
             const container = document.getElementById('chal-options'); const labels = ['A', 'B', 'C'];
             container.innerHTML = chalState.options.map((opt, i) => {
-                const cmds = opt.cmds.map(cmd => `<div class="mini-cmd">${BB_SVGS[cmd]}</div>`).join('');
+                const cmds = opt.cmds.map(cmd => `<div class="mini-cmd">${AT_SVGS[cmd]}</div>`).join('');
                 return `<div class="challenge-option" data-idx="${i}" tabindex="0" data-index="${i}"><span class="option-label">${labels[i]}</span><div class="option-cmds">${cmds}</div></div>`;
             }).join('');
         }

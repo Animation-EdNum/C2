@@ -5,8 +5,8 @@ The **Suite EdNum** (by Animation-EdNum, HEP-VS) is a collection of high-quality
 
 ## Application Categories & Specific Webapps
 The applications are structured into two main categories, and accessible via two main portals (`index.html` for general use, and `indexC1.html` simplified for 4-7 year olds):
-- **Student Tools (`webapps/`):** Simulateur Blue-Bot, Pixel Studio, Mots secrets (located at `webapps/binaire_message.html`), Routage Réseau, Codage binaire, Bit de Parité, etc.
-  - The 'simulateur automate' refers to `webapps/simulateur_bluebot.html`, featuring 4 modes: Simulateur, Pilotage, Décodage, and Dessin. Its user manual is at `MODE_EMPLOI_SIMULATEUR_AUTOMATE.md`.
+- **Student Tools (`webapps/`):** Simulateur Automate, Pixel Studio, Mots secrets (located at `webapps/binaire_message.html`), Routage Réseau, Codage binaire, Bit de Parité, etc.
+  - The 'simulateur automate' refers to `webapps/simulateur_automate.html`, featuring 4 modes: Simulateur, Pilotage, Décodage, and Dessin. Its user manual is at `meta/tuto/MODE_EMPLOI_SIMULATEUR_AUTOMATE.md`.
 - **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. They use a distinct style and layout compared to student apps, sharing a dedicated stylesheet (`assets/css/teacher.css`). Avoid extracting their shared styles into the global `shared.css` and avoid redundant local `<style>` overrides within them.
 
 ## Technical Philosophy & Architecture
@@ -35,5 +35,5 @@ The applications are structured into two main categories, and accessible via two
 - **Support:** Primary contact: vivian.epiney@hepvs.ch.
 
 ## Current Sprint Focus
-- **Simulateur Blue-Bot:** Stable, feature complete.
-- **Ongoing:** Standardization of mobile navigation (moving away from bottom tab bars to top `.tabs`), unified toast notifications, and visual UI audits (border-radius, interactions).
+- **Simulateur Automate:** Rebranded and stabilized.
+- **Ongoing:** Final verification of the rebranding (filenames, localStorage keys, internal strings).

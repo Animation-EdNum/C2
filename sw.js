@@ -37,7 +37,7 @@ const ASSETS = [
     './webapps/binaire_studio.html',
     './webapps/bit_de_parite.html',
     './webapps/routage_reseau.html',
-    './webapps/simulateur_bluebot.html',
+    './webapps/simulateur_automate.html',
 
     // Ressources
     './webapps/teacher/bareme.html',

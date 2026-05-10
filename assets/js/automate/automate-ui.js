@@ -245,11 +245,11 @@ window.commandsVisible = commandsVisible;
                 collectToggle.addEventListener('change', (e) => {
                     if (typeof collectMode !== 'undefined') {
                         collectMode = e.target.checked;
-                        localStorage.setItem('bb_collect_mode', collectMode);
+                        localStorage.setItem('at_collect_mode', collectMode);
                     }
                     if (!collectMode && typeof memoryMode !== 'undefined') {
                         memoryMode = false;
-                        localStorage.setItem('bb_memory_mode', false);
+                        localStorage.setItem('at_memory_mode', false);
                         if (memoryToggle) memoryToggle.checked = false;
                     }
 
@@ -299,7 +299,7 @@ window.commandsVisible = commandsVisible;
                 memoryToggle.addEventListener('change', (e) => {
                     if (typeof memoryMode !== 'undefined') {
                         memoryMode = e.target.checked;
-                        localStorage.setItem('bb_memory_mode', memoryMode);
+                        localStorage.setItem('at_memory_mode', memoryMode);
                     }
                     if (typeof generateMatContent === 'function') generateMatContent(activeMat);
                     if (typeof buildGrid === 'function') {
@@ -342,8 +342,8 @@ window.commandsVisible = commandsVisible;
             }
 
             // Restore active state
-            activeMat = localStorage.getItem('bb_active_mat') || 'none';
-            activeSkin = localStorage.getItem('bb_active_skin') || 'default';
+            activeMat = localStorage.getItem('at_active_mat') || 'none';
+            activeSkin = localStorage.getItem('at_active_skin') || 'default';
             if (!MAT_CONFIG[activeMat]) activeMat = 'none';
             generateMatContent(activeMat);
 
@@ -394,7 +394,7 @@ window.commandsVisible = commandsVisible;
             updateCustomMatUI();
 
             // Additional initializations
-            ScoreManager.init('simulateur_bluebot');
+            ScoreManager.init('simulateur_automate');
             startTabTimer(activeTab);
             updateExtremeVisibility();
 
@@ -579,7 +579,7 @@ window.commandsVisible = commandsVisible;
 
         const matOpacitySlider = document.getElementById('matOpacitySlider');
         const matOpacityValue = document.getElementById('matOpacityValue');
-        let savedOpacity = localStorage.getItem('bb_mat_opacity');
+        let savedOpacity = localStorage.getItem('at_mat_opacity');
         if (savedOpacity) {
             document.documentElement.style.setProperty('--mat-opacity', savedOpacity);
             if (matOpacitySlider) {
@@ -592,7 +592,7 @@ window.commandsVisible = commandsVisible;
                 const val = e.target.value;
                 document.documentElement.style.setProperty('--mat-opacity', val);
                 matOpacityValue.textContent = Math.round(val * 100) + '%';
-                localStorage.setItem('bb_mat_opacity', val);
+                localStorage.setItem('at_mat_opacity', val);
             });
             matOpacitySlider.addEventListener('mousedown', () => {
                 document.getElementById('mats-drawer').classList.add('slider-active-drawer', 'opacity-active');
@@ -689,7 +689,7 @@ window.commandsVisible = commandsVisible;
 
                     try {
                         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                        localStorage.setItem('bb_custom_mat_image', dataUrl);
+                        localStorage.setItem('at_custom_mat_image', dataUrl);
                         document.documentElement.style.setProperty('--custom-mat-url', `url(${dataUrl})`);
                         updateCustomMatUI();
                         selectMat('custom');
@@ -717,7 +717,7 @@ window.commandsVisible = commandsVisible;
         function updateCustomMatUI() {
             const titleEl = document.getElementById('customMatTitle');
             if (titleEl) {
-                if (localStorage.getItem('bb_custom_mat_image')) {
+                if (localStorage.getItem('at_custom_mat_image')) {
                     titleEl.textContent = "Télécharger une nouvelle image";
                 } else {
                     titleEl.textContent = "Ajouter un tapis personnalisé";
@@ -726,7 +726,7 @@ window.commandsVisible = commandsVisible;
         }
 
         // Restore custom mat on load if exists
-        const savedCustomMat = localStorage.getItem('bb_custom_mat_image');
+        const savedCustomMat = localStorage.getItem('at_custom_mat_image');
         if (savedCustomMat) {
             document.documentElement.style.setProperty('--custom-mat-url', `url(${savedCustomMat})`);
         }
