@@ -1,157 +1,157 @@
-        /* ================================================================
-           SVGS DES BOUTONS DU BLUE-BOT
-           ================================================================ */
-        const MAT_CONFIG = {
-            'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
-            'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
-            'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
-            'emotions': {
-                name: 'Émotions et sentiments',
-                desc: 'Reconnaître et nommer les émotions.',
-                example: 'Comment te sens-tu aujourd\'hui ?',
-                icon: '🎭',
-                content: [
-                    '😀', '😢', '😡', '😨',
-                    '🤢', '😴', '🤔', '🤩',
-                    '😭', '🥳', '🥱', '🤐',
-                    '🤧', '🤒', '🤕', '🤑'
-                ]
-            },
-            'seasons': {
-                name: 'Saisons et météo',
-                desc: 'Les saisons et les différents types de météo.',
-                example: 'Quel temps fait-il aujourd\'hui ?',
-                icon: '☀️',
-                content: [
-                    '☀️', '🌧️', '⛅', '⛈️', '❄️',
-                    '⛄', '🍂', '🍁', '🌸', '🏖️',
-                    '🧥', '🧣', '🧤', '☂️', '🌈',
-                    '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
-                ]
-            },
-            'city': {
-                name: 'Cité',
-                desc: 'Thème ville et routes.',
-                example: 'Amène le robot au supermarché.',
-                icon: '🗺️'
-            },
-            'math': {
-                name: 'Calcul mental',
-                desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
-                example: 'Quel est le résultat de 5 + 7 ?',
-                icon: '🔢',
-                content: Array.from({ length: 101 }, (_, i) => i.toString())
-            },
-            'shapes': {
-                name: 'Couleurs et formes',
-                desc: 'Formes géométriques colorées.',
-                example: 'Trouve le carré rouge.',
-                icon: '🔵',
-                content: [],
-                baseContent: [
-                    // Simple shapes and primary/basic colors first
-                    '🔴', '🔵', '🟡', '🟩', '🟥', '🟦', '🟨', '🟢',
-                    // Secondary colors and simpler shapes
-                    '🟠', '🟣', '🟧', '🟪', '🔺', '🔻',
-                    // More complex colors/shapes
-                    '⚫', '⚪', '⬛', '⬜', '❤️', '💙', '💚', '💛',
-                    // Complex/less common shapes and colors
-                    '🔶', '🔷', '🔸', '🔹', '🟤', '🟫', '🤎', '🤍', '🩷', '🩵', '🖤', '🧡', '💜'
-                ]
-            },
-            'geo': {
-                name: 'Géographie',
-                desc: 'Drapeaux du monde.',
-                example: 'Dans quel pays se trouve Tokyo ?',
-                icon: '🌍',
-                content: [
-                    '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧', '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷',
-                    '🇸🇪', '🇳🇴', '🇺🇸', '🇨🇦', '🇲🇽', '🇨🇭', '🇨🇴', '🇦🇷', '🇯🇵', '🇰🇷',
-                    '🇧🇷', '🇿🇦', '🇦🇺', '🇳🇿', '🇨🇳', '🇮🇳', '🇪🇬', '🇲🇦', '🇸🇳', '🇰🇪',
-                    '🇷🇺', '🇹🇷', '🇵🇱', '🇩🇰', '🇫🇮', '🇮🇪', '🇨🇿', '🇭🇺', '🇷🇴', '🇧🇬',
-                    '🇷🇸', '🇭🇷', '🇸🇮', '🇸🇰', '🇺🇦', '🇨🇱', '🇵🇪', '🇻🇪', '🇺🇾', '🇵🇾',
-                    '🇧🇴', '🇪🇨', '🇨🇺', '🇯🇲', '🇭🇹', '🇩🇴', '🇵🇷', '🇲🇬', '🇳🇬', '🇬🇭',
-                    '🇨🇮', '🇨🇲', '🇩🇿', '🇹🇳', '🇱🇾', '🇸🇩', '🇪🇹', '🇸🇴', '🇹🇿', '🇺🇬',
-                    '🇷🇼', '🇿🇲', '🇿🇼', '🇲🇿', '🇦🇴', '🇳🇦', '🇧🇼', '🇲🇾', '🇮🇩', '🇵🇭',
-                    '🇹🇭', '🇻🇳', '🇲🇲', '🇰🇭', '🇱🇦', '🇸🇬', '🇧🇩', '🇵🇰', '🇮🇷', '🇮🇶',
-                    '🇸🇦', '🇦🇪', '🇶🇦', '🇰🇼', '🇴🇲', '🇾🇪', '🇸🇾', '🇯🇴', '🇱🇧', '🇮🇱'
-                ]
-            },
-            'time': {
-                name: 'Lecture de l\'heure',
-                desc: 'Wie spät ist es ?',
-                icon: '⌚',
-                content: [
-                    '🕛', '🕐', '🕑', '🕒', '🕓', '🕔',
-                    '🕕', '🕖', '🕗', '🕘', '🕙', '🕚',
-                    '🕧', '🕜', '🕝', '🕞', '🕟', '🕠',
-                    '🕡', '🕢', '🕣', '🕤', '🕥', '🕦'
-                ]
-            },
-            'fairy_tale': {
-                name: 'Conte personnalisable',
-                desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
-                icon: '🧚',
-                content: [],
-                baseContent: [
-                    '👸', '🐉', '🧙', '🏰', '🌲', '💎', '👑', '🦄', '⚔️', '🛡️',
-                    '🗝️', '📜', '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️', '🧛‍♂️', '🧟‍♀️',
-                    '🧞‍♀️', '🪞', '🍎', '🍄', '🌼', '🌈', '⭐', '🌙', '☀️', '☁️',
-                    '⚡', '🔥', '💧', '🌊', '❄️', '🌪️', '🤴', '🦹', '🦸', '🐺',
-                    '🕷️', '🕸️', '🦇', '🥀', '🌹', '🏹', '🪄', '🔮', '🧪', '🩸',
-                    '🦴', '☠️', '👻', '👽', '👾', '🤖', '🎃', '🎭', '🎨', '🎻',
-                    '🎺', '🪘', '🥁', '⛺', '🛶', '⛵', '⚓', '🧭', '🗺️', '🏔️',
-                    '🌋', '🏕️', '🛤️', '🪙', '💰', '💸', '🏺', '💍', '🦅', '🦆',
-                    '🦢', '🦩', '🦚', '🦜', '🐊', '🐢', '🦎', '🐍', '🦕', '🦖',
-                    '🐳', '🐬', '🦭', '🐟', '🐠', '🐡', '🦈', '🐙',
-                    '🦉', '🦔', '🐿️', '🦡', '🦦', '🪲', '🦋', '🐌', '🐞', '🐜',
-                    '🪶', '🪺', '🪹', '🪨', '🪵', '🪴', '🌾', '💐', '🌷', '🪷',
-                    '🏵️', '🌸', '🌺', '🌻', '🪻', '🍄‍🟫', '🪸', '🪼',
-                    '🦀', '🦞', '🦐', '🦑', '🦪', '🐚'
-                ]
-            }
-        };
+/* ================================================================
+   SVGS DES BOUTONS DU BLUE-BOT
+   ================================================================ */
+const MAT_CONFIG = {
+    'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
+    'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
+    'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+    'emotions': {
+        name: 'Émotions et sentiments',
+        desc: 'Reconnaître et nommer les émotions.',
+        example: 'Comment te sens-tu aujourd\'hui ?',
+        icon: '🎭',
+        content: [
+            '😀', '😢', '😡', '😨',
+            '🤢', '😴', '🤔', '🤩',
+            '😭', '🥳', '🥱', '🤐',
+            '🤧', '🤒', '🤕', '🤑'
+        ]
+    },
+    'seasons': {
+        name: 'Saisons et météo',
+        desc: 'Les saisons et les différents types de météo.',
+        example: 'Quel temps fait-il aujourd\'hui ?',
+        icon: '☀️',
+        content: [
+            '☀️', '🌧️', '⛅', '⛈️', '❄️',
+            '⛄', '🍂', '🍁', '🌸', '🏖️',
+            '🧥', '🧣', '🧤', '☂️', '🌈',
+            '🌪️', '🌫️', '🌂', '🌡️', '🌬️'
+        ]
+    },
+    'city': {
+        name: 'Cité',
+        desc: 'Thème ville et routes.',
+        example: 'Amène le robot au supermarché.',
+        icon: '🗺️'
+    },
+    'math': {
+        name: 'Calcul mental',
+        desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
+        example: 'Quel est le résultat de 5 + 7 ?',
+        icon: '🔢',
+        content: Array.from({ length: 101 }, (_, i) => i.toString())
+    },
+    'shapes': {
+        name: 'Couleurs et formes',
+        desc: 'Formes géométriques colorées.',
+        example: 'Trouve le carré rouge.',
+        icon: '🔵',
+        content: [],
+        baseContent: [
+            // Simple shapes and primary/basic colors first
+            '🔴', '🔵', '🟡', '🟩', '🟥', '🟦', '🟨', '🟢',
+            // Secondary colors and simpler shapes
+            '🟠', '🟣', '🟧', '🟪', '🔺', '🔻',
+            // More complex colors/shapes
+            '⚫', '⚪', '⬛', '⬜', '❤️', '💙', '💚', '💛',
+            // Complex/less common shapes and colors
+            '🔶', '🔷', '🔸', '🔹', '🟤', '🟫', '🤎', '🤍', '🩷', '🩵', '🖤', '🧡', '💜'
+        ]
+    },
+    'geo': {
+        name: 'Géographie',
+        desc: 'Drapeaux du monde.',
+        example: 'Dans quel pays se trouve Tokyo ?',
+        icon: '🌍',
+        content: [
+            '🇫🇷', '🇩🇪', '🇮🇹', '🇪🇸', '🇵🇹', '🇬🇧', '🇧🇪', '🇳🇱', '🇦🇹', '🇬🇷',
+            '🇸🇪', '🇳🇴', '🇺🇸', '🇨🇦', '🇲🇽', '🇨🇭', '🇨🇴', '🇦🇷', '🇯🇵', '🇰🇷',
+            '🇧🇷', '🇿🇦', '🇦🇺', '🇳🇿', '🇨🇳', '🇮🇳', '🇪🇬', '🇲🇦', '🇸🇳', '🇰🇪',
+            '🇷🇺', '🇹🇷', '🇵🇱', '🇩🇰', '🇫🇮', '🇮🇪', '🇨🇿', '🇭🇺', '🇷🇴', '🇧🇬',
+            '🇷🇸', '🇭🇷', '🇸🇮', '🇸🇰', '🇺🇦', '🇨🇱', '🇵🇪', '🇻🇪', '🇺🇾', '🇵🇾',
+            '🇧🇴', '🇪🇨', '🇨🇺', '🇯🇲', '🇭🇹', '🇩🇴', '🇵🇷', '🇲🇬', '🇳🇬', '🇬🇭',
+            '🇨🇮', '🇨🇲', '🇩🇿', '🇹🇳', '🇱🇾', '🇸🇩', '🇪🇹', '🇸🇴', '🇹🇿', '🇺🇬',
+            '🇷🇼', '🇿🇲', '🇿🇼', '🇲🇿', '🇦🇴', '🇳🇦', '🇧🇼', '🇲🇾', '🇮🇩', '🇵🇭',
+            '🇹🇭', '🇻🇳', '🇲🇲', '🇰🇭', '🇱🇦', '🇸🇬', '🇧🇩', '🇵🇰', '🇮🇷', '🇮🇶',
+            '🇸🇦', '🇦🇪', '🇶🇦', '🇰🇼', '🇴🇲', '🇾🇪', '🇸🇾', '🇯🇴', '🇱🇧', '🇮🇱'
+        ]
+    },
+    'time': {
+        name: 'Lecture de l\'heure',
+        desc: 'Wie spät ist es ?',
+        icon: '⌚',
+        content: [
+            '🕛', '🕐', '🕑', '🕒', '🕓', '🕔',
+            '🕕', '🕖', '🕗', '🕘', '🕙', '🕚',
+            '🕧', '🕜', '🕝', '🕞', '🕟', '🕠',
+            '🕡', '🕢', '🕣', '🕤', '🕥', '🕦'
+        ]
+    },
+    'fairy_tale': {
+        name: 'Conte personnalisable',
+        desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
+        icon: '🧚',
+        content: [],
+        baseContent: [
+            '👸', '🐉', '🧙', '🏰', '🌲', '💎', '👑', '🦄', '⚔️', '🛡️',
+            '🗝️', '📜', '🐴', '🐸', '🧚', '🧜‍♀️', '🧞‍♂️', '🧝‍♀️', '🧛‍♂️', '🧟‍♀️',
+            '🧞‍♀️', '🪞', '🍎', '🍄', '🌼', '🌈', '⭐', '🌙', '☀️', '☁️',
+            '⚡', '🔥', '💧', '🌊', '❄️', '🌪️', '🤴', '🦹', '🦸', '🐺',
+            '🕷️', '🕸️', '🦇', '🥀', '🌹', '🏹', '🪄', '🔮', '🧪', '🩸',
+            '🦴', '☠️', '👻', '👽', '👾', '🤖', '🎃', '🎭', '🎨', '🎻',
+            '🎺', '🪘', '🥁', '⛺', '🛶', '⛵', '⚓', '🧭', '🗺️', '🏔️',
+            '🌋', '🏕️', '🛤️', '🪙', '💰', '💸', '🏺', '💍', '🦅', '🦆',
+            '🦢', '🦩', '🦚', '🦜', '🐊', '🐢', '🦎', '🐍', '🦕', '🦖',
+            '🐳', '🐬', '🦭', '🐟', '🐠', '🐡', '🦈', '🐙',
+            '🦉', '🦔', '🐿️', '🦡', '🦦', '🪲', '🦋', '🐌', '🐞', '🐜',
+            '🪶', '🪺', '🪹', '🪨', '🪵', '🪴', '🌾', '💐', '🌷', '🪷',
+            '🏵️', '🌸', '🌺', '🌻', '🪻', '🍄‍🟫', '🪸', '🪼',
+            '🦀', '🦞', '🦐', '🦑', '🦪', '🐚'
+        ]
+    }
+};
 
-        const SKIN_CONFIG = {
-            'default': { name: 'Blue-Bot', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
-            'beebot': { name: 'Bee-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
-            'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
-            'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens exactement sur ta case de départ après avoir fait un parcours d\'au moins 15 cases (sans attraper le trésor).', hidden: false },
-            'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
-            'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 65%; height: 65%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
-            'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
-            'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
-            'volcano': {
-                name: 'En feu 🔥',
-                obstacle: '<i data-fa="snowflake" style="color: #3498db;"></i>',
-                target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coinGrad)"/><circle cx="70" cy="30" r="9" fill="url(#coinGrad)"/><circle cx="20" cy="55" r="8" fill="url(#coinGrad)"/><circle cx="80" cy="65" r="11" fill="url(#coinGrad)"/><circle cx="45" cy="75" r="12" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coinGrad)"/><circle cx="65" cy="50" r="13" fill="url(#coinGrad)"/><circle cx="35" cy="60" r="12" fill="url(#coinGrad)"/><circle cx="60" cy="70" r="9" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coinGrad)" filter="url(#goldGlow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#goldGlow)"/></g></g></svg>`,
-                desc: 'Réussis un décodage (extrême) du premier coup.'
-            },
-            'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
-            'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
-            'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." }
-        };
+const SKIN_CONFIG = {
+    'default': { name: 'Blue-Bot', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
+    'beebot': { name: 'Bee-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
+    'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
+    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens exactement sur ta case de départ après avoir fait un parcours d\'au moins 15 cases (sans attraper le trésor).', hidden: false },
+    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
+    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
+    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
+    'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
+    'volcano': {
+        name: 'En feu 🔥',
+        obstacle: '<i data-fa="snowflake" style="color: #3498db;"></i>',
+        target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coinGrad)"/><circle cx="70" cy="30" r="9" fill="url(#coinGrad)"/><circle cx="20" cy="55" r="8" fill="url(#coinGrad)"/><circle cx="80" cy="65" r="11" fill="url(#coinGrad)"/><circle cx="45" cy="75" r="12" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coinGrad)"/><circle cx="65" cy="50" r="13" fill="url(#coinGrad)"/><circle cx="35" cy="60" r="12" fill="url(#coinGrad)"/><circle cx="60" cy="70" r="9" fill="url(#coinGrad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coinGrad)" filter="url(#goldGlow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#goldGlow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#goldGlow)"/></g></g></svg>`,
+        desc: 'Réussis un décodage (extrême) du premier coup.'
+    },
+    'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
+    'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
+    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." }
+};
 
-        const BB_SVGS = {
-            forward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="5 11 12 4 19 11"/></svg>`,
-            backward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"/><polyline points="19 13 12 20 5 13"/></svg>`,
-            left: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20v-6a4 4 0 0 0-4-4H4"/><polyline points="10 4 4 10 10 16"/></svg>`,
-            right: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6a4 4 0 0 1 4-4h12"/><polyline points="14 4 20 10 14 16"/></svg>`
-        };
+const BB_SVGS = {
+    forward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="5 11 12 4 19 11"/></svg>`,
+    backward: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="20"/><polyline points="19 13 12 20 5 13"/></svg>`,
+    left: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20v-6a4 4 0 0 0-4-4H4"/><polyline points="10 4 4 10 10 16"/></svg>`,
+    right: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20v-6a4 4 0 0 1 4-4h12"/><polyline points="14 4 20 10 14 16"/></svg>`
+};
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const padFwd = document.getElementById('pad-fwd');
-            if (padFwd) padFwd.innerHTML = BB_SVGS.forward;
-            const padBwd = document.getElementById('pad-bwd');
-            if (padBwd) padBwd.innerHTML = BB_SVGS.backward;
-            const padLeft = document.getElementById('pad-left');
-            if (padLeft) padLeft.innerHTML = BB_SVGS.left;
-            const padRight = document.getElementById('pad-right');
-            if (padRight) padRight.innerHTML = BB_SVGS.right;
+window.addEventListener('DOMContentLoaded', () => {
+    const padFwd = document.getElementById('pad-fwd');
+    if (padFwd) padFwd.innerHTML = BB_SVGS.forward;
+    const padBwd = document.getElementById('pad-bwd');
+    if (padBwd) padBwd.innerHTML = BB_SVGS.backward;
+    const padLeft = document.getElementById('pad-left');
+    if (padLeft) padLeft.innerHTML = BB_SVGS.left;
+    const padRight = document.getElementById('pad-right');
+    if (padRight) padRight.innerHTML = BB_SVGS.right;
 
-            const legendContainer = document.getElementById('legend-container');
-            if (legendContainer) {
-                legendContainer.innerHTML = `
+    const legendContainer = document.getElementById('legend-container');
+    if (legendContainer) {
+        legendContainer.innerHTML = `
         <div class="legend-item"><div class="legend-dot fwd">${BB_SVGS.forward}</div> Avancer</div>
         <div class="legend-item"><div class="legend-dot bwd">${BB_SVGS.backward}</div> Reculer</div>
         <div class="legend-item"><div class="legend-dot left">${BB_SVGS.left}</div> Gauche 90°</div>
@@ -159,92 +159,92 @@
         <div class="legend-item"><div class="legend-dot go" style="font-size: 10px; font-weight: bold;">GO</div> Démarrer</div>
         <div class="legend-item"><div class="legend-dot clear" style="font-size: 10px; font-weight: bold;">X</div> Effacer</div>
     `;
-            }
-        });
+    }
+});
 
-        /* ================================================================
-           SKINS ET GAMIFICATION
-           ================================================================ */
-
-
-        function shuffleArray(array) {
-            let newArr = [...array];
-            let currentIndex = newArr.length, randomIndex;
-            while (currentIndex !== 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [newArr[currentIndex], newArr[randomIndex]] = [newArr[randomIndex], newArr[currentIndex]];
-            }
-            return newArr;
-        }
-
-        let drawerTriggerElement = null;
+/* ================================================================
+   SKINS ET GAMIFICATION
+   ================================================================ */
 
 
-        const trapListeners = new WeakMap();
+function shuffleArray(array) {
+    let newArr = [...array];
+    let currentIndex = newArr.length, randomIndex;
+    while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [newArr[currentIndex], newArr[randomIndex]] = [newArr[randomIndex], newArr[currentIndex]];
+    }
+    return newArr;
+}
 
-        function setupFocusTrap(modalId) {
-            const modal = document.getElementById(modalId);
-            if (!modal) return;
-            const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (focusableElements.length === 0) return;
+let drawerTriggerElement = null;
 
-            const firstElement = focusableElements[0];
-            const lastElement = focusableElements[focusableElements.length - 1];
 
-            if (!trapListeners.has(modal)) {
-                const listener = function(e) {
-                    if (e.key === 'Tab') {
-                        if (e.shiftKey) {
-                            if (document.activeElement === firstElement) {
-                                lastElement.focus();
-                                e.preventDefault();
-                            }
-                        } else {
-                            if (document.activeElement === lastElement) {
-                                firstElement.focus();
-                                e.preventDefault();
-                            }
-                        }
+const trapListeners = new WeakMap();
+
+function setupFocusTrap(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (!trapListeners.has(modal)) {
+        const listener = function (e) {
+            if (e.key === 'Tab') {
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
                     }
-                };
-                modal.addEventListener('keydown', listener);
-                trapListeners.set(modal, listener);
+                } else {
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
             }
+        };
+        modal.addEventListener('keydown', listener);
+        trapListeners.set(modal, listener);
+    }
 
-            // Focus first element on open
-            setTimeout(() => firstElement.focus(), 50);
-        }
+    // Focus first element on open
+    setTimeout(() => firstElement.focus(), 50);
+}
 
-        function openMatsModal() {
-            drawerTriggerElement = document.activeElement;
-            playSound('click');
-            renderMatsGrid();
-            document.getElementById('mats-drawer').classList.add('active');
-            document.getElementById('mats-drawer-overlay').classList.add('active');
-            document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'false');
-            document.getElementById('mats-drawer').setAttribute('aria-hidden', 'false');
-            setupFocusTrap('mats-drawer');
-        }
+function openMatsModal() {
+    drawerTriggerElement = document.activeElement;
+    playSound('click');
+    renderMatsGrid();
+    document.getElementById('mats-drawer').classList.add('active');
+    document.getElementById('mats-drawer-overlay').classList.add('active');
+    document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'false');
+    document.getElementById('mats-drawer').setAttribute('aria-hidden', 'false');
+    setupFocusTrap('mats-drawer');
+}
 
-        function closeMatsModal() {
-            if (drawerTriggerElement) drawerTriggerElement.focus();
-            playSound('click');
-            document.getElementById('mats-drawer').classList.remove('active');
-            document.getElementById('mats-drawer-overlay').classList.remove('active');
-            document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'true');
-            document.getElementById('mats-drawer').setAttribute('aria-hidden', 'true');
-        }
+function closeMatsModal() {
+    if (drawerTriggerElement) drawerTriggerElement.focus();
+    playSound('click');
+    document.getElementById('mats-drawer').classList.remove('active');
+    document.getElementById('mats-drawer-overlay').classList.remove('active');
+    document.getElementById('mats-drawer-overlay').setAttribute('aria-hidden', 'true');
+    document.getElementById('mats-drawer').setAttribute('aria-hidden', 'true');
+}
 
-        function renderMatsGrid() {
-            const container = document.getElementById('mats-list-container');
-            container.innerHTML = Object.keys(MAT_CONFIG).filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
-                const config = MAT_CONFIG[matId];
-                const isActive = activeMat === matId;
+function renderMatsGrid() {
+    const container = document.getElementById('mats-list-container');
+    container.innerHTML = Object.keys(MAT_CONFIG).filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
+        const config = MAT_CONFIG[matId];
+        const isActive = activeMat === matId;
 
-                const exampleHtml = config.example ? `<div class="skin-item-desc" style="font-style: italic; color: var(--accent); margin-top: 4px; font-size: 0.8em;">💡 ${config.example}</div>` : '';
+        const exampleHtml = config.example ? `<div class="skin-item-desc" style="font-style: italic; color: var(--accent); margin-top: 4px; font-size: 0.8em;">💡 ${config.example}</div>` : '';
 
-                return `
+        return `
                     <div class="skin-list-item ${isActive ? 'active-skin' : ''}" data-mat="${matId}" tabindex="0">
                         <div class="skin-item-avatar" style="font-size: 32px;">
                             ${config.icon || 'A'}
@@ -256,15 +256,15 @@
                         </div>
                     </div>
                 `;
-            }).join('');
-            if (window.fa && typeof window.fa.createIcons === 'function') {
-                window.fa.createIcons();
-            }
+    }).join('');
+    if (window.fa && typeof window.fa.createIcons === 'function') {
+        window.fa.createIcons();
+    }
 
-            // Prepend the custom upload at the beginning
-            const customConfig = MAT_CONFIG['custom'];
-            const isCustomActive = activeMat === 'custom';
-            const customHtml = `
+    // Prepend the custom upload at the beginning
+    const customConfig = MAT_CONFIG['custom'];
+    const isCustomActive = activeMat === 'custom';
+    const customHtml = `
                 <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-bottom: 15px; border-bottom: 1px solid var(--grid-border); border-radius: 12px 12px 0 0; padding-bottom: 15px;">
                     <div class="skin-item-avatar" style="font-size: 32px;">
                         ${customConfig.icon}
@@ -284,214 +284,214 @@
                     </div>
                 </div>
             `;
-            container.innerHTML = customHtml + container.innerHTML;
-            fa.createIcons();
+    container.innerHTML = customHtml + container.innerHTML;
+    fa.createIcons();
 
-            // Re-bind the upload listener here since the DOM is recreated
-            const uploadInput = document.getElementById('customMatUpload');
-            if (uploadInput) {
-                // Ensure we call the existing global function if defined, or define one dynamically
-                uploadInput.addEventListener('change', function (e) {
-                    if (typeof handleCustomMatUpload === 'function') {
-                        handleCustomMatUpload(e);
-                    }
-                });
+    // Re-bind the upload listener here since the DOM is recreated
+    const uploadInput = document.getElementById('customMatUpload');
+    if (uploadInput) {
+        // Ensure we call the existing global function if defined, or define one dynamically
+        uploadInput.addEventListener('change', function (e) {
+            if (typeof handleCustomMatUpload === 'function') {
+                handleCustomMatUpload(e);
             }
+        });
+    }
+}
+
+
+function generateMatContent(matId) {
+    if (matId === 'custom') {
+        if (!localStorage.getItem('bb_custom_mat_image')) {
+            console.warn("Custom mat selected but no image uploaded.");
         }
+        return;
+    }
+    const config = MAT_CONFIG[matId];
+    const endContainer = document.getElementById('sim-end-container');
+    if (endContainer) {
+        if (config && config.content) {
+            endContainer.style.display = 'block';
+        } else {
+            endContainer.style.display = 'none';
+        }
+    }
+    if (!config) {
+        console.warn(`Unknown matId: ${matId}`);
+        return;
+    }
 
+    const needed = GRID_ROWS * GRID_COLS;
+    if (memoryMode && matId !== 'none' && matId !== 'custom' && matId !== 'city') {
+        const pool = config.baseContent || config.content;
+        if (pool && pool.length > 0) {
+            const neededPairs = Math.floor(needed / 2);
+            let pairsContent = [];
+            const shuffledPool = shuffleArray([...pool]);
 
-        function generateMatContent(matId) {
-            if (matId === 'custom') {
-                if (!localStorage.getItem('bb_custom_mat_image')) {
-                    console.warn("Custom mat selected but no image uploaded.");
-                }
-                return;
-            }
-            const config = MAT_CONFIG[matId];
-            const endContainer = document.getElementById('sim-end-container');
-            if (endContainer) {
-                if (config && config.content) {
-                    endContainer.style.display = 'block';
-                } else {
-                    endContainer.style.display = 'none';
-                }
-            }
-            if (!config) {
-                console.warn(`Unknown matId: ${matId}`);
-                return;
+            for (let i = 0; i < neededPairs; i++) {
+                const item = shuffledPool[i % shuffledPool.length];
+                pairsContent.push(item, item);
             }
 
+            if (needed % 2 !== 0) {
+                pairsContent.push(shuffledPool[neededPairs % shuffledPool.length]);
+            }
+
+            config.content = shuffleArray(pairsContent);
+            return;
+        }
+    }
+
+    if (config.baseContent) {
+        if (matId === 'shapes') {
             const needed = GRID_ROWS * GRID_COLS;
-            if (memoryMode && matId !== 'none' && matId !== 'custom' && matId !== 'city') {
-                const pool = config.baseContent || config.content;
-                if (pool && pool.length > 0) {
-                    const neededPairs = Math.floor(needed / 2);
-                    let pairsContent = [];
-                    const shuffledPool = shuffleArray([...pool]);
+            let content = [];
+            let baseIndex = 0;
 
-                    for (let i = 0; i < neededPairs; i++) {
-                        const item = shuffledPool[i % shuffledPool.length];
-                        pairsContent.push(item, item);
-                    }
-
-                    if (needed % 2 !== 0) {
-                        pairsContent.push(shuffledPool[neededPairs % shuffledPool.length]);
-                    }
-
-                    config.content = shuffleArray(pairsContent);
-                    return;
-                }
+            // Pick from baseContent in order (simpler first) to fill the grid
+            while (content.length < needed) {
+                content.push(config.baseContent[baseIndex % config.baseContent.length]);
+                baseIndex++;
             }
 
-if (config.baseContent) {
-                if (matId === 'shapes') {
-                    const needed = GRID_ROWS * GRID_COLS;
-                    let content = [];
-                    let baseIndex = 0;
+            config.content = shuffleArray(content);
+        } else if (matId === 'fairy_tale') {
+            config.content = shuffleArray([...config.baseContent]).slice(0, GRID_ROWS * GRID_COLS);
+        }
+    }
+}
 
-                    // Pick from baseContent in order (simpler first) to fill the grid
-                    while (content.length < needed) {
-                        content.push(config.baseContent[baseIndex % config.baseContent.length]);
-                        baseIndex++;
-                    }
 
-                    config.content = shuffleArray(content);
-                } else if (matId === 'fairy_tale') {
-                    config.content = shuffleArray([...config.baseContent]).slice(0, GRID_ROWS * GRID_COLS);
-                }
+function updateMemoryToggleVisibility() {
+    const collectContainer = document.getElementById('collect-mode-container');
+    const memoryContainer = document.getElementById('memory-mode-container');
+    const config = MAT_CONFIG[activeMat];
+    const hasMemoryContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+    const hasCollectContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+
+    if (collectContainer) {
+        if (hasCollectContent) {
+            collectContainer.style.display = 'flex';
+        } else {
+            collectContainer.style.display = 'none';
+        }
+    }
+
+    if (memoryContainer) {
+        if (hasMemoryContent) {
+            memoryContainer.style.display = 'flex';
+            if (!collectMode) {
+                memoryContainer.style.opacity = '0.5';
+                memoryContainer.style.pointerEvents = 'none';
+            } else {
+                memoryContainer.style.opacity = '1';
+                memoryContainer.style.pointerEvents = 'auto';
             }
+        } else {
+            memoryContainer.style.display = 'none';
+        }
+    }
+}
+
+function selectMat(matId) {
+    if (matId === 'custom' && !localStorage.getItem('bb_custom_mat_image')) {
+        // If user selects custom mat but no image uploaded yet, prompt upload
+        const uploadInput = document.getElementById('customMatUpload');
+        if (uploadInput) {
+            uploadInput.click();
+        }
+        return;
+    }
+
+    playSound('click');
+    activeMat = matId;
+    localStorage.setItem('bb_active_mat', matId);
+    generateMatContent(matId);
+
+    renderMatsGrid();
+    closeMatsModal();
+    updateGridSizeSlidersState();
+    updateMemoryToggleVisibility();
+
+    // Re-render grids to apply mat
+    buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+    renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+    TrailManager.clear('sim-grid');
+    if (simState.targetRow !== null && simState.targetCol !== null) {
+        renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+    }
+
+    if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+        buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
+        renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+        TrailManager.clear('explore-grid');
+        if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+            renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+        }
+    }
+    if (chalState.robotRow !== null) {
+        buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
+        renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
+        TrailManager.clear('chal-grid');
+        if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+    }
+    if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
+        buildGrid('read-grid', GRID_ROWS, GRID_COLS, readState.obstacles || []);
+        renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
+        TrailManager.clear('read-grid');
+    }
+    if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
+        buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
+        renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
+        TrailManager.clear('draw-grid');
+    }
+
+    if (matId !== 'none') {
+        unlockSkin('helicopter');
+    }
+}
+
+function openSkinsModal() {
+    drawerTriggerElement = document.activeElement;
+    playSound('click');
+    renderSkinsList();
+    document.getElementById('ui-panel').classList.add('active');
+    document.getElementById('ui-panel-overlay').classList.add('active');
+    document.getElementById('ui-panel-overlay').setAttribute('aria-hidden', 'false');
+    document.getElementById('ui-panel').setAttribute('aria-hidden', 'false');
+    setupFocusTrap('ui-panel');
+}
+
+function closeSkinsModal() {
+    if (drawerTriggerElement) drawerTriggerElement.focus();
+    playSound('click');
+    document.getElementById('ui-panel').classList.remove('active');
+    document.getElementById('ui-panel-overlay').classList.remove('active');
+    document.getElementById('ui-panel-overlay').setAttribute('aria-hidden', 'true');
+    document.getElementById('ui-panel').setAttribute('aria-hidden', 'true');
+}
+
+function renderSkinsList() {
+    const container = document.getElementById('skins-list-container');
+    container.innerHTML = Object.keys(SKIN_CONFIG).filter(id => {
+        const config = SKIN_CONFIG[id];
+        return !config.hidden || unlockedSkins.includes(id);
+    }).map(skinId => {
+        const config = SKIN_CONFIG[skinId];
+        const isUnlocked = unlockedSkins.includes(skinId);
+        const isActive = activeSkin === skinId;
+
+        let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
+        svg = svg.replace(/<animate[\s\S]*?>/gi, ''); // Remove animations for preview
+        let btnHtml = '';
+        let lockIcon = '';
+
+        if (!isUnlocked) {
+            lockIcon = `<div class="lock-icon" style="position: absolute; font-size: 24px; z-index: 2;">🔒</div>`;
         }
 
-
-        function updateMemoryToggleVisibility() {
-            const collectContainer = document.getElementById('collect-mode-container');
-            const memoryContainer = document.getElementById('memory-mode-container');
-            const config = MAT_CONFIG[activeMat];
-            const hasMemoryContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
-            const hasCollectContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
-
-            if (collectContainer) {
-                if (hasCollectContent) {
-                    collectContainer.style.display = 'flex';
-                } else {
-                    collectContainer.style.display = 'none';
-                }
-            }
-
-            if (memoryContainer) {
-                if (hasMemoryContent) {
-                    memoryContainer.style.display = 'flex';
-                    if (!collectMode) {
-                        memoryContainer.style.opacity = '0.5';
-                        memoryContainer.style.pointerEvents = 'none';
-                    } else {
-                        memoryContainer.style.opacity = '1';
-                        memoryContainer.style.pointerEvents = 'auto';
-                    }
-                } else {
-                    memoryContainer.style.display = 'none';
-                }
-            }
-        }
-
-        function selectMat(matId) {
-            if (matId === 'custom' && !localStorage.getItem('bb_custom_mat_image')) {
-                // If user selects custom mat but no image uploaded yet, prompt upload
-                const uploadInput = document.getElementById('customMatUpload');
-                if (uploadInput) {
-                    uploadInput.click();
-                }
-                return;
-            }
-
-            playSound('click');
-            activeMat = matId;
-            localStorage.setItem('bb_active_mat', matId);
-            generateMatContent(matId);
-
-            renderMatsGrid();
-            closeMatsModal();
-            updateGridSizeSlidersState();
-            updateMemoryToggleVisibility();
-
-            // Re-render grids to apply mat
-            buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
-            renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            TrailManager.clear('sim-grid');
-            if (simState.targetRow !== null && simState.targetCol !== null) {
-                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
-            }
-
-            if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
-                buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
-                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
-                TrailManager.clear('explore-grid');
-                if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
-                    renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
-                }
-            }
-            if (chalState.robotRow !== null) {
-                buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
-                renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
-                TrailManager.clear('chal-grid');
-                if (chalState.targetRow !== null) renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
-            }
-            if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
-                buildGrid('read-grid', GRID_ROWS, GRID_COLS, readState.obstacles || []);
-                renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
-                TrailManager.clear('read-grid');
-            }
-            if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
-                buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
-                renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
-                TrailManager.clear('draw-grid');
-            }
-
-            if (matId !== 'none') {
-                unlockSkin('helicopter');
-            }
-        }
-
-        function openSkinsModal() {
-            drawerTriggerElement = document.activeElement;
-            playSound('click');
-            renderSkinsList();
-            document.getElementById('ui-panel').classList.add('active');
-            document.getElementById('ui-panel-overlay').classList.add('active');
-            document.getElementById('ui-panel-overlay').setAttribute('aria-hidden', 'false');
-            document.getElementById('ui-panel').setAttribute('aria-hidden', 'false');
-            setupFocusTrap('ui-panel');
-        }
-
-        function closeSkinsModal() {
-            if (drawerTriggerElement) drawerTriggerElement.focus();
-            playSound('click');
-            document.getElementById('ui-panel').classList.remove('active');
-            document.getElementById('ui-panel-overlay').classList.remove('active');
-            document.getElementById('ui-panel-overlay').setAttribute('aria-hidden', 'true');
-            document.getElementById('ui-panel').setAttribute('aria-hidden', 'true');
-        }
-
-        function renderSkinsList() {
-            const container = document.getElementById('skins-list-container');
-            container.innerHTML = Object.keys(SKIN_CONFIG).filter(id => {
-                const config = SKIN_CONFIG[id];
-                return !config.hidden || unlockedSkins.includes(id);
-            }).map(skinId => {
-                const config = SKIN_CONFIG[skinId];
-                const isUnlocked = unlockedSkins.includes(skinId);
-                const isActive = activeSkin === skinId;
-
-                let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
-                svg = svg.replace(/<animate[\s\S]*?>/gi, ''); // Remove animations for preview
-                let btnHtml = '';
-                let lockIcon = '';
-
-                if (!isUnlocked) {
-                    lockIcon = `<div class="lock-icon" style="position: absolute; font-size: 24px; z-index: 2;">🔒</div>`;
-                }
-
-                return `
+        return `
                     <div class="skin-list-item ${!isUnlocked ? 'locked' : ''} ${isActive ? 'active-skin' : ''}" data-skin="${skinId}" tabindex="0">
                         <div class="skin-item-avatar">
                             ${lockIcon}
@@ -508,265 +508,265 @@ if (config.baseContent) {
 
                     </div>
                 `;
-            }).join('');
+    }).join('');
+    if (window.fa && typeof window.fa.createIcons === 'function') {
+        window.fa.createIcons();
+    }
+}
+
+function redrawTrail(containerId, state) {
+    let maxIndex = state.program.length - 1;
+    if (state.running || state.failed) {
+        maxIndex = state.stepIndex - 1;
+    }
+    TrailManager.clear(containerId);
+    TrailManager.captureInitialState(containerId, state.startRow, state.startCol, state.startDir);
+    let tempState = { robotRow: state.startRow, robotCol: state.startCol, robotDir: state.startDir, obstacles: state.obstacles };
+    for (let i = 0; i <= maxIndex; i++) {
+        let cmd = state.program[i];
+        let res = moveRobot(tempState, cmd);
+        if (res.robotRow !== tempState.robotRow || res.robotCol !== tempState.robotCol) {
+            TrailManager.addSegment(containerId, res.robotRow, res.robotCol);
+        }
+        tempState = res;
+    }
+}
+
+function updateSkinGrids() {
+    const grids = ['sim-grid', 'explore-grid', 'chal-grid', 'read-grid', 'draw-grid'];
+    grids.forEach(gridId => {
+        const grid = document.getElementById(gridId);
+        if (!grid) return;
+
+        // Mettre à jour les classes
+        Array.from(grid.classList).forEach(cls => {
+            if (cls.startsWith('skin-')) grid.classList.remove(cls);
+        });
+        if (activeSkin !== 'volcano') grid.classList.remove('ground-fire');
+        if (activeSkin !== 'pirate') grid.classList.remove('ground-ocean');
+        else grid.classList.add('ground-ocean');
+        grid.classList.add(`skin-${activeSkin}`);
+
+        // Mettre à jour les obstacles
+        const obstacles = grid.querySelectorAll('.obstacle');
+        const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
+        obstacles.forEach(cell => {
+            if (obsSkin.includes('<svg') || obsSkin.includes('<i')) {
+                cell.innerHTML = obsSkin;
+                delete cell.dataset.obstacle;
+            } else {
+                cell.innerHTML = '';
+                cell.dataset.obstacle = obsSkin;
+            }
+        });
+    });
+    if (window.fa && typeof window.fa.createIcons === 'function') {
+        window.fa.createIcons();
+    }
+}
+
+function updateSkinEntities() {
+    // Mettre à jour les robots et cibles pour sim-grid
+    renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+    if (simState.targetRow !== null && simState.targetCol !== null) {
+        renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+    }
+
+    // Mettre à jour les robots et cibles pour explore-grid
+    if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+        renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+        if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+            renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+        }
+    }
+
+    // Mettre à jour les robots et cibles pour chal-grid
+    if (chalState.robotRow !== null) {
+        renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
+        if (chalState.targetRow !== null) {
+            renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
+        }
+    }
+
+    // Mettre à jour les robots et cibles pour read-grid
+    if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
+        renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
+        // La cible n'est pas rendue ici pour ne pas révéler la solution dans le mode lecture
+    }
+
+    // Mettre à jour les robots et cibles pour draw-grid
+    if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
+        renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
+    }
+}
+
+function updateSkinButtons() {
+    const tgtBtn = document.getElementById('btn-target-icon');
+    if (tgtBtn) {
+        const tg = SKIN_CONFIG[activeSkin].target;
+        if (tg && tg.includes('<svg')) {
+            tgtBtn.innerHTML = tg;
+            const svg = tgtBtn.querySelector('svg');
+            if (svg) {
+                svg.style.width = '1.2em';
+                svg.style.height = '1.2em';
+                svg.style.display = 'inline-block';
+                svg.style.verticalAlign = 'middle';
+            }
+        } else {
+            tgtBtn.innerText = tg || '';
+        }
+    }
+    const obsBtn = document.getElementById('btn-obstacle-icon');
+    if (obsBtn) {
+        const ob = SKIN_CONFIG[activeSkin].obstacle;
+        if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
+            obsBtn.innerHTML = ob;
             if (window.fa && typeof window.fa.createIcons === 'function') {
                 window.fa.createIcons();
             }
+            const svg = obsBtn.querySelector('svg');
+            if (svg) {
+                svg.style.width = '1.2em';
+                svg.style.height = '1.2em';
+                svg.style.display = 'inline-block';
+                svg.style.verticalAlign = 'middle';
+            }
+        } else {
+            obsBtn.innerText = ob || '';
+        }
+    }
+}
+
+function updateSkinTrails() {
+    // Redraw trails to match new skin
+    if (simState.program.length > 0 || simState.running || simState.failed) {
+        redrawTrail('sim-grid', simState);
+    } else {
+        TrailManager.clear('sim-grid');
+    }
+    if (typeof exploreState !== 'undefined' && exploreState.history && exploreState.history.length > 0) {
+        // Explore doesn't have a program queue, so we just clear or keep the trail depending on state. For now, clear is safer.
+        TrailManager.clear('explore-grid');
+    } else {
+        TrailManager.clear('explore-grid');
+    }
+    if (typeof drawState !== 'undefined' && drawState.program.length > 0) {
+        redrawTrail('draw-grid', drawState);
+    } else {
+        TrailManager.clear('draw-grid');
+    }
+    if (typeof readState !== 'undefined' && readState.program.length > 0 && readState.isAnimating) {
+        // Not perfectly redrawing read path because it uses obstacles in moveRobot which readState has.
+        redrawTrail('read-grid', readState);
+    } else if (typeof readState !== 'undefined' && !readState.isAnimating) {
+        TrailManager.clear('read-grid');
+    }
+    if (typeof chalState !== 'undefined') {
+        // Just clear since chal doesn't store current active program explicitly
+        TrailManager.clear('chal-grid');
+    }
+}
+
+function selectSkin(skinId) {
+    if (!unlockedSkins.includes(skinId)) return;
+    playSound('click');
+    activeSkin = skinId;
+    localStorage.setItem('bb_active_skin', skinId);
+
+    // Cyber-Bot and Volcano force Dark Mode
+    if (skinId === 'cyberbot' || skinId === 'volcano') {
+        if (!document.body.classList.contains('dark')) toggleTheme();
+    }
+
+    if (skinId === 'pirate') {
+        startOceanRipples();
+    } else {
+        stopOceanRipples();
+    }
+
+    renderSkinsList();
+    closeSkinsModal();
+
+    // Met à jour les grilles sans réinitialiser leur état
+    updateSkinGrids();
+    updateSkinEntities();
+    updateSkinButtons();
+    updateSkinTrails();
+}
+
+function unlockSkin(skinId) {
+    // Check if skin unlocking is disabled by URL parameter
+    if (typeof window.isSkinUnlockDisabled !== 'undefined' && window.isSkinUnlockDisabled) {
+        return;
+    }
+    if (!unlockedSkins.includes(skinId)) {
+        unlockedSkins.push(skinId);
+        localStorage.setItem('bb_unlocked_skins', JSON.stringify(unlockedSkins));
+
+        if (activeSkin === 'volcano') {
+            launchFire();
+        } else {
+            launchConfetti();
         }
 
-        function redrawTrail(containerId, state) {
-            let maxIndex = state.program.length - 1;
-            if (state.running || state.failed) {
-                maxIndex = state.stepIndex - 1;
-            }
-            TrailManager.clear(containerId);
-            TrailManager.captureInitialState(containerId, state.startRow, state.startCol, state.startDir);
-            let tempState = { robotRow: state.startRow, robotCol: state.startCol, robotDir: state.startDir, obstacles: state.obstacles };
-            for (let i = 0; i <= maxIndex; i++) {
-                let cmd = state.program[i];
-                let res = moveRobot(tempState, cmd);
-                if (res.robotRow !== tempState.robotRow || res.robotCol !== tempState.robotCol) {
-                    TrailManager.addSegment(containerId, res.robotRow, res.robotCol);
-                }
-                tempState = res;
-            }
-        }
-
-        function updateSkinGrids() {
-            const grids = ['sim-grid', 'explore-grid', 'chal-grid', 'read-grid', 'draw-grid'];
-            grids.forEach(gridId => {
-                const grid = document.getElementById(gridId);
-                if (!grid) return;
-
-                // Mettre à jour les classes
-                Array.from(grid.classList).forEach(cls => {
-                    if (cls.startsWith('skin-')) grid.classList.remove(cls);
-                });
-                if (activeSkin !== 'volcano') grid.classList.remove('ground-fire');
-                if (activeSkin !== 'pirate') grid.classList.remove('ground-ocean');
-                else grid.classList.add('ground-ocean');
-                grid.classList.add(`skin-${activeSkin}`);
-
-                // Mettre à jour les obstacles
-                const obstacles = grid.querySelectorAll('.obstacle');
-                const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
-                obstacles.forEach(cell => {
-                    if (obsSkin.includes('<svg') || obsSkin.includes('<i')) {
-                        cell.innerHTML = obsSkin;
-                        delete cell.dataset.obstacle;
-                    } else {
-                        cell.innerHTML = '';
-                        cell.dataset.obstacle = obsSkin;
-                    }
-                });
-            });
-            if (window.fa && typeof window.fa.createIcons === 'function') {
-                window.fa.createIcons();
-            }
-        }
-
-        function updateSkinEntities() {
-            // Mettre à jour les robots et cibles pour sim-grid
-            renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-            if (simState.targetRow !== null && simState.targetCol !== null) {
-                renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
-            }
-
-            // Mettre à jour les robots et cibles pour explore-grid
-            if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
-                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
-                if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
-                    renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
-                }
-            }
-
-            // Mettre à jour les robots et cibles pour chal-grid
-            if (chalState.robotRow !== null) {
-                renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
-                if (chalState.targetRow !== null) {
-                    renderTarget('chal-grid', 'chal-target', chalState.targetRow, chalState.targetCol);
-                }
-            }
-
-            // Mettre à jour les robots et cibles pour read-grid
-            if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
-                renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
-                // La cible n'est pas rendue ici pour ne pas révéler la solution dans le mode lecture
-            }
-
-            // Mettre à jour les robots et cibles pour draw-grid
-            if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
-                renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
-            }
-        }
-
-        function updateSkinButtons() {
-            const tgtBtn = document.getElementById('btn-target-icon');
-            if (tgtBtn) {
-                const tg = SKIN_CONFIG[activeSkin].target;
-                if (tg && tg.includes('<svg')) {
-                    tgtBtn.innerHTML = tg;
-                    const svg = tgtBtn.querySelector('svg');
-                    if (svg) {
-                        svg.style.width = '1.2em';
-                        svg.style.height = '1.2em';
-                        svg.style.display = 'inline-block';
-                        svg.style.verticalAlign = 'middle';
-                    }
-                } else {
-                    tgtBtn.innerText = tg || '';
-                }
-            }
-            const obsBtn = document.getElementById('btn-obstacle-icon');
-            if (obsBtn) {
-                const ob = SKIN_CONFIG[activeSkin].obstacle;
-                if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-                    obsBtn.innerHTML = ob;
-                    if (window.fa && typeof window.fa.createIcons === 'function') {
-                        window.fa.createIcons();
-                    }
-                    const svg = obsBtn.querySelector('svg');
-                    if (svg) {
-                        svg.style.width = '1.2em';
-                        svg.style.height = '1.2em';
-                        svg.style.display = 'inline-block';
-                        svg.style.verticalAlign = 'middle';
-                    }
-                } else {
-                    obsBtn.innerText = ob || '';
-                }
-            }
-        }
-
-        function updateSkinTrails() {
-            // Redraw trails to match new skin
-            if (simState.program.length > 0 || simState.running || simState.failed) {
-                redrawTrail('sim-grid', simState);
-            } else {
-                TrailManager.clear('sim-grid');
-            }
-            if (typeof exploreState !== 'undefined' && exploreState.history && exploreState.history.length > 0) {
-                // Explore doesn't have a program queue, so we just clear or keep the trail depending on state. For now, clear is safer.
-                TrailManager.clear('explore-grid');
-            } else {
-                TrailManager.clear('explore-grid');
-            }
-            if (typeof drawState !== 'undefined' && drawState.program.length > 0) {
-                redrawTrail('draw-grid', drawState);
-            } else {
-                TrailManager.clear('draw-grid');
-            }
-            if (typeof readState !== 'undefined' && readState.program.length > 0 && readState.isAnimating) {
-                // Not perfectly redrawing read path because it uses obstacles in moveRobot which readState has.
-                redrawTrail('read-grid', readState);
-            } else if (typeof readState !== 'undefined' && !readState.isAnimating) {
-                TrailManager.clear('read-grid');
-            }
-            if (typeof chalState !== 'undefined') {
-                // Just clear since chal doesn't store current active program explicitly
-                TrailManager.clear('chal-grid');
-            }
-        }
-
-        function selectSkin(skinId) {
-            if (!unlockedSkins.includes(skinId)) return;
-            playSound('click');
-            activeSkin = skinId;
-            localStorage.setItem('bb_active_skin', skinId);
-
-            // Cyber-Bot and Volcano force Dark Mode
-            if (skinId === 'cyberbot' || skinId === 'volcano') {
-                if (!document.body.classList.contains('dark')) toggleTheme();
-            }
-
-            if (skinId === 'pirate') {
-                startOceanRipples();
-            } else {
-                stopOceanRipples();
-            }
-
-            renderSkinsList();
-            closeSkinsModal();
-
-            // Met à jour les grilles sans réinitialiser leur état
-            updateSkinGrids();
-            updateSkinEntities();
-            updateSkinButtons();
-            updateSkinTrails();
-        }
-
-        function unlockSkin(skinId) {
-            // Check if skin unlocking is disabled by URL parameter
-            if (typeof window.isSkinUnlockDisabled !== 'undefined' && window.isSkinUnlockDisabled) {
-                return;
-            }
-            if (!unlockedSkins.includes(skinId)) {
-                unlockedSkins.push(skinId);
-                localStorage.setItem('bb_unlocked_skins', JSON.stringify(unlockedSkins));
-
-                if (activeSkin === 'volcano') {
-                    launchFire();
-                } else {
-                    launchConfetti();
-                }
-
-                showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, 'success');
-                selectSkin(skinId);
-            }
-        }
+        showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, 'success');
+        selectSkin(skinId);
+    }
+}
 
 
 
 
-        let collectMode = localStorage.getItem('bb_collect_mode') === 'true';
-        let memoryMode = localStorage.getItem('bb_memory_mode') === 'true';
-        if (!collectMode) {
-            memoryMode = false;
-        }
+let collectMode = localStorage.getItem('bb_collect_mode') === 'true';
+let memoryMode = localStorage.getItem('bb_memory_mode') === 'true';
+if (!collectMode) {
+    memoryMode = false;
+}
 
-        let activeMat = localStorage.getItem('bb_active_mat') || 'none';
-        generateMatContent(activeMat);
-        if (!MAT_CONFIG[activeMat]) activeMat = 'none';
+let activeMat = localStorage.getItem('bb_active_mat') || 'none';
+generateMatContent(activeMat);
+if (!MAT_CONFIG[activeMat]) activeMat = 'none';
 
-        const MAT_GRID_CONSTRAINTS = {
-            'alphabet': { cols: 6, rows: 6 },
-            'time':     { cols: 6, rows: 4 },
-            'emotions': { cols: 4, rows: 4 },
-            'seasons':  { cols: 5, rows: 4 },
-            'city':     { cols: 8, rows: 8 },
-        };
+const MAT_GRID_CONSTRAINTS = {
+    'alphabet': { cols: 6, rows: 6 },
+    'time': { cols: 6, rows: 4 },
+    'emotions': { cols: 4, rows: 4 },
+    'seasons': { cols: 5, rows: 4 },
+    'city': { cols: 8, rows: 8 },
+};
 
-        function updateGridSizeSlidersState() {
-            if (!gridColsSlider || !gridRowsSlider) return;
-            const constraint = MAT_GRID_CONSTRAINTS[activeMat];
-            const locked = !!constraint;
-            const title = locked ? `Taille fixe de ${constraint.cols}x${constraint.rows} pour ce tapis` : '';
+function updateGridSizeSlidersState() {
+    if (!gridColsSlider || !gridRowsSlider) return;
+    const constraint = MAT_GRID_CONSTRAINTS[activeMat];
+    const locked = !!constraint;
+    const title = locked ? `Taille fixe de ${constraint.cols}x${constraint.rows} pour ce tapis` : '';
 
-            gridColsSlider.disabled = locked;
-            gridRowsSlider.disabled = locked;
-            gridColsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
-            gridRowsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
-            gridColsSlider.parentElement.title = title;
-            gridRowsSlider.parentElement.title = title;
+    gridColsSlider.disabled = locked;
+    gridRowsSlider.disabled = locked;
+    gridColsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
+    gridRowsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
+    gridColsSlider.parentElement.title = title;
+    gridRowsSlider.parentElement.title = title;
 
-            if (locked && (GRID_COLS !== constraint.cols || GRID_ROWS !== constraint.rows)) {
-                gridColsSlider.value = constraint.cols;
-                gridRowsSlider.value = constraint.rows;
-                onGridSizeChanged();
-            }
-        }
+    if (locked && (GRID_COLS !== constraint.cols || GRID_ROWS !== constraint.rows)) {
+        gridColsSlider.value = constraint.cols;
+        gridRowsSlider.value = constraint.rows;
+        onGridSizeChanged();
+    }
+}
 
 
 
-        let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
-        if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || new URLSearchParams(window.location.search).get('unlockAllSkins') === '1') {
-            unlockedSkins = Object.keys(SKIN_CONFIG);
-        }
-        let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
-        if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
+let unlockedSkins = JSON.parse(localStorage.getItem('bb_unlocked_skins') || '["default"]');
+if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || new URLSearchParams(window.location.search).get('unlockAllSkins') === '1') {
+    unlockedSkins = Object.keys(SKIN_CONFIG);
+}
+let activeSkin = localStorage.getItem('bb_active_skin') || 'default';
+if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
-        const ROBOT_SVGS = {
-            'pirate': `
+const ROBOT_SVGS = {
+    'pirate': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
 
@@ -845,7 +845,7 @@ if (config.baseContent) {
                         </g>
                     </g>
                 </svg>`,
-            'f1': `
+    'f1': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
                         <!-- Pneus -->
@@ -863,7 +863,7 @@ if (config.baseContent) {
                         <rect x="25" y="80" width="50" height="8" fill="#111" />
                     </g>
                 </svg>`,
-            'unicorn': `
+    'unicorn': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <g transform="scale(0.8) translate(12.5, 12.5)">
                     <path d="M 45 80 Q 25 105 50 110 Q 75 105 55 80 Z" fill="#FFB6C1" opacity="0.9"/>
@@ -895,7 +895,7 @@ if (config.baseContent) {
                 </g>
             </svg>
             `,
-            'train': `
+    'train': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="cylindre" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -966,7 +966,7 @@ if (config.baseContent) {
                 </g>
             </svg>
 `,
-            'helicopter': `
+    'helicopter': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
                         <!-- Corps de l'hélicoptère -->
@@ -990,7 +990,7 @@ if (config.baseContent) {
                         </g>
                     </g>
                 </svg>`,
-            'default': `
+    'default': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
                     <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
@@ -1005,7 +1005,7 @@ if (config.baseContent) {
                     <circle cx="35" cy="75" r="6" fill="#3b82f6"/>
                     <circle cx="65" cy="75" r="6" fill="#3b82f6"/>
                 </svg>`,
-            'thymio': `
+    'thymio': `
                 <svg viewBox="5 5 90 90" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <filter id="violetGlow" x="-50%" y="-50%" width="200%" height="200%">
@@ -1060,7 +1060,7 @@ if (config.baseContent) {
         </g>
     </g>
 </svg>`,
-            'beebot': `
+    'beebot': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
                     <rect x="20" y="30" width="60" height="8" fill="#1e293b"/>
@@ -1075,7 +1075,7 @@ if (config.baseContent) {
                     <path d="M 72 5 Q 80 -5 90 5" stroke="#1e293b" stroke-width="2" fill="none"/>
                     <circle cx="90" cy="5" r="2" fill="#1e293b"/>
                 </svg>`,
-            'space': `
+    'space': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <!-- Rocket body -->
                     <path d="M 50 10 Q 80 30 80 70 L 20 70 Q 20 30 50 10 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="3"/>
@@ -1091,7 +1091,7 @@ if (config.baseContent) {
                     <path class="rocket-flame" d="M 35 70 Q 50 100 65 70 Q 50 85 35 70 Z" fill="#f97316"/>
                     <path class="rocket-flame-inner" d="M 42 70 Q 50 90 58 70 Q 50 80 42 70 Z" fill="#fef08a"/>
                 </svg>`,
-            'volcano': `
+    'volcano': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
     <style>
         .wing-l { transform-origin: 40px 50px; animation: flapL 0.7s ease-in-out infinite alternate; }
@@ -1133,7 +1133,7 @@ if (config.baseContent) {
         <polygon points="56,10 51,13 57,16" fill="#fef08a" filter="url(#glow)"/>
     </g>
 </svg>`,
-            'cyberbot': `
+    'cyberbot': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.85) translate(8, 8)">
                         <!-- ===== COUCHE GLITCH : 3 copies RGB décalées ===== -->
@@ -1183,7 +1183,7 @@ if (config.baseContent) {
                         </rect>
                     </g>
                 </svg>`,
-            'botanique': `
+    'botanique': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <ellipse cx="50" cy="50" rx="35" ry="40" fill="#ef4444" stroke="#b91c1c" stroke-width="3"/>
                     <path d="M 50 10 L 50 90" stroke="#1e293b" stroke-width="3"/>
@@ -1200,5 +1200,5 @@ if (config.baseContent) {
                     <path d="M 45 10 C 40 0 30 5 30 5" fill="none" stroke="#1e293b" stroke-width="2"/>
                     <path d="M 55 10 C 60 0 70 5 70 5" fill="none" stroke="#1e293b" stroke-width="2"/>
                 </svg>`
-        };
+};
 
