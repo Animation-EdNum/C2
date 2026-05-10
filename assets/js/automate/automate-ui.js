@@ -422,6 +422,16 @@ window.commandsVisible = commandsVisible;
             if (matId) selectMat(matId);
         });
         document.getElementById('btn-open-skins').addEventListener('click', openSkinsModal);
+        const btnExploreCycleMat = document.getElementById('btn-explore-cycle-mat');
+        if (btnExploreCycleMat) btnExploreCycleMat.addEventListener('click', cycleMat);
+        const btnSimCycleMat = document.getElementById('btn-sim-cycle-mat');
+        if (btnSimCycleMat) btnSimCycleMat.addEventListener('click', cycleMat);
+
+        const btnExploreOpenSkins = document.getElementById('btn-explore-open-skins');
+        if (btnExploreOpenSkins) btnExploreOpenSkins.addEventListener('click', openSkinsModal);
+        const btnSimOpenSkins = document.getElementById('btn-sim-open-skins');
+        if (btnSimOpenSkins) btnSimOpenSkins.addEventListener('click', openSkinsModal);
+
         document.getElementById('btn-close-skins').addEventListener('click', closeSkinsModal);
         document.getElementById('ui-panel-overlay').addEventListener('click', closeSkinsModal);
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
