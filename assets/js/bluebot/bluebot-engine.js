@@ -776,9 +776,10 @@ let simState = {
                 return;
             }
 
-            const cmdsHtml = simState.program.map((cmd, i) =>
-                `<div class="program-cmd" tabindex="0" data-index="${i}" title="Cliquer pour supprimer">${BB_SVGS[cmd]}</div>`
-            ).join('');
+            const cmdsHtml = simState.program.map((cmd, i) => {
+                const cls = cmd === 'forward' ? 'fwd' : cmd === 'backward' ? 'bwd' : cmd;
+                return `<div class="program-cmd ${cls}" tabindex="0" data-index="${i}" title="Cliquer pour supprimer">${BB_SVGS[cmd]}</div>`;
+            }).join('');
             strip.insertAdjacentHTML('beforeend', cmdsHtml);
 
             if (toggleBtn) {
