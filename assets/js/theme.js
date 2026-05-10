@@ -87,11 +87,12 @@ if ('serviceWorker' in navigator) {
         // Assuming all pages are either at root, or 1 level deep (e.g., webapps/),
         // or 2 levels deep (alpha/webapps/, webapps/teacher/).
         let rootPath = './';
-        if (window.location.pathname.includes('/webapps/')) {
-            if (window.location.pathname.includes('/alpha/') || window.location.pathname.includes('/teacher/')) {
-                rootPath = '../../';
-            } else {
-                rootPath = '../';
+        const rootLink = document.querySelector('link[rel="root"]');
+        if (rootLink) {
+            rootPath = rootLink.getAttribute('href');
+            // Ensure rootPath ends with a slash for appending 'sw.js'
+            if (!rootPath.endsWith('/')) {
+                rootPath += '/';
             }
         }
 
