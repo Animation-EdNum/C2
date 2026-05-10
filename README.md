@@ -35,7 +35,7 @@ Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur d
 
 ### 🎮 Nos Webapps pour les élèves (Jeux pédagogiques)
 
-Toutes nos applications intègrent une interface unifiée (design "Glassmorphism" moderne), un mode clair/sombre/contraste élevé, une difficulté adaptative intelligente, et des graphiques circulaires pour visualiser les progrès. L'application portail d'accueil (`index.html`) permet un accès facile et rapide à chaque outil.
+Toutes nos applications intègrent une interface unifiée (design "Glassmorphism" moderne), un mode clair/sombre/contraste élevé, une difficulté adaptative intelligente, et des graphiques circulaires pour visualiser les progrès. L'application portail d'accueil (`index.html`) permet un accès facile et rapide à chaque outil. Pour les plus jeunes (4-7 ans, Cycle 1), un portail simplifié est également disponible (`indexC1.html`).
 
 ![Portail d'accueil](meta/screenshots/index.png)
 
