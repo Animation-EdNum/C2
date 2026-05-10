@@ -9,9 +9,14 @@ const ASSETS = [
 
     // CSS
     './assets/css/shared.css',
+    './assets/css/automate.css',
 
     // JS
     './assets/js/audio.js',
+    './assets/js/automate/automate-engine.js',
+    './assets/js/automate/automate-main.js',
+    './assets/js/automate/automate-skins.js',
+    './assets/js/automate/automate-ui.js',
     './assets/js/confetti.js',
     './assets/js/fa-subset.js',
     './assets/js/scores.js',
