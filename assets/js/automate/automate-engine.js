@@ -1970,7 +1970,7 @@ let simState = {
                 const row = Math.floor(Math.random() * GRID_ROWS);
                 const col = Math.floor(Math.random() * GRID_COLS);
                 triggerRipple(row, col, 0);
-            }, 2000);
+            }, 5000);
         }
 
         function stopOceanRipples() {
@@ -1983,7 +1983,7 @@ let simState = {
         function triggerRipple(row, col, delay) {
             setTimeout(() => {
                 // Trouver les cellules dans toutes les grilles possibles
-                const grids = ['sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
+                const grids = ['explore-grid', 'sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
                 grids.forEach(gridId => {
                     const cellId = `${gridId}-cell-${row}-${col}`;
                     const cell = document.getElementById(cellId);
