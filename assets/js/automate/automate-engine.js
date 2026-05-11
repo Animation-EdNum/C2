@@ -923,8 +923,8 @@ let simState = {
         }
 
         function handleTargetMissed(stepsThisRun) {
-            // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, après un parcours de 15+ cases
-            if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && stepsThisRun >= 15) {
+            // Rocket unlock: Revenir à la case de départ sans atteindre le trésor, avec exactement 20 instructions
+            if (simState.robotRow === simState.startRow && simState.robotCol === simState.startCol && simState.program.length === 20) {
                 unlockSkin('space');
             }
 
