@@ -1300,22 +1300,22 @@ const ROBOT_SVGS = {
                 </svg>`,
     'pedago': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
+                    <rect x="15" y="20" width="70" height="70" rx="30" ry="25" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
 
-                    <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="72" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="28" cy="12" r="3" fill="#1e293b"/>
-                    <circle cx="72" cy="12" r="3" fill="#1e293b"/>
+                    <circle cx="28" cy="13" r="10" fill="#f6b64b" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="72" cy="13" r="10" fill="#3acc5a" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="28" cy="11" r="3" fill="#1e293b"/>
+                    <circle cx="72" cy="11" r="3" fill="#1e293b"/>
 
-                    <circle cx="50" cy="35" r="7" fill="#28a0e8" />
-                    <circle cx="50" cy="65" r="7" fill="#794bc1" />
-                    <circle cx="32" cy="50" r="7" fill="#f6b64b" />
-                    <circle cx="68" cy="50" r="7" fill="#3acc5a" />
+                    <circle cx="50" cy="36" r="10" fill="#28a0e8" />
+                    <circle cx="50" cy="74" r="10" fill="#794bc1" />
+                    <circle cx="29" cy="55" r="12" fill="#f6b64b" />
+                    <circle cx="71" cy="55" r="12" fill="#3acc5a" />
 
-                    <circle cx="50" cy="50" r="8" fill="#e13c9e" />
+                    <circle cx="50" cy="55" r="8" fill="#e13c9e" />
 
-                    <circle cx="35" cy="75" r="6" fill="#f14d35" />
-                    <circle cx="65" cy="75" r="6" fill="#2acbd8" />
+                    <circle cx="35" cy="80" r="4" fill="#f14d35" />
+                    <circle cx="65" cy="80" r="4" fill="#2acbd8" />
                 </svg>`
 };
 
