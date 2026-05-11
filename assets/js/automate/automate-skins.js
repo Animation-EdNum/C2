@@ -116,7 +116,7 @@ const SKIN_CONFIG = {
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
     'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
     'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
-    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens exactement sur ta case de départ après avoir fait un parcours d\'au moins 15 cases (sans attraper le trésor).', hidden: false },
+    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement !', hidden: false },
     'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
     'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
