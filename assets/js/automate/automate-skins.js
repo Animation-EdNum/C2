@@ -130,7 +130,8 @@ const SKIN_CONFIG = {
     'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
     'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." },
-    'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Associe les couleurs aux directions et navigue comme un pro !', hidden: true }
+    'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Associe les couleurs aux directions et navigue comme un pro !', hidden: true },
+    'indecis': { name: 'L\'Indécis Chronique', obstacle: '<i data-fa="exclamation" style="color: #f39c12;"></i>', target: '⁉️', desc: 'Pendant la saisie, utilise le bouton "Effacer" (X) pour supprimer au moins 10 commandes individuelles, puis réussis le niveau du premier coup une fois le bouton "GO" pressé.', hidden: true }
 };
 
 const AT_SVGS = {
@@ -798,6 +799,75 @@ let activeSkin = localStorage.getItem('at_active_skin') || 'default';
 if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
 
 const ROBOT_SVGS = {
+    'indecis': `
+        <svg viewBox="0 0 200 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#81b1ff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#4a90e2;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="baseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#34495e;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#2c3e50;stop-opacity:1" />
+                </linearGradient>
+
+                <style>
+                    .indecis-eye {
+                        /* Boucle de 30 secondes, répétée à l'infini */
+                        animation: blink-pseudo-random 30s infinite;
+                    }
+                    /* Point d'ancrage au centre de chaque oeil pour qu'il se ferme sur lui-même */
+                    .indecis-left-eye { transform-origin: -25px 0px; }
+                    .indecis-right-eye { transform-origin: 25px 0px; }
+
+                    /* Répartition sur 30 secondes pour simuler l'aléatoire (entre 5s et 10s d'écart) :
+                       - Clignement 1 à 6s (20%)
+                       - Clignement 2 à 14s (46.6%) -> écart 8s
+                       - Clignement 3 à 21s (70%) -> écart 7s
+                       - Clignement 4 à 29s (96.6%) -> écart 8s
+                       (Le suivant sera à 6s du cycle d'après -> écart 7s)
+                    */
+                    @keyframes blink-pseudo-random {
+                        0%, 19.5%, 20.5%, 46.1%, 47.1%, 69.5%, 70.5%, 96.1%, 97.1%, 100% {
+                            transform: scaleY(1);
+                        }
+                        20%, 46.6%, 70%, 96.6% {
+                            /* On écrase l'oeil sur l'axe Y pour simuler la paupière */
+                            transform: scaleY(0.1);
+                        }
+                    }
+                </style>
+            </defs>
+
+            <path d="M60,80 C60,30 140,30 140,80 C140,110 110,120 100,140 L100,160"
+                  fill="none"
+                  stroke="url(#bodyGradient)"
+                  stroke-width="35"
+                  stroke-linecap="round" />
+
+            <g transform="translate(100, 60)">
+                <g class="indecis-eye indecis-left-eye">
+                    <circle cx="-25" cy="0" r="10" fill="white" />
+                    <circle cx="-25" cy="2" r="5" fill="#333" />
+                    <circle cx="-28" cy="-2" r="2" fill="white" />
+                </g>
+
+                <g class="indecis-eye indecis-right-eye">
+                    <circle cx="25" cy="0" r="10" fill="white" />
+                    <circle cx="25" cy="2" r="5" fill="#333" />
+                    <circle cx="22" cy="-2" r="2" fill="white" />
+                </g>
+
+                <path d="M-10,15 Q0,10 10,15" fill="none" stroke="#333" stroke-width="2" />
+
+                <path d="M-35,-15 Q-25,-20 -15,-15" fill="none" stroke="#333" stroke-width="2" />
+                <path d="M15,-12 Q25,-15 35,-10" fill="none" stroke="#333" stroke-width="2" />
+            </g>
+
+            <g transform="translate(100, 210)">
+                <circle r="18" fill="#4a90e2" />
+            </g>
+        </svg>`,
     'pirate': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">

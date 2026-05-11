@@ -5,7 +5,7 @@ let globalScore = 0, globalStreak = 0;
 let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
             running: false, paused: false, stopped: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
-            firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0
+            firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0, deletedCommandsCount: 0
         };
         window.simState = simState;
 
@@ -454,6 +454,7 @@ let simState = {
             if (window.commandsVisible === true) {
                 simState.blindRunAborted = true;
             }
+            simState.deletedCommandsCount = (simState.deletedCommandsCount || 0) + 1;
             playSound('click'); simState.program.splice(index, 1); renderProgram();
         }
         function clearProgram() {
@@ -462,6 +463,7 @@ let simState = {
                 return;
             }
             simState.blindRunAborted = false;
+            simState.deletedCommandsCount = (simState.deletedCommandsCount || 0) + simState.program.length;
             playSound('click'); simState.program = []; simState.stepIndex = -1; simState.failed = false; renderProgram();
         }
 
@@ -563,6 +565,7 @@ let simState = {
                 simState.targetRow = targetR;
                 simState.targetCol = targetC;
                 simState.firstAttempt = true; // Nouveau trésor, nouveau premier essai
+                simState.deletedCommandsCount = 0;
                 renderTarget('sim-grid', 'sim-target', targetR, targetC);
 
                 const counter = document.getElementById('sim-score-bar');
@@ -581,6 +584,7 @@ let simState = {
             simState.starCount = 0;
             simState.firstTryCount = 0;
             simState.firstAttempt = true;
+            simState.deletedCommandsCount = 0;
 
             const counter = document.getElementById('sim-score-bar');
             if (counter) counter.style.display = 'none';
@@ -894,6 +898,11 @@ let simState = {
                     unlockSkin('thymio');
                 }
 
+                // Déblocage L'Indécis Chronique
+                if (simState.firstAttempt && simState.deletedCommandsCount >= 10) {
+                    unlockSkin('indecis');
+                }
+
                 showToast('Trésor trouvé ! Félicitations !', 'success');
             } else {
                 showToast('Bravo ! Tu as atteint la récompense !', 'success');
@@ -916,6 +925,7 @@ let simState = {
                     simState.stepIndex = -1;
                     simState.failed = false;
                     simState.firstAttempt = true;
+                    simState.deletedCommandsCount = 0;
                     renderProgram();
                     placeRandomSimTarget(true);
                 }, 500);
