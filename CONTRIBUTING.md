@@ -70,7 +70,7 @@ C2/
 │   ├── confetti.js         # Effets visuels de récompense
 │   ├── audio.js            # Audio synthétique (Web Audio API)
 │   ├── swipe.js            # Navigation tactile par swipe
-│   └── lucide-subset.js    # Icônes Lucide (subset 15 Ko)
+│   └── fa-subset.js    # Icônes FontAwesome
 │
 ├── assets/fonts/                  # Polices auto-hébergées
 ├── meta/                   # Audits, tests, scripts et ressources non-déployées
@@ -94,17 +94,17 @@ C2/
 | `assets/js/confetti.js` | Effets de confettis et récompenses visuelles (`launchConfetti()`, `launchFire()`) |
 | `assets/js/audio.js` | Sons synthétiques via Web Audio API (`playSound('success')`, etc.) |
 | `assets/js/swipe.js` | Navigation par swipe tactile entre onglets |
-| `assets/js/lucide-subset.js` | 59 icônes Lucide (auto-généré, 15 Ko) — même API que `lucide.createIcons()` |
+| `assets/js/fa-subset.js` | Icônes FontAwesome (auto-généré) |
 
 ### Service Worker
 
-Le fichier `sw.js` maintient un tableau `ASSETS` listant tous les fichiers à mettre en cache. **Toute nouvelle application ou ressource JS/CSS doit y être ajoutée manuellement.**
+Le fichier `sw.js` maintient un tableau `ASSETS` listant tous les fichiers à mettre en cache. **Exécutez `node scripts/generate-sw-manifest.js` pour mettre à jour la liste automatiquement.**
 
-### Icônes Lucide
+### Icônes FontAwesome
 
-Le projet utilise un **subset personnalisé** de Lucide Icons (15 Ko au lieu de 388 Ko). Pour ajouter une nouvelle icône :
-1. Ajoutez `data-lucide="nom-icone"` dans votre HTML
-2. Exécutez `node meta/scripts/generate_lucide_subset.js` pour régénérer le subset
+Le projet utilise un **subset personnalisé** de FontAwesome 7 Pro. Pour ajouter une nouvelle icône :
+1. Ajoutez `data-fa="nom-icone"` dans votre HTML
+2. Exécutez `node meta/scripts/generate_fa_subset.js` pour régénérer le subset
 3. Vérifiez que l'icône s'affiche correctement
 
 ---

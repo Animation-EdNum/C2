@@ -2,44 +2,41 @@ const CACHE_NAME = 'ednum-v1';
 const ASSETS = [
     './',
     './index.html',
+    './indexC1.html',
     './manifest.json',
+    './alpha/webapps/jeu_de_la_grue.html',
+    './alpha/webapps/machine_a_chiffrer.html',
+    './alpha/webapps/machine_a_trier.html',
+    './alpha/webapps/pixels_binaires.html',
+    './alpha/webapps/reseau_de_tri.html',
+    './assets/css/shared.css',
+    './assets/css/automate.css',
+    './assets/css/teacher.css',
     './assets/favicon.svg',
+    './assets/fonts/jetbrains-mono.woff2',
+    './assets/fonts/outfit.woff2',
     './assets/icon-192.png',
     './assets/icon-512.png',
-
-    // CSS
-    './assets/css/shared.css',
-
-    // JS
+    './assets/img/mats/city.png',
     './assets/js/audio.js',
+    './assets/js/automate/automate-engine.js',
+    './assets/js/automate/automate-main.js',
+    './assets/js/automate/automate-skins.js',
+    './assets/js/automate/automate-ui.js',
     './assets/js/confetti.js',
     './assets/js/fa-subset.js',
     './assets/js/scores.js',
     './assets/js/swipe.js',
     './assets/js/theme.js',
     './assets/js/toast.js',
-
-    // Fonts
-    './assets/fonts/jetbrains-mono.woff2',
-    './assets/fonts/outfit.woff2',
-
-    // Alpha Webapps
-    './alpha/webapps/jeu_de_la_grue.html',
-    './alpha/webapps/machine_a_chiffrer.html',
-    './alpha/webapps/machine_a_trier.html',
-    './alpha/webapps/pixel_studio_rvb.html',
-    './alpha/webapps/pixels_binaires.html',
-    './alpha/webapps/reseau_de_tri.html',
-
-    // Webapps
+    './assets/js/url-params.js',
+    './assets/js/vendor/qrious.min.js',
     './webapps/binaire_codage.html',
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
     './webapps/bit_de_parite.html',
     './webapps/routage_reseau.html',
     './webapps/simulateur_automate.html',
-
-    // Ressources
     './webapps/teacher/bareme.html',
     './webapps/teacher/tirage.html'
 ];
