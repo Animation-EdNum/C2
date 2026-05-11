@@ -24,17 +24,27 @@ Une fenêtre modale s'ouvre. Le lien généré intègre automatiquement :
 
 ![Modale de partage basique](../screenshots/share_basic.png)
 
-Trois boutons sont disponibles :
+Trois boutons sont disponibles pour exporter le lien :
 
 | Bouton | Fonction |
 |---|---|
 | **Tester le lien** | Ouvre le lien dans un nouvel onglet pour vérifier le rendu côté élève. |
 | **Copier** | Copie le lien dans le presse-papiers. |
-| **Afficher le QR Code** | Génère un QR Code (voir § 4). |
+| **Afficher le QR Code** | Génère un QR Code (voir § 5). |
 
 ---
 
-## 3. Options avancées
+## 3. Profils rapides (Presets)
+
+Pour faciliter la préparation, trois boutons de profils permettent d'appliquer automatiquement une sélection de réglages adaptés à différentes situations pédagogiques :
+
+- **🎯 Mission :** « Mes élèves font exactement ce que j'ai préparé ». Ce profil verrouille le niveau de difficulté, force le mode de jeu actuel, empêche le retour à l'accueil et masque le menu des réglages.
+- **🏋️ Entraînement :** « Je leur donne l'outil, ils explorent / refont à leur rythme ». Ce profil permet le changement de difficulté, force le mode de jeu actuel et empêche le retour à l'accueil.
+- **🫶 Inclusif :** « J'ai un·e élève dys, TSA, ou non-latéralisé·e dans le groupe ». Ce profil active le thème à contraste élevé, désactive le son, active les couleurs directionnelles (si disponible), force le mode de jeu actuel et empêche le retour à l'accueil.
+
+---
+
+## 4. Options avancées
 
 Un clic sur **« Options Avancées »** donne accès à des paramètres supplémentaires, regroupés en trois catégories.
 
@@ -61,7 +71,7 @@ Un clic sur **« Options Avancées »** donne accès à des paramètres supplém
 
 ---
 
-## 4. Diffusion par QR Code
+## 5. Diffusion par QR Code
 
 Procédure :
 
