@@ -372,7 +372,6 @@ let simState = {
                 exploreState.failed = true;
                 exploreState.firstAttempt = false;
                 exploreState.consecutiveMistakes++;
-                ScoreManager.addMistake('simulator', null);
 
                 document.getElementById('explore-robot').classList.add('shake');
                 setTimeout(() => document.getElementById('explore-robot').classList.remove('shake'), 350);
@@ -400,7 +399,6 @@ let simState = {
                 else if (activeSkin === 'cyberbot') showToast('WELCOME TO THE MATRIX 🕶️', 'success');
                 else launchConfetti();
 
-                ScoreManager.addSuccess('simulator', null, exploreState.firstAttempt ? 0 : 1);
                 exploreState.starCount++;
                 exploreState.firstTryCount += exploreState.firstAttempt ? 1 : 0;
                 exploreState.consecutiveMistakes = 0;
