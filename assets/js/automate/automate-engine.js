@@ -2127,7 +2127,18 @@ let simState = {
             const dirStr = directions[normalizedDir] || 'Haut';
             const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
             const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
-            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`);
+            const ariaMsg = `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`;
+            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
+
+            // Update aria-live region to announce position to screen readers
+            const liveRegion = document.getElementById(containerId + '-aria-live');
+            if (liveRegion) {
+                liveRegion.textContent = ariaMsg;
+            } else {
+                // Global fallback
+                const globalLive = document.getElementById('robot-aria-live');
+                if (globalLive) globalLive.textContent = ariaMsg;
+            }
 
             const overlay = document.getElementById(overlayId);
 
