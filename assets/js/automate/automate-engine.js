@@ -899,6 +899,7 @@ let simState = {
                 // Déblocage L'Indécis Chronique
                 if (simState.firstAttempt && simState.deletedCommandsCount >= 10) {
                     unlockSkin('indecis');
+                }
                 // Déblocage Hélico
                 const progStr = simState.program.join(',');
                 if (progStr.includes('left,left,left,left') || progStr.includes('right,right,right,right')) {
