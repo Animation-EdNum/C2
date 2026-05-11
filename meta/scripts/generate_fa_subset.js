@@ -59,6 +59,32 @@ function findUsedIcons() {
         if (fs.existsSync(file)) scanFile(file);
     }
 
+    // Add icons from registry.json
+    const registryPath = path.join(ROOT, 'assets', 'data', 'registry.json');
+    if (fs.existsSync(registryPath)) {
+        try {
+            const registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
+            for (const app of registry) {
+                const iconsToCheck = [];
+                if (app.icon) iconsToCheck.push(app.icon);
+                if (app.c1Icon) iconsToCheck.push(app.c1Icon);
+                if (Array.isArray(app.c1SmallIcons)) {
+                    iconsToCheck.push(...app.c1SmallIcons);
+                }
+
+                for (const name of iconsToCheck) {
+                    if (name.startsWith('dt-')) {
+                        duotoneSet.add(name.slice(3));
+                    } else {
+                        solidSet.add(name);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Erreur lors du parsing de registry.json:', e);
+        }
+    }
+
     return {
         solidIcons:   [...solidSet].sort(),
         duotoneNames: [...duotoneSet].sort(),
