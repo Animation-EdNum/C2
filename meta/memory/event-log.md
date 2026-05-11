@@ -60,3 +60,4 @@
 - **[2026-05-10]** [Pedagogy] Added `coloredCmds` URL parameter and simulator setting to apply Crane Game colors to commands, aiding non-lateralized children in the Blue-Bot simulator.
 - **[2026-05-10]** [PWA] Introduced `scripts/generate-sw-manifest.js` to automatically generate the Service Worker cache list.
 - **[2026-05-10]** [Documentation] Updated CONTRIBUTING.md and README.md to reflect the new automated Service Worker generation and the migration from Lucide to FontAwesome 7 Pro.
+- **[2026-05-11]** [Maintenance] Relocated `generate-sw-manifest.js` from `scripts/` to `meta/scripts/` to align with the project's developer tools organization. Updated all documentation references.

@@ -21,7 +21,7 @@ Pour le développement local, vous aurez besoin de :
 - Un navigateur web moderne (Chrome, Firefox, Edge)
 - Un éditeur de code (VS Code recommandé)
 - Python 3.x (uniquement pour les tests E2E et le serveur HTTP local)
-- Node.js (uniquement pour les scripts utilitaires dans `scripts/`)
+- Node.js (uniquement pour les scripts utilitaires dans `meta/scripts/`)
 
 ## Architecture technique
 
@@ -98,7 +98,7 @@ C2/
 
 ### Service Worker
 
-Le fichier `sw.js` maintient un tableau `ASSETS` listant tous les fichiers à mettre en cache. **Exécutez `node scripts/generate-sw-manifest.js` pour mettre à jour la liste automatiquement.**
+Le fichier `sw.js` maintient un tableau `ASSETS` listant tous les fichiers à mettre en cache. **Exécutez `node meta/scripts/generate-sw-manifest.js` pour mettre à jour la liste automatiquement.**
 
 ### Icônes FontAwesome
 

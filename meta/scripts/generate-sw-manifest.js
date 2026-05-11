@@ -39,7 +39,7 @@ function generateManifest() {
     // Reorder to put ROOT_FILES first for readability
     const finalAssets = [...ROOT_FILES, ...allFiles.filter(f => !ROOT_FILES.includes(f))];
 
-    const swPath = path.join(__dirname, '..', 'sw.js');
+    const swPath = path.join(__dirname, '..', '..', 'sw.js');
     if (!fs.existsSync(swPath)) {
         console.error('sw.js not found in repository root');
         process.exit(1);
