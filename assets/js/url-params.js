@@ -132,11 +132,6 @@ function applyUrlParameters() {
         window.noDragParam = true;
     }
 
-    if (urlParams.get('noRandom') === '1') {
-        const randomBtns = document.querySelectorAll('#btn-random, .btn-random');
-        randomBtns.forEach(btn => btn.style.display = 'none');
-    }
-
     // 3. Tab routing
     const targetTab = urlParams.get('tab');
     if (targetTab) {

@@ -23,7 +23,7 @@ All web applications must follow this strict semantic structure:
 
 ## 3. Navigation & UI Components
 - **Primary Navigation:** EXCLUSIVELY use top tabs (`.tabs` > `.tab-btn`) to navigate between exercises. **NEVER use bottom tab bars or `.nav-bar`**. Inactive tabs should typically have a white background (`#ffffff`) in light mode. Tab swiping (`assets/js/swipe.js`) must be completely omitted in drawing webapps.
-- **Exercise Cards:** Exercise cards (`.exercise-card`) across all webapps must standardly use a `.card-footer` element at the bottom to house the score bar (`.score-bar`) and a statistics button. The statistics button must strictly be an icon-only button (using `.icon-action-btn`, e.g., `<i data-fa="chart-pie"></i>`) triggering `ScoreManager.showModal()` directly via an inline `onclick` handler. Do not use verbose text buttons.
+- **Exercise Cards:** Exercise cards (`.exercise-card`) across all webapps must standardly use a `.card-footer` element at the bottom to house the score bar (`.score-bar`) and a statistics button. The statistics button must strictly be an icon-only button (using `.icon-action-btn`, e.g., `<i data-fa="dt-chart-pie"></i>`) triggering `ScoreManager.showModal()` directly via an inline `onclick` handler. Do not use verbose text buttons.
 - **Share Modal:** The Share Modal UI is structured using thematic 'Cards' and uses modern Toggle Switches (with `.share-toggle` and `.share-toggle-slider` classes) alongside descriptive micro-copy instead of standard checkboxes. It features a live 'Test Link' button.
 - **Accessibility (A11y) & Interactions:**
   - Touch targets of at least 44x44px.

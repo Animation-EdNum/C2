@@ -84,11 +84,10 @@ Un clic sur **« Options Avancées »** donne accès à des paramètres supplém
 
 ## 5. Paramètres cachés de l'URL
 
-Quelques paramètres avancés ne sont pas disponibles directement dans l'interface et doivent être ajoutés manuellement à la fin du lien généré (par exemple : `&noRandom=1`).
+Quelques paramètres avancés ne sont pas disponibles directement dans l'interface et doivent être ajoutés manuellement à la fin du lien généré (par exemple : `&noDrag=1`).
 
 - `&unlockAllSkins=1` : (*Automate*) Débloque instantanément tous les personnages et tapis de sol cachés du simulateur.
 - `&noDrag=1` : (*Automate*) Désactive le glisser-déposer des blocs de commande, forçant l'utilisation des clics (pratique pour les publics DYS ou sur tableau interactif peu précis).
-- `&noRandom=1` : Désactive les boutons permettant de relancer des exercices aléatoires.
 - `&seed=1234` : Utilisé avec l'option "Carte réseau fixe" pour définir explicitement un numéro de graine aléatoire. Permet de générer la même topologie sur tous les appareils si la graine est identique.
 
 ---
