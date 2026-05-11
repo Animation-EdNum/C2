@@ -128,7 +128,7 @@ const SKIN_CONFIG = {
     'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement !', hidden: false },
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
     'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
-    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Tourne une fois sur toi-même (4x la touche droite ou 4x la touche gauche d'affilée) avant d'atteindre le trésor." },
+    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Tu lui fais tourner la tête !", hidden: true },
     'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Associe les couleurs aux directions et navigue comme un pro !', hidden: true },
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' }
 };
