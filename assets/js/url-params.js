@@ -234,7 +234,7 @@ function initShareModal() {
             <div class="share-main">
                 <div class="share-url-container">
                     <input type="text" id="share-url-input" readonly>
-                    <button class="btn btn-primary" id="btn-test-link"><i data-fa="external-link"></i> Tester</button>
+                    <button class="btn btn-primary" id="btn-test-link"><i data-fa="arrow-up-right-from-square"></i> Tester</button>
                     <button class="btn btn-primary" id="btn-copy-share"><i data-fa="clipboard"></i> Copier</button>
                     <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> QR</button>
                     <button class="btn btn-primary" id="btn-download-qr" style="display: none;"><i data-fa="download"></i> Télécharger le QR</button>

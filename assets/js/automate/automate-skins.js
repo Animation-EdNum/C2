@@ -113,14 +113,6 @@ const MAT_CONFIG = {
 };
 
 const SKIN_CONFIG = {
-    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' },
-    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
-    'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
-    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement !', hidden: false },
-    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
-    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
-    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
-    'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
     'volcano': {
         name: 'En feu 🔥',
         obstacle: '<i data-fa="snowflake" style="color: #3498db;"></i>',
@@ -128,10 +120,18 @@ const SKIN_CONFIG = {
         desc: 'Réussis un décodage (extrême) du premier coup.'
     },
     'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
+    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="poo-storm" style="color: #9b59b6;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
+    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="bomb" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
+    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
     'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="dt-mushroom" style="--fa-primary: #e74c3c; --fa-secondary: #ecf0f1;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
-    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Utilise un tapis." },
+    'indecis': { name: 'L\'Indécis Chronique', obstacle: '<i data-fa="exclamation" style="color: #f39c12;"></i>', target: '⁉️', desc: 'Pendant la saisie, utilise le bouton "Effacer" (X) pour supprimer au moins 10 commandes individuelles, puis réussis le niveau du premier coup une fois le bouton "GO" pressé.', hidden: true },
+    'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
+    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement !', hidden: false },
+    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
+    'train': { name: 'Loco', obstacle: '<i data-fa="dt-car-bump" style="--fa-primary: #e74c3c; --fa-secondary: #f1c40f;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
+    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="drone" style="color: #7f8c8d;"></i>', target: '🏥', desc: "Tu lui fais tourner la tête !", hidden: true },
     'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Associe les couleurs aux directions et navigue comme un pro !', hidden: true },
-    'indecis': { name: 'L\'Indécis Chronique', obstacle: '<i data-fa="exclamation" style="color: #f39c12;"></i>', target: '⁉️', desc: 'Pendant la saisie, utilise le bouton "Effacer" (X) pour supprimer au moins 10 commandes individuelles, puis réussis le niveau du premier coup une fois le bouton "GO" pressé.', hidden: true }
+    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' }
 };
 
 const AT_SVGS = {
@@ -471,10 +471,6 @@ function selectMat(matId) {
         buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
         renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
         TrailManager.clear('draw-grid');
-    }
-
-    if (matId !== 'none') {
-        unlockSkin('helicopter');
     }
 }
 
