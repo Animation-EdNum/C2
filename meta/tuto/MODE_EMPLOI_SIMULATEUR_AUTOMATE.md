@@ -119,10 +119,11 @@ Cette option est **cruciale en classe**, car ses paramètres avancés permettent
 
 Le reste du menu **Options** donne accès à d'autres réglages pour personnaliser l'application :
 
-- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité** et de régler la **taille de la grille** (de 4×4 à 10×10).
+- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité**, de régler la **taille de la grille** (de 4×4 à 10×10), et de **masquer le quadrillage**.
 - **Changer de skin** 🎨 : permet de personnaliser l'apparence du robot et de la piste (Bee-Bot, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.). Certains skins se débloquent en progressant.
 - **Voir mes statistiques** 📊 : accès au tableau de bord des scores.
 - **Vitesse** ⏱ : bascule entre vitesse normale et vitesse rapide (2×).
+- **Commandes colorées** 🧒 : colore les boutons de commandes pour faciliter le repérage.
 - **Thème clair / sombre** 🌙 : bascule entre les deux modes d'affichage.
 - **Son** 🔊 : active ou désactive les effets sonores.
 
