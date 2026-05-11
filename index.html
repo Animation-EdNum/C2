@@ -778,7 +778,8 @@
         }
 
         function executeFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rawQuery = document.getElementById('searchInput').value;
+            const query = rawQuery.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
             const isSearching = query.length > 0;
 
             // Si on recherche, on affiche tous les grids pour chercher partout. Sinon on respecte les onglets.
@@ -806,7 +807,7 @@
                         card.style.display = 'none';
                         card.classList.add('filter-hidden');
                     } else {
-                        const textContent = card.innerText.toLowerCase();
+                        const textContent = card.innerText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
                         const level = card.getAttribute('data-level');
 
                         // Vérifie la recherche texte
