@@ -894,6 +894,12 @@ let simState = {
                     unlockSkin('thymio');
                 }
 
+                // Déblocage Hélico
+                const progStr = simState.program.join(',');
+                if (progStr.includes('left,left,left,left') || progStr.includes('right,right,right,right')) {
+                    unlockSkin('helicopter');
+                }
+
                 showToast('Trésor trouvé ! Félicitations !', 'success');
             } else {
                 showToast('Bravo ! Tu as atteint la récompense !', 'success');
