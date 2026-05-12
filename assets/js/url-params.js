@@ -358,13 +358,23 @@ function initShareModal() {
 
                         <div class="options-column" id="col-restrictions">
                             <h3>🔐 Restrictions</h3>
-                            <div class="share-option">
+                            <div class="share-option" id="lbl-lockDiff">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-lockDiff">Difficulté verrouillée</label>
                                     <div class="share-option-desc">Impose le niveau de difficulté actuel.</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockDiff">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-noNudges">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-noNudges">Désactiver les suggestions</label>
+                                    <div class="share-option-desc">Bloque les popups de changement de difficulté ou de mode.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-noNudges">
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
@@ -500,6 +510,29 @@ function initShareModal() {
     }
 
     // Specific Options Logic
+    const hasDifficulties = document.querySelectorAll('.diff-btn').length > 0 || document.getElementById('difficulty-select');
+    if (!hasDifficulties) {
+        const lblLockDiff = document.getElementById('lbl-lockDiff');
+        if (lblLockDiff) lblLockDiff.style.display = 'none';
+    }
+
+    const hasNudges = hasDifficulties || window.location.pathname.includes('simulateur_automate.html') || window.location.pathname.includes('machine_a_trier.html');
+    if (!hasNudges) {
+        const lblNoNudges = document.getElementById('lbl-noNudges');
+        if (lblNoNudges) lblNoNudges.style.display = 'none';
+    }
+
+    const optLockDiff = document.getElementById('opt-lockDiff');
+    const optNoNudges = document.getElementById('opt-noNudges');
+    if (optLockDiff && optNoNudges) {
+        optLockDiff.addEventListener('change', () => {
+            if (optLockDiff.checked) {
+                optNoNudges.checked = true;
+                updateShareUrl();
+            }
+        });
+    }
+
     if (document.querySelector('.alpha-section')) {
         document.getElementById('lbl-hideDict').style.display = 'flex';
     }

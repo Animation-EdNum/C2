@@ -166,6 +166,9 @@ const ScoreManager = {
     },
 
     showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('noNudges') === '1') return;
+
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
             const popupHtml = `

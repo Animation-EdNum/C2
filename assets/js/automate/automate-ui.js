@@ -114,6 +114,9 @@ window.commandsVisible = commandsVisible;
         const popupsShown = { explore: false, simulator: false };
 
         function showTimePopup(tab) {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('noNudges') === '1') return;
+
             let popup = document.getElementById('time-popup');
             if (!popup) {
                 const popupHtml = `
