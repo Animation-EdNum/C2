@@ -130,7 +130,7 @@ const SKIN_CONFIG = {
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
     'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #ffc0cb;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Prends garde au vertige...', hidden: true },
-    'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Navigue comme un pro grâce aux commandes colorées.', hidden: true },
+    'pedago': { name: 'Coloraie', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Navigue comme un pro grâce à tes nageoires colorées.', hidden: true },
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' }
 };
 
@@ -506,7 +506,7 @@ function renderSkinsList() {
 
         let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
         svg = svg.replace(/<\/?animate[a-zA-Z]*[\s\S]*?>/gi, ''); // Remove animations for preview
-                svg = svg.replace(/animation:[^;]+;/gi, ''); // Remove CSS animations
+        svg = svg.replace(/animation:[^;]+;/gi, ''); // Remove CSS animations
         if (skinId === 'volcano') {
             svg = svg.replace(/<g transform="scale\(1\.4\) translate\(-14, -14\)">/, '<g transform="scale(1.2) translate(-8, -8)">');
         }
@@ -948,22 +948,85 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'f1': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="scale(0.8) translate(12.5, 12.5)">
-                        <!-- Pneus -->
-                        <rect x="20" y="20" width="10" height="20" rx="3" fill="#333" />
-                        <rect x="70" y="20" width="10" height="20" rx="3" fill="#333" />
-                        <rect x="20" y="60" width="10" height="20" rx="3" fill="#333" />
-                        <rect x="70" y="60" width="10" height="20" rx="3" fill="#333" />
-                        <!-- Carrosserie -->
-                        <path d="M 40 10 L 60 10 L 65 30 L 70 50 L 70 80 L 30 80 L 30 50 L 35 30 Z" fill="#E32636" stroke="#990000" stroke-width="2"/>
-                        <!-- Cockpit -->
-                        <rect x="42" y="45" width="16" height="15" rx="5" fill="#111" />
-                        <!-- Aileron avant -->
-                        <rect x="25" y="10" width="50" height="5" fill="#E32636" />
-                        <!-- Aileron arrière -->
-                        <rect x="25" y="80" width="50" height="8" fill="#111" />
+                <svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Texture carbone pour le châssis -->
+                    <linearGradient id="carbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#111827" />
+                    <stop offset="50%" stop-color="#1f2937" />
+                    <stop offset="100%" stop-color="#111827" />
+                    </linearGradient>
+
+                    <!-- Éclat pour les éléments de carrosserie -->
+                    <filter id="lightGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="1" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+
+                <style>
+                    /* Vibration haute fréquence mais faible amplitude (moteur de course) */
+                    .f1-vibration { 
+                    animation: raceThrob 0.1s ease-in-out infinite alternate; 
+                    }
+                    @keyframes raceThrob {
+                    from { transform: translateX(-0.3px); }
+                    to { transform: translateX(0.3px); }
+                    }
+                    
+                    /* Effet de chaleur à l'arrière */
+                    .heat { 
+                    animation: shimmer 0.2s linear infinite; 
+                    opacity: 0.3;
+                    }
+                    @keyframes shimmer {
+                    0% { transform: scaleX(1); opacity: 0.3; }
+                    100% { transform: scaleX(1.5); opacity: 0; }
+                    }
+                </style>
+
+                <g class="f1-vibration" transform-origin="50 90">
+                    <!-- Ombre aérodynamique -->
+                    <path d="M 30 20 L 70 20 L 85 170 L 15 170 Z" fill="#000000" opacity="0.1" />
+
+                    <!-- LES PNEUS (Exposés) -->
+                    <g fill="#111827">
+                    <rect x="15" y="35" width="12" height="25" rx="2" /> <!-- Avant Gauche -->
+                    <rect x="73" y="35" width="12" height="25" rx="2" /> <!-- Avant Droit -->
+                    <rect x="10" y="135" width="15" height="30" rx="3" /> <!-- Arrière Gauche -->
+                    <rect x="75" y="135" width="15" height="30" rx="3" /> <!-- Arrière Droit -->
                     </g>
+
+                    <!-- L'AILERON AVANT (Large et complexe) -->
+                    <rect x="18" y="22" width="64" height="8" rx="1" fill="#7f1d1d" /> <!-- Rouge course -->
+                    <rect x="18" y="24" width="64" height="2" fill="#000000" opacity="0.3" />
+
+                    <!-- CHÂSSIS (Forme "Bouteille de Coca") -->
+                    <path d="M 50 15 
+                            L 42 35 
+                            L 35 70 
+                            C 35 100, 25 120, 25 150 
+                            L 75 150 
+                            C 75 120, 65 100, 65 70 
+                            L 58 35 Z" 
+                        fill="url(#carbonGrad)" stroke="#374151" stroke-width="0.5" />
+
+                    <!-- LE COCKPIT & LE HALO -->
+                    <path d="M 40 85 C 40 70, 50 65, 50 65 C 50 65, 60 70, 60 85" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" /> <!-- Structure Halo -->
+                    <circle cx="50" cy="88" r="5" fill="#000000" /> <!-- Casque du pilote -->
+
+                    <!-- SIDEPODS (Pontons latéraux - Rouge bordeaux) -->
+                    <path d="M 35 75 Q 25 85, 30 110 L 40 110 Z" fill="#991b1b" />
+                    <path d="M 65 75 Q 75 85, 70 110 L 60 110 Z" fill="#991b1b" />
+
+                    <!-- L'AILERON ARRIÈRE (Spoiler) -->
+                    <rect x="22" y="155" width="56" height="12" rx="1" fill="#7f1d1d" />
+                    <rect x="35" y="158" width="30" height="6" fill="#111827" opacity="0.8" /> <!-- DRS flap area -->
+
+                    <!-- SORTIE D'ÉCHAPPEMENT & CHALEUR -->
+                    <rect x="47" y="150" width="6" height="10" fill="#1f2937" />
+                    <rect class="heat" x="45" y="160" width="10" height="15" fill="#f97316" />
+                </g>
                 </svg>`,
     'unicorn': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -998,76 +1061,79 @@ const ROBOT_SVGS = {
             </svg>
             `,
     'train': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <linearGradient id="cylindre" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#1f2937" />
-                        <stop offset="50%" stop-color="#9ca3af" />
-                        <stop offset="100%" stop-color="#111827" />
+                    <!-- Gradient pour l'acier de la chaudière -->
+                    <linearGradient id="boilerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#064e3b" /> <!-- Vert forêt profond -->
+                    <stop offset="50%" stop-color="#059669" /> <!-- Vert plus clair pour le reflet -->
+                    <stop offset="100%" stop-color="#064e3b" />
                     </linearGradient>
-                    <linearGradient id="toit" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#991b1b" />
-                        <stop offset="45%" stop-color="#f87171" />
-                        <stop offset="100%" stop-color="#7f1d1d" />
-                    </linearGradient>
-                    <radialGradient id="or" cx="30%" cy="30%" r="70%">
-                        <stop offset="0%" stop-color="#fef08a" />
-                        <stop offset="50%" stop-color="#eab308" />
-                        <stop offset="100%" stop-color="#854d0e" />
+
+                    <radialGradient id="smokeHole" cx="50%" cy="50%" r="50%">
+                    <stop offset="70%" stop-color="#0f172a" />
+                    <stop offset="100%" stop-color="#000000" />
                     </radialGradient>
                 </defs>
 
-                <g transform="translate(0, 5)">
-                    <line x1="36" y1="20" x2="64" y2="20" stroke="#57534e" stroke-width="3"/>
-                    <line x1="36" y1="40" x2="64" y2="40" stroke="#57534e" stroke-width="3"/>
-                    <line x1="36" y1="60" x2="64" y2="60" stroke="#57534e" stroke-width="3"/>
-                    <line x1="36" y1="80" x2="64" y2="80" stroke="#57534e" stroke-width="3"/>
+                <style>
+                    /* Vapeur plus lente et vaporeuse */
+                    .steam-puff { 
+                    animation: release 3s ease-out infinite; 
+                    opacity: 0;
+                    }
+                    @keyframes release {
+                    0% { transform: translateY(0) scale(0.4); opacity: 0; }
+                    30% { opacity: 0.5; }
+                    100% { transform: translateY(-30px) scale(2); opacity: 0; }
+                    }
 
-                    <rect x="23" y="14" width="54" height="78" rx="4" fill="#000" opacity="0.3"/>
+                    /* Vibration ralentie pour un effet "vapeur sous pression" plus calme */
+                    .vibration { 
+                    animation: shake 0.4s ease-in-out infinite alternate; 
+                    }
+                    @keyframes shake {
+                    from { transform: translateX(-0.5px); }
+                    to { transform: translateX(0.5px); }
+                    }
+                </style>
 
-                    <rect x="25" y="15" width="50" height="75" rx="3" fill="#374151" stroke="#1f2937" stroke-width="1"/>
-                    <line x1="28" y1="15" x2="28" y2="90" stroke="#4b5563" stroke-width="1"/>
-                    <line x1="72" y1="15" x2="72" y2="90" stroke="#4b5563" stroke-width="1"/>
+                <g class="vibration" transform-origin="50 80">
+                    <!-- Ombre -->
+                    <rect x="28" y="25" width="50" height="120" rx="10" fill="#000000" opacity="0.15" />
 
-                    <polygon points="25,15 75,15 50,2" fill="#1f2937" stroke="#111" stroke-width="1.5"/>
-                    <line x1="30" y1="12" x2="70" y2="12" stroke="#facc15" stroke-width="1"/>
-                    <line x1="35" y1="9" x2="65" y2="9" stroke="#facc15" stroke-width="1"/>
-                    <line x1="42" y1="6" x2="58" y2="6" stroke="#facc15" stroke-width="1"/>
+                    <!-- Châssis (Noir/Gris très foncé) -->
+                    <rect x="22" y="20" width="56" height="130" rx="4" fill="#111827" />
+                    
+                    <!-- La Chaudière (Vert de course classique) -->
+                    <rect x="32" y="35" width="36" height="75" rx="18" fill="url(#boilerGrad)" />
 
-                    <rect x="18" y="25" width="8" height="22" rx="2" fill="url(#cylindre)" stroke="#111" stroke-width="1"/>
-                    <rect x="74" y="25" width="8" height="22" rx="2" fill="url(#cylindre)" stroke="#111" stroke-width="1"/>
-                    <line x1="22" y1="47" x2="22" y2="70" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
-                    <line x1="78" y1="47" x2="78" y2="70" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Cerclages en Laiton (L'élégance ferroviaire) -->
+                    <rect x="32" y="52" width="36" height="3" fill="#d97706" />
+                    <rect x="32" y="75" width="36" height="3" fill="#d97706" />
 
-                    <rect x="35" y="15" width="30" height="55" fill="url(#cylindre)" stroke="#111" stroke-width="1"/>
+                    <!-- L'AVANT : La Cheminée -->
+                    <g>
+                    <circle cx="50" cy="35" r="13" fill="#0f172a" />
+                    <circle cx="50" cy="35" r="9" fill="url(#smokeHole)" />
+                    
+                    <circle class="steam-puff" cx="47" cy="25" r="5" fill="#f8fafc" />
+                    <circle class="steam-puff" cx="53" cy="15" r="6" fill="#f8fafc" style="animation-delay: 1s;" />
+                    </g>
 
-                    <line x1="35" y1="25" x2="65" y2="25" stroke="#111" stroke-width="2"/>
-                    <line x1="35" y1="45" x2="65" y2="45" stroke="#111" stroke-width="2"/>
-                    <line x1="35" y1="60" x2="65" y2="60" stroke="#111" stroke-width="2"/>
-
-                    <circle cx="50" cy="35" r="9" fill="url(#or)" stroke="#713f12" stroke-width="1"/>
-                    <circle cx="50" cy="52" r="6" fill="url(#or)" stroke="#713f12" stroke-width="1"/>
-
-                    <circle cx="50" cy="18" r="7" fill="#111" stroke="#374151" stroke-width="2"/>
-                    <circle cx="50" cy="18" r="4" fill="#000" />
-
-                    <rect x="22" y="68" width="56" height="25" rx="2" fill="url(#toit)" stroke="#450a0a" stroke-width="1.5"/>
-                    <rect x="40" y="72" width="20" height="12" rx="1" fill="#7f1d1d" stroke="#450a0a" stroke-width="1"/>
-                    <line x1="42" y1="75" x2="58" y2="75" stroke="#450a0a" stroke-width="1"/>
-                    <line x1="42" y1="78" x2="58" y2="78" stroke="#450a0a" stroke-width="1"/>
-                    <line x1="42" y1="81" x2="58" y2="81" stroke="#450a0a" stroke-width="1"/>
-
-                    <rect x="46" y="93" width="8" height="6" fill="#1f2937" />
-                    <circle cx="50" cy="99" r="3" fill="#111" />
-
-                    <circle cx="50" cy="18" r="5" fill="#f3f4f6" opacity="0.9"/>
-                    <circle cx="48" cy="25" r="8" fill="#e5e7eb" opacity="0.7"/>
-                    <circle cx="54" cy="35" r="12" fill="#d1d5db" opacity="0.5"/>
-                    <circle cx="45" cy="40" r="16" fill="#9ca3af" opacity="0.3"/>
-                    <circle cx="60" cy="55" r="20" fill="#d1d5db" opacity="0.15"/>
+                    <!-- LES CÔTÉS : Pare-fumée ou pistons (Rouge bordeaux discret) -->
+                    <rect x="18" y="45" width="8" height="60" rx="2" fill="#7f1d1d" />
+                    <rect x="74" y="45" width="8" height="60" rx="2" fill="#7f1d1d" />
+                    
+                    <!-- LA CABINE (Arrière) -->
+                    <rect x="28" y="110" width="44" height="32" rx="2" fill="#064e3b" stroke="#d97706" stroke-width="0.5" />
+                    <!-- Toit de la cabine (Noir) -->
+                    <rect x="26" y="108" width="48" height="10" rx="2" fill="#111827" />
+                    
+                    <!-- Tender ou Charbonnière -->
+                    <rect x="32" y="145" width="36" height="10" rx="1" fill="#020617" />
                 </g>
-            </svg>
-`,
+                </svg>`,
     'helicopter': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
@@ -1093,75 +1159,84 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'default': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
-                    <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="72" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#666" d="M0 0h100v100H0z"/>
+                    <rect x="15" y="15" width="70" height="80" rx="27" ry="40" fill="#fff" fill-opacity=".8" stroke="#3b82f6" stroke-width="3"/>
+                    <circle cx="50" cy="35" r="7" fill="#f97316"/>
+                    <path d="m50 31 3 3m-3-3-3 3m3-3v8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="50" cy="50" r="8" fill="#10b981"/>
+                    <text x="50" y="52" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#fff" font-weight="bold">GO</text>
+                    <circle cx="50" cy="65" r="7" fill="#f97316"/>
+                    <path d="m50 69 3-3m-3 3-3-3m3 3v-8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="32" cy="50" r="7" fill="#f97316"/>
+                    <path d="m28 50 3-3m-3 3 3 3m-3-3h8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="68" cy="50" r="7" fill="#f97316"/>
+                    <path d="m72 50-3-3m3 3-3 3m3-3h-8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="35" cy="75" r="6" fill="#3b82f6"/>
+                    <text x="35" y="77" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#fff" font-weight="bold">X</text>
+                    <circle cx="65" cy="75" r="6" fill="#3b82f6"/>
+                    <path d="M63.5 73v4m3-4v4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                    <circle cx="28" cy="15" r="10" fill="#fff" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="72" cy="15" r="10" fill="#fff" stroke="#3b82f6" stroke-width="2"/>
                     <circle cx="28" cy="12" r="3" fill="#1e293b"/>
                     <circle cx="72" cy="12" r="3" fill="#1e293b"/>
-                    <circle cx="50" cy="35" r="7" fill="#f97316"/>
-                    <circle cx="50" cy="65" r="7" fill="#f97316"/>
-                    <circle cx="32" cy="50" r="7" fill="#f97316"/>
-                    <circle cx="68" cy="50" r="7" fill="#f97316"/>
-                    <circle cx="50" cy="50" r="8" fill="#10b981"/>
-                    <circle cx="35" cy="75" r="6" fill="#3b82f6"/>
-                    <circle cx="65" cy="75" r="6" fill="#3b82f6"/>
-                </svg>`,
+                    <circle cx="29" cy="11" r="1" fill="#fff" fill-opacity=".7"/>
+                    <circle cx="71" cy="11" r="1" fill="#fff" fill-opacity=".7"/></svg>`,
     'thymio': `
                 <svg viewBox="5 5 90 90" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <filter id="violetGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
+                <defs>
+                    <filter id="violetGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="6" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
 
-        <filter id="greyGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-    </defs>
+                    <filter id="greyGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="1.5" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
 
-    <style>
-        .obey-light {
-            animation: obey-pulse 2s ease-in-out infinite alternate;
-            filter: url(#violetGlow);
-        }
-        @keyframes obey-pulse {
-            0% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-    </style>
+                <style>
+                    .obey-light {
+                        animation: obey-pulse 2s ease-in-out infinite alternate;
+                        filter: url(#violetGlow);
+                    }
+                    @keyframes obey-pulse {
+                        0% { opacity: 1; }
+                        100% { opacity: 0.3; }
+                    }
+                </style>
 
-    <rect x="13" y="42" width="6" height="32" rx="3" fill="#1c1917" />
-    <rect x="81" y="42" width="6" height="32" rx="3" fill="#1c1917" />
+                <rect x="13" y="42" width="6" height="32" rx="3" fill="#1c1917" />
+                <rect x="81" y="42" width="6" height="32" rx="3" fill="#1c1917" />
 
-    <path d="M 16 88 L 16 35 Q 50 5 84 35 L 84 88 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+                <path d="M 16 88 L 16 35 Q 50 5 84 35 L 84 88 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
 
-    <rect x="24.95" y="27.6" width="2.5" height="1.5" fill="#1c1917" transform="rotate(-31.7 26.2 28.35)" />
-    <rect x="36.85" y="22.05" width="2.5" height="1.5" fill="#1c1917" transform="rotate(-17.1 38.1 22.8)" />
-    <rect x="48.75" y="20.25" width="2.5" height="1.5" fill="#1c1917" />
-    <rect x="60.65" y="22.05" width="2.5" height="1.5" fill="#1c1917" transform="rotate(17.1 61.9 22.8)" />
-    <rect x="72.55" y="27.6" width="2.5" height="1.5" fill="#1c1917" transform="rotate(31.7 73.8 28.35)" />
+                <rect x="24.95" y="27.6" width="2.5" height="1.5" fill="#1c1917" transform="rotate(-31.7 26.2 28.35)" />
+                <rect x="36.85" y="22.05" width="2.5" height="1.5" fill="#1c1917" transform="rotate(-17.1 38.1 22.8)" />
+                <rect x="48.75" y="20.25" width="2.5" height="1.5" fill="#1c1917" />
+                <rect x="60.65" y="22.05" width="2.5" height="1.5" fill="#1c1917" transform="rotate(17.1 61.9 22.8)" />
+                <rect x="72.55" y="27.6" width="2.5" height="1.5" fill="#1c1917" transform="rotate(31.7 73.8 28.35)" />
 
-    <rect x="33.75" y="86.5" width="2.5" height="1.5" fill="#1c1917" />
-    <rect x="63.75" y="86.5" width="2.5" height="1.5" fill="#1c1917" />
+                <rect x="33.75" y="86.5" width="2.5" height="1.5" fill="#1c1917" />
+                <rect x="63.75" y="86.5" width="2.5" height="1.5" fill="#1c1917" />
 
-    <g fill="#94a3b8" stroke="#94a3b8" stroke-width="1.5" filter="url(#greyGlow)">
-        <polygon points="50,28 46,33 54,33" fill="#94a3b8" stroke="none" />
-        <polygon points="50,52 46,47 54,47" fill="#94a3b8" stroke="none" />
-        <polygon points="38,40 43,36 43,44" fill="#94a3b8" stroke="none" />
-        <polygon points="62,40 57,36 57,44" fill="#94a3b8" stroke="none" />
-        <circle cx="50" cy="40" r="16" fill="none" stroke="#fbbf24" stroke-width="2.5" />
-    </g>
+                <g fill="#94a3b8" stroke="#94a3b8" stroke-width="1.5" filter="url(#greyGlow)">
+                    <polygon points="50,28 46,33 54,33" fill="#94a3b8" stroke="none" />
+                    <polygon points="50,52 46,47 54,47" fill="#94a3b8" stroke="none" />
+                    <polygon points="38,40 43,36 43,44" fill="#94a3b8" stroke="none" />
+                    <polygon points="62,40 57,36 57,44" fill="#94a3b8" stroke="none" />
+                    <circle cx="50" cy="40" r="16" fill="none" stroke="#fbbf24" stroke-width="2.5" />
+                </g>
 
-    <g>
-        <circle cx="50" cy="75" r="5" fill="#1c1917" />
-        <g fill="#9333ea" class="obey-light">
-            <circle cx="40" cy="75" r="3" />
-            <circle cx="60" cy="75" r="3" />
-        </g>
-    </g>
-</svg>`,
+                <g>
+                    <circle cx="50" cy="75" r="5" fill="#1c1917" />
+                    <g fill="#9333ea" class="obey-light">
+                        <circle cx="40" cy="75" r="3" />
+                        <circle cx="60" cy="75" r="3" />
+                    </g>
+                </g>
+            </svg>`,
     'beebot': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
@@ -1195,46 +1270,46 @@ const ROBOT_SVGS = {
                 </svg>`,
     'volcano': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-    <style>
-        .wing-l { transform-origin: 40px 50px; animation: flapL 0.7s ease-in-out infinite alternate; }
-        .wing-r { transform-origin: 60px 50px; animation: flapR 0.7s ease-in-out infinite alternate; }
-        .fire { transform-origin: 50px 0px; animation: spit 0.15s ease-in-out infinite alternate; }
-        .tail { transform-origin: 50px 80px; animation: swish 1.5s ease-in-out infinite alternate; }
+                <style>
+                    .wing-l { transform-origin: 40px 50px; animation: flapL 0.7s ease-in-out infinite alternate; }
+                    .wing-r { transform-origin: 60px 50px; animation: flapR 0.7s ease-in-out infinite alternate; }
+                    .fire { transform-origin: 50px 0px; animation: spit 0.15s ease-in-out infinite alternate; }
+                    .tail { transform-origin: 50px 80px; animation: swish 1.5s ease-in-out infinite alternate; }
 
-        @keyframes flapL { 0% { transform: rotate(5deg) scaleY(1); } 100% { transform: rotate(-20deg) scaleY(0.85); } }
-        @keyframes flapR { 0% { transform: rotate(-5deg) scaleY(1); } 100% { transform: rotate(20deg) scaleY(0.85); } }
-        @keyframes spit { 0% { transform: scaleY(1) scaleX(0.9); opacity: 0.8; } 100% { transform: scaleY(1.3) scaleX(1.1); opacity: 1; } }
-        @keyframes swish { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
-    </style>
-    <g transform="scale(1.4) translate(-14, -14)">
-        <g class="tail">
-            <path d="M 45 75 Q 50 135 50 155 Q 50 135 55 75 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="1.5"/>
-            <polygon points="50,155 40,140 60,140" fill="#f97316" filter="url(#glow)"/>
-            <polygon points="50,115 45,100 55,100" fill="#ea580c"/>
-        </g>
-        <g class="wing-l">
-            <!-- Scaled up wings -->
-            <g transform="scale(1.5) translate(-13, -15)">
-                <path d="M 40 45 C 5 20 -20 40 0 65 C 10 55 20 70 25 58 C 30 68 35 60 40 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
-                <path d="M 40 45 Q 15 30 0 65 M 40 45 Q 20 45 25 58 M 40 45 Q 30 55 35 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
-            </g>
-        </g>
-        <g class="wing-r">
-            <!-- Scaled up wings -->
-            <g transform="scale(1.5) translate(-20, -15)">
-                <path d="M 60 45 C 95 20 120 40 100 65 C 90 55 80 70 75 58 C 70 68 65 60 60 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
-                <path d="M 60 45 Q 85 30 100 65 M 60 45 Q 80 45 75 58 M 60 45 Q 70 55 65 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
-            </g>
-        </g>
-        <path d="M 50 22 C 68 28 72 60 50 82 C 28 60 32 28 50 22 Z" fill="#991b1b" stroke="#991b1b" stroke-width="2"/>
-        <path d="M 50 32 C 57 45 56 60 50 72 C 44 60 43 45 50 32 Z" fill="url(#lava)" filter="url(#glow)"/>
-        <path d="M 40 26 C 40 8 46 3 50 -2 C 54 3 60 8 60 26 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
-        <path d="M 40 20 Q 25 8 20 25 Q 32 18 40 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
-        <path d="M 60 20 Q 75 8 80 25 Q 68 18 60 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
-        <polygon points="44,10 49,13 43,16" fill="#fef08a" filter="url(#glow)"/>
-        <polygon points="56,10 51,13 57,16" fill="#fef08a" filter="url(#glow)"/>
-    </g>
-</svg>`,
+                    @keyframes flapL { 0% { transform: rotate(5deg) scaleY(1); } 100% { transform: rotate(-20deg) scaleY(0.85); } }
+                    @keyframes flapR { 0% { transform: rotate(-5deg) scaleY(1); } 100% { transform: rotate(20deg) scaleY(0.85); } }
+                    @keyframes spit { 0% { transform: scaleY(1) scaleX(0.9); opacity: 0.8; } 100% { transform: scaleY(1.3) scaleX(1.1); opacity: 1; } }
+                    @keyframes swish { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
+                </style>
+                <g transform="scale(1.4) translate(-14, -14)">
+                    <g class="tail">
+                        <path d="M 45 75 Q 50 135 50 155 Q 50 135 55 75 Z" fill="#991b1b" stroke="#7f1d1d" stroke-width="1.5"/>
+                        <polygon points="50,155 40,140 60,140" fill="#f97316" filter="url(#glow)"/>
+                        <polygon points="50,115 45,100 55,100" fill="#ea580c"/>
+                    </g>
+                    <g class="wing-l">
+                        <!-- Scaled up wings -->
+                        <g transform="scale(1.5) translate(-13, -15)">
+                            <path d="M 40 45 C 5 20 -20 40 0 65 C 10 55 20 70 25 58 C 30 68 35 60 40 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
+                            <path d="M 40 45 Q 15 30 0 65 M 40 45 Q 20 45 25 58 M 40 45 Q 30 55 35 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
+                        </g>
+                    </g>
+                    <g class="wing-r">
+                        <!-- Scaled up wings -->
+                        <g transform="scale(1.5) translate(-20, -15)">
+                            <path d="M 60 45 C 95 20 120 40 100 65 C 90 55 80 70 75 58 C 70 68 65 60 60 60 Z" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5" stroke-opacity="0.7"/>
+                            <path d="M 60 45 Q 85 30 100 65 M 60 45 Q 80 45 75 58 M 60 45 Q 70 55 65 60" fill="none" stroke="#7f1d1d" stroke-width="2.5"/>
+                        </g>
+                    </g>
+                    <path d="M 50 22 C 68 28 72 60 50 82 C 28 60 32 28 50 22 Z" fill="#991b1b" stroke="#991b1b" stroke-width="2"/>
+                    <path d="M 50 32 C 57 45 56 60 50 72 C 44 60 43 45 50 32 Z" fill="url(#lava)" filter="url(#glow)"/>
+                    <path d="M 40 26 C 40 8 46 3 50 -2 C 54 3 60 8 60 26 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
+                    <path d="M 40 20 Q 25 8 20 25 Q 32 18 40 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
+                    <path d="M 60 20 Q 75 8 80 25 Q 68 18 60 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
+                    <polygon points="44,10 49,13 43,16" fill="#fef08a" filter="url(#glow)"/>
+                    <polygon points="56,10 51,13 57,16" fill="#fef08a" filter="url(#glow)"/>
+                </g>
+            </svg>`,
     'cyberbot': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.85) translate(8, 8)">
@@ -1303,23 +1378,81 @@ const ROBOT_SVGS = {
                     <path d="M 55 10 C 60 0 70 5 70 5" fill="none" stroke="#1e293b" stroke-width="2"/>
                 </svg>`,
     'pedago': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <rect x="15" y="20" width="70" height="70" rx="30" ry="25" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
+                <svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                    <!-- La silhouette de base qui servira à tout découper proprement -->
+                    <path id="mantaShape" d="M 50 15 
+                        C 46 15, 45 10, 43 10 C 40 10, 40 15, 42 18 
+                        L 40 20
+                        C 20 25, 2 40, 2 55
+                        C 2 68, 25 78, 50 85
+                        C 75 78, 98 68, 98 55
+                        C 98 40, 80 25, 60 20
+                        L 58 18
+                        C 60 15, 60 10, 57 10 C 55 10, 54 15, 50 15 Z" />
 
-                    <circle cx="28" cy="13" r="10" fill="#f6b64b" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="72" cy="13" r="10" fill="#3acc5a" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="28" cy="11" r="3" fill="#1e293b"/>
-                    <circle cx="72" cy="11" r="3" fill="#1e293b"/>
+                    <clipPath id="clipManta">
+                    <use href="#mantaShape" />
+                    </clipPath>
 
-                    <circle cx="50" cy="36" r="10" fill="#28a0e8" />
-                    <circle cx="50" cy="74" r="10" fill="#794bc1" />
-                    <circle cx="29" cy="55" r="12" fill="#f6b64b" />
-                    <circle cx="71" cy="55" r="12" fill="#3acc5a" />
+                    <!-- Gradients -->
+                    <radialGradient id="bodyGrad" cx="50%" cy="40%" r="70%">
+                    <stop offset="0%" stop-color="#0ea5e9" />
+                    <stop offset="100%" stop-color="#0369a1" />
+                    </radialGradient>
+                    
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
 
-                    <circle cx="50" cy="55" r="8" fill="#e13c9e" />
+                <style>
+                    .tail { 
+                    transform-origin: 50px 85px; 
+                    animation: wave 2.5s ease-in-out infinite alternate; 
+                    }
+                    @keyframes wave {
+                    0% { transform: rotate(-4deg); }
+                    100% { transform: rotate(4deg); }
+                    }
+                    .pulse { animation: breathing 3s ease-in-out infinite; }
+                    @keyframes breathing {
+                    0%, 100% { opacity: 0.7; }
+                    50% { opacity: 1; }
+                    }
+                </style>
 
-                    <circle cx="35" cy="80" r="4" fill="#f14d35" />
-                    <circle cx="65" cy="80" r="4" fill="#2acbd8" />
+                <!-- La Queue XXL -->
+                <path class="tail" d="M 50 85 Q 55 110 50 145" fill="none" stroke="#0ea5e9" stroke-width="1.2" stroke-linecap="round" />
+
+                <!-- CORPS COMPLET -->
+                <g clip-path="url(#clipManta)">
+                    <!-- Fond de base bleu -->
+                    <use href="#mantaShape" fill="url(#bodyGrad)" />
+                    
+                    <!-- Zones colorées intégrées (grâce au clipPath, rien ne dépasse) -->
+                    <!-- GAUCHE : Orange -->
+                    <circle cx="5" cy="55" r="25" fill="#f97316" opacity="0.9" filter="url(#glow)" />
+                    
+                    <!-- DROITE : Vert -->
+                    <circle cx="95" cy="55" r="25" fill="#22c55e" opacity="0.9" filter="url(#glow)" />
+                </g>
+
+                <!-- Tracé de bordure pour la finition -->
+                <use href="#mantaShape" fill="none" stroke="#7dd3fc" stroke-width="0.5" />
+
+                <!-- COMMANDES AXIALES (Cristaux) -->
+                
+                <!-- AVANT (Bleu clair / Tête) -->
+                <path class="pulse" d="M 50 25 L 54 31 L 50 37 L 46 31 Z" fill="#bae6fd" filter="url(#glow)" />
+
+                <!-- CENTRE / GO (Rose Magenta) -->
+                <circle class="pulse" cx="50" cy="52" r="6" fill="#ec4899" filter="url(#glow)" />
+
+                <!-- ARRIÈRE (Violet) -->
+                <path d="M 50 72 L 54 77 L 50 82 L 46 77 Z" fill="#a855f7" filter="url(#glow)" />
+
                 </svg>`
 };
 
