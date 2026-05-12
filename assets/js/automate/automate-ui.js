@@ -419,6 +419,15 @@ window.commandsVisible = commandsVisible;
         document.getElementById('btn-close-mats').addEventListener('click', closeMatsModal);
         document.getElementById('mats-drawer-overlay').addEventListener('click', closeMatsModal);
         document.getElementById('btn-remove-mat').addEventListener('click', () => selectMat('none'));
+
+        const toggleHideGrid = document.getElementById('toggle-hide-grid');
+        const handleHideGridClick = () => {
+            if (toggleHideGrid) toggleHideGrid.click();
+        };
+        const btnExploreHideGrid = document.getElementById('btn-explore-hide-grid');
+        if (btnExploreHideGrid) btnExploreHideGrid.addEventListener('click', handleHideGridClick);
+        const btnSimHideGrid = document.getElementById('btn-sim-hide-grid');
+        if (btnSimHideGrid) btnSimHideGrid.addEventListener('click', handleHideGridClick);
         document.getElementById('mats-list-container').addEventListener('click', (e) => {
             const item = e.target.closest('.skin-list-item');
             const matId = item?.dataset.mat;
