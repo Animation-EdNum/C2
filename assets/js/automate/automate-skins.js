@@ -948,7 +948,7 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'f1': `
-                <svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <!-- Texture carbone pour le châssis -->
                     <linearGradient id="carbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -1061,7 +1061,7 @@ const ROBOT_SVGS = {
             </svg>
             `,
     'train': `
-                <svg viewBox="0 0 100 160" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <!-- Gradient pour l'acier de la chaudière -->
                     <linearGradient id="boilerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -1159,8 +1159,7 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'default': `
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#666" d="M0 0h100v100H0z"/>
+                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <rect x="15" y="15" width="70" height="80" rx="27" ry="40" fill="#fff" fill-opacity=".8" stroke="#3b82f6" stroke-width="3"/>
                     <circle cx="50" cy="35" r="7" fill="#f97316"/>
                     <path d="m50 31 3 3m-3-3-3 3m3-3v8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1378,7 +1377,7 @@ const ROBOT_SVGS = {
                     <path d="M 55 10 C 60 0 70 5 70 5" fill="none" stroke="#1e293b" stroke-width="2"/>
                 </svg>`,
     'pedago': `
-                <svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 150" width="100%" height="150%" style="overflow: visible;" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                     <!-- La silhouette de base qui servira à tout découper proprement -->
                     <path id="mantaShape" d="M 50 15 
