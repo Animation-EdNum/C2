@@ -120,14 +120,14 @@ const SKIN_CONFIG = {
         desc: 'Réussis un décodage (extrême) du premier coup.'
     },
     'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
-    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="dt-poo-storm" style="--fa-primary: #9b59b6; --fa-secondary: #f1c40f;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
-    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="skull-crossbones" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor avec les commandes masquées.' },
-    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="trees" style="color: #27ae60;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
-    'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="ram" style="color: #e74c3c;"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
+    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="dt-poo-storm" style="--fa-primary: #8b4513; --fa-secondary: #ffff00; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
+    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="skull-crossbones" class="pirate-obstacle" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor avec les commandes masquées.' },
+    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="dt-trees" class="beebot-obstacle" style="--fa-primary: #27ae60; --fa-secondary: #1e8449;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
+    'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="ram" class="botanique-obstacle"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
     'indecis': { name: 'Indécis', obstacle: '<i data-fa="exclamation" style="color: #f39c12;"></i>', target: '⁉️', desc: 'L\'erreur est humaine, l\'hésitation aussi...', hidden: true },
     'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
-    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement.', hidden: false },
-    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
+    'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement.', hidden: false },
+    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
     'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #ffc0cb;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Prends garde au vertige...', hidden: true },
     'pedago': { name: 'Navi-Color', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Navigue comme un pro grâce aux commandes colorées.', hidden: true },
@@ -1304,22 +1304,22 @@ const ROBOT_SVGS = {
                 </svg>`,
     'pedago': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
+                    <rect x="15" y="20" width="70" height="70" rx="30" ry="25" fill="#ffffff" stroke="#3b82f6" stroke-width="3"/>
 
-                    <circle cx="28" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="72" cy="15" r="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
-                    <circle cx="28" cy="12" r="3" fill="#1e293b"/>
-                    <circle cx="72" cy="12" r="3" fill="#1e293b"/>
+                    <circle cx="28" cy="13" r="10" fill="#f6b64b" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="72" cy="13" r="10" fill="#3acc5a" stroke="#3b82f6" stroke-width="2"/>
+                    <circle cx="28" cy="11" r="3" fill="#1e293b"/>
+                    <circle cx="72" cy="11" r="3" fill="#1e293b"/>
 
-                    <circle cx="50" cy="35" r="7" fill="#28a0e8" />
-                    <circle cx="50" cy="65" r="7" fill="#794bc1" />
-                    <circle cx="32" cy="50" r="7" fill="#f6b64b" />
-                    <circle cx="68" cy="50" r="7" fill="#3acc5a" />
+                    <circle cx="50" cy="36" r="10" fill="#28a0e8" />
+                    <circle cx="50" cy="74" r="10" fill="#794bc1" />
+                    <circle cx="29" cy="55" r="12" fill="#f6b64b" />
+                    <circle cx="71" cy="55" r="12" fill="#3acc5a" />
 
-                    <circle cx="50" cy="50" r="8" fill="#e13c9e" />
+                    <circle cx="50" cy="55" r="8" fill="#e13c9e" />
 
-                    <circle cx="35" cy="75" r="6" fill="#f14d35" />
-                    <circle cx="65" cy="75" r="6" fill="#2acbd8" />
+                    <circle cx="35" cy="80" r="4" fill="#f14d35" />
+                    <circle cx="65" cy="80" r="4" fill="#2acbd8" />
                 </svg>`
 };
 
