@@ -23,6 +23,20 @@ Ces outils sont conçus pour fonctionner de la manière la plus simple possible,
 *   **100% Hors-ligne :** Une fois la page ouverte (ou installée comme application sur tablette), vous n'avez plus besoin d'internet. Parfait pour les écoles avec une connexion instable.
 *   **Essayez tout de suite :** Toutes nos applications sont directement jouables en ligne sur le portail [www.zooom.top](https://www.zooom.top).
 
+### 📦 Installation via npm (pour les responsables informatiques)
+
+Si Node.js (≥ 18) est installé sur votre machine, vous pouvez lancer la suite directement avec une seule commande — sans téléchargement manuel ni serveur à configurer :
+
+```bash
+npx @ednum/suite-ednum
+```
+
+Cela démarre automatiquement un serveur local et ouvre le portail dans votre navigateur sur `http://localhost:3000`.
+
+> **Port personnalisé :** `PORT=8080 npx @ednum/suite-ednum`
+> **Sans ouverture automatique du navigateur :** `npx @ednum/suite-ednum --no-open`
+
+
 ### 📱 Compatibilité Multi-Supports (Responsive Design)
 Nos applications sont pensées pour s'adapter à toutes les tailles d'écran (Mobile, Tablette, Desktop, et Ecrans larges). L'interface reste claire et utilisable sur tous les supports.
 
