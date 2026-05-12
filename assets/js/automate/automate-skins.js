@@ -120,7 +120,7 @@ const SKIN_CONFIG = {
         desc: 'Réussis un décodage (extrême) du premier coup.'
     },
     'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
-    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="dt-poo-storm" style="--fa-primary: #8b4513; --fa-secondary: #ccff00;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
+    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="dt-poo-storm" style="--fa-primary: #8b4513; --fa-secondary: #ffff00; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
     'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="skull-crossbones" class="pirate-obstacle" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor en ayant les commandes masquées avant d\'entrer la première instruction.' },
     'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="dt-trees" class="beebot-obstacle" style="--fa-primary: #27ae60; --fa-secondary: #1e8449;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
     'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="ram" class="botanique-obstacle"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
