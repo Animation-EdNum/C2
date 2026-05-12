@@ -103,8 +103,15 @@
                 toggleHideGrid.addEventListener('change', (e) => {
                     if (e.target.checked) {
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.add('no-grid-lines'));
+                        document.getElementById('btn-explore-hide-grid')?.querySelector('i')?.setAttribute('data-fa', 'grid');
+                        document.getElementById('btn-sim-hide-grid')?.querySelector('i')?.setAttribute('data-fa', 'grid');
                     } else {
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.remove('no-grid-lines'));
+                        document.getElementById('btn-explore-hide-grid')?.querySelector('i')?.setAttribute('data-fa', 'grid');
+                        document.getElementById('btn-sim-hide-grid')?.querySelector('i')?.setAttribute('data-fa', 'grid');
+                    }
+                    if (window.fa && typeof window.fa.createIcons === 'function') {
+                        window.fa.createIcons();
                     }
                 });
             }
