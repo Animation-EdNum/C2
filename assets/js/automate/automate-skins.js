@@ -700,8 +700,8 @@ function selectSkin(skinId) {
     activeSkin = skinId;
     localStorage.setItem('at_active_skin', skinId);
 
-    // Cyber-Bot and Volcano force Dark Mode
-    if (skinId === 'cyberbot' || skinId === 'volcano') {
+    // Cyber-Bot, Volcano and Unicorn force Dark Mode
+    if (skinId === 'cyberbot' || skinId === 'volcano' || skinId === 'unicorn') {
         if (!document.body.classList.contains('dark')) toggleTheme();
     }
 
