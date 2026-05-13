@@ -2108,10 +2108,12 @@ let simState = {
             if (isNew) {
                 ov = document.createElement('div'); ov.id = overlayId; ov.className = extraClass || '';
             }
-            if (content.startsWith('<')) {
-                ov.innerHTML = content;
-            } else {
-                ov.innerText = content;
+            if (content !== null) {
+                if (content.startsWith('<')) {
+                    ov.innerHTML = content;
+                } else {
+                    ov.innerText = content;
+                }
             }
             ov.style.width = (100 / GRID_COLS) + '%';
             ov.style.height = (100 / GRID_ROWS) + '%';
@@ -2126,10 +2128,23 @@ let simState = {
             const normalizedDir = ((dirIndex % 4) + 4) % 4;
             const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
             const dirStr = directions[normalizedDir] || 'Haut';
-            const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
-            const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
             const ariaMsg = `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`;
-            placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
+
+            const existingOverlay = document.getElementById(overlayId);
+            const needsFullRender = !existingOverlay || existingOverlay.dataset.skin !== activeSkin;
+
+            if (needsFullRender) {
+                const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
+                const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
+                placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
+                document.getElementById(overlayId).dataset.skin = activeSkin;
+            } else {
+                placeOverlay(containerId, overlayId, row, col, null, 'robot-overlay', ariaMsg);
+                const robotBody = existingOverlay.querySelector('.robot-body');
+                if (robotBody) {
+                    robotBody.style.transform = `rotate(${deg}deg)`;
+                }
+            }
 
             // Update aria-live region to announce position to screen readers
             const liveRegion = document.getElementById(containerId + '-aria-live');
