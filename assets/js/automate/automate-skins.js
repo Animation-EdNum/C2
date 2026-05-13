@@ -1563,69 +1563,71 @@ const ROBOT_SVGS = {
                     <path d="M 55 10 C 60 0 70 5 70 5" fill="none" stroke="#1e293b" stroke-width="2"/>
                 </svg>`,
     'pedago': `
-            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Gradient pour la profondeur de l'océan -->
-    <radialGradient id="rayGrad" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#0ea5e9" />
-      <stop offset="100%" stop-color="#075985" />
-    </radialGradient>
-    
-    <!-- Filtre de lueur pour les cristaux de commande -->
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="1.2" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-  </defs>
-
+<svg width="100%" height="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .tail { 
-      transform-origin: 50px 85px; 
-      animation: wave 2s ease-in-out infinite alternate; 
+    /* Animation de battement d'ailes accentué */
+    @keyframes skin-pedago-flap-left-pro {
+      0%, 80%, 100% { transform: rotateY(0deg) translateY(0px); }
+      84% { transform: rotateY(50deg) translateY(0px); } /* Battement plus ample */
+      88% { transform: rotateY(10deg) translateY(0px); }
+      92% { transform: rotateY(50deg) translateY(0px); } /* Deuxième battement pour la visibilité */
+      96% { transform: rotateY(0deg) translateY(0px); }
     }
-    @keyframes wave {
-      0% { transform: rotate(-3deg); }
-      100% { transform: rotate(3deg); }
+
+    @keyframes skin-pedago-flap-right-pro {
+      0%, 80%, 100% { transform: rotateY(0deg) translateY(0px); }
+      84% { transform: rotateY(-50deg) translateY(0px); }
+      88% { transform: rotateY(-10deg) translateY(0px); }
+      92% { transform: rotateY(-50deg) translateY(0px); }
+      96% { transform: rotateY(0deg) translateY(0px); }
     }
-    .pulse { animation: breathing 3s ease-in-out infinite; }
-    @keyframes breathing {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
+
+    /* Application de l'animation sur les groupes d'ailes */
+    .skin-pedago-wing-l {
+      transform-origin: 200px 40px;
+      animation: skin-pedago-flap-left-pro 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+    .skin-pedago-wing-r {
+      transform-origin: 200px 40px;
+      animation: skin-pedago-flap-right-pro 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
     }
   </style>
 
-  <!-- La Queue (avec animation d'ondulation) -->
-  <path class="tail" d="M 50 85 Q 52 105 50 115" fill="none" stroke="#0ea5e9" stroke-width="1.5" stroke-linecap="round" />
+  <defs>
+    <filter id="skin-pedago-shadow-pro" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="15" stdDeviation="12" flood-opacity="0.25" />
+    </filter>
+    <linearGradient id="skin-pedago-blue-nose-pro" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
 
-  <!-- CORPS : Silhouette fidèle à l'image Manta -->
-  <path d="M 50 15 
-           C 46 15, 45 10, 43 10 C 40 10, 40 15, 42 18 
-           L 40 20
-           C 25 25, 5 45, 5 55
-           C 5 65, 30 75, 50 85
-           C 70 75, 95 65, 95 55
-           C 95 45, 75 25, 60 20
-           L 58 18
-           C 60 15, 60 10, 57 10 C 55 10, 54 15, 50 15 Z" 
-        fill="url(#rayGrad)" stroke="#7dd3fc" stroke-width="0.5" />
+  <g filter="url(#skin-pedago-shadow-pro)">
 
-  <!-- L'AVANT : Les cornes céphaliques et le capteur bleu -->
-  <path class="pulse" d="M 50 25 L 53 30 L 50 35 L 47 30 Z" fill="#bae6fd" filter="url(#glow)" />
+    <g class="skin-pedago-wing-l">
+      <polygon points="200,40 50,320 200,270" fill="#FF9F1C" stroke="#1a1a1a" stroke-width="2" />
+    </g>
 
-  <!-- LES CRISTAUX D'ÉNERGIE (Les commandes discrètes) -->
-  
-  <!-- CENTRE / GO (Rose) -->
-  <circle class="pulse" cx="50" cy="52" r="5" fill="#f472b6" filter="url(#glow)" />
+    <g class="skin-pedago-wing-r">
+      <polygon points="200,40 350,320 200,270" fill="#2ECC71" stroke="#1a1a1a" stroke-width="2" />
+    </g>
 
-  <!-- GAUCHE (Orange) - Sur l'aile gauche -->
-  <path d="M 25 50 L 29 53 L 25 56 L 21 53 Z" fill="#fb923c" filter="url(#glow)" />
+    <polygon points="200,40 185,275 200,350" fill="#E67E22" stroke="#1a1a1a" stroke-width="2" />
+    <polygon points="200,40 215,275 200,350" fill="#27AE60" stroke="#1a1a1a" stroke-width="2" />
 
-  <!-- DROITE (Vert) - Sur l'aile droite -->
-  <path d="M 75 50 L 79 53 L 75 56 L 71 53 Z" fill="#4ade80" filter="url(#glow)" />
+    <g stroke="#1a1a1a" stroke-width="2">
+      <path d="M200,40 L155,125 L200,110 L245,125 Z" fill="url(#skin-pedago-blue-nose-pro)" />
+      <line x1="200" y1="40" x2="200" y2="110" stroke-width="1.5" />
+    </g>
 
-  <!-- ARRIÈRE (Violet) - Base de la queue -->
-  <path d="M 50 70 L 53 74 L 50 78 L 47 74 Z" fill="#c084fc" filter="url(#glow)" />
+    <g stroke="#1a1a1a" stroke-width="2">
+      <polygon points="185,275 200,350 200,270" fill="#9333EA" />
+      <polygon points="215,275 200,350 200,270" fill="#7E22CE" />
+    </g>
 
+    <line x1="200" y1="40" x2="200" y2="270" stroke="#1a1a1a" stroke-width="2" opacity="0.2" />
+  </g>
 </svg>`
 };
 
