@@ -67,7 +67,7 @@ C2/
 │   ├── theme.js            # Thème global + registration SW
 │   ├── scores.js           # ScoreManager (gamification)
 │   ├── confetti.js         # Effets visuels de récompense
-1: │   ├── audio.js            # Audio synthétique (Web Audio API)
+│   ├── audio.js            # Audio synthétique (Web Audio API)
 │   ├── swipe.js            # Navigation tactile par swipe
 │   └── fa-subset.js    # Icônes FontAwesome
 │
