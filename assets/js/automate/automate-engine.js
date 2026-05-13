@@ -104,7 +104,7 @@ let simState = {
                 };
 
                 // Add extra layered paths for specific skins
-                if (activeSkin === 'helicopter') {
+                if (activeSkin === 'helicopter' || activeSkin === 'pedago') {
                     const shadowPath = createSVG("path");
                     shadowPath.setAttribute("class", "trail-path-helicopter-shadow");
                     shadowPath.setAttribute("d", d);
