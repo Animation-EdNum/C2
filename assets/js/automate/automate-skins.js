@@ -1162,28 +1162,146 @@ const ROBOT_SVGS = {
             </g>
         </svg>`,
     'helicopter': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="scale(0.8) translate(12.5, 12.5)">
-                        <!-- Corps de l'hélicoptère -->
-                        <rect x="35" y="20" width="30" height="50" rx="15" ry="15" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
-                        <!-- Queue -->
-                        <rect x="47" y="65" width="6" height="25" fill="#ef4444" stroke="#b91c1c" stroke-width="1"/>
-                        <circle cx="50" cy="85" r="4" fill="#9ca3af"/>
-                        <!-- Patins -->
-                        <line x1="25" y1="30" x2="25" y2="70" stroke="#4b5563" stroke-width="3" stroke-linecap="round"/>
-                        <line x1="75" y1="30" x2="75" y2="70" stroke="#4b5563" stroke-width="3" stroke-linecap="round"/>
-                        <line x1="25" y1="50" x2="35" y2="50" stroke="#4b5563" stroke-width="2"/>
-                        <line x1="75" y1="50" x2="65" y2="50" stroke="#4b5563" stroke-width="2"/>
-                        <!-- Cockpit -->
-                        <ellipse cx="50" cy="35" rx="10" ry="8" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
-                        <!-- Pales animées -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 600 750" width="100%" height="100%">
+                <defs>
+                    <linearGradient id="redBody" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#7a0a0a" />
+                    <stop offset="15%" stop-color="#b81d1d" />
+                    <stop offset="50%" stop-color="#ff3333" />
+                    <stop offset="85%" stop-color="#b81d1d" />
+                    <stop offset="100%" stop-color="#520303" />
+                    </linearGradient>
+
+                    <radialGradient id="glassGradient" cx="50%" cy="40%" r="60%" fx="40%" fy="30%">
+                    <stop offset="0%" stop-color="#8ab4f8" />
+                    <stop offset="30%" stop-color="#2c4c70" />
+                    <stop offset="80%" stop-color="#0a192f" />
+                    <stop offset="100%" stop-color="#020812" />
+                    </radialGradient>
+
+                    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#555" />
+                    <stop offset="50%" stop-color="#aaa" />
+                    <stop offset="100%" stop-color="#333" />
+                    </linearGradient>
+
+                    <linearGradient id="tailRed" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#8f1111" />
+                    <stop offset="50%" stop-color="#e62e2e" />
+                    <stop offset="100%" stop-color="#730909" />
+                    </linearGradient>
+
+                    <filter id="ground-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="15" />
+                    <feOffset dx="25" dy="35" result="offsetblur" />
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4" />
+                    </feComponentTransfer>
+                    <feMerge>
+                        <feMergeNode />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                    </filter>
+
+                    <filter id="rotor-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="8" />
+                    <feOffset dx="15" dy="25" result="offsetblur" />
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.5" />
+                    </feComponentTransfer>
+                    <feMerge>
+                        <feMergeNode />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                    </filter>
+
+                    <g id="main-blade">
+                    <rect x="-8" y="-220" width="16" height="220" rx="3" fill="#2b2d30" />
+                    <rect x="-8" y="-220" width="4" height="220" fill="#66686b" />
+                    <rect x="-8" y="-220" width="16" height="12" rx="2" fill="#ffcc00" />
+                    <line x1="0" y1="-205" x2="0" y2="-15" stroke="#1a1b1c" stroke-width="1" />
+                    </g>
+                </defs>
+
+                <g filter="url(#ground-shadow)">
+                    <path d="M 185 200 L 225 200 M 185 300 L 225 300" stroke="#333" stroke-width="6" stroke-linecap="round" />
+                    <path d="M 315 200 L 275 200 M 315 300 L 275 300" stroke="#333" stroke-width="6" stroke-linecap="round" />
+                    <rect x="181" y="140" width="8" height="220" rx="4" fill="url(#metal)" />
+                    <rect x="311" y="140" width="8" height="220" rx="4" fill="url(#metal)" />
+
+                    <rect x="195" y="470" width="110" height="18" rx="5" fill="url(#tailRed)" />
+                    <line x1="195" y1="479" x2="305" y2="479" stroke="#5c0707" stroke-width="1" opacity="0.6"/>
+
+                    <path d="M 238 350 L 262 350 L 255 520 L 245 520 Z" fill="url(#tailRed)" />
+                    
+                    <rect x="247" y="500" width="6" height="40" rx="2" fill="#991414" />
+
+                    <path d="M 250 100 
+                            C 285 100, 305 180, 290 280 
+                            C 280 340, 265 360, 250 360 
+                            C 235 360, 220 340, 210 280 
+                            C 195 180, 215 100, 250 100 Z" 
+                        fill="url(#redBody)" />
+
+                    <path d="M 218 200 Q 250 210 282 200" stroke="#5c0707" stroke-width="1.5" fill="none" opacity="0.7" />
+                    <path d="M 212 260 Q 250 275 288 260" stroke="#5c0707" stroke-width="1.5" fill="none" opacity="0.7" />
+                    <path d="M 222 320 Q 250 330 278 320" stroke="#5c0707" stroke-width="1.5" fill="none" opacity="0.7" />
+
+                    <path d="M 250 105 
+                            C 275 105, 283 150, 275 190 
+                            C 270 205, 230 205, 225 190 
+                            C 217 150, 225 105, 250 105 Z" 
+                        fill="url(#glassGradient)" />
+                        
+                    <path d="M 250 105 L 250 202" stroke="#222" stroke-width="2.5" />
+                    <path d="M 230 150 Q 250 142 270 150" stroke="#222" stroke-width="2.5" />
+                    <path d="M 226 180 Q 250 174 274 180" stroke="#222" stroke-width="2" />
+
+                    <path d="M 233 210 L 267 210 L 275 280 L 225 280 Z" fill="#2b2b2b" />
+                    <line x1="240" y1="220" x2="260" y2="220" stroke="#111" stroke-width="2" />
+                    <line x1="240" y1="225" x2="260" y2="225" stroke="#111" stroke-width="2" />
+                    <line x1="240" y1="230" x2="260" y2="230" stroke="#111" stroke-width="2" />
+                    <circle cx="238" cy="265" r="7" fill="#111" />
+                    <circle cx="262" cy="265" r="7" fill="#111" />
+                    <circle cx="238" cy="265" r="4" fill="#000" />
+                    <circle cx="262" cy="265" r="4" fill="#000" />
+
+                    <circle cx="205" cy="250" r="3" fill="#ff3333" />
+                    <circle cx="295" cy="250" r="3" fill="#33ff33" />
+                    <circle cx="250" cy="450" r="3.5" fill="#ffffff" />
+                    <circle cx="250" cy="450" r="6" fill="#ff0000" opacity="0.4" />
+                </g>
+
+                <g filter="url(#rotor-shadow)">
+                    
+                    <g transform="translate(250, 245)">
+                    <circle cx="0" cy="0" r="220" fill="#222" opacity="0.03" />
+
+                    <g>
+                        <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="0.3s" repeatCount="indefinite" />
+                        
+                        <use href="#main-blade" transform="rotate(0)" />
+                        <use href="#main-blade" transform="rotate(90)" />
+                        <use href="#main-blade" transform="rotate(180)" />
+                        <use href="#main-blade" transform="rotate(270)" />
+
                         <g>
-                            <line x1="10" y1="50" x2="90" y2="50" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
-                            <line x1="50" y1="10" x2="50" y2="90" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
-                            <circle cx="50" cy="50" r="5" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
-                            <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="0.3s" repeatCount="indefinite" />
+                        <rect x="-4" y="-30" width="8" height="60" rx="2" fill="#555" />
+                        <rect x="-30" y="-4" width="60" height="8" rx="2" fill="#555" />
+                        <circle cx="0" cy="-25" r="4" fill="#222" />
+                        <circle cx="0" cy="25" r="4" fill="#222" />
+                        <circle cx="-25" cy="0" r="4" fill="#222" />
+                        <circle cx="25" cy="0" r="4" fill="#222" />
                         </g>
                     </g>
+
+                    <circle cx="0" cy="0" r="22" fill="#333" opacity="0.8"/>
+                    <circle cx="0" cy="0" r="18" fill="#444" opacity="0.8"/>
+                    <circle cx="0" cy="0" r="12" fill="#222" />
+                    <circle cx="0" cy="0" r="8" fill="#555" />
+                    <circle cx="0" cy="0" r="4" fill="#111" />
+                    </g>
+                </g> 
                 </svg>`,
     'default': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
