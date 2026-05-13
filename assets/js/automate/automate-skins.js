@@ -1345,7 +1345,7 @@ const ROBOT_SVGS = {
             </svg>`,
     'cyberbot': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="scale(0.85) translate(13, 7.5)">
+                    <g transform="scale(0.85) translate(13, 13)">
                         <!-- ===== COUCHE GLITCH : 3 copies RGB décalées ===== -->
 
                         <!-- Rose fluo (décalée gauche) -->
