@@ -48,15 +48,31 @@ window.commandsVisible = commandsVisible;
                 if (iconSpd1) iconSpd1.style.display = 'none';
                 if (iconSpd2) iconSpd2.style.display = 'block';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
-                if (exploreSpeedBtn) exploreSpeedBtn.title = 'Vitesse : Rapide';
-                if (simSpeedBtn) simSpeedBtn.title = 'Vitesse : Rapide';
+                if (exploreSpeedBtn) {
+                    exploreSpeedBtn.title = 'Vitesse : Rapide';
+                    exploreSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
+                    if (window.fa && window.fa.createIcons) window.fa.createIcons(exploreSpeedBtn);
+                }
+                if (simSpeedBtn) {
+                    simSpeedBtn.title = 'Vitesse : Rapide';
+                    simSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
+                    if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
+                }
             } else {
                 currentSpeed = 900;
                 if (iconSpd1) iconSpd1.style.display = 'block';
                 if (iconSpd2) iconSpd2.style.display = 'none';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Lent';
-                if (exploreSpeedBtn) exploreSpeedBtn.title = 'Vitesse : Lent';
-                if (simSpeedBtn) simSpeedBtn.title = 'Vitesse : Lent';
+                if (exploreSpeedBtn) {
+                    exploreSpeedBtn.title = 'Vitesse : Lent';
+                    exploreSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
+                    if (window.fa && window.fa.createIcons) window.fa.createIcons(exploreSpeedBtn);
+                }
+                if (simSpeedBtn) {
+                    simSpeedBtn.title = 'Vitesse : Lent';
+                    simSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
+                    if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
+                }
             }
         };
 
