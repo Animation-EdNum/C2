@@ -508,7 +508,7 @@ function renderSkinsList() {
         svg = svg.replace(/<\/?animate[a-zA-Z]*[\s\S]*?>/gi, ''); // Remove animations for preview
         svg = svg.replace(/animation:[^;]+;/gi, ''); // Remove CSS animations
         if (skinId === 'volcano') {
-            svg = svg.replace(/<g transform="scale\(1\.4\) translate\(-14, -14\)">/, '<g transform="scale(0.65) translate(26, -39)">');
+            svg = svg.replace(/<g transform="scale\(1\.4\) translate\(-14, -14\)">/, '<g transform="scale(0.6) translate(36, 0)">');
         }
         let btnHtml = '';
         let lockIcon = '';
