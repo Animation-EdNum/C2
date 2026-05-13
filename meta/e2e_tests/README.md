@@ -6,10 +6,12 @@ This testing setup ensures that tests are completely isolated from the pure vani
 
 ## Running Tests Locally
 
+All commands should be run from the **root directory** of the project.
+
 1. **Install dependencies:**
    Ensure you have Python installed. Then, run:
    ```bash
-   pip install -r e2e_tests/requirements.txt
+   pip install -r meta/e2e_tests/requirements.txt
    playwright install
    ```
 
@@ -22,5 +24,12 @@ This testing setup ensures that tests are completely isolated from the pure vani
 3. **Run the tests:**
    In another terminal, run:
    ```bash
-   pytest e2e_tests/
+   python -m pytest meta/e2e_tests/ -v
    ```
+
+## Adding a New Test
+
+Tests are organized by application in `meta/e2e_tests/`. Conventions:
+- Name the files `test_<app_name>.py`.
+- Use `page.goto("http://localhost:8000/webapps/...")` as the base URL.
+- Prefer selectors by ID (`#my-element`) for stability.
