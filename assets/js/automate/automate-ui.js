@@ -430,7 +430,7 @@ window.commandsVisible = commandsVisible;
             startTabTimer(activeTab);
             updateExtremeVisibility();
 
-            if (activeSkin === 'pirate') startOceanRipples();
+            if (activeSkin === 'pirate' || activeSkin === 'manta') startOceanRipples();
 
             if (window.cmdsHiddenByDefault && commandsVisible && !window.forceBlindcode) {
                 toggleCommands();
