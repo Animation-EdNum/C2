@@ -40,39 +40,45 @@ window.commandsVisible = commandsVisible;
         window.setSpeedLevel = function(level) {
             const iconSpd1 = document.getElementById('icon-speed-1x');
             const iconSpd2 = document.getElementById('icon-speed-2x');
-            const exploreSpeedBtn = document.getElementById('btn-explore-toggle-speed');
             const simSpeedBtn = document.getElementById('btn-sim-toggle-speed');
+            const chalSpeedBtn = document.getElementById('btn-chal-toggle-speed');
+            const drawSpeedBtn = document.getElementById('btn-draw-toggle-speed');
+            const readSpeedBtn = document.getElementById('btn-read-toggle-speed');
 
             if (level === 2) {
                 currentSpeed = 400;
                 if (iconSpd1) iconSpd1.style.display = 'none';
                 if (iconSpd2) iconSpd2.style.display = 'block';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
-                if (exploreSpeedBtn) {
-                    exploreSpeedBtn.title = 'Vitesse : Rapide';
-                    exploreSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
-                    if (window.fa && window.fa.createIcons) window.fa.createIcons(exploreSpeedBtn);
-                }
                 if (simSpeedBtn) {
                     simSpeedBtn.title = 'Vitesse : Rapide';
                     simSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
                     if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
                 }
+                [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
+                    if (btn) {
+                        btn.title = 'Vitesse : Rapide';
+                        btn.innerHTML = '<i data-fa="rabbit-running"></i>';
+                        if (window.fa && window.fa.createIcons) window.fa.createIcons(btn);
+                    }
+                });
             } else {
                 currentSpeed = 900;
                 if (iconSpd1) iconSpd1.style.display = 'block';
                 if (iconSpd2) iconSpd2.style.display = 'none';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Lent';
-                if (exploreSpeedBtn) {
-                    exploreSpeedBtn.title = 'Vitesse : Lent';
-                    exploreSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
-                    if (window.fa && window.fa.createIcons) window.fa.createIcons(exploreSpeedBtn);
-                }
                 if (simSpeedBtn) {
                     simSpeedBtn.title = 'Vitesse : Lent';
                     simSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
                     if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
                 }
+                [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
+                    if (btn) {
+                        btn.title = 'Vitesse : Lent';
+                        btn.innerHTML = '<i data-fa="turtle"></i>';
+                        if (window.fa && window.fa.createIcons) window.fa.createIcons(btn);
+                    }
+                });
             }
         };
 
@@ -462,20 +468,35 @@ window.commandsVisible = commandsVisible;
         const btnSimCycleMat = document.getElementById('btn-sim-cycle-mat');
         if (btnSimCycleMat) btnSimCycleMat.addEventListener('click', cycleMat);
 
-        const btnExploreOpenSkins = document.getElementById('btn-explore-open-skins');
-        if (btnExploreOpenSkins) btnExploreOpenSkins.addEventListener('click', openSkinsModal);
-        const btnSimOpenSkins = document.getElementById('btn-sim-open-skins');
-        if (btnSimOpenSkins) btnSimOpenSkins.addEventListener('click', openSkinsModal);
-
         document.getElementById('btn-close-skins').addEventListener('click', closeSkinsModal);
         document.getElementById('ui-panel-overlay').addEventListener('click', closeSkinsModal);
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
         document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
 
-        const btnExploreToggleSpeed = document.getElementById('btn-explore-toggle-speed');
-        if (btnExploreToggleSpeed) btnExploreToggleSpeed.addEventListener('click', toggleSpeed);
         const btnSimToggleSpeed = document.getElementById('btn-sim-toggle-speed');
         if (btnSimToggleSpeed) btnSimToggleSpeed.addEventListener('click', toggleSpeed);
+
+
+        const btnChalToggleSpeed = document.getElementById('btn-chal-toggle-speed');
+        if (btnChalToggleSpeed) btnChalToggleSpeed.addEventListener('click', toggleSpeed);
+        const btnDrawToggleSpeed = document.getElementById('btn-draw-toggle-speed');
+        if (btnDrawToggleSpeed) btnDrawToggleSpeed.addEventListener('click', toggleSpeed);
+        const btnReadToggleSpeed = document.getElementById('btn-read-toggle-speed');
+        if (btnReadToggleSpeed) btnReadToggleSpeed.addEventListener('click', toggleSpeed);
+
+        const btnChalHideGrid = document.getElementById('btn-chal-hide-grid');
+        if (btnChalHideGrid) btnChalHideGrid.addEventListener('click', handleHideGridClick);
+        const btnDrawHideGrid = document.getElementById('btn-draw-hide-grid');
+        if (btnDrawHideGrid) btnDrawHideGrid.addEventListener('click', handleHideGridClick);
+        const btnReadHideGrid = document.getElementById('btn-read-hide-grid');
+        if (btnReadHideGrid) btnReadHideGrid.addEventListener('click', handleHideGridClick);
+
+        const btnChalCycleMat = document.getElementById('btn-chal-cycle-mat');
+        if (btnChalCycleMat) btnChalCycleMat.addEventListener('click', cycleMat);
+        const btnDrawCycleMat = document.getElementById('btn-draw-cycle-mat');
+        if (btnDrawCycleMat) btnDrawCycleMat.addEventListener('click', cycleMat);
+        const btnReadCycleMat = document.getElementById('btn-read-cycle-mat');
+        if (btnReadCycleMat) btnReadCycleMat.addEventListener('click', cycleMat);
 
         document.getElementById('tab-explore').addEventListener('click', (e) => switchTab(e, 'explore'));
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
@@ -490,7 +511,7 @@ window.commandsVisible = commandsVisible;
 
         document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
 
-        document.getElementById('btnReset').addEventListener('click', randomizeSimulatorPosition);
+        document.getElementById('btn-sim-random-position').addEventListener('click', randomizeSimulatorPosition);
 
         document.getElementById('btn-explore-reset').addEventListener('click', randomizeExplorePosition);
         document.getElementById('btn-explore-place-elements').addEventListener('click', () => {

@@ -407,13 +407,6 @@ function updateMemoryToggleVisibility() {
 }
 
 
-function updateSkinToolbarButtonsVisibility() {
-    const btnExplore = document.getElementById('btn-explore-open-skins');
-    const btnSim = document.getElementById('btn-sim-open-skins');
-    const hasMultipleSkins = unlockedSkins.filter(skin => skin !== 'default').length > 0;
-    if (btnExplore) btnExplore.style.display = hasMultipleSkins ? '' : 'none';
-    if (btnSim) btnSim.style.display = hasMultipleSkins ? '' : 'none';
-}
 
 function cycleMat() {
     const matKeys = Object.keys(MAT_CONFIG).filter(key => {
@@ -738,7 +731,7 @@ function unlockSkin(skinId) {
     }
     if (!unlockedSkins.includes(skinId)) {
         unlockedSkins.push(skinId);
-        updateSkinToolbarButtonsVisibility();
+
         localStorage.setItem('at_unlocked_skins', JSON.stringify(unlockedSkins));
 
         if (activeSkin === 'volcano') {
@@ -802,7 +795,7 @@ if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || n
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof updateSkinToolbarButtonsVisibility === 'function') {
-        updateSkinToolbarButtonsVisibility();
+
     }
 });
 let activeSkin = localStorage.getItem('at_active_skin') || 'default';
