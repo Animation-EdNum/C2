@@ -54,8 +54,7 @@ C2/
 │   ├── machine_a_trier.html
 │   ├── machine_a_chiffrer.html
 │   ├── reseau_de_tri.html
-│   ├── pixels_binaires.html
-│   └── pixel_studio_rvb.html
+│   └── pixels_binaires.html
 │
 ├── webapps/teacher/             # Outils enseignant·e·s
 │   ├── bareme.html
@@ -68,17 +67,19 @@ C2/
 │   ├── theme.js            # Thème global + registration SW
 │   ├── scores.js           # ScoreManager (gamification)
 │   ├── confetti.js         # Effets visuels de récompense
-│   ├── audio.js            # Audio synthétique (Web Audio API)
+1: │   ├── audio.js            # Audio synthétique (Web Audio API)
 │   ├── swipe.js            # Navigation tactile par swipe
 │   └── fa-subset.js    # Icônes FontAwesome
 │
 ├── assets/fonts/                  # Polices auto-hébergées
 ├── meta/                   # Audits, tests, scripts et ressources non-déployées
 │   ├── audits/
-│   ├── meta/e2e_tests/          # Tests End-to-End Playwright
+│   ├── e2e_tests/          # Tests End-to-End Playwright
 │   ├── memory/             # Contexte agents IA
 │   ├── ressources/
-│   │   └── lucide.min.js   # Source pour la génération du subset
+│   │   ├── solid_icons.js   # Source pour la génération du subset FA
+│   │   ├── regular_icons.js
+│   │   └── duotone.js
 │   ├── screenshots/        # Captures pour le README
 │   └── scripts/            # Scripts utilitaires (Node.js)
 └── .github/workflows/      # CI/CD GitHub Actions
@@ -169,7 +170,7 @@ playwright install
 python -m http.server 8000
 
 # Terminal 2 : lancer les tests
-python -m pytest meta/meta/e2e_tests/ -v
+python -m pytest meta/e2e_tests/ -v
 ```
 
 #### CI/CD
@@ -184,7 +185,6 @@ Les tests sont organisés par application dans `meta/e2e_tests/`. Conventions :
 ---
 
 ## Soumettre une contribution
-
 1. **Forkez** le dépôt
 2. **Créez une branche** descriptive : `fix/automate-collision` ou `feat/new-webapp`
 3. **Commitez** avec des messages clairs en français ou anglais
