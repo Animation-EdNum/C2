@@ -966,26 +966,26 @@ const ROBOT_SVGS = {
 
                 <style>
                     /* Vibration haute fréquence mais faible amplitude (moteur de course) */
-                    .f1-vibration { 
-                    animation: raceThrob 0.1s ease-in-out infinite alternate; 
+                    .skin-f1-vibration {
+                    animation: skin-f1-throb 0.1s ease-in-out infinite alternate;
                     }
-                    @keyframes raceThrob {
-                    from { transform: translateX(-0.3px); }
-                    to { transform: translateX(0.3px); }
+                    @keyframes skin-f1-throb {
+                    from { transform: translateX(-1.5px); }
+                    to { transform: translateX(1.5px); }
                     }
                     
                     /* Effet de chaleur à l'arrière */
-                    .heat { 
-                    animation: shimmer 0.2s linear infinite; 
+                    .skin-f1-heat {
+                    animation: skin-f1-shimmer 0.2s linear infinite;
                     opacity: 0.3;
                     }
-                    @keyframes shimmer {
+                    @keyframes skin-f1-shimmer {
                     0% { transform: scaleX(1); opacity: 0.3; }
                     100% { transform: scaleX(1.5); opacity: 0; }
                     }
                 </style>
 
-                <g class="f1-vibration" transform-origin="50 90">
+                <g class="skin-f1-vibration" transform-origin="50 90">
                     <!-- Ombre aérodynamique -->
                     <path d="M 30 20 L 70 20 L 85 170 L 15 170 Z" fill="#000000" opacity="0.1" />
 
@@ -1025,7 +1025,7 @@ const ROBOT_SVGS = {
 
                     <!-- SORTIE D'ÉCHAPPEMENT & CHALEUR -->
                     <rect x="47" y="150" width="6" height="10" fill="#1f2937" />
-                    <rect class="heat" x="45" y="160" width="10" height="15" fill="#f97316" />
+                    <rect class="skin-f1-heat" x="45" y="160" width="10" height="15" fill="#f97316" />
                 </g>
                 </svg>`,
     'unicorn': `
@@ -1078,27 +1078,27 @@ const ROBOT_SVGS = {
 
                 <style>
                     /* Vapeur plus lente et vaporeuse */
-                    .steam-puff { 
-                    animation: release 3s ease-out infinite; 
+                    .skin-train-steam-puff {
+                    animation: skin-train-release 3s ease-out infinite;
                     opacity: 0;
                     }
-                    @keyframes release {
+                    @keyframes skin-train-release {
                     0% { transform: translateY(0) scale(0.4); opacity: 0; }
                     30% { opacity: 0.5; }
                     100% { transform: translateY(-30px) scale(2); opacity: 0; }
                     }
 
                     /* Vibration ralentie pour un effet "vapeur sous pression" plus calme */
-                    .vibration { 
-                    animation: shake 0.4s ease-in-out infinite alternate; 
+                    .skin-train-vibration {
+                    animation: skin-train-shake 0.4s ease-in-out infinite alternate;
                     }
-                    @keyframes shake {
-                    from { transform: translateX(-0.5px); }
-                    to { transform: translateX(0.5px); }
+                    @keyframes skin-train-shake {
+                    from { transform: translateX(-2px); }
+                    to { transform: translateX(2px); }
                     }
                 </style>
 
-                <g class="vibration" transform-origin="50 80">
+                <g class="skin-train-vibration" transform-origin="50 80">
                     <!-- Ombre -->
                     <rect x="28" y="25" width="50" height="120" rx="10" fill="#000000" opacity="0.15" />
 
@@ -1117,8 +1117,8 @@ const ROBOT_SVGS = {
                     <circle cx="50" cy="35" r="13" fill="#0f172a" />
                     <circle cx="50" cy="35" r="9" fill="url(#smokeHole)" />
                     
-                    <circle class="steam-puff" cx="47" cy="25" r="5" fill="#f8fafc" />
-                    <circle class="steam-puff" cx="53" cy="15" r="6" fill="#f8fafc" style="animation-delay: 1s;" />
+                    <circle class="skin-train-steam-puff" cx="47" cy="25" r="5" fill="#f8fafc" />
+                    <circle class="skin-train-steam-puff" cx="53" cy="15" r="6" fill="#f8fafc" style="animation-delay: 1s;" />
                     </g>
 
                     <!-- LES CÔTÉS : Pare-fumée ou pistons (Rouge bordeaux discret) -->
