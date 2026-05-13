@@ -821,12 +821,13 @@ let simState = {
 
         function moveRobot(state, cmd) {
             let { robotRow: r, robotCol: c, robotDir: d, obstacles } = state;
-            if (cmd === 'left') { d = (d + 3) % 4; }
-            else if (cmd === 'right') { d = (d + 1) % 4; }
+            if (cmd === 'left') { d -= 1; }
+            else if (cmd === 'right') { d += 1; }
             else {
                 const step = cmd === 'forward' ? 1 : -1;
+                const normD = ((d % 4) + 4) % 4;
                 const dr = [-1, 0, 1, 0], dc = [0, 1, 0, -1];
-                const nr = r + dr[d] * step, nc = c + dc[d] * step;
+                const nr = r + dr[normD] * step, nc = c + dc[normD] * step;
                 if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
                     if (obstacles && obstacles.some(o => o.r === nr && o.c === nc)) return { ...state, robotDir: d, blocked: true };
                     r = nr; c = nc;
@@ -1421,13 +1422,14 @@ let simState = {
             let minX = 0, maxX = 0, minY = 0, maxY = 0;
 
             for (const cmd of path) {
-                if (cmd === 'left') dir = (dir + 3) % 4;
-                else if (cmd === 'right') dir = (dir + 1) % 4;
+                if (cmd === 'left') dir -= 1;
+                else if (cmd === 'right') dir += 1;
                 else if (cmd === 'forward') {
-                    if (dir === 0) y -= 1;
-                    else if (dir === 1) x += 1;
-                    else if (dir === 2) y += 1;
-                    else if (dir === 3) x -= 1;
+                    const normD = ((dir % 4) + 4) % 4;
+                    if (normD === 0) y -= 1;
+                    else if (normD === 1) x += 1;
+                    else if (normD === 2) y += 1;
+                    else if (normD === 3) x -= 1;
                     points.push({x, y});
                     minX = Math.min(minX, x);
                     maxX = Math.max(maxX, x);
