@@ -1056,26 +1056,18 @@ const ROBOT_SVGS = {
             </svg>
             `,
     'train': `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 400 510" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <defs>
-                <!-- Gradients pour le relief -->
                 <linearGradient id="volumeChaudiere" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#111" />
-                <stop offset="50%" stop-color="#444" />
-                <stop offset="100%" stop-color="#0a0a0a" />
+                    <stop offset="0%" stop-color="#111" />
+                    <stop offset="50%" stop-color="#444" />
+                    <stop offset="100%" stop-color="#0a0a0a" />
                 </linearGradient>
                 <linearGradient id="cuivre" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffb347" />
-                <stop offset="100%" stop-color="#8b4513" />
+                    <stop offset="0%" stop-color="#ffb347" />
+                    <stop offset="100%" stop-color="#8b4513" />
                 </linearGradient>
                 
-                <!-- Pattern pour le tender -->
-                <pattern id="tender-pattern" patternUnits="userSpaceOnUse" width="10" height="10">
-                <rect width="10" height="10" fill="#222" />
-                <line x1="0" y1="5" x2="10" y2="5" stroke="#111" stroke-width="0.5" />
-                </pattern>
-
-                <!-- La Vibration CSS -->
                 <style>
                     .skin-train-vibration { 
                         animation: skin-train-shake 0.4s ease-in-out infinite alternate; 
@@ -1088,50 +1080,40 @@ const ROBOT_SVGS = {
                 </style>
             </defs>
 
-            <!-- Groupe vibrant global -->
+            <!-- Groupe vibrant global sans translation superflue -->
             <g class="skin-train-vibration">
                 
-                <!-- Ombre au sol -->
-                <rect x="135" y="95" width="130" height="660" fill="rgba(0,0,0,0.2)" rx="10" />
+                <!-- Ombre au sol (ajustée pour la nouvelle vue) -->
+                <rect x="135" y="40" width="130" height="510" fill="rgba(0,0,0,0.15)" rx="10" />
 
                 <!-- === STRUCTURE DE LA LOCOMOTIVE === -->
-                
-                <!-- Tender & Détails -->
-                <rect x="140" y="550" width="120" height="200" fill="url(#tender-pattern)" rx="4" />
-                <rect x="145" y="555" width="110" height="190" fill="#1a1a1a" />
-                <rect x="150" y="565" width="40" height="15" fill="#111" rx="2" />
-                <rect x="210" y="565" width="40" height="15" fill="#111" rx="2" />
-                <rect x="135" y="745" width="15" height="10" fill="#333" rx="1" />
-                <rect x="250" y="745" width="15" height="10" fill="#333" rx="1" />
-
-                <!-- Cabine -->
+                <!-- Cabine (Le "cul" du train) -->
                 <rect x="130" y="450" width="140" height="90" fill="#700" rx="3" />
                 <rect x="135" y="455" width="130" height="80" fill="#333" rx="5" />
                 <rect x="187" y="442" width="6" height="4" fill="#666" rx="1" />
                 <rect x="140" y="460" width="15" height="15" fill="#222" rx="2" />
                 <rect x="245" y="460" width="15" height="15" fill="#222" rx="2" />
 
-                <!-- Chaudière & Tuyauterie -->
+                <!-- Chaudière -->
                 <rect x="155" y="140" width="90" height="310" fill="url(#volumeChaudiere)" />
                 <circle cx="200" cy="380" r="22" fill="url(#cuivre)" />
                 <rect x="195" y="380" width="10" height="10" fill="#4a3018" rx="2" />
                 <circle cx="180" cy="330" r="8" fill="#444" />
                 <circle cx="220" cy="330" r="8" fill="#444" />
-                <rect x="195" y="240" width="10" height="15" fill="#999" rx="2" />
-                <line x1="160" y1="160" x2="160" y2="430" stroke="#333" stroke-width="1" />
-                <line x1="240" y1="160" x2="240" y2="430" stroke="#333" stroke-width="1" />
-
+                
                 <!-- Avant & Cheminée -->
                 <rect x="155" y="100" width="90" height="40" fill="#111" />
                 <circle cx="200" cy="120" r="25" fill="#0a0a0a" />
                 <circle cx="200" cy="120" r="14" fill="#000" />
                 
-                <!-- Chasse-buffle & Phare -->
+                <!-- Chasse-buffle (L'avant à y=40) -->
                 <polygon points="200,40 145,100 255,100" fill="#222" />
                 <rect x="135" y="85" width="15" height="10" fill="#333" rx="1" />
                 <rect x="250" y="85" width="15" height="10" fill="#333" rx="1" />
                 <circle cx="200" cy="90" r="6" fill="#ffffcc" />
-                <polygon points="195,85 170,10 230,10 205,85" fill="#ffffcc" opacity="0.2" />
+                
+                <!-- Le Phare : il commence à y=85 et vise y=-100, donc il sort de la viewBox qui commence à y=40 -->
+                <polygon points="195,85 100,-100 300,-100 205,85" fill="#ffffcc" opacity="0.2" />
 
                 <!-- === ANIMATION DE LA FUMÉE COMPLEXE === -->
                 <g class="smoke-puffs">
@@ -1175,7 +1157,7 @@ const ROBOT_SVGS = {
                 </circle>
                 </g>
             </g>
-            </svg>`,
+        </svg>`,
     'helicopter': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
