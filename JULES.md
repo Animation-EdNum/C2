@@ -7,7 +7,9 @@
 
 ## 2. Technical Stack & Conventions
 - **Language/Framework:** HTML5, Vanilla JavaScript (ES6+), Vanilla CSS.
-- **Testing:** Manual browser testing, ensuring WCAG AA accessibility.
+- **Testing:** 
+  - Manual browser testing, ensuring WCAG AA accessibility.
+  - **Automated E2E Testing:** Uses Playwright. To avoid flakiness in Simulateur Automate, use `localStorage` manipulation instead of UI clicking (see `meta/memory/automate-playwright-tips.md`).
 - **Style Guidelines:** Clean, documented code, consistent glassmorphism design tokens, no external dependencies.
 
 ## 3. Boundaries
