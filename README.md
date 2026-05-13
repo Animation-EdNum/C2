@@ -21,7 +21,7 @@ Ces outils sont conçus pour fonctionner de la manière la plus simple possible,
 ### ✨ Les avantages pour votre classe
 *   **Zéro installation :** Pas de serveur, pas de logiciel lourd. Téléchargez le dossier, double-cliquez sur `index.html` et c'est parti !
 *   **100% Hors-ligne :** Une fois la page ouverte (ou installée comme application sur tablette), vous n'avez plus besoin d'internet. Parfait pour les écoles avec une connexion instable.
-*   **Essayez tout de suite :** Toutes nos applications sont directement jouables en ligne sur le portail [www.zooom.top](https://www.zooom.top).
+*   **Essayez tout de suite :** Toutes nos applications sont directement jouables en ligne sur le portail [www.ednum.org](https://www.ednum.org).
 
 ### 📦 Installation via npm (pour les responsables informatiques)
 
