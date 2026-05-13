@@ -1982,7 +1982,7 @@ let simState = {
                 if (activeSkin !== 'pirate') return;
                 const row = Math.floor(Math.random() * GRID_ROWS);
                 const col = Math.floor(Math.random() * GRID_COLS);
-                triggerRipple(row, col, 0);
+                triggerRipple(row, col);
             }, 5000);
         }
 
@@ -1993,41 +1993,29 @@ let simState = {
             }
         }
 
-        function triggerRipple(row, col, delay) {
-            setTimeout(() => {
-                // Trouver les cellules dans toutes les grilles possibles
-                const grids = ['explore-grid', 'sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
-                grids.forEach(gridId => {
-                    const cellId = `${gridId}-cell-${row}-${col}`;
-                    const cell = document.getElementById(cellId);
-                    if (cell) {
-                        cell.classList.add('ripple');
-                        cell.classList.remove('ripple-fade');
-                        setTimeout(() => {
-                            cell.classList.add('ripple-fade');
-                            cell.classList.remove('ripple');
-                        }, 200);
-                    }
-                });
-            }, delay);
+        function triggerRipple(row, col) {
+            for (let r = 0; r < GRID_ROWS; r++) {
+                for (let c = 0; c < GRID_COLS; c++) {
+                    const dist = Math.abs(r - row) + Math.abs(c - col);
+                    const delay = dist * 900;
 
-            if (delay === 0) {
-                const neighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-                neighbors.forEach(n => {
-                    const nr = row + n[0];
-                    const nc = col + n[1];
-                    if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
-                        triggerRipple(nr, nc, 300);
-                        const neighbors2 = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-                        neighbors2.forEach(n2 => {
-                            const nnr = nr + n2[0];
-                            const nnc = nc + n2[1];
-                            if (nnr >= 0 && nnr < GRID_ROWS && nnc >= 0 && nnc < GRID_COLS && (nnr !== row || nnc !== col)) {
-                                triggerRipple(nnr, nnc, 600);
+                    setTimeout(() => {
+                        // Trouver les cellules dans toutes les grilles possibles
+                        const grids = ['explore-grid', 'sim-grid', 'chal-grid', 'read-grid', 'draw-grid'];
+                        grids.forEach(gridId => {
+                            const cellId = `${gridId}-cell-${r}-${c}`;
+                            const cell = document.getElementById(cellId);
+                            if (cell) {
+                                cell.classList.add('ripple');
+                                cell.classList.remove('ripple-fade');
+                                setTimeout(() => {
+                                    cell.classList.add('ripple-fade');
+                                    cell.classList.remove('ripple');
+                                }, 600);
                             }
                         });
-                    }
-                });
+                    }, delay);
+                }
             }
         }
 
