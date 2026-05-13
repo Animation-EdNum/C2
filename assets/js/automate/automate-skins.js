@@ -1382,20 +1382,61 @@ const ROBOT_SVGS = {
                 </g>
             </svg>`,
     'beebot': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <rect x="15" y="20" width="70" height="70" rx="30" ry="30" fill="#fde047" stroke="#ca8a04" stroke-width="3"/>
-                    <rect x="20" y="30" width="60" height="8" fill="#1e293b"/>
-                    <rect x="15" y="48" width="70" height="8" fill="#1e293b"/>
-                    <rect x="17" y="66" width="66" height="8" fill="#1e293b"/>
-                    <circle cx="28" cy="15" r="10" fill="white" stroke="#ca8a04" stroke-width="2"/>
-                    <circle cx="72" cy="15" r="10" fill="white" stroke="#ca8a04" stroke-width="2"/>
-                    <circle cx="28" cy="12" r="4" fill="#1e293b"/>
-                    <circle cx="72" cy="12" r="4" fill="#1e293b"/>
-                    <path d="M 28 5 Q 20 -5 10 5" stroke="#1e293b" stroke-width="2" fill="none"/>
-                    <circle cx="10" cy="5" r="2" fill="#1e293b"/>
-                    <path d="M 72 5 Q 80 -5 90 5" stroke="#1e293b" stroke-width="2" fill="none"/>
-                    <circle cx="90" cy="5" r="2" fill="#1e293b"/>
-                </svg>`,
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+            <defs>
+                <clipPath id="bodyClip">
+                    <rect x="50" y="20" width="100" height="150" rx="50" />
+                </clipPath>
+                    
+                <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#FFB300" />
+                    <stop offset="50%" stop-color="#FFD54F" />
+                    <stop offset="100%" stop-color="#FFA000" />
+                </linearGradient>
+                    
+                <linearGradient id="wingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#E1F5FE" stop-opacity="0.8"/>
+                    <stop offset="100%" stop-color="#B3E5FC" stop-opacity="0.5"/>
+                </linearGradient>
+            </defs>
+
+            <path d="M 70 25 Q 40 5 30 20" fill="none" stroke="#2C3E50" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="30" cy="20" r="6" fill="#FF5252" stroke="#2C3E50" stroke-width="2"/>
+                
+            <path d="M 130 25 Q 160 5 170 20" fill="none" stroke="#2C3E50" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="170" cy="20" r="6" fill="#FF5252" stroke="#2C3E50" stroke-width="2"/>
+
+            <g stroke="#2C3E50" stroke-width="3">
+                <ellipse cx="30" cy="100" rx="35" ry="60" fill="url(#wingGrad)" transform="rotate(-25 30 100)"/>
+                <ellipse cx="170" cy="100" rx="35" ry="60" fill="url(#wingGrad)" transform="rotate(25 170 100)"/>
+            </g>
+
+            <rect x="50" y="20" width="100" height="150" rx="50" fill="url(#bodyGrad)" stroke="#2C3E50" stroke-width="6" />
+
+            <g clip-path="url(#bodyClip)">
+                <rect x="50" y="65" width="100" height="20" fill="#2C3E50" />
+                <rect x="50" y="105" width="100" height="20" fill="#2C3E50" />
+                <rect x="50" y="145" width="100" height="20" fill="#2C3E50" />
+
+                <ellipse cx="100" cy="40" rx="30" ry="10" fill="#FFFFFF" opacity="0.4" />
+            </g>
+
+            <circle cx="75" cy="45" r="8" fill="#18FFFF" stroke="#2C3E50" stroke-width="3" />
+            <circle cx="125" cy="45" r="8" fill="#18FFFF" stroke="#2C3E50" stroke-width="3" />
+            <circle cx="77" cy="43" r="2" fill="#FFFFFF" />
+            <circle cx="127" cy="43" r="2" fill="#FFFFFF" />
+
+            <circle cx="100" cy="105" r="30" fill="#ECEFF1" stroke="#2C3E50" stroke-width="4" />
+            <circle cx="100" cy="105" r="24" fill="#37474F" />
+                
+            <polygon points="100,86 108,96 92,96" fill="#00E676" />
+            <polygon points="100,124 108,114 92,114" fill="#FF5252" />
+            <polygon points="81,105 91,97 91,113" fill="#FFD54F" />
+            <polygon points="119,105 109,97 109,113" fill="#29B6F6" />
+
+            <circle cx="100" cy="105" r="7" fill="#FFFFFF" />
+            <circle cx="100" cy="105" r="4" fill="#18FFFF" />
+            </svg>`,
     'space': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <!-- Rocket body -->
