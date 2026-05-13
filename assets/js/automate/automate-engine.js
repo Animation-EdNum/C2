@@ -2194,17 +2194,35 @@ let simState = {
             if (overlay) {
                 if (activeSkin === 'volcano') {
                     const triggerDragonFire = () => {
-                        if (!document.contains(overlay)) return;
+                        const scheduleNext = () => {
+                            window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 8000 + 5000);
+                        };
 
                         const cvs = document.getElementById('dragon-fire-canvas');
-                        if (!cvs) return;
+                        if (!cvs) { scheduleNext(); return; }
+
+                        let activeOverlay = null;
+                        if (typeof activeTab !== 'undefined') {
+                            activeOverlay = document.getElementById(activeTab + '-robot');
+                        } else {
+                            const overlays = document.querySelectorAll('.robot-overlay');
+                            for (let i = 0; i < overlays.length; i++) {
+                                const rect = overlays[i].getBoundingClientRect();
+                                if (rect.width > 0 && rect.height > 0) {
+                                    activeOverlay = overlays[i];
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!activeOverlay || !document.contains(activeOverlay)) { scheduleNext(); return; }
+
+                        const rect = activeOverlay.getBoundingClientRect();
+                        if (rect.width === 0 || rect.height === 0) { scheduleNext(); return; }
 
                         const ctx = cvs.getContext('2d');
                         cvs.width = window.innerWidth;
                         cvs.height = window.innerHeight;
-
-                        const rect = overlay.getBoundingClientRect();
-                        if (rect.width === 0 || rect.height === 0) return;
 
                         let startX = rect.left + rect.width / 2;
                         let startY = rect.top + rect.height / 2;
@@ -2213,8 +2231,8 @@ let simState = {
                         let frameCount = 0;
 
                         // Calculate angle and origin based on current robot orientation
-                        let currentDir = normalizedDir;
-                        const body = overlay.querySelector('.robot-body');
+                        let currentDir = 0;
+                        const body = activeOverlay.querySelector('.robot-body');
                         if (body && body.style.transform) {
                             const match = body.style.transform.match(/rotate\(([-\d.]+)deg\)/);
                             if (match) {
@@ -2250,8 +2268,9 @@ let simState = {
                         for (let i = 0; i < 27; i++) createParticle();
 
                         function anim() {
-                            if (!document.contains(overlay)) {
+                            if (!document.contains(activeOverlay)) {
                                 ctx.clearRect(0, 0, cvs.width, cvs.height);
+                                scheduleNext();
                                 return;
                             }
 
@@ -2291,8 +2310,7 @@ let simState = {
                             if (alive) {
                                 window.dragonFireAnimFrame = requestAnimationFrame(anim);
                             } else {
-                                const nextTime = Math.random() * 8000 + 5000;
-                                window.dragonFireTimeout = setTimeout(triggerDragonFire, nextTime);
+                                scheduleNext();
                             }
                         }
                         anim();
