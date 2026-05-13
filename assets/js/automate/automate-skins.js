@@ -323,9 +323,19 @@ function generateMatContent(matId) {
         return;
     }
 
+    // 1. Preserve original content the first time
+    if (!config.originalContent && config.content) {
+        config.originalContent = [...config.content];
+    }
+
+    // 2. Always reset config.content to original before any mode generation
+    if (config.originalContent) {
+        config.content = [...config.originalContent];
+    }
+
     const needed = GRID_ROWS * GRID_COLS;
     if (memoryMode && matId !== 'none' && matId !== 'custom' && matId !== 'city') {
-        const pool = config.baseContent || config.content;
+        const pool = config.baseContent || config.originalContent;
         if (pool && pool.length > 0) {
             const neededPairs = Math.floor(needed / 2);
             let pairsContent = [];
