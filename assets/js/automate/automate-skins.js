@@ -1429,10 +1429,10 @@ const ROBOT_SVGS = {
             <circle cx="100" cy="105" r="30" fill="#ECEFF1" stroke="#2C3E50" stroke-width="4" />
             <circle cx="100" cy="105" r="24" fill="#37474F" />
                 
-            <polygon points="100,86 108,96 92,96" fill="#00E676" />
-            <polygon points="100,124 108,114 92,114" fill="#FF5252" />
+            <polygon points="100,86 108,96 92,96" fill="#29B6F6" />
+            <polygon points="100,124 108,114 92,114" fill="#8e44ad" />
             <polygon points="81,105 91,97 91,113" fill="#FFD54F" />
-            <polygon points="119,105 109,97 109,113" fill="#29B6F6" />
+            <polygon points="119,105 109,97 109,113" fill="#00E676" />
 
             <circle cx="100" cy="105" r="7" fill="#FFFFFF" />
             <circle cx="100" cy="105" r="4" fill="#18FFFF" />
