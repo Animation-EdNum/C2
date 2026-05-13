@@ -40,16 +40,23 @@ window.commandsVisible = commandsVisible;
         window.setSpeedLevel = function(level) {
             const iconSpd1 = document.getElementById('icon-speed-1x');
             const iconSpd2 = document.getElementById('icon-speed-2x');
+            const exploreSpeedBtn = document.getElementById('btn-explore-toggle-speed');
+            const simSpeedBtn = document.getElementById('btn-sim-toggle-speed');
+
             if (level === 2) {
                 currentSpeed = 400;
                 if (iconSpd1) iconSpd1.style.display = 'none';
                 if (iconSpd2) iconSpd2.style.display = 'block';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
+                if (exploreSpeedBtn) exploreSpeedBtn.title = 'Vitesse : Rapide';
+                if (simSpeedBtn) simSpeedBtn.title = 'Vitesse : Rapide';
             } else {
                 currentSpeed = 900;
                 if (iconSpd1) iconSpd1.style.display = 'block';
                 if (iconSpd2) iconSpd2.style.display = 'none';
                 if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Lent';
+                if (exploreSpeedBtn) exploreSpeedBtn.title = 'Vitesse : Lent';
+                if (simSpeedBtn) simSpeedBtn.title = 'Vitesse : Lent';
             }
         };
 
@@ -448,6 +455,11 @@ window.commandsVisible = commandsVisible;
         document.getElementById('ui-panel-overlay').addEventListener('click', closeSkinsModal);
         document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
         document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
+
+        const btnExploreToggleSpeed = document.getElementById('btn-explore-toggle-speed');
+        if (btnExploreToggleSpeed) btnExploreToggleSpeed.addEventListener('click', toggleSpeed);
+        const btnSimToggleSpeed = document.getElementById('btn-sim-toggle-speed');
+        if (btnSimToggleSpeed) btnSimToggleSpeed.addEventListener('click', toggleSpeed);
 
         document.getElementById('tab-explore').addEventListener('click', (e) => switchTab(e, 'explore'));
         document.getElementById('tab-simulator').addEventListener('click', (e) => switchTab(e, 'simulator'));
