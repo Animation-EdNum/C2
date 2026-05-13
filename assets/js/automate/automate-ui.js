@@ -8,7 +8,7 @@ window.commandsVisible = commandsVisible;
             const iconEyeOff = document.getElementById('icon-eye-off');
             const iconEye = document.getElementById('icon-eye');
             const toggleText = document.getElementById('hideCmdToggleText');
-            const toggleBtn = document.getElementById('hideCmdToggleBtn');
+            const toggleBtn = document.getElementById('hide-cmd-toggle-btn');
 
             const simProgram = document.getElementById('sim-program');
 
@@ -263,9 +263,9 @@ window.commandsVisible = commandsVisible;
            CONFETTI
            ================================================================ */
 
-        const gridColsSlider = document.getElementById('gridColsSlider');
-        const gridRowsSlider = document.getElementById('gridRowsSlider');
-        const gridSizeValue = document.getElementById('gridSizeValue');
+        const gridColsSlider = document.getElementById('grid-cols-slider');
+        const gridRowsSlider = document.getElementById('grid-rows-slider');
+        const gridSizeValue = document.getElementById('grid-size-value');
 
 
         function initApplication() {
@@ -438,7 +438,7 @@ window.commandsVisible = commandsVisible;
 
             // Apply force blindcode if parameter is set
             if (window.forceBlindcode) {
-                const toggleBtn = document.getElementById('hideCmdToggleBtn');
+                const toggleBtn = document.getElementById('hide-cmd-toggle-btn');
                 if (toggleBtn) toggleBtn.style.display = 'none';
                 if (commandsVisible) toggleCommands(); // trigger hiding if currently visible
             }
@@ -470,8 +470,8 @@ window.commandsVisible = commandsVisible;
 
         document.getElementById('btn-close-skins').addEventListener('click', closeSkinsModal);
         document.getElementById('ui-panel-overlay').addEventListener('click', closeSkinsModal);
-        document.getElementById('speedToggleBtn').addEventListener('click', toggleSpeed);
-        document.getElementById('hideCmdToggleBtn').addEventListener('click', toggleCommands);
+        document.getElementById('speed-toggle-btn').addEventListener('click', toggleSpeed);
+        document.getElementById('hide-cmd-toggle-btn').addEventListener('click', toggleCommands);
 
         const btnSimToggleSpeed = document.getElementById('btn-sim-toggle-speed');
         if (btnSimToggleSpeed) btnSimToggleSpeed.addEventListener('click', toggleSpeed);
@@ -509,7 +509,7 @@ window.commandsVisible = commandsVisible;
         document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
         document.getElementById('diff-extreme').addEventListener('click', () => setDifficulty('extreme'));
 
-        document.getElementById('btnNextChallenge').addEventListener('click', newChallenge);
+        document.getElementById('btn-next-challenge').addEventListener('click', newChallenge);
 
         document.getElementById('btn-sim-random-position').addEventListener('click', randomizeSimulatorPosition);
 
@@ -612,8 +612,8 @@ window.commandsVisible = commandsVisible;
         document.getElementById('draw-diff-medium').addEventListener('click', () => setDrawDifficulty('medium'));
         document.getElementById('draw-diff-hard').addEventListener('click', () => setDrawDifficulty('hard'));
         document.getElementById('draw-diff-extreme').addEventListener('click', () => setDrawDifficulty('extreme'));
-        document.getElementById('btnNextRead').addEventListener('click', newReadChallenge);
-        document.getElementById('btnNextDraw').addEventListener('click', newDrawChallenge);
+        document.getElementById('btn-next-read').addEventListener('click', newReadChallenge);
+        document.getElementById('btn-next-draw').addEventListener('click', newDrawChallenge);
 
         // Draw Command Pad
         document.getElementById('draw-pad-fwd').addEventListener('click', () => addDrawCommand('forward'));
@@ -648,8 +648,8 @@ window.commandsVisible = commandsVisible;
         document.getElementById('pad-pause').addEventListener('click', pauseProgram);
         document.getElementById('pad-clear').addEventListener('click', clearProgram);
 
-        const matOpacitySlider = document.getElementById('matOpacitySlider');
-        const matOpacityValue = document.getElementById('matOpacityValue');
+        const matOpacitySlider = document.getElementById('mat-opacity-slider');
+        const matOpacityValue = document.getElementById('mat-opacity-value');
         let savedOpacity = localStorage.getItem('at_mat_opacity');
         if (savedOpacity) {
             document.documentElement.style.setProperty('--mat-opacity', savedOpacity);

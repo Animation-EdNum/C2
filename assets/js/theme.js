@@ -3,7 +3,7 @@
  *
  * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
  * Prérequis dans le HTML :
- *   - Un bouton  id="themeToggleBtn"
+ *   - Un bouton  id="theme-toggle-btn"
  *   - Un svg     id="icon-sun"  (affiché en mode sombre)
  *   - Un svg     id="icon-moon" (affiché en mode clair)
  *
@@ -56,12 +56,12 @@
 
     // Gestion des événements du Header
     document.addEventListener('DOMContentLoaded', () => {
-        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeBtn = document.getElementById('theme-toggle-btn');
         if (themeBtn) {
             themeBtn.addEventListener('click', window.toggleTheme);
         }
 
-        const optionsBtn = document.getElementById('optionsMenuBtn');
+        const optionsBtn = document.getElementById('options-menu-btn');
         const optionsContent = document.querySelector('.settings-dropdown-content');
         if (optionsBtn && optionsContent) {
             optionsBtn.addEventListener('click', (e) => {

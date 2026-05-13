@@ -55,13 +55,13 @@ function applyUrlParameters() {
     }
 
     if (urlParams.get('noAudio') === '1') {
-        const audioBtn = document.getElementById('audioToggleBtn');
+        const audioBtn = document.getElementById('audio-toggle-btn');
         if (audioBtn) audioBtn.style.display = 'none';
     }
 
     if (urlParams.get('coloredCmds') === '1') {
         document.body.classList.add('colored-cmds');
-        const toggleBtn = document.getElementById('coloredCmdsToggleBtn');
+        const toggleBtn = document.getElementById('colored-cmds-toggle-btn');
         if (toggleBtn) toggleBtn.style.display = 'none';
     }
 
@@ -111,7 +111,7 @@ function applyUrlParameters() {
     if (urlParams.has('lockSpeed')) {
         const speedBtn = document.getElementById('btn-speed');
         if (speedBtn) speedBtn.style.display = 'none';
-        const speedToggleBtn = document.getElementById('speedToggleBtn');
+        const speedToggleBtn = document.getElementById('speed-toggle-btn');
         if (speedToggleBtn) speedToggleBtn.style.display = 'none';
 
         if (typeof window.setSpeedLevel === 'function') {
@@ -482,11 +482,11 @@ function initShareModal() {
         const lblLockSkin = document.getElementById('lbl-lockSkin');
         if (lblLockSkin) lblLockSkin.style.display = 'none';
     }
-    if (!document.getElementById('btn-speed') && !document.getElementById('speedToggleBtn')) {
+    if (!document.getElementById('btn-speed') && !document.getElementById('speed-toggle-btn')) {
         const lblLockSpeed = document.getElementById('lbl-lockSpeed');
         if (lblLockSpeed) lblLockSpeed.style.display = 'none';
     }
-    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hideCmdToggleBtn')) {
+    if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hide-cmd-toggle-btn')) {
         const lblNoCmdToggle = document.getElementById('lbl-noCmdToggle');
         const lblBlindcode = document.getElementById('lbl-blindcode');
         if (lblNoCmdToggle) lblNoCmdToggle.style.display = 'none';

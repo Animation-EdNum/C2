@@ -208,7 +208,7 @@ def test_automate_skins_drawer_opens(page: Page):
     """Clicking 'Changer de skin' should open the skins drawer."""
     page.goto(BASE_URL)
     # Open the options menu first
-    page.locator("#optionsMenuBtn").click()
+    page.locator("#options-menu-btn").click()
     page.locator("#btn-open-skins").click()
     expect(page.locator("#ui-panel")).to_have_attribute("aria-hidden", "false")
 
@@ -216,7 +216,7 @@ def test_automate_skins_drawer_opens(page: Page):
 def test_automate_skins_drawer_has_items(page: Page):
     """The skins drawer should contain multiple skin cards."""
     page.goto(BASE_URL)
-    page.locator("#optionsMenuBtn").click()
+    page.locator("#options-menu-btn").click()
     page.locator("#btn-open-skins").click()
     cards = page.locator("#skins-list-container .skin-list-item")
     assert cards.count() >= 3, "Should have at least 3 visible skin cards"
@@ -225,7 +225,7 @@ def test_automate_skins_drawer_has_items(page: Page):
 def test_automate_skins_drawer_closes(page: Page):
     """Clicking the close button should close the skins drawer."""
     page.goto(BASE_URL)
-    page.locator("#optionsMenuBtn").click()
+    page.locator("#options-menu-btn").click()
     page.locator("#btn-open-skins").click()
     page.locator("#btn-close-skins").click()
     expect(page.locator("#ui-panel")).to_have_attribute("aria-hidden", "true")
@@ -238,7 +238,7 @@ def test_automate_skins_drawer_closes(page: Page):
 def test_automate_mats_drawer_opens(page: Page):
     """Clicking 'Changer de tapis' should open the mats drawer."""
     page.goto(BASE_URL)
-    page.locator("#optionsMenuBtn").click()
+    page.locator("#options-menu-btn").click()
     page.locator("#btn-open-mats").click()
     expect(page.locator("#mats-drawer")).to_have_attribute("aria-hidden", "false")
 
@@ -246,18 +246,18 @@ def test_automate_mats_drawer_opens(page: Page):
 def test_automate_mats_drawer_has_opacity_slider(page: Page):
     """The mats drawer should contain the opacity slider."""
     page.goto(BASE_URL)
-    page.locator("#optionsMenuBtn").click()
+    page.locator("#options-menu-btn").click()
     page.locator("#btn-open-mats").click()
-    expect(page.locator("#matOpacitySlider")).to_be_visible()
+    expect(page.locator("#mat-opacity-slider")).to_be_visible()
 
 
 def test_automate_mats_drawer_has_grid_size_sliders(page: Page):
     """The mats drawer should contain grid size sliders."""
     page.goto(BASE_URL)
-    page.locator("#optionsMenuBtn").click()
+    page.locator("#options-menu-btn").click()
     page.locator("#btn-open-mats").click()
-    expect(page.locator("#gridColsSlider")).to_be_visible()
-    expect(page.locator("#gridRowsSlider")).to_be_visible()
+    expect(page.locator("#grid-cols-slider")).to_be_visible()
+    expect(page.locator("#grid-rows-slider")).to_be_visible()
 
 
 # ==============================================================
@@ -271,8 +271,8 @@ def test_automate_dark_mode_toggle(page: Page):
     page.reload()
 
     # Toggle to dark
-    page.locator("#optionsMenuBtn").click()
-    page.locator("#themeToggleBtn").click()
+    page.locator("#options-menu-btn").click()
+    page.locator("#theme-toggle-btn").click()
     expect(page.locator("body")).to_have_class(re.compile("dark"))
 
 
