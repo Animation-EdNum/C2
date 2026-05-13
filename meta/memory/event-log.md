@@ -62,3 +62,4 @@
 - **[2026-05-10]** [Documentation] Updated CONTRIBUTING.md and README.md to reflect the new automated Service Worker generation and the migration from Lucide to FontAwesome 7 Pro.
 - **[2026-05-11]** [Maintenance] Relocated `generate-sw-manifest.js` from `scripts/` to `meta/scripts/` to align with the project's developer tools organization. Updated all documentation references.
 - **[2026-05-12]** [Distribution] Created `package.json` and `bin/ednum.js` to publish the Suite EdNum as `@ednum/suite-ednum` on npmjs.com. Running `npx @ednum/suite-ednum` serves the full suite locally via a zero-dependency Node.js HTTP server. Excludes `meta/`, `.github/`, and dev-only root files from the published bundle.
+- **[2026-05-13]** [Bugfix] Fixed the viewbox dimensions of the 'botanique' skin in the Automate Simulator.
