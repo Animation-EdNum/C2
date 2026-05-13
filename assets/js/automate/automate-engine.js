@@ -2102,6 +2102,46 @@ let simState = {
             }
         }
 
+
+        function setCustomDragImage(e, overlay) {
+            // Create a custom drag image to prevent browser clipping overflowing SVGs
+            const rect = overlay.getBoundingClientRect();
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'drag-ghost-wrapper';
+            wrapper.style.position = 'absolute';
+            wrapper.style.top = '-9999px';
+            wrapper.style.left = '-9999px';
+            wrapper.style.width = '300px';
+            wrapper.style.height = '300px';
+            wrapper.style.display = 'flex';
+            wrapper.style.alignItems = 'center';
+            wrapper.style.justifyContent = 'center';
+
+            const clone = overlay.cloneNode(true);
+            clone.id = '';
+            clone.style.position = 'relative';
+            clone.style.width = rect.width + 'px';
+            clone.style.height = rect.height + 'px';
+            clone.style.transform = 'none'; // reset grid positioning
+
+            wrapper.appendChild(clone);
+            document.body.appendChild(wrapper);
+
+            const offsetX = e.clientX - rect.left + (300 - rect.width) / 2;
+            const offsetY = e.clientY - rect.top + (300 - rect.height) / 2;
+
+            if (e.dataTransfer && e.dataTransfer.setDragImage) {
+                e.dataTransfer.setDragImage(wrapper, offsetX, offsetY);
+            }
+
+            const cleanup = () => {
+                if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+                document.removeEventListener('dragend', cleanup);
+            };
+            document.addEventListener('dragend', cleanup);
+        }
+
         function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {
             let ov = document.getElementById(overlayId);
             const isNew = !ov;
@@ -2189,6 +2229,7 @@ let simState = {
                         return;
                     }
                     e.dataTransfer.setData('text/plain', 'robot');
+                    setCustomDragImage(e, e.target);
                 };
             }
 
@@ -2346,6 +2387,7 @@ let simState = {
                     } else {
                         e.dataTransfer.setData('text/plain', 'robot');
                         e.dataTransfer.effectAllowed = 'move';
+                        setCustomDragImage(e, e.target);
                     }
                 };
             }
