@@ -1546,22 +1546,55 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'botanique': `
-                <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="50" cy="50" rx="35" ry="40" fill="#ef4444" stroke="#b91c1c" stroke-width="3"/>
-                    <path d="M 50 10 L 50 90" stroke="#1e293b" stroke-width="3"/>
-                    <path d="M 25 30 C 50 10 75 30 75 30" fill="none" stroke="#1e293b" stroke-width="4"/>
-                    <circle cx="30" cy="45" r="6" fill="#1e293b"/>
-                    <circle cx="70" cy="45" r="6" fill="#1e293b"/>
-                    <circle cx="40" cy="70" r="5" fill="#1e293b"/>
-                    <circle cx="60" cy="70" r="5" fill="#1e293b"/>
-                    <circle cx="25" cy="60" r="4" fill="#1e293b"/>
-                    <circle cx="75" cy="60" r="4" fill="#1e293b"/>
-                    <!-- Head -->
-                    <circle cx="50" cy="15" r="12" fill="#1e293b"/>
-                    <!-- Antennae -->
-                    <path d="M 45 10 C 40 0 30 5 30 5" fill="none" stroke="#1e293b" stroke-width="2"/>
-                    <path d="M 55 10 C 60 0 70 5 70 5" fill="none" stroke="#1e293b" stroke-width="2"/>
-                </svg>`,
+            <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Définitions des dégradés pour le réalisme -->
+            <defs>
+                <!-- Dégradé pour la carapace rouge -->
+                <radialGradient id="wingGradient" cx="50%" cy="40%" r="50%" fx="30%" fy="30%">
+                <stop offset="0%" style="stop-color:#ff3333;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#880000;stop-opacity:1" />
+                </radialGradient>
+                
+                <!-- Reflet brillant sur le dessus -->
+                <linearGradient id="highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:white;stop-opacity:0.4" />
+                <stop offset="100%" style="stop-color:white;stop-opacity:0" />
+                </linearGradient>
+            </defs>
+
+            <!-- Pattes supprimées -->
+
+            <!-- Antennes repositionnées pour une tête plus petite -->
+            <path d="M93 42 Q85 15 75 10" stroke="black" fill="none" stroke-width="2"/>
+            <path d="M107 42 Q115 15 125 10" stroke="black" fill="none" stroke-width="2"/>
+
+            <!-- Tête (Corps / Thorax) réduite -->
+            <ellipse cx="100" cy="55" rx="18" ry="15" fill="#111" />
+            
+            <!-- Taches blanches sur le thorax adaptées à la plus petite tête -->
+            <circle cx="92" cy="48" r="3" fill="white" opacity="0.8" />
+            <circle cx="108" cy="48" r="3" fill="white" opacity="0.8" />
+
+            <!-- Carapace rouge (Élytres) -->
+            <path d="M100 170 C 40 170, 40 70, 100 70 C 160 70, 160 170, 100 170" fill="url(#wingGradient)" stroke="#200" stroke-width="1"/>
+            
+            <!-- Ligne de séparation des ailes -->
+            <line x1="100" y1="70" x2="100" y2="170" stroke="black" stroke-width="1.5" />
+
+            <!-- Les 7 points noirs (le classique) -->
+            <g fill="#111">
+                <circle cx="100" cy="90" r="10" /> <!-- Point central haut -->
+                <circle cx="70" cy="100" r="8" />
+                <circle cx="130" cy="100" r="8" />
+                <circle cx="65" cy="135" r="9" />
+                <circle cx="135" cy="135" r="9" />
+                <circle cx="90" cy="155" r="6" />
+                <circle cx="110" cy="155" r="6" />
+            </g>
+
+            <!-- Reflets brillants pour l'effet "carrosserie" -->
+            <ellipse cx="80" cy="95" rx="15" ry="8" fill="url(#highlight)" transform="rotate(-30, 80, 95)" />
+            </svg>`,
     'pedago': `
             <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
   <defs>
