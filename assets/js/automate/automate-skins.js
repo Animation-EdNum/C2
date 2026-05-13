@@ -128,7 +128,8 @@ const SKIN_CONFIG = {
     'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
     'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement.', hidden: false },
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
-    'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #ffc0cb;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
+    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Navigue gracieusement à travers les profondeurs abyssales.' },
+    'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Prends garde au vertige...', hidden: true },
     'pedago': { name: 'Coloraie', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Navigue comme un pro grâce à tes nageoires colorées.', hidden: true },
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' }
@@ -572,7 +573,7 @@ function updateSkinGrids() {
             if (cls.startsWith('skin-')) grid.classList.remove(cls);
         });
         if (activeSkin !== 'volcano') grid.classList.remove('ground-fire');
-        if (activeSkin !== 'pirate') grid.classList.remove('ground-ocean');
+        if (activeSkin !== 'pirate' && activeSkin !== 'manta') grid.classList.remove('ground-ocean');
         else grid.classList.add('ground-ocean');
         grid.classList.add(`skin-${activeSkin}`);
 
@@ -708,7 +709,7 @@ function selectSkin(skinId) {
         if (!document.body.classList.contains('dark')) toggleTheme();
     }
 
-    if (skinId === 'pirate') {
+    if (skinId === 'pirate' || skinId === 'manta') {
         startOceanRipples();
     } else {
         stopOceanRipples();
@@ -950,6 +951,56 @@ const ROBOT_SVGS = {
                         </g>
                     </g>
                 </svg>`,
+    'manta': `
+<svg viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg" style="overflow: visible; width: 100%; height: auto;">
+  <defs>
+    <path id="mantaShape" d="M 50 15
+           C 46 15, 45 10, 43 10 C 40 10, 40 15, 42 18
+           L 40 20
+           C 20 25, 2 40, 2 55
+           C 2 68, 25 78, 50 85
+           C 75 78, 98 68, 98 55
+           C 98 40, 80 25, 60 20
+           L 58 18
+           C 60 15, 60 10, 57 10 C 55 10, 54 15, 50 15 Z" />
+
+    <clipPath id="clipManta">
+      <use href="#mantaShape" />
+    </clipPath>
+
+    <radialGradient id="skinGrad" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </radialGradient>
+
+    <filter id="manta-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1" />
+    </filter>
+  </defs>
+
+  <style>
+    .manta-tail {
+      transform-origin: 50px 85px;
+      animation: manta-wave 3s ease-in-out infinite alternate;
+    }
+    @keyframes manta-wave {
+      0% { transform: rotate(-3deg); }
+      100% { transform: rotate(3deg); }
+    }
+  </style>
+
+  <!-- La Queue XXL (Elle dépasse maintenant de 50 unités en bas) -->
+  <path class="manta-tail" d="M 50 85 Q 53 110 50 145" fill="none" stroke="#1e293b" stroke-width="1.2" stroke-linecap="round" />
+
+  <!-- CORPS (Parfaitement centré dans la fenêtre 100x95) -->
+  <g clip-path="url(#clipManta)">
+    <use href="#mantaShape" fill="url(#skinGrad)" />
+    <ellipse cx="40" cy="25" rx="8" ry="4" fill="white" opacity="0.3" filter="url(#manta-soft)" transform="rotate(-30, 40, 25)" />
+    <ellipse cx="60" cy="25" rx="8" ry="4" fill="white" opacity="0.3" filter="url(#manta-soft)" transform="rotate(30, 60, 25)" />
+  </g>
+
+  <use href="#mantaShape" fill="none" stroke="#475569" stroke-width="0.3" />
+</svg>`,
     'f1': `
                 <svg viewBox="0 0 100 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>

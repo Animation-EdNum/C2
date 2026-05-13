@@ -1981,7 +1981,7 @@ let simState = {
         function startOceanRipples() {
             if (oceanRippleInterval) clearInterval(oceanRippleInterval);
             oceanRippleInterval = setInterval(() => {
-                if (activeSkin !== 'pirate') return;
+                if (activeSkin !== 'pirate' && activeSkin !== 'manta') return;
                 const row = Math.floor(Math.random() * GRID_ROWS);
                 const col = Math.floor(Math.random() * GRID_COLS);
                 triggerRipple(row, col);
@@ -2049,7 +2049,7 @@ let simState = {
             if (activeSkin !== 'volcano') {
                 grid.classList.remove('ground-fire');
             }
-            if (activeSkin !== 'pirate') {
+            if (activeSkin !== 'pirate' && activeSkin !== 'manta') {
                 grid.classList.remove('ground-ocean');
             } else {
                 grid.classList.add('ground-ocean');
