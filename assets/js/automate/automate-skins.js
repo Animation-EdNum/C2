@@ -948,84 +948,79 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'f1': `
-                <svg viewBox="0 0 100 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                    <!-- Texture carbone pour le châssis -->
                     <linearGradient id="carbonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stop-color="#111827" />
-                    <stop offset="50%" stop-color="#1f2937" />
+                    <stop offset="50%" stop-color="#374151" />
                     <stop offset="100%" stop-color="#111827" />
                     </linearGradient>
 
-                    <!-- Éclat pour les éléments de carrosserie -->
-                    <filter id="lightGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="1" result="blur" />
+                    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
                     <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
                 </defs>
 
                 <style>
-                    /* Vibration haute fréquence mais faible amplitude (moteur de course) */
-                    .skin-f1-vibration {
-                    animation: skin-f1-throb 0.1s ease-in-out infinite alternate;
+                    /* Vibration violente (Amplitude x10 par rapport à avant) */
+                    .f1-hyper-vibration { 
+                    animation: nitroThrob 0.07s ease-in-out infinite alternate; 
                     }
-                    @keyframes skin-f1-throb {
+                    @keyframes nitroThrob {
                     from { transform: translateX(-1.5px); }
                     to { transform: translateX(1.5px); }
                     }
                     
-                    /* Effet de chaleur à l'arrière */
-                    .skin-f1-heat {
-                    animation: skin-f1-shimmer 0.2s linear infinite;
-                    opacity: 0.3;
+                    .exhaust { 
+                    animation: flame 0.1s linear infinite; 
                     }
-                    @keyframes skin-f1-shimmer {
-                    0% { transform: scaleX(1); opacity: 0.3; }
-                    100% { transform: scaleX(1.5); opacity: 0; }
+                    @keyframes flame {
+                    0% { opacity: 0.8; transform: scaleY(1); }
+                    100% { opacity: 0.2; transform: scaleY(2); }
                     }
                 </style>
 
-                <g class="skin-f1-vibration" transform-origin="50 90">
-                    <!-- Ombre aérodynamique -->
-                    <path d="M 30 20 L 70 20 L 85 170 L 15 170 Z" fill="#000000" opacity="0.1" />
+                <g class="f1-hyper-vibration" transform-origin="50 90">
+                    <!-- Ombre -->
+                    <path d="M 30 20 L 70 20 L 85 175 L 15 175 Z" fill="#000000" opacity="0.15" />
 
-                    <!-- LES PNEUS (Exposés) -->
-                    <g fill="#111827">
-                    <rect x="15" y="35" width="12" height="25" rx="2" /> <!-- Avant Gauche -->
-                    <rect x="73" y="35" width="12" height="25" rx="2" /> <!-- Avant Droit -->
-                    <rect x="10" y="135" width="15" height="30" rx="3" /> <!-- Arrière Gauche -->
-                    <rect x="75" y="135" width="15" height="30" rx="3" /> <!-- Arrière Droit -->
+                    <!-- PNEUS (Noir profond pour le contraste) -->
+                    <g fill="#000000">
+                    <rect x="14" y="35" width="13" height="26" rx="2" /> 
+                    <rect x="73" y="35" width="13" height="26" rx="2" />
+                    <rect x="8" y="135" width="16" height="32" rx="3" /> 
+                    <rect x="76" y="135" width="16" height="32" rx="3" />
                     </g>
 
-                    <!-- L'AILERON AVANT (Large et complexe) -->
-                    <rect x="18" y="22" width="64" height="8" rx="1" fill="#7f1d1d" /> <!-- Rouge course -->
-                    <rect x="18" y="24" width="64" height="2" fill="#000000" opacity="0.3" />
+                    <!-- AILERON AVANT (Rouge Vif #ef4444) -->
+                    <rect x="16" y="20" width="68" height="10" rx="1" fill="#ef4444" />
+                    <rect x="40" y="22" width="20" height="2" fill="#facc15" /> <!-- Détail Jaune -->
 
-                    <!-- CHÂSSIS (Forme "Bouteille de Coca") -->
-                    <path d="M 50 15 
-                            L 42 35 
-                            L 35 70 
-                            C 35 100, 25 120, 25 150 
-                            L 75 150 
-                            C 75 120, 65 100, 65 70 
-                            L 58 35 Z" 
-                        fill="url(#carbonGrad)" stroke="#374151" stroke-width="0.5" />
+                    <!-- CHÂSSIS (Forme moderne épurée) -->
+                    <path d="M 50 12 
+                            L 41 35 
+                            L 34 70 
+                            C 34 105, 23 125, 23 155 
+                            L 77 155 
+                            C 77 125, 66 105, 66 70 
+                            L 59 35 Z" 
+                        fill="url(#carbonGrad)" stroke="#4b5563" stroke-width="0.5" />
 
-                    <!-- LE COCKPIT & LE HALO -->
-                    <path d="M 40 85 C 40 70, 50 65, 50 65 C 50 65, 60 70, 60 85" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" /> <!-- Structure Halo -->
-                    <circle cx="50" cy="88" r="5" fill="#000000" /> <!-- Casque du pilote -->
+                    <!-- COCKPIT, HALO & CASQUE -->
+                    <path d="M 38 85 C 38 65, 50 60, 50 60 C 50 60, 62 65, 62 85" fill="none" stroke="#f1f5f9" stroke-width="3" stroke-linecap="round" />
+                    <circle cx="50" cy="88" r="5.5" fill="#facc15" filter="url(#neonGlow)" /> <!-- Casque Jaune Fluo -->
 
-                    <!-- SIDEPODS (Pontons latéraux - Rouge bordeaux) -->
-                    <path d="M 35 75 Q 25 85, 30 110 L 40 110 Z" fill="#991b1b" />
-                    <path d="M 65 75 Q 75 85, 70 110 L 60 110 Z" fill="#991b1b" />
+                    <!-- PONTONS (Rouge Sport #dc2626) -->
+                    <path d="M 34 75 Q 24 85, 28 115 L 39 115 Z" fill="#dc2626" />
+                    <path d="M 66 75 Q 76 85, 72 115 L 61 115 Z" fill="#dc2626" />
 
-                    <!-- L'AILERON ARRIÈRE (Spoiler) -->
-                    <rect x="22" y="155" width="56" height="12" rx="1" fill="#7f1d1d" />
-                    <rect x="35" y="158" width="30" height="6" fill="#111827" opacity="0.8" /> <!-- DRS flap area -->
+                    <!-- AILERON ARRIÈRE (Spoiler massif) -->
+                    <rect x="20" y="158" width="60" height="14" rx="1" fill="#ef4444" />
+                    <rect x="25" y="162" width="50" height="4" fill="#000000" opacity="0.4" />
 
-                    <!-- SORTIE D'ÉCHAPPEMENT & CHALEUR -->
-                    <rect x="47" y="150" width="6" height="10" fill="#1f2937" />
-                    <rect class="skin-f1-heat" x="45" y="160" width="10" height="15" fill="#f97316" />
+                    <!-- FLAMME D'ÉCHAPPEMENT -->
+                    <path class="exhaust" d="M 46 155 L 54 155 L 50 175 Z" fill="#f97316" filter="url(#neonGlow)" />
                 </g>
                 </svg>`,
     'unicorn': `
@@ -1061,79 +1056,126 @@ const ROBOT_SVGS = {
             </svg>
             `,
     'train': `
-                <svg viewBox="0 0 100 160" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <!-- Gradient pour l'acier de la chaudière -->
-                    <linearGradient id="boilerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#064e3b" /> <!-- Vert forêt profond -->
-                    <stop offset="50%" stop-color="#059669" /> <!-- Vert plus clair pour le reflet -->
-                    <stop offset="100%" stop-color="#064e3b" />
-                    </linearGradient>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <!-- Gradients pour le relief -->
+                <linearGradient id="volumeChaudiere" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#111" />
+                <stop offset="50%" stop-color="#444" />
+                <stop offset="100%" stop-color="#0a0a0a" />
+                </linearGradient>
+                <linearGradient id="cuivre" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffb347" />
+                <stop offset="100%" stop-color="#8b4513" />
+                </linearGradient>
+                
+                <!-- Pattern pour le tender -->
+                <pattern id="tender-pattern" patternUnits="userSpaceOnUse" width="10" height="10">
+                <rect width="10" height="10" fill="#222" />
+                <line x1="0" y1="5" x2="10" y2="5" stroke="#111" stroke-width="0.5" />
+                </pattern>
 
-                    <radialGradient id="smokeHole" cx="50%" cy="50%" r="50%">
-                    <stop offset="70%" stop-color="#0f172a" />
-                    <stop offset="100%" stop-color="#000000" />
-                    </radialGradient>
-                </defs>
-
+                <!-- La Vibration CSS -->
                 <style>
-                    /* Vapeur plus lente et vaporeuse */
-                    .skin-train-steam-puff {
-                    animation: skin-train-release 3s ease-out infinite;
-                    opacity: 0;
-                    }
-                    @keyframes skin-train-release {
-                    0% { transform: translateY(0) scale(0.4); opacity: 0; }
-                    30% { opacity: 0.5; }
-                    100% { transform: translateY(-30px) scale(2); opacity: 0; }
-                    }
-
-                    /* Vibration ralentie pour un effet "vapeur sous pression" plus calme */
-                    .skin-train-vibration {
-                    animation: skin-train-shake 0.4s ease-in-out infinite alternate;
+                    .skin-train-vibration { 
+                        animation: skin-train-shake 0.4s ease-in-out infinite alternate; 
+                        transform-origin: center;
                     }
                     @keyframes skin-train-shake {
-                    from { transform: translateX(-2px); }
-                    to { transform: translateX(2px); }
+                        from { transform: translateX(-2px); }
+                        to { transform: translateX(2px); }
                     }
                 </style>
+            </defs>
 
-                <g class="skin-train-vibration" transform-origin="50 80">
-                    <!-- Ombre -->
-                    <rect x="28" y="25" width="50" height="120" rx="10" fill="#000000" opacity="0.15" />
+            <!-- Groupe vibrant global -->
+            <g class="skin-train-vibration">
+                
+                <!-- Ombre au sol -->
+                <rect x="135" y="95" width="130" height="660" fill="rgba(0,0,0,0.2)" rx="10" />
 
-                    <!-- Châssis (Noir/Gris très foncé) -->
-                    <rect x="22" y="20" width="56" height="130" rx="4" fill="#111827" />
-                    
-                    <!-- La Chaudière (Vert de course classique) -->
-                    <rect x="32" y="35" width="36" height="75" rx="18" fill="url(#boilerGrad)" />
+                <!-- === STRUCTURE DE LA LOCOMOTIVE === -->
+                
+                <!-- Tender & Détails -->
+                <rect x="140" y="550" width="120" height="200" fill="url(#tender-pattern)" rx="4" />
+                <rect x="145" y="555" width="110" height="190" fill="#1a1a1a" />
+                <rect x="150" y="565" width="40" height="15" fill="#111" rx="2" />
+                <rect x="210" y="565" width="40" height="15" fill="#111" rx="2" />
+                <rect x="135" y="745" width="15" height="10" fill="#333" rx="1" />
+                <rect x="250" y="745" width="15" height="10" fill="#333" rx="1" />
 
-                    <!-- Cerclages en Laiton (L'élégance ferroviaire) -->
-                    <rect x="32" y="52" width="36" height="3" fill="#d97706" />
-                    <rect x="32" y="75" width="36" height="3" fill="#d97706" />
+                <!-- Cabine -->
+                <rect x="130" y="450" width="140" height="90" fill="#700" rx="3" />
+                <rect x="135" y="455" width="130" height="80" fill="#333" rx="5" />
+                <rect x="187" y="442" width="6" height="4" fill="#666" rx="1" />
+                <rect x="140" y="460" width="15" height="15" fill="#222" rx="2" />
+                <rect x="245" y="460" width="15" height="15" fill="#222" rx="2" />
 
-                    <!-- L'AVANT : La Cheminée -->
-                    <g>
-                    <circle cx="50" cy="35" r="13" fill="#0f172a" />
-                    <circle cx="50" cy="35" r="9" fill="url(#smokeHole)" />
-                    
-                    <circle class="skin-train-steam-puff" cx="47" cy="25" r="5" fill="#f8fafc" />
-                    <circle class="skin-train-steam-puff" cx="53" cy="15" r="6" fill="#f8fafc" style="animation-delay: 1s;" />
-                    </g>
+                <!-- Chaudière & Tuyauterie -->
+                <rect x="155" y="140" width="90" height="310" fill="url(#volumeChaudiere)" />
+                <circle cx="200" cy="380" r="22" fill="url(#cuivre)" />
+                <rect x="195" y="380" width="10" height="10" fill="#4a3018" rx="2" />
+                <circle cx="180" cy="330" r="8" fill="#444" />
+                <circle cx="220" cy="330" r="8" fill="#444" />
+                <rect x="195" y="240" width="10" height="15" fill="#999" rx="2" />
+                <line x1="160" y1="160" x2="160" y2="430" stroke="#333" stroke-width="1" />
+                <line x1="240" y1="160" x2="240" y2="430" stroke="#333" stroke-width="1" />
 
-                    <!-- LES CÔTÉS : Pare-fumée ou pistons (Rouge bordeaux discret) -->
-                    <rect x="18" y="45" width="8" height="60" rx="2" fill="#7f1d1d" />
-                    <rect x="74" y="45" width="8" height="60" rx="2" fill="#7f1d1d" />
-                    
-                    <!-- LA CABINE (Arrière) -->
-                    <rect x="28" y="110" width="44" height="32" rx="2" fill="#064e3b" stroke="#d97706" stroke-width="0.5" />
-                    <!-- Toit de la cabine (Noir) -->
-                    <rect x="26" y="108" width="48" height="10" rx="2" fill="#111827" />
-                    
-                    <!-- Tender ou Charbonnière -->
-                    <rect x="32" y="145" width="36" height="10" rx="1" fill="#020617" />
+                <!-- Avant & Cheminée -->
+                <rect x="155" y="100" width="90" height="40" fill="#111" />
+                <circle cx="200" cy="120" r="25" fill="#0a0a0a" />
+                <circle cx="200" cy="120" r="14" fill="#000" />
+                
+                <!-- Chasse-buffle & Phare -->
+                <polygon points="200,40 145,100 255,100" fill="#222" />
+                <rect x="135" y="85" width="15" height="10" fill="#333" rx="1" />
+                <rect x="250" y="85" width="15" height="10" fill="#333" rx="1" />
+                <circle cx="200" cy="90" r="6" fill="#ffffcc" />
+                <polygon points="195,85 170,10 230,10 205,85" fill="#ffffcc" opacity="0.2" />
+
+                <!-- === ANIMATION DE LA FUMÉE COMPLEXE === -->
+                <g class="smoke-puffs">
+                <!-- Puff 1 -->
+                <circle cx="200" cy="120" r="10" fill="#eee">
+                    <animate attributeName="cy" values="120; 450" dur="2.5s" repeatCount="indefinite" begin="0s" />
+                    <animate attributeName="r" values="8; 85" dur="2.5s" repeatCount="indefinite" begin="0s" />
+                    <animate attributeName="opacity" values="0; 0.7; 0" dur="2.5s" repeatCount="indefinite" begin="0s" />
+                    <animate attributeName="cx" values="200; 210; 190; 200" dur="2.5s" repeatCount="indefinite" begin="0s" />
+                </circle>
+                <!-- Puff 2 -->
+                <circle cx="200" cy="120" r="10" fill="#ddd">
+                    <animate attributeName="cy" values="120; 500" dur="2.8s" repeatCount="indefinite" begin="0.4s" />
+                    <animate attributeName="r" values="8; 95" dur="2.8s" repeatCount="indefinite" begin="0.4s" />
+                    <animate attributeName="opacity" values="0; 0.6; 0" dur="2.8s" repeatCount="indefinite" begin="0.4s" />
+                    <animate attributeName="cx" values="200; 195; 205; 200" dur="2.8s" repeatCount="indefinite" begin="0.4s" />
+                </circle>
+                <!-- Puff 3 -->
+                <circle cx="200" cy="120" r="10" fill="#ccc">
+                    <animate attributeName="cy" values="120; 550" dur="3s" repeatCount="indefinite" begin="0.8s" />
+                    <animate attributeName="r" values="8; 110" dur="3s" repeatCount="indefinite" begin="0.8s" />
+                    <animate attributeName="opacity" values="0; 0.5; 0" dur="3s" repeatCount="indefinite" begin="0.8s" />
+                </circle>
+                <!-- Puff 4 -->
+                <circle cx="200" cy="120" r="10" fill="#bbb">
+                    <animate attributeName="cy" values="120; 400" dur="3.2s" repeatCount="indefinite" begin="1.2s" />
+                    <animate attributeName="r" values="10; 70" dur="3.2s" repeatCount="indefinite" begin="1.2s" />
+                    <animate attributeName="opacity" values="0; 0.8; 0" dur="3.2s" repeatCount="indefinite" begin="1.2s" />
+                </circle>
+                <!-- Puff 5 -->
+                <circle cx="200" cy="120" r="10" fill="#aaa">
+                    <animate attributeName="cy" values="120; 600" dur="3.5s" repeatCount="indefinite" begin="1.6s" />
+                    <animate attributeName="r" values="10; 130" dur="3.5s" repeatCount="indefinite" begin="1.6s" />
+                    <animate attributeName="opacity" values="0; 0.4; 0" dur="3.5s" repeatCount="indefinite" begin="1.6s" />
+                </circle>
+                <!-- Puff 6 -->
+                <circle cx="200" cy="120" r="10" fill="#999">
+                    <animate attributeName="cy" values="120; 480" dur="2.7s" repeatCount="indefinite" begin="2.0s" />
+                    <animate attributeName="r" values="6; 100" dur="2.7s" repeatCount="indefinite" begin="2.0s" />
+                    <animate attributeName="opacity" values="0; 0.6; 0" dur="2.7s" repeatCount="indefinite" begin="2.0s" />
+                </circle>
                 </g>
-                </svg>`,
+            </g>
+            </svg>`,
     'helicopter': `
                 <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                     <g transform="scale(0.8) translate(12.5, 12.5)">
