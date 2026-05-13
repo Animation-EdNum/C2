@@ -1597,7 +1597,7 @@ const ROBOT_SVGS = {
                     </g>
                 </svg>`,
     'botanique': `
-            <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <svg width="160" height="160" viewBox="0 10 200 200" xmlns="http://www.w3.org/2000/svg">
             <!-- Définitions des dégradés pour le réalisme -->
             <defs>
                 <!-- Dégradé pour la carapace rouge -->
