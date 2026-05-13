@@ -68,3 +68,6 @@ All web applications must follow this strict semantic structure:
 - **Routage Réseau:** Extreme mode uses `solarInterval` for real-time breakdowns (`brokenNodes`). Clicking the last added node should trigger an 'undo' action rather than resetting the path.
 
 - **Index Colors Synchronization:** Application cards in `index.html` should use the default blue icon colors (`--fa-primary:#2980b9;--fa-secondary:#3498db`). Customized application theme colors are strictly reserved for the simplified portal `indexC1.html`.
+
+### Naming Conventions
+- **Always use kebab-case for HTML IDs and Classes:** This ensures CSS consistency across the project. For example, use `id="theme-toggle-btn"` instead of `id="themeToggleBtn"`.

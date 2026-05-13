@@ -1,6 +1,6 @@
         window.addEventListener('load', () => {
 
-            const coloredCmdsBtn = document.getElementById('coloredCmdsToggleBtn');
+            const coloredCmdsBtn = document.getElementById('colored-cmds-toggle-btn');
             if (coloredCmdsBtn) {
                 coloredCmdsBtn.addEventListener('click', () => {
                     document.body.classList.toggle('colored-cmds');

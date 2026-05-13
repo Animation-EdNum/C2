@@ -780,7 +780,7 @@ let simState = {
 
         function renderProgram() {
             const strip = document.getElementById('sim-program');
-            const toggleBtn = document.getElementById('hideCmdToggleBtn');
+            const toggleBtn = document.getElementById('hide-cmd-toggle-btn');
 
             strip.innerHTML = '';
 
@@ -1488,7 +1488,7 @@ let simState = {
             drawState.locked = false;
             drawState.mistakes = 0;
             drawState.program = [];
-            document.getElementById('btnNextDraw').style.display = 'none';
+            document.getElementById('btn-next-draw').style.display = 'none';
 
             let chal = generateDrawChallenge(drawState.difficulty);
 
@@ -1675,8 +1675,8 @@ let simState = {
                     unlockSkin('unicorn');
                 }
 
-                document.getElementById('btnNextDraw').style.display = 'inline-flex';
-                if (isCorrect) setTimeout(() => { if (document.getElementById('btnNextDraw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
+                document.getElementById('btn-next-draw').style.display = 'inline-flex';
+                if (isCorrect) setTimeout(() => { if (document.getElementById('btn-next-draw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
             } else {
                 playSound('error');
                 showToast(errorMsg, false);
@@ -1729,7 +1729,7 @@ let simState = {
             if (readState.isAnimating) return;
             readState.locked = false;
             readState.mistakes = 0; // Reset mistakes for the new challenge
-            document.getElementById('btnNextRead').style.display = 'none';
+            document.getElementById('btn-next-read').style.display = 'none';
 
             readState.type = 'destination';
 
@@ -1832,8 +1832,8 @@ let simState = {
             }
 
             if (isCorrect) {
-                document.getElementById('btnNextRead').style.display = 'inline-flex';
-                setTimeout(() => { if (document.getElementById('btnNextRead').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
+                document.getElementById('btn-next-read').style.display = 'inline-flex';
+                setTimeout(() => { if (document.getElementById('btn-next-read').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
             }
             readState.isAnimating = false;
         }
@@ -1841,7 +1841,7 @@ let simState = {
         function newChallenge() {
             if (chalState.isAnimating) return;
             chalState.mistakes = 0;
-            chalState.locked = false; document.getElementById('btnNextChallenge').style.display = 'none';
+            chalState.locked = false; document.getElementById('btn-next-challenge').style.display = 'none';
 
             const chal = generateChallengePath(chalState.difficulty);
             chalState.robotRow = chal.startR; chalState.robotCol = chal.startC; chalState.robotDir = chal.startD;
@@ -1961,8 +1961,8 @@ let simState = {
                     chalState.options.forEach((o, j) => { if (o.isCorrect) opts[j].classList.add('correct'); });
                     showToast('Faux. Clique sur la proposition en vert pour voir la solution.', 'error');
                 }
-                document.getElementById('btnNextChallenge').style.display = 'inline-flex';
-                if (option.isCorrect) setTimeout(() => { if (document.getElementById('btnNextChallenge').style.display !== 'none' && activeTab === 'challenge') newChallenge(); }, 3000);
+                document.getElementById('btn-next-challenge').style.display = 'inline-flex';
+                if (option.isCorrect) setTimeout(() => { if (document.getElementById('btn-next-challenge').style.display !== 'none' && activeTab === 'challenge') newChallenge(); }, 3000);
             } else if (option.isCorrect) {
                 playSound('success');
                 const target = document.getElementById('chal-target');

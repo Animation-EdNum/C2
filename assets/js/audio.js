@@ -90,7 +90,7 @@ function toggleAudio() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const audioBtn = document.getElementById('audioToggleBtn');
+    const audioBtn = document.getElementById('audio-toggle-btn');
     if (audioBtn) {
         audioBtn.addEventListener('click', toggleAudio);
         updateAudioUI();

@@ -63,3 +63,5 @@
 - **[2026-05-11]** [Maintenance] Relocated `generate-sw-manifest.js` from `scripts/` to `meta/scripts/` to align with the project's developer tools organization. Updated all documentation references.
 - **[2026-05-12]** [Distribution] Created `package.json` and `bin/ednum.js` to publish the Suite EdNum as `@ednum/suite-ednum` on npmjs.com. Running `npx @ednum/suite-ednum` serves the full suite locally via a zero-dependency Node.js HTTP server. Excludes `meta/`, `.github/`, and dev-only root files from the published bundle.
 - **[2026-05-13]** [Bugfix] Fixed the viewbox dimensions of the 'botanique' skin in the Automate Simulator.
+
+- **[$(date +%Y-%m-%d)]** [Refactoring] Refactored camelCase IDs in HTML and JS to kebab-case (e.g., `themeToggleBtn` to `theme-toggle-btn`) for CSS consistency and removed `alpha/webapps/pixel_studio_rvb.html` from `registry.json` as it no longer exists.
