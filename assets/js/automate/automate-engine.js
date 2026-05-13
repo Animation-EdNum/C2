@@ -1135,7 +1135,7 @@ let simState = {
                     b.disabled = disabled;
                 }
             });
-            document.getElementById('btnReset').disabled = disabled;
+            document.getElementById('btn-sim-random-position').disabled = disabled;
         }
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
