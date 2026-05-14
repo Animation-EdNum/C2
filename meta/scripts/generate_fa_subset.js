@@ -26,7 +26,7 @@ const SCAN_DIRS = [
 const SCAN_FILES = [path.join(ROOT, 'index.html'), path.join(ROOT, 'indexC1.html')];
 
 // Icônes solides toujours incluses (injectées dynamiquement en JS)
-const EXTRA_SOLID = ['exclamation', 'qrcode', 'arrow-up-right-from-square', 'circle-xmark', 'triangle-exclamation', 'dumbbell', 'hand-holding-heart', 'ghost', 'narwhal', 'heart', 'diamond', 'octagon', 'city'];
+const EXTRA_SOLID = ['exclamation', 'qrcode', 'arrow-up-right-from-square', 'circle-xmark', 'triangle-exclamation', 'dumbbell', 'hand-holding-heart', 'ghost', 'narwhal', 'heart', 'diamond', 'octagon'];
 
 // ── Étape 1 : Détecter les icônes utilisées ─────────────────────────────────
 
