@@ -1440,12 +1440,7 @@
             if (isWin) {
                 updateScore(true);
                 playSound('win');
-                if (globalStreak > 0 && globalStreak % 3 === 0) {
-                    if (typeof launchFire === 'function') launchFire();
-                } else {
-                    launchConfetti();
-                    showToast('Bien joué ! Exercice réussi.', 'success');
-                }
+                showToast('Bien joué ! Exercice réussi.', 'success');
                 setTimeout(() => {
                     startNewLevel();
                 }, 4000); // Wait 4 seconds before the next challenge
@@ -1483,7 +1478,9 @@
             if (correct) {
                 globalCorrect++;
                 globalStreak++;
-                if (globalStreak > globalBest) globalBest = globalStreak;
+                const wasNewRecord = globalStreak > globalBest;
+                if (wasNewRecord) globalBest = globalStreak;
+                handleStreakCelebration(globalStreak, false, wasNewRecord);
                 ScoreManager.addSuccess('jeu_de_la_grue', currentDifficulty, currentMistakes);
             } else {
                 globalStreak = 0;

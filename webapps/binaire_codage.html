@@ -1259,17 +1259,10 @@
 
             if (userBin === expectedBin) {
                 resetValidationCooldown('decBin-check-btn');
-                let isFire = (currentBits === 8 && decBinMistakes === 0);
-                if (isFire) {
-                    playSound('success');
-                    launchFire();
-                    updateGlobalScore(true, true);
-                    ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
-                } else {
-                    playSound('success');
-                    updateGlobalScore(true, false);
-                    ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
-                }
+                playSound('success');
+                const isExtreme = (currentBits === 8 && decBinMistakes === 0);
+                updateGlobalScore(true, isExtreme);
+                ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
 
                 fb.className = 'vault-feedback success';
                 fb.innerHTML = `✅ DÉVERROUILLÉ ! (${explainBinary(userBin)})`;
@@ -1351,17 +1344,10 @@
             const card = document.getElementById('card-bin-dec');
             if (userVal === expectedVal) {
                 resetValidationCooldown('binDec-check-btn');
-                let isFire = (currentBits === 8 && binDecMistakes === 0);
-                if (isFire) {
-                    playSound('success');
-                    launchFire();
-                    updateGlobalScore(true, true);
-                    ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
-                } else {
-                    playSound('success');
-                    updateGlobalScore(true, false);
-                    ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
-                }
+                playSound('success');
+                const isExtreme = (currentBits === 8 && binDecMistakes === 0);
+                updateGlobalScore(true, isExtreme);
+                ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
                 fb.innerHTML = `✅ Exact ! ${explainBinary(currentBinString)}.`;
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
 
@@ -1587,9 +1573,14 @@
             }, 8000); // Pulse après 8 secondes d'inactivité 
         }
 
-        function updateGlobalScore(correct, isFire = false) {
-            if (correct) { globalCorrect++; globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak; if (!isFire && globalStreak % 3 === 0) launchConfetti(); }
-            else { globalStreak = 0; }
+        function updateGlobalScore(correct, isExtreme = false) {
+            if (correct) {
+                globalCorrect++;
+                globalStreak++;
+                const wasNewRecord = globalStreak > globalBest;
+                if (wasNewRecord) globalBest = globalStreak;
+                handleStreakCelebration(globalStreak, isExtreme, wasNewRecord);
+            } else { globalStreak = 0; }
             document.getElementById('global-correct').textContent = globalCorrect;
             document.getElementById('global-streak').textContent = globalStreak;
         }

@@ -939,9 +939,11 @@
                 playSound('success'); isTrainLocked = true;
                 globalCorrect++;
                 ScoreManager.addSuccess("train", 'grid' + gridSize, isFirstAttempt ? 0 : 1);
-                globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                if (gridSize === 6 && isFirstAttempt) launchFire();
-                else if (globalStreak % 3 === 0) launchConfetti();
+                globalStreak++;
+                const wasNewRecordTrain = globalStreak > globalBest;
+                if (wasNewRecordTrain) globalBest = globalStreak;
+                const isExtremeTrain = (gridSize === 6 && isFirstAttempt);
+                handleStreakCelebration(globalStreak, isExtremeTrain, wasNewRecordTrain);
                 showToast("✅ Parfait ! Tout est pair.", 'success');
                 setTimeout(initTrainMode, 2000);
             } else {
@@ -1115,15 +1117,16 @@
 
                 detectCorrect++;
                 detectStreak++;
-                if (detectStreak > detectBest) detectBest = detectStreak;
+                const wasNewRecordDetect = detectStreak > detectBest;
+                if (wasNewRecordDetect) detectBest = detectStreak;
 
                 ScoreManager.addSuccess("detect", null, detectAttempts - 1);
 
+                const isExtremeDetect = (detectAttempts === 1);
+                handleStreakCelebration(detectStreak, isExtremeDetect, wasNewRecordDetect);
                 if (detectAttempts === 1) {
-                    launchFire();
                     showToast("🎉 Premier essai ! Génial !", 'success');
                 } else {
-                    if (detectStreak >= 3) launchConfetti();
                     showToast(`✅ Trouvé en ${detectAttempts} essai${detectAttempts > 1 ? 's' : ''} !`, 'success');
                 }
 

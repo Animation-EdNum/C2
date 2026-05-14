@@ -1068,10 +1068,10 @@
             // Check if finished
             if (currentStageIndex >= networkDef.length) {
                 setTimeout(() => {
-                    launchConfetti();
                     playSound('win');
                     showToast('Bravo ! Le réseau a trié tous les éléments !', 'success');
                     ScoreManager.addSuccess('reseau_de_tri', currentDifficulty, 0);
+                    updateScore(true);
 
                     btnNextStep.style.display = 'none';
                     btnStartRace.style.display = 'inline-flex';
@@ -1265,7 +1265,10 @@
             if (correct) {
                 globalCorrect++;
                 globalStreak++;
-                if (globalStreak > globalBest) globalBest = globalStreak;
+                const wasNewRecord = globalStreak > globalBest;
+                if (wasNewRecord) globalBest = globalStreak;
+                const isExtreme = (currentDifficulty === 'hard'); // 5-wire network = hardest
+                handleStreakCelebration(globalStreak, isExtreme, wasNewRecord);
             } else {
                 globalStreak = 0;
             }

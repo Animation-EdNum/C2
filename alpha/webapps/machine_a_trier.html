@@ -958,7 +958,6 @@
                     }
 
                     setTimeout(() => {
-                        launchConfetti();
                         playSound('win');
                         startNewLevel();
                     }, 1000);
@@ -989,7 +988,9 @@
             if (correct) {
                 globalCorrect++;
                 globalStreak++;
-                if (globalStreak > globalBest) globalBest = globalStreak;
+                const wasNewRecord = globalStreak > globalBest;
+                if (wasNewRecord) globalBest = globalStreak;
+                handleStreakCelebration(globalStreak, false, wasNewRecord);
                 ScoreManager.addSuccess(currentMode, currentDifficulty, 0);
             } else {
                 globalStreak = 0;

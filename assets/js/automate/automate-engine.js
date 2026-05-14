@@ -1,7 +1,7 @@
 const createSVG = (tag) => document.createElementNS("http://www.w3.org/2000/svg", tag);
 
 let GRID_ROWS = 6, GRID_COLS = 6;
-let globalScore = 0, globalStreak = 0, memoryPairsFound = 0, f1Streak = 0;
+let globalScore = 0, globalStreak = 0, globalStreakBest = 0, memoryPairsFound = 0, f1Streak = 0;
 let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
             running: false, paused: false, stopped: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
@@ -27,14 +27,14 @@ let simState = {
             program: [], obstacles: [], locked: false, isAnimating: false, type: 'destination', bugIndex: -1
         };
         let readGlobalScore = 0;
-        let readGlobalStreak = 0;
+        let readGlobalStreak = 0, readGlobalStreakBest = 0;
 
         let drawState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetCells: [],
             program: [], locked: false, isAnimating: false, paused: false, stopped: false, mistakes: 0
         };
         let drawGlobalScore = 0;
-        let drawGlobalStreak = 0;
+        let drawGlobalStreak = 0, drawGlobalStreakBest = 0;
 
         let currentSpeed = 900;
 
@@ -394,9 +394,8 @@ let simState = {
 
             if (!exploreState.failed && exploreState.targetRow !== null && exploreState.robotRow === exploreState.targetRow && exploreState.robotCol === exploreState.targetCol) {
                 playSound('success');
-                if (activeSkin === 'volcano') launchFire();
-                else if (activeSkin === 'cyberbot') showToast('WELCOME TO THE MATRIX 🕶️', 'success');
-                else launchConfetti();
+                if (activeSkin === 'cyberbot') showToast('WELCOME TO THE MATRIX 🕶️', 'success');
+                else handleStreakCelebration(1, false, false); // Explore has no streak, celebrate lightly
 
                 exploreState.starCount++;
                 exploreState.firstTryCount += exploreState.firstAttempt ? 1 : 0;
@@ -849,12 +848,10 @@ let simState = {
         function handleTargetReached() {
             playSound('success');
 
-            if (activeSkin === 'volcano') {
-                launchFire();
-            } else if (activeSkin === 'cyberbot') {
+            if (activeSkin === 'cyberbot') {
                 showToast('WELCOME TO THE MATRIX 🕶️', 'success');
             } else {
-                launchConfetti();
+                handleStreakCelebration(1, false, false); // Sim has no streak, light celebration
             }
 
             // Statistiques en mode simulateur
@@ -1082,7 +1079,7 @@ let simState = {
                 lastItem.classList.add('memory-matched');
 
                 playSound('success');
-                launchConfetti();
+                handleStreakCelebration(1, false, false); // Paire individuelle — légère célébration
                 showToast('Paire trouvée ! 🎉', 'success');
                 memoryPairsFound++;
                 if (memoryPairsFound >= 4) unlockSkin('manta');
@@ -1111,7 +1108,7 @@ let simState = {
                         `#${gridId} .bot-cell .mat-content`
                     );
                     if (remainingContent.length === 0) {
-                        launchFire();
+                        handleStreakCelebration(3, false, false); // All pairs found = mini fête
                         showToast('🔥 Toutes les paires trouvées ! Champion !', 'success');
                     }
                 }, 600);
@@ -1651,7 +1648,6 @@ let simState = {
 
             if (isCorrect) {
                 playSound('success');
-                launchConfetti();
                 showToast('Forme réussie !', 'success');
                 simState.consecutiveMistakes = 0;
 
@@ -1663,9 +1659,11 @@ let simState = {
                 document.getElementById('draw-global-score').textContent = drawGlobalScore;
                 document.getElementById('draw-global-streak').textContent = drawGlobalStreak;
 
-                if (drawGlobalStreak > 0 && drawGlobalStreak % 3 === 0) {
-                    if (activeSkin === 'volcano') launchFire();
-                    else launchConfetti();
+                if (drawGlobalStreak > 0) {
+                    const drawIsExtreme = (drawState.difficulty === 'extreme');
+                    if (drawGlobalStreak > drawGlobalStreakBest) drawGlobalStreakBest = drawGlobalStreak;
+                    const drawNewRecord = (drawGlobalStreak === drawGlobalStreakBest);
+                    handleStreakCelebration(drawGlobalStreak, drawIsExtreme, drawNewRecord);
                 }
 
                 if (drawState.difficulty === 'extreme' && (!drawState.mistakes || drawState.mistakes === 0)) {
@@ -1809,11 +1807,14 @@ let simState = {
                 }
 
                 playSound('success');
-                launchConfetti();
+                handleStreakCelebration(1, false, false); // Read: light celebration, no streak
                 showToast(`Excellent ! C'est la bonne réponse !`, 'success');
 
-                if (readGlobalStreak > 0 && readGlobalStreak % 3 === 0) {
-                    if (activeSkin === 'volcano') launchFire(); else launchConfetti();
+                if (readGlobalStreak > 0) {
+                    const readIsExtreme = (readState.difficulty === 'extreme');
+                    if (readGlobalStreak > readGlobalStreakBest) readGlobalStreakBest = readGlobalStreak;
+                    const readNewRecord = (readGlobalStreak === readGlobalStreakBest);
+                    handleStreakCelebration(readGlobalStreak, readIsExtreme, readNewRecord);
                 }
 
             } else {
@@ -1929,21 +1930,20 @@ let simState = {
                 chalState.locked = true;
                 if (option.isCorrect) {
                     playSound('success');
-                    launchConfetti();
                     simState.consecutiveMistakes = 0;
 
                     globalScore++;
                     globalStreak++;
+                    if (globalStreak > globalStreakBest) globalStreakBest = globalStreak;
                     ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
                     updateExtremeVisibility();
 
                     document.getElementById('global-score').textContent = globalScore;
                     document.getElementById('global-streak').textContent = globalStreak;
 
-                    if (globalStreak > 0 && globalStreak % 3 === 0) {
-                        if (activeSkin === 'volcano') launchFire();
-                        else launchConfetti();
-                    }
+                    const chalIsExtreme = (chalState.difficulty === 'extreme');
+                    const chalActualNewRecord = (globalStreak === globalStreakBest);
+                    handleStreakCelebration(globalStreak, chalIsExtreme, chalActualNewRecord);
 
                     // Déblocages
                     if (chalState.difficulty === 'extreme' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('cyberbot');

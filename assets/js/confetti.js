@@ -1,6 +1,10 @@
 function launchConfetti() {
-    const cvs = document.getElementById('confetti-canvas');
-    if (!cvs) return;
+    // Create a dedicated temporary canvas so multiple confetti bursts
+    // can render simultaneously without conflicts
+    const cvs = document.createElement('canvas');
+    cvs.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
+    document.body.appendChild(cvs);
+
     const ctx = cvs.getContext('2d');
     cvs.width = window.innerWidth;
     cvs.height = window.innerHeight;
@@ -35,7 +39,12 @@ function launchConfetti() {
             ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
             ctx.restore();
         });
-        if (alive) requestAnimationFrame(anim);
+        if (alive) {
+            requestAnimationFrame(anim);
+        } else {
+            // Animation terminée — supprimer le canvas temporaire
+            cvs.remove();
+        }
     }
     anim();
 }
@@ -51,8 +60,12 @@ function launchFire() {
         }
     }, 2500);
 
-    const cvs = document.getElementById('confetti-canvas');
-    if (!cvs) return;
+    // Create a dedicated temporary canvas so multiple fires
+    // and fire+confetti can render simultaneously without conflicts
+    const cvs = document.createElement('canvas');
+    cvs.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+    document.body.appendChild(cvs);
+
     const ctx = cvs.getContext('2d');
     cvs.width = window.innerWidth;
     cvs.height = window.innerHeight;
@@ -129,8 +142,41 @@ function launchFire() {
         if (alive) {
             requestAnimationFrame(anim);
         } else {
-            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            // Animation terminée — supprimer le canvas temporaire
+            cvs.remove();
         }
     }
     anim();
+}
+
+/**
+ * Centralized streak celebration logic — call this on every success.
+ * @param {number} streak        - Current streak value (already incremented).
+ * @param {boolean} isExtreme    - True if the victory was in "extreme" difficulty.
+ * @param {boolean} wasNewRecord - True if this streak is a new personal best.
+ */
+function handleStreakCelebration(streak, isExtreme = false, wasNewRecord = false) {
+    if (streak >= 10 && wasNewRecord) {
+        // 🎉 MÉGA-FÊTE : 2 salves de Feu + 3 Confettis de suite !
+        launchFire(); launchConfetti();
+        setTimeout(() => launchConfetti(), 900);
+        setTimeout(() => { launchFire(); launchConfetti(); }, 1800);
+        return;
+    }
+
+    // Par défaut : Confettis sur CHAQUE victoire !
+    launchConfetti();
+
+    // Bonus de feu selon les conditions
+    if (streak >= 6 && wasNewRecord) {
+        // 🔥 Bonus record sérieux
+        launchFire();
+        setTimeout(() => launchConfetti(), 900);
+    } else if (isExtreme) {
+        // 🔥 Bonus mode extrême
+        launchFire();
+    } else if (streak % 3 === 0) {
+        // 🔥 Bonus série de 3
+        launchFire();
+    }
 }

@@ -1008,9 +1008,12 @@
                 fb.className = 'feedback show success';
                 fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${userTime} UTI</strong>.`;
                 isLocked = true; globalCorrect++;
-                ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork); globalStreak++; if (globalStreak > globalBest) globalBest = globalStreak;
-                if (difficulty === 'hard' && mistakesInCurrentNetwork === 0) { launchFire(); }
-                else if (globalStreak >= 2) { launchConfetti(); }
+                ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork);
+                globalStreak++;
+                const wasNewRecord = globalStreak > globalBest;
+                if (wasNewRecord) globalBest = globalStreak;
+                const isExtreme = (difficulty === 'hard' && mistakesInCurrentNetwork === 0);
+                handleStreakCelebration(globalStreak, isExtreme, wasNewRecord);
                 document.getElementById('btn-next-challenge').style.display = 'inline-block';
                 render();
             } else {
