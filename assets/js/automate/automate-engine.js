@@ -249,17 +249,16 @@ let simState = {
                         setTimeout(() => c.remove(), 800);
                     }
                     // Coulée de lave persistante
-                    if (this.lastVolcanoPt) {
+                    if (fromPt) {
                         const seg = createSVG("line");
                         seg.setAttribute("class", "trail-lava-segment");
-                        seg.setAttribute("x1", this.lastVolcanoPt.x);
-                        seg.setAttribute("y1", this.lastVolcanoPt.y);
+                        seg.setAttribute("x1", fromPt.x);
+                        seg.setAttribute("y1", fromPt.y);
                         seg.setAttribute("x2", pt.x);
                         seg.setAttribute("y2", pt.y);
                         layer.insertBefore(seg, layer.firstChild); // en dessous des particules
                         setTimeout(() => { if (seg && seg.parentNode) seg.remove(); }, 5000);
                     }
-                    this.lastVolcanoPt = { x: pt.x, y: pt.y };
 
                     // Braises incandescentes qui restent et pulsent
                     const emberCount = 2 + Math.floor(Math.random() * 2);
