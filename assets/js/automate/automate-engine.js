@@ -428,7 +428,7 @@ let simState = {
             
             if (!exploreState.failed && MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#explore-grid .bot-cell[data-row="${exploreState.robotRow}"][data-col="${exploreState.robotCol}"] .mat-content`);
-                if (cell && cell.textContent.trim()) {
+                if (cell && cell.innerHTML.trim()) {
                     if (typeof collectMode !== 'undefined' && collectMode) {
                         // Remove emoji from grid cell (collected)
                         const gridCell = cell.closest('.bot-cell');
@@ -947,13 +947,13 @@ let simState = {
             let addedItem = false;
             if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
-                if (cell && cell.textContent.trim()) {
+                if (cell && cell.innerHTML.trim()) {
                     const endContent = document.getElementById('sim-end-content');
                     const emptyEnd = document.getElementById('sim-end-empty');
                     if (emptyEnd) emptyEnd.style.display = 'none';
                     const el = document.createElement('div');
                     el.className = 'end-item';
-                    el.textContent = cell.textContent.trim();
+                    el.innerHTML = cell.innerHTML.trim();
                     endContent.appendChild(el);
                     if (typeof collectMode !== 'undefined' && collectMode) {
                         // Remove emoji from grid cell (collected)
@@ -962,7 +962,7 @@ let simState = {
                         if (gridCell) gridCell.classList.add('cell-collected');
                     }
                     addedItem = true;
-                    checkMemoryPair('sim-grid', cell.textContent.trim());
+                    checkMemoryPair('sim-grid', cell.innerHTML.trim());
                 }
             }
             return addedItem;
@@ -1075,7 +1075,7 @@ let simState = {
             const lastItem = items[items.length - 1];
             if (!lastItem) return false;
 
-            const match = items.slice(0, -1).find(el => el.textContent.trim() === content);
+            const match = items.slice(0, -1).find(el => el.innerHTML.trim() === content);
 
             if (match) {
                 match.classList.add('memory-matched');
@@ -1088,7 +1088,7 @@ let simState = {
                 const allCells = document.querySelectorAll(`#${gridId} .bot-cell .mat-content`);
                 let removed = 0;
                 allCells.forEach(cell => {
-                    if (cell.textContent.trim() === content && removed < 2) {
+                    if (cell.innerHTML.trim() === content && removed < 2) {
                         cell.closest('.bot-cell').classList.add('memory-cleared');
                         cell.remove();
                         removed++;
@@ -2081,7 +2081,7 @@ let simState = {
                         if (index < content.length) {
                             const span = document.createElement('span');
                             span.className = 'mat-content';
-                            span.textContent = content[index];
+                            span.innerHTML = content[index];
                             cell.appendChild(span);
                         }
                     }
