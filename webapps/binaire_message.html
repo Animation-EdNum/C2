@@ -1232,6 +1232,20 @@
                 playSound('success');
                 hideAlpha(); encodeLocked = true;
 
+                // Move score/streak logic out of setTimeout so celebrations trigger immediately
+                globalCorrect++;
+                ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
+                const currentMistakes = encodeMistakes; // Save for isExtreme
+                encodeMistakes = 0; // Reset for next letter
+                globalStreak++;
+                const wasNewRecord = globalStreak > globalBest;
+                if (wasNewRecord) globalBest = globalStreak;
+                document.getElementById('global-correct').innerText = globalCorrect;
+                document.getElementById('global-streak').innerText = globalStreak;
+
+                const isExtreme = (difficulty === 'hard' && currentMistakes === 0);
+                handleStreakCelebration(globalStreak, isExtreme, wasNewRecord);
+
                 // Animation didactique 
                 document.getElementById('encode-values-row').style.display = 'flex';
                 document.getElementById('live-calc').style.display = 'block';
@@ -1250,18 +1264,6 @@
                     calc.classList.remove('success-anim');
                     encodeIndex++; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
                     encodeLetterMistakes = 0;
-
-                    globalCorrect++;
-                    ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
-                    encodeMistakes = 0; // Reset for next letter
-                    globalStreak++;
-                    const wasNewRecord = globalStreak > globalBest;
-                    if (wasNewRecord) globalBest = globalStreak;
-                    document.getElementById('global-correct').innerText = globalCorrect;
-                    document.getElementById('global-streak').innerText = globalStreak;
-
-                    const isExtreme = (difficulty === 'hard' && encodeMistakes === 0);
-                    handleStreakCelebration(globalStreak, isExtreme, wasNewRecord);
 
                     if (encodeIndex >= encodeWord.length) {
                         document.getElementById('encode-check').disabled = true;
