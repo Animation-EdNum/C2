@@ -2056,6 +2056,20 @@ let simState = {
                 grid.classList.add(`mat-${activeMat}`);
             }
 
+            // Build a 2D array representation of obstacles for O(1) lookups
+            const obsGrid = Array(rows);
+            for (let r = 0; r < rows; r++) {
+                obsGrid[r] = Array(cols).fill(false);
+            }
+            if (obstacles && obstacles.length > 0) {
+                for (let i = 0; i < obstacles.length; i++) {
+                    const o = obstacles[i];
+                    if (o.r >= 0 && o.r < rows && o.c >= 0 && o.c < cols) {
+                        obsGrid[o.r][o.c] = true;
+                    }
+                }
+            }
+
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
                 row.setAttribute('role', 'row');
@@ -2064,7 +2078,7 @@ let simState = {
                     cell.className = 'bot-cell ' + ((r + c) % 2 === 0 ? 'cell-light' : 'cell-dark');
                     cell.setAttribute('role', 'gridcell');
                     cell.id = `${containerId}-cell-${r}-${c}`;
-                    const isObstacle = obstacles.some(o => o.r === r && o.c === c);
+                    const isObstacle = obsGrid[r][c];
                     if (isObstacle) {
                         cell.classList.add('obstacle');
                         const obs = SKIN_CONFIG[activeSkin].obstacle;
