@@ -1510,9 +1510,10 @@ let simState = {
 
             // Highlight target cells only for easy and medium
             if (drawState.difficulty === 'easy' || drawState.difficulty === 'medium') {
-                for (const cell of drawState.targetCells) {
-                    const el = document.querySelector(`#draw-grid .bot-cell[data-row="${cell.r}"][data-col="${cell.c}"]`);
-                    if (el) {
+                const targetSet = new Set(drawState.targetCells.map(c => `${c.r},${c.c}`));
+                const drawCells = document.querySelectorAll('#draw-grid .bot-cell');
+                for (const el of drawCells) {
+                    if (targetSet.has(`${el.dataset.row},${el.dataset.col}`)) {
                         el.classList.add('draw-target');
                     }
                 }
