@@ -88,29 +88,32 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('hideGrid') === '1') {
-                document.querySelectorAll('.bot-grid').forEach(grid => {
-                    grid.classList.add('no-grid-lines');
-                });
-                const toggleBtn = document.getElementById('toggle-hide-grid');
-                if (toggleBtn) {
-                    toggleBtn.checked = true;
-                }
-            }
-
+            
             const toggleHideGrid = document.getElementById('toggle-hide-grid');
             if (toggleHideGrid) {
                 toggleHideGrid.addEventListener('change', (e) => {
                     if (e.target.checked) {
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.add('no-grid-lines'));
-                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('i')?.setAttribute('data-fa', 'border-none'); });
+                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('[data-fa]')?.setAttribute('data-fa', 'border-none'); });
                     } else {
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.remove('no-grid-lines'));
-                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('i')?.setAttribute('data-fa', 'frame'); });
+                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('[data-fa]')?.setAttribute('data-fa', 'frame'); });
                     }
                     if (window.fa && typeof window.fa.createIcons === 'function') {
                         window.fa.createIcons();
                     }
                 });
             }
+
+            if (urlParams.get('hideGrid') === '1') {
+                if (toggleHideGrid) {
+                    toggleHideGrid.checked = true;
+                    toggleHideGrid.dispatchEvent(new Event('change'));
+                } else {
+                    document.querySelectorAll('.bot-grid').forEach(grid => {
+                        grid.classList.add('no-grid-lines');
+                    });
+                }
+            }
+
         });
