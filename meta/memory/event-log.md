@@ -65,3 +65,6 @@
 - **[2026-05-13]** [Bugfix] Fixed the viewbox dimensions of the 'botanique' skin in the Automate Simulator.
 - **[2026-05-14]** [System] Unified camelCase identifiers to kebab-case in HTML and JS.
 - **[2026-05-14]** [Testing] Reorganized test infrastructure: moved unit tests to `meta/tests/unit/` and E2E tests to `meta/tests/e2e/`. Updated `package.json` and documentation.
+- **[2026-05-14]** [UX/Refactor] Redesigned Simulateur Automate "Memory" and "Spell" (Épeler) modes. Transformed the `#sim-end-container` into a monospace terminal output screen.
+- **[2026-05-14]** [UI/UX] Replaced native `title` tooltips with custom animated CSS tooltips via `data-tooltip` attribute.
+- **[2026-05-14]** [Code Quality] Centralized victory streaks and extreme difficulty rewards into a single `handleStreakCelebration()` API in `assets/js/confetti.js`.
