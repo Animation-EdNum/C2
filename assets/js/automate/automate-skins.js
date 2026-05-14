@@ -127,9 +127,9 @@ const SKIN_CONFIG = {
     'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".', hidden: false },
     'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement.', hidden: false },
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage, difficulté moyenne ou plus) sans faire une seule erreur.', hidden: false },
-    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
+    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Prends garde au vertige...', hidden: true },
     'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.', hidden: false },
-    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Prends garde au vertige...', hidden: true },
+    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
     'pedago': { name: 'Colorigami', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Aile orange ou verte ? Appuie sur le bouton de la même couleur pour tourner du bon côté.', hidden: true },
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.', hidden: false }
 };

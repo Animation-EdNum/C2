@@ -891,10 +891,10 @@ let simState = {
                 if (simState.firstAttempt && simState.deletedCommandsCount >= 10) {
                     unlockSkin('indecis');
                 }
-                // Déblocage Hélico
+                // Déblocage Manta
                 const progStr = simState.program.join(',');
                 if (progStr.includes('left,left,left,left') || progStr.includes('right,right,right,right')) {
-                    unlockSkin('helicopter');
+                    unlockSkin('manta');
                 }
 
                 showToast('Trésor trouvé ! Félicitations !', 'success');
@@ -1089,7 +1089,7 @@ let simState = {
                 handleStreakCelebration(1, false, false); // Paire individuelle — légère célébration
                 showToast('Paire trouvée ! 🎉', 'success');
                 memoryPairsFound++;
-                if (memoryPairsFound >= 4) unlockSkin('manta');
+                if (memoryPairsFound >= 4) unlockSkin('helicopter');
 
                 const header = document.getElementById('sim-end-header');
                 if (header && typeof memoryMode !== 'undefined' && memoryMode) {
