@@ -285,7 +285,7 @@ function renderMatsGrid() {
     const customConfig = MAT_CONFIG['custom'];
     const isCustomActive = activeMat === 'custom';
     const customHtml = `
-                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-bottom: 15px; border-bottom: 1px solid var(--grid-border); border-radius: 12px 12px 0 0; padding-bottom: 15px;">
+                <div class="skin-list-item ${isCustomActive ? 'active-skin' : ''}" data-mat="custom" tabindex="0" style="margin-bottom: 15px;">
                     <div class="skin-item-avatar" style="font-size: 32px;">
                         ${customConfig.icon}
                     </div>
