@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * Font Awesome Pro 7.2.0 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license (Commercial License)
  * Copyright 2026 Fonticons, Inc.

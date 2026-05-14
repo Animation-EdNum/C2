@@ -220,22 +220,21 @@
                     </div>
 
                     <div class="grid-wrapper" style="margin-top: 0;">
-                        <div
-                            class="grid-layout-wrapper">
+                        <div class="grid-layout-wrapper">
                             <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                                 class="bot-grid-container">
                                 <div class="bot-grid" id="explore-grid" style="margin: 0; max-width: none;"></div>
                             </div>
-                            <div class="grid-toolbar" >
+                            <div class="grid-toolbar">
                                 <button class="icon-action-btn btn-new" id="btn-explore-place-elements"
                                     title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
                                 <button class="icon-action-btn" id="btn-explore-reset" title="Position aléatoire"><i
                                         data-fa="location-dot"></i></button>
                                 <button class="icon-action-btn btn-outline-error" id="btn-explore-clear-walls"
-                                    title="Nettoyer grille"><i data-fa="broom"></i></button>
+                                    title="Nettoyer grille" style="background-color: var(--error); color: white;"><i data-fa="broom"></i></button>
                                 <div class="separator"></div>
-                                <button class="icon-action-btn" id="btn-explore-hide-grid" title="Masquer le quadrillage"><i
-                                        data-fa="frame"></i></button>
+                                <button class="icon-action-btn" id="btn-explore-hide-grid"
+                                    title="Masquer le quadrillage"><i data-fa="frame"></i></button>
                                 <button class="icon-action-btn" id="btn-explore-cycle-mat" title="Changer de tapis"><i
                                         data-fa="map"></i></button>
                             </div>
@@ -272,6 +271,7 @@
                             </svg>
                         </button>
                     </div>
+                    <div class="legend" id="legend-container" style="margin-top: 0;"></div>
                 </div>
             </div>
 
@@ -286,55 +286,40 @@
                     </div>
 
                     <div id="sim-end-container" style="display: none; margin-bottom: 15px;">
+                        <div id="sim-end-header" style="font-weight: 600; margin-bottom: 5px; font-size: 1.1em;">Mot épelé :</div>
                         <div class="program-strip" id="sim-end-content"
-                            style="position: relative; background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 50px;">
+                            style="position: relative; background-color: var(--card-bg); border: 2px dashed var(--badge-bg); min-height: 60px; font-size: 2em; font-family: monospace; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-start; padding: 10px 40px 10px 10px;">
                             <button id="btn-clear-end" class="btn btn-outline"
-                                style="padding: 6px; font-size: 0.8em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg);"
+                                style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); padding: 6px; font-size: 0.4em; display: flex; align-items: center; justify-content: center; background-color: var(--card-bg);"
                                 aria-label="Effacer" title="Effacer les éléments atteints">
                                 <i data-fa="trash-can" style="width: 16px; height: 16px;"></i>
                             </button>
-                            <div class="empty-program" id="sim-end-empty">Éléments atteints...</div>
-                        </div>
-
-                        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 15px;">
-                            <div id="collect-mode-container" style="display: flex; align-items: center; gap: 10px;">
-                                <label class="share-toggle" style="margin-bottom: 0;" for="toggle-collect-mode">
-                                    <input type="checkbox" id="toggle-collect-mode">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                                <label for="toggle-collect-mode"
-                                    style="font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex;">
-                                    Ramasser les objets
-                                </label>
-                            </div>
-
-                            <div id="memory-mode-container" style="display: flex; align-items: center; gap: 10px;">
-                                <label class="share-toggle" style="margin-bottom: 0;" for="toggle-memory-mode">
-                                    <input type="checkbox" id="toggle-memory-mode">
-                                    <span class="share-toggle-slider"></span>
-                                </label>
-                                <label for="toggle-memory-mode"
-                                    style="font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex;">
-                                    🃏 Mode Memory
-                                </label>
-                            </div>
+                            <div class="empty-program" id="sim-end-empty" style="font-size: 0.5em; font-family: 'Outfit', sans-serif;">(Vide)</div>
                         </div>
                     </div>
 
                     <div class="grid-wrapper" style="margin-top: 0;">
-                        <div
-                            class="grid-layout-wrapper">
+                        <div class="grid-layout-wrapper">
                             <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                                 class="bot-grid-container">
                                 <div class="bot-grid" id="sim-grid" style="margin: 0; max-width: none;"></div>
                             </div>
-                            <div class="grid-toolbar" >
+                            <div class="grid-toolbar">
+                                <button class="icon-action-btn btn-new" id="btn-toggle-spell-mode" style="display: none;"
+                                    title="Mode Épeler">
+                                    <i data-fa="magnifying-glass"></i>
+                                </button>
+                                <button class="icon-action-btn btn-new" id="btn-toggle-memory-mode" style="display: none;"
+                                    title="Mode Mémory">
+                                    <i data-fa="cards"></i>
+                                </button>
                                 <button class="icon-action-btn btn-new" id="btn-place-elements"
                                     title="Trésors & Obstacles"><i data-fa="trophy-star"></i></button>
                                 <button class="icon-action-btn" id="btn-sim-random-position"
                                     title="Position aléatoire"><i data-fa="location-dot"></i></button>
-                                <button class="icon-action-btn btn-outline-error" id="btn-clear-walls"
-                                    title="Nettoyer grille"><i data-fa="broom"></i></button>
+                                <button class="icon-action-btn btn-outline-error" id="btn-clear-walls" title="Nettoyer grille"
+                                    style="background-color: var(--error); color: white;"><i
+                                        data-fa="broom"></i></button>
                                 <div class="separator"></div>
                                 <button class="icon-action-btn" id="btn-sim-toggle-speed" title="Vitesse : Lent"><i
                                         data-fa="turtle"></i></button>
@@ -409,7 +394,6 @@
                             <div class="score-value" id="sim-first-try-val">0</div>
                         </div>
                     </div>
-                    <div class="legend" id="legend-container" style="margin-top: 0;"></div>
                 </div>
             </div>
 
@@ -434,8 +418,7 @@
                     <div class="challenge-options" id="chal-options" style="margin-bottom: 15px;"></div>
 
                     <div class="grid-wrapper" style="margin-top: 0;">
-                        <div
-                            class="grid-layout-wrapper">
+                        <div class="grid-layout-wrapper">
                             <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                                 class="bot-grid-container">
                                 <div class="bot-grid" id="chal-grid" style="margin: 0; max-width: none;"></div>
@@ -444,8 +427,8 @@
                                 <button class="icon-action-btn" id="btn-chal-toggle-speed" title="Vitesse : Lent"><i
                                         data-fa="turtle"></i></button>
                                 <div class="separator"></div>
-                                <button class="icon-action-btn" id="btn-chal-hide-grid" title="Masquer le quadrillage"><i
-                                        data-fa="frame"></i></button>
+                                <button class="icon-action-btn" id="btn-chal-hide-grid"
+                                    title="Masquer le quadrillage"><i data-fa="frame"></i></button>
                                 <button class="icon-action-btn" id="btn-chal-cycle-mat" title="Changer de tapis"><i
                                         data-fa="map"></i></button>
                             </div>
@@ -458,8 +441,8 @@
                     </div>
 
                     <div class="controls">
-                        <button class="btn btn-new" id="btn-next-challenge" style="display:none;"><i data-fa="arrow-right"
-                                style="margin-right:5px;"></i> Pilotage suivant</button>
+                        <button class="btn btn-new" id="btn-next-challenge" style="display:none;"><i
+                                data-fa="arrow-right" style="margin-right:5px;"></i> Pilotage suivant</button>
 
                     </div>
 
@@ -502,8 +485,7 @@
                     </div>
 
                     <div class="grid-wrapper" style="margin-top: 0;">
-                        <div
-                            class="grid-layout-wrapper">
+                        <div class="grid-layout-wrapper">
                             <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                                 class="bot-grid-container">
                                 <div class="bot-grid" id="draw-grid" style="margin: 0; max-width: none;"></div>
@@ -512,8 +494,8 @@
                                 <button class="icon-action-btn" id="btn-draw-toggle-speed" title="Vitesse : Lent"><i
                                         data-fa="turtle"></i></button>
                                 <div class="separator"></div>
-                                <button class="icon-action-btn" id="btn-draw-hide-grid" title="Masquer le quadrillage"><i
-                                        data-fa="frame"></i></button>
+                                <button class="icon-action-btn" id="btn-draw-hide-grid"
+                                    title="Masquer le quadrillage"><i data-fa="frame"></i></button>
                                 <button class="icon-action-btn" id="btn-draw-cycle-mat" title="Changer de tapis"><i
                                         data-fa="map"></i></button>
                             </div>
@@ -606,8 +588,7 @@
                     </div>
 
                     <div class="grid-wrapper" style="margin-top: 0;">
-                        <div
-                            class="grid-layout-wrapper">
+                        <div class="grid-layout-wrapper">
                             <div style="position: relative; width: 100%; max-width: min(500px, calc(55vh * (var(--grid-cols, 6) / var(--grid-rows, 6)))); display: flex; flex-direction: column; aspect-ratio: var(--grid-cols, 6) / var(--grid-rows, 6);"
                                 class="bot-grid-container">
                                 <div class="bot-grid" id="read-grid" style="margin: 0; max-width: none;"></div>
@@ -616,8 +597,8 @@
                                 <button class="icon-action-btn" id="btn-read-toggle-speed" title="Vitesse : Lent"><i
                                         data-fa="turtle"></i></button>
                                 <div class="separator"></div>
-                                <button class="icon-action-btn" id="btn-read-hide-grid" title="Masquer le quadrillage"><i
-                                        data-fa="frame"></i></button>
+                                <button class="icon-action-btn" id="btn-read-hide-grid"
+                                    title="Masquer le quadrillage"><i data-fa="frame"></i></button>
                                 <button class="icon-action-btn" id="btn-read-cycle-mat" title="Changer de tapis"><i
                                         data-fa="map"></i></button>
                             </div>

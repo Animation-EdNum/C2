@@ -329,13 +329,25 @@ function generateMatContent(matId) {
     }
     const config = MAT_CONFIG[matId];
     const endContainer = document.getElementById('sim-end-container');
-    if (endContainer) {
-        if (config && config.content) {
-            endContainer.style.display = 'block';
-        } else {
+    const toggleEndBtn = document.getElementById('btn-toggle-end-container');
+    const placeElementsBtn = document.getElementById('btn-place-elements');
+    
+    if (config && (config.content || config.baseContent)) {
+        if (toggleEndBtn) toggleEndBtn.style.display = 'inline-block';
+        if (placeElementsBtn) placeElementsBtn.style.display = 'none';
+        // Hide by default unless user has manually opened it (or we can just keep it closed on new mat)
+        if (endContainer && !endContainer.classList.contains('manually-toggled')) {
             endContainer.style.display = 'none';
         }
+    } else {
+        if (toggleEndBtn) toggleEndBtn.style.display = 'none';
+        if (placeElementsBtn) placeElementsBtn.style.display = 'inline-block';
+        if (endContainer) {
+            endContainer.style.display = 'none';
+            endContainer.classList.remove('manually-toggled');
+        }
     }
+
     if (!config) {
         console.warn(`Unknown matId: ${matId}`);
         return;
@@ -394,34 +406,31 @@ function generateMatContent(matId) {
 }
 
 
-function updateMemoryToggleVisibility() {
-    const collectContainer = document.getElementById('collect-mode-container');
-    const memoryContainer = document.getElementById('memory-mode-container');
+function updateEndModesVisibility() {
+    const spellBtn = document.getElementById('btn-toggle-spell-mode');
+    const memoryBtn = document.getElementById('btn-toggle-memory-mode');
+    const placeElementsBtn = document.getElementById('btn-place-elements');
     const config = MAT_CONFIG[activeMat];
-    const hasMemoryContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
-    const hasCollectContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
+    const hasContent = activeMat !== 'none' && activeMat !== 'custom' && activeMat !== 'city' && config && (config.content || config.baseContent);
 
-    if (collectContainer) {
-        if (hasCollectContent) {
-            collectContainer.style.display = 'flex';
-        } else {
-            collectContainer.style.display = 'none';
+    if (hasContent) {
+        if (spellBtn) spellBtn.style.display = 'inline-block';
+        if (memoryBtn) memoryBtn.style.display = 'inline-block';
+        if (placeElementsBtn) placeElementsBtn.style.display = 'none';
+    } else {
+        if (spellBtn) spellBtn.style.display = 'none';
+        if (memoryBtn) memoryBtn.style.display = 'none';
+        if (placeElementsBtn) placeElementsBtn.style.display = 'inline-block';
+        
+        // Also close the container if no content
+        const endContainer = document.getElementById('sim-end-container');
+        if (endContainer) {
+            endContainer.style.display = 'none';
+            endContainer.classList.remove('manually-toggled');
         }
-    }
-
-    if (memoryContainer) {
-        if (hasMemoryContent) {
-            memoryContainer.style.display = 'flex';
-            if (!collectMode) {
-                memoryContainer.style.opacity = '0.5';
-                memoryContainer.style.pointerEvents = 'none';
-            } else {
-                memoryContainer.style.opacity = '1';
-                memoryContainer.style.pointerEvents = 'auto';
-            }
-        } else {
-            memoryContainer.style.display = 'none';
-        }
+        memoryMode = false;
+        spellMode = false;
+        collectMode = false;
     }
 }
 
@@ -455,12 +464,28 @@ function selectMat(matId) {
     playSound('click');
     activeMat = matId;
     localStorage.setItem('at_active_mat', matId);
+    
+    simState.obstacles = [];
+    simState.targetRow = null;
+    simState.targetCol = null;
+    if (typeof exploreState !== 'undefined') {
+        exploreState.obstacles = [];
+        exploreState.targetRow = null;
+        exploreState.targetCol = null;
+    }
+    
+    const endContainer = document.getElementById('sim-end-container');
+    if (endContainer) {
+        endContainer.classList.remove('manually-toggled');
+        endContainer.style.display = 'none';
+    }
+
     generateMatContent(matId);
 
     renderMatsGrid();
     closeMatsModal();
     updateGridSizeSlidersState();
-    updateMemoryToggleVisibility();
+    updateEndModesVisibility();
 
     // Re-render grids to apply mat
     buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
@@ -769,7 +794,13 @@ function unlockSkin(skinId) {
 
 let collectMode = localStorage.getItem('at_collect_mode') === 'true';
 let memoryMode = localStorage.getItem('at_memory_mode') === 'true';
-if (!collectMode) {
+let spellMode = localStorage.getItem('at_spell_mode') === 'true';
+
+if (memoryMode) {
+    collectMode = true;
+    spellMode = false;
+} else if (spellMode) {
+    collectMode = false;
     memoryMode = false;
 }
 

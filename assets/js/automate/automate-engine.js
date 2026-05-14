@@ -942,24 +942,31 @@ let simState = {
 
         function collectCellContent() {
             let addedItem = false;
+            const endContainer = document.getElementById('sim-end-container');
+            const isCraneActive = endContainer && (endContainer.style.display !== 'none' && endContainer.style.display !== '');
+            
             if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
                 if (cell && cell.innerHTML.trim()) {
-                    const endContent = document.getElementById('sim-end-content');
-                    const emptyEnd = document.getElementById('sim-end-empty');
-                    if (emptyEnd) emptyEnd.style.display = 'none';
-                    const el = document.createElement('div');
-                    el.className = 'end-item';
-                    el.innerHTML = cell.innerHTML.trim();
-                    endContent.appendChild(el);
-                    if (typeof collectMode !== 'undefined' && collectMode) {
-                        // Remove emoji from grid cell (collected)
-                        const gridCell = cell.closest('.bot-cell');
-                        cell.remove();
-                        if (gridCell) gridCell.classList.add('cell-collected');
+                    // Only collect/store if crane is active
+                    if (isCraneActive) {
+                        const endContent = document.getElementById('sim-end-content');
+                        const emptyEnd = document.getElementById('sim-end-empty');
+                        if (emptyEnd) emptyEnd.style.display = 'none';
+                        const el = document.createElement('div');
+                        el.className = 'end-item';
+                        el.innerHTML = cell.innerHTML.trim();
+                        if (endContent) endContent.appendChild(el);
+                        
+                        if (typeof collectMode !== 'undefined' && collectMode) {
+                            // Remove emoji from grid cell (collected)
+                            const gridCell = cell.closest('.bot-cell');
+                            cell.remove();
+                            if (gridCell) gridCell.classList.add('cell-collected');
+                        }
+                        addedItem = true;
+                        checkMemoryPair('sim-grid', cell.innerHTML.trim());
                     }
-                    addedItem = true;
-                    checkMemoryPair('sim-grid', cell.innerHTML.trim());
                 }
             }
             return addedItem;
@@ -1083,6 +1090,12 @@ let simState = {
                 showToast('Paire trouvée ! 🎉', 'success');
                 memoryPairsFound++;
                 if (memoryPairsFound >= 4) unlockSkin('manta');
+
+                const header = document.getElementById('sim-end-header');
+                if (header && typeof memoryMode !== 'undefined' && memoryMode) {
+                    const totalPairs = Math.floor((MAT_CONFIG[activeMat]?.content?.length || 0) / 2);
+                    header.textContent = `Paires trouvées : ${memoryPairsFound}/${totalPairs}`;
+                }
 
                 const allCells = document.querySelectorAll(`#${gridId} .bot-cell .mat-content`);
                 let removed = 0;
