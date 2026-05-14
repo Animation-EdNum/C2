@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
 function applyUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
 
+    if (urlParams.get('spellMode') === '1') {
+        localStorage.setItem('at_spell_mode', 'true');
+    }
+    if (urlParams.get('memoryMode') === '1') {
+        localStorage.setItem('at_memory_mode', 'true');
+    }
+
     if (window.location.search.length > 0) {
         window.isSharedApp = true;
     }
@@ -189,6 +196,20 @@ function applyUrlParameters() {
                 }
             }
         }, 150);
+    }
+
+    // Hide grid toolbar buttons based on restrictions
+    if (urlParams.get('lockMat') === '1') {
+        const cycleMatBtns = document.querySelectorAll('.icon-action-btn[id$="-cycle-mat"]');
+        cycleMatBtns.forEach(btn => btn.style.display = 'none');
+    }
+    if (urlParams.has('lockSpeed')) {
+        const toggleSpeedBtns = document.querySelectorAll('.icon-action-btn[id$="-toggle-speed"]');
+        toggleSpeedBtns.forEach(btn => btn.style.display = 'none');
+    }
+    if (urlParams.get('hideGrid') === '1') {
+        const hideGridBtns = document.querySelectorAll('.icon-action-btn[id$="-hide-grid"]');
+        hideGridBtns.forEach(btn => btn.style.display = 'none');
     }
 }
 
@@ -400,7 +421,7 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockSkin">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSkin">Pas de skins</label>
+                                    <label class="share-option-label" for="opt-lockSkin">Pas de skins <span class="badge-specific" title="Spécifique à l'application">*</span></label>
                                     <div class="share-option-desc">Pas de personnalisation visuelle du robot.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -410,7 +431,7 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockMat">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockMat">Sans tapis</label>
+                                    <label class="share-option-label" for="opt-lockMat">Sans tapis <span class="badge-specific" title="Spécifique à l'application">*</span></label>
                                     <div class="share-option-desc">Désactive le choix de tapis.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -420,7 +441,7 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-forceMat">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-forceMat">Tapis imposé</label>
+                                    <label class="share-option-label" for="opt-forceMat">Tapis imposé <span class="badge-specific" title="Spécifique à l'application">*</span></label>
                                     <div class="share-option-desc">Charge le tapis actuellement sélectionné.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -430,7 +451,7 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockSpeed">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSpeed">Vitesse imposée</label>
+                                    <label class="share-option-label" for="opt-lockSpeed">Vitesse imposée <span class="badge-specific" title="Spécifique à l'application">*</span></label>
                                     <div class="share-option-desc">Charge la vitesse actuellement sélectionnée.</div>
                                 </div>
                                 <label class="share-toggle">
@@ -520,6 +541,10 @@ function initShareModal() {
     if (window.location.pathname.includes('simulateur_automate.html')) {
         document.getElementById('lbl-hideGrid').style.display = 'flex';
         document.getElementById('lbl-coloredCmds').style.display = 'flex';
+        document.getElementById('lbl-lockSkin').style.display = 'flex';
+        document.getElementById('lbl-lockMat').style.display = 'flex';
+        document.getElementById('lbl-forceMat').style.display = 'flex';
+        document.getElementById('lbl-lockSpeed').style.display = 'flex';
     }
     if (window.location.pathname.includes('binaire_studio.html')) {
         document.getElementById('lbl-unlockEditor').style.display = 'flex';
@@ -606,19 +631,49 @@ function initShareModal() {
             url.searchParams.set('noNudges', '1');
         }
 
+        if (optOnly && optOnly.checked) {
+            if (typeof window.spellMode !== 'undefined' && window.spellMode) {
+                url.searchParams.set('spellMode', '1');
+            }
+            if (typeof window.memoryMode !== 'undefined' && window.memoryMode) {
+                url.searchParams.set('memoryMode', '1');
+            }
+        }
+
         // Handle forceMat specifically if it exists and is checked
         const forceMatCb = document.getElementById('opt-forceMat');
-        if (forceMatCb && forceMatCb.checked) {
-            // we don't want the default behavior (forceMat=1) that was added by the loop
-            url.searchParams.delete('forceMat');
-
-            // we need to set it to the actual activeMat
-            // Attempt to get activeMat from localStorage as it's the standard way in this app
+        if (forceMatCb) {
             let currentMat = localStorage.getItem('at_active_mat') || 'none';
             if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
 
-            if (currentMat && currentMat !== 'custom') {
-                url.searchParams.set('forceMat', currentMat);
+            if (optOnly && optOnly.checked) {
+                // If "Mode actuel uniquement" is checked, we automatically apply and disable "Tapis imposé"
+                forceMatCb.checked = true;
+                forceMatCb.disabled = true;
+                const lblForceMat = document.getElementById('lbl-forceMat');
+                if (lblForceMat) {
+                    lblForceMat.style.opacity = '0.5';
+                    lblForceMat.title = 'Activé automatiquement par le mode actuel uniquement';
+                }
+            } else {
+                // Check if we need to restore normal state (but only if it wasn't a custom mat restriction)
+                if (currentMat !== 'custom') {
+                    forceMatCb.disabled = false;
+                    const lblForceMat = document.getElementById('lbl-forceMat');
+                    if (lblForceMat) {
+                        lblForceMat.style.opacity = '1';
+                        lblForceMat.title = '';
+                    }
+                }
+            }
+
+            if (forceMatCb.checked) {
+                // we don't want the default behavior (forceMat=1) that was added by the loop
+                url.searchParams.delete('forceMat');
+
+                if (currentMat && currentMat !== 'custom') {
+                    url.searchParams.set('forceMat', currentMat);
+                }
             }
         }
 
