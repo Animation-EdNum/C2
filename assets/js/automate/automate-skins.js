@@ -1230,7 +1230,7 @@ const ROBOT_SVGS = {
             </g>
         </svg>`,
     'helicopter': `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 600 750" width="100%" height="100%">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -130 600 750" width="100%" height="100%">
                 <defs>
                     <linearGradient id="redBody" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stop-color="#7a0a0a" />
