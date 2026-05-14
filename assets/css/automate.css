@@ -2333,3 +2333,85 @@ body.dark .f1-obstacle { --fa-secondary: #7f8c8d !important; }
         height: 50%;
     }
 }
+/* Tooltips pour les éléments avec data-tooltip */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.9);
+    background: rgba(15, 23, 42, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    right: calc(100% + 4px);
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent transparent rgba(15, 23, 42, 0.9);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
+body.dark [data-tooltip]::before {
+    background: rgba(248, 250, 252, 0.95);
+    color: #0f172a;
+}
+
+body.dark [data-tooltip]::after {
+    border-color: transparent transparent transparent rgba(248, 250, 252, 0.95);
+}
+
+@media (max-width: 768px) {
+    [data-tooltip]::before {
+        right: auto;
+        bottom: calc(100% + 10px);
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%) scale(0.9);
+    }
+    [data-tooltip]::after {
+        right: auto;
+        bottom: calc(100% + 4px);
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        border-color: rgba(15, 23, 42, 0.9) transparent transparent transparent;
+    }
+    body.dark [data-tooltip]::after {
+        border-color: rgba(248, 250, 252, 0.95) transparent transparent transparent;
+    }
+    [data-tooltip]:hover::before,
+    [data-tooltip]:hover::after {
+        transform: translateX(-50%) scale(1);
+    }
+}

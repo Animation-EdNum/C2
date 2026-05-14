@@ -575,8 +575,8 @@ function renderSkinsList() {
                             <div class="skin-item-desc">${config.desc}</div>
                         </div>
                         <div class="skin-item-miniatures">
-                            <div class="skin-item-mini" title="Obstacle">${config.obstacle}</div>
-                            <div class="skin-item-mini" title="Récompense">${config.target}</div>
+                            <div class="skin-item-mini" data-tooltip="Obstacle">${config.obstacle}</div>
+                            <div class="skin-item-mini" data-tooltip="Récompense">${config.target}</div>
                         </div>
 
                     </div>
@@ -826,8 +826,8 @@ function updateGridSizeSlidersState() {
     gridRowsSlider.disabled = locked;
     gridColsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
     gridRowsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
-    gridColsSlider.parentElement.title = title;
-    gridRowsSlider.parentElement.title = title;
+    gridColsSlider.parentElement.setAttribute('data-tooltip', title);
+    gridRowsSlider.parentElement.setAttribute('data-tooltip', title);
 
     if (locked && (GRID_COLS !== constraint.cols || GRID_ROWS !== constraint.rows)) {
         gridColsSlider.value = constraint.cols;
