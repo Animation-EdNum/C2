@@ -267,6 +267,36 @@ window.commandsVisible = commandsVisible;
         const gridRowsSlider = document.getElementById('grid-rows-slider');
         const gridSizeValue = document.getElementById('grid-size-value');
 
+        function rebuildAllGrids() {
+            if (typeof buildGrid !== 'function') return;
+            buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+            if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+            if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
+
+            if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
+                buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
+                if (typeof renderRobot === 'function') renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                if (typeof TrailManager !== 'undefined') TrailManager.clear('explore-grid');
+            }
+
+            if (typeof chalState !== 'undefined' && chalState.robotRow !== null) {
+                buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
+                if (typeof renderRobot === 'function') renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
+                if (typeof TrailManager !== 'undefined') TrailManager.clear('chal-grid');
+            }
+
+            if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
+                buildGrid('read-grid', GRID_ROWS, GRID_COLS, readState.obstacles || []);
+                if (typeof renderRobot === 'function') renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
+                if (typeof TrailManager !== 'undefined') TrailManager.clear('read-grid');
+            }
+
+            if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
+                buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
+                if (typeof renderRobot === 'function') renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
+                if (typeof TrailManager !== 'undefined') TrailManager.clear('draw-grid');
+            }
+        }
 
         function initApplication() {
             const memoryToggle = document.getElementById('toggle-memory-mode');
@@ -287,35 +317,7 @@ window.commandsVisible = commandsVisible;
 
                     if (typeof updateMemoryToggleVisibility === 'function') updateMemoryToggleVisibility();
                     if (typeof generateMatContent === 'function') generateMatContent(activeMat);
-                    if (typeof buildGrid === 'function') {
-                        buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
-                        if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-                        if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
-
-                        if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
-                            buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
-                            if (typeof renderRobot === 'function') renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('explore-grid');
-                        }
-
-                        if (typeof chalState !== 'undefined' && chalState.robotRow !== null) {
-                            buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
-                            if (typeof renderRobot === 'function') renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('chal-grid');
-                        }
-
-                        if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
-                            buildGrid('read-grid', GRID_ROWS, GRID_COLS, readState.obstacles || []);
-                            if (typeof renderRobot === 'function') renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('read-grid');
-                        }
-
-                        if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
-                            buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
-                            if (typeof renderRobot === 'function') renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('draw-grid');
-                        }
-                    }
+                    rebuildAllGrids();
 
                     const endContent = document.getElementById('sim-end-content');
                     if (endContent) {
@@ -334,35 +336,7 @@ window.commandsVisible = commandsVisible;
                         localStorage.setItem('at_memory_mode', memoryMode);
                     }
                     if (typeof generateMatContent === 'function') generateMatContent(activeMat);
-                    if (typeof buildGrid === 'function') {
-                        buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
-                        if (typeof renderRobot === 'function') renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-                        if (typeof TrailManager !== 'undefined') TrailManager.clear('sim-grid');
-
-                        if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
-                            buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles || []);
-                            if (typeof renderRobot === 'function') renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('explore-grid');
-                        }
-
-                        if (typeof chalState !== 'undefined' && chalState.robotRow !== null) {
-                            buildGrid('chal-grid', GRID_ROWS, GRID_COLS, chalState.obstacles || []);
-                            if (typeof renderRobot === 'function') renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('chal-grid');
-                        }
-
-                        if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
-                            buildGrid('read-grid', GRID_ROWS, GRID_COLS, readState.obstacles || []);
-                            if (typeof renderRobot === 'function') renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('read-grid');
-                        }
-
-                        if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
-                            buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []);
-                            if (typeof renderRobot === 'function') renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
-                            if (typeof TrailManager !== 'undefined') TrailManager.clear('draw-grid');
-                        }
-                    }
+                    rebuildAllGrids();
 
                     const endContent = document.getElementById('sim-end-content');
                     if (endContent) {

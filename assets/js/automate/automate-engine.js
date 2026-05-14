@@ -1649,7 +1649,8 @@ let simState = {
             if (isCorrect) {
                 playSound('success');
                 launchConfetti();
-                showToast(`Forme réussie !`, true);
+                showToast('Forme réussie !', 'success');
+                simState.consecutiveMistakes = 0;
 
                 drawGlobalScore++;
                 drawGlobalStreak++;
@@ -1672,9 +1673,11 @@ let simState = {
                 if (isCorrect) setTimeout(() => { if (document.getElementById('btn-next-draw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
             } else {
                 playSound('error');
-                showToast(errorMsg, false);
+                showToast(errorMsg, 'error');
                 drawGlobalStreak = 0;
                 drawState.mistakes++;
+                simState.consecutiveMistakes++;
+                if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
                 ScoreManager.addMistake("draw", drawState.difficulty);
                 document.getElementById('draw-global-streak').textContent = drawGlobalStreak;
 
@@ -1764,6 +1767,7 @@ let simState = {
 
             if (isCorrect) {
                 readState.locked = true;
+                simState.consecutiveMistakes = 0;
                 readGlobalScore++;
                 readGlobalStreak++;
                 ScoreManager.addSuccess('read', readState.difficulty, 0);
@@ -1818,6 +1822,7 @@ let simState = {
                 readGlobalStreak = 0;
                 readState.mistakes = (readState.mistakes || 0) + 1;
                 simState.consecutiveMistakes++;
+                if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
                 ScoreManager.addMistake("read", readState.difficulty);
                 document.getElementById('read-global-streak').textContent = readGlobalStreak;
                 showToast('Faux. Essaie encore !', 'error');
@@ -1922,6 +1927,7 @@ let simState = {
                 if (option.isCorrect) {
                     playSound('success');
                     launchConfetti();
+                    simState.consecutiveMistakes = 0;
 
                     globalScore++;
                     globalStreak++;
@@ -1949,6 +1955,8 @@ let simState = {
                     el.classList.add('wrong');
                     globalStreak = 0;
                     chalState.mistakes = (chalState.mistakes || 0) + 1;
+                    simState.consecutiveMistakes++;
+                    if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
                     ScoreManager.addMistake("chal", chalState.difficulty);
                     document.getElementById('global-streak').textContent = globalStreak;
                     chalState.options.forEach((o, j) => { if (o.isCorrect) opts[j].classList.add('correct'); });
@@ -2198,6 +2206,7 @@ let simState = {
                         return;
                     }
                     e.dataTransfer.setData('text/plain', 'robot');
+                    e.dataTransfer.effectAllowed = 'move';
                 };
             }
 
@@ -2347,17 +2356,6 @@ let simState = {
                 }
             }
 
-            if (overlay && containerId === 'sim-grid') {
-                overlay.setAttribute('draggable', 'true');
-                overlay.ondragstart = (e) => {
-                    if (simState.running) {
-                        e.preventDefault();
-                    } else {
-                        e.dataTransfer.setData('text/plain', 'robot');
-                        e.dataTransfer.effectAllowed = 'move';
-                    }
-                };
-            }
         }
 
         function renderTarget(containerId, overlayId, row, col) {

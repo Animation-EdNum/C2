@@ -57,7 +57,7 @@ function showToast(msg, type = 'success', duration = 3000) {
     
     container.appendChild(toast);
 
-    // Initialize lucide icon if wrapper added
+    // Initialize FontAwesome icon if wrapper added
     if (window.fa) {
         window.fa.createIcons();
     }
