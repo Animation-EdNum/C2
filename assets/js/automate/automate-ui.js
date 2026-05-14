@@ -319,7 +319,7 @@ window.commandsVisible = commandsVisible;
 
                     const endContent = document.getElementById('sim-end-content');
                     if (endContent) {
-                        Array.from(endContent.querySelectorAll('.end-item')).forEach(el => el.remove());
+                        endContent.querySelectorAll('.end-item').forEach(el => el.remove());
                         const emptyEnd = document.getElementById('sim-end-empty');
                         if (emptyEnd) emptyEnd.style.display = 'block';
                     }
@@ -366,7 +366,7 @@ window.commandsVisible = commandsVisible;
 
                     const endContent = document.getElementById('sim-end-content');
                     if (endContent) {
-                        Array.from(endContent.querySelectorAll('.end-item')).forEach(el => el.remove());
+                        endContent.querySelectorAll('.end-item').forEach(el => el.remove());
                         const emptyEnd = document.getElementById('sim-end-empty');
                         if (emptyEnd) emptyEnd.style.display = 'block';
                     }
@@ -531,7 +531,7 @@ window.commandsVisible = commandsVisible;
                 const endContent = document.getElementById('sim-end-content');
                 const emptyEnd = document.getElementById('sim-end-empty');
                 if (endContent) {
-                    Array.from(endContent.querySelectorAll('.end-item')).forEach(el => el.remove());
+                    endContent.querySelectorAll('.end-item').forEach(el => el.remove());
                 }
                 if (emptyEnd) emptyEnd.style.display = 'block';
             });

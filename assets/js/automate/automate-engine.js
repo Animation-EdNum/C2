@@ -72,7 +72,7 @@ let simState = {
                 // Create path element
                 const path = createSVG("path");
                 path.setAttribute("class", "trail-path");
-                const d = `M ${pt.x} ${pt.y}`;
+                const d = `M ${pt.x} ${pt.y} l 0.01 0.01`;
                 path.setAttribute("d", d);
                 layer.appendChild(path);
 
@@ -1510,9 +1510,10 @@ let simState = {
 
             // Highlight target cells only for easy and medium
             if (drawState.difficulty === 'easy' || drawState.difficulty === 'medium') {
-                for (const cell of drawState.targetCells) {
-                    const el = document.querySelector(`#draw-grid .bot-cell[data-row="${cell.r}"][data-col="${cell.c}"]`);
-                    if (el) {
+                const targetSet = new Set(drawState.targetCells.map(c => `${c.r},${c.c}`));
+                const drawCells = document.querySelectorAll('#draw-grid .bot-cell');
+                for (const el of drawCells) {
+                    if (targetSet.has(`${el.dataset.row},${el.dataset.col}`)) {
                         el.classList.add('draw-target');
                     }
                 }
@@ -2056,6 +2057,20 @@ let simState = {
                 grid.classList.add(`mat-${activeMat}`);
             }
 
+            // Build a 2D array representation of obstacles for O(1) lookups
+            const obsGrid = Array(rows);
+            for (let r = 0; r < rows; r++) {
+                obsGrid[r] = Array(cols).fill(false);
+            }
+            if (obstacles && obstacles.length > 0) {
+                for (let i = 0; i < obstacles.length; i++) {
+                    const o = obstacles[i];
+                    if (o.r >= 0 && o.r < rows && o.c >= 0 && o.c < cols) {
+                        obsGrid[o.r][o.c] = true;
+                    }
+                }
+            }
+
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
                 row.setAttribute('role', 'row');
@@ -2064,7 +2079,7 @@ let simState = {
                     cell.className = 'bot-cell ' + ((r + c) % 2 === 0 ? 'cell-light' : 'cell-dark');
                     cell.setAttribute('role', 'gridcell');
                     cell.id = `${containerId}-cell-${r}-${c}`;
-                    const isObstacle = obstacles.some(o => o.r === r && o.c === c);
+                    const isObstacle = obsGrid[r][c];
                     if (isObstacle) {
                         cell.classList.add('obstacle');
                         const obs = SKIN_CONFIG[activeSkin].obstacle;
