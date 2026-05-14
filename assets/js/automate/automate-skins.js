@@ -49,14 +49,31 @@ const MAT_CONFIG = {
         icon: '🔵',
         content: [],
         baseContent: [
-            // Simple shapes and primary/basic colors first
-            '🔴', '🔵', '🟡', '🟩', '🟥', '🟦', '🟨', '🟢',
-            // Secondary colors and simpler shapes
-            '🟠', '🟣', '🟧', '🟪', '🔺', '🔻',
-            // More complex colors/shapes
-            '⚫', '⚪', '⬛', '⬜', '❤️', '💙', '💚', '💛',
-            // Complex/less common shapes and colors
-            '🔶', '🔷', '🔸', '🔹', '🟤', '🟫', '🤎', '🤍', '🩷', '🩵', '🖤', '🧡', '💜'
+            '<i data-fa="square" style="color: #e74c3c;"></i>', '<i data-fa="square" style="color: #3498db;"></i>', '<i data-fa="square" style="color: #f1c40f;"></i>', '<i data-fa="square" style="color: #2ecc71;"></i>',
+            '<i data-fa="circle" style="color: #e74c3c;"></i>', '<i data-fa="circle" style="color: #3498db;"></i>', '<i data-fa="circle" style="color: #f1c40f;"></i>', '<i data-fa="circle" style="color: #2ecc71;"></i>',
+            '<i data-fa="triangle" style="color: #e74c3c;"></i>', '<i data-fa="triangle" style="color: #3498db;"></i>', '<i data-fa="triangle" style="color: #f1c40f;"></i>', '<i data-fa="triangle" style="color: #2ecc71;"></i>',
+            '<i data-fa="star" style="color: #e74c3c;"></i>', '<i data-fa="star" style="color: #3498db;"></i>', '<i data-fa="star" style="color: #f1c40f;"></i>', '<i data-fa="star" style="color: #2ecc71;"></i>',
+            '<i data-fa="star" style="color: #e67e22;"></i>', '<i data-fa="star" style="color: #9b59b6;"></i>', '<i data-fa="heart" style="color: #e74c3c;"></i>', '<i data-fa="heart" style="color: #3498db;"></i>',
+            '<i data-fa="heart" style="color: #f1c40f;"></i>', '<i data-fa="heart" style="color: #2ecc71;"></i>', '<i data-fa="heart" style="color: #e67e22;"></i>', '<i data-fa="heart" style="color: #9b59b6;"></i>',
+            '<i data-fa="square" style="color: #e67e22;"></i>', '<i data-fa="square" style="color: #9b59b6;"></i>', '<i data-fa="square" style="color: #e84393;"></i>', '<i data-fa="square" style="color: #000000;"></i>',
+            '<i data-fa="circle" style="color: #e67e22;"></i>', '<i data-fa="circle" style="color: #9b59b6;"></i>', '<i data-fa="circle" style="color: #e84393;"></i>', '<i data-fa="circle" style="color: #000000;"></i>',
+            '<i data-fa="triangle" style="color: #e67e22;"></i>', '<i data-fa="triangle" style="color: #9b59b6;"></i>', '<i data-fa="triangle" style="color: #e84393;"></i>', '<i data-fa="triangle" style="color: #000000;"></i>',
+            '<i data-fa="square" style="color: #ffffff;"></i>', '<i data-fa="square" style="color: #95a5a6;"></i>', '<i data-fa="square" style="color: #1abc9c;"></i>', '<i data-fa="square" style="color: #d35400;"></i>',
+            '<i data-fa="square" style="color: #8e44ad;"></i>', '<i data-fa="square" style="color: #7f8c8d;"></i>', '<i data-fa="circle" style="color: #ffffff;"></i>', '<i data-fa="circle" style="color: #95a5a6;"></i>',
+            '<i data-fa="circle" style="color: #1abc9c;"></i>', '<i data-fa="circle" style="color: #d35400;"></i>', '<i data-fa="circle" style="color: #8e44ad;"></i>', '<i data-fa="circle" style="color: #7f8c8d;"></i>',
+            '<i data-fa="triangle" style="color: #ffffff;"></i>', '<i data-fa="triangle" style="color: #95a5a6;"></i>', '<i data-fa="triangle" style="color: #1abc9c;"></i>', '<i data-fa="triangle" style="color: #d35400;"></i>',
+            '<i data-fa="triangle" style="color: #8e44ad;"></i>', '<i data-fa="triangle" style="color: #7f8c8d;"></i>', '<i data-fa="star" style="color: #e84393;"></i>', '<i data-fa="star" style="color: #000000;"></i>',
+            '<i data-fa="star" style="color: #ffffff;"></i>', '<i data-fa="star" style="color: #95a5a6;"></i>', '<i data-fa="star" style="color: #1abc9c;"></i>', '<i data-fa="star" style="color: #d35400;"></i>',
+            '<i data-fa="star" style="color: #8e44ad;"></i>', '<i data-fa="star" style="color: #7f8c8d;"></i>', '<i data-fa="heart" style="color: #e84393;"></i>', '<i data-fa="heart" style="color: #000000;"></i>',
+            '<i data-fa="heart" style="color: #ffffff;"></i>', '<i data-fa="heart" style="color: #95a5a6;"></i>', '<i data-fa="heart" style="color: #1abc9c;"></i>', '<i data-fa="heart" style="color: #d35400;"></i>',
+            '<i data-fa="heart" style="color: #8e44ad;"></i>', '<i data-fa="heart" style="color: #7f8c8d;"></i>', '<i data-fa="diamond" style="color: #e74c3c;"></i>', '<i data-fa="diamond" style="color: #3498db;"></i>',
+            '<i data-fa="diamond" style="color: #f1c40f;"></i>', '<i data-fa="diamond" style="color: #2ecc71;"></i>', '<i data-fa="diamond" style="color: #e67e22;"></i>', '<i data-fa="diamond" style="color: #9b59b6;"></i>',
+            '<i data-fa="diamond" style="color: #e84393;"></i>', '<i data-fa="diamond" style="color: #000000;"></i>', '<i data-fa="diamond" style="color: #ffffff;"></i>', '<i data-fa="diamond" style="color: #95a5a6;"></i>',
+            '<i data-fa="diamond" style="color: #1abc9c;"></i>', '<i data-fa="diamond" style="color: #d35400;"></i>', '<i data-fa="diamond" style="color: #8e44ad;"></i>', '<i data-fa="diamond" style="color: #7f8c8d;"></i>',
+            '<i data-fa="hexagon" style="color: #e74c3c;"></i>', '<i data-fa="hexagon" style="color: #3498db;"></i>', '<i data-fa="hexagon" style="color: #f1c40f;"></i>', '<i data-fa="hexagon" style="color: #2ecc71;"></i>',
+            '<i data-fa="hexagon" style="color: #e67e22;"></i>', '<i data-fa="hexagon" style="color: #9b59b6;"></i>', '<i data-fa="hexagon" style="color: #e84393;"></i>', '<i data-fa="hexagon" style="color: #000000;"></i>',
+            '<i data-fa="hexagon" style="color: #ffffff;"></i>', '<i data-fa="hexagon" style="color: #95a5a6;"></i>', '<i data-fa="hexagon" style="color: #1abc9c;"></i>', '<i data-fa="hexagon" style="color: #d35400;"></i>',
+            '<i data-fa="hexagon" style="color: #8e44ad;"></i>', '<i data-fa="hexagon" style="color: #7f8c8d;"></i>', '<i data-fa="octagon" style="color: #e74c3c;"></i>', '<i data-fa="octagon" style="color: #3498db;"></i>'
         ]
     },
     'geo': {
