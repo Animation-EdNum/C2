@@ -1,7 +1,7 @@
 const createSVG = (tag) => document.createElementNS("http://www.w3.org/2000/svg", tag);
 
 let GRID_ROWS = 6, GRID_COLS = 6;
-let globalScore = 0, globalStreak = 0;
+let globalScore = 0, globalStreak = 0, memoryPairsFound = 0;
 let simState = {
             program: [], robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
             running: false, paused: false, stopped: false, stepIndex: -1, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
@@ -575,6 +575,7 @@ let simState = {
             simState.firstTryCount = 0;
             simState.firstAttempt = true;
             simState.deletedCommandsCount = 0;
+            memoryPairsFound = 0;
 
             const counter = document.getElementById('sim-score-bar');
             if (counter) counter.style.display = 'none';
@@ -1083,6 +1084,8 @@ let simState = {
                 playSound('success');
                 launchConfetti();
                 showToast('Paire trouvée ! 🎉', 'success');
+                memoryPairsFound++;
+                if (memoryPairsFound >= 4) unlockSkin('manta');
 
                 const allCells = document.querySelectorAll(`#${gridId} .bot-cell .mat-content`);
                 let removed = 0;
@@ -1944,7 +1947,7 @@ let simState = {
 
                     // Déblocages
                     if (chalState.difficulty === 'extreme' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('cyberbot');
-                    if (globalStreak >= 3) unlockSkin('f1');
+                    if (globalStreak >= 3 && chalState.difficulty !== 'easy') unlockSkin('f1');
 
                     showToast(`Bravo ! Pilotage réussi !`, 'success');
                     el.classList.add('correct');

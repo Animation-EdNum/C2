@@ -134,22 +134,22 @@ const SKIN_CONFIG = {
         name: 'En feu 🔥',
         obstacle: '<i data-fa="snowflake" style="color: #3498db;"></i>',
         target: `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g class="treasure-pile"><g stroke="#92400e" stroke-width="1.5"><circle cx="30" cy="35" r="10" fill="url(#coin-grad)"/><circle cx="70" cy="30" r="9" fill="url(#coin-grad)"/><circle cx="20" cy="55" r="8" fill="url(#coin-grad)"/><circle cx="80" cy="65" r="11" fill="url(#coin-grad)"/><circle cx="45" cy="75" r="12" fill="url(#coin-grad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="45" cy="25" r="11" fill="url(#coin-grad)"/><circle cx="65" cy="50" r="13" fill="url(#coin-grad)"/><circle cx="35" cy="60" r="12" fill="url(#coin-grad)"/><circle cx="60" cy="70" r="9" fill="url(#coin-grad)"/></g><g stroke="#92400e" stroke-width="1.5"><circle cx="50" cy="45" r="15" fill="url(#coin-grad)" filter="url(#gold-glow)"/></g><g fill="none" stroke="#fef3c7" stroke-width="1" opacity="0.5"><circle cx="30" cy="35" r="6"/><circle cx="70" cy="30" r="5"/><circle cx="20" cy="55" r="4"/><circle cx="80" cy="65" r="7"/><circle cx="45" cy="75" r="8"/><circle cx="45" cy="25" r="7"/><circle cx="65" cy="50" r="9"/><circle cx="35" cy="60" r="8"/><circle cx="60" cy="70" r="5"/><circle cx="50" cy="45" r="11"/></g><g class="sparkle s1"><path d="M 30 20 L 32 28 L 40 30 L 32 32 L 30 40 L 28 32 L 20 30 L 28 28 Z" fill="white" filter="url(#gold-glow)"/></g><g class="sparkle s2"><path d="M 70 50 L 72 58 L 80 60 L 72 62 L 70 70 L 68 62 L 60 60 L 68 58 Z" fill="white" filter="url(#gold-glow)"/></g><g class="sparkle s3"><path d="M 50 35 L 53 43 L 61 45 L 53 47 L 50 55 L 47 47 L 39 45 L 47 43 Z" fill="white" filter="url(#gold-glow)"/></g></g></svg>`,
-        desc: 'Réussis un décodage (extrême) du premier coup.'
+        desc: 'Réussis un décodage (extrême) du premier coup.', hidden: false
     },
-    'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.' },
-    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="dt-poo-storm" style="--fa-primary: #8b4513; --fa-secondary: #ffff00; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.' },
-    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="skull-crossbones" class="pirate-obstacle" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor avec les commandes masquées.' },
-    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="dt-trees" class="beebot-obstacle" style="--fa-primary: #27ae60; --fa-secondary: #1e8449;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.' },
+    'cyberbot': { name: 'Cyber-Bot 2077', obstacle: '<i data-fa="dt-alien-8bit" style="--fa-primary: #00FF41; --fa-secondary: #FF10F0;"></i>', target: '💾', desc: 'Réussis un pilotage (extrême) du premier coup.', hidden: false },
+    'unicorn': { name: 'Licorne magique', obstacle: '<i data-fa="dt-poo-storm" style="--fa-primary: #8b4513; --fa-secondary: #ffff00; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '🧁', desc: 'Réussis un dessin (extrême) du premier coup.', hidden: false },
+    'pirate': { name: 'Vaisseau pirate', obstacle: '<i data-fa="skull-crossbones" class="pirate-obstacle" style="color: #2c3e50;"></i>', target: '🪙', desc: 'Atteins le trésor avec les commandes masquées.', hidden: false },
+    'beebot': { name: 'Bzzz-Bot', obstacle: '<i data-fa="dt-trees" class="beebot-obstacle" style="--fa-primary: #27ae60; --fa-secondary: #1e8449;"></i>', target: '🌻', desc: 'N\'utilise jamais deux fois la même instruction d\'affilée pour atteindre le trésor.', hidden: false },
     'botanique': { name: 'Bot-anique', obstacle: '<i data-fa="ram" class="botanique-obstacle"></i>', target: '🌸', desc: 'La persévérance finit par payer...', hidden: true },
     'indecis': { name: 'Indécis', obstacle: '<i data-fa="exclamation" style="color: #f39c12;"></i>', target: '⁉️', desc: 'L\'erreur est humaine, l\'hésitation aussi...', hidden: true },
-    'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".' },
+    'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".', hidden: false },
     'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement.', hidden: false },
-    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage) sans faire une seule erreur.' },
-    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Navigue gracieusement à travers les profondeurs abyssales.', hidden: true },
-    'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.' },
+    'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage, difficulté moyenne ou plus) sans faire une seule erreur.', hidden: false },
+    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
+    'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.', hidden: false },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Prends garde au vertige...', hidden: true },
     'pedago': { name: 'Colorigami', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Aile orange ou verte ? Appuie sur le bouton de la même couleur pour tourner du bon côté.', hidden: true },
-    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.' }
+    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.', hidden: false }
 };
 
 const AT_SVGS = {
@@ -369,6 +369,7 @@ function generateMatContent(matId) {
             }
 
             config.content = shuffleArray(pairsContent);
+            if (typeof memoryPairsFound !== 'undefined') memoryPairsFound = 0;
             return;
         }
     }
