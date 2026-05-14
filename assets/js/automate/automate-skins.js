@@ -33,7 +33,7 @@ const MAT_CONFIG = {
         name: 'Cité',
         desc: 'Thème ville et routes.',
         example: 'Amène le robot au supermarché.',
-        icon: '<i data-fa="city"></i>'
+        icon: '🏙️'
     },
     'math': {
         name: 'Calcul mental',
