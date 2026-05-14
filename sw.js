@@ -23,6 +23,7 @@ const ASSETS = [
     './assets/icon-192.png',
     './assets/icon-512.png',
     './assets/img/mats/city.png',
+    './assets/img/mats/valais.png',
     './assets/js/audio.js',
     './assets/js/automate/automate-engine.js',
     './assets/js/automate/automate-main.js',
