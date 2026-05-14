@@ -1127,7 +1127,7 @@ const ROBOT_SVGS = {
             </svg>
             `,
     'train': `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 400 510" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 510" width="125%" height="125%" preserveAspectRatio="xMidYMid meet">
             <defs>
                 <linearGradient id="volumeChaudiere" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stop-color="#111" />
