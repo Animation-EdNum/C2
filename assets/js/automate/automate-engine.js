@@ -72,7 +72,7 @@ let simState = {
                 // Create path element
                 const path = createSVG("path");
                 path.setAttribute("class", "trail-path");
-                const d = `M ${pt.x} ${pt.y}`;
+                const d = `M ${pt.x} ${pt.y} l 0.01 0.01`;
                 path.setAttribute("d", d);
                 layer.appendChild(path);
 
