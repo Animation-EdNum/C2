@@ -11,7 +11,7 @@ All commands should be run from the **root directory** of the project.
 1. **Install dependencies:**
    Ensure you have Python installed. Then, run:
    ```bash
-   pip install -r meta/e2e_tests/requirements.txt
+   pip install -r meta/tests/e2e/requirements.txt
    playwright install
    ```
 
@@ -24,12 +24,12 @@ All commands should be run from the **root directory** of the project.
 3. **Run the tests:**
    In another terminal, run:
    ```bash
-   python -m pytest meta/e2e_tests/ -v
+   python -m pytest meta/tests/e2e/ -v
    ```
 
 ## Adding a New Test
 
-Tests are organized by application in `meta/e2e_tests/`. Conventions:
+Tests are organized by application in `meta/tests/e2e/`. Conventions:
 - Name the files `test_<app_name>.py`.
 - Use `page.goto("http://localhost:8000/webapps/...")` as the base URL.
 - Prefer selectors by ID (`#my-element`) for stability.

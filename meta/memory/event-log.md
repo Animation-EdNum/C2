@@ -48,7 +48,7 @@
 - **[2026-05-04]** [Maintenance] Relocated full `lucide.min.js` bundle to `meta/ressources/` and updated `scripts/generate_lucide_subset.js` to reflect the new source path. Updated documentation and code comments.
 - **[2026-05-05]** [System] Updated memory files (`user-preferences.md`, `project-context.md`, `code-patterns.md`) with latest gathered learnings including Playwright environment setup, architecture notes, app constraints, and UI/UX patterns.
 - **[2026-05-05]** [Documentation] Added detailed pedagogical value descriptions to README.md for the 6 core student webapps, specifically addressing cognitive benefits of game modes and difficulty scales.
-- **[2026-05-06]** [System & Documentation] Updated all memory files (`project-context.md`, `code-patterns.md`, `decisions.md`, `user-preferences.md`) to incorporate new rules regarding FontAwesome 7 Pro, `assets/` paths, Playwright E2E constraints, and rewrote `README.md` completely to cater to both teachers and developers.
+- **[2026-05-06]** [System & Documentation] Updated all memory files (`project-context.md`, `code-patterns.md`, `decisions.md`, `user-preferences.md`) to incorporate new rules regarding FontAwesome 7 Pro, `assets/` paths, Playwright E2E tests, and rewrew README.md completely to cater to both teachers and developers.
 - **[2026-05-07]** [UX] Refactored `url-params.js` to use the `.unlinked` CSS class for disabling navigation links and added QR code generation support in the share modal.
 - **[2026-05-07]** [Bugfix] Fixed icon mapping in `toast.js` for FontAwesome 7 compatibility.
 - **[2026-05-07]** [UX] Implemented auto-advance logic in `simulateur_automate.html` with correct tab-based trigger handling.
@@ -63,5 +63,5 @@
 - **[2026-05-11]** [Maintenance] Relocated `generate-sw-manifest.js` from `scripts/` to `meta/scripts/` to align with the project's developer tools organization. Updated all documentation references.
 - **[2026-05-12]** [Distribution] Created `package.json` and `bin/ednum.js` to publish the Suite EdNum as `@ednum/suite-ednum` on npmjs.com. Running `npx @ednum/suite-ednum` serves the full suite locally via a zero-dependency Node.js HTTP server. Excludes `meta/`, `.github/`, and dev-only root files from the published bundle.
 - **[2026-05-13]** [Bugfix] Fixed the viewbox dimensions of the 'botanique' skin in the Automate Simulator.
-
-- **[$(date +%Y-%m-%d)]** [Refactoring] Refactored camelCase IDs in HTML and JS to kebab-case (e.g., `themeToggleBtn` to `theme-toggle-btn`) for CSS consistency and removed `alpha/webapps/pixel_studio_rvb.html` from `registry.json` as it no longer exists.
+- **[2026-05-14]** [System] Unified camelCase identifiers to kebab-case in HTML and JS.
+- **[2026-05-14]** [Testing] Reorganized test infrastructure: moved unit tests to `meta/tests/unit/` and E2E tests to `meta/tests/e2e/`. Updated `package.json` and documentation.

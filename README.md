@@ -128,24 +128,22 @@ Check out the **[Contributing Guide](CONTRIBUTING.md)** to learn more.
 1.  **Fork** the project and clone your repo.
 2.  Create a branch (`feature/new-app`).
 3.  Make your changes while respecting the **Project Patterns** (see `meta/memory/code-patterns.md`).
-4.  Run the Playwright **E2E tests** before submitting.
+4.  Run the unit and E2E tests before submitting.
 5.  Open a **Pull Request** to `main`.
 
-### 🧪 End-to-End (E2E) Tests
-Our CI pipeline (`.github/workflows/e2e-tests.yml`) checks every PR with Playwright.
-To run the tests locally:
-```bash
-# 1. Install Python dependencies
-python3 -m pip install -r meta/e2e_tests/requirements.txt && playwright install
+### 🧪 Testing
+Our CI pipeline checks every PR. We use Node.js for unit tests and Playwright (Python) for E2E tests.
 
-# 2. Start a local server (in background) and wait a bit
+To run tests locally:
+```bash
+# 1. Unit Tests (Node.js)
+npm run test:unit
+
+# 2. E2E Tests (Playwright/Python)
+python3 -m pip install -r meta/tests/e2e/requirements.txt && playwright install
 python3 -m http.server 8000 > server.log 2>&1 &
 sleep 5
-
-# 3. Run E2E tests
-python3 -m pytest meta/e2e_tests/
-
-# 4. Kill the server when finished
+python3 -m pytest meta/tests/e2e/
 kill $(lsof -t -i :8000) 2>/dev/null || true
 ```
 

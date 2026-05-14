@@ -21,7 +21,7 @@ Pour le développement local, vous aurez besoin de :
 - Un navigateur web moderne (Chrome, Firefox, Edge)
 - Un éditeur de code (VS Code recommandé)
 - Python 3.x (uniquement pour les tests E2E et le serveur HTTP local)
-- Node.js (uniquement pour les scripts utilitaires dans `meta/scripts/`)
+- Node.js (scripts utilitaires et tests unitaires)
 
 ## Architecture technique
 
@@ -74,7 +74,9 @@ C2/
 ├── assets/fonts/                  # Polices auto-hébergées
 ├── meta/                   # Audits, tests, scripts et ressources non-déployées
 │   ├── audits/
-│   ├── e2e_tests/          # Tests End-to-End Playwright
+│   ├── tests/
+│   │   ├── unit/           # Tests unitaires Node.js
+│   │   └── e2e/            # Tests End-to-End Playwright (Python)
 │   ├── memory/             # Contexte agents IA
 │   ├── ressources/
 │   │   ├── solid_icons.js   # Source pour la génération du subset FA
@@ -154,9 +156,18 @@ Le projet utilise un **subset personnalisé** de FontAwesome 7 Pro. Pour ajouter
 
 ## Tests
 
+### Tests unitaires (Node.js)
+
+Ces tests vérifient la logique métier isolée (calculs, mélanges, etc.).
+
+```bash
+# Lancer les tests unitaires
+npm run test:unit
+```
+
 ### Tests E2E (Playwright)
 
-Le projet dispose d'une suite de tests End-to-End qui vérifie le bon fonctionnement des applications.
+Le projet dispose d'une suite de tests End-to-End qui vérifie le bon fonctionnement des applications dans un navigateur.
 
 #### Installation
 ```bash
@@ -170,14 +181,14 @@ playwright install
 python -m http.server 8000
 
 # Terminal 2 : lancer les tests
-python -m pytest meta/e2e_tests/ -v
+python -m pytest meta/tests/e2e/ -v
 ```
 
 #### CI/CD
 Les tests sont automatiquement exécutés via GitHub Actions sur chaque Pull Request vers `main`. Le workflow est défini dans `.github/workflows/e2e-tests.yml`.
 
 #### Ajouter un test
-Les tests sont organisés par application dans `meta/e2e_tests/`. Conventions :
+Les tests sont organisés par application dans `meta/tests/e2e/`. Conventions :
 - Nommer les fichiers `test_<nom_app>.py`
 - Utiliser `page.goto("http://localhost:8000/...")` comme base URL
 - Privilégier les sélecteurs par ID (`#mon-element`) pour la stabilité
@@ -188,7 +199,7 @@ Les tests sont organisés par application dans `meta/e2e_tests/`. Conventions :
 1. **Forkez** le dépôt
 2. **Créez une branche** descriptive : `fix/automate-collision` ou `feat/new-webapp`
 3. **Commitez** avec des messages clairs en français ou anglais
-4. **Testez** localement (vérification visuelle + tests E2E)
+4. **Testez** localement (vérification visuelle + tests unitaires + tests E2E)
 5. **Ouvrez une Pull Request** vers `main` avec une description détaillée
 
 > 💡 Pour les changements visuels, incluez des captures d'écran avant/après dans votre PR.

@@ -19,17 +19,19 @@
   - **Execution Plans:** When creating an execution plan, ensure verification steps use concrete tool calls (e.g., `read_file` or `run_in_bash_session`) rather than vague summaries. Always include a distinct step to run all relevant tests (such as the E2E suite) immediately before the pre-commit step. To satisfy the 'Exploration' and 'Groundedness' rules during plan reviews, ensure the specific code blocks you intend to modify are explicitly visible in the trace. Since `read_file` outputs may be truncated in the trace (e.g., to 1000 characters), use `grep` or `sed -n '<start>,<end>p' <filepath>` to print the exact target lines into the trace before requesting a review.
   - **Pre-commit Phrasing:** When creating an execution plan, the description for the pre-commit step must exactly match the required phrasing: 'Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.'
 
-## E2E Testing Guidelines (Playwright & Local)
-### Local E2E Test Execution
-To run the E2E test suite locally, the following steps must be strictly followed:
-1. Ensure dependencies are installed (e.g., via `python3 -m pip install playwright pytest-playwright -r meta/e2e_tests/requirements.txt` and `playwright install`). If running the E2E test suite fails due to missing modules like `pytest` or `playwright`, you can successfully install them in the sandbox via `pip install playwright pytest-playwright` followed by `python -m playwright install`.
-2. If the E2E test suite throws a "fixture 'page' not found" error when run with `pytest` and custom `PYTHONPATH` manipulation, it means the `pytest-playwright` plugin failed to load. To resolve this, run the tests by invoking the module directly (e.g., `python3 -m pytest`) without altering the `PYTHONPATH`.
-3. Start a local HTTP server with output redirection to prevent broken pipe crashes: `python3 -m http.server 8000 > server.log 2>&1 &`
-4. Wait for the server to initialize (e.g., `sleep 5`) to avoid connection race conditions.
-5. Run the suite: `python3 -m pytest meta/e2e_tests/`
-6. Cleanly kill the process: `kill $(lsof -t -i :8000) 2>/dev/null || true`
+## Testing Guidelines (Unit & E2E)
+### Local Test Execution
+Testing is split between Node.js unit tests and Playwright (Python) E2E tests:
 
-Note: The development sandbox environment is network-restricted (offline). Commands that require external resource fetching will fail unless pre-installed. If the automated E2E test suite (`pytest`) cannot be run due to environment constraints, use a standalone Playwright script to capture screenshots for visual verification of frontend changes.
+1. **Unit Tests (Node.js):** Run via `npm run test:unit`. These tests reside in `meta/tests/unit/`.
+2. **E2E Tests (Playwright):** 
+   - Ensure dependencies are installed (e.g., via `pip install playwright pytest-playwright -r meta/tests/e2e/requirements.txt` and `playwright install`). 
+   - Start a local HTTP server: `python3 -m http.server 8000 > server.log 2>&1 &`
+   - Wait for the server (e.g., `sleep 5`).
+   - Run the suite: `python3 -m pytest meta/tests/e2e/`
+   - Cleanly kill the process: `kill $(lsof -t -i :8000) 2>/dev/null || true`
+
+If the automated E2E test suite cannot be run due to environment constraints, use a standalone Playwright script to capture screenshots for visual verification of frontend changes.
 
 ### Frontend Visual Verification (Screenshots)
 Any modification affecting the user-facing UI MUST be visually verified via the integrated Playwright tools (`frontend_verification_instructions` and `frontend_verification_complete`).
@@ -49,6 +51,5 @@ Any modification affecting the user-facing UI MUST be visually verified via the 
   - **"In Use" State:** When creating screenshots for documentation, Playwright must simulate a real user interaction (filling a field, clicking) rather than capturing the fully empty application.
 
 ## Cleanup & Git
-- Ensure temporary testing artifacts and workspace files (e.g., ad-hoc Playwright scripts like `verify.py`, visual verification screenshots, `plan.md`, or log files like `server.log`) created during development or pre-commit steps are physically deleted and removed from Git staging before final submission.
+- Ensure temporary testing artifacts and workspace files created during development are physically deleted and removed from Git staging before final submission.
 - Before the final commit, all temporary Python scripts used for Playwright or tests must be completely deleted from the disk and index (`git rm --cached`).
-- If Git commands behave poorly (revision errors), force `git fetch --unshallow` to retrieve the full history.
