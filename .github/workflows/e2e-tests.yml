@@ -13,7 +13,7 @@ jobs:
     outputs:
       basic:         ${{ steps.filter.outputs.basic }}
       scores:        ${{ steps.filter.outputs.scores }}
-      bluebot:       ${{ steps.filter.outputs.bluebot }}
+      automate:      ${{ steps.filter.outputs.automate }}
       binaire_codage: ${{ steps.filter.outputs.binaire_codage }}
       alpha_webapps: ${{ steps.filter.outputs.alpha_webapps }}
     steps:
@@ -29,15 +29,13 @@ jobs:
             scores:
               - 'assets/js/**'
               - 'webapps/**'
-            bluebot:
-              - 'webapps/simulateur_bluebot.html'
+            automate:
+              - 'webapps/simulateur_automate.html'
               - 'assets/img/mats/**'
             binaire_codage:
               - 'webapps/binaire_codage.html'
             alpha_webapps:
               - 'alpha/webapps/**'
-
-  # ── Shared setup step (bash function to avoid repetition) ─────────────────
 
   # ── Basic & Resources ──────────────────────────────────────────────────────
   test-basic:
@@ -59,7 +57,7 @@ jobs:
       - name: Wait for server
         run: sleep 2
       - name: Run tests
-        run: python -m pytest meta/e2e_tests/test_basic.py meta/e2e_tests/test_teacher.py meta/e2e_tests/test_confetti.py meta/e2e_tests/test_theme.py meta/e2e_tests/test_webapps.py -v
+        run: python -m pytest meta/tests/e2e/test_basic.py meta/tests/e2e/test_teacher.py meta/tests/e2e/test_confetti.py meta/tests/e2e/test_theme.py meta/tests/e2e/test_webapps.py -v
 
   # ── Scores ─────────────────────────────────────────────────────────────────
   test-scores:
@@ -81,13 +79,13 @@ jobs:
       - name: Wait for server
         run: sleep 2
       - name: Run tests
-        run: python -m pytest meta/e2e_tests/test_scores.py -v
+        run: python -m pytest meta/tests/e2e/test_scores.py -v
 
-  # ── Blue-Bot Simulator ─────────────────────────────────────────────────────
-  test-bluebot:
-    name: "Blue-Bot Simulator"
+  # ── Automate Simulator ─────────────────────────────────────────────────────
+  test-automate:
+    name: "Automate Simulator"
     needs: changes
-    if: needs.changes.outputs.bluebot == 'true'
+    if: needs.changes.outputs.automate == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -103,7 +101,7 @@ jobs:
       - name: Wait for server
         run: sleep 2
       - name: Run tests
-        run: python -m pytest meta/e2e_tests/test_bluebot.py -v
+        run: python -m pytest meta/tests/e2e/test_automate.py -v
 
   # ── Binaire Codage ─────────────────────────────────────────────────────────
   test-binaire-codage:
@@ -125,7 +123,7 @@ jobs:
       - name: Wait for server
         run: sleep 2
       - name: Run tests
-        run: python -m pytest meta/e2e_tests/test_binaire_codage.py -v
+        run: python -m pytest meta/tests/e2e/test_binaire_codage.py -v
 
   # ── Alpha Webapps (pixels_binaires, pixel_studio_rvb, etc.) ───────────────
   test-alpha-webapps:
@@ -147,4 +145,4 @@ jobs:
       - name: Wait for server
         run: sleep 2
       - name: Run tests
-        run: python -m pytest meta/e2e_tests/test_alpha_webapps.py -v
+        run: python -m pytest meta/tests/e2e/test_alpha_webapps.py -v
