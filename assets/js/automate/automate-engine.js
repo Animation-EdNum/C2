@@ -429,13 +429,6 @@ let simState = {
             if (!exploreState.failed && MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#explore-grid .bot-cell[data-row="${exploreState.robotRow}"][data-col="${exploreState.robotCol}"] .mat-content`);
                 if (cell && cell.textContent.trim()) {
-                    const endContent = document.getElementById('sim-end-content');
-                    const emptyEnd = document.getElementById('sim-end-empty');
-                    if (emptyEnd) emptyEnd.style.display = 'none';
-                    const el = document.createElement('div');
-                    el.className = 'end-item';
-                    el.textContent = cell.textContent.trim();
-                    endContent.appendChild(el);
                     if (typeof collectMode !== 'undefined' && collectMode) {
                         // Remove emoji from grid cell (collected)
                         const gridCell = cell.closest('.bot-cell');
