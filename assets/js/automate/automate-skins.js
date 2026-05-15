@@ -35,6 +35,12 @@ const MAT_CONFIG = {
         example: 'Amène le robot au supermarché.',
         icon: '🏙️'
     },
+    'valais': {
+        name: 'Valais',
+        desc: 'Carte du canton (swisstopo)',
+        example: 'Rends-toi dans la Cité du Soleil.',
+        icon: '⛰️'
+    },
     'math': {
         name: 'Calcul mental',
         desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
@@ -796,6 +802,7 @@ const MAT_GRID_CONSTRAINTS = {
     'emotions': { cols: 4, rows: 4 },
     'seasons': { cols: 5, rows: 4 },
     'city': { cols: 8, rows: 8 },
+    'valais': { cols: 10, rows: 7 },
 };
 
 function updateGridSizeSlidersState() {
