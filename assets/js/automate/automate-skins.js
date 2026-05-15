@@ -2,9 +2,9 @@
    SVGS DES BOUTONS DU BLUE-BOT
    ================================================================ */
 const MAT_CONFIG = {
-    'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
-    'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
-    'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+    'none': { name: 'Aucun tapis', desc: 'Grille vide.', content: '', icon: '🚫' },
+    'custom': { name: 'Tapis personnalisé', desc: 'Télécharge ton tapis.', icon: '🖼️', content: '' },
+    'alphabet': { name: 'Alphabet et nombres', desc: 'Toutes les lettres et les chiffres.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
     'emotions': {
         name: 'Émotions et sentiments',
         desc: 'Reconnaître et nommer les émotions.',
@@ -31,7 +31,7 @@ const MAT_CONFIG = {
     },
     'city': {
         name: 'Cité',
-        desc: 'Thème ville et routes.',
+        desc: 'Des routes et une ville.',
         example: 'Amène le robot au supermarché.',
         icon: '🏙️'
     },
@@ -43,14 +43,14 @@ const MAT_CONFIG = {
     },
     'math': {
         name: 'Calcul mental',
-        desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
+        desc: 'Les nombres jusqu\'à 100.',
         example: 'Quel est le résultat de 5 + 7 ?',
         icon: '🔢',
         content: Array.from({ length: 101 }, (_, i) => i.toString())
     },
     'shapes': {
         name: 'Couleurs et formes',
-        desc: 'Formes géométriques colorées.',
+        desc: 'Des formes de toutes les couleurs.',
         example: 'Trouve le carré rouge.',
         icon: '🔵',
         content: [],
@@ -84,6 +84,7 @@ const MAT_CONFIG = {
     },
     'time': {
         name: 'Lecture de l\'heure',
+        desc: 'Horloges affichant toutes les heures et demi-heures.',
         example: 'Wie spät ist es ?',
         icon: '⌚',
         content: [
@@ -95,7 +96,7 @@ const MAT_CONFIG = {
     },
     'fairy_tale': {
         name: 'Conte personnalisable',
-        desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
+        desc: 'Raconte ton histoire avec le robot.',
         icon: '🧚',
         content: [],
         baseContent: [
