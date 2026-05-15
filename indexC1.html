@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#a52a23">
     <link rel="stylesheet" href="assets/css/shared.css">
     <style>
         body>header,
@@ -32,35 +32,39 @@
         }
 
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
+            --primary: #a52a23;
+            --primary-hover: #cc362d;
             --secondary: #475569;
             --bg: #f8fafc;
             --card-bg: rgba(255, 255, 255, 0.85);
             --text-main: #0f172a;
             --text-light: #64748b;
             --border: #e2e8f0;
-            --header-bg: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            --header-bg: linear-gradient(135deg, #a52a23, #cc362d);
             --header-text: #ffffff;
-            --section-title: #1e3a8a;
+            --section-title: #a52a23;
             --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --badge-bg: #fee2e1;
+            --badge-text: #991b1b;
         }
 
         body.dark {
-            --primary: #3b82f6;
-            --primary-hover: #60a5fa;
+            --primary: #cc362d;
+            --primary-hover: #da5c55;
             --secondary: #94a3b8;
             --bg: #0f172a;
             --card-bg: rgba(30, 41, 59, 0.85);
             --text-main: #f8fafc;
             --text-light: #cbd5e1;
             --border: #334155;
-            --header-bg: linear-gradient(135deg, #0f172a, #1e3a8a);
+            --header-bg: linear-gradient(135deg, #0f172a, #a52a23);
             --header-text: #f8fafc;
-            --section-title: #60a5fa;
+            --section-title: #da5c55;
             --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
             --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            --badge-bg: #7f1d1d;
+            --badge-text: #fca5a5;
         }
 
         body {
@@ -74,54 +78,182 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
             background-image:
-                radial-gradient(var(--border) 1px, transparent 1px),
+                radial-gradient(ellipse at 50% 0%, rgba(165,42,35,0.04) 0%, transparent 60%),
                 radial-gradient(var(--border) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
+            background-size: 100% 100%, 32px 32px;
+            background-position: top center, 0 0;
         }
 
-        .main-header {
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .action-buttons {
+            position: absolute;
+            top: 20px;
+            right: 2rem;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .icon-action-btn {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        body.dark .icon-action-btn {
+            background-color: var(--card-bg);
+            color: white;
+            border-color: var(--border);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+
+        .icon-action-btn:hover {
+            background-color: var(--primary-hover);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .icon-action-btn svg,
+        .icon-action-btn i {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        #installBtn {
+            display: none;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 2rem 2.2rem;
             background: var(--header-bg);
             color: var(--header-text);
-            padding: 1rem 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            box-shadow: 0 8px 24px -4px rgba(165, 42, 35, 0.25);
+            position: relative;
+            overflow: hidden;
         }
 
-        .header-content {
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpolygon points='30,8 26,18 16,18 24,24 21,34 30,28 39,34 36,24 44,18 34,18' fill='%23ffffff' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .header-main {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
             max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             width: 100%;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .header-text-group {
+            text-align: left;
         }
 
-        .logo-container i,
-        .logo-container svg {
-            font-size: 1.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
-            color: #fbbf24;
+        .header-logo {
+            width: 76px;
+            height: 76px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .header-logo:hover {
+            transform: scale(1.08) rotate(-3deg);
         }
 
         .site-title {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 2.2rem;
+            font-weight: 800;
             margin: 0;
             letter-spacing: -0.02em;
+            line-height: 1.1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        header p {
+            margin: 0.15rem 0 0 0;
+            opacity: 0.85;
+            font-size: 1rem;
+            font-weight: 300;
+            letter-spacing: 0.01em;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 1.5rem 1rem;
+            }
+
+            .header-main {
+                gap: 0.8rem;
+            }
+
+            .header-logo {
+                width: 55px;
+                height: 55px;
+                border-radius: 12px;
+                padding: 4px;
+            }
+
+            .site-title {
+                font-size: 1.6rem;
+                line-height: 1;
+            }
+
+            header p {
+                font-size: 0.85rem;
+                line-height: 1.2;
+            }
+
+            main {
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .action-buttons {
+                top: 10px;
+                right: 1rem;
+                gap: 8px;
+            }
+
+            .icon-action-btn {
+                width: 36px;
+                height: 36px;
+            }
         }
 
         main {
@@ -131,6 +263,7 @@
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
+            position: relative;
         }
 
         .grid {
@@ -156,9 +289,9 @@
         }
 
         .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--card-shadow-hover);
-            border-color: var(--primary);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.25), 0 8px 16px -6px rgba(0,0,0,0.1);
+            border-color: rgba(255,255,255,0.2);
         }
 
         .card::before {
@@ -168,7 +301,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), #60a5fa);
+            background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.15));
             transform: scaleX(0);
             transform-origin: left;
             transition: transform 0.4s ease;
@@ -181,6 +314,21 @@
         .card-icon-main {
             text-align: center;
             margin: 20px 0;
+            position: relative;
+        }
+
+        .card-icon-main::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            filter: blur(20px);
+            pointer-events: none;
         }
 
         .card-icon-main i, .card-icon-main svg {
@@ -218,12 +366,24 @@
 
         footer {
             margin-top: 2rem;
-            padding: 3rem 1rem;
+            padding: 2.5rem 1rem;
             text-align: center;
             color: var(--text-light);
             font-size: 0.875rem;
-            border-top: 1px solid var(--border);
+            border-top: none;
             background: var(--bg);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.3;
         }
 
         footer a {
@@ -246,37 +406,62 @@
             margin-top: 1rem;
             margin-bottom: 1rem;
         }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--header-text);
-            cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .theme-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
     </style>
 </head>
 
 <body>
-
-    <header class="main-header">
-        <div class="header-content">
-            <div class="logo-container">
-                <i data-fa="dt-star" style="--fa-primary:#fbbf24;--fa-secondary:#f59e0b;"></i>
-                <h1 class="site-title">Éducation numérique • Cycle 1</h1>
+    <header>
+        <div class="header-main">
+            <svg class="header-logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="screen-clip-portal-c1">
+                        <rect x="44" y="64" width="424" height="340" rx="16" />
+                    </clipPath>
+                    <filter id="shadow-portal-c1" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.20" />
+                    </filter>
+                </defs>
+                <rect x="28" y="48" width="456" height="416" rx="32" fill="#a52a23" />
+                <rect x="44" y="64" width="424" height="340" rx="16" fill="#cc362d" />
+                <polygon points="44,404 468,64 468,404" fill="#b02f26" clip-path="url(#screen-clip-portal-c1)" />
+                <rect x="220" y="426" width="72" height="12" rx="6" fill="#da5c55" />
+                <circle cx="410" cy="432" r="8" fill="#da5c55" />
+                <g filter="url(#shadow-portal-c1)">
+                    <polygon points="256,90 232,166 151,166 216,213 191,289 256,242" fill="#ffffff" />
+                    <polygon points="256,90 280,166 361,166 296,213 321,289 256,242" fill="#e2e6eb" />
+                </g>
+                <text x="256" y="385" font-family="Arial, sans-serif" font-size="90" font-weight="900" fill="#ffffff"
+                    text-anchor="middle"
+                    style="letter-spacing: 2px; text-transform: lowercase; opacity: 0.9;">ednum</text>
+            </svg>
+            <div class="header-text-group">
+                <h1 class="site-title">Éducation Numérique</h1>
+                <p>Applications interactives et ressources pour le Cycle 1</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 1rem;">
-                <button class="theme-toggle" id="theme-toggle-btn" title="Mode sombre/clair" aria-label="Changer de thème">
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div class="action-buttons">
+            <a href="index.html" class="icon-action-btn" title="Cycle 2" aria-label="Aller au Cycle 2"
+                style="text-decoration: none;">
+                <i data-fa="children"></i>
+            </a>
+            <button class="icon-action-btn" id="reset-cache-btn" title="Réinitialiser l'application"
+                aria-label="Réinitialiser le cache et l'application">
+                <i data-fa="arrows-rotate"></i>
+            </button>
+            <button class="icon-action-btn" id="installBtn" title="Installer l'application"
+                aria-label="Installer l'application">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
+            <button class="icon-action-btn" id="theme-toggle-btn" title="Mode sombre/clair"
+                aria-label="Changer de thème">
                 <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"></circle>
@@ -294,11 +479,7 @@
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
             </button>
-            </div>
         </div>
-    </header>
-
-    <main>
         <div class="grid">
         </div>
     </main>

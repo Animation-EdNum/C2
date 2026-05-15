@@ -68,3 +68,4 @@
 - **[2026-05-14]** [UX/Refactor] Redesigned Simulateur Automate "Memory" and "Spell" (Épeler) modes. Transformed the `#sim-end-container` into a monospace terminal output screen.
 - **[2026-05-14]** [UI/UX] Replaced native `title` tooltips with custom animated CSS tooltips via `data-tooltip` attribute.
 - **[2026-05-14]** [Code Quality] Centralized victory streaks and extreme difficulty rewards into a single `handleStreakCelebration()` API in `assets/js/confetti.js`.
+- **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html`. Updated favicon, theme colors, and CSS variables to red/white palette.
