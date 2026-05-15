@@ -21,13 +21,13 @@ function toggleCommands() {
         if (iconEyeOff) iconEyeOff.style.display = 'block';
         if (iconEye) iconEye.style.display = 'none';
         if (toggleText) toggleText.textContent = 'Masquer commandes';
-        if (toggleBtn) toggleBtn.setAttribute('data-tooltip', 'Masquer les commandes');
+        if (toggleBtn) toggleBtn.setAttribute('title', 'Masquer les commandes');
         if (simProgram) simProgram.classList.remove('masked');
     } else {
         if (iconEyeOff) iconEyeOff.style.display = 'none';
         if (iconEye) iconEye.style.display = 'block';
         if (toggleText) toggleText.textContent = 'Afficher commandes';
-        if (toggleBtn) toggleBtn.setAttribute('data-tooltip', 'Afficher les commandes');
+        if (toggleBtn) toggleBtn.setAttribute('title', 'Afficher les commandes');
         if (simProgram) simProgram.classList.add('masked');
     }
 }
@@ -51,13 +51,13 @@ window.setSpeedLevel = function (level) {
         if (iconSpd2) iconSpd2.style.display = 'block';
         if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
         if (simSpeedBtn) {
-            simSpeedBtn.setAttribute('data-tooltip', 'Vitesse : Rapide');
+            simSpeedBtn.setAttribute('title', 'Vitesse : Rapide');
             simSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
             if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
         }
         [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
             if (btn) {
-                btn.setAttribute('data-tooltip', 'Vitesse : Rapide');
+                btn.setAttribute('title', 'Vitesse : Rapide');
                 btn.innerHTML = '<i data-fa="rabbit-running"></i>';
                 if (window.fa && window.fa.createIcons) window.fa.createIcons(btn);
             }
@@ -68,13 +68,13 @@ window.setSpeedLevel = function (level) {
         if (iconSpd2) iconSpd2.style.display = 'none';
         if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Lent';
         if (simSpeedBtn) {
-            simSpeedBtn.setAttribute('data-tooltip', 'Vitesse : Lent');
+            simSpeedBtn.setAttribute('title', 'Vitesse : Lent');
             simSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
             if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
         }
         [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
             if (btn) {
-                btn.setAttribute('data-tooltip', 'Vitesse : Lent');
+                btn.setAttribute('title', 'Vitesse : Lent');
                 btn.innerHTML = '<i data-fa="turtle"></i>';
                 if (window.fa && window.fa.createIcons) window.fa.createIcons(btn);
             }
