@@ -2,9 +2,9 @@
    SVGS DES BOUTONS DU BLUE-BOT
    ================================================================ */
 const MAT_CONFIG = {
-    'none': { name: 'Aucun tapis', desc: 'Grille standard.', content: '', icon: '🚫' },
-    'custom': { name: 'Tapis personnalisé', desc: 'Votre propre image', icon: '🖼️', content: '' },
-    'alphabet': { name: 'Alphabet et nombres', desc: 'Lettres A-Z et chiffres 0-9.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
+    'none': { name: 'Aucun tapis', desc: 'Grille vide.', content: '', icon: '🚫' },
+    'custom': { name: 'Tapis personnalisé', desc: 'Télécharge ton tapis.', icon: '🖼️', content: '' },
+    'alphabet': { name: 'Alphabet et nombres', desc: 'Toutes les lettres et les chiffres.', example: 'Épelle ton prénom.', content: Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), icon: '🔤' },
     'emotions': {
         name: 'Émotions et sentiments',
         desc: 'Reconnaître et nommer les émotions.',
@@ -31,20 +31,26 @@ const MAT_CONFIG = {
     },
     'city': {
         name: 'Cité',
-        desc: 'Thème ville et routes.',
+        desc: 'Des routes et une ville.',
         example: 'Amène le robot au supermarché.',
-        icon: '<i data-fa="city"></i>'
+        icon: '🏙️'
+    },
+    'valais': {
+        name: 'Valais',
+        desc: 'Carte du canton (swisstopo)',
+        example: 'Où le Rhône prend-il sa source ?',
+        icon: '⛰️'
     },
     'math': {
         name: 'Calcul mental',
-        desc: 'Chiffres de 0 à 100 pour s\'entraîner au calcul.',
+        desc: 'Les nombres jusqu\'à 100.',
         example: 'Quel est le résultat de 5 + 7 ?',
         icon: '🔢',
         content: Array.from({ length: 101 }, (_, i) => i.toString())
     },
     'shapes': {
         name: 'Couleurs et formes',
-        desc: 'Formes géométriques colorées.',
+        desc: 'Des formes de toutes les couleurs.',
         example: 'Trouve le carré rouge.',
         icon: '🔵',
         content: [],
@@ -78,6 +84,7 @@ const MAT_CONFIG = {
     },
     'time': {
         name: 'Lecture de l\'heure',
+        desc: 'Horloges affichant toutes les heures et demi-heures.',
         example: 'Wie spät ist es ?',
         icon: '⌚',
         content: [
@@ -89,7 +96,7 @@ const MAT_CONFIG = {
     },
     'fairy_tale': {
         name: 'Conte personnalisable',
-        desc: "L'élève raconte son histoire en programmant le parcours du robot. Mode créatif.",
+        desc: 'Raconte ton histoire avec le robot.',
         icon: '🧚',
         content: [],
         baseContent: [
@@ -127,9 +134,9 @@ const SKIN_CONFIG = {
     'thymio': { name: 'Thymio', obstacle: '<i data-fa="traffic-cone" style="color: #e67e22;"></i>', target: '✏️', desc: 'Atteins un trésor sans utiliser la flèche "Avancer".', hidden: false },
     'space': { name: 'Rocket', obstacle: '<i data-fa="dt-meteor" style="--fa-primary: #f39c12; --fa-secondary: #e74c3c; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>', target: '💎', desc: 'Reviens sur ta case de départ après avoir fait un parcours de 20 instructions exactement.', hidden: false },
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage, difficulté moyenne ou plus) sans faire une seule erreur.', hidden: false },
-    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
+    'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Prends garde au vertige...', hidden: true },
     'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.', hidden: false },
-    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Prends garde au vertige...', hidden: true },
+    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
     'pedago': { name: 'Colorigami', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Aile orange ou verte ? Appuie sur le bouton de la même couleur pour tourner du bon côté.', hidden: true },
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.', hidden: false }
 };
@@ -557,8 +564,8 @@ function renderSkinsList() {
                             <div class="skin-item-desc">${config.desc}</div>
                         </div>
                         <div class="skin-item-miniatures">
-                            <div class="skin-item-mini" data-tooltip="Obstacle">${config.obstacle}</div>
-                            <div class="skin-item-mini" data-tooltip="Récompense">${config.target}</div>
+                            <div class="skin-item-mini" title="Obstacle">${config.obstacle}</div>
+                            <div class="skin-item-mini" title="Récompense">${config.target}</div>
                         </div>
 
                     </div>
@@ -796,6 +803,7 @@ const MAT_GRID_CONSTRAINTS = {
     'emotions': { cols: 4, rows: 4 },
     'seasons': { cols: 5, rows: 4 },
     'city': { cols: 8, rows: 8 },
+    'valais': { cols: 10, rows: 7 },
 };
 
 function updateGridSizeSlidersState() {
@@ -808,8 +816,8 @@ function updateGridSizeSlidersState() {
     gridRowsSlider.disabled = locked;
     gridColsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
     gridRowsSlider.parentElement.style.opacity = locked ? '0.5' : '1';
-    gridColsSlider.parentElement.setAttribute('data-tooltip', title);
-    gridRowsSlider.parentElement.setAttribute('data-tooltip', title);
+    gridColsSlider.parentElement.setAttribute('title', title);
+    gridRowsSlider.parentElement.setAttribute('title', title);
 
     if (locked && (GRID_COLS !== constraint.cols || GRID_ROWS !== constraint.rows)) {
         gridColsSlider.value = constraint.cols;
