@@ -38,7 +38,7 @@ const MAT_CONFIG = {
     'valais': {
         name: 'Valais',
         desc: 'Carte du canton (swisstopo)',
-        example: 'Rends-toi dans la Cité du Soleil.',
+        example: 'Où le Rhône prend-il sa source ?',
         icon: '⛰️'
     },
     'math': {
