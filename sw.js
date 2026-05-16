@@ -38,6 +38,7 @@ const ASSETS = [
     './assets/js/toast.js',
     './assets/js/url-params.js',
     './assets/js/vendor/qrious.min.js',
+    './assets/logo-header.svg',
     './webapps/binaire_codage.html',
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
