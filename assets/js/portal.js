@@ -98,7 +98,7 @@ window.renderPortal = async function(mode) {
         }
 
         if (window.fa && window.fa.createIcons) {
-            window.fa.createIcons();
+            if (typeof window.fa.createIcons === "function") window.fa.createIcons();
         }
 
         // Trigger filters
@@ -117,7 +117,7 @@ window.renderPortal = async function(mode) {
         }
 
         if (window.fa && window.fa.createIcons) {
-            window.fa.createIcons();
+            if (typeof window.fa.createIcons === "function") window.fa.createIcons();
         }
     }
 };
