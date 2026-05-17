@@ -268,9 +268,7 @@ function renderMatsGrid() {
                     </div>
                 `;
     }).join('');
-    if (window.fa && typeof window.fa.createIcons === 'function') {
-        window.fa.createIcons();
-    }
+    window.fa?.createIcons?.();
 
     // Prepend the custom upload at the beginning
     const customConfig = MAT_CONFIG['custom'];
@@ -296,7 +294,7 @@ function renderMatsGrid() {
                 </div>
             `;
     container.innerHTML = customHtml + container.innerHTML;
-    fa.createIcons();
+    window.fa?.createIcons?.();
 
     // Re-bind the upload listener here since the DOM is recreated
     const uploadInput = document.getElementById('customMatUpload');
@@ -573,9 +571,7 @@ function renderSkinsList() {
                     </div>
                 `;
     }).join('');
-    if (window.fa && typeof window.fa.createIcons === 'function') {
-        window.fa.createIcons();
-    }
+    window.fa?.createIcons?.();
 }
 
 function redrawTrail(containerId, state) {
@@ -624,9 +620,7 @@ function updateSkinGrids() {
             }
         });
     });
-    if (window.fa && typeof window.fa.createIcons === 'function') {
-        window.fa.createIcons();
-    }
+    window.fa?.createIcons?.();
 }
 
 function updateSkinEntities() {
@@ -686,9 +680,7 @@ function updateSkinButtons() {
         const ob = SKIN_CONFIG[activeSkin].obstacle;
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
             obsBtn.innerHTML = ob;
-            if (window.fa && typeof window.fa.createIcons === 'function') {
-                window.fa.createIcons();
-            }
+            window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
