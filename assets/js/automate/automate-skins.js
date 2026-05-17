@@ -543,6 +543,8 @@ function renderSkinsList() {
         let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
         svg = svg.replace(/<\/?animate[a-zA-Z]*[\s\S]*?>/gi, ''); // Remove animations for preview
         svg = svg.replace(/animation:[^;]+;/gi, ''); // Remove CSS animations
+        svg = svg.replace(/<filter[\s\S]*?<\/filter>/gi, ''); // Remove SVG filters for better performance
+        svg = svg.replace(/filter="[^"]+"/gi, ''); // Remove filter attributes
         if (skinId === 'volcano') {
             svg = svg.replace(/<g transform="scale\(1\.4\) translate\(-14, -14\)">/, '<g transform="scale(0.6) translate(36, 0)">');
         }
