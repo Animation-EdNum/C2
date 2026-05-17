@@ -97,9 +97,7 @@ window.renderPortal = async function(mode) {
             teacherExternalContainer.innerHTML = apps.map(renderIndexCard).join('');
         }
 
-        if (window.fa && window.fa.createIcons) {
-            if (typeof window.fa.createIcons === "function") window.fa.createIcons();
-        }
+        window.fa?.createIcons?.();
 
         // Trigger filters
         if (typeof window.executeFilters === 'function') {
@@ -116,8 +114,6 @@ window.renderPortal = async function(mode) {
             grid.innerHTML = apps.map(renderC1Card).join('');
         }
 
-        if (window.fa && window.fa.createIcons) {
-            if (typeof window.fa.createIcons === "function") window.fa.createIcons();
-        }
+        window.fa?.createIcons?.();
     }
 };

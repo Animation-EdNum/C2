@@ -1514,7 +1514,7 @@ let simState = {
             }
 
             document.getElementById('draw-instruction').innerHTML = instructionHTML;
-            if (window.fa) window.fa.createIcons();
+            window.fa?.createIcons?.();
 
             buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []); // No obstacles in draw mode yet
             renderRobot('draw-grid', 'draw-robot', chal.startR, chal.startC, chal.startD);
@@ -2138,9 +2138,7 @@ let simState = {
                 }
                 grid.appendChild(row);
             }
-            if (window.fa && typeof window.fa.createIcons === 'function') {
-                window.fa.createIcons();
-            }
+            window.fa?.createIcons?.();
         }
 
         function placeOverlay(containerId, overlayId, row, col, content, extraClass, ariaLabel = '') {

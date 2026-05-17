@@ -99,9 +99,7 @@
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.remove('no-grid-lines'));
                         ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('[data-fa]')?.setAttribute('data-fa', 'frame'); });
                     }
-                    if (window.fa && typeof window.fa.createIcons === 'function') {
-                        window.fa.createIcons();
-                    }
+                    window.fa?.createIcons?.();
                 });
             }
 

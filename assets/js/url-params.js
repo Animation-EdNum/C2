@@ -235,7 +235,7 @@ function initShareModal() {
             settingsDropdown.appendChild(divider);
             settingsDropdown.appendChild(shareBtn);
             // Must create icon after insertion
-            if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+            window.fa?.createIcons?.();
         } else {
             return; // Nowhere to put it
         }
@@ -490,7 +490,7 @@ function initShareModal() {
     </div>`
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+    window.fa?.createIcons?.();
 
     // Context-Aware Options: Hide options for features not in the current app
     if (!document.getElementById('btn-open-mats')) {
@@ -682,7 +682,7 @@ function initShareModal() {
         // Reset copy button state
         btnCopy.innerHTML = '<i data-fa="clipboard"></i> Copier';
         btnCopy.classList.remove('btn-success');
-        if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+        window.fa?.createIcons?.();
     }
 
     shareBtn.addEventListener('click', () => {
@@ -776,7 +776,7 @@ function initShareModal() {
         const isVisible = advancedOptions.style.display === 'block';
         advancedOptions.style.display = isVisible ? 'none' : 'block';
         btnToggleAdvanced.innerHTML = `Options Avancées <i data-fa="chevron-${isVisible ? 'down' : 'up'}"></i>`;
-        if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+        window.fa?.createIcons?.();
     });
 
     checkboxes.forEach(cb => {
@@ -791,7 +791,7 @@ function initShareModal() {
         navigator.clipboard.writeText(urlInput.value).then(() => {
             btnCopy.innerHTML = '<i data-fa="check"></i> Copié !';
             btnCopy.classList.add('btn-success');
-            if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+            window.fa?.createIcons?.();
 
             if (typeof showToast === 'function') {
                 showToast("Lien copié dans le presse-papiers !", true);
@@ -804,7 +804,7 @@ function initShareModal() {
             qrContainer.style.display = 'none';
             if (btnDownloadQr) btnDownloadQr.style.display = 'none';
             btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Afficher le QR Code';
-            if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+            window.fa?.createIcons?.();
             return;
         }
 
@@ -833,7 +833,7 @@ function initShareModal() {
         qrContainer.style.display = 'block';
         if (btnDownloadQr) btnDownloadQr.style.display = 'inline-block';
         btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Masquer le QR Code';
-        if (window.fa && typeof fa.createIcons === 'function') fa.createIcons();
+        window.fa?.createIcons?.();
         new QRious({
             element: qrCanvas,
             value: urlInput.value,
