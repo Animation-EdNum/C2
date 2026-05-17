@@ -53,6 +53,14 @@ console.log(`📋 Copie de ${sourceFile} vers ${targetFile}...`);
 
 try {
     fs.copyFileSync(sourceFile, targetFile);
+
+    // INJECT CUSTOM ICONS
+    console.log("💉 Injection des icônes personnalisées (border-all, border-all-slash)...");
+    let content = fs.readFileSync(targetFile, 'utf8');
+    const newIcons = `  "border-all-slash": [640, 640, [], "border-all-slash", "M39 39.2C29.7 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L538.8 505.1C542.1 497.4 543.9 488.9 543.9 480L543.9 160C543.9 124.7 515.2 96 479.9 96L160 96C151.1 96 142.6 97.8 134.9 101.1L72.9 39.1C63.5 29.7 48.3 29.7 39 39.1zM288 254.2L193.8 160L288 160L288 254.2zM352 288L352 160L480 160L480 288L352 288zM96 197.8L96 480C96 515.3 124.7 544 160 544L160 544L160 544L442.2 544L378.2 480L352 480L352 453.8L288 389.8L288 480L160 480L160 352L250.2 352L186.2 288L160 288L160 261.8L96 197.8zM480 446.2L385.8 352L480 352L480 446.2L480 446.2z"],\n  "border-all": [448, 512, [], "f84c", "M384 32c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96C0 60.7 28.7 32 64 32H384zM256 96H64v128H256V96zm0 192H64V416H256V288zM448 96c0-35.3-28.7-64-64-64H256V224H448V96zm0 192H256V416h128c35.3 0 64-28.7 64-64V288z"],\n`;
+    content = content.replace(/\n  };\n/, ',\n' + newIcons + '  };\n');
+    fs.writeFileSync(targetFile, content);
+
     console.log('✅ Fichier fa-subset.js mis à jour avec succès dans le projet !');
 } catch (error) {
     console.error("❌ Erreur lors de la copie du fichier :", error.message);
