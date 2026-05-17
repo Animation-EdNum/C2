@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 const createSVG = (tag) => document.createElementNS("http://www.w3.org/2000/svg", tag);
 
 let GRID_ROWS = 6, GRID_COLS = 6;

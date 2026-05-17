@@ -203,3 +203,11 @@ Les tests sont organisés par application dans `meta/tests/e2e/`. Conventions :
 5. **Ouvrez une Pull Request** vers `main` avec une description détaillée
 
 > 💡 Pour les changements visuels, incluez des captures d'écran avant/après dans votre PR.
+
+## Licence et droits d'auteur (License and Copyright)
+
+Ce projet utilise une stratégie de double en-tête pour la conformité avec la licence AGPL-3.0 :
+
+1. **Fichiers Principaux (.html) :** Ces fichiers, qui incluent la structure principale des webapps (ex. `index.html`, fichiers sous `webapps/`), doivent toujours contenir la notice officielle complète de la FSF (Free Software Foundation) pour l'AGPL-3.0 en haut de fichier.
+2. **Fichiers Secondaires (.js, .css) :** Pour alléger la base de code, ces fichiers doivent utiliser l'identifiant court `SPDX-License-Identifier: AGPL-3.0-only` accompagné du Copyright.
+3. **Exclusions :** Ne pas ajouter de notices de droits d'auteur sur les fichiers triviaux (< 10 lignes), les données générées automatiquement (comme `fa-subset.js` ou dans `dist/`), ni sur les dépendances tierces (vendor).

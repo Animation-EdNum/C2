@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 function launchConfetti() {
     // Create a dedicated temporary canvas so multiple confetti bursts
     // can render simultaneously without conflicts

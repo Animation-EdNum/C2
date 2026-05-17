@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 /**
  * toast.js — Unified toast notification utility for the C2 suite.
  *

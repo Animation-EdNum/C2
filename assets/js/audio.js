@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 /**
  * Gestion centralisée de l'audio (Web Audio API) pour la suite C2
  */
