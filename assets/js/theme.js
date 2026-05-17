@@ -77,6 +77,49 @@
                 content.classList.remove('show');
             }
         });
+
+        const resetCacheBtn = document.getElementById('reset-cache-btn');
+        if (resetCacheBtn) {
+            resetCacheBtn.addEventListener('click', async () => {
+                if (confirm("Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")) {
+                    // Clear localStorage and sessionStorage
+                    localStorage.clear();
+                    sessionStorage.clear();
+
+                    // Clear cookies
+                    document.cookie.split(";").forEach(function (c) {
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                    });
+
+                    // Clear caches
+                    if ('caches' in window) {
+                        try {
+                            const cacheNames = await caches.keys();
+                            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                        } catch (e) {
+                            // ignore error
+                        }
+                    }
+
+                    // Unregister service workers
+                    if ('serviceWorker' in navigator) {
+                        try {
+                            const registrations = await navigator.serviceWorker.getRegistrations();
+                            for (let registration of registrations) {
+                                await registration.unregister();
+                            }
+                        } catch (e) {
+                            // ignore error
+                        }
+                    }
+
+                    // Reload after a short delay
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                }
+            });
+        }
     });
 })();
 
