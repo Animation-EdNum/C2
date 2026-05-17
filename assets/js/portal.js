@@ -121,3 +121,43 @@ window.renderPortal = async function(mode) {
         }
     }
 };
+
+
+// PWA Installation Logic
+function initPWAInstall() {
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    if (installBtn) {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Empêche l'affichage automatique de l'invite d'installation par Chrome mini-infobar
+            e.preventDefault();
+            // Stash l'événement pour pouvoir le déclencher plus tard.
+            deferredPrompt = e;
+            // Affiche le bouton d'installation
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Affiche le prompt
+                deferredPrompt.prompt();
+                // Attend que l'utilisateur réponde au prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                // L'événement ne peut être utilisé qu'une seule fois, on le réinitialise
+                deferredPrompt = null;
+                // On cache le bouton
+                installBtn.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            // L'application a été installée
+            installBtn.style.display = 'none';
+            deferredPrompt = null;
+        });
+    }
+}
+
+// Initialize PWA install logic when DOM is ready or portal is rendered
+document.addEventListener('DOMContentLoaded', initPWAInstall);

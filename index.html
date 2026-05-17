@@ -159,7 +159,7 @@
         }
 
         #installBtn {
-            display: flex;
+            display: none;
         }
 
         header {
@@ -1138,39 +1138,47 @@
         document.getElementById('searchInput').addEventListener('input', searchApps);
         document.getElementById('theme-toggle-btn').addEventListener('click', toggleTheme);
 
-        /* =========================================
-           PWA - SERVICE WORKER ET INSTALLATION
-           ========================================= */
-        let deferredPrompt;
-        const installBtn = document.getElementById('installBtn');
+        document.getElementById('reset-cache-btn').addEventListener('click', async () => {
+            if (confirm("Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")) {
+                // Clear localStorage and sessionStorage
+                localStorage.clear();
+                sessionStorage.clear();
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Empêche l'affichage automatique de l'invite d'installation par Chrome mini-infobar
-            e.preventDefault();
-            // Stash l'événement pour pouvoir le déclencher plus tard.
-            deferredPrompt = e;
-            // Affiche le bouton d'installation
-            installBtn.style.display = 'flex';
-        });
+                // Clear cookies
+                document.cookie.split(";").forEach(function (c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
 
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                // Affiche le prompt
-                deferredPrompt.prompt();
-                // Attend que l'utilisateur réponde au prompt
-                const { outcome } = await deferredPrompt.userChoice;
-                // L'événement ne peut être utilisé qu'une seule fois, on le réinitialise
-                deferredPrompt = null;
-                // On cache le bouton
-                installBtn.style.display = 'none';
+                // Clear caches
+                if ('caches' in window) {
+                    try {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                    } catch (e) {
+                        // ignore error
+                    }
+                }
+
+                // Unregister service workers
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registrations = await navigator.serviceWorker.getRegistrations();
+                        for (let registration of registrations) {
+                            await registration.unregister();
+                        }
+                    } catch (e) {
+                        // ignore error
+                    }
+                }
+
+                // Reload after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             }
         });
 
-        window.addEventListener('appinstalled', () => {
-            // L'application a été installée
-            installBtn.style.display = 'none';
-            deferredPrompt = null;
-        });
+
     </script>
     <script src="assets/js/swipe.js"></script>
     <script>
