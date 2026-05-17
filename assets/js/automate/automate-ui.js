@@ -55,13 +55,13 @@ window.setSpeedLevel = function (level) {
         if (simSpeedBtn) {
             simSpeedBtn.setAttribute('title', 'Vitesse : Rapide');
             simSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
-            if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
+            window.fa?.createIcons?.(simSpeedBtn);
         }
         [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Rapide');
                 btn.innerHTML = '<i data-fa="rabbit-running"></i>';
-                if (window.fa && window.fa.createIcons) window.fa.createIcons(btn);
+                window.fa?.createIcons?.(btn);
             }
         });
     } else {
@@ -72,13 +72,13 @@ window.setSpeedLevel = function (level) {
         if (simSpeedBtn) {
             simSpeedBtn.setAttribute('title', 'Vitesse : Lent');
             simSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
-            if (window.fa && window.fa.createIcons) window.fa.createIcons(simSpeedBtn);
+            window.fa?.createIcons?.(simSpeedBtn);
         }
         [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Lent');
                 btn.innerHTML = '<i data-fa="turtle"></i>';
-                if (window.fa && window.fa.createIcons) window.fa.createIcons(btn);
+                window.fa?.createIcons?.(btn);
             }
         });
     }
@@ -417,9 +417,7 @@ function initApplication() {
     if (obsBtn) {
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
             obsBtn.innerHTML = ob;
-            if (window.fa && typeof window.fa.createIcons === 'function') {
-                window.fa.createIcons();
-            }
+            window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
