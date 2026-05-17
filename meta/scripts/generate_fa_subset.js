@@ -3,274 +3,58 @@
 /**
  * generate_fa_subset.js
  *
- * Scanne les fichiers HTML du projet et génère assets/js/fa-subset.js
- * contenant uniquement les icônes réellement utilisées, depuis deux sources :
- *   - meta/ressources/solid_icons.js   → icônes solid (data-fa="name")
- *   - meta/ressources/duotone.js       → icônes duotone (data-fa="dt-name")
- *
- * Usage : node meta/scripts/generate_fa_subset.js
+ * Appelle le script generate_fa_subset.js du dépôt privé fontawesome-subset
+ * pour générer les icônes, puis copie le résultat dans assets/js/fa-subset.js.
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+const faSubsetDir = process.env.FA_SUBSET_DIR;
+
+if (!faSubsetDir) {
+    console.error("Erreur : La variable d'environnement FA_SUBSET_DIR n'est pas définie.");
+    console.error("Veuillez définir FA_SUBSET_DIR pour pointer vers le dépôt privé fontawesome-subset.");
+    console.error("Exemple : FA_SUBSET_DIR=../fontawesome-subset node meta/scripts/generate_fa_subset.js");
+    process.exit(1);
+}
+
+const faSubsetScript = path.join(faSubsetDir, 'generate_fa_subset.js');
+const sourceFile = path.join(faSubsetDir, 'fa-subset.js');
 const ROOT = path.resolve(__dirname, '../..');
-const SOLID_SOURCE  = path.join(ROOT, 'meta', 'ressources', 'solid_icons.js');
-const DUOTONE_SOURCE = path.join(ROOT, 'meta', 'ressources', 'duotone.js');
-const OUTPUT_FILE   = path.join(ROOT, 'assets', 'js', 'fa-subset.js');
+const targetFile = path.join(ROOT, 'assets', 'js', 'fa-subset.js');
 
-// Répertoires HTML à scanner
-const SCAN_DIRS = [
-    path.join(ROOT, 'webapps'),
-    path.join(ROOT, 'webapps', 'teacher'),
-    path.join(ROOT, 'alpha', 'webapps'),
-];
-const SCAN_FILES = [path.join(ROOT, 'index.html'), path.join(ROOT, 'indexC1.html')];
-
-// Icônes solides toujours incluses (injectées dynamiquement en JS)
-const EXTRA_SOLID = ['exclamation', 'qrcode', 'arrow-up-right-from-square', 'circle-xmark', 'triangle-exclamation', 'dumbbell', 'hand-holding-heart', 'ghost', 'narwhal', 'heart', 'diamond', 'octagon'];
-
-// ── Étape 1 : Détecter les icônes utilisées ─────────────────────────────────
-
-function findUsedIcons() {
-    const solidSet   = new Set(EXTRA_SOLID);
-    const duotoneSet = new Set(); // noms sans le préfixe "dt-"
-    const regex = /data-fa="([^"]+)"/g;
-
-    function scanFile(filePath) {
-        const content = fs.readFileSync(filePath, 'utf-8');
-        let m;
-        while ((m = regex.exec(content)) !== null) {
-            const name = m[1];
-            if (name.startsWith('$')) continue; // template JS, ignorer
-            if (name.startsWith('dt-')) {
-                duotoneSet.add(name.slice(3));   // strip "dt-"
-            } else {
-                solidSet.add(name);
-            }
-        }
-    }
-
-    for (const dir of SCAN_DIRS) {
-        if (!fs.existsSync(dir)) continue;
-        for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.html'))) {
-            scanFile(path.join(dir, f));
-        }
-    }
-    for (const file of SCAN_FILES) {
-        if (fs.existsSync(file)) scanFile(file);
-    }
-
-    // Add icons from registry.json
-    const registryPath = path.join(ROOT, 'assets', 'data', 'registry.json');
-    if (fs.existsSync(registryPath)) {
-        try {
-            const registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
-            for (const app of registry) {
-                const iconsToCheck = [];
-                if (app.icon) iconsToCheck.push(app.icon);
-                if (app.c1Icon) iconsToCheck.push(app.c1Icon);
-                if (Array.isArray(app.c1SmallIcons)) {
-                    iconsToCheck.push(...app.c1SmallIcons);
-                }
-
-                for (const name of iconsToCheck) {
-                    if (name.startsWith('dt-')) {
-                        duotoneSet.add(name.slice(3));
-                    } else {
-                        solidSet.add(name);
-                    }
-                }
-            }
-        } catch (e) {
-            console.error('Erreur lors du parsing de registry.json:', e);
-        }
-    }
-
-    return {
-        solidIcons:   [...solidSet].sort(),
-        duotoneNames: [...duotoneSet].sort(),
-    };
+if (!fs.existsSync(faSubsetScript)) {
+    console.error(`Erreur : Le script ${faSubsetScript} est introuvable dans le dossier spécifié.`);
+    process.exit(1);
 }
 
-// ── Étape 2 : Extraction robuste d'une entrée d'icône ───────────────────────
-// Lit le texte brut de la valeur (préserve tableaux, chaînes, virgules, etc.)
+console.log(`🚀 Exécution de ${faSubsetScript} dans ${faSubsetDir}...`);
 
-function extractIconEntry(code, name) {
-    const pattern = '"' + name + '": ';
-    const idx = code.indexOf(pattern);
-    if (idx < 0) return null;
-
-    const valStart = idx + pattern.length;
-    let depth = 0, inString = false, i = valStart;
-
-    while (i < code.length) {
-        const c = code[i];
-        const prev = i > 0 ? code[i - 1] : '';
-        if (c === '"' && prev !== '\\') inString = !inString;
-        if (!inString) {
-            if (c === '[') depth++;
-            else if (c === ']') { depth--; if (depth === 0) { i++; break; } }
-        }
-        i++;
-    }
-
-    return code.substring(valStart, i);
-}
-
-// ── Étape 3 : Extraire toutes les définitions nécessaires ───────────────────
-
-function extractAllIcons(solidIcons, duotoneNames) {
-    const solidCode   = fs.readFileSync(SOLID_SOURCE,   'utf-8');
-    const duotoneCode = fs.readFileSync(DUOTONE_SOURCE, 'utf-8');
-
-    const entries = [];
-    const missingSolid = [], missingDuotone = [];
-
-    for (const name of solidIcons) {
-        const data = extractIconEntry(solidCode, name);
-        if (!data) { missingSolid.push(name); continue; }
-        entries.push({ key: name, data });
-    }
-
-    for (const name of duotoneNames) {
-        const data = extractIconEntry(duotoneCode, name);
-        if (!data) { missingDuotone.push(name); continue; }
-        entries.push({ key: 'dt-' + name, data });
-    }
-
-    if (missingSolid.length)   console.warn('⚠️  Solid introuvables : '   + missingSolid.join(', '));
-    if (missingDuotone.length) console.warn('⚠️  Duotone introuvables : ' + missingDuotone.join(', '));
-
-    return entries;
-}
-
-// ── Étape 4 : Générer le fichier de sortie ───────────────────────────────────
-
-function generateSubset(entries) {
-    const iconEntries = entries
-        .map(({ key, data }) => '  "' + key + '": ' + data + ',')
-        .join('\n');
-
-    const nSolid   = entries.filter(e => !e.key.startsWith('dt-')).length;
-    const nDuotone = entries.filter(e =>  e.key.startsWith('dt-')).length;
-
-    return `/**
- * fa-subset.js — Subset of FontAwesome Pro 7 Icons
- *
- * Auto-generated by scripts/generate_fa_subset.js
- * ${nSolid} solid icons + ${nDuotone} duotone icons (préfixe dt-).
- */
-(function(root) {
-  "use strict";
-
-  const icons = {
-${iconEntries}
-  };
-
-  function createIcons({ attrs = {}, nameAttr = "data-fa" } = {}) {
-    // Injecter le CSS duotone une seule fois
-    if (typeof document !== "undefined" && !document.getElementById("fa-duotone-styles")) {
-      var style = document.createElement("style");
-      style.id = "fa-duotone-styles";
-      style.textContent = ".fa-icon path.fa-secondary{fill:var(--fa-secondary,currentColor);opacity:var(--fa-secondary-opacity,.4)}.fa-icon path.fa-primary{fill:var(--fa-primary,currentColor);opacity:var(--fa-primary-opacity,1)}";
-      document.head.appendChild(style);
-    }
-
-    const elements = document.querySelectorAll("[" + nameAttr + "]");
-    elements.forEach(el => {
-      const name = el.getAttribute(nameAttr);
-      if (!name) return;
-      const iconData = icons[name];
-      if (!iconData) {
-        console.warn("fa-subset: icon '" + name + "' not found in subset.");
-        return;
-      }
-
-      // FA icon data : [width, height, aliases, unicode, path]
-      // path est une string (solid) ou [secondary, primary] (duotone)
-      const width    = iconData[0];
-      const height   = iconData[1];
-      const pathData = iconData[4];
-      const isDuotone = Array.isArray(pathData);
-
-      const existingAttrs = {};
-      Array.from(el.attributes).forEach(a => { existingAttrs[a.name] = a.value; });
-
-      const hasAria = Object.keys(existingAttrs).some(k => k.startsWith("aria-") || k === "role" || k === "title");
-      const ariaAttrs = hasAria ? {} : { "aria-hidden": "true" };
-
-      const mergedAttrs = {
-        xmlns: "http://www.w3.org/2000/svg",
-        viewBox: "0 0 " + width + " " + height,
-        fill: "currentColor",
-        ...ariaAttrs,
-        ...attrs,
-        ...existingAttrs
-      };
-
-      mergedAttrs["data-fa"] = name;
-
-      const safeName = name.replace(/[^a-zA-Z0-9_-]/g, "-");
-      const classes = ["fa-icon", "fa-" + safeName];
-      if (isDuotone) classes.push("fa-duotone");
-      if (existingAttrs.class) classes.push(existingAttrs.class);
-      if (attrs.class) classes.push(typeof attrs.class === "string" ? attrs.class : attrs.class.join(" "));
-
-      const allClassNames = classes.filter(Boolean).join(" ").split(/\\s+/);
-      mergedAttrs.class = [...new Set(allClassNames)].join(" ").trim();
-
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      Object.keys(mergedAttrs).forEach(k => svg.setAttribute(k, String(mergedAttrs[k])));
-
-      if (isDuotone) {
-        // Couche secondaire (index 0) — fond/ombre
-        const pathSecondary = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        pathSecondary.setAttribute("d", pathData[0]);
-        pathSecondary.setAttribute("class", "fa-secondary");
-        svg.appendChild(pathSecondary);
-        // Couche primaire (index 1) — détail/avant-plan
-        const pathPrimary = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        pathPrimary.setAttribute("d", pathData[1]);
-        pathPrimary.setAttribute("class", "fa-primary");
-        svg.appendChild(pathPrimary);
-      } else {
-        const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        pathEl.setAttribute("d", pathData);
-        svg.appendChild(pathEl);
-      }
-
-      el.parentNode.replaceChild(svg, el);
+try {
+    execSync(`node generate_fa_subset.js "${ROOT}"`, {
+        cwd: faSubsetDir,
+        stdio: 'inherit',
+        env: { ...process.env, SUITE_DIR: ROOT }
     });
-  }
-
-  // Export
-  const fa = { icons, createIcons };
-  if (typeof module !== "undefined" && module.exports) {
-    module.exports = fa;
-  } else {
-    root.fa = fa;
-  }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this);
-`;
+    console.log('✅ Script généré avec succès dans la repo privée.');
+} catch (error) {
+    console.error("❌ Erreur lors de l'exécution du script :", error.message);
+    process.exit(1);
 }
 
-// ── Main ────────────────────────────────────────────────────────────────────
+if (!fs.existsSync(sourceFile)) {
+    console.error(`Erreur : Le fichier généré ${sourceFile} est introuvable.`);
+    process.exit(1);
+}
 
-console.log('🔍 Scan des fichiers HTML...');
-const { solidIcons, duotoneNames } = findUsedIcons();
-console.log(`   Solid   : ${solidIcons.length} — ${solidIcons.join(', ')}`);
-console.log(`   Duotone : ${duotoneNames.length} — ${duotoneNames.map(n => 'dt-' + n).join(', ')}`);
+console.log(`📋 Copie de ${sourceFile} vers ${targetFile}...`);
 
-console.log('📦 Extraction des définitions...');
-const entries = extractAllIcons(solidIcons, duotoneNames);
-const nS = entries.filter(e => !e.key.startsWith('dt-')).length;
-const nD = entries.filter(e =>  e.key.startsWith('dt-')).length;
-console.log(`   Extraites : ${nS} solid + ${nD} duotone`);
-
-console.log('✏️  Génération du fichier subset...');
-const output = generateSubset(entries);
-fs.writeFileSync(OUTPUT_FILE, output, 'utf-8');
-const size = fs.statSync(OUTPUT_FILE).size;
-console.log(`✅ ${OUTPUT_FILE}`);
-console.log(`   Taille : ${(size / 1024).toFixed(0)} Ko  (${entries.length} icônes)`);
+try {
+    fs.copyFileSync(sourceFile, targetFile);
+    console.log('✅ Fichier fa-subset.js mis à jour avec succès dans le projet !');
+} catch (error) {
+    console.error("❌ Erreur lors de la copie du fichier :", error.message);
+    process.exit(1);
+}
