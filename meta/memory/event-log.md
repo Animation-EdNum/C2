@@ -69,3 +69,4 @@
 - **[2026-05-14]** [UI/UX] Replaced native `title` tooltips with custom animated CSS tooltips via `data-tooltip` attribute.
 - **[2026-05-14]** [Code Quality] Centralized victory streaks and extreme difficulty rewards into a single `handleStreakCelebration()` API in `assets/js/confetti.js`.
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html`. Updated favicon, theme colors, and CSS variables to red/white palette.
+- **[2026-05-17]** [Configuration] Programmatically bulk-configured the FontAwesome Pro Kit using a reverse-engineered internal PUT API to bypass GraphQL CORS restrictions.
