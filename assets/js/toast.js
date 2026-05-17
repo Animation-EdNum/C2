@@ -59,7 +59,7 @@ function showToast(msg, type = 'success', duration = 3000) {
 
     // Initialize FontAwesome icon if wrapper added
     if (window.fa) {
-        window.fa.createIcons();
+        if (typeof window.fa.createIcons === "function") window.fa.createIcons();
     }
 
     // Force reflow so the transition fires
