@@ -772,7 +772,8 @@
         let currentPath = [], isLocked = false, difficulty = 'medium';
         let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0, mistakesInCurrentNetwork = 0;
         let lastNetworkIndex = -1; // Anti-répétition 
-        let useColoredWeights = false; // Option demandée par l'utilisateur
+        const urlParamsConfig = new URLSearchParams(window.location.search);
+        let useColoredWeights = urlParamsConfig.get('coloredWeights') === '1'; // Option demandée par l'utilisateur
 
         function parseNetwork(raw) {
             parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] }));
@@ -1076,10 +1077,11 @@
         newChallenge();
 
         // Toggle couleurs de poids
+        const coloredWeightsBtnText = document.getElementById('coloredWeightsText');
+        if (coloredWeightsBtnText) coloredWeightsBtnText.textContent = `Couleurs poids (${useColoredWeights ? 'Oui' : 'Non'})`;
         document.getElementById('colored-weights-toggle-btn').addEventListener('click', () => {
             useColoredWeights = !useColoredWeights;
-            const textSpan = document.getElementById('coloredWeightsText');
-            textSpan.textContent = `Couleurs poids (${useColoredWeights ? 'Oui' : 'Non'})`;
+            if (coloredWeightsBtnText) coloredWeightsBtnText.textContent = `Couleurs poids (${useColoredWeights ? 'Oui' : 'Non'})`;
             renderEdges();
         });
 
