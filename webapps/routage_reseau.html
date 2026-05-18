@@ -743,19 +743,30 @@
 
         function generateProceduralNetwork(difficulty, rng) {
             const nodes = [['src', 8, 50, 's']];
-            let numCols, rowsPerCol;
+            let numCols, rowsPerCol, maxRouters;
             if (difficulty === 'easy') {
-                numCols = 2; rowsPerCol = [1, 2];
+                numCols = 2; rowsPerCol = [1, 2]; maxRouters = 4;
             } else if (difficulty === 'medium') {
-                numCols = 3; rowsPerCol = [2, 3];
+                numCols = 3; rowsPerCol = [1, 3]; maxRouters = 7;
             } else { // hard
-                numCols = 4; rowsPerCol = [3, 4];
+                numCols = 4; rowsPerCol = [1, 4]; maxRouters = 11;
             }
 
             const cols = [];
             let rId = 1;
+            let totalRouters = 0;
+
             for (let c = 0; c < numCols; c++) {
-                let numRows = rowsPerCol[0] + Math.floor(rng() * (rowsPerCol[1] - rowsPerCol[0] + 1));
+                let colsLeft = numCols - 1 - c;
+                let minRemaining = colsLeft * rowsPerCol[0];
+                let maxPossibleHere = maxRouters - totalRouters - minRemaining;
+
+                let maxRows = Math.min(rowsPerCol[1], maxPossibleHere);
+                let minRows = Math.min(rowsPerCol[0], maxRows);
+
+                let numRows = minRows + Math.floor(rng() * (maxRows - minRows + 1));
+                totalRouters += numRows;
+
                 let colNodes = [];
                 let baseX = 8 + ((92 - 8) / (numCols + 1)) * (c + 1);
 
@@ -799,11 +810,12 @@
                     targetIndex = Math.min(targetIndex, col2.length - 1);
                     addEdge(col1[i], col2[targetIndex]);
 
-                    // Add slight randomness but keep it local
-                    if (rng() > 0.5 && targetIndex + 1 < col2.length) {
+                    // Add slight randomness but keep it local, reduce cross connections to make it readable
+                    let crossProb = (difficulty === 'hard') ? 0.3 : 0.2;
+                    if (rng() < crossProb && targetIndex + 1 < col2.length) {
                         addEdge(col1[i], col2[targetIndex + 1]);
                     }
-                    if (rng() > 0.5 && targetIndex - 1 >= 0) {
+                    if (rng() < crossProb && targetIndex - 1 >= 0) {
                          addEdge(col1[i], col2[targetIndex - 1]);
                     }
                 }
@@ -818,10 +830,11 @@
                 }
             }
 
+            let verticalProb = (difficulty === 'hard') ? 0.3 : 0.2;
             for (let c = 0; c < numCols; c++) {
                 let col = cols[c];
                 for (let i = 0; i < col.length - 1; i++) {
-                    if (rng() > 0.3) { // Higher probability to connect vertically
+                    if (rng() < verticalProb) { // Connect vertically less often to reduce clutter
                         addEdge(col[i], col[i+1]);
                     }
                 }
