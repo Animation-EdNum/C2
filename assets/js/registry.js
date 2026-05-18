@@ -1,4 +1,4 @@
-[
+window.REGISTRY = [
   {
     "id": "app-machine-trier",
     "href": "alpha/webapps/machine_a_trier.html",
@@ -823,4 +823,4 @@
     "inIndex": true,
     "inC1": false
   }
-]
+];
