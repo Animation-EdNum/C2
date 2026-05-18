@@ -728,42 +728,6 @@
         //  RÉSEAUX AVEC POIDS (Temps en UTI) 
         // ========================================== 
         //[id1, id2, UTI (temps)] 
-        const networkPool = {
-            easy: [
-                { // Diamant : Le chemin avec le moins de sauts n'est pas forcément le plus rapide 
-                    nodes: [['src', 8, 50, 's'], ['R1', 34, 22, 'r'], ['R2', 34, 78, 'r'], ['R3', 66, 50, 'r'], ['dst', 92, 50, 'd']],
-                    edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R3', 2], ['R2', 'R3', 6], ['R3', 'dst', 3]]
-                },
-                { // Fourche 
-                    nodes: [['src', 8, 50, 's'], ['R1', 36, 50, 'r'], ['R2', 64, 25, 'r'], ['R3', 64, 75, 'r'], ['dst', 92, 50, 'd']],
-                    edges: [['src', 'R1', 2], ['R1', 'R2', 5], ['R1', 'R3', 2], ['R2', 'dst', 2], ['R3', 'dst', 6]]
-                },
-                { // Zigzag 
-                    nodes: [['src', 8, 35, 's'], ['R1', 32, 75, 'r'], ['R2', 58, 25, 'r'], ['R3', 78, 70, 'r'], ['dst', 92, 40, 'd']],
-                    edges: [['src', 'R1', 2], ['src', 'R2', 8], ['R1', 'R2', 3], ['R2', 'R3', 2], ['R3', 'dst', 4]]
-                }
-            ],
-            medium: [
-                { // Double diamant 
-                    nodes: [['src', 7, 50, 's'], ['R1', 24, 22, 'r'], ['R2', 24, 78, 'r'], ['R3', 48, 50, 'r'], ['R4', 72, 25, 'r'], ['R5', 72, 75, 'r'], ['dst', 93, 50, 'd']],
-                    edges: [['src', 'R1', 3], ['src', 'R2', 5], ['R1', 'R3', 4], ['R2', 'R3', 2], ['R1', 'R4', 8], ['R2', 'R5', 7], ['R3', 'R4', 2], ['R3', 'R5', 5], ['R4', 'dst', 4], ['R5', 'dst', 2]]
-                },
-                { // Grille 
-                    nodes: [['src', 7, 50, 's'], ['R1', 25, 22, 'r'], ['R2', 25, 78, 'r'], ['R3', 50, 22, 'r'], ['R4', 50, 78, 'r'], ['R5', 75, 50, 'r'], ['dst', 93, 50, 'd']],
-                    edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R2', 2], ['R1', 'R3', 6], ['R2', 'R4', 3], ['R3', 'R4', 2], ['R3', 'R5', 3], ['R4', 'R5', 5], ['R5', 'dst', 2]]
-                }
-            ],
-            hard: [
-                { // Maillage complexe 
-                    nodes: [['src', 5, 50, 's'], ['R1', 18, 18, 'r'], ['R2', 18, 82, 'r'], ['R3', 36, 50, 'r'], ['R4', 54, 18, 'r'], ['R5', 54, 50, 'r'], ['R6', 54, 82, 'r'], ['R7', 76, 35, 'r'], ['R8', 76, 70, 'r'], ['dst', 95, 50, 'd']],
-                    edges: [['src', 'R1', 2], ['src', 'R2', 3], ['R1', 'R3', 4], ['R2', 'R3', 2], ['R1', 'R4', 6], ['R3', 'R5', 3], ['R3', 'R6', 5], ['R2', 'R6', 7], ['R4', 'R5', 1], ['R4', 'R7', 4], ['R5', 'R7', 2], ['R5', 'R8', 5], ['R6', 'R8', 3], ['R7', 'dst', 3], ['R8', 'dst', 4]]
-                },
-                { // Large mesh 
-                    nodes: [['src', 5, 50, 's'], ['R1', 16, 25, 'r'], ['R2', 16, 75, 'r'], ['R3', 32, 50, 'r'], ['R4', 48, 20, 'r'], ['R5', 48, 80, 'r'], ['R6', 64, 50, 'r'], ['R7', 80, 25, 'r'], ['R8', 80, 75, 'r'], ['dst', 95, 50, 'd']],
-                    edges: [['src', 'R1', 4], ['src', 'R2', 2], ['R1', 'R3', 2], ['R2', 'R3', 5], ['R3', 'R4', 3], ['R3', 'R5', 6], ['R4', 'R6', 2], ['R5', 'R6', 1], ['R6', 'R7', 4], ['R6', 'R8', 3], ['R7', 'dst', 2], ['R8', 'dst', 5], ['R4', 'R7', 7], ['R5', 'R8', 2], ['R1', 'R4', 8]]
-                }
-            ]
-        };
 
         // ========================================== 
         //  MOTEUR DU JEU 
@@ -774,6 +738,99 @@
         let lastNetworkIndex = -1; // Anti-répétition 
         const urlParamsConfig = new URLSearchParams(window.location.search);
         let useColoredWeights = urlParamsConfig.get('coloredWeights') === '1'; // Option demandée par l'utilisateur
+
+
+
+        function generateProceduralNetwork(difficulty, rng) {
+            const nodes = [['src', 8, 50, 's']];
+            let numCols, rowsPerCol;
+            if (difficulty === 'easy') {
+                numCols = 2; rowsPerCol = [1, 2];
+            } else if (difficulty === 'medium') {
+                numCols = 3; rowsPerCol = [2, 3];
+            } else { // hard
+                numCols = 4; rowsPerCol = [3, 4];
+            }
+
+            const cols = [];
+            let rId = 1;
+            for (let c = 0; c < numCols; c++) {
+                let numRows = rowsPerCol[0] + Math.floor(rng() * (rowsPerCol[1] - rowsPerCol[0] + 1));
+                let colNodes = [];
+                let baseX = 8 + ((92 - 8) / (numCols + 1)) * (c + 1);
+
+                for (let r = 0; r < numRows; r++) {
+                    let y = 50;
+                    if (numRows > 1) {
+                        y = 20 + ((60) / (numRows - 1)) * r;
+                    }
+                    let x = baseX + (rng() * 10 - 5); // jitter +/- 5
+                    y += (rng() * 10 - 5); // jitter +/- 5
+
+                    x = Math.max(10, Math.min(90, x));
+                    y = Math.max(10, Math.min(90, y));
+
+                    let id = 'R' + rId++;
+                    colNodes.push({id, x, y});
+                    nodes.push([id, x, y, 'r']);
+                }
+
+                // Sort by Y to prevent crossing lines inside a column
+                colNodes.sort((a, b) => a.y - b.y);
+                cols.push(colNodes.map(n => n.id));
+            }
+            nodes.push(['dst', 92, 50, 'd']);
+
+            const edges = [];
+            const hasEdge = (a, b) => edges.some(e => (e[0]===a && e[1]===b) || (e[0]===b && e[1]===a));
+            const addEdge = (a, b) => {
+                if (!hasEdge(a, b)) edges.push([a, b, Math.floor(rng() * 8) + 1]);
+            };
+
+            cols[0].forEach(id => addEdge('src', id));
+
+            for (let c = 0; c < numCols - 1; c++) {
+                let col1 = cols[c];
+                let col2 = cols[c+1];
+
+                // Proportionally connect nodes between columns to avoid crossing
+                for (let i = 0; i < col1.length; i++) {
+                    let targetIndex = Math.floor(i * (col2.length / col1.length));
+                    targetIndex = Math.min(targetIndex, col2.length - 1);
+                    addEdge(col1[i], col2[targetIndex]);
+
+                    // Add slight randomness but keep it local
+                    if (rng() > 0.5 && targetIndex + 1 < col2.length) {
+                        addEdge(col1[i], col2[targetIndex + 1]);
+                    }
+                    if (rng() > 0.5 && targetIndex - 1 >= 0) {
+                         addEdge(col1[i], col2[targetIndex - 1]);
+                    }
+                }
+
+                // Ensure all nodes in col2 have at least one incoming edge
+                for (let j = 0; j < col2.length; j++) {
+                    if (!edges.some(e => e[1] === col2[j])) {
+                        let srcIndex = Math.floor(j * (col1.length / col2.length));
+                        srcIndex = Math.min(srcIndex, col1.length - 1);
+                        addEdge(col1[srcIndex], col2[j]);
+                    }
+                }
+            }
+
+            for (let c = 0; c < numCols; c++) {
+                let col = cols[c];
+                for (let i = 0; i < col.length - 1; i++) {
+                    if (rng() > 0.3) { // Higher probability to connect vertically
+                        addEdge(col[i], col[i+1]);
+                    }
+                }
+            }
+
+            cols[numCols - 1].forEach(id => addEdge(id, 'dst'));
+
+            return { nodes, edges };
+        }
 
         function parseNetwork(raw) {
             parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] }));
@@ -851,20 +908,10 @@
         });
 
         function newChallenge() {
-            const pool = networkPool[difficulty];
-            // Anti-répétition : choisir un index différent du dernier
-            let idx;
-
-            // Random source
             const rng = seededRandom ? seededRandom : Math.random;
+            const network = generateProceduralNetwork(difficulty, rng);
 
-            if (pool.length > 1) {
-                do { idx = Math.floor(rng() * pool.length); } while (idx === lastNetworkIndex && !seededRandom);
-            } else {
-                idx = 0;
-            }
-            lastNetworkIndex = idx;
-            parseNetwork(pool[idx]);
+            parseNetwork(network);
             currentPath = ['src'];
             isLocked = false; netCount++; mistakesInCurrentNetwork = 0;
             document.getElementById('netNumber').textContent = netCount;
@@ -1050,6 +1097,14 @@
                 if (wasNewRecord) globalBest = globalStreak;
                 const isExtreme = (difficulty === 'hard' && mistakesInCurrentNetwork === 0);
                 handleStreakCelebration(globalStreak, isExtreme, wasNewRecord);
+
+                // Désactiver les couleurs poids après 3 victoires de suite
+                if (useColoredWeights && globalStreak >= 3) {
+                    useColoredWeights = false;
+                    const coloredWeightsBtnText = document.getElementById('coloredWeightsText');
+                    if (coloredWeightsBtnText) coloredWeightsBtnText.textContent = `Couleurs poids (Non)`;
+                }
+
                 document.getElementById('btn-next-challenge').style.display = 'inline-block';
                 render();
             } else {
