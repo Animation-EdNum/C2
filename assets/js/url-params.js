@@ -74,6 +74,11 @@ function applyUrlParameters() {
         if (toggleBtn) toggleBtn.style.display = 'none';
     }
 
+    if (urlParams.get('coloredWeights') === '1') {
+        const toggleBtn = document.getElementById('colored-weights-toggle-btn');
+        if (toggleBtn) toggleBtn.style.display = 'none';
+    }
+
     if (urlParams.get('noInstructions') === '1') {
         const instructions = document.querySelectorAll('.instructions, .chal-instruction');
         instructions.forEach(el => el.style.display = 'none');
@@ -292,6 +297,16 @@ function initShareModal() {
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-highContrast">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="share-option" id="lbl-coloredWeights" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-coloredWeights">Couleurs de poids <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Affiche les poids du réseau avec une coloration dynamique.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-coloredWeights">
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
@@ -536,6 +551,7 @@ function initShareModal() {
     }
     if (window.location.pathname.includes('routage_reseau.html')) {
         document.getElementById('lbl-lockTopology').style.display = 'flex';
+        document.getElementById('lbl-coloredWeights').style.display = 'flex';
     }
     if (window.location.pathname.includes('bit_de_parite.html')) {
         document.getElementById('lbl-strictMode').style.display = 'flex';

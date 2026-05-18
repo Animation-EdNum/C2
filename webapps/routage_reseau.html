@@ -616,6 +616,11 @@
                             <span id="audioToggleText">Activer son</span>
                             </button>
                         <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="colored-weights-toggle-btn" aria-label="Activer/Désactiver les couleurs des poids">
+                            <i data-fa="palette" id="icon-palette"></i>
+                            <span id="coloredWeightsText">Couleurs poids (Non)</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
                         <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
                             <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
                             <i data-fa="moon" id="icon-moon"></i>
@@ -767,6 +772,8 @@
         let currentPath = [], isLocked = false, difficulty = 'medium';
         let globalCorrect = 0, globalStreak = 0, globalBest = 0, netCount = 0, mistakesInCurrentNetwork = 0;
         let lastNetworkIndex = -1; // Anti-répétition 
+        const urlParamsConfig = new URLSearchParams(window.location.search);
+        let useColoredWeights = urlParamsConfig.get('coloredWeights') === '1'; // Option demandée par l'utilisateur
 
         function parseNetwork(raw) {
             parsedNodes = raw.nodes.map(n => ({ id: n[0], x: n[1], y: n[2], type: n[3] }));
@@ -892,12 +899,25 @@
                 line.setAttribute('stroke-width', isPath ? '5' : '2.5');
                 svgEdges.appendChild(line);
 
-                // Cercle UTI (Poids) — toujours orange, plus grand
+                // Cercle UTI (Poids) — couleur dynamique
                 const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
                 circle.classList.add('weight-circle');
-                circle.setAttribute('fill', isPath ? '#e65100' : '#ff9800');
+
+                let weightFill = '';
+                if (useColoredWeights) {
+                    if (e.weight <= 3) {
+                        weightFill = isPath ? 'var(--success)' : 'var(--accent)';
+                    } else if (e.weight <= 5) {
+                        weightFill = isPath ? 'var(--warn)' : '#ff9800';
+                    } else {
+                        weightFill = isPath ? 'var(--error)' : '#f44336';
+                    }
+                } else {
+                    weightFill = isPath ? '#e65100' : '#ff9800';
+                }
+                circle.setAttribute('fill', weightFill);
                 svgWeights.appendChild(circle);
 
                 // Texte UTI 
@@ -1055,6 +1075,15 @@
         document.getElementById('btn-next-challenge').addEventListener('click', newChallenge);
 
         newChallenge();
+
+        // Toggle couleurs de poids
+        const coloredWeightsBtnText = document.getElementById('coloredWeightsText');
+        if (coloredWeightsBtnText) coloredWeightsBtnText.textContent = `Couleurs poids (${useColoredWeights ? 'Oui' : 'Non'})`;
+        document.getElementById('colored-weights-toggle-btn').addEventListener('click', () => {
+            useColoredWeights = !useColoredWeights;
+            if (coloredWeightsBtnText) coloredWeightsBtnText.textContent = `Couleurs poids (${useColoredWeights ? 'Oui' : 'Non'})`;
+            renderEdges();
+        });
 
         // THEME — géré par ../assets/js/theme.js
         // renderEdges() est appelé via le hook __onThemeChange
