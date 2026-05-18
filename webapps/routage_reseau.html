@@ -1021,7 +1021,56 @@
             const edgeColor = isDark ? '#475569' : '#c5cbe9';
             const weightColor = isDark ? '#334155' : '#9fa8da';
 
-            parsedEdges.forEach(e => {
+            // Algorithme de répulsion pour éviter le chevauchement des poids
+            const edgeRatios = parsedEdges.map(() => 0.5);
+            const aspect = 2.0; // Ratio pour simuler le format de l'écran plus large que haut
+
+            for (let iter = 0; iter < 50; iter++) {
+                if (iter === 0 && parsedEdges.length >= 2) {
+                    edgeRatios[0] += 0.01;
+                    edgeRatios[1] -= 0.01;
+                }
+                for (let i = 0; i < parsedEdges.length; i++) {
+                    const e1 = parsedEdges[i];
+                    const n1_1 = getNode(e1.from), n2_1 = getNode(e1.to);
+                    const dx1 = n2_1.x - n1_1.x;
+                    const dy1 = n2_1.y - n1_1.y;
+                    const len1 = Math.sqrt((dx1 * aspect) ** 2 + dy1 ** 2);
+                    if (len1 === 0) continue;
+
+                    let force = 0;
+                    let px1 = (n1_1.x + dx1 * edgeRatios[i]) * aspect;
+                    let py1 = n1_1.y + dy1 * edgeRatios[i];
+
+                    for (let j = 0; j < parsedEdges.length; j++) {
+                        if (i === j) continue;
+                        const e2 = parsedEdges[j];
+                        const n1_2 = getNode(e2.from), n2_2 = getNode(e2.to);
+                        const r2 = edgeRatios[j];
+                        let px2 = (n1_2.x + (n2_2.x - n1_2.x) * r2) * aspect;
+                        let py2 = n1_2.y + (n2_2.y - n1_2.y) * r2;
+
+                        let vx = px1 - px2;
+                        let vy = py1 - py2;
+                        let distSq = vx * vx + vy * vy;
+                        let dist = Math.sqrt(distSq);
+
+                        if (dist < 15 && dist > 0) {
+                            let f = 150 / distSq;
+                            let edx = (dx1 * aspect) / len1;
+                            let edy = dy1 / len1;
+                            let dot = (vx / dist) * edx + (vy / dist) * edy;
+                            force += f * dot;
+                        }
+                    }
+
+                    edgeRatios[i] += (force * 0.1) / len1;
+                    edgeRatios[i] += (0.5 - edgeRatios[i]) * 0.02; // Retour doux vers le centre
+                    edgeRatios[i] = Math.max(0.25, Math.min(0.75, edgeRatios[i]));
+                }
+            }
+
+            parsedEdges.forEach((e, i) => {
                 const n1 = getNode(e.from), n2 = getNode(e.to);
                 const isPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1;
 
@@ -1034,7 +1083,9 @@
                 svgEdges.appendChild(line);
 
                 // Cercle UTI (Poids) — couleur dynamique
-                const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
+                const r = edgeRatios[i];
+                const cx = n1.x + (n2.x - n1.x) * r;
+                const cy = n1.y + (n2.y - n1.y) * r;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
                 circle.classList.add('weight-circle');
