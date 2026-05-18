@@ -120,7 +120,6 @@ We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no n
     *   Mobile Swipe: `assets/js/swipe.js`.
     *   Toasts & Particles: `assets/js/toast.js` and `assets/js/confetti.js`.
 *   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, a Node.js script (`meta/scripts/generate_fa_subset.js`) parses the HTML and dynamically generates `assets/js/fa-subset.js` (under 20kb!).
-    *   **Note on modification:** To add or modify icons, you must first clone the private `fontawesome-subset` repository (using a valid GitHub Personal Access Token) and then run the generation script specifying the directory: `FA_SUBSET_DIR=/path/to/fontawesome-subset node meta/scripts/generate_fa_subset.js`.
 
 ### 🤝 How to contribute?
 Contributions (new apps, bug fixes, or UI optimizations) are highly appreciated!
