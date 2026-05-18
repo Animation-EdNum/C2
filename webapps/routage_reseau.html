@@ -892,12 +892,21 @@
                 line.setAttribute('stroke-width', isPath ? '5' : '2.5');
                 svgEdges.appendChild(line);
 
-                // Cercle UTI (Poids) — toujours orange, plus grand
+                // Cercle UTI (Poids) — couleur dynamique
                 const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
                 circle.classList.add('weight-circle');
-                circle.setAttribute('fill', isPath ? '#e65100' : '#ff9800');
+
+                let weightFill = '';
+                if (e.weight <= 3) {
+                    weightFill = isPath ? 'var(--success)' : 'var(--accent)';
+                } else if (e.weight <= 5) {
+                    weightFill = isPath ? 'var(--warn)' : '#ff9800';
+                } else {
+                    weightFill = isPath ? 'var(--error)' : '#f44336';
+                }
+                circle.setAttribute('fill', weightFill);
                 svgWeights.appendChild(circle);
 
                 // Texte UTI 
