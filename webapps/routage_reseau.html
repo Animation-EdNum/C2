@@ -747,9 +747,9 @@
             if (difficulty === 'easy') {
                 numCols = 2; rowsPerCol = [1, 2]; maxRouters = 4;
             } else if (difficulty === 'medium') {
-                numCols = 3; rowsPerCol = [1, 3]; maxRouters = 7;
+                numCols = 3; rowsPerCol = [2, 3]; maxRouters = 7;
             } else { // hard
-                numCols = 4; rowsPerCol = [1, 4]; maxRouters = 11;
+                numCols = 4; rowsPerCol = [3, 4]; maxRouters = 12;
             }
 
             const cols = [];
@@ -765,6 +765,16 @@
                 let minRows = Math.min(rowsPerCol[0], maxRows);
 
                 let numRows = minRows + Math.floor(rng() * (maxRows - minRows + 1));
+
+                // Forcer un minimum d'options au départ pour garantir la complexité
+                if (c === 0 && difficulty === 'medium') {
+                    numRows = Math.max(numRows, 2);
+                } else if (c === 0 && difficulty === 'hard') {
+                    numRows = Math.max(numRows, 3);
+                } else if (c === 0 && difficulty === 'easy') {
+                    numRows = Math.max(numRows, 2);
+                }
+
                 totalRouters += numRows;
 
                 let colNodes = [];
@@ -811,7 +821,7 @@
                     addEdge(col1[i], col2[targetIndex]);
 
                     // Add slight randomness but keep it local, reduce cross connections to make it readable
-                    let crossProb = (difficulty === 'hard') ? 0.3 : 0.2;
+                    let crossProb = (difficulty === 'hard') ? 0.6 : ((difficulty === 'medium') ? 0.4 : 0.2);
                     if (rng() < crossProb && targetIndex + 1 < col2.length) {
                         addEdge(col1[i], col2[targetIndex + 1]);
                     }
@@ -830,7 +840,7 @@
                 }
             }
 
-            let verticalProb = (difficulty === 'hard') ? 0.3 : 0.2;
+            let verticalProb = (difficulty === 'hard') ? 0.6 : ((difficulty === 'medium') ? 0.4 : 0.2);
             for (let c = 0; c < numCols; c++) {
                 let col = cols[c];
                 for (let i = 0; i < col.length - 1; i++) {
@@ -841,6 +851,70 @@
             }
 
             cols[numCols - 1].forEach(id => addEdge(id, 'dst'));
+
+            // Vérifier s'il y a au moins 2 chemins possibles
+            let analyzePaths = () => {
+                let adj = {};
+                nodes.forEach(n => adj[n[0]] = []);
+                edges.forEach(e => {
+                    adj[e[0]].push(e[1]);
+                    adj[e[1]].push(e[0]);
+                });
+
+                let pathCount = 0;
+                let visited = new Set();
+                function dfs(u) {
+                    if (u === 'dst') {
+                        pathCount++;
+                        return;
+                    }
+                    if (pathCount >= 2) return;
+                    visited.add(u);
+                    for (let v of adj[u]) {
+                        if (!visited.has(v)) {
+                            dfs(v);
+                        }
+                    }
+                    visited.delete(u);
+                }
+                dfs('src');
+                return pathCount;
+            };
+
+            let paths = analyzePaths();
+
+            // Fallback: Si pas assez de chemins, ajouter des arêtes aléatoires
+            let attempts = 0;
+            while (paths < 2 && attempts < 20) {
+                let c = Math.floor(rng() * (numCols - 1));
+                let col1 = cols[c];
+                let col2 = cols[c+1];
+                let n1 = col1[Math.floor(rng() * col1.length)];
+                let n2 = col2[Math.floor(rng() * col2.length)];
+
+                if (!hasEdge(n1, n2)) {
+                    addEdge(n1, n2);
+                    paths = analyzePaths();
+                }
+                attempts++;
+            }
+
+            // Additional fallback pour des liens verticaux
+            attempts = 0;
+            while (paths < 2 && attempts < 20) {
+                 let c = Math.floor(rng() * numCols);
+                 let col = cols[c];
+                 if (col.length >= 2) {
+                     let r = Math.floor(rng() * (col.length - 1));
+                     let n1 = col[r];
+                     let n2 = col[r+1];
+                     if (!hasEdge(n1, n2)) {
+                         addEdge(n1, n2);
+                         paths = analyzePaths();
+                     }
+                 }
+                 attempts++;
+            }
 
             return { nodes, edges };
         }
@@ -947,7 +1021,56 @@
             const edgeColor = isDark ? '#475569' : '#c5cbe9';
             const weightColor = isDark ? '#334155' : '#9fa8da';
 
-            parsedEdges.forEach(e => {
+            // Algorithme de répulsion pour éviter le chevauchement des poids
+            const edgeRatios = parsedEdges.map(() => 0.5);
+            const aspect = 2.0; // Ratio pour simuler le format de l'écran plus large que haut
+
+            for (let iter = 0; iter < 50; iter++) {
+                if (iter === 0 && parsedEdges.length >= 2) {
+                    edgeRatios[0] += 0.01;
+                    edgeRatios[1] -= 0.01;
+                }
+                for (let i = 0; i < parsedEdges.length; i++) {
+                    const e1 = parsedEdges[i];
+                    const n1_1 = getNode(e1.from), n2_1 = getNode(e1.to);
+                    const dx1 = n2_1.x - n1_1.x;
+                    const dy1 = n2_1.y - n1_1.y;
+                    const len1 = Math.sqrt((dx1 * aspect) ** 2 + dy1 ** 2);
+                    if (len1 === 0) continue;
+
+                    let force = 0;
+                    let px1 = (n1_1.x + dx1 * edgeRatios[i]) * aspect;
+                    let py1 = n1_1.y + dy1 * edgeRatios[i];
+
+                    for (let j = 0; j < parsedEdges.length; j++) {
+                        if (i === j) continue;
+                        const e2 = parsedEdges[j];
+                        const n1_2 = getNode(e2.from), n2_2 = getNode(e2.to);
+                        const r2 = edgeRatios[j];
+                        let px2 = (n1_2.x + (n2_2.x - n1_2.x) * r2) * aspect;
+                        let py2 = n1_2.y + (n2_2.y - n1_2.y) * r2;
+
+                        let vx = px1 - px2;
+                        let vy = py1 - py2;
+                        let distSq = vx * vx + vy * vy;
+                        let dist = Math.sqrt(distSq);
+
+                        if (dist < 15 && dist > 0) {
+                            let f = 150 / distSq;
+                            let edx = (dx1 * aspect) / len1;
+                            let edy = dy1 / len1;
+                            let dot = (vx / dist) * edx + (vy / dist) * edy;
+                            force += f * dot;
+                        }
+                    }
+
+                    edgeRatios[i] += (force * 0.1) / len1;
+                    edgeRatios[i] += (0.5 - edgeRatios[i]) * 0.02; // Retour doux vers le centre
+                    edgeRatios[i] = Math.max(0.25, Math.min(0.75, edgeRatios[i]));
+                }
+            }
+
+            parsedEdges.forEach((e, i) => {
                 const n1 = getNode(e.from), n2 = getNode(e.to);
                 const isPath = currentPath.includes(e.from) && currentPath.includes(e.to) && Math.abs(currentPath.indexOf(e.from) - currentPath.indexOf(e.to)) === 1;
 
@@ -960,7 +1083,9 @@
                 svgEdges.appendChild(line);
 
                 // Cercle UTI (Poids) — couleur dynamique
-                const cx = (n1.x + n2.x) / 2, cy = (n1.y + n2.y) / 2;
+                const r = edgeRatios[i];
+                const cx = n1.x + (n2.x - n1.x) * r;
+                const cy = n1.y + (n2.y - n1.y) * r;
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', `${cx}%`); circle.setAttribute('cy', `${cy}%`);
                 circle.classList.add('weight-circle');
