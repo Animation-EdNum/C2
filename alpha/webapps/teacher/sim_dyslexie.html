@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de Dyslexie</title>
+    <meta property="og:title" content="Simulateur de Dyslexie">
+    <meta property="og:description" content="Simulateur pour expérimenter les difficultés liées à la dyslexie.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <link rel="stylesheet" href="../../../assets/css/shared.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <style>
+        .action-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        body > header, body > .app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #e0e7ff;
+            --bg-gradient-start: #e0e7ff;
+            --bg-gradient-end: #fce7f3;
+            --bg-gradient-alt: #fef3c7;
+
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.5);
+
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark {
+            --bg-gradient-start: #1e1b4b;
+            --bg-gradient-end: #312e81;
+            --bg-gradient-alt: #4c1d95;
+            --glass-bg: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --primary-light: rgba(79, 70, 229, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        button {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, var(--bg-gradient-alt) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            transition: background 0.3s;
+            overflow: hidden; /* Prevent body scrolling, manage within shell */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-shell {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1; /* Take up available space */
+            min-height: 0; /* Important for nested flex scrolling */
+        }
+
+        /* HEADER */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            background: var(--primary);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        h1 span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            border-color: var(--border);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        body.dark .tab-btn.active {
+            background: var(--glass-bg);
+        }
+
+        .tab-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.4);
+            color: var(--text-main);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            color: var(--text-main);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-action.success {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+            }
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 340px;
+                flex-shrink: 0;
+            }
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark .panel {
+             background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* CONTROLS */
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .control-label {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-value {
+            font-size: 0.75rem;
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        body.dark .control-value {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 999px;
+            appearance: none;
+            outline: none;
+            border: 1px solid var(--border);
+        }
+
+        body.dark input[type="range"] {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* RADIO BUTTONS (Mixing Style) */
+        .radio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .radio-btn {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark .radio-btn {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .radio-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-hover);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* TOGGLE SWITCHES */
+        .toggle-label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            user-select: none;
+            group: hover;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 24px;
+            flex-shrink: 0;
+            margin-right: 0.75rem;
+        }
+
+        .toggle-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        body.dark .toggle-slider {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .toggle-input:checked + .toggle-slider {
+            background-color: var(--primary);
+            border-color: var(--primary-hover);
+        }
+
+        .toggle-input:checked + .toggle-slider:before {
+            transform: translateX(16px);
+        }
+
+        .toggle-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toggle-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-main);
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .toggle-label:hover .toggle-title {
+            color: var(--primary);
+        }
+
+        .toggle-desc {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            margin-top: 0.125rem;
+        }
+
+        /* PRESET TEXTS */
+        .preset-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .preset-btn {
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            border-radius: var(--radius-xl);
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        body.dark .preset-btn {
+             background: rgba(0, 0, 0, 0.2);
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-light);
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .preset-btn.active {
+            background: var(--primary-light);
+            border: 1px solid rgba(79, 70, 229, 0.4);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .preset-title {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--text-main);
+        }
+
+        .preset-preview {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .info-banner {
+            margin-top: 1.5rem;
+            background: rgba(253, 230, 138, 0.8);
+            border: 1px solid rgba(252, 211, 77, 0.6);
+            padding: 1rem;
+            border-radius: var(--radius-xl);
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        body.dark .info-banner {
+            background: rgba(146, 64, 14, 0.3);
+            border-color: rgba(180, 83, 9, 0.5);
+        }
+
+        .info-banner i {
+            color: var(--warning);
+            margin-top: 0.125rem;
+        }
+
+        .info-banner p {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            color: #92400e;
+            line-height: 1.5;
+        }
+
+        body.dark .info-banner p {
+            color: #fcd34d;
+        }
+
+        /* VIEWPORT */
+        .viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 2.5rem;
+            margin: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            min-height: 500px;
+        }
+
+        @media (max-width: 767px) {
+            .viewport {
+                margin: 0 1.5rem 1.5rem 1.5rem;
+                border-radius: 1.5rem;
+                min-height: 400px;
+            }
+        }
+
+        body.dark .viewport {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .viewport-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark .viewport-header {
+             background: rgba(0, 0, 0, 0.3);
+        }
+
+        .viewport-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .window-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+        }
+
+        .dot-red { background: #f87171; border-color: #ef4444; }
+        .dot-yellow { background: #fbbf24; border-color: #f59e0b; }
+        .dot-green { background: #34d399; border-color: #10b981; }
+
+        .viewport-body {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .viewport-body {
+                padding: 3rem;
+            }
+        }
+
+        /* EDITOR MODE */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        textarea {
+            flex: 1;
+            width: 100%;
+            padding: 2rem;
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.125rem;
+            color: var(--text-main);
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        body.dark textarea {
+             background: rgba(0, 0, 0, 0.3);
+        }
+
+        textarea:focus {
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 4px rgba(79, 70, 229, 0.2);
+            border-color: #818cf8;
+        }
+
+        .editor-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+            border-radius: var(--radius-xl);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+        }
+
+        /* SIMULATION MODE */
+        .simulation-container {
+            height: 100%;
+            animation: fadeIn 0.5s ease;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            opacity: 0.4;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state p {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .dyslexic-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            font-weight: 500;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            transition: all 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .dyslexic-text {
+                font-size: 1.875rem;
+            }
+        }
+
+        .dyslexic-text span {
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .dyslexic-text.visual-effect {
+            font-family: 'Inter', sans-serif; /* Fallback to standard font for typical visual effect */
+            text-shadow: 1px 0 0 rgba(255,0,0,0.5), -1px 0 0 rgba(0,255,255,0.5); /* Basic chromatic aberration */
+        }
+
+        .dyslexic-text span.focused {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            border-radius: var(--radius-md);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.4);
+            transform: scale(1.05);
+            z-index: 10;
+            position: relative;
+            transition: all 0.15s;
+            padding: 0 2px;
+        }
+
+        body.dark .dyslexic-text span.focused {
+             color: white;
+             background: rgba(79, 70, 229, 0.8);
+        }
+
+        .dyslexic-text span.dimmed {
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-tabs-switcher {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 767px) {
+            .mobile-tabs-switcher {
+                display: block;
+            }
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--radius-xl);
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Focus speed slider container */
+        .focus-speed-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease;
+        }
+
+        body.dark .focus-speed-container {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Scrollbar hiding for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        body.dark .sidebar::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Animated Background Blobs handled via CSS in shared/teacher, or keep simple gradient -->
+    <div class="app-shell">
+        <header>
+            <div class="header-title-wrapper">
+                <a href="../../../" class="header-icon" title="Retour à l'accueil">
+                    <i data-fa="house"></i>
+                </a>
+                <div class="header-icon" style="background: var(--primary);">D</div>
+                <h1>Dyslexia<span>Lens</span></h1>
+            </div>
+
+            <div class="tabs-nav hidden-mobile" id="desktop-tabs">
+                <button class="tab-btn active" data-tab="simulation">Simulateur</button>
+                <button class="tab-btn" data-tab="edit">Éditer</button>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn-action" id="btn-share">
+                    <i data-fa="share-nodes"></i>
+                    <span class="hidden-mobile">Partager</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <aside class="sidebar">
+                <div class="panel">
+                    <div class="panel-title">
+                        <i data-fa="gear"></i> Réglages
+                    </div>
+
+                    <!-- Severity -->
+                    <div class="control-group">
+                        <div class="control-header">
+                            <span class="control-label"><i data-fa="font" style="color: var(--primary)"></i> Intensité</span>
+                            <span class="control-value" id="val-severity">80%</span>
+                        </div>
+                        <input type="range" id="input-severity" min="0" max="1" step="0.05" value="0.8">
+                    </div>
+
+                    <!-- Speed -->
+                    <div class="control-group">
+                        <div class="control-header">
+                            <span class="control-label"><i data-fa="bolt" style="color: var(--primary)"></i> Instabilité</span>
+                            <span class="control-value" id="val-speed">5</span>
+                        </div>
+                        <input type="range" id="input-speed" min="0" max="10" step="1" value="5">
+                    </div>
+
+                    <!-- Mixing Style -->
+                    <div class="control-group" style="padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <div class="control-label" style="margin-bottom: 0.75rem;">Type de trouble</div>
+                        <div class="radio-grid" id="mixing-style-grid">
+                            <button class="radio-btn active" data-style="all">Mixte</button>
+                            <button class="radio-btn" data-style="offset">Décalages</button>
+                            <button class="radio-btn" data-style="scramble">Mélange</button>
+                            <button class="radio-btn" data-style="invert">Inversions</button>
+                        </div>
+                    </div>
+
+                    <!-- Focus Mode -->
+                    <div class="control-group" style="padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <label class="toggle-label">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="input-focus-mode" class="toggle-input">
+                                <span class="toggle-slider"></span>
+                            </div>
+                            <div class="toggle-text">
+                                <span class="toggle-title"><i data-fa="wave-square" style="color: var(--primary)"></i> Mode Focus</span>
+                                <span class="toggle-desc">Surligne le mot en cours</span>
+                            </div>
+                        </label>
+
+                        <div class="focus-speed-container" id="focus-speed-container" style="display: none;">
+                            <div class="control-header">
+                                <span class="control-label" style="font-size: 0.75rem;">Vitesse</span>
+                                <span class="control-value" id="val-focus-speed">100 MPM</span>
+                            </div>
+                            <input type="range" id="input-focus-speed" min="200" max="1000" step="50" value="600">
+                        </div>
+                    </div>
+
+                    <!-- Visual Effects -->
+                    <div class="control-group" style="padding-top: 1rem;">
+                        <label class="toggle-label">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="input-visual-effect" class="toggle-input" checked>
+                                <span class="toggle-slider"></span>
+                            </div>
+                            <div class="toggle-text">
+                                <span class="toggle-title">Effets visuels simulés</span>
+                                <span class="toggle-desc">Aberration chromatique & flou</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Mobile Tab Switcher -->
+                    <div class="mobile-tabs-switcher">
+                         <button class="btn-secondary" id="mobile-tab-switch">Passer en mode édition</button>
+                    </div>
+                </div>
+
+                <div class="panel" style="flex: 1; min-height: 0;">
+                    <div class="panel-title" style="flex-shrink: 0;">
+                        <i data-fa="align-left"></i> Textes d'exemple
+                    </div>
+                    <div class="preset-list" id="preset-container">
+                        <!-- Presets injected here -->
+                    </div>
+
+                    <div class="info-banner" style="flex-shrink: 0;">
+                        <i data-fa="circle-info"></i>
+                        <p>Le simulateur reproduit la fatigue visuelle (lettres qui dansent, inversions) mais ne correspond pas à la vision d'un seul individu.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="viewport">
+                <div class="viewport-header">
+                    <span class="viewport-title" id="viewport-title">Visualisation en temps réel</span>
+                    <div class="window-controls">
+                        <div class="window-dot dot-red"></div>
+                        <div class="window-dot dot-yellow"></div>
+                        <div class="window-dot dot-green"></div>
+                    </div>
+                </div>
+
+                <div class="viewport-body">
+                    <!-- Editor Mode -->
+                    <div class="editor-container" id="view-edit" style="display: none;">
+                        <textarea id="text-input" placeholder="Collez ou tapez votre texte ici..."></textarea>
+                        <div class="editor-actions">
+                            <button class="btn-primary" id="btn-start-sim">
+                                <i data-fa="eye"></i> Lancer l'expérience
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Simulation Mode -->
+                    <div class="simulation-container" id="view-simulation">
+                        <div class="empty-state" id="empty-state" style="display: none;">
+                            <i data-fa="volume-low"></i>
+                            <p>Veuillez entrer du texte pour voir la simulation.</p>
+                            <button class="btn-secondary" style="margin-top: 1.5rem; max-width: 200px;" id="btn-empty-edit">Passer en mode édition</button>
+                        </div>
+
+                        <div class="dyslexic-text visual-effect" id="dyslexic-output">
+                            <!-- Tokens injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../../../assets/js/theme.js"></script>
+    <script>
+        // --- Data ---
+        const PRESET_TEXTS = [
+            {
+                id: '1',
+                title: 'Le Petit Prince',
+                content: "S'il vous plaît... dessine-moi un mouton ! J'ai sauté sur mes pieds comme si j'avais été frappé par la foudre. J'ai bien frotté mes yeux. J'ai bien regardé."
+            },
+            {
+                id: '2',
+                title: 'Instructions scolaires',
+                content: "Prenez votre cahier rouge et ouvrez-le à la page quarante-deux. Lisez attentivement le troisième paragraphe avant de répondre aux questions figurant au tableau."
+            },
+            {
+                id: '3',
+                title: 'Alphabet et confusions',
+                content: "Le dauphin plonge dans la baie. Le garçon boit sa boisson. La petite poule picore du pain. Mon oncle observe les oiseaux depuis la colline."
+            }
+        ];
+
+        const CONFUSE_CHARS = {
+            'b': 'd', 'd': 'b',
+            'p': 'q', 'q': 'p',
+            'n': 'u', 'u': 'n',
+            'm': 'w', 'w': 'm',
+            'e': 'c', 'c': 'e',
+            'f': 't', 't': 'f',
+            'O': 'Q', 'Q': 'O',
+            'I': 'l', 'l': 'I',
+        };
+
+        const PRESERVE_CASE = (orig, replacement) => {
+            if (orig === orig.toUpperCase() && orig !== orig.toLowerCase()) {
+                return replacement.toUpperCase();
+            }
+            return replacement.toLowerCase();
+        };
+
+        // --- State ---
+        let state = {
+            text: PRESET_TEXTS[0].content,
+            speed: 5,
+            severity: 0.8,
+            enableVisualEffect: true,
+            activeTab: 'simulation',
+            mixingStyle: 'all',
+            focusMode: false,
+            focusSpeedMs: 600, // 1200 - input value
+            baseTokens: [],
+            focusedIndex: -1
+        };
+
+        let mutationInterval = null;
+        let focusInterval = null;
+
+        // --- DOM Elements ---
+        const els = {
+            inputSeverity: document.getElementById('input-severity'),
+            valSeverity: document.getElementById('val-severity'),
+            inputSpeed: document.getElementById('input-speed'),
+            valSpeed: document.getElementById('val-speed'),
+            mixingBtns: document.querySelectorAll('.radio-btn'),
+            inputFocusMode: document.getElementById('input-focus-mode'),
+            focusSpeedContainer: document.getElementById('focus-speed-container'),
+            inputFocusSpeed: document.getElementById('input-focus-speed'),
+            valFocusSpeed: document.getElementById('val-focus-speed'),
+            inputVisualEffect: document.getElementById('input-visual-effect'),
+            presetContainer: document.getElementById('preset-container'),
+            tabBtns: document.querySelectorAll('.tab-btn'),
+            mobileTabSwitch: document.getElementById('mobile-tab-switch'),
+            viewportTitle: document.getElementById('viewport-title'),
+            viewEdit: document.getElementById('view-edit'),
+            viewSimulation: document.getElementById('view-simulation'),
+            textInput: document.getElementById('text-input'),
+            btnStartSim: document.getElementById('btn-start-sim'),
+            btnEmptyEdit: document.getElementById('btn-empty-edit'),
+            emptyState: document.getElementById('empty-state'),
+            dyslexicOutput: document.getElementById('dyslexic-output'),
+            btnShare: document.getElementById('btn-share')
+        };
+
+        // --- Core Logic ---
+
+        function tokenize(text) {
+            const regex = /([a-zA-ZÀ-ÿ]+)|([^a-zA-ZÀ-ÿ]+)/g;
+            const rawTokens = text.match(regex) || [];
+            return rawTokens.map((t, idx) => ({
+                original: t,
+                isWord: /^[a-zA-ZÀ-ÿ]+$/.test(t),
+                id: idx
+            }));
+        }
+
+        function mutateToken(tokenStr) {
+            if (!/^[a-zA-ZÀ-ÿ]+$/.test(tokenStr)) return tokenStr;
+
+            let chars = tokenStr.split('');
+            const len = chars.length;
+            const { severity, mixingStyle } = state;
+
+            if (mixingStyle === 'invert' || mixingStyle === 'all') {
+                for (let i = 0; i < len; i++) {
+                    if (Math.random() < severity * 0.3) {
+                        const lowerChar = chars[i].toLowerCase();
+                        if (CONFUSE_CHARS[lowerChar]) {
+                            chars[i] = PRESERVE_CASE(chars[i], CONFUSE_CHARS[lowerChar]);
+                        }
+                    }
+                }
+            }
+
+            if (mixingStyle === 'scramble' || mixingStyle === 'all') {
+                if (len > 3 && Math.random() < severity * 0.6) {
+                    const numSwaps = Math.max(1, Math.floor(len * severity * 0.6));
+                    for (let s = 0; s < numSwaps; s++) {
+                        const idx1 = Math.floor(Math.random() * (len - 2)) + 1;
+                        const idx2 = Math.floor(Math.random() * (len - 2)) + 1;
+                        const temp = chars[idx1];
+                        chars[idx1] = chars[idx2];
+                        chars[idx2] = temp;
+                    }
+                }
+            }
+
+            if (mixingStyle === 'offset' || mixingStyle === 'all') {
+                if (len > 1 && Math.random() < severity * 0.5) {
+                    const numSwaps = Math.max(1, Math.floor(len * severity * 0.4));
+                    for (let s = 0; s < numSwaps; s++) {
+                        const idx = Math.floor(Math.random() * (len - 1));
+                        const temp = chars[idx];
+                        chars[idx] = chars[idx + 1];
+                        chars[idx + 1] = temp;
+                    }
+                }
+            }
+
+            return chars.join('');
+        }
+
+        // --- Rendering ---
+
+        function renderPresets() {
+            els.presetContainer.innerHTML = PRESET_TEXTS.map(preset => `
+                <button class="preset-btn ${state.text === preset.content ? 'active' : ''}" data-id="${preset.id}">
+                    <div class="preset-title">${preset.title}</div>
+                    <div class="preset-preview">${preset.content}</div>
+                </button>
+            `).join('');
+
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    const preset = PRESET_TEXTS.find(p => p.id === id);
+                    if (preset) {
+                        updateText(preset.content);
+                        switchTab('simulation');
+                    }
+                });
+            });
+        }
+
+        function renderOutput() {
+            if (state.text.trim() === '') {
+                els.emptyState.style.display = 'flex';
+                els.dyslexicOutput.style.display = 'none';
+                return;
+            }
+
+            els.emptyState.style.display = 'none';
+            els.dyslexicOutput.style.display = 'block';
+
+            // Initial render of spans if not done or length changed
+            if (els.dyslexicOutput.children.length !== state.baseTokens.length) {
+                els.dyslexicOutput.innerHTML = state.baseTokens.map(t => `<span id="tok-${t.id}">${t.original}</span>`).join('');
+            }
+
+            // Update contents and classes
+            state.baseTokens.forEach((t, i) => {
+                const span = document.getElementById(`tok-${t.id}`);
+                if (!span) return;
+
+                const mutatedText = t.isWord ? mutateToken(t.original) : t.original;
+                if (span.textContent !== mutatedText) {
+                    span.textContent = mutatedText;
+                }
+
+                const isFocused = state.focusMode && i === state.focusedIndex;
+                const isDimmed = state.focusMode && !isFocused && t.isWord;
+
+                if (isFocused) {
+                    span.className = 'focused';
+                } else if (isDimmed) {
+                    span.className = 'dimmed';
+                } else {
+                    span.className = '';
+                }
+            });
+
+            // Update visual effects
+            if (state.enableVisualEffect) {
+                els.dyslexicOutput.classList.add('visual-effect');
+                els.dyslexicOutput.style.filter = `blur(${(state.severity * 0.5).toFixed(1)}px)`;
+            } else {
+                els.dyslexicOutput.classList.remove('visual-effect');
+                els.dyslexicOutput.style.filter = 'none';
+            }
+        }
+
+        // --- Updaters & Intervals ---
+
+        function updateText(newText) {
+            state.text = newText;
+            els.textInput.value = newText;
+            state.baseTokens = tokenize(newText);
+
+            // Reset focus index
+            if (state.focusMode) {
+                let startIdx = 0;
+                while (startIdx < state.baseTokens.length && !state.baseTokens[startIdx].isWord) {
+                    startIdx++;
+                }
+                state.focusedIndex = startIdx < state.baseTokens.length ? startIdx : -1;
+            }
+
+            renderPresets();
+            if (state.activeTab === 'simulation') {
+                renderOutput();
+            }
+        }
+
+        function startMutationInterval() {
+            clearInterval(mutationInterval);
+            if (state.speed === 0 || state.severity === 0 || state.activeTab !== 'simulation') return;
+
+            const intervalTime = 2000 / Math.max(0.1, state.speed);
+            mutationInterval = setInterval(() => {
+                renderOutput();
+            }, intervalTime);
+        }
+
+        function startFocusInterval() {
+            clearInterval(focusInterval);
+            if (!state.focusMode || state.activeTab !== 'simulation') return;
+
+            focusInterval = setInterval(() => {
+                state.focusedIndex++;
+                while (state.focusedIndex < state.baseTokens.length && !state.baseTokens[state.focusedIndex].isWord) {
+                    state.focusedIndex++;
+                }
+                if (state.focusedIndex >= state.baseTokens.length) {
+                    let first = 0;
+                    while(first < state.baseTokens.length && !state.baseTokens[first].isWord) first++;
+                    state.focusedIndex = first < state.baseTokens.length ? first : -1;
+                }
+                renderOutput(); // Only need to update classes, but renderOutput handles it
+            }, state.focusSpeedMs);
+        }
+
+        function switchTab(tab) {
+            state.activeTab = tab;
+
+            // Update UI Desktop tabs
+            els.tabBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+
+            // Update UI Mobile button
+            if (tab === 'simulation') {
+                els.mobileTabSwitch.textContent = 'Passer en mode édition';
+                els.viewportTitle.textContent = 'Visualisation en temps réel';
+                els.viewEdit.style.display = 'none';
+                els.viewSimulation.style.display = 'block';
+
+                // Sync text from editor
+                updateText(els.textInput.value);
+
+                startMutationInterval();
+                startFocusInterval();
+            } else {
+                els.mobileTabSwitch.textContent = 'Passer en mode simulateur';
+                els.viewportTitle.textContent = 'Éditeur de texte libre';
+                els.viewEdit.style.display = 'flex';
+                els.viewSimulation.style.display = 'none';
+
+                clearInterval(mutationInterval);
+                clearInterval(focusInterval);
+            }
+        }
+
+        // --- Event Listeners ---
+
+        els.inputSeverity.addEventListener('input', (e) => {
+            state.severity = parseFloat(e.target.value);
+            els.valSeverity.textContent = Math.round(state.severity * 100) + '%';
+            if (state.activeTab === 'simulation') renderOutput();
+        });
+
+        els.inputSpeed.addEventListener('input', (e) => {
+            state.speed = parseFloat(e.target.value);
+            els.valSpeed.textContent = state.speed;
+            startMutationInterval();
+        });
+
+        els.mixingBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                els.mixingBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                state.mixingStyle = e.target.dataset.style;
+                if (state.activeTab === 'simulation') renderOutput();
+            });
+        });
+
+        els.inputFocusMode.addEventListener('change', (e) => {
+            state.focusMode = e.target.checked;
+            els.focusSpeedContainer.style.display = state.focusMode ? 'block' : 'none';
+
+            if (state.focusMode) {
+                let startIdx = 0;
+                while (startIdx < state.baseTokens.length && !state.baseTokens[startIdx].isWord) {
+                    startIdx++;
+                }
+                state.focusedIndex = startIdx < state.baseTokens.length ? startIdx : -1;
+                startFocusInterval();
+            } else {
+                state.focusedIndex = -1;
+                clearInterval(focusInterval);
+            }
+            if (state.activeTab === 'simulation') renderOutput();
+        });
+
+        els.inputFocusSpeed.addEventListener('input', (e) => {
+            // Slider value is 200 to 1000. In React app: focusSpeed = 1200 - val.
+            // Words per minute approx: 60000 / ms
+            const val = parseFloat(e.target.value);
+            state.focusSpeedMs = 1200 - val;
+            els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
+            startFocusInterval();
+        });
+
+        els.inputVisualEffect.addEventListener('change', (e) => {
+            state.enableVisualEffect = e.target.checked;
+            if (state.activeTab === 'simulation') renderOutput();
+        });
+
+        els.tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
+        });
+
+        els.mobileTabSwitch.addEventListener('click', () => {
+            switchTab(state.activeTab === 'simulation' ? 'edit' : 'simulation');
+        });
+
+        els.btnStartSim.addEventListener('click', () => switchTab('simulation'));
+        els.btnEmptyEdit.addEventListener('click', () => switchTab('edit'));
+
+        els.textInput.addEventListener('input', (e) => {
+             // Just update local state text, don't trigger full re-render/tokenize until switch
+             state.text = e.target.value;
+        });
+
+        els.btnShare.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                const originalHtml = els.btnShare.innerHTML;
+                els.btnShare.innerHTML = '<i data-fa="check"></i> <span class="hidden-mobile">Lien copié !</span>';
+                els.btnShare.classList.add('success');
+                setTimeout(() => {
+                    els.btnShare.innerHTML = originalHtml;
+                    els.btnShare.classList.remove('success');
+                    window.fa?.createIcons?.(els.btnShare);
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        });
+
+        // --- Init ---
+        function init() {
+            // Initialize FontAwesome
+            window.fa?.createIcons?.(document.body);
+
+            // Set initial state
+            updateText(PRESET_TEXTS[0].content);
+            els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
+            switchTab('simulation');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

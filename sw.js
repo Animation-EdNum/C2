@@ -11,6 +11,7 @@ const ASSETS = [
     './alpha/webapps/machine_a_trier.html',
     './alpha/webapps/pixels_binaires.html',
     './alpha/webapps/reseau_de_tri.html',
+    './alpha/webapps/teacher/sim_dyslexie.html',
     './assets/css/automate.css',
     './assets/css/base.css',
     './assets/css/components.css',
