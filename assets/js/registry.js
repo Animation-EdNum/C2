@@ -822,5 +822,34 @@ window.REGISTRY = [
     "category": "teachers_external",
     "inIndex": true,
     "inC1": false
+  },
+  {
+    "id": "tool-sim-dyslexie",
+    "href": "alpha/webapps/teacher/sim_dyslexie.html",
+    "target": null,
+    "rel": null,
+    "isAlpha": true,
+    "isExternal": false,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "dt-eye",
+    "iconStyle": "width:32px; height:32px; flex-shrink: 0;",
+    "title": "Lentille de dyslexie",
+    "desc": "Simulateur de lecture pour sensibiliser aux troubles DYS.",
+    "tags": [
+      "#Outil",
+      "#Sensibilisation",
+      "#DYS"
+    ],
+    "ref": "Alpha",
+    "badges": [
+      {
+        "text": "Outil",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
   }
 ];
