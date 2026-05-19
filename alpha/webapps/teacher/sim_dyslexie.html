@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lentille de dyslexie</title>
+    <meta property="og:title" content="Lentille de dyslexie">
+    <meta property="og:description" content="Simulateur de lecture pour sensibiliser aux troubles DYS.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <link rel="stylesheet" href="../../../assets/css/shared.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <style>
+        body > header, body > .app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: #ccfbf1;
+            --bg-gradient-start: #0d9488;
+            --bg-gradient-end: #064e4b;
+
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #064e4b;
+            --glass-bg: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --primary-light: rgba(13, 148, 136, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 40px);
+        }
+
+        /* HEADER */
+        header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-light);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px var(--primary-light);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px var(--primary-light);
+        }
+
+        /* APP MAIN LAYOUT */
+        .app-main {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        @media (min-width: 900px) {
+            .app-main {
+                flex-direction: row;
+            }
+        }
+
+        /* CONFIG PANEL */
+        .config-panel {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.02);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 900px) {
+            .config-panel {
+                width: 320px;
+                flex-shrink: 0;
+            }
+        }
+
+        .panel-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .panel-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.05);
+            padding: 0.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--glass-bg);
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* INPUTS & CONTROLS */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group .value-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .input-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .mixing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .mixing-btn {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mixing-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .checkbox-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-card:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .checkbox-card input[type="checkbox"] {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .preset-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .preset-btn {
+            text-align: left;
+            padding: 0.75rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--primary-light);
+            background: var(--primary-light);
+        }
+
+        .preset-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+
+        .preset-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .preset-preview {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* RESULTS PANEL */
+        .results-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            position: relative;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-title-group h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .results-title-group p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .workspace-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .edit-view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .edit-view textarea {
+            flex: 1;
+            width: 100%;
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.5);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            resize: none;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        body.dark .edit-view textarea {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-view textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .sim-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .dyslexic-text {
+            flex: 1;
+            padding: 1.5rem;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            font-weight: 500;
+            color: var(--text-main);
+            overflow-y: auto;
+            white-space: pre-wrap;
+            transition: filter 0.3s;
+        }
+
+        /* TEXT EFFECTS */
+        .dyslexic-text span {
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .dyslexic-text span.focused {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 4px;
+            box-shadow: 0 0 0 2px var(--primary);
+            transform: scale(1.05);
+            z-index: 10;
+            position: relative;
+        }
+
+        .dyslexic-text span.dimmed {
+            opacity: 0.4;
+        }
+
+        .dyslexic-text.visual-effect {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .dyslexic-text.visual-effect span {
+            text-shadow:
+                -1px 0 rgba(255,0,0,0.5),
+                1px 0 rgba(0,255,255,0.5);
+        }
+
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .empty-state i {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        footer a:hover {
+            color: var(--primary-light);
+        }
+
+        /* INFO BANNER */
+        .info-banner {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 0.75rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin-top: 1rem;
+        }
+        .info-banner i {
+            color: #f59e0b;
+            margin-top: 2px;
+        }
+        .info-banner p {
+            font-size: 0.75rem;
+            color: #b45309;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        body.dark .info-banner p {
+            color: #fcd34d;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <header class="no-print">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="magnifying-glass"></i>
+                </a>
+                <div>
+                    <h1>Lentille de dyslexie</h1>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="shareBtn" title="Partager l'expérience">
+                    <i data-fa="share-nodes" style="width:16px;height:16px;"></i>
+                    <span class="hidden-mobile">Partager</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="app-main">
+            <aside class="config-panel no-print">
+                <div class="panel-section">
+                    <div class="panel-section-title">
+                        <i data-fa="gear" style="width:14px;height:14px;"></i>
+                        Réglages
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <span><i data-fa="pen-nib" style="margin-right:4px;"></i> Intensité</span>
+                            <span class="value-badge" id="valSeverity">80%</span>
+                        </label>
+                        <input type="range" id="inputSeverity" min="0" max="1" step="0.05" value="0.8">
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <span><i data-fa="timer" style="margin-right:4px;"></i> Instabilité</span>
+                            <span class="value-badge" id="valSpeed">5</span>
+                        </label>
+                        <input type="range" id="inputSpeed" min="0" max="10" step="1" value="5">
+                    </div>
+
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label>Type de trouble</label>
+                        <div class="mixing-grid">
+                            <button class="mixing-btn active" data-style="all">Mixte</button>
+                            <button class="mixing-btn" data-style="offset">Décalages</button>
+                            <button class="mixing-btn" data-style="scramble">Mélange</button>
+                            <button class="mixing-btn" data-style="invert">Inversions</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                        <label class="checkbox-card" for="inputFocusMode">
+                            <input type="checkbox" id="inputFocusMode">
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Mode Focus</div>
+                                <div style="font-size: 0.7rem; color: var(--text-secondary);">Surligne le mot en cours</div>
+                            </div>
+                        </label>
+
+                        <div class="input-group" id="focusSpeedContainer" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: rgba(0,0,0,0.03); border-radius: var(--radius-lg);">
+                            <label>
+                                <span>Vitesse de lecture</span>
+                                <span class="value-badge" id="valFocusSpeed">100 MPM</span>
+                            </label>
+                            <input type="range" id="inputFocusSpeed" min="200" max="1000" step="50" value="600">
+                        </div>
+
+                        <label class="checkbox-card" for="inputVisualEffect">
+                            <input type="checkbox" id="inputVisualEffect" checked>
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Effets visuels simulés</div>
+                                <div style="font-size: 0.7rem; color: var(--text-secondary);">Aberration chromatique & flou</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">
+                        <i data-fa="book-open" style="width:14px;height:14px;"></i>
+                        Textes d'exemple
+                    </div>
+                    <div class="preset-list" id="presetList">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="info-banner">
+                        <i data-fa="circle-info" style="width:14px;height:14px;"></i>
+                        <p>Le simulateur reproduit la fatigue visuelle (lettres qui dansent, inversions) mais ne correspond pas à la vision d'un seul individu.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="results-panel">
+                <div class="results-header no-print">
+                    <div class="results-title-group">
+                        <h2 id="viewportTitle">Visualisation en temps réel</h2>
+                        <p id="viewportSubtitle">Observez les effets de la dyslexie</p>
+                    </div>
+                    <div class="tabs" style="margin-bottom: 0;">
+                        <button class="tab-btn active" data-tab="simulation">Simulateur</button>
+                        <button class="tab-btn" data-tab="edit">Éditer</button>
+                    </div>
+                </div>
+
+                <div class="workspace-area">
+                    <div class="edit-view" id="viewEdit">
+                        <textarea id="textInput" placeholder="Collez ou tapez votre texte ici..."></textarea>
+                        <div style="display: flex; justify-content: flex-end;">
+                            <button class="btn btn-primary" id="btnStartSim" style="padding: 1rem 2rem;">
+                                <i data-fa="eye" style="width:18px;height:18px;"></i> Lancer l'expérience
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sim-view" id="viewSimulation">
+                        <div class="empty-state" id="emptyState">
+                            <i data-fa="volume-high"></i>
+                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte pour voir la simulation.</p>
+                            <button class="btn btn-secondary" id="btnEmptyEdit">Passer en mode édition</button>
+                        </div>
+                        <div class="dyslexic-text" id="dyslexicOutput"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec ❤️ et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script>
+        // --- DATA ---
+        const PRESET_TEXTS = [
+            {
+                id: '1',
+                title: 'Instructions de mathématiques',
+                content: 'Prenez votre cahier rouge. Ouvrez-le à la page 42. Résolvez les problèmes 3, 4 et 5 en détaillant vos calculs. Faites attention aux retenues dans les additions. Quand vous avez terminé, levez la main en silence.'
+            },
+            {
+                id: '2',
+                title: 'Texte narratif simple',
+                content: 'Le petit chat gris dort sur le canapé du salon. Soudain, un bruit le réveille. Il dresse les oreilles et ouvre de grands yeux ronds. C\'est seulement la porte d\'entrée qui claque.'
+            },
+            {
+                id: '3',
+                title: 'Consignes de sécurité',
+                content: 'En cas d\'alarme incendie, restez calmes. Laissez vos affaires sur vos pupitres. Mettez-vous en rang deux par deux devant la porte. Attendez le signal de votre enseignant avant de sortir.'
+            }
+        ];
+
+        const CONFUSE_CHARS = {
+            'b': 'd', 'd': 'b',
+            'p': 'q', 'q': 'p',
+            'n': 'u', 'u': 'n',
+            'm': 'w', 'w': 'm',
+            'e': 'c', 'c': 'e',
+            'f': 't', 't': 'f',
+            'O': 'Q', 'Q': 'O',
+            'I': 'l', 'l': 'I',
+        };
+
+        const PRESERVE_CASE = (orig, replacement) => {
+            if (orig === orig.toUpperCase() && orig !== orig.toLowerCase()) {
+                return replacement.toUpperCase();
+            }
+            return replacement.toLowerCase();
+        };
+
+        // --- STATE ---
+        const state = {
+            text: PRESET_TEXTS[0].content,
+            speed: 5,
+            severity: 0.8,
+            enableVisualEffect: true,
+            activeTab: 'simulation',
+            mixingStyle: 'all',
+            focusMode: false,
+            focusSpeedMs: 600,
+            baseTokens: [],
+            focusedIndex: -1
+        };
+
+        let mutationInterval = null;
+        let focusInterval = null;
+
+        // --- DOM Elements ---
+        const els = {
+            inputSeverity: document.getElementById('inputSeverity'),
+            valSeverity: document.getElementById('valSeverity'),
+            inputSpeed: document.getElementById('inputSpeed'),
+            valSpeed: document.getElementById('valSpeed'),
+            mixingBtns: document.querySelectorAll('.mixing-btn'),
+            inputFocusMode: document.getElementById('inputFocusMode'),
+            focusSpeedContainer: document.getElementById('focusSpeedContainer'),
+            inputFocusSpeed: document.getElementById('inputFocusSpeed'),
+            valFocusSpeed: document.getElementById('valFocusSpeed'),
+            inputVisualEffect: document.getElementById('inputVisualEffect'),
+
+            presetList: document.getElementById('presetList'),
+
+            tabBtns: document.querySelectorAll('.tab-btn[data-tab]'),
+            viewportTitle: document.getElementById('viewportTitle'),
+            viewportSubtitle: document.getElementById('viewportSubtitle'),
+            viewEdit: document.getElementById('viewEdit'),
+            viewSimulation: document.getElementById('viewSimulation'),
+            textInput: document.getElementById('textInput'),
+            btnStartSim: document.getElementById('btnStartSim'),
+            btnEmptyEdit: document.getElementById('btnEmptyEdit'),
+            emptyState: document.getElementById('emptyState'),
+            dyslexicOutput: document.getElementById('dyslexicOutput'),
+
+            btnShare: document.getElementById('shareBtn')
+        };
+
+        // --- LOGIC ---
+
+        function tokenize(text) {
+            const regex = /([a-zA-ZÀ-ÿ]+)|([^a-zA-ZÀ-ÿ]+)/g;
+            const tokens = [];
+            let match;
+            let idx = 0;
+            while ((match = regex.exec(text)) !== null) {
+                const t = match[0];
+                tokens.push({
+                    original: t,
+                    isWord: /^[a-zA-ZÀ-ÿ]+$/.test(t),
+                    id: idx++
+                });
+            }
+            return tokens;
+        }
+
+        function mutateToken(token) {
+            if (!/^[a-zA-ZÀ-ÿ]+$/.test(token)) return token;
+
+            let chars = token.split('');
+            const len = chars.length;
+
+            if (state.mixingStyle === 'invert' || state.mixingStyle === 'all') {
+                for (let i = 0; i < len; i++) {
+                    if (Math.random() < state.severity * 0.3) {
+                        const lowerChar = chars[i].toLowerCase();
+                        if (CONFUSE_CHARS[lowerChar]) {
+                            chars[i] = PRESERVE_CASE(chars[i], CONFUSE_CHARS[lowerChar]);
+                        }
+                    }
+                }
+            }
+
+            if (state.mixingStyle === 'scramble' || state.mixingStyle === 'all') {
+                if (len > 3 && Math.random() < state.severity * 0.6) {
+                    const numSwaps = Math.max(1, Math.floor(len * state.severity * 0.6));
+                    for (let s = 0; s < numSwaps; s++) {
+                        const idx1 = Math.floor(Math.random() * (len - 2)) + 1;
+                        const idx2 = Math.floor(Math.random() * (len - 2)) + 1;
+                        const temp = chars[idx1];
+                        chars[idx1] = chars[idx2];
+                        chars[idx2] = temp;
+                    }
+                }
+            }
+
+            if (state.mixingStyle === 'offset' || state.mixingStyle === 'all') {
+                if (len > 1 && Math.random() < state.severity * 0.5) {
+                    const numSwaps = Math.max(1, Math.floor(len * state.severity * 0.4));
+                    for (let s = 0; s < numSwaps; s++) {
+                        const idx = Math.floor(Math.random() * (len - 1));
+                        const temp = chars[idx];
+                        chars[idx] = chars[idx + 1];
+                        chars[idx + 1] = temp;
+                    }
+                }
+            }
+
+            return chars.join('');
+        }
+
+        function renderPresets() {
+            els.presetList.innerHTML = PRESET_TEXTS.map(preset => `
+                <button class="preset-btn ${state.text === preset.content ? 'active' : ''}" data-id="${preset.id}">
+                    <div class="preset-title">${preset.title}</div>
+                    <div class="preset-preview">${preset.content}</div>
+                </button>
+            `).join('');
+
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    const preset = PRESET_TEXTS.find(p => p.id === id);
+                    if (preset) {
+                        updateText(preset.content);
+                        switchTab('simulation');
+                    }
+                });
+            });
+        }
+
+        function renderOutput() {
+            if (state.text.trim() === '') {
+                els.emptyState.style.display = 'flex';
+                els.dyslexicOutput.style.display = 'none';
+                return;
+            }
+
+            els.emptyState.style.display = 'none';
+            els.dyslexicOutput.style.display = 'block';
+
+            if (els.dyslexicOutput.children.length !== state.baseTokens.length) {
+                els.dyslexicOutput.innerHTML = state.baseTokens.map(t => `<span id="tok-${t.id}">${t.original}</span>`).join('');
+            }
+
+            state.baseTokens.forEach((t, i) => {
+                const span = document.getElementById(`tok-${t.id}`);
+                if (!span) return;
+
+                const mutatedText = t.isWord ? mutateToken(t.original) : t.original;
+                if (span.textContent !== mutatedText) {
+                    span.textContent = mutatedText;
+                }
+
+                const isFocused = state.focusMode && i === state.focusedIndex;
+                const isDimmed = state.focusMode && !isFocused && t.isWord;
+
+                if (isFocused) {
+                    span.className = 'focused';
+                } else if (isDimmed) {
+                    span.className = 'dimmed';
+                } else {
+                    span.className = '';
+                }
+            });
+
+            if (state.enableVisualEffect) {
+                els.dyslexicOutput.classList.add('visual-effect');
+                els.dyslexicOutput.style.filter = `blur(${(state.severity * 0.5).toFixed(1)}px)`;
+            } else {
+                els.dyslexicOutput.classList.remove('visual-effect');
+                els.dyslexicOutput.style.filter = 'none';
+            }
+        }
+
+        function updateText(newText) {
+            state.text = newText;
+            els.textInput.value = newText;
+            state.baseTokens = tokenize(newText);
+
+            if (state.focusMode) {
+                let startIdx = 0;
+                while (startIdx < state.baseTokens.length && !state.baseTokens[startIdx].isWord) {
+                    startIdx++;
+                }
+                state.focusedIndex = startIdx < state.baseTokens.length ? startIdx : -1;
+            }
+
+            renderPresets();
+            if (state.activeTab === 'simulation') {
+                renderOutput();
+            }
+        }
+
+        function startMutationInterval() {
+            clearInterval(mutationInterval);
+            if (state.speed === 0 || state.severity === 0 || state.activeTab !== 'simulation') return;
+
+            const intervalTime = 2000 / Math.max(0.1, state.speed);
+            mutationInterval = setInterval(() => {
+                renderOutput();
+            }, intervalTime);
+        }
+
+        function startFocusInterval() {
+            clearInterval(focusInterval);
+            if (!state.focusMode || state.activeTab !== 'simulation') return;
+
+            focusInterval = setInterval(() => {
+                state.focusedIndex++;
+                while (state.focusedIndex < state.baseTokens.length && !state.baseTokens[state.focusedIndex].isWord) {
+                    state.focusedIndex++;
+                }
+                if (state.focusedIndex >= state.baseTokens.length) {
+                    let first = 0;
+                    while(first < state.baseTokens.length && !state.baseTokens[first].isWord) first++;
+                    state.focusedIndex = first < state.baseTokens.length ? first : -1;
+                }
+                renderOutput();
+            }, state.focusSpeedMs);
+        }
+
+        function switchTab(tab) {
+            state.activeTab = tab;
+
+            els.tabBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+
+            if (tab === 'simulation') {
+                els.viewportTitle.textContent = 'Visualisation en temps réel';
+                els.viewportSubtitle.textContent = 'Observez les effets de la dyslexie';
+                els.viewEdit.style.display = 'none';
+                els.viewSimulation.style.display = 'flex';
+
+                updateText(els.textInput.value);
+
+                startMutationInterval();
+                startFocusInterval();
+            } else {
+                els.viewportTitle.textContent = 'Éditeur de texte libre';
+                els.viewportSubtitle.textContent = 'Modifiez le texte à simuler';
+                els.viewEdit.style.display = 'flex';
+                els.viewSimulation.style.display = 'none';
+
+                clearInterval(mutationInterval);
+                clearInterval(focusInterval);
+            }
+        }
+
+        els.inputSeverity.addEventListener('input', (e) => {
+            state.severity = parseFloat(e.target.value);
+            els.valSeverity.textContent = Math.round(state.severity * 100) + '%';
+            if (state.activeTab === 'simulation') renderOutput();
+        });
+
+        els.inputSpeed.addEventListener('input', (e) => {
+            state.speed = parseFloat(e.target.value);
+            els.valSpeed.textContent = state.speed;
+            startMutationInterval();
+        });
+
+        els.mixingBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                els.mixingBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                state.mixingStyle = e.target.dataset.style;
+                if (state.activeTab === 'simulation') renderOutput();
+            });
+        });
+
+        els.inputFocusMode.addEventListener('change', (e) => {
+            state.focusMode = e.target.checked;
+            els.focusSpeedContainer.style.display = state.focusMode ? 'block' : 'none';
+
+            if (state.focusMode) {
+                let startIdx = 0;
+                while (startIdx < state.baseTokens.length && !state.baseTokens[startIdx].isWord) {
+                    startIdx++;
+                }
+                state.focusedIndex = startIdx < state.baseTokens.length ? startIdx : -1;
+                startFocusInterval();
+            } else {
+                state.focusedIndex = -1;
+                clearInterval(focusInterval);
+            }
+            if (state.activeTab === 'simulation') renderOutput();
+        });
+
+        els.inputFocusSpeed.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            state.focusSpeedMs = 1200 - val;
+            els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
+            startFocusInterval();
+        });
+
+        els.inputVisualEffect.addEventListener('change', (e) => {
+            state.enableVisualEffect = e.target.checked;
+            if (state.activeTab === 'simulation') renderOutput();
+        });
+
+        els.tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
+        });
+
+        els.btnStartSim.addEventListener('click', () => switchTab('simulation'));
+        els.btnEmptyEdit.addEventListener('click', () => switchTab('edit'));
+
+        els.textInput.addEventListener('input', (e) => {
+             state.text = e.target.value;
+        });
+
+        els.btnShare.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                const originalHtml = els.btnShare.innerHTML;
+                els.btnShare.innerHTML = '<i data-fa="check"></i> <span class="hidden-mobile">Lien copié !</span>';
+                els.btnShare.classList.add('success');
+                setTimeout(() => {
+                    els.btnShare.innerHTML = originalHtml;
+                    els.btnShare.classList.remove('success');
+                    window.fa?.createIcons?.(els.btnShare);
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        });
+
+        function init() {
+            window.fa?.createIcons?.(document.body);
+            updateText(PRESET_TEXTS[0].content);
+            els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
+            switchTab('simulation');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
