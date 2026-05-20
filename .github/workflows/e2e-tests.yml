@@ -1,6 +1,8 @@
 name: E2E Tests
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -32,8 +34,13 @@ jobs:
             automate:
               - 'webapps/simulateur_automate.html'
               - 'assets/img/mats/**'
-            binaire_codage:
+            webapps_binaire:
               - 'webapps/binaire_codage.html'
+              - 'webapps/binaire_message.html'
+              - 'webapps/binaire_studio.html'
+            webapps_logic:
+              - 'webapps/bit_de_parite.html'
+              - 'webapps/routage_reseau.html'
             alpha_webapps:
               - 'alpha/webapps/**'
 
@@ -103,11 +110,11 @@ jobs:
       - name: Run tests
         run: python -m pytest meta/tests/e2e/test_automate.py -v
 
-  # ── Binaire Codage ─────────────────────────────────────────────────────────
-  test-binaire-codage:
-    name: "Binaire Codage"
+  # ── Webapps Binaire ────────────────────────────────────────────────────────
+  test-webapps-binaire:
+    name: "Webapps Binaire"
     needs: changes
-    if: needs.changes.outputs.binaire_codage == 'true'
+    if: needs.changes.outputs.webapps_binaire == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -123,7 +130,29 @@ jobs:
       - name: Wait for server
         run: sleep 2
       - name: Run tests
-        run: python -m pytest meta/tests/e2e/test_binaire_codage.py -v
+        run: python -m pytest meta/tests/e2e/test_binaire_codage.py meta/tests/e2e/test_binaire_message.py meta/tests/e2e/test_binaire_studio.py -v
+
+  # ── Webapps Logic ──────────────────────────────────────────────────────────
+  test-webapps-logic:
+    name: "Webapps Logic"
+    needs: changes
+    if: needs.changes.outputs.webapps_logic == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright playwright
+          playwright install chromium
+      - name: Start HTTP server
+        run: python -m http.server 8000 &
+      - name: Wait for server
+        run: sleep 2
+      - name: Run tests
+        run: python -m pytest meta/tests/e2e/test_bit_de_parite.py meta/tests/e2e/test_routage_reseau.py -v
 
   # ── Alpha Webapps (pixels_binaires, pixel_studio_rvb, etc.) ───────────────
   test-alpha-webapps:
