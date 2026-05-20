@@ -2175,7 +2175,10 @@ let simState = {
             const needsFullRender = !existingOverlay || existingOverlay.dataset.skin !== activeSkin;
 
             if (needsFullRender) {
-                const svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
+                let svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
+                svg = svg.replace(/id="([^"]+)"/g, `id="$1_${containerId}"`)
+                         .replace(/url\(#([^)]+)\)/g, `url(#$1_${containerId})`)
+                         .replace(/href="#([^"]+)"/g, `href="#$1_${containerId}"`);
                 const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
                 placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
                 document.getElementById(overlayId).dataset.skin = activeSkin;
