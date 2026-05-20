@@ -96,10 +96,24 @@
                 toggleHideGrid.addEventListener('change', (e) => {
                     if (e.target.checked) {
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.add('no-grid-lines'));
-                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('[data-fa]')?.setAttribute('data-fa', 'border-all-slash'); });
+                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (btn) {
+                                btn.querySelector('[data-fa]')?.setAttribute('data-fa', 'border-all');
+                                btn.setAttribute('data-tooltip', 'Afficher le quadrillage');
+                                btn.setAttribute('title', 'Afficher le quadrillage');
+                            }
+                        });
                     } else {
                         document.querySelectorAll('.bot-grid').forEach(grid => grid.classList.remove('no-grid-lines'));
-                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => { document.getElementById(id)?.querySelector('[data-fa]')?.setAttribute('data-fa', 'border-all'); });
+                        ['btn-explore-hide-grid', 'btn-sim-hide-grid', 'btn-chal-hide-grid', 'btn-draw-hide-grid', 'btn-read-hide-grid'].forEach(id => {
+                            const btn = document.getElementById(id);
+                            if (btn) {
+                                btn.querySelector('[data-fa]')?.setAttribute('data-fa', 'border-all-slash');
+                                btn.setAttribute('data-tooltip', 'Masquer le quadrillage');
+                                btn.setAttribute('title', 'Masquer le quadrillage');
+                            }
+                        });
                     }
                     window.fa?.createIcons?.();
                 });
