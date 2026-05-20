@@ -2,6 +2,7 @@
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const DIRECTORIES_TO_SCAN = ['webapps', 'assets', 'alpha'];
 const ROOT_FILES = [
@@ -64,10 +65,17 @@ function generateManifest() {
 
     swContent = swContent.replace(assetRegex, assetString);
 
-    // Dynamic cache-busting timestamp version (e.g., ednum-20260520-1520)
-    const now = new Date();
-    const pad = num => String(num).padStart(2, '0');
-    const version = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+    // Dynamic cache-busting based on file content hash
+    const hash = crypto.createHash('md5');
+    for (const file of finalAssets) {
+        if (file === './') continue; // Skip directory reference
+        const filePath = path.join(__dirname, '..', '..', file);
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            hash.update(fs.readFileSync(filePath));
+        }
+    }
+    const version = hash.digest('hex').substring(0, 8);
+
     const cacheRegex = /const CACHE_NAME = 'ednum-[^']*'/;
 
     if (cacheRegex.test(swContent)) {
