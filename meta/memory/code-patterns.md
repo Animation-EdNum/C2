@@ -1,92 +1,48 @@
 # Code Patterns & UI/UX Consistency
 
 ## 1. Global App Structure (HTML)
-- **Standalone Pages:** For standalone HTML pages (like `index.html` and `merci.html`), the universal CSS reset (`* { margin: 0; padding: 0; box-sizing: border-box; }`) should be defined inline within the page's `<style>` block rather than centralized.
-- **Teacher Webapps:** Teacher tools must use a consistent structural layout: an `.app-shell` holding a `<header>` and `<main>`. Inside the main area, use an `.app-main` container typically split into a left `.config-panel` (`<aside>` for settings) and a right `.results-panel` (or `.main-content` for the output/simulation).
-- **AGPL-3.0 License:** New or modified source files (.html, .css, .js) should include a standard AGPL-3.0 copyright header attributing 'Animation-EdNum (HEP-VS)', excluding vendor files or `node_modules`.
-All web applications must follow this strict semantic structure:
-- **Head:** Open Graph tags (`og:title`, etc.) and centralized favicon (`favicon.svg`).
-- **Body:** Immediately followed by an accessibility link `<a href="#main-content" class="skip-link">Aller au contenu principal</a>`. The `.skip-link` styles are globally maintained in `assets/css/shared.css`.
-- **Header (`<header class="app-header">`):** Contains the title, the header icon (clickable back to `../index.html`), and action buttons (Scores, Theme, Audio, Settings) often grouped into a wide, accessible dropdown menu. Action buttons use inline SVGs extracted from `fa-subset.js`.
-- **Main (`<main id="main-content">`):** Encapsulates the primary content (grids, simulator) up to the site footer. It must have `id="main-content"` for the skip-link. When aligning to layout conventions, ensure the main content wrapper (like `.app-content`) is centered using `margin: 0 auto;`.
-- **Footer (`<footer class="no-print">`):** See `project-context.md` for the exact mandatory text.
-- **Confetti:** A `<canvas id="confetti-canvas"></canvas>` for animations.
+- **Standalone Pages:** Use inline CSS resets (`* { margin: 0; ... }`) in `<style>` blocks.
+- **Teacher Webapps:** Use `.app-shell` > `<header>` and `<main>`. The `.app-main` contains `.config-panel` (`<aside>`) and `.results-panel`.
+- **Copyright Header:** All source files (`.html`, `.css`, `.js`) MUST include the AGPL-3.0 header for 'Animation-EdNum (HEP-VS)'.
+- **Semantic Structure:**
+  - `<a href="#main-content" class="skip-link">`: Mandatory first body element.
+  - `<header class="app-header">`: Contains title, back icon, action buttons (inline SVGs from `fa-subset.js`).
+  - `<main id="main-content">`: Main content wrapper, center with `margin: 0 auto;`.
+  - `<footer class="no-print">`: Mandatory legal text.
+  - `<canvas id="confetti-canvas">`: Mandatory for celebrations.
 
-## 2. CSS & Glassmorphism Design System
-- **Centralization:** All global styles, variables (`--text-main`, `--card-bg`), and shared classes (`.btn`, `.tab-btn`, `.chal-instruction`, `.instructions`) must reside STRICTLY in `assets/css/shared.css`. **No local styles in HTML files** (except for single-use pages like `index.html`) and no hardcoded colors (use variables). DO NOT blindly extract generic app-specific `<style>` blocks if they pollute the global namespace.
-- **Glassmorphism:** Cards (`.card`) use semi-transparent backgrounds (`var(--glass-bg)`), a `backdrop-filter: blur(12px) saturate(180%)`, and borders using `--glass-border`. Global UI components use `--card-border` (not `--border-color`).
-- **Border Radius & Buttons:** Standardized via `--radius-sm` (6px, `.btn-small`), `--radius-md` (8px, primary `.btn`), `--radius-lg` (12px, `.tab-btn`, dropdowns), `--radius-2xl` (20px, `.container`). Specific button variants (e.g., `.btn-primary`) must also include the base `.btn` class (`class="btn btn-primary"`). The global utility class `.btn-large` is available in `assets/css/shared.css` to standardize the styling of larger buttons alongside `.btn` and `.btn-small`. To ensure proper vertical alignment and spacing of text alongside icons within buttons (like `.diff-btn`), use `display: inline-flex; align-items: center; justify-content: center; gap: 6px;` instead of relying on default inline text rendering and hardcoded HTML spaces. Icon-only buttons should typically use the `.icon-action-btn` CSS class.
-- **Tooltips:** Instead of using the native HTML `title` attribute for custom icon buttons (which causes a delay and browser-specific styling), use the custom `data-tooltip="..."` attribute. This triggers a custom, animated CSS tooltip defined in the stylesheet.
-- **Badges:** When styling UI tag badges (e.g., the `.tag` class), apply `white-space: nowrap;` to ensure the text content inside the badge never wraps onto multiple lines.
-- **Unlinked Links:** To visually disable header or navigation links (e.g., via URL parameters like `noHome`), remove functional attributes (`href`, `title`, `aria-label`) and apply the `.unlinked` utility class. The class strictly uses `pointer-events: none` and `cursor: inherit` without altering original opacity or color.
-- **Layout:** For wide-screen responsive design, use a `.desktop-layout` structure that includes a restricted-width `.desktop-layout-side` panel. UI elements inside this side panel (like `.card-footer` components) should be styled to stack vertically to prevent horizontal squeezing. When designing directional control pads (D-pads), use CSS Grid with a 3x3 `grid-template-areas` definition (e.g., `'. up .', 'left action right', '. down .'`).
-- **Animations:** When animating grid overlays dynamically positioned via inline `transform: translate()` (e.g., in the Automate simulator), apply CSS `transform` animations to an inner wrapper element (like `.target-inner` configured with `display: flex`) rather than the parent overlay container. Implement continuous animations using recursive `requestAnimationFrame` calls instead of `setInterval` to optimize rendering performance.
-- **Responsive & Layout:** Avoid fixed pixel dimensions. Use `flex-wrap`, `min-width: 0`, and `width: clamp(...)`. For responsive tables, hide dynamic columns with `display: none !important` and use `white-space: nowrap` on `<th>`. To prevent horizontal overflow on mobile, limit card widths with `minmax(min(100%, 320px), 1fr)`. When forcing multiple interactive elements (like 8-bit toggles) onto a single horizontal line (`flex-wrap: nowrap`), ensure responsiveness and prevent mobile overflow by using CSS `clamp()` for dynamic dimensions (e.g., `width`, `height`, `font-size`, `gap`) alongside appropriate flex-shrink rules (`flex: 0 1 [basis]`).
-- **Dark Mode:** Managed natively via a `data-theme` attribute on `<html>`. UI components (buttons) must maintain high contrast in light/dark modes on hover (use `filter: brightness()` or semi-transparency; avoid white text on light backgrounds).
-- **SVG Styling:** To ensure correct rendering in Safari, always include explicit units (e.g., `px`) for presentation attributes like `r` in CSS (e.g., `r: 14px;`). To prevent FontAwesome SVGs (`.fa-icon`) from being cropped, apply `overflow: visible;` in their CSS. Note that FontAwesome dynamically replaces `<i>` tags with `<svg>` elements; to adjust their sizes inside buttons, apply explicit `width` and `height` CSS properties to the `svg` element instead of relying on `font-size`. To stack icons, apply inline styling (`display: inline-flex`, `position: relative` for the container, and `position: absolute` for the inner icon) rather than standard FA stack classes. To optimize UI performance, use a single `<defs>` block to define reusable SVG elements and reference them via `<use href="#id">`.
-- **FCP Optimization:** To optimize First Contentful Paint, do not bundle CSS into a single file. HTML files must include direct, parallel `<link>` tags for `tokens.css`, `base.css`, `components.css`, and `utilities.css` (in that exact cascade order).
-- **Semantic Colors:** When applying semantic colors (success, warning, error) dynamically in JS or SVG styles, utilize the standard CSS variables defined locally in the document (e.g., `var(--success)`, `var(--warn)`, `var(--error)`) rather than hardcoding hex values.
-- **CSS Specificity:** To remove or avoid `!important` declarations safely, override styles by naturally increasing selector specificity (e.g., prefixing selectors with `html body `) rather than blindly deleting `!important` flags, which can break utility classes and accessibility features.
-- **SVG Transform Scaling:** When animating SVG elements using CSS `transform: scale()`, ensure elements scale towards their own center by explicitly adding `transform-box: fill-box; transform-origin: center;` to their CSS class (the default SVG transform-origin is `0 0`).
+## 2. CSS & Design System (Glassmorphism)
+- **Centralization:** NO local styles in HTML files. All variables (`--text-main`) and utility classes (`.btn`) reside in `assets/css/shared.css`.
+- **Glassmorphism:** Use `var(--glass-bg)` with `backdrop-filter: blur(12px) saturate(180%)`. Border is `--glass-border`.
+- **Border Radii:** `--radius-sm` (6px), `--radius-md` (8px), `--radius-lg` (12px), `--radius-2xl` (20px).
+- **Tooltips:** NEVER use native `title` attributes on buttons. Use `data-tooltip="..."` for CSS-animated tooltips.
+- **Dark Mode:** Applied via `data-theme="dark"` on `<html>`. Ensure high contrast on hover states.
+- **SVG Styling:** Always add `px` to SVG units in CSS (e.g., `r: 14px;`). Apply `overflow: visible` to prevent `.fa-icon` cropping. Scale SVGs via `width/height`, NOT `font-size`. Add `transform-box: fill-box; transform-origin: center;` for proper CSS scaling.
+- **CSS Specificity:** Do NOT use `!important` to override. Increase selector specificity (e.g., `html body .class`).
+- **Animations:** Use CSS `transform` on `.target-inner` wrappers, not the parent overlay. Use `requestAnimationFrame` for continuous JS animations, not `setInterval`.
 
 ## 3. Navigation & UI Components
-- **Primary Navigation:** EXCLUSIVELY use top tabs (`.tabs` > `.tab-btn`) to navigate between exercises. **NEVER use bottom tab bars or `.nav-bar`**. Inactive tabs should typically have a white background (`#ffffff`) in light mode. Tab swiping (`assets/js/swipe.js`) must be completely omitted in drawing webapps.
-- **Exercise Cards:** Exercise cards (`.exercise-card`) across all webapps must standardly use a `.card-footer` element at the bottom to house the score bar (`.score-bar`) and a statistics button. The statistics button must strictly be an icon-only button (using `.icon-action-btn`, e.g., `<i data-fa="dt-chart-pie"></i>`) triggering `ScoreManager.showModal()` directly via an inline `onclick` handler. Do not use verbose text buttons.
-- **Share Modal:** The Share Modal UI is structured using thematic 'Cards' and uses modern Toggle Switches (with `.share-toggle` and `.share-toggle-slider` classes) alongside descriptive micro-copy instead of standard checkboxes. It features a live 'Test Link' button.
-- **Accessibility (A11y) & Interactions:**
-  - Touch targets of at least 44x44px.
-  - Keyboard management (`tabindex="0"`, `onkeydown="Enter/Space"`). Exact ARIA roles for complex grids. Global focus rings via `:focus-visible`. Do not implement global tablist navigation using `ArrowLeft`/`ArrowRight` if the app relies on arrow keys for core gameplay (like `simulateur_automate.html`).
-  - "Juicy" micro-interactions using spring animations (`var(--spring-easing)`).
-- **Instructions:** Long instructions use `<details class="instructions">` (globally styled). Short directives (one sentence) use `.chal-instruction` (e.g., `font-weight: 600; font-size: 1.1em`).
-- **Modals & Drawers:** Styled as side-panels, no floating windows or "bottom sheets". Must support gesture closing (swipe) and the Escape key. When creating custom modal popups or alerts, maintain UI consistency by using the `.modal-overlay`, `.modal-content`, `.modal-prompt`, and `.modal-prompt-actions` CSS classes from `shared.css`. Error toasts (or toasts using type 'error') have a red background color; when inserting custom content into them, avoid using red elements to maintain contrast and legibility, relying on white (`#fff`) or high-contrast colors instead.
-- **FontAwesome Rules:** Use `data-fa="<name>"` (solid) and `data-fa="dt-<name>"` (duotone). Dice icons must use text suffixes (e.g., `dice-one`). Run `FA_SUBSET_DIR=/path/to/fontawesome-subset node meta/scripts/generate_fa_subset.js` after adding icons. The `FA_SUBSET_DIR` must point to the cloned private `fontawesome-subset` repository (requires a GitHub Personal Access Token to clone). Dynamically injected SVGs must be present in the HTML (e.g., hidden `<i>`) before generating the subset.
-  - **Bulk Kit Update:** The official GraphQL API (`https://api.fontawesome.com/graphql`) blocks cross-origin credentialed requests due to CORS wildcard policy on credentials. To programmatically bulk-update a kit, extract the active Bearer token by intercepting a manual `PUT` request to `/api/clouds/kits/<KIT_TOKEN>` in the browser DevTools, then inject the new subset payload into that `PUT` request body and run the `fetch` in the browser console.
-- **UI Toggle Buttons:** UI toggle buttons (theme, grid visibility, speed, sound, commands) must follow an action-oriented paradigm: the icon and tooltip text must reflect the target action that will occur upon clicking, not the system's current state.
-- **Custom FontAwesome Icons:** When creating/modifying custom injected FA icons (e.g., `border-all-slash`), ensure the custom icon uses the exact same `viewBox` width and height dimensions as the original icon (e.g., 448x512) and appends modifying path geometry to the original path. Do not manually modify the generated data inside `assets/js/fa-subset.js` to fix appearance issues; instead, correct their display via standard CSS overrides (e.g., targeting `.fa-secondary` opacity and `transform: scale()`).
-- **Tooltips:** Tooltips defined by the `data-tooltip` attribute in the Automate simulator are scoped to the toolbar via `.grid-toolbar [data-tooltip]` to prevent global appearance. Their pseudo-elements use a high z-index (10000) to render above overlays.
+- **Primary Navigation:** Exclusively use top tabs (`.tabs` > `.tab-btn`). NEVER use bottom tab bars (`.nav-bar` is deprecated).
+- **Cards:** `.exercise-card` must use a `.card-footer` with a `.score-bar` and an icon-only stats button (`.icon-action-btn`).
+- **Modals/Drawers:** Styled as side-panels. Must support swipe-to-close and Escape key.
+- **Icons (FontAwesome 7 Pro):** `data-fa="<name>"` (solid), `data-fa="dt-<name>"` (duotone). Run `generate_fa_subset.js` after adding.
+- **Accessibility:** Minimum 44x44px touch targets. Maintain `:focus-visible` rings. Add `tabindex="0"`.
 
 ## 4. JS & State Management
-- **Modularity:** When modularizing vanilla JS, trace dependencies and ensure foundational state is in the base script. Order `<script>` tags by dependency, and defer UI/skin setup to a central initialization function (e.g., `initApplication()`) instead of synchronous top-level calls.
-- **ScoreManager (`assets/js/scores.js`):** Centralizes adaptive difficulty, streaks, and records, stored in `localStorage`. Statistics (%) must encompass all actions. Do not use deprecated functions.
-- **Celebrations (`assets/js/confetti.js`):** Centralizes victory animations (fireworks, confetti). Always use `window.handleStreakCelebration(currentStreak, isExtreme, score)` instead of manually triggering `triggerFireworks()` to ensure consistent logic for milestones and extreme difficulty rewards.
-- **Toasts (`assets/js/toast.js`):** The `showToast(msg, type = 'success', duration = 3000)` handles display logic. The `msg` parameter safely accepts either a plain string or an `HTMLElement` (for custom formatting like stacked icons). Types map to specific FA7 icons: 'success' ('circle-check'), 'error' ('circle-xmark'), 'warn' ('triangle-exclamation'), 'info' ('circle-info').
-- **DOM Queries & Optimization:** To optimize frequent UI updates in vanilla JavaScript that repeatedly query the DOM inside loops, pre-cache the DOM element references into a global data structure (like `window.domCache`). Avoid 'optimizations' that replace O(1) ID lookups with O(N^2) array searches (like using `Array.from(document.querySelectorAll).find()` inside a loop) as these significantly degrade performance. Batch DOM manipulations should use `document.createDocumentFragment()` to prevent layout thrashing. When reading UI state (such as the selected difficulty) for URL generation or feature logic in multi-tab applications, scope the DOM query to the currently active view (e.g., `document.querySelector('.view.active .diff-btn.active')`) rather than relying on a global query. When updating UI state from URL parameters in multi-tab applications, use `document.querySelectorAll()` to apply the setting to all corresponding elements across all tabs.
-- **Dynamic CSS Classes:** When dynamically managing CSS classes via strings or arrays in Vanilla JS (e.g., building class attributes before assigning them to elements), always ensure class strings are split by whitespace (`/\s+/`) before applying deduplication strategies (like `new Set()`). This prevents compounding strings of redundant classes.
-- **SVG & DOM Injection:** To prevent XSS vulnerabilities, always escape any data retrieved from `localStorage` or other untrusted sources using the internal `_escapeHtml` method before injecting it into the DOM via `innerHTML` or `insertAdjacentHTML`. This applies to all dynamic content in template literals, including numeric values which must be cast (e.g., via `Number()`) and then escaped. Place shared SVG `<defs>` in a hidden global `<svg>` in the `<body>` to avoid ID collisions
-- **Audio (`assets/js/audio.js`):** All applications with audio must start muted (`let isMuted = true;`). Use the Web Audio API (`playSound()`), never static files or `<audio>` tags.
-- **Asynchronous Loops:** When managing loops (`setInterval`, `setTimeout`), track all timer IDs and clear them explicitly during state transitions to prevent auto-advancement. Avoid double-binding event listeners (e.g., mixing `addEventListener` with `.onclick`).
-- **Inline Event Handlers:** When using inline HTML handlers that rely on deferred scripts (e.g., `onclick="window.openShareModal && window.openShareModal()"`), ensure the target function is explicitly bound to the global window object (`window.openShareModal = openShareModal;`).
-- **URL Parameters (`assets/js/url-params.js`):** Global UI configuration (hiding elements, locking difficulty) is managed centrally. Apps can implement `window.getAppShareState()` to return state objects serialized into the Share URL. Check flags dynamically (`new URLSearchParams(window.location.search).get('lockName')`) in event listeners rather than caching statically on load.
-- **Drag & Drop (Mobile & Desktop):** Explicitly track global state (e.g., `isDragged = true`) to prevent conflicts with `requestAnimationFrame` loops. For mobile D&D without HTML5 API, clone the element, use `position: fixed`, and block scrolling via `e.preventDefault()` in `touchmove`.
-- **SVG & DOM Injection:** Do not use `innerHTML` for untrusted data. Use `ScoreManager._escapeHtml()`. Place shared SVG `<defs>` in a hidden global `<svg>` in the `<body>` to avoid ID collisions.
-- **FontAwesome Injection:** When dynamically injecting new FA `<i data-fa="...">` tags into the DOM via JS, use optional chaining `window.fa?.createIcons?.(parentElement)` to trigger conversion to `<svg>` while avoiding errors if the script hasn't fully initialized.
-- **Adaptive Difficulty Calls:** When calling `ScoreManager.addSuccess` or `addMistake` in game modes that do not feature explicit difficulty levels, pass `null` as the difficulty parameter to ensure adaptive difficulty popups are not erroneously triggered.
-- **Dynamic SVG IDs:** In multi-tab apps, when dynamically injecting identical SVG strings containing `<filter>` or `<linearGradient>` into the DOM, append a unique suffix (like the container ID) to all `id="..."`, `url(#...)`, and `href="#..."` strings to prevent referencing invisibility bugs in WebKit/Chromium when referencing an ID inside a `display: none` ancestor.
-- **Loop DOM Lookups:** To optimize N+1 DOM queries when targeting specific grid cells by row/col in loops, execute a single `document.querySelectorAll('.bot-cell')` outside the loop and filter elements by checking their dataset against an O(1) lookup structure (like a `Set` of coordinate strings `${r},${c}`).
+- **ScoreManager (`scores.js`):** Centralizes all adaptive difficulty and scores via `localStorage`. Call `ScoreManager.addSuccess(level)` or `addMistake(level)`. Pass `null` for `level` if difficulty logic is disabled.
+- **Confetti (`confetti.js`):** Use `window.handleStreakCelebration(currentStreak, isExtreme, score)` instead of raw `launchConfetti()`.
+- **Toasts (`toast.js`):** `showToast(msg, type)`. Types: `success`, `error`, `warn`, `info`.
+- **DOM Queries:** Pre-cache DOM elements. Do NOT use `Array.from(document.querySelectorAll).find()` inside loops. Use `DocumentFragment` for batch inserts.
+- **XSS Prevention (Critical):** Always sanitize untrusted input with `ScoreManager._escapeHtml()` before using `innerHTML`.
+- **Audio (`audio.js`):** Use `playSound(id)`. Apps must start muted (`isMuted = true`).
+- **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
 
-## 5. Alpha Apps & App-Specific Quirks (Keywords)
-- **Drawing / Pixels (Pixel Studio, Binaire):** Implement 'swipe-to-paint' with `isDrawing` tracking; `e.preventDefault()` on `touchstart` and `touchmove`; total deactivation/removal of `assets/js/swipe.js` to avoid Swipe vs Drawing conflicts.
-  - In `binaire_studio.html`, the Editor mode ('Éditeur') must remain locked by default until 3 'decode' and 3 'encode' challenges are completed.
+## 5. App-Specific Quirks
+- **Drawing Apps:** Call `e.preventDefault()` on `touchstart/move`. Disable `swipe.js`.
 - **Simulateur Automate:**
-  - Verify routing via `activeTab` for global listeners (keyboard).
-  - "Drawing" validation: requires shape `closed: true` and final position == initial position check.
-  - Square Grid: Dynamically calculate `aspect-ratio` instead of fixed `1/1`.
-  - Skins/Mats: In-place DOM classes updates. Do not use `buildGrid()`. Force `redrawTrail()`. In the Automate simulator engine (`automate-engine.js`), always use the helper function `createSVG(tag)` instead of explicit `document.createElementNS` calls.
-  - 'Read' Mode (Décodage): Hide the target on render! Use `.read-only-cmd` (`pointer-events: none`).
-  - Orientation: The robot's orientation is tracked as an integer index (0, 1, 2, 3) representing Haut, Droite, Bas, Gauche within the `simState` object, not as degrees.
-  - Engine state: The 'Memory' mode overrides standard mat content generation to create randomly shuffled pairs. Mat types that do not rely on explicit content arrays must bypass this logic.
-  - Mat collection: When a robot collects an item from a grid cell, the `.mat-content` DOM element is permanently removed and a `.cell-collected` CSS class is applied. Items only reset when the grid is rebuilt.
-  - Command pad buttons have different IDs depending on the active mode (e.g., `#pad-fwd` and `#pad-go` in 'Simulateur' mode vs. `#draw-pad-fwd` in 'Dessin' mode).
-  - The 'Exploration' tab (`#tab-explore`) is the default active tab on load.
-  - **SVG Thumbnail Performance:** To optimize rendering performance when displaying multiple SVG thumbnails (e.g., in skins modal), computationally heavy `<filter>` tags and attributes must be stripped from SVG strings via regex prior to DOM insertion.
-  - **SVG Gradient Trails:** SVG trails drawn with gradients fail to render initially if their starting path is a single point due to a 0x0 bounding box. Fix this by initializing the path with a tiny line segment (e.g., `l 0.01 0.01`).
-- **Jeu de la Grue:** 1D blind queue logic (no Preview); `.active-column`/`.active-slot` on the DOM to animate execution; Reset `initialCupsState` on failure.
-- **Réseau de Tri:** Parallel animations via `currentStageIndex`. `offsetX` shifts only for guaranteed vertical overlaps. Dynamic `GRID_SPACING_X` calculations on `window.resize`.
-- **Machine à Trier:** Ascending sort required for "Quantité" (dice) and "Taille" modes.
-- **Machine à Chiffrer:** Circular container (`aspect-ratio: 1/1`), % internal heights, `transform-origin: bottom center`.
-- **Routage Réseau:** Extreme mode uses `solarInterval` for real-time breakdowns (`brokenNodes`). Clicking the last added node should trigger an 'undo' action rather than resetting the path.
-
-- **Index Colors Synchronization:** Application cards in `index.html` should use the default blue icon colors (`--fa-primary:#2980b9;--fa-secondary:#3498db`). Customized application theme colors are strictly reserved for the simplified portal `indexC1.html`.
-
-### Naming Conventions
-- **Always use kebab-case for HTML IDs and Classes:** This ensures CSS consistency across the project. For example, use `id="theme-toggle-btn"` instead of `id="themeToggleBtn"`.
+  - Robot orientation is an integer `0-3` (Up, Right, Down, Left).
+  - Validation: Shape `closed: true` and final position == initial position.
+  - Skin config: `MAT_CONFIG` and `SKIN_CONFIG`. Use `createSVG(tag)`.
+  - Clear `<filter>` tags from SVG strings before generating thumbnails to fix lag.
+- **Jeu de la Grue:** 1D blind queue. Reset `initialCupsState` on failure.
+- **Routage Réseau:** Extreme mode breaks nodes dynamically (`brokenNodes`). Undo last node instead of resetting path.
