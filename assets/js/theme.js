@@ -141,7 +141,48 @@ if ('serviceWorker' in navigator) {
             }
         }
 
-        navigator.serviceWorker.register(rootPath + 'sw.js').catch(() => {
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+                refreshing = true;
+                window.location.reload();
+            }
+        });
+
+        navigator.serviceWorker.register(rootPath + 'sw.js').then(registration => {
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                if (!newWorker) return;
+
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // A new update is available
+                        if (typeof showToast === 'function') {
+                            const content = document.createElement('div');
+                            content.style.display = 'flex';
+                            content.style.flexDirection = 'column';
+                            content.style.gap = '10px';
+                            
+                            const text = document.createElement('span');
+                            text.textContent = 'Une mise à jour de la Suite EdNum est disponible.';
+                            
+                            const btn = document.createElement('button');
+                            btn.className = 'btn btn-primary btn-small';
+                            btn.textContent = 'Mettre à jour maintenant';
+                            btn.style.width = 'fit-content';
+                            btn.addEventListener('click', () => {
+                                newWorker.postMessage('skipWaiting');
+                            });
+                            
+                            content.appendChild(text);
+                            content.appendChild(btn);
+                            
+                            showToast(content, 'info', 86400000); // 24 hours
+                        }
+                    }
+                });
+            });
+        }).catch(() => {
             // silent fail
         });
     });
