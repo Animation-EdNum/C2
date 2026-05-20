@@ -20,6 +20,8 @@ function showToast(msg, type = 'success', duration = 3000) {
     if (!container) {
         container = document.createElement('div');
         container.id = 'c2-toast-container';
+        container.setAttribute('aria-live', 'polite');
+        container.setAttribute('role', 'status');
         document.body.appendChild(container);
     }
 

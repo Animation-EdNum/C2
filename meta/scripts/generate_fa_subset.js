@@ -58,13 +58,25 @@ try {
     console.log("💉 Injection de l'icône personnalisée (border-all-slash) et correctif de classes...");
     let content = fs.readFileSync(targetFile, 'utf8');
     const newIcons = `  "border-all-slash": [640, 640, [], "border-all-slash", "M39 39.2C29.7 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L538.8 505.1C542.1 497.4 543.9 488.9 543.9 480L543.9 160C543.9 124.7 515.2 96 479.9 96L160 96C151.1 96 142.6 97.8 134.9 101.1L72.9 39.1C63.5 29.7 48.3 29.7 39 39.1zM288 254.2L193.8 160L288 160L288 254.2zM352 288L352 160L480 160L480 288L352 288zM96 197.8L96 480C96 515.3 124.7 544 160 544L160 544L160 544L442.2 544L378.2 480L352 480L352 453.8L288 389.8L288 480L160 480L160 352L250.2 352L186.2 288L160 288L160 261.8L96 197.8zM480 446.2L385.8 352L480 352L480 446.2L480 446.2z"],\n`;
-    content = content.replace(/,?\n  };\n/, ',\n' + newIcons + '  };\n');
+    const iconDictEndPattern = /,?\n  };\n/;
+    if (!iconDictEndPattern.test(content)) {
+        console.error("❌ Erreur : Impossible de trouver le marqueur de fin du dictionnaire d'icônes ('};\") dans le fichier généré.");
+        console.error("   Le format du fichier source a peut-être changé. Vérifiez le fichier généré par le dépôt privé.");
+        process.exit(1);
+    }
+    content = content.replace(iconDictEndPattern, ',\n' + newIcons + '  };\n');
 
     const functionStartToken = '  function createIcons({ attrs = {}, nameAttr = "data-fa" } = {}) {';
     const startIndex = content.indexOf(functionStartToken);
     
-    if (startIndex !== -1) {
-        const newCreateIconsAndExport = `  function createIcons({ attrs = {}, nameAttr = "data-fa" } = {}) {
+    if (startIndex === -1) {
+        console.error("❌ Erreur : Impossible de trouver la signature de la fonction 'createIcons' dans le fichier généré.");
+        console.error("   Token recherché : " + functionStartToken);
+        console.error("   Le format du fichier source a peut-être changé. Vérifiez le fichier généré par le dépôt privé.");
+        process.exit(1);
+    }
+
+    const newCreateIconsAndExport = `  function createIcons({ attrs = {}, nameAttr = "data-fa" } = {}) {
     // Injecter le CSS duotone une seule fois
     if (typeof document !== "undefined" && !document.getElementById("fa-duotone-styles")) {
       var style = document.createElement("style");
@@ -168,7 +180,16 @@ try {
   }
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this);
 `;
-        content = content.substring(0, startIndex) + newCreateIconsAndExport;
+    content = content.substring(0, startIndex) + newCreateIconsAndExport;
+
+    // Vérification finale : s'assurer que le fichier généré contient les marqueurs attendus
+    if (!content.includes('border-all-slash')) {
+        console.error("❌ Erreur : L'icône personnalisée 'border-all-slash' n'a pas été injectée correctement.");
+        process.exit(1);
+    }
+    if (!content.includes('createIcons')) {
+        console.error("❌ Erreur : La fonction 'createIcons' est absente du fichier final.");
+        process.exit(1);
     }
 
     fs.writeFileSync(targetFile, content);
