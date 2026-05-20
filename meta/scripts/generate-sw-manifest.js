@@ -27,7 +27,40 @@ function getFiles(dir, files = []) {
     return files;
 }
 
+function compileCSS() {
+    const cssDir = path.join(__dirname, '..', '..', 'assets', 'css');
+    const filesToBundle = ['tokens.css', 'base.css', 'components.css', 'utilities.css'];
+
+    let bundledContent = `/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+/* ==========================================================================
+   shared.css — Fichier CSS groupé généré automatiquement.
+   Ne pas modifier directement. Modifiez les fichiers sources séparés :
+   - tokens.css
+   - base.css
+   - components.css
+   - utilities.css
+   ========================================================================== */\n\n`;
+
+    for (const file of filesToBundle) {
+        const filePath = path.join(cssDir, file);
+        if (fs.existsSync(filePath)) {
+            let content = fs.readFileSync(filePath, 'utf8');
+            // Remove SPDX headers / license comments from nested files to avoid duplication
+            content = content.replace(/\/\*[\s\S]*?SPDX-License-Identifier[\s\S]*?\*\/\r?\n?/, '');
+            bundledContent += `/* --- Début de ${file} --- */\n` + content.trim() + '\n\n';
+        } else {
+            console.warn(`Warning: CSS file to bundle not found: ${file}`);
+        }
+    }
+
+    const outputPath = path.join(cssDir, 'shared.css');
+    fs.writeFileSync(outputPath, bundledContent, 'utf8');
+    console.log('Successfully bundled shared.css.');
+}
+
 function generateManifest() {
+    compileCSS();
     let allFiles = [...ROOT_FILES];
 
     for (const dir of DIRECTORIES_TO_SCAN) {
@@ -63,8 +96,22 @@ function generateManifest() {
 
     swContent = swContent.replace(assetRegex, assetString);
 
+    // Dynamic cache-busting timestamp version (e.g., ednum-20260520-1520)
+    const now = new Date();
+    const pad = num => String(num).padStart(2, '0');
+    const version = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}`;
+    const cacheRegex = /const CACHE_NAME = 'ednum-[^']*'/;
+
+    if (cacheRegex.test(swContent)) {
+        swContent = swContent.replace(cacheRegex, `const CACHE_NAME = 'ednum-${version}'`);
+    } else {
+        // Fallback to match any initial CACHE_NAME definition
+        const fallbackRegex = /const CACHE_NAME = '[^']*'/;
+        swContent = swContent.replace(fallbackRegex, `const CACHE_NAME = 'ednum-${version}'`);
+    }
+
     fs.writeFileSync(swPath, swContent, 'utf8');
-    console.log(`Successfully updated sw.js with ${finalAssets.length} assets.`);
+    console.log(`Successfully updated sw.js with cache version ednum-${version} and ${finalAssets.length} assets.`);
 }
 
 generateManifest();

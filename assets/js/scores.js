@@ -231,13 +231,24 @@ const ScoreManager = {
             <div id="score-details-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
                 <div class="ui-modal-content" id="score-modal-content">
                     <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
-                    <button class="ui-btn-close" onclick="ScoreManager.closeModal()" aria-label="Fermer">✖</button>
+                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="Fermer">✖</button>
                     <div id="score-modal-body"></div>
-                    <button class="btn-reset-scores" onclick="ScoreManager.resetScores()">Réinitialiser les scores</button>
+                    <button class="btn-reset-scores" id="btn-reset-scores-action">Réinitialiser les scores</button>
                 </div>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        // Attacher les gestionnaires d'événements pour la conformité CSP (pas de onclick inline)
+        const closeBtn = document.getElementById('btn-close-score-modal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.closeModal());
+        }
+        const resetBtn = document.getElementById('btn-reset-scores-action');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetScores());
+        }
+
         this.addSwipeToClose();
     },
 
