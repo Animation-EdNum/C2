@@ -63,6 +63,15 @@ const ScoreManager = {
         this.appId = appId;
         this.loadStats();
         this.injectModalHtml();
+
+        if (!this._listenerAdded) {
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[data-action="show-stats"]')) {
+                    this.showModal();
+                }
+            });
+            this._listenerAdded = true;
+        }
     },
 
     loadStats() {

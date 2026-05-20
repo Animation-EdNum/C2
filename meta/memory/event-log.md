@@ -67,6 +67,75 @@
 - **[2026-05-14]** [Testing] Reorganized test infrastructure: moved unit tests to `meta/tests/unit/` and E2E tests to `meta/tests/e2e/`. Updated `package.json` and documentation.
 - **[2026-05-14]** [UX/Refactor] Redesigned Simulateur Automate "Memory" and "Spell" (Épeler) modes. Transformed the `#sim-end-container` into a monospace terminal output screen.
 - **[2026-05-14]** [UI/UX] Replaced native `title` tooltips with custom animated CSS tooltips via `data-tooltip` attribute.
+# Agent Event Log
+*Append-only. Format: [Date] - [Action/Update] - [Reason]*
+
+- **[2026-04-01]** [Core] Initialized repository with AGPL-3.0 license and application organization (#1).
+- **[2026-04-16]** [Tools] Launched core educational tools for binary encoding, routing, and parity (#30).
+- **[2026-04-19]** [PWA] Integrated Progressive Web App (PWA) support for offline reliability (#39).
+- **[2026-04-19]** [Accessibility] Completed deep WCAG AA accessibility audit and implemented initial fixes (#42).
+- **[2026-04-19]** [Accessibility] Enhanced ARIA grid semantics for better screen reader support (#46).
+- **[2026-04-19]** [Design] Implemented Glassmorphism 2.0 and a unified shared confetti engine (#55).
+- **[2026-04-19]** [UX] Performed Tablet-First UI optimizations across all applications (#50).
+- **[2026-04-19]** [UX] Optimized UI for touch devices and fixed visual antipatterns (#56, #51).
+- **[2026-04-20]** [UX] Optimized mobile layouts and fixed positioning issues (#58).
+- **[2026-04-20]** [UX] Standardized audio behavior: muted by default with manual volume toggle (#60).
+- **[2026-04-20]** [Gamification] Introduced initial skin system for Automate simulator (#71).
+- **[2026-04-21]** [Gamification] Enhanced Automate skins (Volcano, Unicorn) and refined mechanics (#72, #75).
+- **[2026-04-21]** [Rewards] Added "LaunchFire" rewards for perfect completions in Routage, Parity, and Binary apps (#79, #81, #82, #83).
+- **[2026-04-22]** [Gamification] Implemented global statistics modal and ScoreManager persistence (#84).
+- **[2026-04-22]** [UX] Unified webapp headers and performed final UI polish (#85).
+- **[2026-04-22]** [System] Initialized memory directory and 3-layer architecture index.
+- **[2026-04-22]** [System] Populated memory domains with project-specific context, decisions, patterns, and preferences.
+- **[2026-04-23]** [Architecture] Centralized audio logic into `js/audio.js` and removed duplicated audio engine implementations across all webapps.
+- **[2026-04-23]** [Code Quality] Standardized Dark Mode selectors to `body.dark`, removed duplicate meta tags, and migrated event handlers to inline `onclick` attributes.
+- **[2026-04-24]** [UX/Pedagogy] Refined Automate simulator: improved pedagogical constraints for challenge modes, overhauled collision feedback, and updated robot skins.
+- **[2026-04-24]** [UX/Design] Enhanced Routage Réseau: updated router icons (SVG), improved UTI visibility with larger orange circles, and implemented automatic verification at goal.
+- **[2026-04-25]** [UX/Security] Improved Automate simulator fullscreen mode and implemented comprehensive global security/XSS mitigations.
+- **2026-04-25**: Updated code-patterns.md rule on absolute dropdown menu alignment, changing mobile preference to `right: 0; left: auto;` to prevent layout overflow.
+- **[2026-04-25]** [UX/Gamification] Refined Automate simulator: introduced custom mat image upload feature.
+- **[2026-04-26]** [UI/UX] Replaced Automate skins modal with a sliding side drawer for better accessibility and mobile experience.
+- **[2026-04-26]** [Gamification] Added new robot skins (Pirate-Bot, F1, Locomotive) and related easter eggs/rewards to Automate simulator.
+- **[2026-04-29]** [System] Updated `JULES.md` to restrict file modification tools to `write_to_file` only, prohibiting `replace_file_content`.
+- **[2026-04-29]** [Bugfix] Fixed grid dimensions for 'Reading time' mat in Automate simulator (forced 4x6 instead of 6x6).
+- **[2026-04-29]** [UI/UX] Added standard footers to alpha webapps and improved overall responsiveness and layout constraints for desktop vs mobile.
+- **[2026-04-30]** [UX/Gamification] Enhanced Simulateur Automate: added toggle to hide entered commands, added end execution content container.
+- **[2026-04-30]** [Testing] Added comprehensive E2E tests for `ScoreManager`.
+- **[2026-04-30]** [UI/UX] Standardized header icons across all web applications and optimized layout for interactive whiteboards (TBIs).
+- **[2026-04-30]** [Security] Fixed XSS vulnerability in `js/scores.js` — added `_escapeHtml()` and sanitized `innerHTML` fallbacks in `renderModalContent`.
+- **[2026-04-30]** [Code Quality] Removed duplicate SW registration in `js/theme.js`, merged duplicate CSS in `css/shared.css`, removed `console.log` statements.
+- **[2026-04-30]** [Infrastructure] Created CI/CD workflow `.github/workflows/e2e-tests.yml` for Playwright tests on PRs.
+- **[2026-04-30]** [Testing] Created 25 E2E tests for Automate simulator in `e2e_tests/test_automate.py`.
+- **[2026-04-30]** [Optimization] Generated Lucide icon subset (`js/lucide-subset.js`) — reduced from 388 Ko to 15 Ko (-96%). Migrated all 15 HTML files and SW cache.
+- **[2026-04-30]** [Documentation] Created `CONTRIBUTING.md` with architecture overview and contribution guidelines. Updated `README.md` with architecture section.
+- **[2026-05-01]** [UI/UX] Standardized on top `.tabs` navigation across all webapps, explicitly deprecating `.nav-bar` and bottom tab bars.
+- **[2026-05-01]** [UI/UX] Refactored `binaire_studio.html` and `pixels_binaires.html` to align tab styling, container width (`margin: 0 auto;`), and button elements (`.btn-small`, border radius) with the project's visual guidelines.
+- **[2026-05-01]** [Layout] Fixed index.html mobile layout issues and applied global safe-area constraints.
+- **[2026-05-01]** [Bugfix] Fixed overlap issues in Automate simulator by modifying `#hideCmdToggleBtn` and `#sim-end-container` clearing buttons to act as normal, relative flex items instead of absolutely positioned components within `.program-strip`.
+- **[2026-05-02]** [UX] Enabled active touch-based drag-and-drop for mobile devices in Machine à Trier alpha webapp.
+- **[2026-05-02]** [System] Transferred accumulated memory items into categorized markdown files in the `memory/` directory to ensure knowledge persistence.
+- **[2026-05-04]** [Maintenance] Relocated full `lucide.min.js` bundle to `meta/ressources/` and updated `scripts/generate_lucide_subset.js` to reflect the new source path. Updated documentation and code comments.
+- **[2026-05-05]** [System] Updated memory files (`user-preferences.md`, `project-context.md`, `code-patterns.md`) with latest gathered learnings including Playwright environment setup, architecture notes, app constraints, and UI/UX patterns.
+- **[2026-05-05]** [Documentation] Added pedagogical value descriptions to README.md for the 6 core student webapps, specifically addressing cognitive benefits of game modes and difficulty scales.
+- **[2026-05-06]** [System & Documentation] Updated all memory files (`project-context.md`, `code-patterns.md`, `decisions.md`, `user-preferences.md`) to incorporate new rules regarding FontAwesome 7 Pro, `assets/` paths, Playwright E2E tests, and rewrew README.md completely to cater to both teachers and developers.
+- **[2026-05-07]** [UX] Refactored `url-params.js` to use the `.unlinked` CSS class for disabling navigation links and added QR code generation support in the share modal.
+- **[2026-05-07]** [Bugfix] Fixed icon mapping in `toast.js` for FontAwesome 7 compatibility.
+- **[2026-05-07]** [UX] Implemented auto-advance logic in `simulateur_automate.html` with correct tab-based trigger handling.
+- **[2026-05-08]** [Maintenance] Performed repository cleanup: deleted banned `server.log` file and created root `.gitignore` to maintain cleanliness.
+- **[2026-05-08]** [UI/UX] Converted the binary calculator panel in `binaire_codage.html` to a full-page modal to ensure it fits perfectly on narrow mobile screens.
+- **[2026-05-09]** [UI/UX] Added a visual inactivity pulse animation to the mode tabs in `machine_a_trier.html` (alpha).
+- **[2026-05-09]** [Feature] Created `indexC1.html`, a simplified portal specifically designed for younger children (4-7 years old, Cycle 1).
+- **[2026-05-09]** [Pedagogy] Added `unlockAllSkins` URL parameter to bypass skin progression.
+- **[2026-05-10]** [Pedagogy] Added `coloredCmds` URL parameter and simulator setting to apply Crane Game colors to commands, aiding non-lateralized children in the Automate simulator.
+- **[2026-05-10]** [PWA] Introduced `scripts/generate-sw-manifest.js` to automatically generate the Service Worker cache list.
+- **[2026-05-10]** [Documentation] Updated CONTRIBUTING.md and README.md to reflect the new automated Service Worker generation and the migration from Lucide to FontAwesome 7 Pro.
+- **[2026-05-11]** [Maintenance] Relocated `generate-sw-manifest.js` from `scripts/` to `meta/scripts/` to align with the project's developer tools organization. Updated all documentation references.
+- **[2026-05-12]** [Distribution] Created `package.json` and `bin/ednum.js` to publish the Suite EdNum as `@ednum/suite-ednum` on npmjs.com. Running `npx @ednum/suite-ednum` serves the full suite locally via a zero-dependency Node.js HTTP server. Excludes `meta/`, `.github/`, and dev-only root files from the published bundle.
+- **[2026-05-13]** [Bugfix] Fixed the viewbox dimensions of the 'botanique' skin in the Automate Simulator.
+- **[2026-05-14]** [System] Unified camelCase identifiers to kebab-case in HTML and JS.
+- **[2026-05-14]** [Testing] Reorganized test infrastructure: moved unit tests to `meta/tests/unit/` and E2E tests to `meta/tests/e2e/`. Updated `package.json` and documentation.
+- **[2026-05-14]** [UX/Refactor] Redesigned Simulateur Automate "Memory" and "Spell" (Épeler) modes. Transformed the `#sim-end-container` into a monospace terminal output screen.
+- **[2026-05-14]** [UI/UX] Replaced native `title` tooltips with custom animated CSS tooltips via `data-tooltip` attribute.
 - **[2026-05-14]** [Code Quality] Centralized victory streaks and extreme difficulty rewards into a single `handleStreakCelebration()` API in `assets/js/confetti.js`.
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html`. Updated favicon, theme colors, and CSS variables to red/white palette.
 - **[2026-05-17]** [Configuration] Programmatically bulk-configured the FontAwesome Pro Kit using a reverse-engineered internal PUT API to bypass GraphQL CORS restrictions.
@@ -76,3 +145,4 @@
 - **[2026-05-20]** [Audit] Complete rewrite of `meta/audits/2026_05_20_comprehensive_audit.md` by Claude Opus 4.6. Deep evidence-based analysis with grep-verified findings: 35+ inline onclick handlers, missing skipWaiting SW notification, playwright in prod dependencies, missing ARIA role="search", missing aria-live on toasts, 4 webapps without E2E tests. Score: 8.6/10.
 - **[2026-05-20]** [Audit Fix] Implemented 3 quick-wins: (1) moved `playwright` from `dependencies` to `devDependencies` in `package.json`; (2) added `aria-live="polite"` + `role="status"` to toast container in `toast.js`; (3) added 3 injection assertions in `generate_fa_subset.js` (icon dict end marker, createIcons signature, final content verification).
 - **[2026-05-20]** [Audit Fix] Implemented PWA `skipWaiting` + user notification. Modified `sw.js` to listen for 'skipWaiting' message. Modified `assets/js/theme.js` to detect `updatefound` and `statechange` -> 'installed', and display a persistent toast notification with a "Mettre à jour maintenant" button that triggers the update and reloads the page.
+- **[2026-05-20]** [Audit Fix] Removed `onclick="ScoreManager.showModal()"` inline handlers from 11 HTML files, replacing them with `data-action="show-stats"`. Added a global event delegation listener in `ScoreManager.init()` (`assets/js/scores.js`) to handle these clicks, improving CSP compliance and code separation.
