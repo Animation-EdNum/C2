@@ -71,3 +71,5 @@
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html`. Updated favicon, theme colors, and CSS variables to red/white palette.
 - **[2026-05-17]** [Configuration] Programmatically bulk-configured the FontAwesome Pro Kit using a reverse-engineered internal PUT API to bypass GraphQL CORS restrictions.
 - **[2026-05-20]** [Bugfix] Mise à jour du script de patching generate_fa_subset.js pour corriger robustement la double virgule (,,) lors de l'injection d'icônes personnalisées dans fa-subset.js.
+- **[2026-05-20]** [Optimization] Optimized CSS in `assets/css/components.css` to eliminate redundant `!important` declarations by increasing selector specificity (e.g., anchoring via `html body`), preserving only accessibility-mode and print-media styles.
+- **[2026-05-20]** [Bugfix] Centered "Masquer le quadrillage" icon in .icon-action-btn by removing the redundant transform: scale(1.42) override on .fa-border-all-slash in assets/css/components.css, aligning both icons at natural proportions.
