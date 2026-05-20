@@ -46,6 +46,7 @@ const ASSETS = [
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
     './webapps/bit_de_parite.html',
+    './webapps/merci.html',
     './webapps/routage_reseau.html',
     './webapps/simulateur_automate.html',
     './webapps/teacher/bareme.html',
