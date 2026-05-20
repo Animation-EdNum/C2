@@ -13,7 +13,7 @@ let simState = {
 
         let exploreState = {
             robotRow: 5, robotCol: 0, robotDir: 0, startRow: 5, startCol: 0, startDir: 0,
-            absoluteStartRow: 5, absoluteStartCol: 0,
+            absoluteStartRow: 5, absoluteStartCol: 0, absoluteStartDir: 0,
             running: false, obstacles: [], failed: false, targetRow: null, targetCol: null, starCount: 0,
             firstTryCount: 0, firstAttempt: true, consecutiveMistakes: 0, history: [], stepsThisRun: 0
         };
@@ -420,6 +420,9 @@ let simState = {
                         exploreState.targetCol = null;
                         exploreState.firstAttempt = true;
                         exploreState.history = [];
+                        exploreState.absoluteStartRow = exploreState.robotRow;
+                        exploreState.absoluteStartCol = exploreState.robotCol;
+                        exploreState.absoluteStartDir = exploreState.robotDir;
                         exploreState.stepsThisRun = 0;
                         placeRandomExploreTarget(true);
                     }, 500);
@@ -723,6 +726,9 @@ let simState = {
             exploreState.firstTryCount = 0;
             exploreState.firstAttempt = true;
             exploreState.history = [];
+            exploreState.absoluteStartRow = exploreState.robotRow;
+            exploreState.absoluteStartCol = exploreState.robotCol;
+            exploreState.absoluteStartDir = exploreState.robotDir;
             exploreState.stepsThisRun = 0;
 
             // Remove mat
@@ -763,6 +769,7 @@ let simState = {
             exploreState.absoluteStartCol = newCol;
             let randomDir = Math.floor(Math.random() * 4);
             exploreState.robotDir = randomDir;
+            exploreState.absoluteStartDir = randomDir;
             exploreState.startDir = randomDir;
             exploreState.failed = false;
             exploreState.history = [];

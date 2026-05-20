@@ -696,6 +696,30 @@ function updateSkinButtons() {
     }
 }
 
+
+function redrawExploreTrail(containerId, state) {
+    if (!state.history || state.history.length === 0) return;
+
+    TrailManager.clear(containerId);
+    TrailManager.captureInitialState(containerId, state.absoluteStartRow, state.absoluteStartCol, state.absoluteStartDir);
+
+    let tempState = {
+        robotRow: state.absoluteStartRow,
+        robotCol: state.absoluteStartCol,
+        robotDir: state.absoluteStartDir,
+        obstacles: state.obstacles
+    };
+
+    for (let i = 0; i < state.history.length; i++) {
+        let cmd = state.history[i];
+        let res = moveRobot(tempState, cmd);
+        if (res.robotRow !== tempState.robotRow || res.robotCol !== tempState.robotCol) {
+            TrailManager.addSegment(containerId, res.robotRow, res.robotCol);
+        }
+        tempState = res;
+    }
+}
+
 function updateSkinTrails() {
     // Redraw trails to match new skin
     if (simState.program.length > 0 || simState.running || simState.failed) {
@@ -704,8 +728,7 @@ function updateSkinTrails() {
         TrailManager.clear('sim-grid');
     }
     if (typeof exploreState !== 'undefined' && exploreState.history && exploreState.history.length > 0) {
-        // Explore doesn't have a program queue, so we just clear or keep the trail depending on state. For now, clear is safer.
-        TrailManager.clear('explore-grid');
+        redrawExploreTrail('explore-grid', exploreState);
     } else {
         TrailManager.clear('explore-grid');
     }
