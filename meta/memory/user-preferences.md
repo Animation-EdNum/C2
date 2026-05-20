@@ -17,7 +17,8 @@
   - **Conciseness:** Responses should be brief, actionable summaries in French using GitHub-style Markdown.
   - **Proactive Execution:** The user prefers proactive execution of tasks without waiting for intermediate validation. The agent is expected to execute commands and modifications directly.
   - **Execution Plans:** When creating an execution plan, ensure verification steps use concrete tool calls (e.g., `read_file` or `run_in_bash_session`) rather than vague summaries. Always include a distinct step to run all relevant tests (such as the E2E suite) immediately before the pre-commit step. To satisfy the 'Exploration' and 'Groundedness' rules during plan reviews, ensure the specific code blocks you intend to modify are explicitly visible in the trace. Since `read_file` outputs may be truncated in the trace (e.g., to 1000 characters), use `grep` or `sed -n '<start>,<end>p' <filepath>` to print the exact target lines into the trace before requesting a review.
-  - **Pre-commit Phrasing:** When creating an execution plan, the description for the pre-commit step must exactly match the required phrasing: 'Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.'
+  - **Pre-commit Phrasing:** The pre-commit plan step description must exactly match this required phrasing: 'Complete pre commit steps to ensure proper testing, verification, review, and reflection are done.'
+  - **Testing in Plans:** Execution plans must explicitly include a step to run all relevant project tests (e.g., `npm run test:unit` and `python -m pytest meta/tests/e2e/`) before the pre-commit step to prevent regressions.
 
 ## Testing Guidelines (Unit & E2E)
 ### Local Test Execution
@@ -52,4 +53,5 @@ Any modification affecting the user-facing UI MUST be visually verified via the 
 
 ## Cleanup & Git
 - Ensure temporary testing artifacts and workspace files created during development are physically deleted and removed from Git staging before final submission.
+- **Workspace Cleanup:** When running ad-hoc testing scripts that require installing external Node modules (e.g., jsdom or Playwright), ensure the workspace is fully cleaned up before committing by removing scratchpad scripts and reverting both `package.json` and `package-lock.json` (e.g., via `git restore package.json package-lock.json`) to uphold the project's strict zero-dependency production principle without destroying the lockfile.
 - Before the final commit, all temporary Python scripts used for Playwright or tests must be completely deleted from the disk and index (`git rm --cached`).

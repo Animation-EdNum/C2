@@ -47,3 +47,9 @@ if __name__ == "__main__":
 ```
 
 This bypasses UI flakiness, sets the hidden skin directly, moves the robot, and generates a clean, targeted screenshot of the grid area.
+
+## Navigating Menus
+For Playwright testing, the settings menu is opened via `#options-menu-btn`, which reveals options like `#btn-open-skins` and `#btn-open-mats`. Modals like the mats drawer (`#mats-drawer`) become visible after clicking these respective buttons. Specific skins in the opened modal can be targeted reliably using their data attribute, e.g., `.skin-list-item[data-skin='unicorn']`.
+
+## Mocking Canvas Context
+In `assets/js/confetti.js`, functions like `launchConfetti()` and `launchFire()` dynamically create their own `<canvas>` elements and append them to the document body rather than relying on a pre-existing canvas. To mock these in Playwright E2E tests, override `HTMLCanvasElement.prototype.getContext` globally via `page.evaluate` before invoking the functions.
