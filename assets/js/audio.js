@@ -76,8 +76,10 @@ function playSound(type) {
 function updateAudioUI() {
     const iconOn = document.getElementById('icon-vol-on');
     const iconOff = document.getElementById('icon-vol-off');
-    if (iconOn) iconOn.style.display = isMuted ? 'none' : 'block';
-    if (iconOff) iconOff.style.display = isMuted ? 'block' : 'none';
+    // Si isMuted est true (le son est coupé), on veut proposer de l'activer (donc icône on)
+    // S'il est false (le son est actif), on veut proposer de le couper (donc icône off)
+    if (iconOn) iconOn.style.display = isMuted ? 'block' : 'none';
+    if (iconOff) iconOff.style.display = isMuted ? 'none' : 'block';
 
     const audioText = document.getElementById('audioToggleText');
     if (audioText) {

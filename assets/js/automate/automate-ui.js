@@ -20,12 +20,14 @@ function toggleCommands() {
     }
 
     if (commandsVisible) {
+        // Commandes visibles => On propose de les masquer => icône barrée (eye-slash)
         if (iconEyeOff) iconEyeOff.style.display = 'block';
         if (iconEye) iconEye.style.display = 'none';
         if (toggleText) toggleText.textContent = 'Masquer commandes';
         if (toggleBtn) toggleBtn.setAttribute('title', 'Masquer les commandes');
         if (simProgram) simProgram.classList.remove('masked');
     } else {
+        // Commandes masquées => On propose de les afficher => icône normale (eye)
         if (iconEyeOff) iconEyeOff.style.display = 'none';
         if (iconEye) iconEye.style.display = 'block';
         if (toggleText) toggleText.textContent = 'Afficher commandes';
@@ -49,38 +51,38 @@ window.setSpeedLevel = function (level) {
 
     if (level === 2) {
         currentSpeed = 400;
-        if (iconSpd1) iconSpd1.style.display = 'none';
-        if (iconSpd2) iconSpd2.style.display = 'block';
-        if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
-        if (simSpeedBtn) {
-            simSpeedBtn.setAttribute('title', 'Vitesse : Rapide');
-            simSpeedBtn.innerHTML = '<i data-fa="rabbit-running"></i>';
-            window.fa?.createIcons?.(simSpeedBtn);
-        }
-        [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
-            if (btn) {
-                btn.setAttribute('title', 'Vitesse : Rapide');
-                btn.innerHTML = '<i data-fa="rabbit-running"></i>';
-                window.fa?.createIcons?.(btn);
-            }
-        });
-    } else {
-        currentSpeed = 900;
+        // Si on est en rapide, on propose de passer en lent, donc icône lent
         if (iconSpd1) iconSpd1.style.display = 'block';
         if (iconSpd2) iconSpd2.style.display = 'none';
         if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Lent';
-        if (simSpeedBtn) {
-            simSpeedBtn.setAttribute('title', 'Vitesse : Lent');
-            simSpeedBtn.innerHTML = '<i data-fa="turtle"></i>';
-            window.fa?.createIcons?.(simSpeedBtn);
-        }
-        [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(btn => {
+
+        const setSpeedBtnIcon = (btn) => {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Lent');
+                btn.setAttribute('data-tooltip', 'Vitesse : Lent');
                 btn.innerHTML = '<i data-fa="turtle"></i>';
                 window.fa?.createIcons?.(btn);
             }
-        });
+        };
+        setSpeedBtnIcon(simSpeedBtn);
+        [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(setSpeedBtnIcon);
+    } else {
+        currentSpeed = 900;
+        // Si on est en lent, on propose de passer en rapide, donc icône rapide
+        if (iconSpd1) iconSpd1.style.display = 'none';
+        if (iconSpd2) iconSpd2.style.display = 'block';
+        if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = 'Rapide';
+
+        const setSpeedBtnIcon = (btn) => {
+            if (btn) {
+                btn.setAttribute('title', 'Vitesse : Rapide');
+                btn.setAttribute('data-tooltip', 'Vitesse : Rapide');
+                btn.innerHTML = '<i data-fa="rabbit-running"></i>';
+                window.fa?.createIcons?.(btn);
+            }
+        };
+        setSpeedBtnIcon(simSpeedBtn);
+        [chalSpeedBtn, drawSpeedBtn, readSpeedBtn].forEach(setSpeedBtnIcon);
     }
 };
 
