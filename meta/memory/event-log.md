@@ -70,3 +70,4 @@
 - **[2026-05-14]** [Code Quality] Centralized victory streaks and extreme difficulty rewards into a single `handleStreakCelebration()` API in `assets/js/confetti.js`.
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html`. Updated favicon, theme colors, and CSS variables to red/white palette.
 - **[2026-05-17]** [Configuration] Programmatically bulk-configured the FontAwesome Pro Kit using a reverse-engineered internal PUT API to bypass GraphQL CORS restrictions.
+- **[2026-05-20]** [System/UI] Relocated merci.html to the root, redesigned it with Outfit/Inter typography and premium glassmorphism, removed the dark mode toggle button in its header, updated all relative footer links across general/simplified portals, student and teacher webapps (stable and alpha), and regenerated the offline cache manifest via scripts.

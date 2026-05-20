@@ -797,13 +797,12 @@
                     <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" onclick="ScoreManager.showModal()"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
                 </div>
             </div>
-
         </main>
     </div>
 
     <footer class="no-print">
         <p>
-            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec <a href="merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec <a href="../merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
             <br>
             <span style="font-size: 0.9em; opacity: 0.85;">
                 <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
@@ -1184,6 +1183,28 @@
             difficulty = level;
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(level === 'easy' ? 'facile' : (level === 'medium' ? 'moyen' : 'difficile'))));
             newEncode();
+        }
+
+        // ========================================== 
+        // SOUMISSION DE SÉRIE
+        // ========================================== 
+        // handleStreakCelebration triggers sounds/confetti based on streak milestones.
+        function handleStreakCelebration(streak, isExtreme, wasNewRecord) {
+            if (streak > 0 && streak % 10 === 0) {
+                playSound('victory');
+                launchConfetti();
+                showToast(`🏆 Incroyable ! Série de ${streak} victoires !`, 'success');
+            } else if (streak > 0 && streak % 5 === 0) {
+                playSound('victory');
+                launchConfetti();
+                showToast(`🔥 Superbe ! Série de ${streak} !`, 'success');
+            } else if (isExtreme) {
+                playSound('victory');
+                launchConfetti();
+                showToast("⚡ Parfait ! Mode difficile sans erreur !", 'success');
+            } else if (wasNewRecord && streak > 1) {
+                showToast("⭐ Nouveau record personnel !", 'success');
+            }
         }
 
         function newEncode() {

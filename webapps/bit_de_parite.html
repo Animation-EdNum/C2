@@ -785,7 +785,7 @@
         <p>
             Webapp conçue par Vivian de l'<a
                 href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                rel="noopener noreferrer">AP EdNum</a> avec <a href="merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+                rel="noopener noreferrer">AP EdNum</a> avec <a href="../merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
             <br>
             <span style="font-size: 0.9em; opacity: 0.85;">
                 <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
@@ -983,6 +983,27 @@
         }
 
         // ==========================================
+        // CELEBRATION
+        // ==========================================
+        function handleStreakCelebration(streak, isExtreme, wasNewRecord) {
+            if (streak > 0 && streak % 10 === 0) {
+                playSound('victory');
+                launchConfetti();
+                showToast(`🏆 Incroyable ! Série de ${streak} victoires !`, 'success');
+            } else if (streak > 0 && streak % 5 === 0) {
+                playSound('victory');
+                launchConfetti();
+                showToast(`🔥 Superbe ! Série de ${streak} !`, 'success');
+            } else if (isExtreme) {
+                playSound('victory');
+                launchConfetti();
+                showToast("⚡ Parfait ! Mode difficile sans erreur !", 'success');
+            } else if (wasNewRecord && streak > 1) {
+                showToast("⭐ Nouveau record personnel !", 'success');
+            }
+        }
+
+        // ==========================================
         // MODE DÉTECTION D'ERREUR
         // ==========================================
         const DET_SIZE = 5;
@@ -1101,6 +1122,9 @@
             }
         }
 
+        // ==========================================
+        // HIGHLIGHTS
+        // ==========================================
         function highlightDetectParityRow(r) {
             const grid = document.getElementById('detect-grid');
             for (let j = 0; j < DET_SIZE; j++)

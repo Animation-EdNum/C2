@@ -8,7 +8,8 @@ const ROOT_FILES = [
     './',
     './index.html',
     './indexC1.html',
-    './manifest.json'
+    './manifest.json',
+    './merci.html'
 ];
 
 function getFiles(dir, files = []) {
