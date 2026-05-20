@@ -28,40 +28,8 @@ function getFiles(dir, files = []) {
     return files;
 }
 
-function compileCSS() {
-    const cssDir = path.join(__dirname, '..', '..', 'assets', 'css');
-    const filesToBundle = ['tokens.css', 'base.css', 'components.css', 'utilities.css'];
-
-    let bundledContent = `/* SPDX-License-Identifier: AGPL-3.0-only
- * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-/* ==========================================================================
-   shared.css — Fichier CSS groupé généré automatiquement.
-   Ne pas modifier directement. Modifiez les fichiers sources séparés :
-   - tokens.css
-   - base.css
-   - components.css
-   - utilities.css
-   ========================================================================== */\n\n`;
-
-    for (const file of filesToBundle) {
-        const filePath = path.join(cssDir, file);
-        if (fs.existsSync(filePath)) {
-            let content = fs.readFileSync(filePath, 'utf8');
-            // Remove SPDX headers / license comments from nested files to avoid duplication
-            content = content.replace(/\/\*[\s\S]*?SPDX-License-Identifier[\s\S]*?\*\/\r?\n?/, '');
-            bundledContent += `/* --- Début de ${file} --- */\n` + content.trim() + '\n\n';
-        } else {
-            console.warn(`Warning: CSS file to bundle not found: ${file}`);
-        }
-    }
-
-    const outputPath = path.join(cssDir, 'shared.css');
-    fs.writeFileSync(outputPath, bundledContent, 'utf8');
-    console.log('Successfully bundled shared.css.');
-}
 
 function generateManifest() {
-    compileCSS();
     let allFiles = [...ROOT_FILES];
 
     for (const dir of DIRECTORIES_TO_SCAN) {

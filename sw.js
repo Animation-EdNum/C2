@@ -16,7 +16,6 @@ const ASSETS = [
     './assets/css/automate.css',
     './assets/css/base.css',
     './assets/css/components.css',
-    './assets/css/shared.css',
     './assets/css/teacher.css',
     './assets/css/tokens.css',
     './assets/css/utilities.css',
