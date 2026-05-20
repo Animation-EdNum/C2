@@ -47,7 +47,7 @@
 - **[2026-05-02]** [System] Transferred accumulated memory items into categorized markdown files in the `memory/` directory to ensure knowledge persistence.
 - **[2026-05-04]** [Maintenance] Relocated full `lucide.min.js` bundle to `meta/ressources/` and updated `scripts/generate_lucide_subset.js` to reflect the new source path. Updated documentation and code comments.
 - **[2026-05-05]** [System] Updated memory files (`user-preferences.md`, `project-context.md`, `code-patterns.md`) with latest gathered learnings including Playwright environment setup, architecture notes, app constraints, and UI/UX patterns.
-- **[2026-05-05]** [Documentation] Added detailed pedagogical value descriptions to README.md for the 6 core student webapps, specifically addressing cognitive benefits of game modes and difficulty scales.
+- **[2026-05-05]** [Documentation] Added pedagogical value descriptions to README.md for the 6 core student webapps, specifically addressing cognitive benefits of game modes and difficulty scales.
 - **[2026-05-06]** [System & Documentation] Updated all memory files (`project-context.md`, `code-patterns.md`, `decisions.md`, `user-preferences.md`) to incorporate new rules regarding FontAwesome 7 Pro, `assets/` paths, Playwright E2E tests, and rewrew README.md completely to cater to both teachers and developers.
 - **[2026-05-07]** [UX] Refactored `url-params.js` to use the `.unlinked` CSS class for disabling navigation links and added QR code generation support in the share modal.
 - **[2026-05-07]** [Bugfix] Fixed icon mapping in `toast.js` for FontAwesome 7 compatibility.
@@ -70,4 +70,4 @@
 - **[2026-05-14]** [Code Quality] Centralized victory streaks and extreme difficulty rewards into a single `handleStreakCelebration()` API in `assets/js/confetti.js`.
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html`. Updated favicon, theme colors, and CSS variables to red/white palette.
 - **[2026-05-17]** [Configuration] Programmatically bulk-configured the FontAwesome Pro Kit using a reverse-engineered internal PUT API to bypass GraphQL CORS restrictions.
-- **[2026-05-20]** [System/UI] Relocated merci.html to the root, redesigned it with Outfit/Inter typography and premium glassmorphism, removed the dark mode toggle button in its header, updated all relative footer links across general/simplified portals, student and teacher webapps (stable and alpha), and regenerated the offline cache manifest via scripts.
+- **[2026-05-20]** [Bugfix] Mise à jour du script de patching generate_fa_subset.js pour corriger robustement la double virgule (,,) lors de l'injection d'icônes personnalisées dans fa-subset.js.
