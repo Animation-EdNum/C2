@@ -8,9 +8,14 @@ def test_binaire_message_encode(page: Page):
     page.goto(BASE_URL)
     
     # Check default difficulty is Medium
-    expect(page.locator("#diff-medium")).to_have_class(re.compile("active"))
+    expect(page.locator("#diff-easy")).to_have_class(re.compile("active"))
     
     # Open the alphabet to see it's there
+    page.locator("#diff-medium").click()
+    page.locator("#encode-check").click()
+    page.wait_for_timeout(2500)
+    page.locator("#encode-check").click()
+    page.wait_for_timeout(500)
     page.locator("#alpha-header").click()
     expect(page.locator("#alpha-grid")).to_be_visible()
     
@@ -26,8 +31,8 @@ def test_binaire_message_encode(page: Page):
     expect(page.locator("#encode-bits-row")).to_be_visible()
     
     # Click random bits and check
-    bits = page.locator("#encode-bits-row .bit-toggle")
-    bits.nth(0).click()
+    bits = page.locator("#encode-bits-row .encode-bit-btn")
+    bits.first.click()
     
     page.locator("#encode-check").click()
     # It might be wrong or right, but we just verify it doesn't crash and the global score/streak are present

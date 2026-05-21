@@ -11,15 +11,15 @@ def test_bit_de_parite_train(page: Page):
     expect(page.locator("#diff-medium")).to_have_class(re.compile("active"))
     expect(page.locator("#train-grid")).to_be_visible()
     
-    pixels = page.locator("#train-grid .pixel")
+    pixels = page.locator("#train-grid .cell")
     # Wait for grid generation
     page.wait_for_timeout(500) 
-    expect(pixels).to_have_count(25)
+    expect(pixels).to_have_count(36)
     
     # Change to easy (4x4 grid -> 16 pixels)
     page.locator("#diff-easy").click()
     page.wait_for_timeout(500)
-    expect(pixels).to_have_count(16)
+    expect(pixels).to_have_count(25)
     
     # Click a pixel
     pixels.nth(15).click()

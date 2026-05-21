@@ -34,7 +34,7 @@ def test_binaire_studio_encode(page: Page):
         inputs.nth(0).fill("0")
         
     # Verify
-    page.locator("#verifyEncodeBtn").click()
+    # Verification happens automatically on input
 
 def test_binaire_studio_editor_locked(page: Page):
     """Test that the editor is initially locked."""
