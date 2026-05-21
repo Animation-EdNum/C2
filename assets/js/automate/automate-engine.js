@@ -11,10 +11,9 @@ function triggerSkinUnlockBubble() {
     if (window.skinUnlockBubbleState.timer) clearTimeout(window.skinUnlockBubbleState.timer);
 
     // Manual DOM update so we don't rely on full re-renders
-    const bubbles = document.querySelectorAll('.skin-speech-bubble');
-    bubbles.forEach(b => {
-        const textDiv = b.querySelector('.skin-speech-bubble-text');
-        if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
+    const textDivs = document.querySelectorAll('.skin-speech-bubble-text');
+    textDivs.forEach(textDiv => {
+        textDiv.textContent = window.skinUnlockBubbleState.text;
     });
 
     window.skinUnlockBubbleState.timer = setTimeout(() => {
@@ -30,10 +29,9 @@ function handleSpeechBubbleClick(e) {
     if (window.skinUnlockBubbleState.timer) clearTimeout(window.skinUnlockBubbleState.timer);
 
     // Manual DOM update so we don't rely on full re-renders
-    const bubbles = document.querySelectorAll('.skin-speech-bubble');
-    bubbles.forEach(b => {
-        const textDiv = b.querySelector('.skin-speech-bubble-text');
-        if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
+    const textDivs = document.querySelectorAll('.skin-speech-bubble-text');
+    textDivs.forEach(textDiv => {
+        textDiv.textContent = window.skinUnlockBubbleState.text;
     });
 
     window.skinUnlockBubbleState.timer = setTimeout(() => {
