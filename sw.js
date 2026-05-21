@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-451b05fb';
+const CACHE_NAME = 'ednum-28ea2c31';
 const ASSETS = [
     './',
     './index.html',
@@ -15,7 +15,12 @@ const ASSETS = [
     './alpha/webapps/teacher/sim_dyslexie.html',
     './assets/css/automate.css',
     './assets/css/base.css',
+    './assets/css/binaire_codage.css',
+    './assets/css/binaire_message.css',
+    './assets/css/binaire_studio.css',
+    './assets/css/bit_de_parite.css',
     './assets/css/components.css',
+    './assets/css/routage_reseau.css',
     './assets/css/teacher.css',
     './assets/css/tokens.css',
     './assets/css/utilities.css',

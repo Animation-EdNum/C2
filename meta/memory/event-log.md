@@ -35,3 +35,4 @@
 - **[2026-05-20]** [Audit] Fixed XSS vulnerability via inline `onclick` handlers. Added `aria-live` to toasts.
 - **[2026-05-20]** [Audit Fix] Implemented PWA `skipWaiting` with user toast notification to force update reloads.
 - **[2026-05-20]** [Testing] Added 4 new E2E test suites and updated `.github/workflows/e2e-tests.yml`.
+- **[2026-05-21]** [Refactor] Extracted inline CSS of 5 stable webapps to dedicated stylesheets in `assets/css/` and updated Service Worker cache manifest.
