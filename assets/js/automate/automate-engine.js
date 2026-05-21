@@ -2228,7 +2228,7 @@ let simState = {
                          .replace(/href="#([^"]+)"/g, `href="#$1_${containerId}"`);
                 let bubbleHtml = '';
                 if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
-                    bubbleHtml = `<div class="skin-speech-bubble" style="transform: rotate(-${deg}deg) translate(-50%, calc(-100% - 40px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div>`;
+                    bubbleHtml = `<div class="skin-speech-bubble" style="transform: rotate(-${deg}deg) translate(-50%, calc(-100% - 80px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div>`;
                 }
                 const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}${bubbleHtml}</div>`;
                 placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
@@ -2250,7 +2250,7 @@ let simState = {
                             bubble.appendChild(textDiv);
                             robotBody.appendChild(bubble);
                         }
-                        bubble.style.transform = `translate(-50%, -100%) rotate(-${deg}deg)`;
+                        bubble.style.transform = `rotate(-${deg}deg) translate(-50%, calc(-100% - 80px))`;
                         const textDiv = bubble.querySelector('.skin-speech-bubble-text');
                         if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
                     } else if (bubble) {
