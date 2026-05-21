@@ -548,7 +548,6 @@ function renderSkinsList() {
         if (skinId === 'volcano') {
             svg = svg.replace(/<g transform="scale\(1\.4\) translate\(-14, -14\)">/, '<g transform="scale(0.6) translate(36, 0)">');
         }
-        let btnHtml = '';
         let lockIcon = '';
 
         if (!isUnlocked) {
