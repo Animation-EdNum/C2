@@ -757,7 +757,7 @@
         }
 
         /* ========== SCORE ========== */
-.score-bar {
+        .score-bar {
             display: flex;
             justify-content: center;
             gap: 24px;
@@ -931,24 +931,24 @@
 
                 <div class="controls-panel">
                     <div class="instructions-group">
-                        <button class="instruction-btn up-color" onclick="addInstruction('up')" aria-label="Haut"><i
+                        <button class="instruction-btn up-color" id="btn-inst-up" aria-label="Haut"><i
                                 data-fa="arrow-up"></i></button>
-                        <button class="instruction-btn down-color" onclick="addInstruction('down')" aria-label="Bas"><i
+                        <button class="instruction-btn down-color" id="btn-inst-down" aria-label="Bas"><i
                                 data-fa="arrow-down"></i></button>
-                        <button class="instruction-btn left-color" onclick="addInstruction('left')" aria-label="Gauche"><i
+                        <button class="instruction-btn left-color" id="btn-inst-left" aria-label="Gauche"><i
                                 data-fa="arrow-left"></i></button>
-                        <button class="instruction-btn right-color" onclick="addInstruction('right')" aria-label="Droite"><i
+                        <button class="instruction-btn right-color" id="btn-inst-right" aria-label="Droite"><i
                                 data-fa="arrow-right"></i></button>
-                        <button class="instruction-btn action-color" onclick="addInstruction('action')"
+                        <button class="instruction-btn action-color" id="btn-inst-action"
                             aria-label="Action"><i data-fa="hand-fist" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i></button>
                     </div>
 
                     <div class="execution-group">
-                        <button class="exec-btn del-btn" onclick="deleteLastInstruction()"><i data-fa="trash-can"></i>
+                        <button class="exec-btn del-btn" id="btn-inst-del"><i data-fa="trash-can"></i>
                             Effacer</button>
-                        <button class="exec-btn clear-btn" onclick="clearProgram()"><i data-fa="trash-can"></i> Tout
+                        <button class="exec-btn clear-btn" id="btn-inst-clear"><i data-fa="trash-can"></i> Tout
                             vider</button>
-                        <button class="exec-btn play-btn" id="play-btn" onclick="executeProgram()"><i
+                        <button class="exec-btn play-btn" id="play-btn"><i
                                 data-fa="play"></i> Exécuter</button>
                     </div>
                 </div>
@@ -1024,6 +1024,16 @@
             document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
             document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
             document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+
+            document.getElementById('btn-inst-up').addEventListener('click', () => addInstruction('up'));
+            document.getElementById('btn-inst-down').addEventListener('click', () => addInstruction('down'));
+            document.getElementById('btn-inst-left').addEventListener('click', () => addInstruction('left'));
+            document.getElementById('btn-inst-right').addEventListener('click', () => addInstruction('right'));
+            document.getElementById('btn-inst-action').addEventListener('click', () => addInstruction('action'));
+
+            document.getElementById('btn-inst-del').addEventListener('click', () => deleteLastInstruction());
+            document.getElementById('btn-inst-clear').addEventListener('click', () => clearProgram());
+            document.getElementById('play-btn').addEventListener('click', () => executeProgram());
 
             window.addEventListener('keydown', (e) => {
                 if (e.repeat || isExecuting) return;
@@ -1226,7 +1236,7 @@
                 stepEl.id = `prog-step-${idx}`;
                 stepEl.style.cursor = 'pointer';
                 stepEl.style.position = 'relative';
-                stepEl.onclick = () => removeSpecificCmd(idx);
+                stepEl.addEventListener('click', () => removeSpecificCmd(idx));
 
                 let icon = '';
                 let isFlipped = false;

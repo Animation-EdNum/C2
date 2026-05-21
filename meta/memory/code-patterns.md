@@ -34,6 +34,7 @@
 - **Toasts (`toast.js`):** `showToast(msg, type)`. Types: `success`, `error`, `warn`, `info`.
 - **DOM Queries:** Pre-cache DOM elements. Do NOT use `Array.from(document.querySelectorAll).find()` inside loops. Use `DocumentFragment` for batch inserts.
 - **XSS Prevention (Critical):** Always sanitize untrusted input with `ScoreManager._escapeHtml()` before using `innerHTML`.
+- **No Inline Events (Critical):** Do NOT use inline event attributes (e.g. `onclick="..."`, `onchange="..."`) in HTML code across all stable and alpha apps. Always bind events programmatically via `.addEventListener('click', ...)` on elements identified with unique `id` attributes or structural selectors.
 - **Audio (`audio.js`):** Use `playSound(id)`. Apps must start muted (`isMuted = true`).
 - **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
 

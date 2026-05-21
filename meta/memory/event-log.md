@@ -36,3 +36,4 @@
 - **[2026-05-20]** [Audit Fix] Implemented PWA `skipWaiting` with user toast notification to force update reloads.
 - **[2026-05-20]** [Testing] Added 4 new E2E test suites and updated `.github/workflows/e2e-tests.yml`.
 - **[2026-05-21]** [Refactor] Extracted inline CSS of 5 stable webapps to dedicated stylesheets in `assets/css/` and updated Service Worker cache manifest.
+- **[2026-05-21]** [Refactor] Migrated all inline `onclick` event handlers of experimental "alpha" web applications (`machine_a_chiffrer.html` and `jeu_de_la_grue.html`) to modern `addEventListener` registrations.
