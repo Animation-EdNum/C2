@@ -2171,6 +2171,136 @@ let simState = {
             if (isNew) document.getElementById(containerId).appendChild(ov);
         }
 
+        function initVolcanoAnimation() {
+            const triggerDragonFire = () => {
+                const scheduleNext = () => {
+                    window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 8000 + 5000);
+                };
+
+                const cvs = document.getElementById('dragon-fire-canvas');
+                if (!cvs) { scheduleNext(); return; }
+
+                let activeOverlay = null;
+                if (typeof activeTab !== 'undefined') {
+                    activeOverlay = document.getElementById(activeTab + '-robot');
+                } else {
+                    const overlays = document.querySelectorAll('.robot-overlay');
+                    for (let i = 0; i < overlays.length; i++) {
+                        const rect = overlays[i].getBoundingClientRect();
+                        if (rect.width > 0 && rect.height > 0) {
+                            activeOverlay = overlays[i];
+                            break;
+                        }
+                    }
+                }
+
+                if (!activeOverlay || !document.contains(activeOverlay)) { scheduleNext(); return; }
+
+                const rect = activeOverlay.getBoundingClientRect();
+                if (rect.width === 0 || rect.height === 0) { scheduleNext(); return; }
+
+                const ctx = cvs.getContext('2d');
+                cvs.width = window.innerWidth;
+                cvs.height = window.innerHeight;
+
+                let startX = rect.left + rect.width / 2;
+                let startY = rect.top + rect.height / 2;
+
+                let parts = [];
+                let frameCount = 0;
+
+                // Calculate angle and origin based on current robot orientation
+                let currentDir = 0;
+                const body = activeOverlay.querySelector('.robot-body');
+                if (body && body.style.transform) {
+                    const match = body.style.transform.match(/rotate\(([-\d.]+)deg\)/);
+                    if (match) {
+                        let deg = parseFloat(match[1]);
+                        let dirIndex = Math.round(deg / 90);
+                        currentDir = ((dirIndex % 4) + 4) % 4;
+                    }
+                }
+
+                let baseAngle = -Math.PI / 2; // Up by default
+                if (currentDir === 0) startY -= 40; // Up
+                if (currentDir === 1) { baseAngle = 0; startX += 40; } // Right
+                if (currentDir === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
+                if (currentDir === 3) { baseAngle = Math.PI; startX -= 40; } // Left
+
+                function createParticle() {
+                    const angle = baseAngle + (Math.random() - 0.5) * (Math.PI / 3);
+                    const speed = Math.random() * 8 + 4;
+                    const cols = ['#fef08a', '#fde047', '#f59e0b', '#ea580c', '#dc2626', '#991b1b', '#292524'];
+
+                    parts.push({
+                        x: startX + (Math.random() - 0.5) * 10,
+                        y: startY + (Math.random() - 0.5) * 10,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        c: cols[Math.floor(Math.random() * cols.length)],
+                        s: Math.random() * 15 + 5,
+                        life: 1.0,
+                        decay: Math.random() * 0.03 + 0.025
+                    });
+                }
+
+                for (let i = 0; i < 27; i++) createParticle();
+
+                function anim() {
+                    if (!document.contains(activeOverlay)) {
+                        ctx.clearRect(0, 0, cvs.width, cvs.height);
+                        scheduleNext();
+                        return;
+                    }
+
+                    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+                    if (frameCount < 20) {
+                        for (let i = 0; i < 3; i++) createParticle();
+                    }
+                    frameCount++;
+
+                    let alive = false;
+
+                    ctx.globalCompositeOperation = 'screen';
+
+                    for (let i = parts.length - 1; i >= 0; i--) {
+                        let p = parts[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.s *= 0.95;
+                        p.life -= p.decay;
+
+                        if (p.life > 0 && p.s > 0.5) {
+                            alive = true;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                            ctx.fillStyle = p.c;
+                            ctx.globalAlpha = p.life;
+                            ctx.fill();
+                        } else {
+                            parts.splice(i, 1);
+                        }
+                    }
+
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.globalAlpha = 1.0;
+
+                    if (alive) {
+                        window.dragonFireAnimFrame = requestAnimationFrame(anim);
+                    } else {
+                        scheduleNext();
+                    }
+                }
+                anim();
+            };
+
+            if (!window.dragonFireActive) {
+                window.dragonFireActive = true;
+                window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 8000 + 5000);
+            }
+        }
+
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
             const deg = dirIndex * 90;
             const normalizedDir = ((dirIndex % 4) + 4) % 4;
@@ -2260,133 +2390,7 @@ let simState = {
 
             if (overlay) {
                 if (activeSkin === 'volcano') {
-                    const triggerDragonFire = () => {
-                        const scheduleNext = () => {
-                            window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 8000 + 5000);
-                        };
-
-                        const cvs = document.getElementById('dragon-fire-canvas');
-                        if (!cvs) { scheduleNext(); return; }
-
-                        let activeOverlay = null;
-                        if (typeof activeTab !== 'undefined') {
-                            activeOverlay = document.getElementById(activeTab + '-robot');
-                        } else {
-                            const overlays = document.querySelectorAll('.robot-overlay');
-                            for (let i = 0; i < overlays.length; i++) {
-                                const rect = overlays[i].getBoundingClientRect();
-                                if (rect.width > 0 && rect.height > 0) {
-                                    activeOverlay = overlays[i];
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!activeOverlay || !document.contains(activeOverlay)) { scheduleNext(); return; }
-
-                        const rect = activeOverlay.getBoundingClientRect();
-                        if (rect.width === 0 || rect.height === 0) { scheduleNext(); return; }
-
-                        const ctx = cvs.getContext('2d');
-                        cvs.width = window.innerWidth;
-                        cvs.height = window.innerHeight;
-
-                        let startX = rect.left + rect.width / 2;
-                        let startY = rect.top + rect.height / 2;
-
-                        let parts = [];
-                        let frameCount = 0;
-
-                        // Calculate angle and origin based on current robot orientation
-                        let currentDir = 0;
-                        const body = activeOverlay.querySelector('.robot-body');
-                        if (body && body.style.transform) {
-                            const match = body.style.transform.match(/rotate\(([-\d.]+)deg\)/);
-                            if (match) {
-                                let deg = parseFloat(match[1]);
-                                let dirIndex = Math.round(deg / 90);
-                                currentDir = ((dirIndex % 4) + 4) % 4;
-                            }
-                        }
-
-                        let baseAngle = -Math.PI / 2; // Up by default
-                        if (currentDir === 0) startY -= 40; // Up
-                        if (currentDir === 1) { baseAngle = 0; startX += 40; } // Right
-                        if (currentDir === 2) { baseAngle = Math.PI / 2; startY += 40; } // Down
-                        if (currentDir === 3) { baseAngle = Math.PI; startX -= 40; } // Left
-
-                        function createParticle() {
-                            const angle = baseAngle + (Math.random() - 0.5) * (Math.PI / 3);
-                            const speed = Math.random() * 8 + 4;
-                            const cols = ['#fef08a', '#fde047', '#f59e0b', '#ea580c', '#dc2626', '#991b1b', '#292524'];
-
-                            parts.push({
-                                x: startX + (Math.random() - 0.5) * 10,
-                                y: startY + (Math.random() - 0.5) * 10,
-                                vx: Math.cos(angle) * speed,
-                                vy: Math.sin(angle) * speed,
-                                c: cols[Math.floor(Math.random() * cols.length)],
-                                s: Math.random() * 15 + 5,
-                                life: 1.0,
-                                decay: Math.random() * 0.03 + 0.025
-                            });
-                        }
-
-                        for (let i = 0; i < 27; i++) createParticle();
-
-                        function anim() {
-                            if (!document.contains(activeOverlay)) {
-                                ctx.clearRect(0, 0, cvs.width, cvs.height);
-                                scheduleNext();
-                                return;
-                            }
-
-                            ctx.clearRect(0, 0, cvs.width, cvs.height);
-
-                            if (frameCount < 20) {
-                                for (let i = 0; i < 3; i++) createParticle();
-                            }
-                            frameCount++;
-
-                            let alive = false;
-
-                            ctx.globalCompositeOperation = 'screen';
-
-                            for (let i = parts.length - 1; i >= 0; i--) {
-                                let p = parts[i];
-                                p.x += p.vx;
-                                p.y += p.vy;
-                                p.s *= 0.95;
-                                p.life -= p.decay;
-
-                                if (p.life > 0 && p.s > 0.5) {
-                                    alive = true;
-                                    ctx.beginPath();
-                                    ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
-                                    ctx.fillStyle = p.c;
-                                    ctx.globalAlpha = p.life;
-                                    ctx.fill();
-                                } else {
-                                    parts.splice(i, 1);
-                                }
-                            }
-
-                            ctx.globalCompositeOperation = 'source-over';
-                            ctx.globalAlpha = 1.0;
-
-                            if (alive) {
-                                window.dragonFireAnimFrame = requestAnimationFrame(anim);
-                            } else {
-                                scheduleNext();
-                            }
-                        }
-                        anim();
-                    };
-
-                    if (!window.dragonFireActive) {
-                        window.dragonFireActive = true;
-                        window.dragonFireTimeout = setTimeout(triggerDragonFire, Math.random() * 8000 + 5000);
-                    }
+                    initVolcanoAnimation();
                 }
             }
 
