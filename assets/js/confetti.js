@@ -133,7 +133,10 @@ function launchFire() {
                 ctx.globalAlpha = p.life;
                 ctx.fill();
             } else {
-                parts.splice(i, 1);
+                let last = parts.pop();
+                if (i < parts.length) {
+                    parts[i] = last;
+                }
             }
         }
 
