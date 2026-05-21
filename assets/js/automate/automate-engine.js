@@ -2364,7 +2364,7 @@ let simState = {
                          .replace(/href="#([^"]+)"/g, `href="#$1_${containerId}"`);
                 let bubbleHtml = '';
                 if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
-                    bubbleHtml = `<div class="skin-speech-bubble-wrapper" style="position: absolute; top: 50%; left: 50%; width: 0; height: 0; overflow: visible; transform: rotate(-${deg}deg); z-index: 1000;"><div class="skin-speech-bubble" style="top: 0; left: 0; transform: translate(-50%, calc(-100% - 80px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div></div>`;
+                    bubbleHtml = `<div class="skin-speech-bubble-wrapper" style="position: absolute; top: 50%; left: 50%; width: 0; height: 0; overflow: visible; transform: rotate(-${deg}deg); z-index: 1000;"><div class="skin-speech-bubble" style="top: 0; left: 0; transform: translate(-50%, calc(-100% - 40px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div></div>`;
                 }
                 const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}${bubbleHtml}</div>`;
                 placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
@@ -2393,7 +2393,7 @@ let simState = {
                             bubble.className = 'skin-speech-bubble';
                             bubble.style.top = '0';
                             bubble.style.left = '0';
-                            bubble.style.transform = `translate(-50%, calc(-100% - 80px))`;
+                            bubble.style.transform = `translate(-50%, calc(-100% - 40px))`;
                             bubble.onclick = handleSpeechBubbleClick;
 
                             const textDiv = document.createElement('div');
