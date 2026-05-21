@@ -39,3 +39,13 @@
 ## 7. Testing & Maintenance
 - **Testing (2026-05-14):** Playwright E2E in `meta/tests/e2e/`, Node Unit tests in `meta/tests/unit/`.
 - **Clean Code:** No `console.log` in production. No work-in-progress files committed. Use `write_file` or diffs, never `replace_file_content`.
+
+## 8. Specific Architectural Rules
+- **Data Loading**: To maintain the 'zero installation' offline requirement, static data must be formatted as JavaScript (e.g., `window.REGISTRY` in `assets/js/registry.js`) and loaded synchronously via `<script>` tags, not `fetch()`.
+- **Registry Configuration**: To register a new web application, manually add its configuration object to `window.REGISTRY` in `assets/js/registry.js`. Alpha apps need `"isAlpha": true` and text fields matching search terms.
+- **URL Parameters**: Specific URL parameters control pedagogical logic: `hideDict` in binaire_message, `lockTopology` in routage_reseau, `strictMode` in bit_de_parite, `hideGrid` in simulateur_automate, etc. `noNudges` is implicitly appended when `lockDiff` or `only` are active. When `lockMat=1`, `lockSpeed=1`, or `hideGrid=1` are active, their corresponding UI toolbar buttons must be explicitly hidden via logic in `url-params.js`.
+- **Offline Assets**: The application must remain 100% usable offline. Do not use external CDNs; all dependencies must be hosted locally.
+- **Service Worker Updates**: When adding, modifying, moving, or deleting static files, regenerate the service worker manifest by running `node meta/scripts/generate-sw-manifest.js`.
+- **FontAwesome Subset**: To add or change FontAwesome icons, regenerate the custom subset by running `FA_SUBSET_DIR=/path/to/fontawesome-subset node meta/scripts/generate_fa_subset.js` (requires PAT). If no PAT is available, check available icons in `assets/js/fa-subset.js`.
+- **Routage Réseau Generation**: Network topologies are procedurally generated using `generateProceduralNetwork(difficulty, rng)`. Edge weight labels (`.weight-circle`, `.weight-text`) are positioned dynamically along edges using an iterative repulsion algorithm.
+- **Bit de Parité Grid**: The grid elements are represented by the `.cell` class. The total cell count for an N x N grid is (N+1) x (N+1).

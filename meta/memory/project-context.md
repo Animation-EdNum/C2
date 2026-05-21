@@ -40,3 +40,9 @@
   - Text: "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec ❤️ et quelques neurones artificiels" (link strictly on "AP EdNum"). The '❤️' must link to `merci.html`.
   - Source Link: "Code 100% libre (AGPL-3.0)".
 - **Support Contact:** vivian.epiney@hepvs.ch.
+
+## 7. Additional Constraints
+- **Images**: When adding image files, resize or compress them if they are excessively large to maintain optimal load times (e.g., resizing to 1920x1080 via ImageMagick).
+- **Security**: Never reveal or hardcode sensitive tokens (such as GitHub PATs) in the codebase, markdown documentation, or memory files.
+- **Alpha Paths**: Alpha versions of teacher-specific web applications in `alpha/webapps/teacher/` must use the relative path `../../../` to correctly reference global resources in the root `assets/` directory.
+- **HTML Footer**: The HTML footer serves as 'Appropriate Legal Notices' for AGPL-3.0 compliance. It must contain the copyright notice attributing 'Animation-EdNum (HEP-VS)' alongside the link to the source code and the license. The '❤️' must be a link to `merci.html`.

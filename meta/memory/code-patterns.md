@@ -47,3 +47,15 @@
   - Clear `<filter>` tags from SVG strings before generating thumbnails to fix lag.
 - **Jeu de la Grue:** 1D blind queue. Reset `initialCupsState` on failure.
 - **Routage Réseau:** Extreme mode breaks nodes dynamically (`brokenNodes`). Undo last node instead of resetting path.
+
+## 6. Structure & Styling Specifics
+- **Teacher Webapps Layout**: Teacher webapps (e.g., `tirage.html`, `bareme.html`) use a consistent structural layout that should be replicated for new tools: an `.app-shell` holding a `<header>` and a `<main>`. Inside the main area, use an `.app-main` container typically split into a left `.config-panel` (an `<aside>` for settings) and a right `.results-panel` (or `.main-content` for the output/simulation).
+- **Standalone Pages**: For standalone HTML pages (like `index.html` and `merci.html`), the universal CSS reset (`* { margin: 0; padding: 0; box-sizing: border-box; }`) is defined directly inline within the page's `<style>` block rather than being centralized in `assets/css/base.css` or other shared stylesheets.
+- **FCP Optimization**: To optimize First Contentful Paint (FCP), HTML files must include direct, parallel `<link>` tags for `tokens.css`, `base.css`, `components.css`, and `utilities.css` (in that specific cascade order). Do not bundle CSS into a single file.
+- **CSS Specificity vs `!important`**: Override styles by naturally increasing selector specificity (e.g., prefixing selectors with `html body `) rather than deleting `!important` flags across the codebase, which can break utility classes and accessibility features.
+- **Duplicate SVG IDs**: In webapps with multiple tabs or hidden containers, when dynamically injecting identical SVG strings containing `<filter>` or `<linearGradient>`, append a unique suffix to all `id="..."`, `url(#...)`, and `href="#..."` strings to prevent invisibility bugs in Chromium/WebKit.
+- **Event Delegation**: For dynamically generated elements (like `.program-cmd` in `#sim-program`), handle click events using event delegation on their static parent containers combined with `e.target.closest()`.
+- **FontAwesome Dynamic Injection**: When dynamically injecting new FontAwesome `<i data-fa="...">` tags into the DOM via JavaScript, use optional chaining `window.fa?.createIcons?.(parentElement)` to trigger conversion.
+- **AGPL-3.0 Headers**: New or modified source files (.html, .css, .js) should include a standard AGPL-3.0 copyright header attributing 'Animation-EdNum (HEP-VS)'.
+- **Back Navigation**: To implement 'back' navigation in static offline HTML pages, use `<a href="javascript:history.back()">`.
+- **FontAwesome Subset Tweaks**: Do not manually modify the generated data inside `assets/js/fa-subset.js`. Fix icon appearance issues (like duotone paths or mismatching viewBoxes) via standard CSS overrides. Ensure custom icons use the exact same `viewBox` width and height dimensions as the original icon.

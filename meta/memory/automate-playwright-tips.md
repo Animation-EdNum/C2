@@ -44,3 +44,8 @@ if __name__ == "__main__":
 ## 2. Mocking Canvas Context
 `confetti.js` functions dynamically append `<canvas>` elements to the body.
 To mock these in E2E tests, override `HTMLCanvasElement.prototype.getContext` via `page.evaluate()` before triggering the function.
+
+## 3. General E2E Testing Tips
+- **binaire_message.html**: The `#alpha-section` help block is revealed naturally by making 2 consecutive mistakes (clicking `#encode-check` twice) with a validation cooldown (e.g., >2000ms) between attempts. E2E tests must simulate this interaction instead of forcing DOM visibility via `page.evaluate()`.
+- **binaire_studio.html**: In encode mode, verification happens automatically upon input; therefore, E2E tests should not attempt to click a manual verify button.
+- **Local Server**: When running Playwright E2E tests locally (e.g., via `python3 -m pytest meta/tests/e2e/`), ensure a local web server is running on port 8000 (e.g., `python3 -m http.server 8000 &`) to allow the test framework to successfully navigate to `http://localhost:8000` and avoid connection refused errors.
