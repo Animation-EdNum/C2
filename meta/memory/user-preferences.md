@@ -36,3 +36,9 @@
 
 ## 6. Cleanup Rules
 - **Workspace:** Ensure temp scripts, `package.json` modifications (restore original), and python test files outside `e2e/` are deleted before final commit.
+## 7. Additional Developer Rules
+- **UI Paradigm**: Across the entire suite, UI toggle buttons must follow an action-oriented paradigm: the button's icon and tooltip text must reflect the target action that will occur upon clicking, not the system's current state.
+- **Automate UI Specifics**: Masked command buttons (`.program-strip.masked .program-cmd`) must strictly maintain a neutral gray appearance, superseding the 'colored commands' mode. Share options strictly specific to this application append an explicit asterisk badge. Grid line visibility is toggled by adding/removing `.no-grid-lines` on `.bot-grid` containers. To ensure grid lines render above image mats, `.grid-row` must have `position: relative` and `z-index: 1`, and `.bot-cell` borders need increased opacity. Fixed grid constraints are in `MAT_GRID_CONSTRAINTS`. Tooltips defined by `data-tooltip` are scoped to `.grid-toolbar [data-tooltip]`.
+- **Automate Descriptions**: Mat descriptions should be concise, factual, and written in simple language easily understandable by an 8-year-old child.
+- **Execution Plans**: Avoid vague steps that defer decision-making. Ensure verification steps use concrete tool calls. Include steps to run tests before pre-commit. Use `grep` or `sed` to extract specific lines for plan reviews.
+- **Workspace Cleanliness**: Ensure the workspace is fully cleaned up before committing by removing scratchpad scripts and reverting `package.json` and `package-lock.json` (e.g., `git restore package.json package-lock.json`) to uphold the zero-dependency rule without destroying the lockfile. Ensure all temporary scratchpad scripts are completely deleted.
