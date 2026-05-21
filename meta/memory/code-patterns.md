@@ -38,7 +38,7 @@
 - **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
 
 ## 5. App-Specific Quirks
-- **Drawing Apps:** Call `e.preventDefault()` on `touchstart/move`. Disable `swipe.js`.
+- **Drawing Apps:** Call `e.preventDefault()` on `touchstart/move`.
 - **Simulateur Automate:**
   - Robot orientation is an integer `0-3` (Up, Right, Down, Left).
   - Validation: Shape `closed: true` and final position == initial position.
