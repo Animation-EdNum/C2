@@ -621,7 +621,7 @@ document.getElementById('explore-grid').addEventListener('drop', (e) => {
     playSound('click');
     exploreState.robotRow = r; exploreState.robotCol = c;
     exploreState.startRow = r; exploreState.startCol = c;
-    exploreState.absoluteStartRow = r; exploreState.absoluteStartCol = c;
+    exploreState.absoluteStartRow = r; exploreState.absoluteStartCol = c; exploreState.absoluteStartDir = exploreState.robotDir;
     exploreState.startDir = exploreState.robotDir;
     exploreState.history = [];
     exploreState.stepsThisRun = 0;
