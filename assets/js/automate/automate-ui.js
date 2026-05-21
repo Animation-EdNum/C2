@@ -640,6 +640,21 @@ document.getElementById('sim-program').addEventListener('click', (e) => {
     if (cmdEl) removeSpecificCmd(parseInt(cmdEl.dataset.index));
 });
 
+const simEndContent = document.getElementById('sim-end-content');
+if (simEndContent) {
+    simEndContent.addEventListener('click', (e) => {
+        const endItemEl = e.target.closest('.end-item');
+        if (endItemEl && spellMode) {
+            endItemEl.remove();
+            playSound('click');
+            if (simEndContent.querySelectorAll('.end-item').length === 0) {
+                const emptyEnd = document.getElementById('sim-end-empty');
+                if (emptyEnd) emptyEnd.style.display = 'block';
+            }
+        }
+    });
+}
+
 document.getElementById('chal-options').addEventListener('click', (e) => {
     const optEl = e.target.closest('.challenge-option');
     if (optEl) pickOption(parseInt(optEl.dataset.index));
