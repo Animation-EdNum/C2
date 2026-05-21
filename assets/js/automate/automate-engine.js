@@ -1502,14 +1502,15 @@ let simState = {
             const padX = Math.floor((size - width) / 2);
             const padY = Math.floor((size - height) / 2);
 
-            let gridRects = '';
+            const gridRectsArr = [];
             for (let r = 0; r < size; r++) {
                 for (let c = 0; c < size; c++) {
                     const isDark = (r + c) % 2 === 1;
                     const fillOpacity = isDark ? '0.08' : '0.03';
-                    gridRects += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="currentColor" fill-opacity="${fillOpacity}" stroke="var(--border)" stroke-width="1" />`;
+                    gridRectsArr.push(`<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="currentColor" fill-opacity="${fillOpacity}" stroke="var(--border)" stroke-width="1" />`);
                 }
             }
+            const gridRects = gridRectsArr.join('');
 
             const polylinePoints = points.map(p => {
                 const c = p.x - minX + padX;
