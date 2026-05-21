@@ -15,7 +15,8 @@ const url  = require('node:url');
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 const PORT    = parseInt(process.env.PORT || '3000', 10);
-const ROOT    = path.join(__dirname, '..'); // package root (one level up from /bin)
+const ROOT    = path.resolve(path.join(__dirname, '..')); // package root (one level up from /bin)
+const SECURE_ROOT = ROOT.endsWith(path.sep) ? ROOT : ROOT + path.sep;
 const OPEN_BROWSER = process.argv.includes('--no-open') === false;
 
 // ─── MIME types ───────────────────────────────────────────────────────────────
@@ -43,10 +44,17 @@ const MIME = {
 const server = http.createServer((req, res) => {
   // Parse the request URL and resolve the file path
   const parsedUrl = url.parse(req.url);
-  let filePath = path.join(ROOT, parsedUrl.pathname);
+  let pathname = parsedUrl.pathname || '';
+  try {
+    pathname = decodeURIComponent(pathname);
+  } catch (e) {
+    // fallback to original pathname if decode fails
+  }
+
+  let filePath = path.resolve(path.join(ROOT, pathname));
 
   // Prevent directory traversal outside ROOT
-  if (!filePath.startsWith(ROOT)) {
+  if (filePath !== ROOT && !filePath.startsWith(SECURE_ROOT)) {
     res.writeHead(403);
     res.end('403 Forbidden');
     return;
