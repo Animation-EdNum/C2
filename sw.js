@@ -36,7 +36,6 @@ const ASSETS = [
     './assets/js/portal.js',
     './assets/js/registry.js',
     './assets/js/scores.js',
-    './assets/js/swipe.js',
     './assets/js/theme.js',
     './assets/js/toast.js',
     './assets/js/url-params.js',
