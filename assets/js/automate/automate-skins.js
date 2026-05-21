@@ -794,6 +794,10 @@ function unlockSkin(skinId) {
 
         showToast(`Nouveau Skin débloqué : ${SKIN_CONFIG[skinId].name} ! 🎁`, 'success');
         selectSkin(skinId);
+
+        if (typeof triggerSkinUnlockBubble === 'function' && !localStorage.getItem('at_seen_skin_bubble')) {
+            triggerSkinUnlockBubble();
+        }
     }
 }
 

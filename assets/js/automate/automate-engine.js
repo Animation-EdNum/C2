@@ -2,6 +2,46 @@
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 const createSVG = (tag) => document.createElementNS("http://www.w3.org/2000/svg", tag);
 
+window.skinUnlockBubbleState = { active: false, timer: null, text: 'Clique-moi pour changer de skin !' };
+
+function triggerSkinUnlockBubble() {
+    localStorage.setItem('at_seen_skin_bubble', 'true');
+    window.skinUnlockBubbleState.active = true;
+    window.skinUnlockBubbleState.text = 'Clique-moi pour changer de skin !';
+    if (window.skinUnlockBubbleState.timer) clearTimeout(window.skinUnlockBubbleState.timer);
+
+    // Manual DOM update so we don't rely on full re-renders
+    const bubbles = document.querySelectorAll('.skin-speech-bubble');
+    bubbles.forEach(b => {
+        const textDiv = b.querySelector('.skin-speech-bubble-text');
+        if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
+    });
+
+    window.skinUnlockBubbleState.timer = setTimeout(() => {
+        window.skinUnlockBubbleState.active = false;
+        document.querySelectorAll('.skin-speech-bubble').forEach(b => b.remove());
+    }, 6000);
+    if (typeof updateSkinEntities === 'function') updateSkinEntities();
+}
+
+function handleSpeechBubbleClick(e) {
+    e.stopPropagation();
+    window.skinUnlockBubbleState.text = "Clique sur l'automate !";
+    if (window.skinUnlockBubbleState.timer) clearTimeout(window.skinUnlockBubbleState.timer);
+
+    // Manual DOM update so we don't rely on full re-renders
+    const bubbles = document.querySelectorAll('.skin-speech-bubble');
+    bubbles.forEach(b => {
+        const textDiv = b.querySelector('.skin-speech-bubble-text');
+        if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
+    });
+
+    window.skinUnlockBubbleState.timer = setTimeout(() => {
+        window.skinUnlockBubbleState.active = false;
+        document.querySelectorAll('.skin-speech-bubble').forEach(b => b.remove());
+    }, 6000);
+}
+
 let GRID_ROWS = 6, GRID_COLS = 6;
 let globalScore = 0, globalStreak = 0, globalStreakBest = 0, memoryPairsFound = 0, f1Streak = 0;
 let simState = {
@@ -2186,7 +2226,11 @@ let simState = {
                 svg = svg.replace(/id="([^"]+)"/g, `id="$1_${containerId}"`)
                          .replace(/url\(#([^)]+)\)/g, `url(#$1_${containerId})`)
                          .replace(/href="#([^"]+)"/g, `href="#$1_${containerId}"`);
-                const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}</div>`;
+                let bubbleHtml = '';
+                if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
+                    bubbleHtml = `<div class="skin-speech-bubble" style="transform: translate(-50%, -100%) rotate(-${deg}deg);" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div>`;
+                }
+                const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}${bubbleHtml}</div>`;
                 placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
                 document.getElementById(overlayId).dataset.skin = activeSkin;
             } else {
@@ -2194,6 +2238,24 @@ let simState = {
                 const robotBody = existingOverlay.querySelector('.robot-body');
                 if (robotBody) {
                     robotBody.style.transform = `rotate(${deg}deg)`;
+
+                    let bubble = robotBody.querySelector('.skin-speech-bubble');
+                    if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
+                        if (!bubble) {
+                            bubble = document.createElement('div');
+                            bubble.className = 'skin-speech-bubble';
+                            bubble.onclick = handleSpeechBubbleClick;
+                            const textDiv = document.createElement('div');
+                            textDiv.className = 'skin-speech-bubble-text';
+                            bubble.appendChild(textDiv);
+                            robotBody.appendChild(bubble);
+                        }
+                        bubble.style.transform = `translate(-50%, -100%) rotate(-${deg}deg)`;
+                        const textDiv = bubble.querySelector('.skin-speech-bubble-text');
+                        if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
+                    } else if (bubble) {
+                        bubble.remove();
+                    }
                 }
             }
 
@@ -2219,6 +2281,12 @@ let simState = {
                     if (typeof drawState !== 'undefined' && drawState && drawState.isAnimating) return;
                     e.preventDefault();
                     e.stopPropagation();
+
+                    if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
+                        window.skinUnlockBubbleState.active = false;
+                        if (window.skinUnlockBubbleState.timer) clearTimeout(window.skinUnlockBubbleState.timer);
+                        document.querySelectorAll('.skin-speech-bubble').forEach(b => b.remove());
+                    }
 
                     // Calculate next skin based on SKIN_CONFIG order, filtering for unlocked ones
                     const availableSkins = Object.keys(SKIN_CONFIG).filter(id => unlockedSkins.includes(id));
