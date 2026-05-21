@@ -848,13 +848,20 @@ let simState = {
 
         function renderProgramStep() {
             const strip = document.getElementById('sim-program');
-            for (const el of strip.querySelectorAll('.active-step, .error-step')) {
-                el.classList.remove('active-step', 'error-step');
-            }
+
+            const activeSteps = strip.getElementsByClassName('active-step');
+            while (activeSteps.length > 0) activeSteps[0].classList.remove('active-step');
+
+            const errorSteps = strip.getElementsByClassName('error-step');
+            while (errorSteps.length > 0) errorSteps[0].classList.remove('error-step');
+
             if (simState.stepIndex >= 0) {
-                const cmds = strip.querySelectorAll('.program-cmd');
-                if (cmds[simState.stepIndex]) {
-                    cmds[simState.stepIndex].classList.add(simState.failed ? 'error-step' : 'active-step');
+                let target = strip.children[simState.stepIndex];
+                if (!target || !target.classList.contains('program-cmd')) {
+                    target = strip.getElementsByClassName('program-cmd')[simState.stepIndex];
+                }
+                if (target) {
+                    target.classList.add(simState.failed ? 'error-step' : 'active-step');
                 }
             }
         }
