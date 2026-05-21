@@ -19,7 +19,7 @@ function triggerSkinUnlockBubble() {
 
     window.skinUnlockBubbleState.timer = setTimeout(() => {
         window.skinUnlockBubbleState.active = false;
-        document.querySelectorAll('.skin-speech-bubble').forEach(b => b.remove());
+        document.querySelectorAll('.skin-speech-bubble-wrapper, .skin-speech-bubble').forEach(b => b.remove());
     }, 6000);
     if (typeof updateSkinEntities === 'function') updateSkinEntities();
 }
@@ -38,7 +38,7 @@ function handleSpeechBubbleClick(e) {
 
     window.skinUnlockBubbleState.timer = setTimeout(() => {
         window.skinUnlockBubbleState.active = false;
-        document.querySelectorAll('.skin-speech-bubble').forEach(b => b.remove());
+        document.querySelectorAll('.skin-speech-bubble-wrapper, .skin-speech-bubble').forEach(b => b.remove());
     }, 6000);
 }
 
@@ -2359,7 +2359,7 @@ let simState = {
                          .replace(/href="#([^"]+)"/g, `href="#$1_${containerId}"`);
                 let bubbleHtml = '';
                 if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
-                    bubbleHtml = `<div class="skin-speech-bubble" style="transform: rotate(-${deg}deg) translate(-50%, calc(-100% - 80px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div>`;
+                    bubbleHtml = `<div class="skin-speech-bubble-wrapper" style="position: absolute; top: 50%; left: 50%; width: 0; height: 0; overflow: visible; transform: rotate(-${deg}deg); z-index: 1000;"><div class="skin-speech-bubble" style="top: 0; left: 0; transform: translate(-50%, calc(-100% - 80px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div></div>`;
                 }
                 const html = `<div class="robot-body" style="transform:rotate(${deg}deg)">${svg}${bubbleHtml}</div>`;
                 placeOverlay(containerId, overlayId, row, col, html, 'robot-overlay', ariaMsg);
@@ -2370,22 +2370,40 @@ let simState = {
                 if (robotBody) {
                     robotBody.style.transform = `rotate(${deg}deg)`;
 
+                    let wrapper = robotBody.querySelector('.skin-speech-bubble-wrapper');
                     let bubble = robotBody.querySelector('.skin-speech-bubble');
                     if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
-                        if (!bubble) {
+                        if (!wrapper) {
+                            wrapper = document.createElement('div');
+                            wrapper.className = 'skin-speech-bubble-wrapper';
+                            wrapper.style.position = 'absolute';
+                            wrapper.style.top = '50%';
+                            wrapper.style.left = '50%';
+                            wrapper.style.width = '0';
+                            wrapper.style.height = '0';
+                            wrapper.style.overflow = 'visible';
+                            wrapper.style.zIndex = '1000';
+
                             bubble = document.createElement('div');
                             bubble.className = 'skin-speech-bubble';
+                            bubble.style.top = '0';
+                            bubble.style.left = '0';
+                            bubble.style.transform = `translate(-50%, calc(-100% - 80px))`;
                             bubble.onclick = handleSpeechBubbleClick;
+
                             const textDiv = document.createElement('div');
                             textDiv.className = 'skin-speech-bubble-text';
                             bubble.appendChild(textDiv);
-                            robotBody.appendChild(bubble);
+                            wrapper.appendChild(bubble);
+                            robotBody.appendChild(wrapper);
                         }
-                        bubble.style.transform = `rotate(-${deg}deg) translate(-50%, calc(-100% - 80px))`;
+                        wrapper.style.transform = `rotate(-${deg}deg)`;
                         const textDiv = bubble.querySelector('.skin-speech-bubble-text');
                         if (textDiv) textDiv.textContent = window.skinUnlockBubbleState.text;
+                    } else if (wrapper) {
+                        wrapper.remove();
                     } else if (bubble) {
-                        bubble.remove();
+                        bubble.remove(); // fallback for old bubbles
                     }
                 }
             }
@@ -2416,7 +2434,7 @@ let simState = {
                     if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
                         window.skinUnlockBubbleState.active = false;
                         if (window.skinUnlockBubbleState.timer) clearTimeout(window.skinUnlockBubbleState.timer);
-                        document.querySelectorAll('.skin-speech-bubble').forEach(b => b.remove());
+                        document.querySelectorAll('.skin-speech-bubble-wrapper, .skin-speech-bubble').forEach(b => b.remove());
                     }
 
                     // Calculate next skin based on SKIN_CONFIG order, filtering for unlocked ones
