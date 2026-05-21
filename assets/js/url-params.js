@@ -38,14 +38,7 @@ function applyUrlParameters() {
         const tabs = document.querySelector('.tabs');
         if (tabs) tabs.style.display = 'none';
 
-        // Hide swipe indicators if swipe.js is present
-        const swipeDots = document.getElementById('swipe-dots');
-        if (swipeDots) swipeDots.style.display = 'none';
 
-        // Disable swipe behavior if active
-        if (typeof window.swipeEnabled !== 'undefined') {
-            window.swipeEnabled = false;
-        }
     }
 
     if (urlParams.get('noHome') === '1') {

@@ -45,7 +45,7 @@ Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur d
 | Mobile | Écran large (Wide) |
 |:---:|:---:|
 | <img src="meta/screenshots/simulateur_automate_mobile.png" height="350"> | <img src="meta/screenshots/simulateur_automate_widescreen.png" height="350"> |
-| *Affichage vertical compact avec swipe* | *Exploitation complète de la largeur d'écran* |
+| *Affichage vertical compact* | *Exploitation complète de la largeur d'écran* |
 
 ### 🎮 Nos Webapps pour les élèves (Jeux pédagogiques)
 
@@ -117,7 +117,6 @@ We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no n
 *   **Global Managers:**
     *   Scores and Gamification: `assets/js/scores.js` (ScoreManager).
     *   Sounds (Web Audio API): `assets/js/audio.js` (no external .mp3 files).
-    *   Mobile Swipe: `assets/js/swipe.js`.
     *   Toasts & Particles: `assets/js/toast.js` and `assets/js/confetti.js`.
 *   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, a Node.js script (`meta/scripts/generate_fa_subset.js`) parses the HTML and dynamically generates `assets/js/fa-subset.js` (under 20kb!).
 

@@ -68,7 +68,6 @@ C2/
 │   ├── scores.js           # ScoreManager (gamification)
 │   ├── confetti.js         # Effets visuels de récompense
 │   ├── audio.js            # Audio synthétique (Web Audio API)
-│   ├── swipe.js            # Navigation tactile par swipe
 │   └── fa-subset.js    # Icônes FontAwesome
 │
 ├── assets/fonts/                  # Polices auto-hébergées
@@ -96,7 +95,6 @@ C2/
 | `assets/js/scores.js` | `ScoreManager` — suivi des scores, séries, records, difficulté adaptative, modale de stats |
 | `assets/js/confetti.js` | Effets de confettis et récompenses visuelles (`launchConfetti()`, `launchFire()`) |
 | `assets/js/audio.js` | Sons synthétiques via Web Audio API (`playSound('success')`, etc.) |
-| `assets/js/swipe.js` | Navigation par swipe tactile entre onglets |
 | `assets/js/fa-subset.js` | Icônes FontAwesome (auto-généré) |
 
 ### Service Worker
