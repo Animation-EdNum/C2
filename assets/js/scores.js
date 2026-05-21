@@ -380,18 +380,21 @@ const ScoreManager = {
                             </tr></thead>
                             <tbody>`;
 
-                for (const diff in this.stats[mode]) {
-                    if (diff === this._NO_DIFF) continue;
-                    const st = this.stats[mode][diff];
-                    const diffName = this.DIFF_LABELS[diff] || this._escapeHtml(diff);
+                html += diffs
+                    .filter(diff => diff !== this._NO_DIFF)
+                    .map(diff => {
+                        const st = this.stats[mode][diff];
+                        const diffName = this.DIFF_LABELS[diff] || this._escapeHtml(diff);
 
-                    html += `<tr>
-                                <td><strong>${diffName}</strong></td>
-                                <td>${this._escapeHtml(String(st.firstTrySuccess))}</td>
-                                <td>${this._escapeHtml(String(st.totalSuccess))}</td>
-                                <td>${this._escapeHtml(String(st.mistakes))}</td>
-                             </tr>`;
-                }
+                        return `<tr>
+                                <td>${diffName}</td>
+                                <td>${this._escapeHtml(String(st.firstTrySuccess || 0))}</td>
+                                <td>${this._escapeHtml(String((st.totalSuccess || 0) - (st.firstTrySuccess || 0)))}</td>
+                                <td>${this._escapeHtml(String(st.totalSuccess || 0))}</td>
+                                <td>${this._escapeHtml(String(st.mistakes || 0))}</td>
+                            </tr>`;
+                    })
+                    .join('');
                 html += `</tbody></table></div>`;
             }
             html += `</div>`;
