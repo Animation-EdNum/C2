@@ -504,16 +504,6 @@
             opacity: 0.4;
         }
 
-        .dyslexic-text.visual-effect {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .dyslexic-text.visual-effect span {
-            text-shadow:
-                -1px 0 rgba(255, 0, 0, 0.5),
-                1px 0 rgba(0, 255, 255, 0.5);
-        }
-
         .empty-state {
             display: none;
             flex-direction: column;
@@ -654,16 +644,6 @@
                             </label>
                             <input type="range" id="inputFocusSpeed" min="200" max="1000" step="50" value="600">
                         </div>
-
-                        <label class="checkbox-card" for="inputVisualEffect">
-                            <input type="checkbox" id="inputVisualEffect" checked>
-                            <div>
-                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Effets
-                                    visuels simulés</div>
-                                <div style="font-size: 0.7rem; color: var(--text-secondary);">Aberration chromatique &
-                                    flou</div>
-                            </div>
-                        </label>
                     </div>
                 </div>
 
@@ -678,8 +658,7 @@
 
                     <div class="info-banner">
                         <i data-fa="circle-info" style="width:14px;height:14px;"></i>
-                        <p>Le simulateur reproduit la fatigue visuelle (lettres qui dansent, inversions) mais ne
-                            correspond pas à la vision d'un seul individu.</p>
+                        <p>La dyslexie est un trouble cognitif, non visuel. Ce simulateur ne montre pas ce qu'un élève voit, mais il recrée l'effort phénoménal, la perte de repères et la fatigue attentionnelle nécessaires pour décoder chaque mot.</p>
                     </div>
                 </div>
             </aside>
@@ -741,8 +720,8 @@
         const PRESET_TEXTS = [
             {
                 id: '1',
-                title: 'Instructions de mathématiques',
-                content: 'Prenez votre cahier rouge. Ouvrez-le à la page 42. Résolvez les problèmes 3, 4 et 5 en détaillant vos calculs. Faites attention aux retenues dans les additions. Quand vous avez terminé, levez la main en silence.'
+                title: 'Problème de mathématiques',
+                content: 'Un paysan possède un champ rectangulaire de 120 mètres de long et de 80 mètres de large. Il souhaite l\'entourer d\'une clôture en fil de fer. Le fil de fer est vendu en rouleaux de 50 mètres. Chaque rouleau coûte 45 francs. Combien de rouleaux entiers le paysan doit-il acheter au minimum pour clôturer son champ ? Quel sera le prix total de ces rouleaux ?'
             },
             {
                 id: '2',
@@ -779,7 +758,6 @@
             text: PRESET_TEXTS[0].content,
             speed: 5,
             severity: 0.8,
-            enableVisualEffect: true,
             activeTab: 'simulation',
             mixingStyle: 'all',
             focusMode: false,
@@ -802,7 +780,6 @@
             focusSpeedContainer: document.getElementById('focusSpeedContainer'),
             inputFocusSpeed: document.getElementById('inputFocusSpeed'),
             valFocusSpeed: document.getElementById('valFocusSpeed'),
-            inputVisualEffect: document.getElementById('inputVisualEffect'),
 
             presetList: document.getElementById('presetList'),
 
@@ -937,14 +914,6 @@
                     span.className = '';
                 }
             });
-
-            if (state.enableVisualEffect) {
-                els.dyslexicOutput.classList.add('visual-effect');
-                els.dyslexicOutput.style.filter = `blur(${(state.severity * 0.5).toFixed(1)}px)`;
-            } else {
-                els.dyslexicOutput.classList.remove('visual-effect');
-                els.dyslexicOutput.style.filter = 'none';
-            }
         }
 
         function updateText(newText) {
@@ -1066,11 +1035,6 @@
             state.focusSpeedMs = 1200 - val;
             els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
             startFocusInterval();
-        });
-
-        els.inputVisualEffect.addEventListener('change', (e) => {
-            state.enableVisualEffect = e.target.checked;
-            if (state.activeTab === 'simulation') renderOutput();
         });
 
         els.tabBtns.forEach(btn => {
