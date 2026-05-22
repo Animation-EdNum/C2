@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <title>🤖 Détective IA</title>
+    <meta property="og:title" content="Détective IA">
+    <meta property="og:description" content="Classe des objets en posant des questions, comme une vraie intelligence artificielle.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <style>
+        body > header,
+        body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-gradient-start: #7c3aed;
+            --bg-gradient-end: #5b21b6;
+            --card-bg: rgba(249, 250, 252, 0.85);
+            --card-border: #ede9fe;
+            --container-bg: rgba(255, 255, 255, 0.88);
+            --text-main: #1e1b4b;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --accent: #7c3aed;
+            --accent-dark: #6d28d9;
+            --accent-light: #a78bfa;
+            --badge-bg: #ede9fe;
+            --badge-color: #5b21b6;
+            --input-border: #c4b5fd;
+            --instructions-bg: #f5f3ff;
+            --success: #166534;
+            --warn: #b45309;
+            --error: #b91c1c;
+            --shadow-color: rgba(91, 33, 182, 0.3);
+            --card-shadow: rgba(124, 58, 237, 0.15);
+            --yes-bg: #dcfce7;
+            --yes-color: #166534;
+            --yes-border: #86efac;
+            --no-bg: #fef2f2;
+            --no-color: #991b1b;
+            --no-border: #fca5a5;
+            --group-bg: rgba(249, 250, 252, 0.6);
+        }
+
+        body.dark {
+            --bg-gradient-start: #1e1b4b;
+            --bg-gradient-end: #0f0a2e;
+            --card-bg: rgba(30, 27, 75, 0.75);
+            --card-border: #312e81;
+            --container-bg: rgba(15, 23, 42, 0.80);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #a78bfa;
+            --accent-dark: #8b5cf6;
+            --accent-light: #c4b5fd;
+            --badge-bg: #312e81;
+            --badge-color: #c4b5fd;
+            --input-border: #312e81;
+            --instructions-bg: #1e1b4b;
+            --success: #34d399;
+            --warn: #fbbf24;
+            --error: #f87171;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --card-shadow: rgba(0, 0, 0, 0.4);
+            --yes-bg: #052e16;
+            --yes-color: #86efac;
+            --yes-border: #14532d;
+            --no-bg: #450a0a;
+            --no-color: #fca5a5;
+            --no-border: #7f1d1d;
+            --group-bg: rgba(30, 27, 75, 0.5);
+        }
+
+        body.dark .icon-action-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1400px);
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+
+        /* ========== DIFFICULTY ========== */
+        .difficulty-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .diff-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 6px 16px; border-radius: var(--radius-2xl); border: 2px solid var(--accent);
+            background: transparent; color: var(--accent); font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px;
+        }
+        .diff-btn.active { background: var(--accent); color: #fff; }
+        .diff-btn:hover:not(.active) { background: var(--badge-bg); }
+
+        /* ========== DATASET SELECTOR ========== */
+        .dataset-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .dataset-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: var(--radius-pill); border: 2px solid var(--card-border);
+            background: var(--card-bg); color: var(--text-secondary); font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; outline: none;
+            min-width: 44px; min-height: 44px;
+        }
+        .dataset-btn.active { border-color: var(--accent); color: var(--accent); background: var(--badge-bg); }
+        .dataset-btn:hover:not(.active) { border-color: var(--accent-light); }
+
+        /* ========== GAME AREA ========== */
+        .game-area { margin-bottom: 20px; }
+
+        .game-prompt {
+            background: var(--instructions-bg); padding: 16px 20px; border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border); margin-bottom: 20px; text-align: center;
+            font-size: 15px; color: var(--text-main); line-height: 1.5;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+        .game-prompt strong { color: var(--accent); }
+
+        /* ========== ITEM CARDS ========== */
+        .items-display {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+            margin-bottom: 20px; min-height: 80px;
+        }
+        .item-card {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 14px; background: var(--card-bg); border-radius: var(--radius-lg);
+            border: 2px solid var(--card-border); min-width: 72px;
+            transition: all 0.4s var(--spring-easing);
+            cursor: default; position: relative;
+        }
+        .item-card .item-emoji { font-size: 32px; line-height: 1; }
+        .item-card .item-name { font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+        .item-card.highlight-yes {
+            border-color: var(--yes-border); background: var(--yes-bg);
+            transform: translateY(-4px);
+        }
+        .item-card.highlight-no {
+            border-color: var(--no-border); background: var(--no-bg);
+            transform: translateY(4px);
+        }
+        .item-card.dim { opacity: 0.35; transform: scale(0.9); }
+        .item-card.mystery {
+            border-color: var(--accent); border-style: dashed; border-width: 3px;
+            animation: pulseMystery 2s infinite;
+        }
+        @keyframes pulseMystery {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0); }
+        }
+
+        /* ========== TRAIT TOOLTIP ========== */
+        .item-card .traits-tooltip {
+            display: none; position: absolute; bottom: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%); background: var(--text-main); color: var(--card-bg);
+            padding: 6px 10px; border-radius: var(--radius-md); font-size: 11px;
+            white-space: nowrap; z-index: 50; pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .item-card .traits-tooltip::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-top-color: var(--text-main);
+        }
+        .item-card:hover .traits-tooltip,
+        .item-card:focus .traits-tooltip { display: block; }
+
+        /* ========== QUESTION BUTTONS ========== */
+        .question-area { margin-bottom: 20px; }
+        .question-area h3 {
+            text-align: center; font-size: 14px; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;
+        }
+        .questions-list { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .question-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 20px; border-radius: var(--radius-lg);
+            border: 2px solid var(--accent); background: transparent; color: var(--accent);
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            transition: all 0.25s var(--spring-easing);
+            min-width: 44px; min-height: 44px;
+        }
+        .question-btn:hover {
+            background: var(--accent); color: #fff; transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--card-shadow);
+        }
+        .question-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .question-btn .q-emoji { font-size: 20px; }
+
+        /* ========== ANSWER BUTTONS ========== */
+        .answer-area { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
+        .answer-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 32px; border-radius: var(--radius-lg);
+            font-size: 18px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s var(--spring-easing);
+            min-width: 44px; min-height: 44px;
+        }
+        .answer-btn.yes-btn {
+            background: var(--yes-bg); color: var(--yes-color); border: 2px solid var(--yes-border);
+        }
+        .answer-btn.yes-btn:hover { background: #bbf7d0; transform: scale(1.05); }
+        .answer-btn.no-btn {
+            background: var(--no-bg); color: var(--no-color); border: 2px solid var(--no-border);
+        }
+        .answer-btn.no-btn:hover { background: #fecaca; transform: scale(1.05); }
+
+        /* ========== GROUPS DISPLAY ========== */
+        .groups-display {
+            display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+            margin-bottom: 20px;
+        }
+        .group-card {
+            flex: 1; min-width: 140px; max-width: 300px;
+            padding: 12px; border-radius: var(--radius-lg);
+            border: 2px solid var(--card-border); background: var(--group-bg);
+            cursor: pointer; transition: all 0.25s var(--spring-easing);
+        }
+        .group-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 20px var(--card-shadow); }
+        .group-card.active-group { border-color: var(--accent); border-width: 3px; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); }
+        .group-card.classified {
+            border-color: var(--yes-border); background: var(--yes-bg);
+            cursor: default; opacity: 0.7;
+        }
+        .group-card.classified:hover { transform: none; box-shadow: none; }
+        .group-label {
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            color: var(--text-muted); margin-bottom: 8px; text-align: center;
+        }
+        .group-items { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .group-items .item-card { padding: 6px 8px; min-width: 56px; }
+        .group-items .item-card .item-emoji { font-size: 24px; }
+        .group-items .item-card .item-name { font-size: 10px; }
+
+        /* ========== TREE VISUALIZATION ========== */
+        .tree-display {
+            margin: 20px 0; padding: 20px; overflow-x: auto;
+            background: var(--group-bg); border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border);
+        }
+        .tree-display:empty { display: none; }
+        .tree-display h3 {
+            text-align: center; font-size: 13px; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;
+        }
+        .tree-node { display: flex; flex-direction: column; align-items: center; }
+        .tree-question-box {
+            background: var(--accent); color: #fff; padding: 8px 16px;
+            border-radius: var(--radius-lg); font-weight: 600; font-size: 13px;
+            text-align: center; white-space: nowrap; transition: all 0.3s;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+        .tree-question-box.active { transform: scale(1.08); box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.3); }
+        .tree-question-box.dimmed { opacity: 0.35; }
+        .tree-branches {
+            display: flex; gap: 20px; margin-top: 8px; position: relative;
+        }
+        .tree-branch {
+            display: flex; flex-direction: column; align-items: center; position: relative;
+        }
+        .tree-branch::before {
+            content: ''; position: absolute; top: -8px; left: 50%; width: 2px; height: 8px;
+            background: var(--accent-light);
+        }
+        .tree-branch-label {
+            font-size: 11px; font-weight: 700; padding: 2px 10px;
+            border-radius: var(--radius-pill); margin-bottom: 6px;
+        }
+        .tree-branch-label.yes { background: var(--yes-bg); color: var(--yes-color); }
+        .tree-branch-label.no { background: var(--no-bg); color: var(--no-color); }
+        .tree-branch-label.dimmed { opacity: 0.35; }
+        .tree-leaf {
+            display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+            padding: 8px; background: var(--card-bg); border-radius: var(--radius-md);
+            border: 1px solid var(--card-border); min-width: 60px;
+        }
+        .tree-leaf.highlight { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); }
+        .tree-leaf-item { font-size: 22px; }
+
+        /* ========== RESULT AREA ========== */
+        .result-area {
+            text-align: center; padding: 24px; margin: 20px 0;
+            background: var(--instructions-bg); border-radius: var(--radius-lg);
+            border: 2px solid var(--card-border);
+        }
+        .result-area.success { border-color: var(--yes-border); background: var(--yes-bg); }
+        .result-area.error { border-color: var(--no-border); background: var(--no-bg); }
+        .result-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .result-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+        .result-stat { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+        .result-stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
+
+        /* ========== CONTROLS ========== */
+        .controls { display: flex; justify-content: center; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+
+        /* ========== SCORE ========== */
+        .score-bar {
+            display: flex; justify-content: center; gap: 24px; margin-top: 20px;
+            padding-top: 20px; border-top: 1px solid var(--card-border); flex-wrap: wrap;
+        }
+        .score-item { text-align: center; }
+        .score-item .score-label { font-size: 14px; color: var(--text-muted); text-transform: uppercase; }
+        .score-item .score-value { font-size: 22px; font-weight: 700; color: var(--accent); font-family: monospace; }
+
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+        }
+
+        @media print { .no-print { display: none !important; } }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            h1 { font-size: 22px; }
+            .tree-branches { gap: 10px; }
+            .tree-question-box { font-size: 11px; padding: 6px 10px; }
+            .question-btn { font-size: 13px; padding: 10px 14px; }
+            .answer-btn { padding: 12px 24px; font-size: 16px; }
+            .item-card { padding: 8px 10px; min-width: 60px; }
+            .item-card .item-emoji { font-size: 26px; }
+        }
+    </style>
+    <script src="../../assets/js/scores.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="dt-magnifying-glass-chart"></i>
+                </a>
+                <div>
+                    <h1>Détective IA</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <p class="subtitle">Classe des objets en posant des questions, comme une vraie intelligence artificielle !</p>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-guided">📖 Guidé</button>
+                <button class="tab-btn" id="tab-free">🔍 Libre</button>
+                <button class="tab-btn" id="tab-challenge">⚡ Défi</button>
+            </div>
+
+            <!-- DATASET SELECTOR -->
+            <div class="dataset-bar">
+                <button class="dataset-btn active" id="ds-animals">🐾 Animaux</button>
+                <button class="dataset-btn" id="ds-fruits">🍎 Fruits</button>
+                <button class="dataset-btn" id="ds-vehicles">🚗 Véhicules</button>
+            </div>
+
+            <!-- DIFFICULTY -->
+            <div class="difficulty-bar">
+                <button class="diff-btn" id="diff-easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
+                <button class="diff-btn active" id="diff-medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
+                <button class="diff-btn" id="diff-hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
+            </div>
+
+            <!-- GAME AREA -->
+            <div class="game-area">
+                <div class="game-prompt" id="game-prompt"></div>
+                <div class="items-display" id="items-display"></div>
+                <div class="question-area" id="question-area"></div>
+                <div class="groups-display" id="groups-display"></div>
+                <div class="tree-display" id="tree-display"></div>
+                <div class="result-area" id="result-area" style="display:none;"></div>
+                <div class="controls" id="controls"></div>
+            </div>
+
+            <div class="card-footer">
+                <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Victoires</div>
+                        <div class="score-value" id="global-correct">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Série 🔥</div>
+                        <div class="score-value" id="global-streak">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum</a> avec <a href="../../merci.html"
+                style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                    libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script>window.fa?.createIcons?.();</script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/toast.js"></script>
+    <script>
+        // ==============================================================
+        //  DÉTECTIVE IA — Moteur de jeu
+        // ==============================================================
+
+        // ===== DATASETS =====
+        const DATASETS = {
+            animals: {
+                name: 'Animaux',
+                items: [
+                    { id: 'chat', label: 'Chat', emoji: '🐱', traits: { pattes4: true, vole: false, nage: false, domestique: true, grand: false } },
+                    { id: 'chien', label: 'Chien', emoji: '🐶', traits: { pattes4: true, vole: false, nage: false, domestique: true, grand: true } },
+                    { id: 'oiseau', label: 'Oiseau', emoji: '🐦', traits: { pattes4: false, vole: true, nage: false, domestique: false, grand: false } },
+                    { id: 'poisson', label: 'Poisson', emoji: '🐟', traits: { pattes4: false, vole: false, nage: true, domestique: false, grand: false } },
+                    { id: 'araignee', label: 'Araignée', emoji: '🕷️', traits: { pattes4: false, vole: false, nage: false, domestique: false, grand: false } },
+                    { id: 'serpent', label: 'Serpent', emoji: '🐍', traits: { pattes4: false, vole: false, nage: false, domestique: false, grand: true } },
+                    { id: 'grenouille', label: 'Grenouille', emoji: '🐸', traits: { pattes4: true, vole: false, nage: true, domestique: false, grand: false } },
+                    { id: 'papillon', label: 'Papillon', emoji: '🦋', traits: { pattes4: false, vole: true, nage: false, domestique: false, grand: false } },
+                    { id: 'tortue', label: 'Tortue', emoji: '🐢', traits: { pattes4: true, vole: false, nage: true, domestique: false, grand: true } },
+                ],
+                questions: [
+                    { id: 'q-pattes4', text: 'A-t-il 4 pattes ?', trait: 'pattes4', emoji: '🦵' },
+                    { id: 'q-vole', text: 'Peut-il voler ?', trait: 'vole', emoji: '🪽' },
+                    { id: 'q-nage', text: 'Peut-il nager ?', trait: 'nage', emoji: '🏊' },
+                    { id: 'q-domestique', text: 'Est-il domestique ?', trait: 'domestique', emoji: '🏠' },
+                    { id: 'q-grand', text: 'Est-il grand ?', trait: 'grand', emoji: '📏' },
+                ]
+            },
+            fruits: {
+                name: 'Fruits',
+                items: [
+                    { id: 'pomme', label: 'Pomme', emoji: '🍎', traits: { rouge: true, jaune: false, petit: false, noyau: false, arbre: true } },
+                    { id: 'banane', label: 'Banane', emoji: '🍌', traits: { rouge: false, jaune: true, petit: false, noyau: false, arbre: true } },
+                    { id: 'fraise', label: 'Fraise', emoji: '🍓', traits: { rouge: true, jaune: false, petit: true, noyau: false, arbre: false } },
+                    { id: 'orange', label: 'Orange', emoji: '🍊', traits: { rouge: false, jaune: false, petit: false, noyau: false, arbre: true } },
+                    { id: 'raisin', label: 'Raisin', emoji: '🍇', traits: { rouge: false, jaune: false, petit: true, noyau: false, arbre: false } },
+                    { id: 'cerise', label: 'Cerise', emoji: '🍒', traits: { rouge: true, jaune: false, petit: true, noyau: true, arbre: true } },
+                    { id: 'pasteque', label: 'Pastèque', emoji: '🍉', traits: { rouge: false, jaune: false, petit: false, noyau: false, arbre: false } },
+                    { id: 'citron', label: 'Citron', emoji: '🍋', traits: { rouge: false, jaune: true, petit: false, noyau: false, arbre: true } },
+                ],
+                questions: [
+                    { id: 'q-rouge', text: 'Est-il rouge ?', trait: 'rouge', emoji: '🔴' },
+                    { id: 'q-jaune', text: 'Est-il jaune ?', trait: 'jaune', emoji: '🟡' },
+                    { id: 'q-petit', text: 'Est-il petit ?', trait: 'petit', emoji: '🤏' },
+                    { id: 'q-noyau', text: 'A-t-il un noyau ?', trait: 'noyau', emoji: '⚫' },
+                    { id: 'q-arbre', text: 'Pousse-t-il sur un arbre ?', trait: 'arbre', emoji: '🌳' },
+                ]
+            },
+            vehicles: {
+                name: 'Véhicules',
+                items: [
+                    { id: 'voiture', label: 'Voiture', emoji: '🚗', traits: { roues: true, moteur: true, vole: false, eau: false, rails: false } },
+                    { id: 'velo', label: 'Vélo', emoji: '🚲', traits: { roues: true, moteur: false, vole: false, eau: false, rails: false } },
+                    { id: 'avion', label: 'Avion', emoji: '✈️', traits: { roues: true, moteur: true, vole: true, eau: false, rails: false } },
+                    { id: 'bateau', label: 'Bateau', emoji: '🚢', traits: { roues: false, moteur: true, vole: false, eau: true, rails: false } },
+                    { id: 'train', label: 'Train', emoji: '🚂', traits: { roues: true, moteur: true, vole: false, eau: false, rails: true } },
+                    { id: 'helicoptere', label: 'Hélicoptère', emoji: '🚁', traits: { roues: false, moteur: true, vole: true, eau: false, rails: false } },
+                    { id: 'voilier', label: 'Voilier', emoji: '⛵', traits: { roues: false, moteur: false, vole: false, eau: true, rails: false } },
+                    { id: 'trottinette', label: 'Trottinette', emoji: '🛴', traits: { roues: true, moteur: false, vole: false, eau: false, rails: false } },
+                ],
+                questions: [
+                    { id: 'q-roues', text: 'A-t-il des roues ?', trait: 'roues', emoji: '🛞' },
+                    { id: 'q-moteur', text: 'A-t-il un moteur ?', trait: 'moteur', emoji: '⚙️' },
+                    { id: 'q-vole-v', text: 'Peut-il voler ?', trait: 'vole', emoji: '🪽' },
+                    { id: 'q-eau', text: 'Va-t-il sur l\u2019eau ?', trait: 'eau', emoji: '🌊' },
+                    { id: 'q-rails', text: 'Roule-t-il sur des rails ?', trait: 'rails', emoji: '🛤️' },
+                ]
+            }
+        };
+
+        const DIFFICULTY_CONFIG = {
+            easy: { numItems: 4 },
+            medium: { numItems: 6 },
+            hard: { numItems: 8 }
+        };
+
+        // ===== STATE =====
+        let currentMode = 'guided';
+        let currentDifficulty = 'medium';
+        let currentDatasetKey = 'animals';
+        let globalCorrect = 0, globalStreak = 0, globalBest = 0;
+
+        // Guided state
+        let guidedItems = [];
+        let guidedSequence = [];
+        let guidedStep = 0;
+        let guidedTree = null;
+
+        // Free state
+        let freeGroups = []; // Array of { items: [...], classified: false }
+        let freeUsedQuestions = [];
+        let freeActiveGroupIndex = -1;
+        let freeTree = null;
+        let freeMistakes = 0;
+
+        // Challenge state
+        let challengeTree = null;
+        let challengeMysteryItem = null;
+        let challengeCurrentNode = null;
+        let challengeTraversalPath = [];
+        let challengeMistakes = 0;
+
+        // DOM Elements
+        const elPrompt = document.getElementById('game-prompt');
+        const elItems = document.getElementById('items-display');
+        const elQuestionArea = document.getElementById('question-area');
+        const elGroups = document.getElementById('groups-display');
+        const elTree = document.getElementById('tree-display');
+        const elResult = document.getElementById('result-area');
+        const elControls = document.getElementById('controls');
+
+        // ===== CORE UTILITIES =====
+        function shuffleArray(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function evaluateQuestion(item, question) {
+            return item.traits[question.trait] === true;
+        }
+
+        function splitGroup(items, question) {
+            const yes = items.filter(item => evaluateQuestion(item, question));
+            const no = items.filter(item => !evaluateQuestion(item, question));
+            return { yes, no };
+        }
+
+        function getTraitLabels(item) {
+            const ds = DATASETS[currentDatasetKey];
+            return ds.questions
+                .map(q => (evaluateQuestion(item, q) ? '✓ ' : '✗ ') + q.text.replace(' ?', ''))
+                .join(' · ');
+        }
+
+        // ===== TREE ALGORITHM =====
+        function buildOptimalTree(items, questions) {
+            if (items.length <= 1) {
+                return { type: 'leaf', items: [...items] };
+            }
+
+            let bestQ = null;
+            let bestScore = -Infinity;
+            for (const q of questions) {
+                const { yes, no } = splitGroup(items, q);
+                if (yes.length === 0 || no.length === 0) { continue; }
+                const score = Math.min(yes.length, no.length);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestQ = q;
+                }
+            }
+
+            if (!bestQ) {
+                return { type: 'leaf', items: [...items] };
+            }
+
+            const { yes, no } = splitGroup(items, bestQ);
+            const remaining = questions.filter(q => q.id !== bestQ.id);
+
+            return {
+                type: 'node',
+                question: bestQ,
+                yesChild: buildOptimalTree(yes, remaining),
+                noChild: buildOptimalTree(no, remaining),
+            };
+        }
+
+        function countTreeQuestions(node) {
+            if (!node || node.type === 'leaf') { return 0; }
+            return 1 + Math.max(countTreeQuestions(node.yesChild), countTreeQuestions(node.noChild));
+        }
+
+        function findLeafForItem(node, item) {
+            if (node.type === 'leaf') {
+                return node;
+            }
+            if (evaluateQuestion(item, node.question)) {
+                return findLeafForItem(node.yesChild, item);
+            }
+            return findLeafForItem(node.noChild, item);
+        }
+
+        // ===== RENDERING HELPERS =====
+        function createItemCard(item, options = {}) {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            if (options.mystery) { card.classList.add('mystery'); }
+            card.tabIndex = 0;
+
+            const emoji = document.createElement('span');
+            emoji.className = 'item-emoji';
+            emoji.textContent = item.emoji;
+            card.appendChild(emoji);
+
+            const name = document.createElement('span');
+            name.className = 'item-name';
+            name.textContent = item.label;
+            card.appendChild(name);
+
+            // Tooltip with traits
+            const tooltip = document.createElement('div');
+            tooltip.className = 'traits-tooltip';
+            tooltip.textContent = getTraitLabels(item);
+            card.appendChild(tooltip);
+
+            return card;
+        }
+
+        function renderItemCards(container, items, options = {}) {
+            container.innerHTML = '';
+            items.forEach(item => {
+                container.appendChild(createItemCard(item, options));
+            });
+        }
+
+        function renderTreeDOM(node, container, highlightLeaf = null, dimmedNodes = null) {
+            if (!node) { return; }
+
+            if (node.type === 'leaf') {
+                const leaf = document.createElement('div');
+                leaf.className = 'tree-leaf';
+                if (highlightLeaf && node === highlightLeaf) {
+                    leaf.classList.add('highlight');
+                }
+                node.items.forEach(item => {
+                    const span = document.createElement('span');
+                    span.className = 'tree-leaf-item';
+                    span.textContent = item.emoji;
+                    span.title = item.label;
+                    leaf.appendChild(span);
+                });
+                container.appendChild(leaf);
+                return;
+            }
+
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'tree-node';
+
+            const qBox = document.createElement('div');
+            qBox.className = 'tree-question-box';
+            if (dimmedNodes && dimmedNodes.has(node)) {
+                qBox.classList.add('dimmed');
+            }
+            if (dimmedNodes && dimmedNodes.get && dimmedNodes.get(node) === 'active') {
+                qBox.classList.add('active');
+            }
+            qBox.textContent = node.question.emoji + ' ' + node.question.text;
+            nodeDiv.appendChild(qBox);
+
+            const branches = document.createElement('div');
+            branches.className = 'tree-branches';
+
+            // Yes branch
+            const yesBranch = document.createElement('div');
+            yesBranch.className = 'tree-branch';
+            const yesLabel = document.createElement('div');
+            yesLabel.className = 'tree-branch-label yes';
+            if (dimmedNodes && dimmedNodes.has && dimmedNodes.has('yes-' + node.question.id)) {
+                yesLabel.classList.add('dimmed');
+            }
+            yesLabel.textContent = 'Oui ✓';
+            yesBranch.appendChild(yesLabel);
+            renderTreeDOM(node.yesChild, yesBranch, highlightLeaf, dimmedNodes);
+            branches.appendChild(yesBranch);
+
+            // No branch
+            const noBranch = document.createElement('div');
+            noBranch.className = 'tree-branch';
+            const noLabel = document.createElement('div');
+            noLabel.className = 'tree-branch-label no';
+            if (dimmedNodes && dimmedNodes.has && dimmedNodes.has('no-' + node.question.id)) {
+                noLabel.classList.add('dimmed');
+            }
+            noLabel.textContent = 'Non ✗';
+            noBranch.appendChild(noLabel);
+            renderTreeDOM(node.noChild, noBranch, highlightLeaf, dimmedNodes);
+            branches.appendChild(noBranch);
+
+            nodeDiv.appendChild(branches);
+            container.appendChild(nodeDiv);
+        }
+
+        function clearGameArea() {
+            elPrompt.innerHTML = '';
+            elItems.innerHTML = '';
+            elQuestionArea.innerHTML = '';
+            elGroups.innerHTML = '';
+            elTree.innerHTML = '';
+            elResult.style.display = 'none';
+            elResult.innerHTML = '';
+            elControls.innerHTML = '';
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('global-correct').textContent = globalCorrect;
+            document.getElementById('global-streak').textContent = globalStreak;
+        }
+
+        // ===== MODE: GUIDED =====
+        function startGuided() {
+            clearGameArea();
+            const ds = DATASETS[currentDatasetKey];
+            const config = DIFFICULTY_CONFIG[currentDifficulty];
+            guidedItems = shuffleArray(ds.items).slice(0, config.numItems);
+
+            // Build the optimal sequence
+            guidedSequence = [];
+            buildGuidedSequence(guidedItems, [...ds.questions], guidedSequence);
+            guidedStep = 0;
+            guidedTree = null;
+
+            elPrompt.innerHTML = '<strong>Mode Guidé</strong> — L\u2019IA va poser des questions pour classer ces objets. Observe comment elle fait !';
+            renderItemCards(elItems, guidedItems);
+            renderGuidedStep();
+        }
+
+        function buildGuidedSequence(items, questions, sequence) {
+            if (items.length <= 1) { return; }
+
+            let bestQ = null;
+            let bestScore = -Infinity;
+            for (const q of questions) {
+                const { yes, no } = splitGroup(items, q);
+                if (yes.length === 0 || no.length === 0) { continue; }
+                const score = Math.min(yes.length, no.length);
+                if (score > bestScore) { bestScore = score; bestQ = q; }
+            }
+            if (!bestQ) { return; }
+
+            const { yes, no } = splitGroup(items, bestQ);
+            sequence.push({ question: bestQ, items, yes, no });
+            const remaining = questions.filter(q => q.id !== bestQ.id);
+            if (yes.length > 1) { buildGuidedSequence(yes, remaining, sequence); }
+            if (no.length > 1) { buildGuidedSequence(no, remaining, sequence); }
+        }
+
+        function renderGuidedStep() {
+            elQuestionArea.innerHTML = '';
+            elControls.innerHTML = '';
+
+            if (guidedStep >= guidedSequence.length) {
+                // All done
+                guidedTree = buildOptimalTree(guidedItems, DATASETS[currentDatasetKey].questions);
+                showGuidedSuccess();
+                return;
+            }
+
+            const step = guidedSequence[guidedStep];
+
+            // Highlight the items being classified in this step
+            const itemCards = elItems.querySelectorAll('.item-card');
+            itemCards.forEach(card => {
+                card.classList.remove('highlight-yes', 'highlight-no', 'dim');
+            });
+
+            // Show the question
+            const title = document.createElement('h3');
+            title.textContent = 'L\u2019IA pose la question :';
+            elQuestionArea.appendChild(title);
+
+            const questionDisplay = document.createElement('div');
+            questionDisplay.className = 'questions-list';
+
+            const qBtn = document.createElement('button');
+            qBtn.className = 'question-btn';
+            const qEmoji = document.createElement('span');
+            qEmoji.className = 'q-emoji';
+            qEmoji.textContent = step.question.emoji;
+            qBtn.appendChild(qEmoji);
+            qBtn.appendChild(document.createTextNode(step.question.text));
+            qBtn.addEventListener('click', () => applyGuidedStep(step));
+            questionDisplay.appendChild(qBtn);
+
+            elQuestionArea.appendChild(questionDisplay);
+
+            // Build partial tree
+            if (guidedStep > 0) {
+                guidedTree = buildOptimalTree(guidedItems, DATASETS[currentDatasetKey].questions);
+                renderPartialTree();
+            }
+        }
+
+        function applyGuidedStep(step) {
+            // Animate items
+            const allItems = guidedItems;
+            const itemCards = elItems.querySelectorAll('.item-card');
+            itemCards.forEach((card, i) => {
+                const item = allItems[i];
+                if (!item) { return; }
+                if (step.items.includes(item)) {
+                    if (evaluateQuestion(item, step.question)) {
+                        card.classList.add('highlight-yes');
+                    } else {
+                        card.classList.add('highlight-no');
+                    }
+                } else {
+                    card.classList.add('dim');
+                }
+            });
+
+            playSound('success');
+            guidedStep++;
+
+            // Show next button
+            elQuestionArea.innerHTML = '';
+            const info = document.createElement('div');
+            info.className = 'game-prompt';
+            info.style.marginBottom = '0';
+            info.innerHTML = step.question.emoji + ' <strong>' + ScoreManager._escapeHtml(step.question.text) + '</strong><br>' +
+                '<span style="color:var(--yes-color)">Oui ✓ : ' + step.yes.map(i => i.emoji).join(' ') + '</span> · ' +
+                '<span style="color:var(--no-color)">Non ✗ : ' + step.no.map(i => i.emoji).join(' ') + '</span>';
+            elQuestionArea.appendChild(info);
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-new';
+            nextBtn.textContent = guidedStep < guidedSequence.length ? 'Question suivante →' : 'Voir le résultat →';
+            nextBtn.style.marginTop = '12px';
+            nextBtn.addEventListener('click', () => {
+                // Reset highlights
+                itemCards.forEach(card => card.classList.remove('highlight-yes', 'highlight-no', 'dim'));
+                renderGuidedStep();
+            });
+            elQuestionArea.appendChild(nextBtn);
+        }
+
+        function renderPartialTree() {
+            elTree.innerHTML = '';
+            const title = document.createElement('h3');
+            title.textContent = '🌳 Arbre de décision';
+            elTree.appendChild(title);
+
+            // Build tree from completed steps only
+            const ds = DATASETS[currentDatasetKey];
+            const tree = buildOptimalTree(guidedItems, ds.questions);
+            renderTreeDOM(tree, elTree);
+        }
+
+        function showGuidedSuccess() {
+            elQuestionArea.innerHTML = '';
+            const tree = buildOptimalTree(guidedItems, DATASETS[currentDatasetKey].questions);
+
+            elTree.innerHTML = '';
+            const title = document.createElement('h3');
+            title.textContent = '🌳 Arbre de décision complet';
+            elTree.appendChild(title);
+            renderTreeDOM(tree, elTree);
+
+            const numQ = guidedSequence.length;
+            globalCorrect++;
+            globalStreak++;
+            if (globalStreak > globalBest) { globalBest = globalStreak; }
+            ScoreManager.addSuccess('guided', currentDifficulty, 0);
+            updateScoreDisplay();
+            handleStreakCelebration(globalStreak, currentDifficulty === 'hard', globalStreak > globalBest);
+
+            elResult.style.display = 'block';
+            elResult.className = 'result-area success';
+            elResult.innerHTML = '';
+
+            const resTitle = document.createElement('div');
+            resTitle.className = 'result-title';
+            resTitle.textContent = '🎉 Classification terminée !';
+            elResult.appendChild(resTitle);
+
+            const resSub = document.createElement('div');
+            resSub.className = 'result-subtitle';
+            resSub.textContent = 'L\u2019IA a classé ' + guidedItems.length + ' objets en ' + numQ + ' questions.';
+            elResult.appendChild(resSub);
+
+            const newBtn = document.createElement('button');
+            newBtn.className = 'btn btn-new';
+            newBtn.textContent = '🔄 Recommencer';
+            newBtn.addEventListener('click', startGuided);
+            elResult.appendChild(newBtn);
+        }
+
+        // ===== MODE: FREE =====
+        function startFree() {
+            clearGameArea();
+            const ds = DATASETS[currentDatasetKey];
+            const config = DIFFICULTY_CONFIG[currentDifficulty];
+            const items = shuffleArray(ds.items).slice(0, config.numItems);
+
+            freeGroups = [{ items, classified: false }];
+            freeUsedQuestions = [];
+            freeActiveGroupIndex = 0;
+            freeTree = null;
+            freeMistakes = 0;
+
+            elPrompt.innerHTML = '<strong>Mode Libre</strong> — C\u2019est toi le détective ! Choisis les questions pour classer les objets. Clique sur un groupe, puis pose une question.';
+            renderFreeState();
+        }
+
+        function renderFreeState() {
+            const ds = DATASETS[currentDatasetKey];
+            elItems.innerHTML = '';
+            elQuestionArea.innerHTML = '';
+            elGroups.innerHTML = '';
+            elControls.innerHTML = '';
+
+            // Check victory
+            if (freeGroups.every(g => g.classified || g.items.length <= 1)) {
+                showFreeSuccess();
+                return;
+            }
+
+            // Auto-classify groups with 1 item
+            freeGroups.forEach(g => {
+                if (g.items.length <= 1) { g.classified = true; }
+            });
+
+            // Ensure active group is valid
+            if (freeActiveGroupIndex < 0 || freeActiveGroupIndex >= freeGroups.length || freeGroups[freeActiveGroupIndex].classified) {
+                freeActiveGroupIndex = freeGroups.findIndex(g => !g.classified);
+                if (freeActiveGroupIndex < 0) {
+                    showFreeSuccess();
+                    return;
+                }
+            }
+
+            // Render groups
+            freeGroups.forEach((group, index) => {
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                if (group.classified) {
+                    card.classList.add('classified');
+                } else if (index === freeActiveGroupIndex) {
+                    card.classList.add('active-group');
+                }
+
+                const label = document.createElement('div');
+                label.className = 'group-label';
+                label.textContent = group.classified ? '✅ Classé' : 'Groupe ' + (index + 1);
+                card.appendChild(label);
+
+                const itemsDiv = document.createElement('div');
+                itemsDiv.className = 'group-items';
+                group.items.forEach(item => {
+                    itemsDiv.appendChild(createItemCard(item));
+                });
+                card.appendChild(itemsDiv);
+
+                if (!group.classified) {
+                    card.addEventListener('click', () => {
+                        freeActiveGroupIndex = index;
+                        renderFreeState();
+                    });
+                }
+                elGroups.appendChild(card);
+            });
+
+            // Show available questions for active group
+            const activeGroup = freeGroups[freeActiveGroupIndex];
+            if (!activeGroup || activeGroup.classified) { return; }
+
+            const availableQuestions = ds.questions.filter(q => {
+                if (freeUsedQuestions.includes(q.id)) { return false; }
+                // Only show questions that actually split this group
+                const { yes, no } = splitGroup(activeGroup.items, q);
+                return yes.length > 0 && no.length > 0;
+            });
+
+            if (availableQuestions.length === 0) {
+                // No more useful questions for this group — auto-classify
+                activeGroup.classified = true;
+                freeActiveGroupIndex = freeGroups.findIndex(g => !g.classified);
+                renderFreeState();
+                return;
+            }
+
+            const title = document.createElement('h3');
+            title.textContent = 'Quelle question poser au groupe ' + (freeActiveGroupIndex + 1) + ' ?';
+            elQuestionArea.appendChild(title);
+
+            const qList = document.createElement('div');
+            qList.className = 'questions-list';
+            availableQuestions.forEach(q => {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                const emoji = document.createElement('span');
+                emoji.className = 'q-emoji';
+                emoji.textContent = q.emoji;
+                btn.appendChild(emoji);
+                btn.appendChild(document.createTextNode(q.text));
+                btn.addEventListener('click', () => applyFreeQuestion(q));
+                qList.appendChild(btn);
+            });
+            elQuestionArea.appendChild(qList);
+
+            // Render tree so far
+            renderFreeTree();
+        }
+
+        function applyFreeQuestion(question) {
+            const activeGroup = freeGroups[freeActiveGroupIndex];
+            const { yes, no } = splitGroup(activeGroup.items, question);
+
+            playSound('success');
+            freeUsedQuestions.push(question.id);
+
+            // Replace active group with two new groups
+            const newGroups = [];
+            for (let i = 0; i < freeGroups.length; i++) {
+                if (i === freeActiveGroupIndex) {
+                    if (yes.length > 0) { newGroups.push({ items: yes, classified: yes.length <= 1 }); }
+                    if (no.length > 0) { newGroups.push({ items: no, classified: no.length <= 1 }); }
+                } else {
+                    newGroups.push(freeGroups[i]);
+                }
+            }
+            freeGroups = newGroups;
+
+            // Select first non-classified group
+            freeActiveGroupIndex = freeGroups.findIndex(g => !g.classified);
+            renderFreeState();
+        }
+
+        function renderFreeTree() {
+            elTree.innerHTML = '';
+            if (freeUsedQuestions.length === 0) { return; }
+
+            const title = document.createElement('h3');
+            title.textContent = '🌳 Ton arbre de décision (' + freeUsedQuestions.length + ' question' + (freeUsedQuestions.length > 1 ? 's' : '') + ')';
+            elTree.appendChild(title);
+
+            // Rebuild tree from used questions order
+            const ds = DATASETS[currentDatasetKey];
+            const allItems = [];
+            freeGroups.forEach(g => allItems.push(...g.items));
+            const usedQObjects = freeUsedQuestions.map(qid => ds.questions.find(q => q.id === qid)).filter(Boolean);
+            const tree = buildOptimalTree(allItems, usedQObjects);
+            renderTreeDOM(tree, elTree);
+        }
+
+        function showFreeSuccess() {
+            elQuestionArea.innerHTML = '';
+            elGroups.innerHTML = '';
+
+            const ds = DATASETS[currentDatasetKey];
+            const numQ = freeUsedQuestions.length;
+
+            // Calculate optimal
+            const allItems = [];
+            freeGroups.forEach(g => allItems.push(...g.items));
+            const optimalTree = buildOptimalTree(allItems, ds.questions);
+            const optimalQ = countTreeLeaves(optimalTree) - 1; // internal nodes = leaves - 1 max
+
+            globalCorrect++;
+            globalStreak++;
+            if (globalStreak > globalBest) { globalBest = globalStreak; }
+            ScoreManager.addSuccess('free', currentDifficulty, freeMistakes);
+            updateScoreDisplay();
+            handleStreakCelebration(globalStreak, currentDifficulty === 'hard', globalStreak > globalBest);
+
+            // Final tree
+            renderFreeTree();
+
+            elResult.style.display = 'block';
+            elResult.className = 'result-area success';
+            elResult.innerHTML = '';
+
+            const resTitle = document.createElement('div');
+            resTitle.className = 'result-title';
+            resTitle.textContent = '🎉 Tous les objets sont classés !';
+            elResult.appendChild(resTitle);
+
+            const stat = document.createElement('div');
+            stat.className = 'result-stat';
+            stat.textContent = numQ;
+            elResult.appendChild(stat);
+
+            const statLabel = document.createElement('div');
+            statLabel.className = 'result-stat-label';
+            statLabel.textContent = 'question' + (numQ > 1 ? 's' : '') + ' posée' + (numQ > 1 ? 's' : '');
+            elResult.appendChild(statLabel);
+
+            const newBtn = document.createElement('button');
+            newBtn.className = 'btn btn-new';
+            newBtn.style.marginTop = '16px';
+            newBtn.textContent = '🔄 Recommencer';
+            newBtn.addEventListener('click', startFree);
+            elResult.appendChild(newBtn);
+        }
+
+        function countTreeLeaves(node) {
+            if (!node || node.type === 'leaf') { return 1; }
+            return countTreeLeaves(node.yesChild) + countTreeLeaves(node.noChild);
+        }
+
+        // ===== MODE: CHALLENGE =====
+        function startChallenge() {
+            clearGameArea();
+            const ds = DATASETS[currentDatasetKey];
+            const config = DIFFICULTY_CONFIG[currentDifficulty];
+            const numForTree = Math.min(config.numItems, ds.items.length - 1);
+
+            // Pick items for the tree and one mystery item
+            const shuffled = shuffleArray(ds.items);
+            const treeItems = shuffled.slice(0, numForTree);
+            const remaining = shuffled.slice(numForTree);
+
+            // Build tree
+            challengeTree = buildOptimalTree(treeItems, [...ds.questions]);
+            challengeMysteryItem = remaining[0] || shuffled[0]; // fallback
+            challengeCurrentNode = challengeTree;
+            challengeTraversalPath = [];
+            challengeMistakes = 0;
+
+            elPrompt.innerHTML = '<strong>Mode Défi</strong> — Un nouvel objet arrive ! Suis l\u2019arbre de décision pour prédire dans quel groupe il va.';
+
+            // Show mystery item
+            const mysteryDiv = document.createElement('div');
+            mysteryDiv.style.textAlign = 'center';
+            mysteryDiv.style.marginBottom = '16px';
+            const mysteryLabel = document.createElement('div');
+            mysteryLabel.style.cssText = 'font-size:13px; font-weight:700; text-transform:uppercase; color:var(--accent); margin-bottom:8px;';
+            mysteryLabel.textContent = '🔮 Objet mystère';
+            mysteryDiv.appendChild(mysteryLabel);
+            const cardWrapper = document.createElement('div');
+            cardWrapper.style.display = 'flex';
+            cardWrapper.style.justifyContent = 'center';
+            cardWrapper.appendChild(createItemCard(challengeMysteryItem, { mystery: true }));
+            mysteryDiv.appendChild(cardWrapper);
+            elItems.appendChild(mysteryDiv);
+
+            renderChallengeStep();
+        }
+
+        function renderChallengeStep() {
+            elQuestionArea.innerHTML = '';
+            elControls.innerHTML = '';
+
+            // Render the full tree with highlighting
+            elTree.innerHTML = '';
+            const title = document.createElement('h3');
+            title.textContent = '🌳 Arbre de décision — Suis le chemin !';
+            elTree.appendChild(title);
+            renderTreeDOM(challengeTree, elTree);
+
+            if (challengeCurrentNode.type === 'leaf') {
+                // Reached a leaf — verify
+                showChallengeResult();
+                return;
+            }
+
+            // Show the current question with answer buttons
+            const qTitle = document.createElement('h3');
+            qTitle.textContent = 'Pour ' + challengeMysteryItem.emoji + ' ' + challengeMysteryItem.label + ' :';
+            elQuestionArea.appendChild(qTitle);
+
+            const qDisplay = document.createElement('div');
+            qDisplay.className = 'game-prompt';
+            qDisplay.style.marginBottom = '0';
+            qDisplay.innerHTML = challengeCurrentNode.question.emoji + ' <strong>' + ScoreManager._escapeHtml(challengeCurrentNode.question.text) + '</strong>';
+            elQuestionArea.appendChild(qDisplay);
+
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'answer-area';
+
+            const yesBtn = document.createElement('button');
+            yesBtn.className = 'answer-btn yes-btn';
+            yesBtn.textContent = '✓ Oui';
+            yesBtn.addEventListener('click', () => answerChallenge(true));
+            answerDiv.appendChild(yesBtn);
+
+            const noBtn = document.createElement('button');
+            noBtn.className = 'answer-btn no-btn';
+            noBtn.textContent = '✗ Non';
+            noBtn.addEventListener('click', () => answerChallenge(false));
+            answerDiv.appendChild(noBtn);
+
+            elQuestionArea.appendChild(answerDiv);
+        }
+
+        function answerChallenge(userAnswer) {
+            const correctAnswer = evaluateQuestion(challengeMysteryItem, challengeCurrentNode.question);
+
+            if (userAnswer === correctAnswer) {
+                playSound('success');
+                challengeTraversalPath.push({ question: challengeCurrentNode.question, answer: userAnswer });
+                challengeCurrentNode = userAnswer ? challengeCurrentNode.yesChild : challengeCurrentNode.noChild;
+                renderChallengeStep();
+            } else {
+                playSound('error');
+                challengeMistakes++;
+                ScoreManager.addMistake('challenge', currentDifficulty);
+                showToast('Réfléchis bien aux caractéristiques de ' + challengeMysteryItem.emoji + ' !', 'error');
+            }
+        }
+
+        function showChallengeResult() {
+            elQuestionArea.innerHTML = '';
+
+            const leaf = challengeCurrentNode;
+            const leafItems = leaf.items;
+
+            globalCorrect++;
+            globalStreak++;
+            if (globalStreak > globalBest) { globalBest = globalStreak; }
+            ScoreManager.addSuccess('challenge', currentDifficulty, challengeMistakes);
+            updateScoreDisplay();
+            const isExtreme = currentDifficulty === 'hard' && challengeMistakes === 0;
+            handleStreakCelebration(globalStreak, isExtreme, globalStreak > globalBest);
+
+            elResult.style.display = 'block';
+            elResult.className = 'result-area success';
+            elResult.innerHTML = '';
+
+            const resTitle = document.createElement('div');
+            resTitle.className = 'result-title';
+            resTitle.textContent = '🎉 Bravo, détective !';
+            elResult.appendChild(resTitle);
+
+            const resSub = document.createElement('div');
+            resSub.className = 'result-subtitle';
+            const groupText = leafItems.map(i => i.emoji + ' ' + i.label).join(', ');
+            resSub.textContent = challengeMysteryItem.emoji + ' ' + challengeMysteryItem.label + ' va dans le même groupe que ' + groupText + ' !';
+            elResult.appendChild(resSub);
+
+            if (challengeMistakes === 0) {
+                const perfect = document.createElement('div');
+                perfect.style.cssText = 'font-size: 14px; color: var(--success); font-weight: 700; margin-top: 8px;';
+                perfect.textContent = '⭐ Sans aucune erreur !';
+                elResult.appendChild(perfect);
+            }
+
+            const newBtn = document.createElement('button');
+            newBtn.className = 'btn btn-new';
+            newBtn.style.marginTop = '16px';
+            newBtn.textContent = '⚡ Nouveau défi';
+            newBtn.addEventListener('click', startChallenge);
+            elResult.appendChild(newBtn);
+        }
+
+        // ===== GAME CONTROL =====
+        function startGame() {
+            if (currentMode === 'guided') { startGuided(); }
+            else if (currentMode === 'free') { startFree(); }
+            else if (currentMode === 'challenge') { startChallenge(); }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('tab-guided').classList.toggle('active', mode === 'guided');
+            document.getElementById('tab-free').classList.toggle('active', mode === 'free');
+            document.getElementById('tab-challenge').classList.toggle('active', mode === 'challenge');
+            startGame();
+        }
+
+        function setDifficulty(diff) {
+            currentDifficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('diff-' + diff).classList.add('active');
+            startGame();
+        }
+
+        function setDataset(key) {
+            currentDatasetKey = key;
+            document.querySelectorAll('.dataset-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('ds-' + key).classList.add('active');
+            startGame();
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.getElementById('tab-guided').addEventListener('click', () => setMode('guided'));
+        document.getElementById('tab-free').addEventListener('click', () => setMode('free'));
+        document.getElementById('tab-challenge').addEventListener('click', () => setMode('challenge'));
+
+        document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
+        document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
+        document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+
+        document.getElementById('ds-animals').addEventListener('click', () => setDataset('animals'));
+        document.getElementById('ds-fruits').addEventListener('click', () => setDataset('fruits'));
+        document.getElementById('ds-vehicles').addEventListener('click', () => setDataset('vehicles'));
+
+        window.addEventListener('c2_change_difficulty', (e) => {
+            const nextDiff = e.detail.difficulty;
+            if (nextDiff === 'easy') { document.getElementById('diff-easy')?.click(); }
+            else if (nextDiff === 'medium') { document.getElementById('diff-medium')?.click(); }
+            else if (nextDiff === 'hard') { document.getElementById('diff-hard')?.click(); }
+        });
+
+        // ===== INITIALIZATION =====
+        startGame();
+    </script>
+    <script src="../../assets/js/theme.js"></script>
+    <script>
+        window.addEventListener('load', () => ScoreManager.init('detective_ia'));
+    </script>
+    <script src="../../assets/js/url-params.js"></script>
+</body>
+
+</html>

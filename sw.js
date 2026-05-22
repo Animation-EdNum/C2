@@ -7,6 +7,7 @@ const ASSETS = [
     './indexC1.html',
     './manifest.json',
     './merci.html',
+    './alpha/webapps/detective_ia.html',
     './alpha/webapps/jeu_de_la_grue.html',
     './alpha/webapps/machine_a_chiffrer.html',
     './alpha/webapps/machine_a_trier.html',

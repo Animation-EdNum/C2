@@ -113,6 +113,35 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-detective-ia",
+    "href": "alpha/webapps/detective_ia.html",
+    "target": null,
+    "rel": null,
+    "isAlpha": true,
+    "isExternal": false,
+    "isTeacher": false,
+    "dataLevel": "7-8H",
+    "icon": "dt-robot-astromech",
+    "iconStyle": "width:32px;height:32px;flex-shrink:0;",
+    "title": "Détective IA",
+    "desc": "Entraîne une IA à classer des objets ou résous des énigmes avec des arbres de décision.",
+    "tags": [
+      "#Intelligence Artificielle",
+      "#Classification",
+      "#Arbre de décision"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-reseau-tri",
     "href": "alpha/webapps/reseau_de_tri.html",
     "target": null,
