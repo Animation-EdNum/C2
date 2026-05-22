@@ -823,8 +823,8 @@
             <div id="mode-sort" class="view active" role="tabpanel" aria-labelledby="tab-sort">
                 <!-- Difficulty Selector -->
                 <div class="difficulty-bar">
-                    <button id="diff-easy" class="diff-btn active">🎒 Niveau 3-4H</button>
-                    <button id="diff-hard" class="diff-btn">💻 Niveau 5-6H / 7-8H</button>
+                    <button id="diff-easy" class="diff-btn active"><i data-fa="circle" style="color: #2ecc71;"></i> Niveau 3-4H</button>
+                    <button id="diff-hard" class="diff-btn"><i data-fa="circle" style="color: #f1c40f;"></i> Niveau 5-6H / 7-8H</button>
                 </div>
 
                 <details class="instructions">
@@ -891,9 +891,9 @@
             <div id="mode-scenarios" class="view" role="tabpanel" aria-labelledby="tab-scenarios">
                 <!-- Difficulty Selector -->
                 <div class="difficulty-bar">
-                    <button id="sc-diff-easy" class="diff-btn" data-diff="easy">🎒 Niveau Facile (3-4H)</button>
-                    <button id="sc-diff-medium" class="diff-btn active" data-diff="medium">💻 Niveau Moyen (5-6H)</button>
-                    <button id="sc-diff-hard" class="diff-btn" data-diff="hard">🚀 Niveau Difficile (7-8H)</button>
+                    <button id="sc-diff-easy" class="diff-btn" data-diff="easy"><i data-fa="circle" style="color: #2ecc71;"></i> Niveau Facile (3-4H)</button>
+                    <button id="sc-diff-medium" class="diff-btn active" data-diff="medium"><i data-fa="circle" style="color: #f1c40f;"></i> Niveau Moyen (5-6H)</button>
+                    <button id="sc-diff-hard" class="diff-btn" data-diff="hard"><i data-fa="circle" style="color: #e74c3c;"></i> Niveau Difficile (7-8H)</button>
                 </div>
 
                 <details class="instructions">
@@ -1598,8 +1598,10 @@
             elScProgress.textContent = `Question ${currentScenarioIndex + 1}/${activeScList.length}`;
             elScPrompt.innerHTML = `<strong>Situation :</strong> ${current.prompt}`;
 
+            current.shuffledOptions = [...current.options].sort(() => 0.5 - Math.random());
+
             elScOptions.innerHTML = '';
-            current.options.forEach((opt, idx) => {
+            current.shuffledOptions.forEach((opt, idx) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-item';
                 btn.innerHTML = `<span style="font-weight: 800; opacity: 0.5;">${String.fromCharCode(65 + idx)} :</span> <span>${opt.text}</span>`;
@@ -1617,7 +1619,7 @@
             optionsButtons.forEach(btn => btn.classList.add('disabled'));
 
             const selectedBtn = optionsButtons[selectedIdx];
-            const chosenOption = current.options[selectedIdx];
+            const chosenOption = current.shuffledOptions[selectedIdx];
 
             if (chosenOption.correct) {
                 // Success
@@ -1658,7 +1660,7 @@
                 ScoreManager.addMistake('scenarios', currentScDifficulty);
 
                 // Highlight correct one
-                current.options.forEach((opt, idx) => {
+                current.shuffledOptions.forEach((opt, idx) => {
                     if (opt.correct) {
                         optionsButtons[idx].classList.add('correct');
                     }
