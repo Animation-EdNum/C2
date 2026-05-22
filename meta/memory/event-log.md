@@ -37,3 +37,5 @@
 - **[2026-05-20]** [Testing] Added 4 new E2E test suites and updated `.github/workflows/e2e-tests.yml`.
 - **[2026-05-21]** [Refactor] Extracted inline CSS of 5 stable webapps to dedicated stylesheets in `assets/css/` and updated Service Worker cache manifest.
 - **[2026-05-21]** [Refactor] Migrated all inline `onclick` event handlers of experimental "alpha" web applications (`machine_a_chiffrer.html` and `jeu_de_la_grue.html`) to modern `addEventListener` registrations.
+- **[2026-05-22]** [Optimization] Corrected private subset scanner to robustly parse `registry.js` (dynamic external link icons) and scan root pages like `merci.html`, restoring all suite-wide pruned icons to `fa-subset.js` and updating the Service Worker manifest cache.
+- **[2026-05-22]** [Feature] Added easy and hard difficulty levels (5 questions each) with dynamic UI selection in Coffre-fort Scenarios mode, set friendly modal labels, fully prevented Password utility from registering scores, implemented defensive cleanup of legacy stats in `scores.js`, and updated Service Worker cache manifest.

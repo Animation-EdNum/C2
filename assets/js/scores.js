@@ -25,7 +25,9 @@ const ScoreManager = {
         'quantity': 'Par quantité',
         'size': 'Par taille',
         'nombres': 'Nombres',
-        'lettres': 'Lettres'
+        'lettres': 'Lettres',
+        'sort': 'Mode Tri',
+        'scenarios': 'Mode Scénarios'
     },
 
     DIFF_LABELS: {
@@ -79,6 +81,11 @@ const ScoreManager = {
         if (data) {
             try {
                 this.stats = JSON.parse(data);
+                // Clean up obsolete password scores if present
+                if (this.stats && this.stats.password) {
+                    delete this.stats.password;
+                    this.saveStats();
+                }
             } catch (e) {
                 this.stats = {};
             }

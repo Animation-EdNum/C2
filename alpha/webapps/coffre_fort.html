@@ -20,33 +20,30 @@
 <head>
     <link rel="root" href="../../">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Apprends à protéger tes données personnelles et à créer des mots de passe robustes grâce à des exercices interactifs.">
     <title>🔒 Coffre-fort numérique</title>
     <meta property="og:title" content="Coffre-fort numérique">
     <meta property="og:description" content="Apprends à protéger tes données personnelles et à créer des mots de passe robustes.">
+    <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <style>
-        body > header,
-        body > .container {
-            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
-        }
-
+        /* ========== GAME-SPECIFIC TOKENS ========== */
         :root {
-            --bg-gradient-start: #e2e8f0;
-            --bg-gradient-end: #cbd5e1;
+            --container-max-width: 1000px;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --accent-light: #60a5fa;
             --card-bg: rgba(255, 255, 255, 0.9);
             --card-border: #cbd5e1;
             --container-bg: rgba(255, 255, 255, 0.9);
             --text-main: #0f172a;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
-            --accent: #2563eb;
-            --accent-dark: #1d4ed8;
-            --accent-light: #60a5fa;
             --badge-bg: #dbeafe;
             --badge-color: #1e40af;
             --input-border: #94a3b8;
@@ -56,7 +53,7 @@
             --error: #ef4444;
             --shadow-color: rgba(0, 0, 0, 0.15);
             --card-shadow: rgba(37, 99, 235, 0.1);
-            
+
             --steel-safe: #64748b;
             --neon-green: #10b981;
             --neon-blue: #06b6d4;
@@ -70,24 +67,22 @@
         }
 
         body.dark {
-            --bg-gradient-start: #0f172a;
-            --bg-gradient-end: #020617;
+            --accent: #3b82f6;
+            --accent-dark: #1d4ed8;
+            --accent-light: #60a5fa;
             --card-bg: rgba(30, 41, 59, 0.7);
             --card-border: #334155;
             --container-bg: rgba(15, 23, 42, 0.88);
             --text-main: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            --accent: #3b82f6;
-            --accent-dark: #1d4ed8;
-            --accent-light: #60a5fa;
             --badge-bg: #1e293b;
             --badge-color: #3b82f6;
             --input-border: #334155;
             --instructions-bg: #1e293b;
             --shadow-color: rgba(0, 0, 0, 0.5);
             --card-shadow: rgba(0, 0, 0, 0.4);
-            
+
             --steel-safe: #475569;
             --yes-bg: #064e3b;
             --yes-color: #a7f3d0;
@@ -97,83 +92,47 @@
             --no-border: #be123c;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ========== LAYOUT ========== */
         body {
-            touch-action: manipulation;
             font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            background: linear-gradient(135deg, #e0e7ff 0%, #e0f2fe 50%, #f3e8ff 100%);
             min-height: 100vh;
             padding: 20px;
             color: var(--text-main);
+            transition: background 0.3s ease;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%);
         }
 
         .container {
-            max-width: var(--container-max-width, 1000px);
+            max-width: var(--container-max-width);
             margin: 0 auto;
             background: var(--container-bg);
             padding: 30px;
-            border-radius: var(--radius-xl);
+            border-radius: var(--radius-2xl);
             box-shadow: 0 20px 60px var(--shadow-color);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: var(--glass-border);
         }
 
-        h1 {
-            text-align: center;
-            color: var(--accent);
-            margin-bottom: 5px;
-            font-size: 28px;
-        }
-
         .subtitle {
             text-align: center;
             color: var(--text-secondary);
-            margin-bottom: 25px;
+            margin-bottom: 4px;
             font-size: 14px;
         }
 
-        /* ========== TABS & NAVIGATION ========== */
-        .navigation-bar {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
+        /* ========== VIEWS ========== */
+        .view {
+            display: none;
+            animation: fade-in-cascade 0.4s ease-out forwards;
         }
 
-        .tab-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: var(--radius-xl);
-            border: 2px solid var(--accent);
-            background: transparent;
-            color: var(--accent);
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            outline: none;
-            min-width: 44px;
-            min-height: 44px;
-        }
-
-        .tab-btn.active {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 4px 12px var(--card-shadow);
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: var(--badge-bg);
+        .view.active {
+            display: block;
         }
 
         /* ========== DIFFICULTY BAR ========== */
@@ -189,7 +148,7 @@
             align-items: center;
             justify-content: center;
             padding: 6px 16px;
-            border-radius: var(--radius-2xl);
+            border-radius: var(--radius-pill);
             border: 2px solid var(--text-muted);
             background: transparent;
             color: var(--text-secondary);
@@ -206,53 +165,6 @@
             border-color: var(--accent);
             background: var(--badge-bg);
             color: var(--accent);
-        }
-
-        /* ========== INSTRUCTIONS ========== */
-        .instructions {
-            background: var(--instructions-bg);
-            border-left: 4px solid var(--accent);
-            padding: 15px;
-            border-radius: var(--radius-md);
-            margin-bottom: 25px;
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--text-secondary);
-        }
-
-        /* ========== SCORE PANEL ========== */
-        .score-panel {
-            display: flex;
-            justify-content: space-around;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 12px;
-            border-radius: var(--radius-lg);
-            margin-bottom: 25px;
-            font-weight: 600;
-            box-shadow: 0 4px 10px var(--card-shadow);
-        }
-
-        .score-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .score-val {
-            color: var(--accent);
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* ========== GAME MODES CONTAINER ========== */
-        .mode-container {
-            display: none;
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        .mode-container.active {
-            display: block;
         }
 
         /* ========== MODE 1: DRAG & DROP TRI ========== */
@@ -300,7 +212,8 @@
             cursor: grabbing;
         }
 
-        .data-card i {
+        .data-card i,
+        .data-card .fa-icon {
             font-size: 18px;
             color: var(--accent);
         }
@@ -355,7 +268,6 @@
             box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        /* Custom Safe Dial styles */
         .safe-dial {
             width: 60px;
             height: 60px;
@@ -363,7 +275,7 @@
             background: var(--steel-safe);
             border: 4px solid #94a3b8;
             position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: transform 0.6s var(--spring-easing);
         }
 
@@ -379,8 +291,10 @@
             border-radius: 2px;
         }
 
-        .safe-box.safe-private .safe-icon-header i { color: var(--neon-pink); }
-        .safe-box.safe-public .safe-icon-header i { color: var(--neon-blue); }
+        .safe-box.safe-private .safe-icon-header i,
+        .safe-box.safe-private .safe-icon-header .fa-icon { color: var(--neon-pink); }
+        .safe-box.safe-public .safe-icon-header i,
+        .safe-box.safe-public .safe-icon-header .fa-icon { color: var(--neon-blue); }
 
         .safe-title {
             font-size: 18px;
@@ -406,11 +320,12 @@
             min-height: 80px;
             padding: 10px;
             border-radius: var(--radius-xl);
-            background: rgba(0,0,0,0.02);
+            background: rgba(0, 0, 0, 0.02);
             border: 1px solid var(--card-border);
         }
+
         body.dark .safe-contents {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .safe-contents .data-card {
@@ -419,6 +334,12 @@
             font-size: 12px;
             padding: 8px 12px;
             box-shadow: none;
+        }
+
+        .sort-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
         }
 
         /* ========== MODE 2: SCENARIOS (QUIZ) ========== */
@@ -494,15 +415,15 @@
         }
 
         .option-item.correct {
-            background: var(--yes-bg) !important;
-            color: var(--yes-color) !important;
-            border-color: var(--yes-border) !important;
+            background: var(--yes-bg);
+            color: var(--yes-color);
+            border-color: var(--yes-border);
         }
 
         .option-item.incorrect {
-            background: var(--no-bg) !important;
-            color: var(--no-color) !important;
-            border-color: var(--no-border) !important;
+            background: var(--no-bg);
+            color: var(--no-color);
+            border-color: var(--no-border);
         }
 
         .option-item.disabled {
@@ -547,22 +468,6 @@
             display: flex;
             justify-content: flex-end;
             margin-top: 20px;
-        }
-
-        .next-btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--radius-xl);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px var(--card-shadow);
-        }
-
-        .next-btn:hover {
-            background: var(--accent-dark);
         }
 
         /* ========== MODE 3: PASSWORD METER ========== */
@@ -645,13 +550,14 @@
 
         .strength-bar-bg {
             height: 8px;
-            background: rgba(0,0,0,0.06);
+            background: rgba(0, 0, 0, 0.06);
             border-radius: 4px;
             overflow: hidden;
             width: 100%;
         }
+
         body.dark .strength-bar-bg {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .strength-bar-fill {
@@ -692,7 +598,8 @@
             transition: color 0.2s;
         }
 
-        .crit-item i {
+        .crit-item i,
+        .crit-item .crit-icon {
             font-size: 14px;
             width: 20px;
             height: 20px;
@@ -701,15 +608,15 @@
             align-items: center;
             justify-content: center;
             color: #fff;
+            font-style: normal;
         }
 
-        .crit-item i.crit-ok {
+        .crit-item .crit-ok {
             background: var(--success);
-            content: "✓";
         }
-        .crit-item i.crit-ko {
+
+        .crit-item .crit-ko {
             background: var(--text-muted);
-            content: "✗";
         }
 
         .crit-item.ok {
@@ -750,20 +657,22 @@
             border-radius: 50%;
             background: #1e293b;
             border: 6px solid #475569;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 1s var(--spring-easing);
         }
 
-        .big-lock-wheel i {
+        .big-lock-wheel i,
+        .big-lock-wheel .fa-icon {
             font-size: 32px;
             color: var(--neon-pink);
             transition: color 0.5s;
         }
 
-        .big-lock-wheel.unlocked i {
+        .big-lock-wheel.unlocked i,
+        .big-lock-wheel.unlocked .fa-icon {
             color: var(--neon-green);
         }
 
@@ -801,12 +710,34 @@
             z-index: 9999;
         }
 
-        /* ========== ANIMATIONS ========== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ========== SCORE BAR UNIFIED STYLES ========== */
+        .score-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
         }
 
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        /* ========== ANIMATIONS ========== */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -822,18 +753,10 @@
             animation: shake 0.4s ease-in-out;
         }
 
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 600px) {
             .container {
                 padding: 15px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            .tab-btn {
-                padding: 8px 12px;
-                font-size: 13px;
             }
 
             .safe-box {
@@ -842,7 +765,6 @@
         }
     </style>
     <script src="../../assets/js/scores.js"></script>
-    <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
 </head>
 
@@ -854,174 +776,249 @@
         <header class="app-header">
             <div class="header-title-wrapper">
                 <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
-                    <i data-fa="dt-magnifying-glass-chart"></i>
+                    <i data-fa="dt-lock"></i>
                 </a>
                 <div>
-                    <h1>🔒 Coffre-fort numérique</h1>
+                    <h1>Coffre-fort numérique</h1>
                     <div class="subtitle">Apprends à identifier les données personnelles et à protéger tes secrets</div>
                 </div>
             </div>
-            <button id="theme-btn" class="theme-toggle-btn" aria-label="Changer le thème">
-                <i data-fa="dt-moon"></i>
-            </button>
-        </header>
-
-        <!-- Mode Navigation Tabs -->
-        <nav class="navigation-bar" role="tablist">
-            <button id="tab-sort" class="tab-btn active" role="tab" aria-selected="true" aria-controls="mode-sort">
-                <i data-fa="dt-shapes"></i> Mode Tri
-            </button>
-            <button id="tab-scenarios" class="tab-btn" role="tab" aria-selected="false" aria-controls="mode-scenarios">
-                <i data-fa="dt-message"></i> Scénarios
-            </button>
-            <button id="tab-password" class="tab-btn" role="tab" aria-selected="false" aria-controls="mode-password">
-                <i data-fa="dt-key"></i> Mot de passe
-            </button>
-        </nav>
-
-        <!-- Score Panel -->
-        <div class="score-panel">
-            <div class="score-item">
-                <span>Série en cours :</span>
-                <span class="score-val" id="streak-val">0</span>
-            </div>
-            <div class="score-item">
-                <span>Record :</span>
-                <span class="score-val" id="best-val">0</span>
-            </div>
-        </div>
-
-        <!-- ==================== MODE 1: DRAG & DROP TRI ==================== -->
-        <div id="mode-sort" class="mode-container active" role="tabpanel" aria-labelledby="tab-sort">
-            <!-- Difficulty Selector -->
-            <div class="difficulty-bar">
-                <button id="diff-easy" class="diff-btn active">🎒 Niveau 3-4H</button>
-                <button id="diff-hard" class="diff-btn">💻 Niveau 5-6H / 7-8H</button>
-            </div>
-
-            <div class="instructions">
-                <strong>Consigne :</strong> Glisse chaque carte d'information dans le bon coffre-fort. 
-                <br>🔒 <strong>Privé</strong> : À garder secret car cela te concerne uniquement (identité, coordonnées, sécurité).
-                <br>🌍 <strong>Public</strong> : Tu peux le partager sans risque car cela ne permet pas de t'identifier ou de te nuire.
-            </div>
-
-            <div class="drag-area">
-                <!-- Items Deck -->
-                <div class="items-deck" id="items-deck">
-                    <!-- Cards will be injected dynamically -->
-                </div>
-
-                <!-- Safe Dropzones -->
-                <div class="safes-row">
-                    <!-- Private Safe -->
-                    <div class="safe-box safe-private" id="safe-private" data-accept="private">
-                        <div class="safe-icon-header">
-                            <i data-fa="dt-lock"></i>
-                        </div>
-                        <div class="safe-dial" id="dial-private"></div>
-                        <div class="safe-title">🔒 Privé</div>
-                        <div class="safe-desc">À garder strictement secret</div>
-                        <div class="safe-contents" id="contents-private"></div>
-                    </div>
-
-                    <!-- Public Safe -->
-                    <div class="safe-box safe-public" id="safe-public" data-accept="public">
-                        <div class="safe-icon-header">
-                            <i data-fa="dt-globe"></i>
-                        </div>
-                        <div class="safe-dial" id="dial-public"></div>
-                        <div class="safe-title">🌍 Public</div>
-                        <div class="safe-desc">Partageable librement</div>
-                        <div class="safe-contents" id="contents-public"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== MODE 2: SCENARIOS ==================== -->
-        <div id="mode-scenarios" class="mode-container" role="tabpanel" aria-labelledby="tab-scenarios">
-            <div class="instructions">
-                <strong>Consigne :</strong> Lis attentivement chaque situation en ligne et choisis la meilleure action à adopter pour protéger ta sécurité et ta vie privée.
-            </div>
-
-            <div class="scenario-card">
-                <div class="scenario-header">
-                    <span class="scenario-theme" id="sc-theme">Sécurité</span>
-                    <span class="scenario-progress" id="sc-progress">Question 1/5</span>
-                </div>
-                <div class="scenario-prompt" id="sc-prompt">
-                    Chargement du scénario...
-                </div>
-                <div class="options-list" id="sc-options">
-                    <!-- Options injected by JS -->
-                </div>
-                <div class="scenario-feedback" id="sc-feedback">
-                    <div class="feedback-title" id="sc-fb-title">Bravo !</div>
-                    <div class="feedback-explanation" id="sc-fb-exp">Explanation goes here.</div>
-                </div>
-                <div class="scenario-actions" id="sc-actions" style="display: none;">
-                    <button class="next-btn" id="sc-next-btn">Question suivante ➔</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== MODE 3: PASSWORD METER ==================== -->
-        <div id="mode-password" class="mode-container" role="tabpanel" aria-labelledby="tab-password">
-            <div class="instructions">
-                <strong>Consigne :</strong> Tape un mot de passe dans la zone de test ci-dessous. Vois en temps réel comment sa force augmente et s'il respecte les consignes de sécurité pour déverrouiller le grand coffre-fort blindé !
-            </div>
-
-            <div class="password-grid">
-                <!-- Inputs & Rules -->
-                <div class="pw-tester-card">
-                    <div class="pw-title">🔑 Crée un mot de passe fort</div>
-                    <div class="pw-input-wrapper">
-                        <input type="password" id="password-input" class="pw-input" placeholder="Tape un mot de passe ici..." aria-label="Mot de passe à tester">
-                        <button id="password-toggle" class="toggle-pw-btn" title="Afficher/Masquer le mot de passe" aria-label="Afficher/Masquer le mot de passe">
-                            <i data-fa="dt-eye"></i>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" id="options-menu-btn" title="Options" aria-label="Options">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
                         </button>
                     </div>
-
-                    <!-- Strength Meter -->
-                    <div class="strength-container">
-                        <div class="strength-bar-bg">
-                            <div class="strength-bar-fill" id="strength-bar"></div>
-                        </div>
-                        <div class="strength-label-row">
-                            <span>Robustesse :</span>
-                            <span class="strength-status" id="strength-status">Vide</span>
-                        </div>
-                    </div>
-
-                    <!-- Rules list -->
-                    <div class="criteria-checklist">
-                        <div class="crit-item" id="crit-length"><i class="crit-ko"></i> 📏 Au moins 8 caractères</div>
-                        <div class="crit-item" id="crit-upper"><i class="crit-ko"></i> 🔠 Au moins une lettre MAJUSCULE</div>
-                        <div class="crit-item" id="crit-lower"><i class="crit-ko"></i> 🔤 Au moins une lettre minuscule</div>
-                        <div class="crit-item" id="crit-number"><i class="crit-ko"></i> 🔢 Au moins un chiffre (0-9)</div>
-                        <div class="crit-item" id="crit-special"><i class="crit-ko"></i> 🔣 Au moins un caractère spécial (@, #, !, ?, etc.)</div>
-                    </div>
-                </div>
-
-                <!-- Visual Safe Door Lock -->
-                <div class="pw-locker-card">
-                    <div class="big-lock-graphic">
-                        <div class="big-lock-wheel" id="main-safe-wheel">
-                            <i data-fa="dt-lock"></i>
-                        </div>
-                        <div class="big-lock-wheel-handle"></div>
-                    </div>
-                    <div class="locker-status-text" id="locker-status-text">Coffre-fort verrouillé 🔒</div>
-                    <div class="locker-subtext" id="locker-subtext">Respecte toutes les consignes de sécurité de gauche pour déverrouiller la serrure blindée !</div>
                 </div>
             </div>
-        </div>
+        </header>
+
+        <main>
+            <!-- Navigation Tabs -->
+            <div class="tabs" role="tablist">
+                <button id="tab-sort" class="tab-btn active" role="tab" aria-selected="true" aria-controls="mode-sort">
+                    <i data-fa="dt-shapes"></i> Mode Tri
+                </button>
+                <button id="tab-scenarios" class="tab-btn" role="tab" aria-selected="false" aria-controls="mode-scenarios">
+                    <i data-fa="dt-message"></i> Scénarios
+                </button>
+                <button id="tab-password" class="tab-btn" role="tab" aria-selected="false" aria-controls="mode-password">
+                    <i data-fa="dt-key"></i> Mot de passe
+                </button>
+            </div>
+
+            <!-- ==================== MODE 1: DRAG & DROP TRI ==================== -->
+            <div id="mode-sort" class="view active" role="tabpanel" aria-labelledby="tab-sort">
+                <!-- Difficulty Selector -->
+                <div class="difficulty-bar">
+                    <button id="diff-easy" class="diff-btn active">🎒 Niveau 3-4H</button>
+                    <button id="diff-hard" class="diff-btn">💻 Niveau 5-6H / 7-8H</button>
+                </div>
+
+                <details class="instructions">
+                    <summary><strong>📖 Consigne (cliquer pour ouvrir)</strong></summary>
+                    <div style="margin-top:10px;">
+                        Glisse chaque carte d'information dans le bon coffre-fort.
+                        <br>🔒 <strong>Privé</strong> : À garder secret car cela te concerne uniquement (identité, coordonnées, sécurité).
+                        <br>🌍 <strong>Public</strong> : Tu peux le partager sans risque car cela ne permet pas de t'identifier ou de te nuire.
+                    </div>
+                </details>
+
+                <div class="drag-area">
+                    <!-- Items Deck -->
+                    <div class="items-deck" id="items-deck">
+                        <!-- Cards will be injected dynamically -->
+                    </div>
+
+                    <!-- Safe Dropzones -->
+                    <div class="safes-row">
+                        <!-- Private Safe -->
+                        <div class="safe-box safe-private" id="safe-private" data-accept="private">
+                            <div class="safe-icon-header">
+                                <i data-fa="dt-lock"></i>
+                            </div>
+                            <div class="safe-dial" id="dial-private"></div>
+                            <div class="safe-title">🔒 Privé</div>
+                            <div class="safe-desc">À garder strictement secret</div>
+                            <div class="safe-contents" id="contents-private"></div>
+                        </div>
+
+                        <!-- Public Safe -->
+                        <div class="safe-box safe-public" id="safe-public" data-accept="public">
+                            <div class="safe-icon-header">
+                                <i data-fa="dt-globe"></i>
+                            </div>
+                            <div class="safe-dial" id="dial-public"></div>
+                            <div class="safe-title">🌍 Public</div>
+                            <div class="safe-desc">Partageable librement</div>
+                            <div class="safe-contents" id="contents-public"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sort-controls">
+                    <button class="btn btn-new" id="sort-restart-btn"><i data-fa="rotate-right" style="margin-right:5px;"></i> Recommencer</button>
+                </div>
+
+                <div class="card-footer">
+                    <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="sort-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="sort-streak">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== MODE 2: SCENARIOS ==================== -->
+            <div id="mode-scenarios" class="view" role="tabpanel" aria-labelledby="tab-scenarios">
+                <!-- Difficulty Selector -->
+                <div class="difficulty-bar">
+                    <button id="sc-diff-easy" class="diff-btn" data-diff="easy">🎒 Niveau Facile (3-4H)</button>
+                    <button id="sc-diff-medium" class="diff-btn active" data-diff="medium">💻 Niveau Moyen (5-6H)</button>
+                    <button id="sc-diff-hard" class="diff-btn" data-diff="hard">🚀 Niveau Difficile (7-8H)</button>
+                </div>
+
+                <details class="instructions">
+                    <summary><strong>📖 Consigne (cliquer pour ouvrir)</strong></summary>
+                    <div style="margin-top:10px;">
+                        Lis attentivement chaque situation en ligne et choisis la meilleure action à adopter pour protéger ta sécurité et ta vie privée.
+                    </div>
+                </details>
+
+                <div class="scenario-card">
+                    <div class="scenario-header">
+                        <span class="scenario-theme" id="sc-theme">Sécurité</span>
+                        <span class="scenario-progress" id="sc-progress">Question 1/5</span>
+                    </div>
+                    <div class="scenario-prompt" id="sc-prompt">
+                        Chargement du scénario…
+                    </div>
+                    <div class="options-list" id="sc-options">
+                        <!-- Options injected by JS -->
+                    </div>
+                    <div class="scenario-feedback" id="sc-feedback">
+                        <div class="feedback-title" id="sc-fb-title">Bravo !</div>
+                        <div class="feedback-explanation" id="sc-fb-exp"></div>
+                    </div>
+                    <div class="scenario-actions" id="sc-actions" style="display: none;">
+                        <button class="btn btn-primary" id="sc-next-btn">Question suivante ➔</button>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="sc-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="sc-streak">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== MODE 3: PASSWORD METER (no score-bar) ==================== -->
+            <div id="mode-password" class="view" role="tabpanel" aria-labelledby="tab-password">
+                <details class="instructions">
+                    <summary><strong>📖 Consigne (cliquer pour ouvrir)</strong></summary>
+                    <div style="margin-top:10px;">
+                        Tape un mot de passe dans la zone de test ci-dessous. Vois en temps réel comment sa force augmente et s'il respecte les consignes de sécurité pour déverrouiller le grand coffre-fort blindé !
+                    </div>
+                </details>
+
+                <div class="password-grid">
+                    <!-- Inputs & Rules -->
+                    <div class="pw-tester-card">
+                        <div class="pw-title">🔑 Crée un mot de passe fort</div>
+                        <div class="pw-input-wrapper">
+                            <input type="password" id="password-input" class="pw-input" placeholder="Tape un mot de passe ici…" aria-label="Mot de passe à tester">
+                            <button id="password-toggle" class="toggle-pw-btn" title="Afficher/Masquer le mot de passe" aria-label="Afficher/Masquer le mot de passe">
+                                <i data-fa="dt-eye"></i>
+                            </button>
+                        </div>
+
+                        <!-- Strength Meter -->
+                        <div class="strength-container">
+                            <div class="strength-bar-bg">
+                                <div class="strength-bar-fill" id="strength-bar"></div>
+                            </div>
+                            <div class="strength-label-row">
+                                <span>Robustesse :</span>
+                                <span class="strength-status" id="strength-status">Vide</span>
+                            </div>
+                        </div>
+
+                        <!-- Rules list -->
+                        <div class="criteria-checklist">
+                            <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins 8 caractères</div>
+                            <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au moins une lettre MAJUSCULE</div>
+                            <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au moins une lettre minuscule</div>
+                            <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au moins un chiffre (0-9)</div>
+                            <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au moins un caractère spécial (@, #, !, ?, etc.)</div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Safe Door Lock -->
+                    <div class="pw-locker-card">
+                        <div class="big-lock-graphic">
+                            <div class="big-lock-wheel" id="main-safe-wheel">
+                                <i data-fa="dt-lock"></i>
+                            </div>
+                            <div class="big-lock-wheel-handle"></div>
+                        </div>
+                        <div class="locker-status-text" id="locker-status-text">Coffre-fort verrouillé 🔒</div>
+                        <div class="locker-subtext" id="locker-subtext">Respecte toutes les consignes de sécurité de gauche pour déverrouiller la serrure blindée !</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
-    <!-- Scripts -->
-    <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/toast.js"></script>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum</a> avec <a href="../../merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                    libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script>window.fa?.createIcons?.();</script>
+
     <script>
+        // ==========================================
         // DATA SETS FOR MODE TRI (DRAG AND DROP)
+        // ==========================================
         const TRI_DATA = {
             easy: [
                 { id: 'tri-nom', label: 'Nom de famille complet', type: 'private', icon: 'dt-person-carry-box', desc: 'Permet de savoir qui tu es précisément.' },
@@ -1045,74 +1042,173 @@
             ]
         };
 
+        // ==========================================
         // SCENARIOS FOR MODE 2
-        const SCENARIOS = [
-            {
-                theme: '🔑 Sécurité',
-                prompt: 'Un joueur en ligne que tu ne connais pas te propose de t\'offrir des pièces de jeu gratuites si tu lui donnes ton mot de passe. Que fais-tu ?',
-                options: [
-                    { text: 'Je refuse immédiatement et j\'en parle à un adulte.', correct: true, feedback: 'Bravo ! Ne donne JAMAIS ton mot de passe, c\'est ta clé secrète personnelle.' },
-                    { text: 'Je lui donne mon mot de passe car j\'ai vraiment besoin de ces pièces.', correct: false, feedback: 'Attention ! C\'est un piège très courant (phishing) pour voler ton compte.' },
-                    { text: 'Je lui donne un faux mot de passe pour m\'amuser.', correct: false, feedback: 'Même si c\'est drôle, le plus sûr est de couper la discussion et de prévenir un adulte.' }
-                ]
-            },
-            {
-                theme: '📸 Vie Privée',
-                prompt: 'Tu as pris une photo amusante de ton camarade de classe à la récréation. Tu aimerais la publier sur ton réseau social préféré. Quelle est la bonne démarche ?',
-                options: [
-                    { text: 'Je la publie immédiatement pour faire rire mes copains.', correct: false, feedback: 'Erreur ! Publier la photo de quelqu\'un sans son accord est interdit (droit à l\'image).' },
-                    { text: 'Je lui demande son autorisation et celle de ses parents d\'abord.', correct: true, feedback: 'Exactement ! Le respect de la vie privée commence par le consentement des autres.' },
-                    { text: 'Je la partage seulement en message privé avec mes meilleurs copains sans lui dire.', correct: false, feedback: 'Non, les messages privés peuvent circuler ou être copiés. Demande toujours l\'accord.' }
-                ]
-            },
-            {
-                theme: '📱 Autorisations',
-                prompt: 'Une application de jeu de Morpion toute simple sur smartphone te demande l\'accès à tes photos et à ta position GPS précise pour pouvoir s\'ouvrir. Que fais-tu ?',
-                options: [
-                    { text: 'J\'accepte les yeux fermés car j\'ai hâte de jouer.', correct: false, feedback: 'Erreur ! Les applications demandent parfois trop d\'accès sensibles non justifiés.' },
-                    { text: 'Je refuse les permissions car un jeu de Morpion n\'a pas besoin de savoir où je suis ni d\'accéder à mes photos pour fonctionner.', correct: true, feedback: 'Très bien ! C\'est ce qu\'on appelle le principe de minimisation des données.' },
-                    { text: 'J\'accepte mais seulement pendant que j\'utilise l\'application.', correct: false, feedback: 'Dans ce cas précis, le Morpion ne nécessite absolument pas ces données. Autant les refuser totalement !' }
-                ]
-            },
-            {
-                theme: '📧 Phishing',
-                prompt: 'Tu reçois un e-mail qui a l\'air officiel (de ton école ou d\'un grand service comme Netflix) disant qu\'il y a un blocage sur ton compte et qu\'il faut cliquer d\'urgence sur un lien pour retaper tes informations secrètes.',
-                options: [
-                    { text: 'Je clique sur le lien et je remplis les champs pour réparer la situation.', correct: false, feedback: 'Attention ! C\'est un e-mail de phishing (hameçonnage) destiné à voler tes codes.' },
-                    { text: 'Je ne clique pas. Je demande à mes parents ou à un enseignant de vérifier s\'il s\'agit d\'une arnaque.', correct: true, feedback: 'Excellent réflexe ! Toujours vérifier l\'authenticité d\'un message demandant des identifiants.' },
-                    { text: 'Je réponds directement à l\'e-mail en écrivant mon mot de passe.', correct: false, feedback: 'Danger ! Ne transmet jamais de mot de passe par message écrit ou e-mail.' }
-                ]
-            },
-            {
-                theme: '🌍 Données',
-                prompt: 'Tu crées un profil sur un nouveau site éducatif. Le site te demande de renseigner ton nom de famille complet, ton adresse postale, ton école, ton âge et ton adresse e-mail. Que fais-tu ?',
-                options: [
-                    { text: 'Je remplis tout soigneusement car ce sont des cases obligatoires.', correct: false, feedback: 'Mauvaise idée. Certains sites collectent trop de données pour de la publicité ou du profilage.' },
-                    { text: 'Je ne remplis que les cases obligatoires nécessaires (e-mail, pseudo) et je demande l\'aide d\'un adulte.', correct: true, feedback: 'Parfait ! Moins tu donnes d\'informations personnelles sur internet, mieux tu es protégé.' },
-                    { text: 'Je rentre des fausses données rigolotes.', correct: false, feedback: 'Même si c\'est plus sûr, le mieux est de demander à un adulte et de limiter au strict nécessaire.' }
-                ]
-            }
-        ];
+        // ==========================================
+        const SCENARIOS = {
+            easy: [
+                {
+                    theme: '🔑 Secret',
+                    prompt: 'À la récréation, un copain te demande le mot de passe de ta tablette de l\'école pour pouvoir jouer à ta place. Que fais-tu ?',
+                    options: [
+                        { text: 'Je refuse poliment et je garde mon mot de passe pour moi.', correct: true, feedback: 'Bravo ! Un mot de passe doit toujours rester secret, même pour ses meilleurs copains.' },
+                        { text: 'Je lui donne car c\'est mon ami et j\'ai confiance en lui.', correct: false, feedback: 'Attention ! Même un ami peut faire une bêtise avec ton compte sans le vouloir.' },
+                        { text: 'Je lui donne en lui demandant de ne le dire à personne.', correct: false, feedback: 'C\'est risqué. Le mot de passe ne doit jamais être partagé.' }
+                    ]
+                },
+                {
+                    theme: '🌍 Identité',
+                    prompt: 'Tu t\'inscris sur un jeu de dessin sur internet. Le site te demande de choisir un pseudo. Lequel vaut-il mieux choisir ?',
+                    options: [
+                        { text: 'Mon prénom et mon nom de famille (ex: Lucas_Martin).', correct: false, feedback: 'Attention ! Cela permet à tout le monde de savoir qui tu es en vrai.' },
+                        { text: 'Un nom imaginaire rigolo (ex: super_pinceau2).', correct: true, feedback: 'Bravo ! Utiliser un pseudo imaginaire protège ton identité en ligne.' },
+                        { text: 'Mon adresse postale (ex: 12_rue_des_fleurs).', correct: false, feedback: 'Très dangereux ! Ne partage jamais ton adresse avec des inconnus sur internet.' }
+                    ]
+                },
+                {
+                    theme: '📸 Image',
+                    prompt: 'Tu as filmé ton chat qui fait une pirouette amusante et tu veux montrer la vidéo à ta grand-mère. Quel est le moyen le plus sûr ?',
+                    options: [
+                        { text: 'Je la montre directement sur mon écran à la maison ou je l\'envoie en message privé à ma grand-mère.', correct: true, feedback: 'Bravo ! C\'est privé, sûr et familial.' },
+                        { text: 'Je la publie en mode public sur YouTube pour que tout le monde puisse la voir.', correct: false, feedback: 'Attention. Même pour un chat, publier publiquement sur internet doit être une décision discutée avec tes parents.' },
+                        { text: 'Je l\'envoie à tous les numéros de mon téléphone au hasard.', correct: false, feedback: 'Mauvais choix ! On ne partage pas ses vidéos privées avec des inconnus.' }
+                    ]
+                },
+                {
+                    theme: '📱 Sécurité',
+                    prompt: 'En jouant sur la tablette de tes parents, une grande fenêtre rouge apparaît et dit : "Attention ! Tu as gagné un cadeau ! Clique vite ici pour le recevoir !". Que fais-tu ?',
+                    options: [
+                        { text: 'Je clique vite pour ne pas rater mon cadeau.', correct: false, feedback: 'Attention ! C\'est une publicité mensongère pour installer des virus ou voler des données.' },
+                        { text: 'Je ne clique pas et j\'appelle immédiatement un adulte pour lui montrer.', correct: true, feedback: 'Excellent réflexe ! Face à un message suspect, demande toujours l\'aide d\'un adulte.' },
+                        { text: 'Je ferme les yeux et je continue à jouer sans rien faire.', correct: false, feedback: 'Mieux vaut en parler à un adulte ou fermer la page pour être sûr de ne pas faire d\'erreur.' }
+                    ]
+                },
+                {
+                    theme: '💬 Communication',
+                    prompt: 'Sur un jeu éducatif en ligne, un autre joueur commence à t\'écrire des mots méchants et à se moquer de toi dans le chat. Que fais-tu ?',
+                    options: [
+                        { text: 'Je lui réponds des mots encore plus méchants pour me défendre.', correct: false, feedback: 'Mauvaise idée. Cela aggrave la dispute et n\'est pas poli.' },
+                        { text: 'J\'arrête de discuter avec lui, je le bloque et j\'en parle à mon enseignant ou à mes parents.', correct: true, feedback: 'Bravo ! C\'est la meilleure réaction face à la méchanceté en ligne.' },
+                        { text: 'Je continue à jouer en pleurant sans rien dire à personne.', correct: false, feedback: 'Ne reste pas triste et seul. Parles-en toujours à un adulte de confiance.' }
+                    ]
+                }
+            ],
+            medium: [
+                {
+                    theme: '🔑 Sécurité',
+                    prompt: 'Un joueur en ligne que tu ne connais pas te propose de t\'offrir des pièces de jeu gratuites si tu lui donnes ton mot de passe. Que fais-tu ?',
+                    options: [
+                        { text: 'Je refuse immédiatement et j\'en parle à un adulte.', correct: true, feedback: 'Bravo ! Ne donne JAMAIS ton mot de passe, c\'est ta clé secrète personnelle.' },
+                        { text: 'Je lui donne mon mot de passe car j\'ai vraiment besoin de ces pièces.', correct: false, feedback: 'Attention ! C\'est un piège très courant (phishing) pour voler ton compte.' },
+                        { text: 'Je lui donne un faux mot de passe pour m\'amuser.', correct: false, feedback: 'Même si c\'est drôle, le plus sûr est de couper la discussion et de prévenir un adulte.' }
+                    ]
+                },
+                {
+                    theme: '📸 Vie Privée',
+                    prompt: 'Tu as pris une photo amusante de ton camarade de classe à la récréation. Tu aimerais la publier sur ton réseau social préféré. Quelle est la bonne démarche ?',
+                    options: [
+                        { text: 'Je la publie immédiatement pour faire rire mes copains.', correct: false, feedback: 'Erreur ! Publier la photo de quelqu\'un sans son accord est interdit (droit à l\'image).' },
+                        { text: 'Je lui demande son autorisation et celle de ses parents d\'abord.', correct: true, feedback: 'Exactement ! Le respect de la vie privée commence par le consentement des autres.' },
+                        { text: 'Je la partage seulement en message privé avec mes meilleurs copains sans lui dire.', correct: false, feedback: 'Non, les messages privés peuvent circuler ou être copiés. Demande toujours l\'accord.' }
+                    ]
+                },
+                {
+                    theme: '📱 Autorisations',
+                    prompt: 'Une application de jeu de Morpion toute simple sur smartphone te demande l\'accès à tes photos et à ta position GPS précise pour pouvoir s\'ouvrir. Que fais-tu ?',
+                    options: [
+                        { text: 'J\'accepte les yeux fermés car j\'ai hâte de jouer.', correct: false, feedback: 'Erreur ! Les applications demandent parfois trop d\'accès sensibles non justifiés.' },
+                        { text: 'Je refuse les permissions car un jeu de Morpion n\'a pas besoin de savoir où je suis ni d\'accéder à mes photos pour fonctionner.', correct: true, feedback: 'Très bien ! C\'est ce qu\'on appelle le principe de minimisation des données.' },
+                        { text: 'J\'accepte mais seulement pendant que j\'utilise l\'application.', correct: false, feedback: 'Dans ce cas précis, le Morpion ne nécessite absolument pas ces données. Autant les refuser totalement !' }
+                    ]
+                },
+                {
+                    theme: '📧 Phishing',
+                    prompt: 'Tu reçois un e-mail qui a l\'air officiel (de ton école ou d\'un grand service comme Netflix) disant qu\'il y a un blocage sur ton compte et qu\'il faut cliquer d\'urgence sur un lien pour retaper tes informations secrètes.',
+                    options: [
+                        { text: 'Je clique sur le lien et je remplis les champs pour réparer la situation.', correct: false, feedback: 'Attention ! C\'est un e-mail de phishing (hameçonnage) destiné à voler tes codes.' },
+                        { text: 'Je ne clique pas. Je demande à mes parents ou à un enseignant de vérifier s\'il s\'agit d\'une arnaque.', correct: true, feedback: 'Excellent réflexe ! Toujours vérifier l\'authenticité d\'un message demandant des identifiants.' },
+                        { text: 'Je réponds directement à l\'e-mail en écrivant mon mot de passe.', correct: false, feedback: 'Danger ! Ne transmet jamais de mot de passe par message écrit ou e-mail.' }
+                    ]
+                },
+                {
+                    theme: '🌍 Données',
+                    prompt: 'Tu crées un profil sur un nouveau site éducatif. Le site te demande de renseigner ton nom de famille complet, ton adresse postale, ton école, ton âge et ton adresse e-mail. Que fais-tu ?',
+                    options: [
+                        { text: 'Je remplis tout soigneusement car ce sont des cookies/cases obligatoires.', correct: false, feedback: 'Mauvaise idée. Certains sites collectent trop de données pour de la publicité ou du profilage.' },
+                        { text: 'Je ne remplis que les cookies obligatoires nécessaires (e-mail, pseudo) et je demande l\'aide d\'un adulte.', correct: true, feedback: 'Parfait ! Moins tu donnes d\'informations personnelles sur internet, mieux tu es protégé.' },
+                        { text: 'Je rentre des fausses données rigolotes.', correct: false, feedback: 'Même si c\'est plus sûr, le mieux est de demander à un adulte et de limiter au strict nécessaire.' }
+                    ]
+                }
+            ],
+            hard: [
+                {
+                    theme: '📧 Sécurité',
+                    prompt: 'Tu reçois un message sur ton réseau social favori provenant du profil exact d\'une de tes meilleures amies. Elle te dit qu\'elle a perdu son mot de passe et te demande de lui envoyer le tien pour l\'aider à réinitialiser son compte. Que fais-tu ?',
+                    options: [
+                        { text: 'Je lui donne immédiatement car je connais son profil et sa photo.', correct: false, feedback: 'Attention ! Le profil de ton amie a pu être piraté. C\'est une technique classique d\'usurpation d\'identité.' },
+                        { text: 'Je refuse de lui envoyer et je l\'appelle ou lui parle en vrai pour vérifier si c\'est bien elle.', correct: true, feedback: 'Excellent ! Il faut toujours vérifier par un autre canal de communication (de vive voix ou par téléphone).' },
+                        { text: 'Je signale son profil immédiatement comme harceleur sans lui parler.', correct: false, feedback: 'Avant de signaler, vérifie si elle n\'a pas simplement été piratée, et préviens-la en vrai.' }
+                    ]
+                },
+                {
+                    theme: '🍪 Cookies',
+                    prompt: 'En arrivant sur un site pour faire des recherches scolaires, on te demande d\'accepter des "cookies de ciblage publicitaire et de profilage tiers". Qu\'est-ce que cela signifie ?',
+                    options: [
+                        { text: 'Ce sont de petits gâteaux virtuels gratuits offerts par le site.', correct: false, feedback: 'Non ! Les cookies sont des fichiers texte de suivi, rien à voir avec de la nourriture.' },
+                        { text: 'Ce sont des trackers qui vont suivre ce que tu visites sur internet pour te proposer des publicités ciblées.', correct: true, feedback: 'Bravo ! C\'est le principe du profilage publicitaire. Il est recommandé de refuser ces cookies tiers.' },
+                        { text: 'Ce sont des outils obligatoires pour que l\'ordinateur fonctionne.', correct: false, feedback: 'Faux. Les cookies publicitaires ne sont pas nécessaires au bon fonctionnement technique d\'un site.' }
+                    ]
+                },
+                {
+                    theme: '⚖️ Droit',
+                    prompt: 'Tu as créé un compte sur un forum de discussion il y a deux ans sous ton vrai nom. Aujourd\'hui, tu aimerais que ces informations et tes anciens messages n\'apparaissent plus sur Google. Quel est ton droit ?',
+                    options: [
+                        { text: 'Je n\'ai aucun droit, une fois publié sur internet, c\'est gravé à vie et impossible à effacer.', correct: false, feedback: 'Faux ! La loi te donne des droits de contrôle sur tes données.' },
+                        { text: 'J\'ai le "droit à l\'oubli" (droit à l\'effacement). Je peux écrire au site pour demander la suppression de mes données personnelles.', correct: true, feedback: 'Exactement ! En Europe et en Suisse, la loi protège ta vie privée et te permet de demander l\'effacement de tes données.' },
+                        { text: 'Je dois payer une amende pour pouvoir supprimer mon profil.', correct: false, feedback: 'Absolument pas. L\'exercice de tes droits d\'effacement est totalement gratuit.' }
+                    ]
+                },
+                {
+                    theme: '🌐 Réseau',
+                    prompt: 'Tu es dans un café ou une gare et tu te connectes à un réseau Wi-Fi public gratuit nommé "WIFI_GRATUIT" sans mot de passe. Tu décides de te connecter à ton compte d\'école. Y a-t-il un risque ?',
+                    options: [
+                        { text: 'Non, les réseaux Wi-Fi gratuits sont toujours sécurisés par les communes ou les gares.', correct: false, feedback: 'Faux. N\'importe qui peut créer un faux réseau Wi-Fi pour espionner les données qui y transitent.' },
+                        { text: 'Oui, un pirate connecté au même réseau ouvert pourrait intercepter tes identifiants de connexion.', correct: true, feedback: 'Bravo ! Sur un réseau Wi-Fi public sans mot de passe, évite de te connecter à des comptes sensibles.' },
+                        { text: 'Oui, mon smartphone risque d\'exploser à cause des interférences.', correct: false, feedback: 'Heureusement non, le risque est purement informatique et concerne la confidentialité de tes données.' }
+                    ]
+                },
+                {
+                    theme: '📸 Vie Privée',
+                    prompt: 'Tu prends une photo avec ton smartphone dans ta chambre et tu la partages en ligne. Même si on ne voit pas ton visage ni ta rue, quelle information cachée (métadonnée EXIF) peut être enregistrée dans le fichier de l\'image ?',
+                    options: [
+                        { text: 'Le nom de ton animal de compagnie et ton âge.', correct: false, feedback: 'Non, ces données ne sont pas enregistrées automatiquement par l\'appareil photo.' },
+                        { text: 'Les coordonnées GPS précises de l\'endroit où la photo a été prise et le modèle de ton téléphone.', correct: true, feedback: 'Bravo ! C\'est ce qu\'on appelle les métadonnées EXIF. Elles peuvent révéler ton adresse exacte si la géolocalisation de l\'appareil est activée.' },
+                        { text: 'Ton adresse e-mail de contact.', correct: false, feedback: 'Faux, l\'e-mail n\'est pas intégré automatiquement dans les fichiers photo standards.' }
+                    ]
+                }
+            ]
+        };
 
+        // ==========================================
         // STATE VARIABLES
+        // ==========================================
         let currentMode = 'sort';
         let currentDifficulty = 'easy';
-        
-        let streak = 0;
-        let bestStreak = 0;
 
         // MODE TRI STATE
         let activeCards = [];
         let selectedItem = null;
         let isDragged = false;
+        let sortCorrect = 0, sortStreak = 0, sortBest = 0;
 
         // MODE SCENARIOS STATE
         let currentScenarioIndex = 0;
         let scenarioMistakes = 0;
+        let scCorrect = 0, scStreak = 0, scBest = 0;
+        let scRoundCorrect = 0;
+        let currentScDifficulty = 'medium';
 
         // ELEMENTS
-        const elStreakVal = document.getElementById('streak-val');
-        const elBestVal = document.getElementById('best-val');
         const elItemsDeck = document.getElementById('items-deck');
         const elContentsPrivate = document.getElementById('contents-private');
         const elContentsPublic = document.getElementById('contents-public');
@@ -1138,41 +1234,22 @@
         // Rotation angles for dials
         let dialRotations = { private: 0, public: 0 };
 
-        // ===== TOAST & UTILITIES =====
-        function showToast(msg, type = 'info') {
-            if (typeof window.showToast === 'function') {
-                window.showToast(msg, type);
-            } else {
-                alert(msg);
-            }
-        }
-
-        function playSound(name) {
-            if (typeof window.playSound === 'function') {
-                window.playSound(name);
-            }
-        }
-
-        function triggerConfetti() {
-            if (typeof window.triggerConfetti === 'function') {
-                window.triggerConfetti();
-            } else if (typeof confetti === 'function') {
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            }
-        }
-
-        // ===== NAVIGATION CONTROL =====
+        // ==========================================
+        // NAVIGATION CONTROL
+        // ==========================================
         function setMode(mode) {
             currentMode = mode;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.mode-container').forEach(cont => cont.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            document.querySelectorAll('.view').forEach(cont => cont.classList.remove('active'));
 
-            document.getElementById('tab-' + mode).classList.add('active');
+            const activeTab = document.getElementById('tab-' + mode);
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
             document.getElementById('mode-' + mode).classList.add('active');
 
-            streak = 0;
-            updateStreakDisplay();
-            
             if (mode === 'sort') {
                 initSortMode();
             } else if (mode === 'scenarios') {
@@ -1188,7 +1265,7 @@
 
         function setDifficulty(diff) {
             currentDifficulty = diff;
-            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('#mode-sort .difficulty-bar .diff-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('diff-' + diff).classList.add('active');
             initSortMode();
         }
@@ -1196,27 +1273,30 @@
         document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
         document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
 
-        function updateStreakDisplay() {
-            elStreakVal.textContent = streak;
-            elBestVal.textContent = bestStreak;
+        function setScDifficulty(diff) {
+            currentScDifficulty = diff;
+            document.querySelectorAll('#mode-scenarios .difficulty-bar .diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('sc-diff-' + diff).classList.add('active');
+            initScenariosMode();
         }
 
-        function handleStreakSuccess(isExtreme = false) {
-            streak++;
-            if (streak > bestStreak) {
-                bestStreak = streak;
-            }
-            updateStreakDisplay();
+        document.getElementById('sc-diff-easy').addEventListener('click', () => setScDifficulty('easy'));
+        document.getElementById('sc-diff-medium').addEventListener('click', () => setScDifficulty('medium'));
+        document.getElementById('sc-diff-hard').addEventListener('click', () => setScDifficulty('hard'));
 
-            // Fire celebration !
-            if (typeof window.handleStreakCelebration === 'function') {
-                window.handleStreakCelebration(streak, isExtreme, streak > bestStreak);
-            } else {
-                triggerConfetti();
-            }
+        function updateSortScoreDisplay() {
+            document.getElementById('sort-correct').textContent = sortCorrect;
+            document.getElementById('sort-streak').textContent = sortStreak;
         }
 
-        // ==================== MODE 1: DRAG & DROP TRI LOGIC ====================
+        function updateScScoreDisplay() {
+            document.getElementById('sc-correct').textContent = scCorrect;
+            document.getElementById('sc-streak').textContent = scStreak;
+        }
+
+        // ==========================================
+        // MODE 1: DRAG & DROP TRI LOGIC
+        // ==========================================
         function initSortMode() {
             // Reset dropzones
             elContentsPrivate.innerHTML = '';
@@ -1224,7 +1304,7 @@
             elItemsDeck.innerHTML = '';
             selectedItem = null;
             isDragged = false;
-            
+
             // Build original deck and shuffle
             const rawData = TRI_DATA[currentDifficulty];
             activeCards = JSON.parse(JSON.stringify(rawData));
@@ -1296,7 +1376,7 @@
             selectedItem.classList.add('selected');
         }
 
-        // Touch Drag & Drop logic (Identical to machine_a_trier / portal standards)
+        // Touch Drag & Drop logic
         let touchOffsetX = 0;
         let touchOffsetY = 0;
         let activeClone = null;
@@ -1314,10 +1394,10 @@
         }
 
         function handleTouchMove(e) {
-            if (!currentTouchItem) return;
+            if (!currentTouchItem) { return; }
             touchHasMoved = true;
 
-            if (e.cancelable) e.preventDefault();
+            if (e.cancelable) { e.preventDefault(); }
             e.stopPropagation();
 
             const touch = e.touches[0];
@@ -1348,13 +1428,13 @@
         }
 
         function handleTouchEnd(e) {
-            if (!currentTouchItem) return;
+            if (!currentTouchItem) { return; }
             if (touchHasMoved) {
                 e.stopPropagation();
             }
 
             if (touchHasMoved && activeClone) {
-                if (e.cancelable) e.preventDefault();
+                if (e.cancelable) { e.preventDefault(); }
                 const touch = e.changedTouches[0];
                 const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
 
@@ -1411,16 +1491,20 @@
         }
 
         function verifyDrop(card, safe) {
+            // Anti-doublon pour éviter le triple toast sur les appareils tactiles/hybrides
+            if (card.classList.contains('shake') || card.parentElement !== elItemsDeck) {
+                return;
+            }
+
             const cardType = card.dataset.type;
             const safeAccept = safe.dataset.accept;
 
             if (cardType === safeAccept) {
                 // Correct!
                 playSound('success');
-                showToast(card.querySelector('span').textContent + ' : ' + card.dataset.desc, 'success');
 
                 // Visual rotary dial animation
-                dialRotations[safeAccept] += 72; // turn dial slightly
+                dialRotations[safeAccept] += 72;
                 document.getElementById('dial-' + safeAccept).style.transform = `rotate(${dialRotations[safeAccept]}deg)`;
 
                 // Append card to safe contents list
@@ -1437,23 +1521,39 @@
                 selectedItem = null;
                 isDragged = false;
 
+                sortCorrect++;
+                sortStreak++;
+                const wasNewRecord = sortStreak > sortBest;
+                if (wasNewRecord) { sortBest = sortStreak; }
+                updateSortScoreDisplay();
+
                 ScoreManager.addSuccess('sort', currentDifficulty, 0);
-                handleStreakSuccess(false);
+
+                // Trigger ONLY simple confetti for intermediate cards in Tri Mode (No Fire)
+                launchConfetti();
+                showToast(card.querySelector('span').textContent + ' : ' + card.dataset.desc, 'success');
 
                 // Check if victory (all cards sorted)
                 if (elItemsDeck.children.length === 0) {
-                    triggerConfetti();
+                    playSound('victory');
+                    // Crache du feu uniquement à la fin, quand tout est correctement placé !
+                    launchFire();
+                    showToast('🎉 Extraordinaire ! Toutes les données ont été classées !', 'success');
                     setTimeout(() => {
-                        showToast('🎉 Extraordinaire ! Toutes les données ont été classées de manière sécurisée !', 'success');
                         initSortMode();
-                    }, 800);
+                    }, 1500);
                 }
             } else {
                 // Mistake
                 playSound('error');
                 ScoreManager.addMistake('sort', currentDifficulty);
-                streak = 0;
-                updateStreakDisplay();
+                sortStreak = 0;
+                updateSortScoreDisplay();
+
+                card.classList.remove('selected');
+                if (selectedItem === card) {
+                    selectedItem = null;
+                }
 
                 card.classList.add('shake');
                 setTimeout(() => card.classList.remove('shake'), 400);
@@ -1462,23 +1562,42 @@
             }
         }
 
-        // ==================== MODE 2: SCENARIOS (QUIZ) LOGIC ====================
+        // Restart button
+        document.getElementById('sort-restart-btn').addEventListener('click', () => {
+            initSortMode();
+            showToast('🔄 Nouveau défi !', 'info');
+        });
+
+        // ==========================================
+        // MODE 2: SCENARIOS (QUIZ) LOGIC
+        // ==========================================
         function initScenariosMode() {
             currentScenarioIndex = 0;
             scenarioMistakes = 0;
+            scRoundCorrect = 0;
+
+            // Restore standard UI classes and styles in case we were on the end-screen
+            elScPrompt.style.textAlign = '';
+            elScPrompt.style.padding = '';
+            elScOptions.style.display = '';
+            elScActions.style.display = 'none';
+            elScFeedback.style.display = 'none';
+            elScNextBtn.textContent = 'Question suivante ➔';
+
             displayScenario();
         }
 
         function displayScenario() {
             elScFeedback.style.display = 'none';
             elScActions.style.display = 'none';
-            
-            const current = SCENARIOS[currentScenarioIndex];
-            
+
+            const activeScList = SCENARIOS[currentScDifficulty];
+            const current = activeScList[currentScenarioIndex];
+
             elScTheme.textContent = current.theme;
-            elScProgress.textContent = `Question ${currentScenarioIndex + 1}/${SCENARIOS.length}`;
+            elScProgress.textContent = `Question ${currentScenarioIndex + 1}/${activeScList.length}`;
             elScPrompt.innerHTML = `<strong>Situation :</strong> ${current.prompt}`;
-            
+
             elScOptions.innerHTML = '';
             current.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
@@ -1490,9 +1609,10 @@
         }
 
         function chooseOption(selectedIdx) {
-            const current = SCENARIOS[currentScenarioIndex];
+            const activeScList = SCENARIOS[currentScDifficulty];
+            const current = activeScList[currentScenarioIndex];
             const optionsButtons = elScOptions.querySelectorAll('.option-item');
-            
+
             // Disable all other options
             optionsButtons.forEach(btn => btn.classList.add('disabled'));
 
@@ -1503,26 +1623,39 @@
                 // Success
                 playSound('success');
                 selectedBtn.classList.add('correct');
-                
+
                 elScFeedback.className = 'scenario-feedback correct';
                 elScFbTitle.textContent = '✓ Correct !';
                 elScFbExp.textContent = chosenOption.feedback;
+
+                scCorrect++;
+                scStreak++;
+                const wasNewRecord = scStreak > scBest;
+                if (wasNewRecord) { scBest = scStreak; }
+                updateScScoreDisplay();
+
+                ScoreManager.addSuccess('scenarios', currentScDifficulty, scenarioMistakes);
                 
-                ScoreManager.addSuccess('scenarios', 'medium', scenarioMistakes);
-                handleStreakSuccess(false);
+                // Track correct answers on first try for the round
+                if (scenarioMistakes === 0) {
+                    scRoundCorrect++;
+                }
+
+                // Simple confetti for intermediate correct answers (No Fire)
+                launchConfetti();
             } else {
                 // Failure
                 playSound('error');
                 selectedBtn.classList.add('incorrect');
-                
+
                 elScFeedback.className = 'scenario-feedback incorrect';
-                elScFbTitle.textContent = '✗ Faux...';
+                elScFbTitle.textContent = '✗ Faux…';
                 elScFbExp.textContent = chosenOption.feedback;
-                
+
                 scenarioMistakes++;
-                streak = 0;
-                updateStreakDisplay();
-                ScoreManager.addMistake('scenarios', 'medium');
+                scStreak = 0;
+                updateScScoreDisplay();
+                ScoreManager.addMistake('scenarios', currentScDifficulty);
 
                 // Highlight correct one
                 current.options.forEach((opt, idx) => {
@@ -1532,37 +1665,93 @@
                 });
             }
 
+            // Adjust Next Button text dynamically on the last scenario question
+            if (currentScenarioIndex === activeScList.length - 1) {
+                elScNextBtn.textContent = 'Terminer ➔';
+            } else {
+                elScNextBtn.textContent = 'Question suivante ➔';
+            }
+
             elScFeedback.style.display = 'block';
             elScActions.style.display = 'flex';
         }
 
         elScNextBtn.addEventListener('click', () => {
-            currentScenarioIndex++;
-            if (currentScenarioIndex < SCENARIOS.length) {
+            const activeScList = SCENARIOS[currentScDifficulty];
+            if (currentScenarioIndex < activeScList.length - 1) {
+                currentScenarioIndex++;
                 scenarioMistakes = 0;
                 displayScenario();
             } else {
-                triggerConfetti();
-                showToast('🎉 Félicitations ! Tu as complété tous les scénarios et sais comment te protéger !', 'success');
-                initScenariosMode();
+                // Scenario mode end state - stop the mode and display results screen
+                elScFeedback.style.display = 'none';
+                elScActions.style.display = 'none';
+                elScOptions.innerHTML = '';
+                elScProgress.textContent = 'Résultats';
+                elScTheme.textContent = '🏆 Bilan';
+
+                // Crache du feu SEULEMENT si 5 réponses justes sur 5 du premier coup !
+                if (scRoundCorrect === activeScList.length) {
+                    playSound('victory');
+                    launchFire();
+                    showToast(`🎉 Incroyable sans-faute ! ${activeScList.length}/${activeScList.length} !`, 'success');
+                } else {
+                    playSound('success');
+                    launchConfetti();
+                    showToast(`👍 Scénario complété avec ${scRoundCorrect}/${activeScList.length} !`, 'success');
+                }
+
+                // Inject beautiful results UI
+                elScPrompt.style.textAlign = 'center';
+                elScPrompt.style.padding = '20px 10px';
+                elScPrompt.innerHTML = `
+                    <div style="font-size: 60px; margin-bottom: 15px;">
+                        ${scRoundCorrect === activeScList.length ? '🔥🏆🔥' : '🎉'}
+                    </div>
+                    <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main);">
+                        Scénario terminé !
+                    </h3>
+                    <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 15px;">
+                        Tu as obtenu un score de <strong style="font-size: 20px; color: var(--accent);">${scRoundCorrect} / ${activeScList.length}</strong> correct${scRoundCorrect > 1 ? 's' : ''} du premier coup !
+                    </p>
+                    <p style="font-size: 14px; line-height: 1.5; color: var(--text-secondary); max-width: 450px; margin: 0 auto 20px;">
+                        ${scRoundCorrect === activeScList.length 
+                            ? 'Quel magnifique sans-faute ! Tu es un véritable expert de la sécurité et de la protection des données ! 🔒' 
+                            : 'Félicitations pour tes efforts ! Prends le temps de bien analyser chaque situation pour essayer de faire un sans-faute la prochaine fois ! 💪'}
+                    </p>
+                    <button class="btn btn-primary" id="sc-restart-btn" style="margin-top: 10px;">
+                        <i data-fa="rotate-right" style="margin-right:8px;"></i>Recommencer le scénario
+                    </button>
+                `;
+
+                // Re-create icons for FontAwesome dynamically inside the injected HTML
+                window.fa?.createIcons?.();
+
+                // Bind click event for restart button
+                document.getElementById('sc-restart-btn').addEventListener('click', () => {
+                    initScenariosMode();
+                });
             }
         });
 
-        // ==================== MODE 3: PASSWORD METER LOGIC ====================
+        // ==========================================
+        // MODE 3: PASSWORD METER LOGIC
+        // ==========================================
         let currentWheelAngle = 0;
         let passwordUnlocked = false;
 
         function initPasswordMode() {
             elPasswordInput.value = '';
             elPasswordInput.type = 'password';
-            elPasswordToggle.innerHTML = '<i class="shape-icon" data-fa="dt-eye"></i>';
+            elPasswordToggle.innerHTML = '<i data-fa="dt-eye"></i>';
             window.fa?.createIcons?.();
-            
+
             passwordUnlocked = false;
             currentWheelAngle = 0;
             elMainSafeWheel.className = 'big-lock-wheel';
             elMainSafeWheel.style.transform = 'rotate(0deg)';
             elLockerStatusText.textContent = 'Coffre-fort verrouillé 🔒';
+            elLockerStatusText.style.color = '';
             elLockerSubtext.textContent = 'Respecte toutes les consignes de sécurité de gauche pour déverrouiller la serrure blindée !';
 
             updatePasswordChecklist('');
@@ -1572,10 +1761,10 @@
         elPasswordToggle.addEventListener('click', () => {
             if (elPasswordInput.type === 'password') {
                 elPasswordInput.type = 'text';
-                elPasswordToggle.innerHTML = '<i class="shape-icon" data-fa="dt-eye-slash"></i>';
+                elPasswordToggle.innerHTML = '<i data-fa="dt-eye-slash"></i>';
             } else {
                 elPasswordInput.type = 'password';
-                elPasswordToggle.innerHTML = '<i class="shape-icon" data-fa="dt-eye"></i>';
+                elPasswordToggle.innerHTML = '<i data-fa="dt-eye"></i>';
             }
             window.fa?.createIcons?.();
         });
@@ -1601,16 +1790,16 @@
             // Strength calculations
             let score = 0;
             if (pw.length > 0) {
-                if (hasLength) score += 20;
-                if (hasUpper) score += 20;
-                if (hasLower) score += 20;
-                if (hasNumber) score += 20;
-                if (hasSpecial) score += 20;
+                if (hasLength) { score += 20; }
+                if (hasUpper) { score += 20; }
+                if (hasLower) { score += 20; }
+                if (hasNumber) { score += 20; }
+                if (hasSpecial) { score += 20; }
             }
 
             // Adjust fill and labels
             elStrengthBar.style.width = `${score}%`;
-            
+
             let color = 'var(--error)';
             let status = 'Vide';
 
@@ -1643,72 +1832,92 @@
 
         function updateCriterionUI(id, isOk) {
             const item = document.getElementById(id);
-            const icon = item.querySelector('i');
-            
+            const icon = item.querySelector('.crit-icon');
+
             if (isOk) {
                 item.classList.add('ok');
-                icon.className = 'crit-ok';
+                icon.className = 'crit-icon crit-ok';
             } else {
                 item.classList.remove('ok');
-                icon.className = 'crit-ko';
+                icon.className = 'crit-icon crit-ko';
             }
         }
 
         function unlockSafe() {
             passwordUnlocked = true;
             playSound('success');
-            triggerConfetti();
+            launchConfetti();
 
             // Rotate Safe wheel
             currentWheelAngle += 360;
             elMainSafeWheel.style.transform = `rotate(${currentWheelAngle}deg)`;
             elMainSafeWheel.classList.add('unlocked');
-            elMainSafeWheel.querySelector('i').setAttribute('data-fa', 'dt-lock-open');
+            elMainSafeWheel.querySelector('i, .fa-icon')?.setAttribute?.('data-fa', 'dt-lock-open');
 
             elLockerStatusText.textContent = 'Coffre-fort déverrouillé ! 🎉';
             elLockerStatusText.style.color = 'var(--success)';
             elLockerSubtext.textContent = 'Félicitations ! Ton mot de passe est extrêmement fort et tes secrets en ligne sont en sécurité !';
 
-            ScoreManager.addSuccess('password', 'hard', 0);
-            handleStreakSuccess(true);
             window.fa?.createIcons?.();
         }
 
         function lockSafe() {
             passwordUnlocked = false;
             elMainSafeWheel.classList.remove('unlocked');
-            elMainSafeWheel.querySelector('i').setAttribute('data-fa', 'dt-lock');
-            
+            elMainSafeWheel.querySelector('i, .fa-icon')?.setAttribute?.('data-fa', 'dt-lock');
+
             elLockerStatusText.textContent = 'Coffre-fort verrouillé 🔒';
-            elLockerStatusText.style.color = 'var(--text-main)';
+            elLockerStatusText.style.color = '';
             elLockerSubtext.textContent = 'Respecte toutes les consignes de sécurité de gauche pour déverrouiller la serrure blindée !';
             window.fa?.createIcons?.();
         }
 
-        // ===== INITIALIZATION =====
-        window.addEventListener('load', () => {
-            ScoreManager.init('coffre_fort');
-            initSortMode();
-        });
-
-        // Theme management helper
-        const themeBtn = document.getElementById('theme-btn');
-        if (themeBtn) {
-            themeBtn.addEventListener('click', () => {
-                document.body.classList.toggle('dark');
-                const isDark = document.body.classList.contains('dark');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                themeBtn.innerHTML = isDark ? '<i data-fa="dt-sun-bright"></i>' : '<i data-fa="dt-moon"></i>';
-                window.fa?.createIcons?.();
-            });
-
-            // Set initial theme state on icon
-            const initialDark = document.body.classList.contains('dark');
-            themeBtn.innerHTML = initialDark ? '<i data-fa="dt-sun-bright"></i>' : '<i data-fa="dt-moon"></i>';
-        }
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        initSortMode();
     </script>
+    <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script>
+        window.addEventListener('load', () => ScoreManager.init('coffre_fort'));
+        window.addEventListener('c2_change_difficulty', (e) => {
+            const nextDiff = e.detail.difficulty;
+            const targetMode = e.detail.mode;
+            if (targetMode === 'sort') {
+                if (nextDiff === 'hard') {
+                    document.getElementById('diff-hard')?.click();
+                } else if (nextDiff === 'easy') {
+                    document.getElementById('diff-easy')?.click();
+                }
+            } else if (targetMode === 'scenarios') {
+                if (nextDiff === 'easy') {
+                    document.getElementById('sc-diff-easy')?.click();
+                } else if (nextDiff === 'medium') {
+                    document.getElementById('sc-diff-medium')?.click();
+                } else if (nextDiff === 'hard') {
+                    document.getElementById('sc-diff-hard')?.click();
+                }
+            }
+        });
+    </script>
     <script src="../../assets/js/url-params.js"></script>
+    <!-- FontAwesome dynamic subsets declaration (do not remove, parsed by generate_fa_subset) -->
+    <div style="display:none;">
+        <i data-fa="dt-person-carry-box"></i>
+        <i data-fa="dt-user-secret"></i>
+        <i data-fa="dt-location-dot"></i>
+        <i data-fa="dt-volume-high"></i>
+        <i data-fa="dt-palette"></i>
+        <i data-fa="dt-cow"></i>
+        <i data-fa="dt-shapes"></i>
+        <i data-fa="dt-key"></i>
+        <i data-fa="dt-binary"></i>
+        <i data-fa="dt-eye"></i>
+        <i data-fa="dt-chart-network"></i>
+        <i data-fa="dt-trophy-star"></i>
+    </div>
 </body>
 
 </html>
