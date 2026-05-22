@@ -170,6 +170,39 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-coffre-fort",
+    "href": "alpha/webapps/coffre_fort.html",
+    "target": null,
+    "rel": null,
+    "isAlpha": true,
+    "isExternal": false,
+    "isTeacher": false,
+    "dataLevel": "3-4H",
+    "icon": "dt-shield-check",
+    "iconStyle": "width:32px;height:32px;flex-shrink:0;",
+    "title": "Coffre-fort numérique",
+    "desc": "Apprends à protéger tes données personnelles et à créer des mots de passe robustes.",
+    "tags": [
+      "#Sécurité",
+      "#Vie privée",
+      "#Données"
+    ],
+    "ref": "DÉ>CODAGE 3-4 · Scénario 1",
+    "badges": [
+      {
+        "text": "3-4H",
+        "grey": false
+      },
+      {
+        "text": "5-6H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-automate",
     "href": "webapps/simulateur_automate.html",
     "target": null,
