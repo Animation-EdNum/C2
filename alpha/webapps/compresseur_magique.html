@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Compresseur magique – Compression RLE</title>
+    <meta property="og:title" content="⚡ Compresseur magique – Encodage RLE">
+    <meta property="og:description" content="Découvre comment réduire la taille d'une image grâce à la compression RLE.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    
+    <!-- Cascade CSS -->
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../assets/css/compresseur_magique.css">
+    
+    <!-- External scripts -->
+    <script src="../../assets/js/scores.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" data-tooltip="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="dt-person-carry-box" style="--fa-primary: #3b82f6; --fa-secondary: #10b981; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>
+                </a>
+                <div>
+                    <h1>Compresseur magique</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" data-tooltip="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <p class="subtitle">Comprends comment les ordinateurs réduisent la taille des images avec le codage par plages (RLE) !</p>
+
+            <!-- TABS NAVIGATION -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-btn-decode"><i data-fa="eye"></i> Décompresser</button>
+                <button class="tab-btn" id="tab-btn-encode"><i data-fa="marker"></i> Compresser</button>
+                <button class="tab-btn" id="tab-btn-editor"><i data-fa="dt-grid" style="--fa-primary: #3b82f6; --fa-secondary: #f59e0b; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i> Dessin libre</button>
+            </div>
+
+            <!-- DIFFICULTY SELECTION (For Decode and Encode) -->
+            <div class="difficulty-bar" id="app-difficulty-bar">
+                <button class="diff-btn" id="diff-btn-easy"><i data-fa="circle" style="color: #10b981;"></i> Facile (5×5 N/B)</button>
+                <button class="diff-btn active" id="diff-btn-medium"><i data-fa="circle" style="color: #f59e0b;"></i> Moyen (8×8 N/B)</button>
+                <button class="diff-btn" id="diff-btn-hard"><i data-fa="circle" style="color: #ef4444;"></i> Difficile (8×8 Couleurs)</button>
+            </div>
+
+            <!-- INSTRUCTIONS DETAILS -->
+            <details class="instructions" id="instructions-block">
+                <summary><strong>📖 Comment ça marche ? (cliquer pour ouvrir)</strong></summary>
+                <div style="margin-top: 10px; line-height: 1.5;">
+                    Le codage RLE permet de compresser des images en évitant de répéter la même couleur plusieurs fois.<br><br>
+                    <strong>📝 Règle d'écriture :</strong> On indique le nombre de pixels suivi de la lettre de la couleur.<br>
+                    - <span class="legend-box col-x">X</span> <strong>X = Blanc</strong> (Cross / Blank)<br>
+                    - <span class="legend-box col-n">N</span> <strong>N = Noir</strong><br>
+                    - <span class="legend-box col-b">B</span> <strong>B = Bleu</strong><br>
+                    - <span class="legend-box col-r">R</span> <strong>R = Rouge</strong><br>
+                    - <span class="legend-box col-v">V</span> <strong>V = Vert</strong><br>
+                    - <span class="legend-box col-j">J</span> <strong>J = Jaune</strong><br><br>
+                    <em>Exemple :</em> <code>3X 2N</code> signifie 3 pixels blancs suivis de 2 pixels noirs. Chaque ligne de la grille est séparée par une nouvelle ligne dans le code.
+                </div>
+            </details>
+
+            <!-- MODE 1 : DÉCOMPRESSER (DÉCODAGE) -->
+            <div id="view-decode" class="view active">
+                <div class="exercise-card">
+                    <div class="card-title">Lis le code RLE ci-dessous et dessine l'image correspondante en cliquant sur la grille !</div>
+                    
+                    <div class="code-card" id="decode-target-code">Code RLE cible</div>
+
+                    <!-- Colors Palette selector for drawing (displayed in hard mode) -->
+                    <div class="palette-selector" id="decode-palette" style="display: none;"></div>
+
+                    <div class="grid-wrapper">
+                        <div class="pixel-grid" id="decode-grid"></div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-check" id="decode-verify-btn"><i data-fa="circle-check"></i> Vérifier</button>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="icon-action-btn" aria-label="Voir mes statistiques" data-tooltip="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Décompressions</div>
+                            <div class="score-value" id="decode-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="decode-streak">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODE 2 : COMPRESSER (ENCODAGE) -->
+            <div id="view-encode" class="view">
+                <div class="exercise-card">
+                    <div class="card-title">Observe l'image de référence à gauche et saisis le code RLE correspondant !</div>
+
+                    <div class="dashboard-layout">
+                        <!-- Left Panel: Reference image -->
+                        <div class="panel-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <div style="font-weight: bold; margin-bottom: 5px; font-size: 14px; color: var(--text-secondary);">Image cible</div>
+                            <div class="grid-wrapper">
+                                <div class="pixel-grid" id="encode-reference-grid"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Input & Live visualizer -->
+                        <div class="panel-right" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                            <div style="font-weight: bold; margin-bottom: 5px; font-size: 14px; color: var(--text-secondary);">Aperçu en temps réel de ton code</div>
+                            
+                            <div class="grid-wrapper" style="margin: 5px 0 15px 0;">
+                                <div class="pixel-grid" id="encode-preview-grid"></div>
+                            </div>
+
+                            <div class="input-wrapper">
+                                <label for="encode-rle-input" style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-align: center; text-transform: uppercase;">Saisie ton code RLE :</label>
+                                <textarea class="rle-input" id="encode-rle-input" rows="5" placeholder="Saisis le code RLE ligne par ligne (ex: 5X)" autocomplete="off" spellcheck="false"></textarea>
+                            </div>
+
+                            <div class="controls">
+                                <button class="btn btn-check" id="encode-verify-btn"><i data-fa="circle-check"></i> Valider</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="icon-action-btn" aria-label="Voir mes statistiques" data-tooltip="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Compressions</div>
+                            <div class="score-value" id="encode-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="encode-streak">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODE 3 : DESSIN LIBRE & STATS (ÉDITEUR) -->
+            <div id="view-editor" class="view">
+                <div class="exercise-card">
+                    <div class="card-title">Dessine sur la grille et observe comment la machine magique compresse ton dessin en temps réel !</div>
+
+                    <div class="dashboard-layout">
+                        <!-- Left Panel: Interactive free paint grid -->
+                        <div class="panel-left" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                            <div class="palette-selector" id="editor-palette"></div>
+                            <div class="grid-wrapper">
+                                <div class="pixel-grid" id="editor-grid"></div>
+                            </div>
+                            <div class="controls">
+                                <button class="btn btn-small" id="editor-clear-btn" style="background: var(--error);"><i data-fa="trash-can"></i> Effacer</button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Magic compressor RLE machine visualizer -->
+                        <div class="panel-right" style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+                            <div class="compressor-machine">
+                                <div class="machine-header">
+                                    <div class="machine-title">
+                                        <i data-fa="dt-person-carry-box" style="--fa-primary: #3b82f6; --fa-secondary: #10b981; --fa-primary-opacity: 1; --fa-secondary-opacity: 1;"></i>
+                                        <span>COMPRESSEUR RLE</span>
+                                    </div>
+                                    <span style="font-size: 11px; font-weight: 800; color: var(--success); text-shadow: 0 0 5px rgba(16,185,129,0.2);">MACHINE ACTIVE</span>
+                                </div>
+
+                                <div class="machine-stats">
+                                    <div class="stat-row">
+                                        <span>Grille de départ :</span>
+                                        <span class="stat-value" id="editor-stat-raw">64 pixels</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Code RLE compressé :</span>
+                                        <span class="stat-value" id="editor-stat-compressed">0 caract.</span>
+                                    </div>
+                                    <div class="stat-row" style="margin-top: 5px; font-weight: bold; border-top: 1px dashed var(--card-border); padding-top: 5px;">
+                                        <span>Gain d'espace :</span>
+                                        <span class="stat-value" id="editor-stat-saved" style="color: var(--success);">0%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Progress visual jauge -->
+                                <div class="gauge-container">
+                                    <div class="gauge-bar" id="editor-gauge-bar"></div>
+                                    <div class="gauge-text" id="editor-gauge-text">0% Économisé</div>
+                                </div>
+
+                                <div style="font-weight: bold; font-size: 12px; color: var(--text-secondary); margin-top: 5px;">Code RLE généré :</div>
+                                <div class="code-card" id="editor-output-code" style="font-size: 14px; padding: 10px; margin-bottom: 0; min-height: 80px; letter-spacing: 1px;">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Centralized Footers conforms with AGPL-3.0 -->
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/"
+                target="_blank" rel="noopener noreferrer">AP EdNum</a> avec <a href="../../merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <!-- App JavaScript logic -->
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
+    
+    <script>
+        // Init FontAwesome and ScoreManager
+        window.fa?.createIcons?.();
+        ScoreManager.init('compresseur_magique');
+
+        // Color definitions matching the prompt and user preferences
+        const COLORS = {
+            'X': { name: 'Blanc', hex: '#ffffff', char: 'X', class: 'col-x' },
+            'N': { name: 'Noir', hex: '#1e293b', char: 'N', class: 'col-n' },
+            'B': { name: 'Bleu', hex: '#3b82f6', char: 'B', class: 'col-b' },
+            'R': { name: 'Rouge', hex: '#ef4444', char: 'R', class: 'col-r' },
+            'V': { name: 'Vert', hex: '#10b981', char: 'V', class: 'col-v' },
+            'J': { name: 'Jaune', hex: '#f59e0b', char: 'J', class: 'col-j' }
+        };
+
+        // Predefined patterns for student activities
+        // B = Bleu, X = Blanc (comment: "Mets plutôt 'B=Bleu' et 'X=Blanc'")
+        const PATTERNS = {
+            'easy': [
+                {
+                    name: 'Cœur',
+                    grid: [
+                        ['X','N','X','N','X'],
+                        ['N','N','N','N','N'],
+                        ['N','N','N','N','N'],
+                        ['X','N','N','N','X'],
+                        ['X','X','N','X','X']
+                    ]
+                },
+                {
+                    name: 'Maison',
+                    grid: [
+                        ['X','X','N','X','X'],
+                        ['X','N','N','N','X'],
+                        ['N','N','N','N','N'],
+                        ['N','N','N','N','N'],
+                        ['N','X','X','X','N']
+                    ]
+                },
+                {
+                    name: 'Smiley',
+                    grid: [
+                        ['X','X','X','X','X'],
+                        ['X','N','X','N','X'],
+                        ['X','X','X','X','X'],
+                        ['X','N','N','N','X'],
+                        ['X','X','X','X','X']
+                    ]
+                },
+                {
+                    name: 'Croix',
+                    grid: [
+                        ['X','X','N','X','X'],
+                        ['X','X','N','X','X'],
+                        ['N','N','N','N','N'],
+                        ['X','X','N','X','X'],
+                        ['X','X','N','X','X']
+                    ]
+                }
+            ],
+            'medium': [
+                {
+                    name: 'Cœur',
+                    grid: [
+                        ['X','N','N','X','X','N','N','X'],
+                        ['N','N','N','N','N','N','N','N'],
+                        ['N','N','N','N','N','N','N','N'],
+                        ['N','N','N','N','N','N','N','N'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['X','X','N','N','N','N','X','X'],
+                        ['X','X','X','N','N','X','X','X'],
+                        ['X','X','X','X','X','X','X','X']
+                    ]
+                },
+                {
+                    name: 'Fantôme',
+                    grid: [
+                        ['X','X','X','N','N','X','X','X'],
+                        ['X','X','N','N','N','N','X','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['X','N','X','N','N','X','N','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['X','N','X','N','N','X','N','X']
+                    ]
+                },
+                {
+                    name: 'Sapin',
+                    grid: [
+                        ['X','X','X','N','N','X','X','X'],
+                        ['X','X','N','N','N','N','X','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['X','X','N','N','N','N','X','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['N','N','N','N','N','N','N','N'],
+                        ['X','X','X','N','N','X','X','X'],
+                        ['X','X','X','N','N','X','X','X']
+                    ]
+                },
+                {
+                    name: 'Maison',
+                    grid: [
+                        ['X','X','X','N','N','X','X','X'],
+                        ['X','X','N','N','N','N','X','X'],
+                        ['X','N','N','N','N','N','N','X'],
+                        ['N','N','N','N','N','N','N','N'],
+                        ['N','X','X','X','X','X','X','N'],
+                        ['N','X','X','N','N','X','X','N'],
+                        ['N','X','X','N','N','X','X','N'],
+                        ['N','N','N','N','N','N','N','N']
+                    ]
+                }
+            ],
+            'hard': [
+                {
+                    name: 'Champignon',
+                    grid: [
+                        ['X','X','R','R','R','R','X','X'],
+                        ['X','R','X','R','R','X','R','X'],
+                        ['R','X','R','R','R','R','X','R'],
+                        ['R','R','R','R','R','R','R','R'],
+                        ['X','X','J','J','J','J','X','X'],
+                        ['X','X','J','N','N','J','X','X'],
+                        ['X','X','J','J','J','J','X','X'],
+                        ['X','J','J','J','J','J','J','X']
+                    ]
+                },
+                {
+                    name: 'Fleur',
+                    grid: [
+                        ['X','X','X','V','V','X','X','X'],
+                        ['X','X','V','R','R','V','X','X'],
+                        ['X','R','R','J','J','R','R','X'],
+                        ['X','R','R','J','J','R','R','X'],
+                        ['X','X','V','R','R','V','X','X'],
+                        ['X','X','X','V','V','X','X','X'],
+                        ['X','X','V','X','X','V','X','X'],
+                        ['X','V','V','V','V','V','V','X']
+                    ]
+                },
+                {
+                    name: 'Pokéball',
+                    grid: [
+                        ['X','X','X','N','N','X','X','X'],
+                        ['X','X','N','R','R','N','X','X'],
+                        ['X','N','R','R','R','R','N','X'],
+                        ['N','N','R','N','N','R','N','N'],
+                        ['N','N','X','N','N','X','N','N'],
+                        ['X','N','X','X','X','X','N','X'],
+                        ['X','X','N','X','X','N','X','X'],
+                        ['X','X','X','N','N','X','X','X']
+                    ]
+                }
+            ]
+        };
+
+        // Application State
+        let activeTab = 'decode';
+        let difficulty = 'medium'; // 'easy' (5x5 B/N), 'medium' (8x8 B/N), 'hard' (8x8 Color)
+        let isMuted = true;
+
+        // Scores and Streaks
+        let decodeCorrect = 0, decodeStreak = 0;
+        let encodeCorrect = 0, encodeStreak = 0;
+
+        // Current active challenge data
+        let currentChallenge = null;
+        let decodeUserGrid = []; // Flat 1D array representing current decode grid state
+        let activePaintColor = 'N'; // Selected draw color ('X','N','B','R','V','J')
+
+        // Interactive mouse & touch drawing flags
+        let isDrawing = false;
+
+        // Navigation elements
+        const tabDecodeBtn = document.getElementById('tab-btn-decode');
+        const tabEncodeBtn = document.getElementById('tab-btn-encode');
+        const tabEditorBtn = document.getElementById('tab-btn-editor');
+        const viewDecode = document.getElementById('view-decode');
+        const viewEncode = document.getElementById('view-encode');
+        const viewEditor = document.getElementById('view-editor');
+        const diffBar = document.getElementById('app-difficulty-bar');
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        function initApp() {
+            // Register Tab Switch events programmatically (CSP compliant)
+            tabDecodeBtn.addEventListener('click', () => switchTab('decode'));
+            tabEncodeBtn.addEventListener('click', () => switchTab('encode'));
+            tabEditorBtn.addEventListener('click', () => switchTab('editor'));
+
+            // Register Difficulty Switch events programmatically
+            document.getElementById('diff-btn-easy').addEventListener('click', () => changeDifficulty('easy'));
+            document.getElementById('diff-btn-medium').addEventListener('click', () => changeDifficulty('medium'));
+            document.getElementById('diff-btn-hard').addEventListener('click', () => changeDifficulty('hard'));
+
+            // Verification events
+            document.getElementById('decode-verify-btn').addEventListener('click', verifyDecodeChallenge);
+            document.getElementById('encode-verify-btn').addEventListener('click', verifyEncodeChallenge);
+
+            // Editor events
+            document.getElementById('editor-clear-btn').addEventListener('click', clearEditorGrid);
+
+            // Listen to adaptive difficulty nudges
+            window.addEventListener('c2_change_difficulty', (e) => {
+                const nextDiff = e.detail.difficulty;
+                changeDifficulty(nextDiff);
+            });
+
+            // Global settings dropdown toggling
+            const optionsMenuBtn = document.getElementById('options-menu-btn');
+            const dropdownContent = document.querySelector('.settings-dropdown-content');
+            if (optionsMenuBtn && dropdownContent) {
+                optionsMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdownContent.classList.toggle('show');
+                });
+                document.addEventListener('click', () => {
+                    dropdownContent.classList.remove('show');
+                });
+            }
+
+            // Audio & Theme togglers
+            document.getElementById('audio-toggle-btn').addEventListener('click', toggleAudio);
+
+            // Global drawing mouse listeners
+            window.addEventListener('mouseup', () => { isDrawing = false; });
+            window.addEventListener('touchend', () => { isDrawing = false; });
+
+            // Start up default tab and challenge
+            switchTab('decode');
+        }
+
+        // TAB NAVIGATION SWITCHING
+        function switchTab(tab) {
+            activeTab = tab;
+            playSound('click');
+
+            // Toggle tab active classes
+            tabDecodeBtn.classList.toggle('active', tab === 'decode');
+            tabEncodeBtn.classList.toggle('active', tab === 'encode');
+            tabEditorBtn.classList.toggle('active', tab === 'editor');
+
+            // Toggle active views
+            viewDecode.classList.toggle('active', tab === 'decode');
+            viewEncode.classList.toggle('active', tab === 'encode');
+            viewEditor.classList.toggle('active', tab === 'editor');
+
+            // Hide/Show difficulty bar based on active tab
+            diffBar.style.display = tab === 'editor' ? 'none' : 'flex';
+
+            // Generate contents
+            if (tab === 'decode') {
+                loadDecodeChallenge();
+            } else if (tab === 'encode') {
+                loadEncodeChallenge();
+            } else if (tab === 'editor') {
+                initEditorMode();
+            }
+        }
+
+        // DIFFICULTY SELECTION & CONFIG
+        function changeDifficulty(diff) {
+            difficulty = diff;
+            playSound('click');
+
+            document.getElementById('diff-btn-easy').classList.toggle('active', diff === 'easy');
+            document.getElementById('diff-btn-medium').classList.toggle('active', diff === 'medium');
+            document.getElementById('diff-btn-hard').classList.toggle('active', diff === 'hard');
+
+            if (activeTab === 'decode') {
+                loadDecodeChallenge();
+            } else if (activeTab === 'encode') {
+                loadEncodeChallenge();
+            }
+        }
+
+        function getGridSize() {
+            return difficulty === 'easy' ? 5 : 8;
+        }
+
+        // AUDIO TOGGLE
+        function toggleAudio(e) {
+            if (e) e.stopPropagation();
+            isMuted = !isMuted;
+            if (window.AudioTools) {
+                AudioTools.muted = isMuted;
+            }
+            document.getElementById('icon-vol-on').style.display = isMuted ? 'none' : 'block';
+            document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
+            document.getElementById('audioToggleText').textContent = isMuted ? 'Activer son' : 'Couper son';
+        }
+
+        function playSound(soundId) {
+            if (!isMuted && window.AudioTools) {
+                AudioTools.play(soundId);
+            }
+        }
+
+        // RLE ALGORITHM (ENCODE & DECODE HELPERS)
+        // Encodes a grid 2D matrix into a line-separated RLE code string
+        function encodeGridToRLE(grid) {
+            let lines = [];
+            for (let r = 0; r < grid.length; r++) {
+                let rowCode = [];
+                let currentVal = grid[r][0];
+                let count = 1;
+                for (let c = 1; c < grid[r].length; c++) {
+                    if (grid[r][c] === currentVal) {
+                        count++;
+                    } else {
+                        rowCode.push(`${count}${currentVal}`);
+                        currentVal = grid[r][c];
+                        count = 1;
+                    }
+                }
+                rowCode.push(`${count}${currentVal}`);
+                lines.push(rowCode.join(' '));
+            }
+            return lines.join('\n');
+        }
+
+        // Decodes RLE text string back into a 2D matrix grid
+        function decodeRLEToGrid(rleText, size) {
+            // Pre-fill grid with 'X' (Blanc) by default
+            let grid = Array(size).fill(null).map(() => Array(size).fill('X'));
+            
+            // Clean string: split by newlines or lines
+            let rows = rleText.trim().split('\n');
+            
+            for (let r = 0; r < Math.min(rows.length, size); r++) {
+                // Tokenize items like "3X", "4N"
+                let tokens = rows[r].trim().split(/\s+/);
+                let colIdx = 0;
+                for (let t = 0; t < tokens.length; t++) {
+                    let tok = tokens[t].toUpperCase().trim();
+                    if (!tok) continue;
+                    
+                    // Match numbers and single character color code
+                    let match = tok.match(/^(\d+)([XNBRVJ])$/);
+                    if (match) {
+                        let count = parseInt(match[1]);
+                        let color = match[2];
+                        for (let i = 0; i < count; i++) {
+                            if (colIdx < size) {
+                                grid[r][colIdx] = color;
+                                colIdx++;
+                            }
+                        }
+                    }
+                }
+            }
+            return grid;
+        }
+
+        // =========================================================================
+        // MODE 1 : DÉCOMPRESSER (DÉCODAGE) LOGIC
+        // =========================================================================
+        function loadDecodeChallenge() {
+            const list = PATTERNS[difficulty];
+            // Get a random pattern
+            currentChallenge = list[Math.floor(Math.random() * list.length)];
+
+            // Encode reference RLE code
+            let rleCode = encodeGridToRLE(currentChallenge.grid);
+            document.getElementById('decode-target-code').textContent = rleCode;
+
+            // Reset user grid
+            const size = getGridSize();
+            decodeUserGrid = Array(size * size).fill('X');
+
+            // Draw palette selector (only for color mode hard)
+            const paletteEl = document.getElementById('decode-palette');
+            paletteEl.innerHTML = '';
+            if (difficulty === 'hard') {
+                paletteEl.style.display = 'flex';
+                activePaintColor = 'N'; // Reset to Noir
+                
+                Object.keys(COLORS).forEach(colorChar => {
+                    const btn = document.createElement('div');
+                    btn.className = `palette-btn ${COLORS[colorChar].class} ${colorChar === activePaintColor ? 'active' : ''}`;
+                    btn.textContent = colorChar;
+                    btn.addEventListener('click', () => {
+                        playSound('click');
+                        document.querySelectorAll('#decode-palette .palette-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        activePaintColor = colorChar;
+                    });
+                    paletteEl.appendChild(btn);
+                });
+            } else {
+                paletteEl.style.display = 'none';
+                activePaintColor = 'N'; // Toggle Noir/Blanc directly in easy/medium
+            }
+
+            buildDecodeGrid(size);
+        }
+
+        function buildDecodeGrid(size) {
+            const gridEl = document.getElementById('decode-grid');
+            gridEl.innerHTML = '';
+            gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'pixel-cell col-x';
+                cell.dataset.index = i;
+                cell.textContent = 'X'; // Start with Blanc
+
+                // Mouse and touch draw bindings programmatically
+                cell.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isDrawing = true;
+                    paintDecodeCell(cell, i);
+                });
+
+                cell.addEventListener('mouseenter', () => {
+                    if (isDrawing) {
+                        paintDecodeCell(cell, i);
+                    }
+                });
+
+                cell.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    isDrawing = true;
+                    paintDecodeCell(cell, i);
+                }, { passive: false });
+
+                gridEl.appendChild(cell);
+            }
+
+            // Swipe support on tablets/phones
+            gridEl.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target && target.classList.contains('pixel-cell') && target.parentElement === gridEl) {
+                    const idx = target.dataset.index;
+                    if (gridEl._lastTouchedIndex !== idx) {
+                        paintDecodeCell(target, idx);
+                        gridEl._lastTouchedIndex = idx;
+                    }
+                }
+            }, { passive: false });
+
+            gridEl.addEventListener('touchend', () => {
+                gridEl._lastTouchedIndex = null;
+            });
+        }
+
+        function paintDecodeCell(cell, index) {
+            if (difficulty === 'hard') {
+                // In hard mode, paints selected palette color
+                decodeUserGrid[index] = activePaintColor;
+            } else {
+                // In B/N, click or drag toggles between Blanc (X) and Noir (N)
+                // If dragging, we color the target with activePaintColor (which is N).
+                // If single click, we toggle. To behave nicely:
+                if (isDrawing && decodeUserGrid[index] === activePaintColor) {
+                    // Already colored with activePaintColor, toggle to X
+                    decodeUserGrid[index] = 'X';
+                } else {
+                    decodeUserGrid[index] = activePaintColor;
+                }
+            }
+
+            // Update UI class
+            const colorObj = COLORS[decodeUserGrid[index]];
+            cell.className = `pixel-cell ${colorObj.class} toggled`;
+            cell.textContent = colorObj.char;
+            playSound('click');
+
+            // Trigger animation pop
+            setTimeout(() => {
+                cell.classList.remove('toggled');
+            }, 250);
+        }
+
+        function verifyDecodeChallenge() {
+            const size = getGridSize();
+            let isCorrect = true;
+
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const index = r * size + c;
+                    if (decodeUserGrid[index] !== currentChallenge.grid[r][c]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                playSound('success');
+                showToast(`🎉 Superbe ! Dessin décodé : "${currentChallenge.name}" !`, 'success');
+                
+                decodeCorrect++;
+                decodeStreak++;
+                ScoreManager.addSuccess('decode', difficulty, 0);
+
+                // Célébration
+                window.handleStreakCelebration?.(decodeStreak, difficulty === 'hard', decodeStreak % 3 === 0);
+
+                document.getElementById('decode-correct').textContent = decodeCorrect;
+                document.getElementById('decode-streak').textContent = decodeStreak;
+
+                // Load next challenge after brief pause
+                setTimeout(loadDecodeChallenge, 2000);
+            } else {
+                playSound('error');
+                showToast("❌ Oups ! Il y a des erreurs dans la grille.", 'error');
+                decodeStreak = 0;
+                ScoreManager.addMistake('decode', difficulty);
+                document.getElementById('decode-streak').textContent = '0';
+
+                // Add brief red shake effect to grid
+                const gridEl = document.getElementById('decode-grid');
+                gridEl.classList.add('cell-error');
+                setTimeout(() => gridEl.classList.remove('cell-error'), 500);
+            }
+        }
+
+        // =========================================================================
+        // MODE 2 : COMPRESSER (ENCODAGE) LOGIC
+        // =========================================================================
+        let encodePreviewGridState = []; // Flat array for preview
+
+        function loadEncodeChallenge() {
+            const list = PATTERNS[difficulty];
+            currentChallenge = list[Math.floor(Math.random() * list.length)];
+
+            const size = getGridSize();
+
+            // Saisie RLE input field reset
+            const textInput = document.getElementById('encode-rle-input');
+            textInput.value = '';
+
+            // Draw target Reference grid
+            const refGrid = document.getElementById('encode-reference-grid');
+            refGrid.innerHTML = '';
+            refGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const color = currentChallenge.grid[r][c];
+                    const cell = document.createElement('div');
+                    cell.className = `pixel-cell ${COLORS[color].class} locked`;
+                    cell.textContent = color;
+                    refGrid.appendChild(cell);
+                }
+            }
+
+            // Setup preview grid
+            encodePreviewGridState = Array(size * size).fill('X');
+            buildEncodePreviewGrid(size);
+
+            // Bind input event to textarea for live RLE decoding (Visual dynamic preview!)
+            textInput.removeEventListener('input', updateRLELivePreview); // Avoid duplicates
+            textInput.addEventListener('input', updateRLELivePreview);
+        }
+
+        function buildEncodePreviewGrid(size) {
+            const previewGrid = document.getElementById('encode-preview-grid');
+            previewGrid.innerHTML = '';
+            previewGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'pixel-cell col-x locked';
+                cell.textContent = 'X';
+                previewGrid.appendChild(cell);
+            }
+        }
+
+        function updateRLELivePreview() {
+            const size = getGridSize();
+            const text = document.getElementById('encode-rle-input').value;
+            
+            // Decode input RLE text
+            const previewMatrix = decodeRLEToGrid(text, size);
+            
+            // Draw on preview grid
+            const previewCells = document.getElementById('encode-preview-grid').children;
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const cell = previewCells[r * size + c];
+                    const color = previewMatrix[r][c];
+                    
+                    if (cell) {
+                        cell.className = `pixel-cell ${COLORS[color].class} locked`;
+                        cell.textContent = color;
+                    }
+                }
+            }
+        }
+
+        function verifyEncodeChallenge() {
+            const size = getGridSize();
+            const textInput = document.getElementById('encode-rle-input').value;
+
+            // Generate grid from text
+            const userMatrix = decodeRLEToGrid(textInput, size);
+
+            let isCorrect = true;
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (userMatrix[r][c] !== currentChallenge.grid[r][c]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                playSound('success');
+                showToast(`🎉 Super ! Code RLE correct pour : "${currentChallenge.name}" !`, 'success');
+
+                encodeCorrect++;
+                encodeStreak++;
+                ScoreManager.addSuccess('encode', difficulty, 0);
+
+                window.handleStreakCelebration?.(encodeStreak, difficulty === 'hard', encodeStreak % 3 === 0);
+
+                document.getElementById('encode-correct').textContent = encodeCorrect;
+                document.getElementById('encode-streak').textContent = encodeStreak;
+
+                setTimeout(loadEncodeChallenge, 2000);
+            } else {
+                playSound('error');
+                showToast("❌ Code erroné ! L'aperçu ne correspond pas à l'image cible.", 'error');
+                
+                encodeStreak = 0;
+                ScoreManager.addMistake('encode', difficulty);
+                document.getElementById('encode-streak').textContent = '0';
+
+                // Shake textarea on error
+                const inputArea = document.getElementById('encode-rle-input');
+                inputArea.classList.add('cell-error');
+                setTimeout(() => inputArea.classList.remove('cell-error'), 500);
+            }
+        }
+
+        // =========================================================================
+        // MODE 3 : DESSIN LIBRE & STATS (ÉDITEUR) LOGIC
+        // =========================================================================
+        let editorUserGrid = []; // Flat 1D array representing Editor drawing state
+
+        function initEditorMode() {
+            // Draw Editor grid 8x8 (standard)
+            const size = 8;
+            editorUserGrid = Array(size * size).fill('X');
+
+            // Draw color palette selector
+            const paletteEl = document.getElementById('editor-palette');
+            paletteEl.innerHTML = '';
+            activePaintColor = 'N'; // Start with Noir
+
+            Object.keys(COLORS).forEach(colorChar => {
+                const btn = document.createElement('div');
+                btn.className = `palette-btn ${COLORS[colorChar].class} ${colorChar === activePaintColor ? 'active' : ''}`;
+                btn.textContent = colorChar;
+                btn.addEventListener('click', () => {
+                    playSound('click');
+                    document.querySelectorAll('#editor-palette .palette-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activePaintColor = colorChar;
+                });
+                paletteEl.appendChild(btn);
+            });
+
+            buildEditorGrid(size);
+            updateEditorCompressionStats();
+        }
+
+        function buildEditorGrid(size) {
+            const gridEl = document.getElementById('editor-grid');
+            gridEl.innerHTML = '';
+            gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'pixel-cell col-x';
+                cell.dataset.index = i;
+                cell.textContent = 'X';
+
+                cell.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isDrawing = true;
+                    paintEditorCell(cell, i);
+                });
+
+                cell.addEventListener('mouseenter', () => {
+                    if (isDrawing) {
+                        paintEditorCell(cell, i);
+                    }
+                });
+
+                cell.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    isDrawing = true;
+                    paintEditorCell(cell, i);
+                }, { passive: false });
+
+                gridEl.appendChild(cell);
+            }
+
+            // Swipe painting
+            gridEl.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target && target.classList.contains('pixel-cell') && target.parentElement === gridEl) {
+                    const idx = target.dataset.index;
+                    if (gridEl._lastTouchedIndex !== idx) {
+                        paintEditorCell(target, idx);
+                        gridEl._lastTouchedIndex = idx;
+                    }
+                }
+            }, { passive: false });
+
+            gridEl.addEventListener('touchend', () => {
+                gridEl._lastTouchedIndex = null;
+            });
+        }
+
+        function paintEditorCell(cell, index) {
+            editorUserGrid[index] = activePaintColor;
+
+            // Update UI class
+            const colorObj = COLORS[activePaintColor];
+            cell.className = `pixel-cell ${colorObj.class} toggled`;
+            cell.textContent = colorObj.char;
+            playSound('click');
+
+            setTimeout(() => {
+                cell.classList.remove('toggled');
+            }, 250);
+
+            // Compute RLE and statistics in real time!
+            updateEditorCompressionStats();
+        }
+
+        function clearEditorGrid() {
+            playSound('click');
+            editorUserGrid.fill('X');
+            const cells = document.getElementById('editor-grid').children;
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].className = 'pixel-cell col-x';
+                cells[i].textContent = 'X';
+            }
+            updateEditorCompressionStats();
+        }
+
+        function updateEditorCompressionStats() {
+            const size = 8;
+            // Build 2D matrix
+            let gridMatrix = [];
+            for (let r = 0; r < size; r++) {
+                gridMatrix.push(editorUserGrid.slice(r * size, (r + 1) * size));
+            }
+
+            // Calculate RLE
+            const rleCode = encodeGridToRLE(gridMatrix);
+            document.getElementById('editor-output-code').textContent = rleCode;
+
+            // Stats computations
+            const rawSizeInBytes = size * size; // 1 pixel = 1 byte uncompressed
+            
+            // Clean up compressed characters count (ignoring newlines and spaces to get the real code length)
+            const compressedCodeClean = rleCode.replace(/\s+/g, '');
+            const compressedSizeInChars = compressedCodeClean.length;
+
+            // Ratio of compression: saved space
+            let percentSaved = Math.max(0, Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100));
+
+            // If empty, percent saved should look neutral (0)
+            const isEmptyGrid = editorUserGrid.every(c => c === 'X');
+            if (isEmptyGrid) {
+                percentSaved = 0;
+            }
+
+            // Update text elements
+            document.getElementById('editor-stat-raw').textContent = `${rawSizeInBytes} pixels (octets)`;
+            document.getElementById('editor-stat-compressed').textContent = `${compressedSizeInChars} caractères`;
+            document.getElementById('editor-stat-saved').textContent = `${percentSaved}% d'espace gagné`;
+
+            // Update physical magic compressor gauge color and width
+            const bar = document.getElementById('editor-gauge-bar');
+            bar.style.width = `${percentSaved}%`;
+            document.getElementById('editor-gauge-text').textContent = `${percentSaved}% Économisé`;
+        }
+
+    </script>
+</body>
+</html>

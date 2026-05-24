@@ -203,6 +203,35 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-compresseur-magique",
+    "href": "alpha/webapps/compresseur_magique.html",
+    "target": null,
+    "rel": null,
+    "isAlpha": true,
+    "isExternal": false,
+    "isTeacher": false,
+    "dataLevel": "7-8H",
+    "icon": "dt-person-carry-box",
+    "iconStyle": "width:32px;height:32px;flex-shrink:0;",
+    "title": "Compresseur magique",
+    "desc": "Découvre comment réduire la taille d'une image grâce à la compression RLE.",
+    "tags": [
+      "#Codage",
+      "#Binaire",
+      "#Maths"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-automate",
     "href": "webapps/simulateur_automate.html",
     "target": null,
