@@ -429,7 +429,6 @@
         // Application State
         let activeTab = 'decode';
         let difficulty = 'medium'; // 'easy' (5x5 B/N), 'medium' (8x8 B/N), 'hard' (8x8 Color)
-        let isMuted = true;
 
         // Scores and Streaks
         let decodeCorrect = 0, decodeStreak = 0;
@@ -494,9 +493,6 @@
                 });
             }
 
-            // Audio & Theme togglers
-            document.getElementById('audio-toggle-btn').addEventListener('click', toggleAudio);
-
             // Global drawing mouse listeners
             window.addEventListener('mouseup', () => { isDrawing = false; });
             window.addEventListener('touchend', () => { isDrawing = false; });
@@ -551,24 +547,6 @@
 
         function getGridSize() {
             return difficulty === 'easy' ? 5 : 8;
-        }
-
-        // AUDIO TOGGLE
-        function toggleAudio(e) {
-            if (e) e.stopPropagation();
-            isMuted = !isMuted;
-            if (window.AudioTools) {
-                AudioTools.muted = isMuted;
-            }
-            document.getElementById('icon-vol-on').style.display = isMuted ? 'none' : 'block';
-            document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
-            document.getElementById('audioToggleText').textContent = isMuted ? 'Activer son' : 'Couper son';
-        }
-
-        function playSound(soundId) {
-            if (!isMuted && window.AudioTools) {
-                AudioTools.play(soundId);
-            }
         }
 
         // RLE ALGORITHM (ENCODE & DECODE HELPERS)
@@ -1045,7 +1023,7 @@
             const compressedSizeInChars = compressedCodeClean.length;
 
             // Ratio of compression: saved space
-            let percentSaved = Math.max(0, Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100));
+            let percentSaved = Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100);
 
             // If empty, percent saved should look neutral (0)
             const isEmptyGrid = editorUserGrid.every(c => c === 'X');
@@ -1056,12 +1034,22 @@
             // Update text elements
             document.getElementById('editor-stat-raw').textContent = `${rawSizeInBytes} pixels (octets)`;
             document.getElementById('editor-stat-compressed').textContent = `${compressedSizeInChars} caractères`;
-            document.getElementById('editor-stat-saved').textContent = `${percentSaved}% d'espace gagné`;
+
+            const statSaved = document.getElementById('editor-stat-saved');
+            const gaugeText = document.getElementById('editor-gauge-text');
+            if (percentSaved < 0) {
+                statSaved.style.color = 'var(--error)';
+                statSaved.textContent = `${percentSaved}% (perte)`;
+                gaugeText.textContent = `${Math.abs(percentSaved)}% Perdu`;
+            } else {
+                statSaved.style.color = 'var(--success)';
+                statSaved.textContent = `${percentSaved}% d'espace gagné`;
+                gaugeText.textContent = `${percentSaved}% Économisé`;
+            }
 
             // Update physical magic compressor gauge color and width
             const bar = document.getElementById('editor-gauge-bar');
-            bar.style.width = `${percentSaved}%`;
-            document.getElementById('editor-gauge-text').textContent = `${percentSaved}% Économisé`;
+            bar.style.width = `${Math.max(0, percentSaved)}%`;
         }
 
     </script>

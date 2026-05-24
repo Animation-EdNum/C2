@@ -494,6 +494,22 @@
             gap: 20px;
         }
 
+        .pw-generator {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--card-border);
+            flex-direction: column;
+        }
+
+        .pw-generator-row {
+            display: flex;
+            gap: 10px;
+        }
+
         .pw-title {
             font-size: 16px;
             font-weight: 700;
@@ -943,13 +959,27 @@
                 <details class="instructions">
                     <summary><strong>📖 Consigne (cliquer pour ouvrir)</strong></summary>
                     <div style="margin-top:10px;">
-                        Tape un mot de passe dans la zone de test ci-dessous. Vois en temps réel comment sa force augmente et s'il respecte les consignes de sécurité pour déverrouiller le grand coffre-fort blindé !
+                        Tape un mot de passe dans la zone de test ci-dessous. Vois en temps réel comment sa force augmente et s'il respecte les consignes de sécurité pour déverrouiller le grand coffre-fort blindé !<br><br>
+                        On te conseille d'utiliser une <em>passphrase</em> au lieu d’un mot de passe. La passphrase est une phrase facile à retenir à vos yeux mais qui combine plusieurs éléments spéciaux. Par exemple : "J’aimeuhLesL1c0rnes!"
                     </div>
                 </details>
 
                 <div class="password-grid">
                     <!-- Inputs & Rules -->
                     <div class="pw-tester-card">
+                        <!-- Generateur -->
+                        <div class="pw-generator">
+                            <div class="pw-title" style="font-size: 14px; margin-bottom: 5px;">🪄 Générateur de mot de passe (méthode de la phrase)</div>
+                            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 10px;">
+                                Entre un mot de base (au moins 4 lettres) que tu aimes bien :
+                            </div>
+                            <div class="pw-generator-row">
+                                <input type="text" id="generator-base-word" class="pw-input" placeholder="Ex: lapin" aria-label="Mot de base pour générer un mot de passe">
+                                <button class="btn btn-primary" id="generate-pw-btn">Générer</button>
+                            </div>
+                        </div>
+
+
                         <div class="pw-title">🔑 Crée un mot de passe fort</div>
                         <div class="pw-input-wrapper">
                             <input type="password" id="password-input" class="pw-input" placeholder="Tape un mot de passe ici…" aria-label="Mot de passe à tester">
@@ -971,11 +1001,14 @@
 
                         <!-- Rules list -->
                         <div class="criteria-checklist">
-                            <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins 8 caractères</div>
-                            <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au moins une lettre MAJUSCULE</div>
-                            <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au moins une lettre minuscule</div>
-                            <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au moins un chiffre (0-9)</div>
-                            <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au moins un caractère spécial (@, #, !, ?, etc.)</div>
+                            <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins 12 caractères</div>
+                            <div class="crit-item" id="crit-types"><span class="crit-icon crit-ko"></span> 🔀 Remplir au moins 3 des critères suivants :</div>
+                            <div style="padding-left: 30px; display: flex; flex-direction: column; gap: 8px;">
+                                <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au moins une lettre MAJUSCULE</div>
+                                <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au moins une lettre minuscule</div>
+                                <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au moins un chiffre (0-9)</div>
+                                <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au moins un caractère spécial (@, #, !, ?, etc.)</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1735,12 +1768,88 @@
                 });
             }
         });
-
-        // ==========================================
+// ==========================================
         // MODE 3: PASSWORD METER LOGIC
         // ==========================================
         let currentWheelAngle = 0;
         let passwordUnlocked = false;
+
+        function generateLeetPassword(word) {
+            if (!word || word.length < 4) return "";
+
+            const leetDict = {
+                'a': '4', 'e': '3', 'i': '1', 'o': '0', 's': '5', 't': '7'
+            };
+
+            let wordArr = word.toLowerCase().split('');
+
+            // Find leetable indices
+            let leetIndices = [];
+            for (let i = 0; i < wordArr.length; i++) {
+                if (leetDict[wordArr[i]]) {
+                    leetIndices.push(i);
+                }
+            }
+
+            if (leetIndices.length > 0) {
+                // Shuffle leetIndices and pick at least 1
+                leetIndices.sort(() => 0.5 - Math.random());
+                let numLeet = Math.floor(Math.random() * leetIndices.length) + 1;
+                for (let i = 0; i < numLeet; i++) {
+                    let idx = leetIndices[i];
+                    wordArr[idx] = leetDict[wordArr[idx]];
+                }
+            }
+
+            // Pick one alpha char to upper
+            let alphaIndices = [];
+            for (let i = 0; i < wordArr.length; i++) {
+                if (/[a-z]/.test(wordArr[i])) {
+                    alphaIndices.push(i);
+                }
+            }
+
+            if (alphaIndices.length > 0) {
+                let upperIdx = alphaIndices[Math.floor(Math.random() * alphaIndices.length)];
+                wordArr[upperIdx] = wordArr[upperIdx].toUpperCase();
+            }
+
+            let pw = wordArr.join('');
+
+            // Add special char
+            const specialChars = ['$', '?', '!', '*', '%', '+', '-', '='];
+            pw += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+            // Pad to 12 chars
+            if (pw.length < 12) {
+                let diff = 12 - pw.length;
+                // Pad by repeating the beginning of the string
+                let padding = pw.substring(0, diff);
+                // Ensure the final length is exactly 12 by repeating if necessary
+                while (pw.length < 12) {
+                    pw += pw.substring(0, 12 - pw.length);
+                }
+            }
+
+            return pw;
+        }
+
+        document.getElementById('generate-pw-btn').addEventListener('click', () => {
+            const baseWordInput = document.getElementById('generator-base-word');
+            const baseWord = baseWordInput.value.trim();
+            if (baseWord.length < 4) {
+                showToast('Le mot de base doit contenir au moins 4 caractères.', 'error');
+                return;
+            }
+
+            const newPassword = generateLeetPassword(baseWord);
+            elPasswordInput.value = newPassword;
+            // Also switch to text mode temporarily so they can see it
+            if (elPasswordInput.type === 'password') {
+                elPasswordToggle.click();
+            }
+            updatePasswordChecklist(newPassword);
+        });
 
         function initPasswordMode() {
             elPasswordInput.value = '';
@@ -1777,13 +1886,17 @@
 
         function updatePasswordChecklist(pw) {
             // Rules
-            const hasLength = pw.length >= 8;
+            const hasLength = pw.length >= 12;
             const hasUpper = /[A-Z]/.test(pw);
             const hasLower = /[a-z]/.test(pw);
             const hasNumber = /[0-9]/.test(pw);
             const hasSpecial = /[^A-Za-z0-9]/.test(pw);
 
+            const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
+            const hasTypes = typesCount >= 3;
+
             updateCriterionUI('crit-length', hasLength);
+            updateCriterionUI('crit-types', hasTypes);
             updateCriterionUI('crit-upper', hasUpper);
             updateCriterionUI('crit-lower', hasLower);
             updateCriterionUI('crit-number', hasNumber);
@@ -1792,11 +1905,16 @@
             // Strength calculations
             let score = 0;
             if (pw.length > 0) {
-                if (hasLength) { score += 20; }
-                if (hasUpper) { score += 20; }
-                if (hasLower) { score += 20; }
-                if (hasNumber) { score += 20; }
-                if (hasSpecial) { score += 20; }
+                // Length is worth 40 points
+                if (hasLength) {
+                    score += 40;
+                } else {
+                    // Partial score for length (e.g. up to 20 points if at least 6 chars)
+                    score += Math.min(20, Math.floor((pw.length / 12) * 20));
+                }
+
+                // Each type is worth 20 points, up to 60 points max (3 types)
+                score += Math.min(60, typesCount * 20);
             }
 
             // Adjust fill and labels
