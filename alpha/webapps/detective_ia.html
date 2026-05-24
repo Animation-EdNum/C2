@@ -347,48 +347,169 @@
 
         /* ========== TREE VISUALIZATION ========== */
         .tree-display {
-            margin: 20px 0; padding: 20px; overflow-x: auto;
-            background: var(--group-bg); border-radius: var(--radius-lg);
-            border: 1px solid var(--card-border);
+            margin: 30px 0;
+            padding: 30px;
+            overflow-x: auto;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(124, 58, 237, 0.15);
+            box-shadow: inset 0 2px 8px rgba(124, 58, 237, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        body.dark .tree-display {
+            background: rgba(15, 23, 42, 0.4);
+            border-color: rgba(167, 139, 250, 0.15);
         }
         .tree-display:empty { display: none; }
         .tree-display h3 {
-            text-align: center; font-size: 13px; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+            font-weight: 800;
         }
-        .tree-node { display: flex; flex-direction: column; align-items: center; }
+        .tree-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .tree-question-box {
-            background: var(--accent); color: #fff; padding: 8px 16px;
-            border-radius: var(--radius-lg); font-weight: 600; font-size: 13px;
-            text-align: center; white-space: nowrap; transition: all 0.3s;
-            box-shadow: 0 4px 12px var(--card-shadow);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            transition: all 0.4s var(--spring-easing);
+            box-shadow: 0 4px 15px var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .tree-question-box.active { transform: scale(1.08); box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.3); }
-        .tree-question-box.dimmed { opacity: 0.35; }
+        .tree-question-box.active {
+            transform: scale(1.08);
+            box-shadow: 0 0 0 5px rgba(124, 58, 237, 0.4), 0 8px 25px var(--card-shadow);
+            background: linear-gradient(135deg, #a78bfa 0%, var(--accent) 100%);
+        }
+        .tree-question-box.dimmed {
+            opacity: 0.25;
+            filter: grayscale(80%);
+            box-shadow: none;
+        }
         .tree-branches {
-            display: flex; gap: 20px; margin-top: 8px; position: relative;
+            display: flex;
+            gap: 40px;
+            margin-top: 24px;
+            position: relative;
+        }
+        /* Vertical line from parent to horizontal bridge */
+        .tree-branches::before {
+            content: '';
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            width: 2px;
+            height: 12px;
+            background: var(--accent-light);
+            opacity: 0.7;
+            transform: translateX(-50%);
         }
         .tree-branch {
-            display: flex; flex-direction: column; align-items: center; position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
         }
+        /* Vertical line from horizontal bridge to branch label */
         .tree-branch::before {
-            content: ''; position: absolute; top: -8px; left: 50%; width: 2px; height: 8px;
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            width: 2px;
+            height: 12px;
             background: var(--accent-light);
+            opacity: 0.7;
+            transform: translateX(-50%);
+        }
+        /* Horizontal bridge lines */
+        .tree-branch::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 50%;
+            height: 2px;
+            background: var(--accent-light);
+            opacity: 0.7;
+        }
+        .tree-branch:first-child::after {
+            left: 50%;
+        }
+        .tree-branch:last-child::after {
+            right: 50%;
         }
         .tree-branch-label {
-            font-size: 11px; font-weight: 700; padding: 2px 10px;
-            border-radius: var(--radius-pill); margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1.5px solid transparent;
+            z-index: 5;
+            transition: all 0.3s ease;
         }
-        .tree-branch-label.yes { background: var(--yes-bg); color: var(--yes-color); }
-        .tree-branch-label.no { background: var(--no-bg); color: var(--no-color); }
-        .tree-branch-label.dimmed { opacity: 0.35; }
+        .tree-branch-label.yes {
+            background: var(--yes-bg);
+            color: var(--yes-color);
+            border-color: var(--yes-border);
+        }
+        .tree-branch-label.no {
+            background: var(--no-bg);
+            color: var(--no-color);
+            border-color: var(--no-border);
+        }
+        .tree-branch-label.dimmed {
+            opacity: 0.3;
+            filter: grayscale(80%);
+            box-shadow: none;
+        }
         .tree-leaf {
-            display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
-            padding: 8px; background: var(--card-bg); border-radius: var(--radius-md);
-            border: 1px solid var(--card-border); min-width: 60px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            border: 2px solid var(--card-border);
+            min-width: 70px;
+            min-height: 52px;
+            box-shadow: 0 4px 10px var(--card-shadow);
+            transition: all 0.4s var(--spring-easing);
         }
-        .tree-leaf.highlight { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); }
-        .tree-leaf-item { font-size: 22px; }
+        .tree-leaf.highlight {
+            border-color: var(--accent);
+            background: var(--badge-bg);
+            transform: scale(1.05);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.25), 0 8px 20px var(--card-shadow);
+        }
+        .tree-leaf-item {
+            font-size: 24px;
+            transition: transform 0.2s ease;
+            cursor: help;
+        }
+        .tree-leaf-item:hover {
+            transform: scale(1.3) translateY(-2px);
+        }
 
         /* ========== RESULT AREA ========== */
         .result-area {
@@ -764,13 +885,65 @@
 
             const { yes, no } = splitGroup(items, bestQ);
             const remaining = questions.filter(q => q.id !== bestQ.id);
+            const yesChild = buildOptimalTree(yes, remaining);
+            const noChild = buildOptimalTree(no, remaining);
 
             return {
                 type: 'node',
                 question: bestQ,
-                yesChild: buildOptimalTree(yes, remaining),
-                noChild: buildOptimalTree(no, remaining),
+                items: [...items],
+                yesChild,
+                noChild,
             };
+        }
+
+        function buildGuidedPartialTree(items, questions) {
+            if (items.length <= 1) {
+                return { type: 'leaf', items: [...items] };
+            }
+
+            const completedStep = guidedSequence.slice(0, guidedStep).find(step => 
+                step.items.length === items.length && 
+                step.items.every(item => items.some(i => i.id === item.id))
+            );
+
+            if (!completedStep) {
+                return { type: 'leaf', items: [...items] };
+            }
+
+            const bestQ = completedStep.question;
+            const { yes, no } = splitGroup(items, bestQ);
+
+            return {
+                type: 'node',
+                question: bestQ,
+                items: [...items],
+                yesChild: buildGuidedPartialTree(yes, questions),
+                noChild: buildGuidedPartialTree(no, questions),
+            };
+        }
+
+        function findLeafByItems(node, items) {
+            if (!node) return null;
+            if (node.type === 'leaf') {
+                if (node.items.length === items.length && 
+                    node.items.every(item => items.some(i => i.id === item.id))) {
+                    return node;
+                }
+                return null;
+            }
+            return findLeafByItems(node.yesChild, items) || findLeafByItems(node.noChild, items);
+        }
+
+        function findNodeByStep(node, step) {
+            if (!node || node.type === 'leaf') return null;
+            if (node.question.id === step.question.id && 
+                node.items && 
+                node.items.length === step.items.length && 
+                node.items.every(item => step.items.some(i => i.id === item.id))) {
+                return node;
+            }
+            return findNodeByStep(node.yesChild, step) || findNodeByStep(node.noChild, step);
         }
 
         function countTreeQuestions(node) {
@@ -948,7 +1121,6 @@
 
             if (guidedStep >= guidedSequence.length) {
                 // All done
-                guidedTree = buildOptimalTree(guidedItems, DATASETS[currentDatasetKey].questions);
                 showGuidedSuccess();
                 return;
             }
@@ -981,11 +1153,10 @@
 
             elQuestionArea.appendChild(questionDisplay);
 
-            // Build partial tree
-            if (guidedStep > 0) {
-                guidedTree = buildOptimalTree(guidedItems, DATASETS[currentDatasetKey].questions);
-                renderPartialTree();
-            }
+            // Render partial tree
+            const tree = buildGuidedPartialTree(guidedItems, DATASETS[currentDatasetKey].questions);
+            const activeLeaf = findLeafByItems(tree, step.items);
+            renderPartialTree(activeLeaf);
         }
 
         function applyGuidedStep(step) {
@@ -1009,6 +1180,20 @@
             playSound('success');
             guidedStep++;
 
+            // Re-render partial tree to show the split that was just applied,
+            // and highlight the newly created question node as active!
+            const ds = DATASETS[currentDatasetKey];
+            const tree = buildGuidedPartialTree(guidedItems, ds.questions);
+            const justCompletedStep = guidedSequence[guidedStep - 1];
+            const treeMeta = new Map();
+            if (justCompletedStep) {
+                const justCompletedNode = findNodeByStep(tree, justCompletedStep);
+                if (justCompletedNode) {
+                    treeMeta.set(justCompletedNode, 'active');
+                }
+            }
+            renderPartialTree(null, treeMeta);
+
             // Show next button
             elQuestionArea.innerHTML = '';
             const info = document.createElement('div');
@@ -1031,16 +1216,15 @@
             elQuestionArea.appendChild(nextBtn);
         }
 
-        function renderPartialTree() {
+        function renderPartialTree(activeLeaf = null, treeMeta = null) {
             elTree.innerHTML = '';
             const title = document.createElement('h3');
             title.textContent = '🌳 Arbre de décision';
             elTree.appendChild(title);
 
-            // Build tree from completed steps only
             const ds = DATASETS[currentDatasetKey];
-            const tree = buildOptimalTree(guidedItems, ds.questions);
-            renderTreeDOM(tree, elTree);
+            const tree = buildGuidedPartialTree(guidedItems, ds.questions);
+            renderTreeDOM(tree, elTree, activeLeaf, treeMeta);
         }
 
         function showGuidedSuccess() {
