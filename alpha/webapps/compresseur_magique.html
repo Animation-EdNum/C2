@@ -1023,7 +1023,7 @@
             const compressedSizeInChars = compressedCodeClean.length;
 
             // Ratio of compression: saved space
-            let percentSaved = Math.max(0, Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100));
+            let percentSaved = Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100);
 
             // If empty, percent saved should look neutral (0)
             const isEmptyGrid = editorUserGrid.every(c => c === 'X');
@@ -1034,12 +1034,22 @@
             // Update text elements
             document.getElementById('editor-stat-raw').textContent = `${rawSizeInBytes} pixels (octets)`;
             document.getElementById('editor-stat-compressed').textContent = `${compressedSizeInChars} caractères`;
-            document.getElementById('editor-stat-saved').textContent = `${percentSaved}% d'espace gagné`;
+
+            const statSaved = document.getElementById('editor-stat-saved');
+            const gaugeText = document.getElementById('editor-gauge-text');
+            if (percentSaved < 0) {
+                statSaved.style.color = 'var(--error)';
+                statSaved.textContent = `${percentSaved}% (perte)`;
+                gaugeText.textContent = `${Math.abs(percentSaved)}% Perdu`;
+            } else {
+                statSaved.style.color = 'var(--success)';
+                statSaved.textContent = `${percentSaved}% d'espace gagné`;
+                gaugeText.textContent = `${percentSaved}% Économisé`;
+            }
 
             // Update physical magic compressor gauge color and width
             const bar = document.getElementById('editor-gauge-bar');
-            bar.style.width = `${percentSaved}%`;
-            document.getElementById('editor-gauge-text').textContent = `${percentSaved}% Économisé`;
+            bar.style.width = `${Math.max(0, percentSaved)}%`;
         }
 
     </script>
