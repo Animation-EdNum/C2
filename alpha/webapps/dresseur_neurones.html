@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <title>🧠 Dresseur de neurones</title>
+    <meta property="og:title" content="Dresseur de neurones">
+    <meta property="og:description" content="Entraîne ton IA pour lui apprendre à trier des fruits et déjoue les pièges du biais algorithmique !">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        body > header,
+        body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-gradient-start: #6366f1;
+            --bg-gradient-end: #3730a3;
+            --card-bg: rgba(249, 250, 252, 0.85);
+            --card-border: #e0e7ff;
+            --container-bg: rgba(255, 255, 255, 0.88);
+            --text-main: #1e1b4b;
+            --text-secondary: #4f46e5;
+            --text-muted: #6b7280;
+            --accent: #4f46e5;
+            --accent-dark: #3730a3;
+            --accent-light: #818cf8;
+            --badge-bg: #e0e7ff;
+            --badge-color: #3730a3;
+            --input-border: #a5b4fc;
+            --instructions-bg: #f5f3ff;
+            --success: #166534;
+            --success-light: #dcfce7;
+            --warn: #b45309;
+            --error: #b91c1c;
+            --error-light: #fef2f2;
+            --shadow-color: rgba(99, 102, 241, 0.3);
+            --card-shadow: rgba(99, 102, 241, 0.15);
+            --yes-bg: #dcfce7;
+            --yes-color: #166534;
+            --yes-border: #86efac;
+            --no-bg: #fef2f2;
+            --no-color: #991b1b;
+            --no-border: #fca5a5;
+            --group-bg: rgba(249, 250, 252, 0.6);
+        }
+
+        body.dark {
+            --bg-gradient-start: #1e1b4b;
+            --bg-gradient-end: #0f0a2e;
+            --card-bg: rgba(30, 27, 75, 0.75);
+            --card-border: #312e81;
+            --container-bg: rgba(15, 23, 42, 0.80);
+            --text-main: #f8fafc;
+            --text-secondary: #a5b4fc;
+            --text-muted: #64748b;
+            --accent: #818cf8;
+            --accent-dark: #4f46e5;
+            --accent-light: #c4b5fd;
+            --badge-bg: #312e81;
+            --badge-color: #c4b5fd;
+            --input-border: #312e81;
+            --instructions-bg: #1e1b4b;
+            --success: #34d399;
+            --success-light: #064e3b;
+            --warn: #fbbf24;
+            --error: #f87171;
+            --error-light: #450a0a;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --card-shadow: rgba(0, 0, 0, 0.4);
+            --yes-bg: #052e16;
+            --yes-color: #86efac;
+            --yes-border: #14532d;
+            --no-bg: #450a0a;
+            --no-color: #fca5a5;
+            --no-border: #7f1d1d;
+            --group-bg: rgba(30, 27, 75, 0.5);
+        }
+
+        body.dark .icon-action-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1400px);
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+
+        /* ========== PANELS & VIEWS ========== */
+        .game-panel {
+            display: none;
+            animation: fadeSlideIn 0.5s var(--spring-easing) forwards;
+        }
+        .game-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== PHASE 1: TRAINING LAB ========== */
+        .training-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .training-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lab-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .lab-card h2 {
+            font-size: 18px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px dashed var(--card-border);
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+
+        /* Reserve Grid */
+        .reserve-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .reserve-btn {
+            background: var(--group-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s var(--spring-easing);
+            text-align: left;
+            outline: none;
+            position: relative;
+        }
+
+        .reserve-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--card-shadow);
+            background: var(--card-bg);
+        }
+
+        .reserve-btn .btn-text-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reserve-btn .btn-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-main);
+        }
+
+        .reserve-btn .btn-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Dynamic Customizer */
+        .customizer-box {
+            background: var(--group-bg);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .customizer-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .customizer-selectors {
+            display: flex;
+            gap: 16px;
+        }
+
+        .selector-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .selector-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .selector-options {
+            display: flex;
+            gap: 6px;
+        }
+
+        .sel-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+            text-align: center;
+        }
+
+        .sel-btn.active {
+            border-color: var(--accent);
+            background: var(--badge-bg);
+            color: var(--badge-color);
+        }
+
+        .feed-custom-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-lg);
+            background: var(--accent);
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .feed-custom-btn:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        /* Feeder & Robot Head display */
+        .feeder-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--group-bg);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            border: 2px dashed var(--card-border);
+            min-height: 240px;
+            position: relative;
+        }
+
+        .robot-svg-wrapper {
+            width: 160px;
+            height: 160px;
+            position: relative;
+        }
+
+        .food-slot {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            border: 2px dashed var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .food-slot.active {
+            background: rgba(99, 102, 241, 0.15);
+            transform: scale(1.05);
+            border-style: solid;
+        }
+
+        .food-slot::after {
+            content: 'Déposer ici';
+            position: absolute;
+            bottom: -22px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* Basket Displays */
+        .baskets-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .basket-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            min-height: 180px;
+        }
+
+        .basket-header {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 2px dashed var(--card-border);
+            padding-bottom: 8px;
+        }
+
+        .basket-count {
+            background: var(--badge-bg);
+            color: var(--badge-color);
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .basket-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-content: flex-start;
+            flex-grow: 1;
+        }
+
+        .tiny-fruit {
+            width: 32px;
+            height: 32px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .tiny-fruit:hover {
+            transform: scale(1.2);
+        }
+
+        /* ========== PHASE 2: FACTORY FLOOR ========== */
+        .factory-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Conveyor belt */
+        .conveyor-belt {
+            width: 100%;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-xl);
+            border: 4px solid var(--card-border);
+            background: repeating-linear-gradient(
+                -45deg,
+                #e2e8f0,
+                #e2e8f0 20px,
+                #cbd5e1 20px,
+                #cbd5e1 40px
+            );
+            background-size: 56px 56px;
+            animation: moveConveyorBelt 2s linear infinite;
+            animation-play-state: paused;
+            box-shadow: inset 0 8px 16px rgba(0,0,0,0.1), 0 8px 24px var(--card-shadow);
+        }
+
+        body.dark .conveyor-belt {
+            background: repeating-linear-gradient(
+                -45deg,
+                #334155,
+                #334155 20px,
+                #1e293b 20px,
+                #1e293b 40px
+            );
+            border-color: #1e293b;
+        }
+
+        .conveyor-belt.running {
+            animation-play-state: running;
+        }
+
+        @keyframes moveConveyorBelt {
+            0% { background-position: 0 0; }
+            100% { background-position: 56px 0; }
+        }
+
+        /* Laser scan zone */
+        .scanner-beam-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 6px;
+            height: 100%;
+            background: rgba(167, 139, 250, 0.4);
+            border-left: 2px solid #818cf8;
+            border-right: 2px solid #818cf8;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px #818cf8;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .scanner-beam-line.scanning {
+            display: block;
+            animation: laserSweep 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes laserSweep {
+            0% { opacity: 0.3; filter: brightness(0.8); }
+            100% { opacity: 1; filter: brightness(1.3); }
+        }
+
+        /* Conveyor items */
+        .conveyor-item {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            transition: left 0.1s linear;
+        }
+
+        /* Factory Centerpiece */
+        .factory-center {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 24px;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .factory-center {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .robot-monitor {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px var(--card-shadow);
+            min-height: 250px;
+        }
+
+        /* Explicability Brain Panel */
+        .brain-monitor {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 8px 24px var(--card-shadow);
+        }
+
+        .brain-monitor h2 {
+            font-size: 16px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px dashed var(--card-border);
+            padding-bottom: 8px;
+        }
+
+        .thoughts-log {
+            font-family: monospace;
+            background: rgba(0,0,0,0.04);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-size: 11px;
+            color: var(--text-main);
+            min-height: 80px;
+            max-height: 120px;
+            overflow-y: auto;
+            line-height: 1.4;
+            border: 1px solid var(--card-border);
+        }
+        body.dark .thoughts-log {
+            background: rgba(255,255,255,0.04);
+        }
+
+        /* Confidence Bars */
+        .confidence-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .conf-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .conf-bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .conf-bar-container {
+            width: 100%;
+            height: 16px;
+            background: rgba(0,0,0,0.05);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+        }
+        body.dark .conf-bar-container {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .conf-bar-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--accent-light);
+        }
+
+        .conf-bar-fill.pomme {
+            background: linear-gradient(90deg, #f87171, #ef4444);
+        }
+
+        .conf-bar-fill.poire {
+            background: linear-gradient(90deg, #a3e635, #22c55e);
+        }
+
+        /* Output Bins */
+        .factory-bins {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .factory-bin {
+            border: 3px dashed var(--card-border);
+            background: var(--group-bg);
+            border-radius: var(--radius-xl);
+            min-height: 140px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            transition: all 0.3s var(--spring-easing);
+            position: relative;
+        }
+
+        .factory-bin.highlight {
+            border-color: var(--accent);
+            background: var(--badge-bg);
+            transform: scale(1.02);
+        }
+
+        .factory-bin .bin-label {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .factory-bin-contents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        /* ========== ALERTS & OVERLAYS ========== */
+        .bias-alert-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(30, 27, 75, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .bias-alert-card {
+            background: var(--container-bg);
+            border: 3px solid var(--error);
+            border-radius: var(--radius-2xl);
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: scaleUp 0.4s var(--spring-easing) forwards;
+            color: var(--text-main);
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.9) translateY(20px); }
+            to { transform: scale(1) translateY(0); }
+        }
+
+        .bias-icon {
+            font-size: 56px;
+            color: var(--error);
+            margin-bottom: 16px;
+            animation: pulseError 2s infinite;
+        }
+
+        @keyframes pulseError {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .bias-alert-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--error);
+            margin-bottom: 12px;
+        }
+
+        .bias-alert-card p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .bias-alert-card p strong {
+            color: var(--error);
+        }
+
+        /* Success Overlay */
+        .success-overlay-card {
+            border-color: var(--success);
+        }
+
+        .success-overlay-card h2 {
+            color: var(--success);
+        }
+
+        .success-icon {
+            font-size: 56px;
+            color: var(--success);
+            margin-bottom: 16px;
+            animation: scaleBig 0.5s var(--spring-easing) forwards;
+        }
+
+        @keyframes scaleBig {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* ========== GENERAL CONTROLS ========== */
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* Confetti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* SVG Fruit design properties */
+        .svg-fruit-element {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .svg-fruit-shadow {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+            transition: all 0.3s;
+        }
+
+        .svg-fruit-element:hover .svg-fruit-shadow {
+            filter: drop-shadow(0 8px 12px rgba(99,102,241,0.25));
+        }
+
+        /* UI/UX Tweak */
+        .exercise-card {
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--card-shadow);
+        }
+
+        .info-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--instructions-bg);
+            border: 1px dashed var(--input-border);
+            padding: 10px 16px;
+            border-radius: var(--radius-lg);
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            width: 100%;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+    </style>
+    <script src="../../assets/js/scores.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="dt-brain"></i>
+                </a>
+                <div>
+                    <h1>Dresseur de neurones</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <p class="subtitle">Supervise l'entraînement d'un robot naïf et apprends-lui à trier des fruits sans biais !</p>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-training">
+                    <i data-fa="dt-brain"></i> 🧺 1. Entraînement
+                </button>
+                <button class="tab-btn" id="tab-factory" disabled>
+                    <i data-fa="dt-conveyor-belt-boxes"></i> 🏭 2. Tapis de tri
+                </button>
+            </div>
+
+            <!-- VIEW 1: LAB / TRAINING -->
+            <div id="panel-training" class="game-panel active">
+                <div class="info-pill">
+                    🤖 <span><strong>Comment dresser le robot ?</strong> Donne-lui des fruits d'exemples à manger pour remplir ses bacs de mémoire. L'IA a besoin d'au moins <strong>2 exemples</strong> par bac pour pouvoir s'activer !</span>
+                </div>
+
+                <div class="training-grid">
+                    <!-- Left: reserve of organic fruits -->
+                    <div class="lab-card">
+                        <h2><i data-fa="dt-basket-shopping"></i> La Réserve de Fruits</h2>
+                        <p class="score-label" style="font-size: 12px; margin-top: -10px;">Clique sur un fruit type pour le placer dans le chargeur :</p>
+                        
+                        <div class="reserve-grid">
+                            <button class="reserve-btn" id="res-pomme-rouge">
+                                <span style="width: 32px; height: 32px;" id="svg-res-pr"></span>
+                                <div class="btn-text-wrapper">
+                                    <span class="btn-title">Pomme Rouge</span>
+                                    <span class="btn-desc">Rouge, Ronde</span>
+                                </div>
+                            </button>
+                            <button class="reserve-btn" id="res-poire-verte">
+                                <span style="width: 32px; height: 32px;" id="svg-res-pv"></span>
+                                <div class="btn-text-wrapper">
+                                    <span class="btn-title">Poire Verte</span>
+                                    <span class="btn-desc">Verte, Allongée</span>
+                                </div>
+                            </button>
+                            <button class="reserve-btn" id="res-pomme-verte">
+                                <span style="width: 32px; height: 32px;" id="svg-res-pg"></span>
+                                <div class="btn-text-wrapper">
+                                    <span class="btn-title">Pomme Verte</span>
+                                    <span class="btn-desc">Verte, Ronde ⚠️</span>
+                                </div>
+                            </button>
+                            <button class="reserve-btn" id="res-poire-rouge">
+                                <span style="width: 32px; height: 32px;" id="svg-res-prg"></span>
+                                <div class="btn-text-wrapper">
+                                    <span class="btn-title">Poire Rouge</span>
+                                    <span class="btn-desc">Rouge, Allongée ⚠️</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Manual customized builder -->
+                        <div class="customizer-box">
+                            <span class="customizer-title">Créateur de Fruit sur-mesure</span>
+                            <div class="customizer-selectors">
+                                <div class="selector-group">
+                                    <span class="selector-label">Couleur dominante</span>
+                                    <div class="selector-options">
+                                        <button class="sel-btn active" id="sel-color-red">Rouge</button>
+                                        <button class="sel-btn" id="sel-color-green">Vert</button>
+                                    </div>
+                                </div>
+                                <div class="selector-group">
+                                    <span class="selector-label">Forme du fruit</span>
+                                    <div class="selector-options">
+                                        <button class="sel-btn active" id="sel-shape-round">Ronde</button>
+                                        <button class="sel-btn" id="sel-shape-long">Allongée</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="feed-custom-btn" id="btn-create-custom">Créer & Charger ce fruit</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: interactive robot and feeder -->
+                    <div class="lab-card">
+                        <h2><i data-fa="dt-face-laugh-beam"></i> Entraîneur de Neurones</h2>
+                        <div class="feeder-section">
+                            <!-- SVG Robot -->
+                            <div class="robot-svg-wrapper" id="robot-interactive-svg"></div>
+                            <!-- Loaded fruit waiting slot -->
+                            <div class="food-slot" id="active-food-slot"></div>
+                        </div>
+
+                        <div class="controls-row" style="margin-top: 0;">
+                            <button class="btn btn-secondary" id="feed-to-pomme" disabled>🍎 Nourrir Pomme</button>
+                            <button class="btn btn-secondary" id="feed-to-poire" disabled>🍐 Nourrir Poire</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Baskets summary -->
+                <div class="baskets-display">
+                    <div class="basket-card" id="basket-pomme-card">
+                        <div class="basket-header">
+                            <span>🧺 Bac Mémoire : POMMES 🍎</span>
+                            <span class="basket-count" id="count-pomme">0 / 10</span>
+                        </div>
+                        <div class="basket-items" id="basket-pomme-items"></div>
+                    </div>
+                    <div class="basket-card" id="basket-poire-card">
+                        <div class="basket-header">
+                            <span>🧺 Bac Mémoire : POIRES 🍐</span>
+                            <span class="basket-count" id="count-poire">0 / 10</span>
+                        </div>
+                        <div class="basket-items" id="basket-poire-items"></div>
+                    </div>
+                </div>
+
+                <div class="controls-row">
+                    <button class="btn btn-new" id="btn-start-sorting" disabled style="padding: 16px 36px; font-size: 18px; font-weight: 800;">
+                        🚀 Lancer le tri en usine !
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 2: FACTORY FLOOR -->
+            <div id="panel-factory" class="game-panel">
+                <div class="info-pill" id="factory-tip-banner">
+                    ⚙️ <span><strong>L'Usine est en marche !</strong> Observe comment le robot analyse les fruits qui passent devant son laser. Fera-t-il des erreurs ?</span>
+                </div>
+
+                <div class="factory-layout">
+                    <!-- Conveyor Belt Component -->
+                    <div class="conveyor-belt" id="factory-conveyor-belt">
+                        <div class="scanner-beam-line" id="scanner-beam"></div>
+                    </div>
+
+                    <!-- Factory Centerpiece (Robot and details) -->
+                    <div class="factory-center">
+                        <div class="robot-monitor">
+                            <div style="width: 140px; height: 140px;" id="robot-factory-svg"></div>
+                            <div class="basket-count" id="monitor-status" style="margin-top: 10px; font-size: 11px;">En veille...</div>
+                        </div>
+
+                        <!-- IA thoughts / logs -->
+                        <div class="brain-monitor">
+                            <h2><i data-fa="dt-microchip"></i> Les pensées de l'IA (Similarité)</h2>
+                            <div class="thoughts-log" id="ai-thoughts-log"></div>
+                            
+                            <div class="confidence-bars">
+                                <div class="conf-bar-wrapper">
+                                    <div class="conf-bar-header">
+                                        <span style="color:#ef4444;">🍎 Similarité Pomme</span>
+                                        <span id="score-val-pomme">0%</span>
+                                    </div>
+                                    <div class="conf-bar-container">
+                                        <div class="conf-bar-fill pomme" id="bar-pomme"></div>
+                                    </div>
+                                </div>
+                                <div class="conf-bar-wrapper">
+                                    <div class="conf-bar-header">
+                                        <span style="color:#22c55e;">🍐 Similarité Poire</span>
+                                        <span id="score-val-poire">0%</span>
+                                    </div>
+                                    <div class="conf-bar-container">
+                                        <div class="conf-bar-fill poire" id="bar-poire"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bins -->
+                    <div class="factory-bins">
+                        <div class="factory-bin" id="bin-pomme">
+                            <span class="bin-label">🍎 Bac Pommes</span>
+                            <div class="factory-bin-contents" id="bin-pomme-contents"></div>
+                        </div>
+                        <div class="factory-bin" id="bin-poire">
+                            <span class="bin-label">🍐 Bac Poires</span>
+                            <div class="factory-bin-contents" id="bin-poire-contents"></div>
+                        </div>
+                    </div>
+
+                    <div class="controls-row">
+                        <button class="btn btn-secondary" id="btn-back-to-lab">🧺 Retourner à l'entraînement</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCORE AND ATTRIBUTION CARD -->
+            <div class="card-footer" style="margin-top: 25px;">
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Niveaux Réussis</div>
+                        <div class="score-value" id="global-correct">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Fruits triés</div>
+                        <div class="score-value" id="global-streak">0</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- BIAS ALERT OVERLAY -->
+    <div class="bias-alert-overlay" id="bias-alert-overlay" style="display: none;">
+        <div class="bias-alert-card" id="bias-alert-card-inner">
+            <!-- Populated dynamically -->
+        </div>
+    </div>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec <a href="../../merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script>window.fa?.createIcons?.();</script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/toast.js"></script>
+    <script>
+        // ==============================================================
+        //  DRESSEUR DE NEURONES — MOTEUR DE JEU
+        // ==============================================================
+
+        // Global State
+        let trainingSet = {
+            pomme: [],
+            poire: []
+        };
+        let activeFruit = null; // The loaded fruit in the active training slot
+        let testQueue = [];
+        let sortedFruits = [];
+        let isTestingMode = false;
+        let testStep = 0;
+        let testAnimationId = null;
+        let successCount = 0;
+
+        // Customizer state
+        let customColor = 'red'; // 'red', 'green'
+        let customShape = 'round'; // 'round', 'long'
+
+        // DOM elements cache
+        const tabTraining = document.getElementById('tab-training');
+        const tabFactory = document.getElementById('tab-factory');
+        const panelTraining = document.getElementById('panel-training');
+        const panelFactory = document.getElementById('panel-factory');
+        const countPomme = document.getElementById('count-pomme');
+        const countPoire = document.getElementById('count-poire');
+        const basketPommeItems = document.getElementById('basket-pomme-items');
+        const basketPoireItems = document.getElementById('basket-poire-items');
+        const activeFoodSlot = document.getElementById('active-food-slot');
+        const feedToPommeBtn = document.getElementById('feed-to-pomme');
+        const feedToPoireBtn = document.getElementById('feed-to-poire');
+        const btnStartSorting = document.getElementById('btn-start-sorting');
+        const conveyorBelt = document.getElementById('factory-conveyor-belt');
+        const scannerBeam = document.getElementById('scanner-beam');
+        const thoughtsLog = document.getElementById('ai-thoughts-log');
+        const barPomme = document.getElementById('bar-pomme');
+        const barPoire = document.getElementById('bar-poire');
+        const scoreValPomme = document.getElementById('score-val-pomme');
+        const scoreValPoire = document.getElementById('score-val-poire');
+        const binPommeContents = document.getElementById('bin-pomme-contents');
+        const binPoireContents = document.getElementById('bin-poire-contents');
+        const biasAlertOverlay = document.getElementById('bias-alert-overlay');
+
+        // Stats
+        let statsLevelsSolved = 0;
+        let statsTotalSorted = 0;
+
+        // Visual gradients generators for premium diversity
+        function getOrganicColorGradient(color, uniqueId) {
+            let colorStops = [];
+            if (color === 'red') {
+                const stops = [
+                    ['#ef4444', '#b91c1c'], // Red to deep red
+                    ['#f87171', '#dc2626'], // Pinkish to crimson
+                    ['#f87171', '#991b1b'], // Coral to mahogany
+                    ['#f43f5e', '#be123c'], // Rose red
+                ];
+                colorStops = stops[Math.floor(Math.random() * stops.length)];
+            } else {
+                const stops = [
+                    ['#4ade80', '#15803d'], // Bright green to dark green
+                    ['#a3e635', '#166534'], // Lime green to forest green
+                    ['#86efac', '#15803d'], // Pastel green to dark forest
+                    ['#a3e635', '#15803d'], // Yellowish green
+                ];
+                colorStops = stops[Math.floor(Math.random() * stops.length)];
+            }
+            return `
+                <defs>
+                    <linearGradient id="grad-${uniqueId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:${colorStops[0]};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${colorStops[1]};stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+            `;
+        }
+
+        // SVG Fruit generator
+        function generateFruitSVG(shape, color, uniqueId, opt = {}) {
+            const scale = opt.scale || (0.85 + Math.random() * 0.3);
+            const scaleX = opt.scaleX || (0.9 + Math.random() * 0.2);
+            const scaleY = opt.scaleY || (0.9 + Math.random() * 0.2);
+            const defs = getOrganicColorGradient(color, uniqueId);
+
+            // Shape path
+            let path = "";
+            let width = 60, height = 60;
+            if (shape === 'round') {
+                // Round shape path with subtle dimples (apple style)
+                path = `M30,15 C44,14 51,23 50,37 C48,51 38,55 30,53 C22,55 12,51 10,37 C9,23 16,14 30,15 Z`;
+            } else {
+                // Pear shape path (narrow top, wide base)
+                path = `M30,10 C37,10 38,22 43,32 C48,42 47,54 30,54 C13,54 12,42 17,32 C22,22 23,10 30,10 Z`;
+            }
+
+            return `
+                <svg class="svg-fruit-element" viewBox="0 0 60 60" style="transform: scale(${scale}) scaleX(${scaleX}) scaleY(${scaleY});">
+                    ${defs}
+                    <g class="svg-fruit-shadow">
+                        <!-- Stem (Tige marron) -->
+                        <path d="M30,14 C30,7 34,4 35,4" fill="none" stroke="#78350f" stroke-width="2.5" stroke-linecap="round" />
+                        <!-- Leaf (Petite feuille verte) -->
+                        <path d="M30,11 C26,7 20,8 20,8 C20,8 24,12 28,12 Z" fill="#22c55e" stroke="#15803d" stroke-width="0.5" />
+                        <!-- Fruit Body -->
+                        <path d="${path}" fill="url(#grad-${uniqueId})" stroke="${color === 'red' ? '#991b1b' : '#166534'}" stroke-width="1.5" />
+                        <!-- Highlight Shine -->
+                        <ellipse cx="23" cy="23" rx="4" ry="7" transform="rotate(-30 23 23)" fill="#ffffff" opacity="0.35" />
+                    </g>
+                </svg>
+            `;
+        }
+
+        // SVG Robot generator
+        function getRobotSVG(expression = 'neutral') {
+            let eyes = '';
+            let mouth = '';
+            let antennaColor = 'var(--accent-light)';
+
+            if (expression === 'neutral') {
+                eyes = `
+                    <circle cx="50" cy="50" r="10" fill="#fff" />
+                    <circle cx="50" cy="50" r="4" fill="#000" />
+                    <circle cx="90" cy="50" r="10" fill="#fff" />
+                    <circle cx="90" cy="50" r="4" fill="#000" />
+                `;
+                mouth = `<rect x="55" y="75" width="30" height="6" rx="3" fill="#312e81" />`;
+            } else if (expression === 'happy') {
+                eyes = `
+                    <path d="M40,55 C40,45 60,45 60,55" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" />
+                    <path d="M80,55 C80,45 100,45 100,55" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" />
+                `;
+                mouth = `<path d="M50,75 Q70,95 90,75" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" />`;
+            } else if (expression === 'eating') {
+                eyes = `
+                    <circle cx="50" cy="50" r="10" fill="#fff" />
+                    <circle cx="52" cy="50" r="5" fill="#4f46e5" />
+                    <circle cx="90" cy="50" r="10" fill="#fff" />
+                    <circle cx="88" cy="50" r="5" fill="#4f46e5" />
+                `;
+                mouth = `<circle cx="70" cy="85" r="14" fill="#312e81" />`;
+            } else if (expression === 'confused') {
+                eyes = `
+                    <path d="M40,45 L60,55 M40,55 L60,45" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" />
+                    <path d="M80,45 L100,55 M80,55 L100,45" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" />
+                `;
+                mouth = `<path d="M55,80 Q70,70 85,80" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" />`;
+                antennaColor = '#fbbf24';
+            } else if (expression === 'sad') {
+                eyes = `
+                    <path d="M40,55 L60,48" fill="none" stroke="#f87171" stroke-width="5" stroke-linecap="round" />
+                    <path d="M80,48 L100,55" fill="none" stroke="#f87171" stroke-width="5" stroke-linecap="round" />
+                    <circle cx="50" cy="62" r="2" fill="#60a5fa" /> <!-- Tear -->
+                `;
+                mouth = `<path d="M55,82 Q70,72 85,82" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" />`;
+                antennaColor = '#f87171';
+            }
+
+            return `
+                <svg viewBox="0 0 140 140" style="width: 100%; height: 100%;">
+                    <!-- Antenna -->
+                    <line x1="70" y1="30" x2="70" y2="10" stroke="#64748b" stroke-width="5" />
+                    <circle cx="70" cy="8" r="8" fill="${antennaColor}" />
+                    
+                    <!-- Head Box -->
+                    <rect x="20" y="20" width="100" height="95" rx="20" fill="linear-gradient(135deg, #4f46e5, #3730a3)" stroke="#1e1b4b" stroke-width="4" />
+                    
+                    <!-- Screen Area -->
+                    <rect x="28" y="28" width="84" height="66" rx="12" fill="#1e1b4b" />
+                    
+                    <!-- Ears -->
+                    <rect x="10" y="50" width="10" height="25" rx="3" fill="#64748b" />
+                    <rect x="120" y="50" width="10" height="25" rx="3" fill="#64748b" />
+                    
+                    <!-- Expression Nodes -->
+                    ${eyes}
+                    ${mouth}
+                </svg>
+            `;
+        }
+
+        // --- INTERACTIVE STATE UPDATE ---
+        function setRobotFace(expression) {
+            const wrapperInteractive = document.getElementById('robot-interactive-svg');
+            const wrapperFactory = document.getElementById('robot-factory-svg');
+            const svgContent = getRobotSVG(expression);
+            if (wrapperInteractive) wrapperInteractive.innerHTML = svgContent;
+            if (wrapperFactory) wrapperFactory.innerHTML = svgContent;
+        }
+
+        function createFullFruitObject(shape, color) {
+            const uid = Math.random().toString(36).substring(2, 9);
+            return {
+                id: uid,
+                shape: shape,
+                color: color,
+                // Organic variation factors
+                scale: 0.85 + Math.random() * 0.3,
+                scaleX: 0.9 + Math.random() * 0.2,
+                scaleY: 0.9 + Math.random() * 0.2
+            };
+        }
+
+        function setTab(mode) {
+            if (mode === 'training') {
+                isTestingMode = false;
+                if (testAnimationId) cancelAnimationFrame(testAnimationId);
+                tabTraining.classList.add('active');
+                tabFactory.classList.remove('active');
+                panelTraining.classList.add('active');
+                panelFactory.classList.remove('active');
+                setRobotFace('neutral');
+            } else if (mode === 'factory') {
+                if (trainingSet.pomme.length < 2 || trainingSet.poire.length < 2) {
+                    showToast("Entraîne d'abord ton IA avec 2 exemples par bac !", "warn");
+                    return;
+                }
+                isTestingMode = true;
+                tabTraining.classList.remove('active');
+                tabFactory.classList.add('active');
+                panelTraining.classList.remove('active');
+                panelFactory.classList.add('active');
+                startTestRun();
+            }
+        }
+
+        function handleFruitSelection(shape, color) {
+            activeFruit = createFullFruitObject(shape, color);
+            renderActiveFruit();
+            playSound('tap');
+        }
+
+        function renderActiveFruit() {
+            activeFoodSlot.innerHTML = '';
+            if (activeFruit) {
+                activeFoodSlot.classList.add('active');
+                activeFoodSlot.innerHTML = generateFruitSVG(activeFruit.shape, activeFruit.color, activeFruit.id, activeFruit);
+                feedToPommeBtn.disabled = false;
+                feedToPoireBtn.disabled = false;
+            } else {
+                activeFoodSlot.classList.remove('active');
+                feedToPommeBtn.disabled = true;
+                feedToPoireBtn.disabled = true;
+            }
+        }
+
+        function feedRobot(targetClass) {
+            if (!activeFruit) return;
+
+            // Trigger animation
+            const flyingFruit = activeFoodSlot.querySelector('.svg-fruit-element');
+            if (flyingFruit) {
+                flyingFruit.style.transition = 'all 0.45s ease-in';
+                flyingFruit.style.transform = 'scale(0.1) translateY(-120px)';
+                flyingFruit.style.opacity = '0';
+            }
+
+            setRobotFace('eating');
+            playSound('success');
+
+            const fruitData = { ...activeFruit };
+            activeFruit = null;
+
+            setTimeout(() => {
+                trainingSet[targetClass].push(fruitData);
+                renderActiveFruit();
+                updateBasketsUI();
+                setRobotFace('happy');
+                
+                // Let the robot return to neutral face after a short time
+                setTimeout(() => {
+                    if (!activeFruit) setRobotFace('neutral');
+                }, 1000);
+
+                // Enable/disable sorting button
+                const okToStart = trainingSet.pomme.length >= 2 && trainingSet.poire.length >= 2;
+                btnStartSorting.disabled = !okToStart;
+                tabFactory.disabled = !okToStart;
+
+            }, 450);
+        }
+
+        function updateBasketsUI() {
+            // Pommes
+            countPomme.textContent = `${trainingSet.pomme.length} / 10`;
+            basketPommeItems.innerHTML = '';
+            trainingSet.pomme.forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = 'tiny-fruit';
+                el.innerHTML = generateFruitSVG(item.shape, item.color, item.id + '-tiny', { scale: 0.6, scaleX: 1, scaleY: 1 });
+                el.addEventListener('click', () => removeTrainedFruit('pomme', idx));
+                basketPommeItems.appendChild(el);
+            });
+
+            // Poires
+            countPoire.textContent = `${trainingSet.poire.length} / 10`;
+            basketPoireItems.innerHTML = '';
+            trainingSet.poire.forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = 'tiny-fruit';
+                el.innerHTML = generateFruitSVG(item.shape, item.color, item.id + '-tiny', { scale: 0.6, scaleX: 1, scaleY: 1 });
+                el.addEventListener('click', () => removeTrainedFruit('poire', idx));
+                basketPoireItems.appendChild(el);
+            });
+        }
+
+        function removeTrainedFruit(targetClass, index) {
+            trainingSet[targetClass].splice(index, 1);
+            playSound('tap');
+            updateBasketsUI();
+            
+            const okToStart = trainingSet.pomme.length >= 2 && trainingSet.poire.length >= 2;
+            btnStartSorting.disabled = !okToStart;
+            tabFactory.disabled = !okToStart;
+        }
+
+        // Customizer triggers
+        function setupCustomizer() {
+            const btnColorRed = document.getElementById('sel-color-red');
+            const btnColorGreen = document.getElementById('sel-color-green');
+            const btnShapeRound = document.getElementById('sel-shape-round');
+            const btnShapeLong = document.getElementById('sel-shape-long');
+            const btnCreate = document.getElementById('btn-create-custom');
+
+            btnColorRed.addEventListener('click', () => {
+                customColor = 'red';
+                btnColorRed.classList.add('active');
+                btnColorGreen.classList.remove('active');
+            });
+            btnColorGreen.addEventListener('click', () => {
+                customColor = 'green';
+                btnColorGreen.classList.add('active');
+                btnColorRed.classList.remove('active');
+            });
+            btnShapeRound.addEventListener('click', () => {
+                customShape = 'round';
+                btnShapeRound.classList.add('active');
+                btnShapeLong.classList.remove('active');
+            });
+            btnShapeLong.addEventListener('click', () => {
+                customShape = 'long';
+                btnShapeLong.classList.add('active');
+                btnShapeRound.classList.remove('active');
+            });
+
+            btnCreate.addEventListener('click', () => {
+                handleFruitSelection(customShape, customColor);
+            });
+        }
+
+        // Standard presets loader
+        function setupPresets() {
+            document.getElementById('res-pomme-rouge').addEventListener('click', () => handleFruitSelection('round', 'red'));
+            document.getElementById('res-poire-verte').addEventListener('click', () => handleFruitSelection('long', 'green'));
+            document.getElementById('res-pomme-verte').addEventListener('click', () => handleFruitSelection('round', 'green'));
+            document.getElementById('res-poire-rouge').addEventListener('click', () => handleFruitSelection('long', 'red'));
+
+            // Set background SVGs for the presets buttons
+            document.getElementById('svg-res-pr').innerHTML = generateFruitSVG('round', 'red', 'preset-pr', { scale: 0.65, scaleX: 1, scaleY: 1 });
+            document.getElementById('svg-res-pv').innerHTML = generateFruitSVG('long', 'green', 'preset-pv', { scale: 0.65, scaleX: 1, scaleY: 1 });
+            document.getElementById('svg-res-pg').innerHTML = generateFruitSVG('round', 'green', 'preset-pg', { scale: 0.65, scaleX: 1, scaleY: 1 });
+            document.getElementById('svg-res-prg').innerHTML = generateFruitSVG('long', 'red', 'preset-prg', { scale: 0.65, scaleX: 1, scaleY: 1 });
+        }
+
+        // ==============================================================
+        //  CLASSIFICATION ENGINE & TEST PHASE
+        // ==============================================================
+
+        function computeClassificationConfidence(fruit) {
+            // Count examples in each basket
+            const numPomme = trainingSet.pomme.length;
+            const numPoire = trainingSet.poire.length;
+
+            if (numPomme === 0 && numPoire === 0) {
+                return { pomme: 50, poire: 50, pommeScore: 0.5, poireScore: 0.5, logs: ["Pas de données d'entraînement !"] };
+            }
+
+            // Traits matches
+            // 1. Pomme class
+            let matchesColorPomme = trainingSet.pomme.filter(item => item.color === fruit.color).length;
+            let matchesShapePomme = trainingSet.pomme.filter(item => item.shape === fruit.shape).length;
+
+            let rateColorPomme = numPomme > 0 ? (matchesColorPomme / numPomme) : 0.5;
+            let rateShapePomme = numPomme > 0 ? (matchesShapePomme / numPomme) : 0.5;
+
+            // 2. Poire class
+            let matchesColorPoire = trainingSet.poire.filter(item => item.color === fruit.color).length;
+            let matchesShapePoire = trainingSet.poire.filter(item => item.shape === fruit.shape).length;
+
+            let rateColorPoire = numPoire > 0 ? (matchesColorPoire / numPoire) : 0.5;
+            let rateShapePoire = numPoire > 0 ? (matchesShapePoire / numPoire) : 0.5;
+
+            // Average score
+            let scorePomme = (rateColorPomme + rateShapePomme) / 2;
+            let scorePoire = (rateColorPoire + rateShapePoire) / 2;
+
+            // In case of total division by zero or equal 0
+            if (scorePomme === 0 && scorePoire === 0) {
+                scorePomme = 0.5;
+                scorePoire = 0.5;
+            }
+
+            // Relative confidence %
+            let confPomme = Math.round((scorePomme / (scorePomme + scorePoire)) * 100);
+            let confPoire = 100 - confPomme;
+
+            // Logs
+            let logs = [];
+            logs.push(`SCANNÉ : Couleur: ${fruit.color === 'red' ? 'Rouge' : 'Verte'}, Forme: ${fruit.shape === 'round' ? 'Ronde' : 'Allongée'}`);
+            logs.push(`----------------------------------`);
+            logs.push(`Mémoire POMMES (total ${numPomme}) :`);
+            logs.push(` - Couleur ${fruit.color === 'red' ? 'rouge' : 'verte'} : ${matchesColorPomme}/${numPomme} (${Math.round(rateColorPomme*100)}%)`);
+            logs.push(` - Forme ${fruit.shape === 'round' ? 'ronde' : 'allongée'} : ${matchesShapePomme}/${numPomme} (${Math.round(rateShapePomme*100)}%)`);
+            logs.push(`Mémoire POIRES (total ${numPoire}) :`);
+            logs.push(` - Couleur ${fruit.color === 'red' ? 'rouge' : 'verte'} : ${matchesColorPoire}/${numPoire} (${Math.round(rateColorPoire*100)}%)`);
+            logs.push(` - Forme ${fruit.shape === 'round' ? 'ronde' : 'allongée'} : ${matchesShapePoire}/${numPoire} (${Math.round(rateShapePoire*100)}%)`);
+
+            return {
+                pomme: confPomme,
+                poire: confPoire,
+                pommeScore: scorePomme,
+                poireScore: scorePoire,
+                logs: logs
+            };
+        }
+
+        function startTestRun() {
+            // Build the cargo of test fruits
+            // This set is crafted to specifically test bias and balance!
+            testQueue = [
+                { shape: 'round', color: 'red', realClass: 'pomme', name: 'Pomme Rouge' },
+                { shape: 'long', color: 'green', realClass: 'poire', name: 'Poire Verte' },
+                { shape: 'round', color: 'green', realClass: 'pomme', name: 'Pomme Verte' }, // The ultimate bias test!
+                { shape: 'long', color: 'red', realClass: 'poire', name: 'Poire Rouge' } // Bias test 2
+            ];
+
+            // Shuffle test cargo to look natural
+            testQueue = testQueue.sort(() => 0.5 - Math.random());
+
+            sortedFruits = [];
+            testStep = 0;
+            successCount = 0;
+
+            // Reset bins UI
+            binPommeContents.innerHTML = '';
+            binPoireContents.innerHTML = '';
+            document.getElementById('monitor-status').textContent = 'Initialisation...';
+            thoughtsLog.innerHTML = 'En attente du premier scan...';
+            barPomme.style.width = '0%';
+            barPoire.style.width = '0%';
+            scoreValPomme.textContent = '0%';
+            scoreValPoire.textContent = '0%';
+
+            setTimeout(() => {
+                conveyorBelt.classList.add('running');
+                document.getElementById('monitor-status').textContent = 'Tapis en marche';
+                spawnNextTestFruit();
+            }, 600);
+        }
+
+        function spawnNextTestFruit() {
+            if (testStep >= testQueue.length) {
+                // Done sorting all fruits without critical failure!
+                conveyorBelt.classList.remove('running');
+                showSuccessRun();
+                return;
+            }
+
+            const fruitData = testQueue[testStep];
+            const uid = 'test-' + testStep;
+            const fruitEl = document.createElement('div');
+            fruitEl.className = 'conveyor-item';
+            fruitEl.id = uid;
+            
+            // Build organic fruit SVG
+            fruitEl.innerHTML = generateFruitSVG(fruitData.shape, fruitData.color, uid, { scale: 0.9, scaleX: 1, scaleY: 1 });
+            conveyorBelt.appendChild(fruitEl);
+
+            // Move the fruit across the belt to the center (scanner)
+            let pos = -70;
+            const beltWidth = conveyorBelt.getBoundingClientRect().width;
+            const stopPos = beltWidth / 2;
+
+            function animateItem() {
+                if (!isTestingMode) return;
+
+                if (pos < stopPos) {
+                    pos += 3;
+                    fruitEl.style.left = pos + 'px';
+                    testAnimationId = requestAnimationFrame(animateItem);
+                } else {
+                    // Item has reached the scanner! Stop belt and scan
+                    conveyorBelt.classList.remove('running');
+                    runScannerSequence(fruitEl, fruitData);
+                }
+            }
+
+            testAnimationId = requestAnimationFrame(animateItem);
+        }
+
+        function runScannerSequence(fruitEl, fruitData) {
+            document.getElementById('monitor-status').textContent = 'Analyse en cours...';
+            scannerBeam.classList.add('scanning');
+            setRobotFace('neutral');
+            playSound('tap');
+
+            // Compute classification
+            const res = computeClassificationConfidence(fruitData);
+
+            setTimeout(() => {
+                // Render explicability bars
+                barPomme.style.width = res.pomme + '%';
+                barPoire.style.width = res.poire + '%';
+                scoreValPomme.textContent = res.pomme + '%';
+                scoreValPoire.textContent = res.poire + '%';
+
+                // Display logs
+                thoughtsLog.innerHTML = res.logs.join('<br>');
+                thoughtsLog.scrollTop = 0;
+
+                // Decision
+                let decision = 'pomme';
+                if (res.poire > res.pomme) {
+                    decision = 'poire';
+                } else if (res.pomme === res.poire) {
+                    // In case of exact tie, robot uses dominant trained color bias
+                    // e.g. does it have more green things as poires?
+                    const greenInPoire = trainingSet.poire.filter(i => i.color === 'green').length;
+                    const greenInPomme = trainingSet.pomme.filter(i => i.color === 'green').length;
+                    
+                    if (fruitData.color === 'green') {
+                        decision = greenInPoire >= greenInPomme ? 'poire' : 'pomme';
+                    } else {
+                        const redInPomme = trainingSet.pomme.filter(i => i.color === 'red').length;
+                        const redInPoire = trainingSet.poire.filter(i => i.color === 'red').length;
+                        decision = redInPomme >= redInPoire ? 'pomme' : 'poire';
+                    }
+                }
+
+                // Verify correctness
+                const isCorrect = (decision === fruitData.realClass);
+
+                setTimeout(() => {
+                    scannerBeam.classList.remove('scanning');
+                    executeSortingAction(fruitEl, fruitData, decision, isCorrect);
+                }, 1000);
+
+            }, 1200);
+        }
+
+        function executeSortingAction(fruitEl, fruitData, decision, isCorrect) {
+            const targetBin = document.getElementById('bin-' + decision);
+            targetBin.classList.add('highlight');
+
+            // Slide fruit down to the bin
+            fruitEl.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            const beltRect = conveyorBelt.getBoundingClientRect();
+            const binRect = targetBin.getBoundingClientRect();
+
+            const yDiff = binRect.top - beltRect.top + 20;
+            const xDiff = (decision === 'pomme') ? -120 : 120;
+
+            fruitEl.style.transform = `translate(${xDiff}px, ${yDiff}px) scale(0.6)`;
+            fruitEl.style.opacity = '0';
+
+            if (isCorrect) {
+                playSound('success');
+                setRobotFace('happy');
+                document.getElementById('monitor-status').textContent = 'Tri validé !';
+                successCount++;
+                statsTotalSorted++;
+                document.getElementById('global-streak').textContent = statsTotalSorted;
+            } else {
+                playSound('error');
+                setRobotFace('confused');
+                document.getElementById('monitor-status').textContent = 'ERREUR !';
+            }
+
+            setTimeout(() => {
+                targetBin.classList.remove('highlight');
+                
+                // Add miniature fruit in the bin
+                const mini = document.createElement('div');
+                mini.className = 'tiny-fruit';
+                mini.innerHTML = generateFruitSVG(fruitData.shape, fruitData.color, fruitData.id + '-bin', { scale: 0.6, scaleX: 1, scaleY: 1 });
+                mini.title = `${fruitData.name} (Trie comme ${decision === 'pomme' ? 'Pomme' : 'Poire'})`;
+                document.getElementById(`bin-${decision}-contents`).appendChild(mini);
+
+                fruitEl.remove();
+
+                if (!isCorrect) {
+                    // BIAIS ALGORITHMIQUE DETECTE !
+                    // Freeze conveyor belt and trigger alerte card!
+                    conveyorBelt.classList.remove('running');
+                    showBiasAlert(fruitData, decision);
+                } else {
+                    // Next step
+                    testStep++;
+                    conveyorBelt.classList.add('running');
+                    document.getElementById('monitor-status').textContent = 'Tapis en marche';
+                    spawnNextTestFruit();
+                }
+
+            }, 650);
+        }
+
+        // ==============================================================
+        //  ALERTS & CELEBRATIONS
+        // ==============================================================
+
+        function showBiasAlert(failedFruit, incorrectDecision) {
+            setRobotFace('sad');
+            
+            // Build explanatory bias card
+            const inner = document.getElementById('bias-alert-card-inner');
+            inner.className = "bias-alert-card";
+            inner.innerHTML = `
+                <div class="bias-icon">⚠️</div>
+                <h2>Biais Algorithmique Détecté !</h2>
+                <p>
+                    Oh non ! Le robot a confondu une <strong>${failedFruit.name}</strong> (${failedFruit.color === 'red' ? 'Rouge' : 'Verte'}, ${failedFruit.shape === 'round' ? 'Ronde' : 'Allongée'}) en la triant comme une <strong>${incorrectDecision.toUpperCase()}</strong>.
+                </p>
+                <p style="background:var(--instructions-bg); padding:12px; border-radius:var(--radius-lg); border-left:4px solid var(--error);">
+                    💡 <strong>Pourquoi cette erreur ?</strong><br>
+                    Le robot n'est pas intelligent par magie. Il cherche des ressemblances avec les exemples que vous lui avez donnés.<br><br>
+                    Si vous ne lui avez montré que des pommes rouges et des poires vertes, le robot en a conclu que <strong>"tout ce qui est vert est forcément une poire"</strong>. Face à une pomme verte, il s'est trompé !
+                </p>
+                <p>
+                    <strong>La solution :</strong> Cliquez sur le bouton ci-dessous pour retourner au laboratoire d'entraînement. Ajoutez des <strong>Pommes Vertes</strong> (ou des <strong>Poires Rouges</strong>) dans vos bacs de mémoire pour lui apprendre la diversité des couleurs !
+                </p>
+                <button class="btn btn-new" id="btn-alert-close">🧺 Corriger l'entraînement</button>
+            `;
+
+            biasAlertOverlay.style.display = 'flex';
+
+            document.getElementById('btn-alert-close').addEventListener('click', () => {
+                biasAlertOverlay.style.display = 'none';
+                setTab('training');
+            });
+        }
+
+        function showSuccessRun() {
+            setRobotFace('happy');
+            statsLevelsSolved++;
+            document.getElementById('global-correct').textContent = statsLevelsSolved;
+            ScoreManager.addSuccess('dresseur_neurones', 'hard', 0);
+            
+            // Celebration
+            handleStreakCelebration(statsLevelsSolved, true, true);
+
+            const inner = document.getElementById('bias-alert-card-inner');
+            inner.className = "bias-alert-card success-overlay-card";
+            inner.innerHTML = `
+                <div class="success-icon">🎓🏆</div>
+                <h2>Félicitations, Dresseur de Neurones !</h2>
+                <p>
+                    Incroyable ! Vous avez entraîné une IA parfaitement équilibrée et robuste.
+                </p>
+                <p style="background:var(--success-light); color:var(--success); padding:12px; border-radius:var(--radius-lg); border-left:4px solid var(--success);">
+                    🌱 <strong>Victoire contre le biais !</strong><br>
+                    En lui montrant des fruits variés de toutes les couleurs (pommes vertes, pommes rouges, poires vertes et poires rouges), vous avez appris au robot à ignorer la couleur pour se concentrer sur la forme géométrique !
+                </p>
+                <p>
+                    Vous avez brillamment démontré comment les données influencent l'intelligence des algorithmes modernes !
+                </p>
+                <div class="controls-row">
+                    <button class="btn btn-new" id="btn-success-reset">🔄 Réentraîner un nouveau modèle</button>
+                </div>
+            `;
+
+            biasAlertOverlay.style.display = 'flex';
+
+            document.getElementById('btn-success-reset').addEventListener('click', () => {
+                biasAlertOverlay.style.display = 'none';
+                // Clear all baskets
+                trainingSet = { pomme: [], poire: [] };
+                activeFruit = null;
+                updateBasketsUI();
+                renderActiveFruit();
+                btnStartSorting.disabled = true;
+                tabFactory.disabled = true;
+                setTab('training');
+            });
+        }
+
+        // ==============================================================
+        //  INITIALIZATION & LISTENERS
+        // ==============================================================
+
+        function initApp() {
+            setupCustomizer();
+            setupPresets();
+            setRobotFace('neutral');
+
+            // Tab togglers
+            tabTraining.addEventListener('click', () => setTab('training'));
+            tabFactory.addEventListener('click', () => setTab('factory'));
+
+            // Feed actions
+            feedToPommeBtn.addEventListener('click', () => feedRobot('pomme'));
+            feedToPoireBtn.addEventListener('click', () => feedRobot('poire'));
+
+            // Start sorting action
+            btnStartSorting.addEventListener('click', () => setTab('factory'));
+            document.getElementById('btn-back-to-lab').addEventListener('click', () => setTab('training'));
+
+            // Custom slot triggers loading if empty
+            activeFoodSlot.addEventListener('click', () => {
+                if (!activeFruit) {
+                    handleFruitSelection('round', 'red');
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            initApp();
+            ScoreManager.init('dresseur_neurones');
+        });
+    </script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
+</body>
+
+</html>
