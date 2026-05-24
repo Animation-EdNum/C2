@@ -959,7 +959,8 @@
                 <details class="instructions">
                     <summary><strong>📖 Consigne (cliquer pour ouvrir)</strong></summary>
                     <div style="margin-top:10px;">
-                        Tape un mot de passe dans la zone de test ci-dessous. Vois en temps réel comment sa force augmente et s'il respecte les consignes de sécurité pour déverrouiller le grand coffre-fort blindé !
+                        Tape un mot de passe dans la zone de test ci-dessous. Vois en temps réel comment sa force augmente et s'il respecte les consignes de sécurité pour déverrouiller le grand coffre-fort blindé !<br><br>
+                        On te conseille d'utiliser une <em>passphrase</em> au lieu d’un mot de passe. La passphrase est une phrase facile à retenir à vos yeux mais qui combine plusieurs éléments spéciaux. Par exemple : "J’aimeuhLesL1c0rnes!"
                     </div>
                 </details>
 
@@ -1000,11 +1001,14 @@
 
                         <!-- Rules list -->
                         <div class="criteria-checklist">
-                            <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins 8 caractères</div>
-                            <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au moins une lettre MAJUSCULE</div>
-                            <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au moins une lettre minuscule</div>
-                            <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au moins un chiffre (0-9)</div>
-                            <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au moins un caractère spécial (@, #, !, ?, etc.)</div>
+                            <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins 12 caractères</div>
+                            <div class="crit-item" id="crit-types"><span class="crit-icon crit-ko"></span> 🔀 Remplir au moins 3 des critères suivants :</div>
+                            <div style="padding-left: 30px; display: flex; flex-direction: column; gap: 8px;">
+                                <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au moins une lettre MAJUSCULE</div>
+                                <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au moins une lettre minuscule</div>
+                                <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au moins un chiffre (0-9)</div>
+                                <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au moins un caractère spécial (@, #, !, ?, etc.)</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1816,14 +1820,14 @@
             const specialChars = ['$', '?', '!', '*', '%', '+', '-', '='];
             pw += specialChars[Math.floor(Math.random() * specialChars.length)];
 
-            // Pad to 8 chars
-            if (pw.length < 8) {
-                let diff = 8 - pw.length;
+            // Pad to 12 chars
+            if (pw.length < 12) {
+                let diff = 12 - pw.length;
                 // Pad by repeating the beginning of the string
                 let padding = pw.substring(0, diff);
-                // Ensure the final length is exactly 8 by repeating if necessary
-                while (pw.length < 8) {
-                    pw += pw.substring(0, 8 - pw.length);
+                // Ensure the final length is exactly 12 by repeating if necessary
+                while (pw.length < 12) {
+                    pw += pw.substring(0, 12 - pw.length);
                 }
             }
 
@@ -1882,13 +1886,17 @@
 
         function updatePasswordChecklist(pw) {
             // Rules
-            const hasLength = pw.length >= 8;
+            const hasLength = pw.length >= 12;
             const hasUpper = /[A-Z]/.test(pw);
             const hasLower = /[a-z]/.test(pw);
             const hasNumber = /[0-9]/.test(pw);
             const hasSpecial = /[^A-Za-z0-9]/.test(pw);
 
+            const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
+            const hasTypes = typesCount >= 3;
+
             updateCriterionUI('crit-length', hasLength);
+            updateCriterionUI('crit-types', hasTypes);
             updateCriterionUI('crit-upper', hasUpper);
             updateCriterionUI('crit-lower', hasLower);
             updateCriterionUI('crit-number', hasNumber);
@@ -1897,11 +1905,16 @@
             // Strength calculations
             let score = 0;
             if (pw.length > 0) {
-                if (hasLength) { score += 20; }
-                if (hasUpper) { score += 20; }
-                if (hasLower) { score += 20; }
-                if (hasNumber) { score += 20; }
-                if (hasSpecial) { score += 20; }
+                // Length is worth 40 points
+                if (hasLength) {
+                    score += 40;
+                } else {
+                    // Partial score for length (e.g. up to 20 points if at least 6 chars)
+                    score += Math.min(20, Math.floor((pw.length / 12) * 20));
+                }
+
+                // Each type is worth 20 points, up to 60 points max (3 types)
+                score += Math.min(60, typesCount * 20);
             }
 
             // Adjust fill and labels
