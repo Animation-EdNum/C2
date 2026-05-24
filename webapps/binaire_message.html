@@ -148,7 +148,10 @@
                     <div id="creator-output-display"
                         style="background: var(--card-bg); color: #34d399; font-family: 'Consolas', monospace; font-size: 20px; letter-spacing: 4px; text-align: center; padding: 15px; border-radius: var(--radius-md); margin-bottom: 15px; min-height: 56px;">
                     </div>
-                    <button class="btn btn-new" id="copy-binary-btn" style="margin: 0 auto; display: block;"><i data-fa="clipboard" style="margin-right:5px;"></i> Copier le code secret</button>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-new" id="copy-binary-btn" style="margin: 0;"><i data-fa="clipboard" style="margin-right:5px;"></i> Copier le code secret</button>
+                        <button class="btn btn-new" id="share-binary-btn" style="margin: 0;"><i data-fa="share-nodes" style="margin-right:5px;"></i> Partager le mot</button>
+                    </div>
                 </div>
 
                 <div class="card creator-area" style="margin-bottom: 20px; flex: 1; min-width: 300px;">
@@ -330,6 +333,27 @@
                 document.execCommand('copy');
                 document.body.removeChild(ta);
                 showToast("Code copié dans le presse-papier !", 'success');
+            });
+        }
+
+        function shareBinary() {
+            const text = document.getElementById('creator-output').value;
+            if (!text) { showToast('Rien à partager', 'error'); return; }
+            const shareUrl = new URL(window.location.href);
+            shareUrl.search = '';
+            shareUrl.searchParams.set('tab', 'create');
+            shareUrl.searchParams.set('importWord', text);
+            
+            navigator.clipboard.writeText(shareUrl.toString()).then(() => {
+                showToast("Lien de partage copié ! Envoie-le à ton camarade.", 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = shareUrl.toString();
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast("Lien de partage copié ! Envoie-le à ton camarade.", 'success');
             });
         }
 
@@ -734,6 +758,21 @@
         generateAlphaGrid();
         newEncode();
 
+        // Check for imported word in URL (Improved Collaborative Mode!)
+        const importWordParam = new URLSearchParams(window.location.search).get('importWord');
+        if (importWordParam) {
+            setTimeout(() => {
+                switchTab(null, 'create');
+                const decoderInput = document.getElementById('decoder-input');
+                if (decoderInput) {
+                    decoderInput.value = importWordParam;
+                    decoderInput.dispatchEvent(new Event('input'));
+                    startDecoding();
+                }
+                showToast('Message secret importé ! Prêt à être décodé.', 'success');
+            }, 300);
+        }
+
         // Événements
         document.getElementById('tab-play').addEventListener('click', (e) => switchTab(e, 'play'));
         document.getElementById('tab-create').addEventListener('click', (e) => switchTab(e, 'create'));
@@ -745,6 +784,7 @@
         document.getElementById('alpha-header').addEventListener('click', toggleAlpha);
         document.getElementById('encode-check').addEventListener('click', checkEncodeLetter);
         document.getElementById('copy-binary-btn').addEventListener('click', copyBinary);
+        document.getElementById('share-binary-btn').addEventListener('click', shareBinary);
         document.getElementById('btn-start-decode').addEventListener('click', startDecoding);
         document.getElementById('reset-decoder-btn').addEventListener('click', resetDecoder);
     </script>
