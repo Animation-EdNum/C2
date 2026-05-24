@@ -139,7 +139,10 @@
                     <div class="editor-output-area">
                         <div class="editor-output-header">
                             <span class="editor-output-label">Code binaire</span>
-                            <button class="btn-copy-output" id="btn-copy-editor"><i data-fa="clipboard" style="margin-right:5px;"></i> Copier</button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-copy-output" id="btn-share-editor"><i data-fa="share-nodes" style="margin-right:5px;"></i> Partager</button>
+                                <button class="btn-copy-output" id="btn-copy-editor"><i data-fa="clipboard" style="margin-right:5px;"></i> Copier</button>
+                            </div>
                         </div>
                         <textarea id="editor-output" placeholder="Dessine ou colle un code binaire…"></textarea>
                     </div>
@@ -601,6 +604,31 @@
             });
         }
 
+        function shareEditorOutput() {
+            const output = document.getElementById('editor-output').value;
+            if (!output) { showToast('Rien à partager', 'error'); return; }
+            const flatBinary = output.replace(/\s+/g, '');
+            const shareUrl = new URL(window.location.href);
+            shareUrl.search = '';
+            shareUrl.searchParams.set('tab', 'editor');
+            shareUrl.searchParams.set('importGrid', flatBinary);
+            
+            navigator.clipboard.writeText(shareUrl.toString()).then(() => {
+                showToast('Lien de partage copié ! Envoie-le à tes camarades.', 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = shareUrl.toString(); ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                try { 
+                    document.execCommand('copy'); 
+                    showToast('Lien de partage copié ! Envoie-le à tes camarades.', 'success'); 
+                } catch { 
+                    showToast('Erreur lors de la copie du lien', 'error'); 
+                }
+                document.body.removeChild(ta);
+            });
+        }
+
         function exportImage() {
             const wrapper = document.getElementById('grid-editor');
             const rows = wrapper.querySelectorAll('.grid-row');
@@ -704,6 +732,39 @@
             if (lockMsg) lockMsg.style.display = 'none';
         }
 
+        // Check for imported grid in URL (Improved Collaborative Mode!)
+        const importGridParam = new URLSearchParams(window.location.search).get('importGrid');
+        if (importGridParam) {
+            let size = 10;
+            if (importGridParam.length === 225) size = 15;
+            else if (importGridParam.length === 400) size = 20;
+
+            let formattedGrid = '';
+            for (let i = 0; i < size; i++) {
+                formattedGrid += importGridParam.substring(i * size, (i + 1) * size) + '\n';
+            }
+
+            editorUnlocked = true;
+            const editorTab = document.getElementById('tab-editor');
+            if (editorTab) {
+                editorTab.disabled = false;
+                editorTab.classList.remove('locked-tab');
+            }
+            const lockMsg = document.getElementById('editor-lock-message');
+            if (lockMsg) lockMsg.style.display = 'none';
+
+            editorSize = size;
+            setTimeout(() => {
+                switchMode('editor');
+                const ta = document.getElementById('editor-output');
+                if (ta) {
+                    ta.value = formattedGrid;
+                    ta.dispatchEvent(new Event('input'));
+                }
+                showToast('Dessin importé avec succès !', 'success');
+            }, 300);
+        }
+
         // Événements
         document.getElementById('tab-decode').addEventListener('click', () => switchMode('decode'));
         document.getElementById('tab-encode').addEventListener('click', () => switchMode('encode'));
@@ -716,6 +777,7 @@
         document.getElementById('btn-editor-20').addEventListener('click', () => initEditor(20));
         
         document.getElementById('btn-copy-editor').addEventListener('click', copyEditorOutput);
+        document.getElementById('btn-share-editor').addEventListener('click', shareEditorOutput);
         document.getElementById('btn-clear-editor').addEventListener('click', clearEditor);
         document.getElementById('btn-export-editor').addEventListener('click', exportImage);
         document.getElementById('editor-output').addEventListener('input', applyEditorOutput);
