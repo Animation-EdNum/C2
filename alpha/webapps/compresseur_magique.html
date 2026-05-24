@@ -429,7 +429,6 @@
         // Application State
         let activeTab = 'decode';
         let difficulty = 'medium'; // 'easy' (5x5 B/N), 'medium' (8x8 B/N), 'hard' (8x8 Color)
-        let isMuted = true;
 
         // Scores and Streaks
         let decodeCorrect = 0, decodeStreak = 0;
@@ -494,9 +493,6 @@
                 });
             }
 
-            // Audio & Theme togglers
-            document.getElementById('audio-toggle-btn').addEventListener('click', toggleAudio);
-
             // Global drawing mouse listeners
             window.addEventListener('mouseup', () => { isDrawing = false; });
             window.addEventListener('touchend', () => { isDrawing = false; });
@@ -551,24 +547,6 @@
 
         function getGridSize() {
             return difficulty === 'easy' ? 5 : 8;
-        }
-
-        // AUDIO TOGGLE
-        function toggleAudio(e) {
-            if (e) e.stopPropagation();
-            isMuted = !isMuted;
-            if (window.AudioTools) {
-                AudioTools.muted = isMuted;
-            }
-            document.getElementById('icon-vol-on').style.display = isMuted ? 'none' : 'block';
-            document.getElementById('icon-vol-off').style.display = isMuted ? 'block' : 'none';
-            document.getElementById('audioToggleText').textContent = isMuted ? 'Activer son' : 'Couper son';
-        }
-
-        function playSound(soundId) {
-            if (!isMuted && window.AudioTools) {
-                AudioTools.play(soundId);
-            }
         }
 
         // RLE ALGORITHM (ENCODE & DECODE HELPERS)
