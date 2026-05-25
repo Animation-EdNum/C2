@@ -385,6 +385,16 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
+                            <div class="share-option" id="lbl-colorMode" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-colorMode">Mode Couleurs <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Force l'application à s'ouvrir en mode 4 couleurs (2 bits).</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-colorMode">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="options-column" id="col-restrictions">
@@ -497,7 +507,7 @@ function initShareModal() {
                 </div>
             </div>
         </div>
-    </div>`
+    </div>`;
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     window.fa?.createIcons?.();
@@ -559,6 +569,7 @@ function initShareModal() {
     }
     if (window.location.pathname.includes('binaire_studio.html')) {
         document.getElementById('lbl-unlockEditor').style.display = 'flex';
+        document.getElementById('lbl-colorMode').style.display = 'flex';
     }
 
 
@@ -712,6 +723,12 @@ function initShareModal() {
                 document.getElementById('lbl-forceMat').title = '';
             }
         }
+
+        const optColorMode = document.getElementById('opt-colorMode');
+        if (optColorMode && typeof window.colorMode !== 'undefined') {
+            optColorMode.checked = window.colorMode;
+        }
+
         updateShareUrl();
         modalOverlay.classList.add('active');
     });
