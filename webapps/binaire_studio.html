@@ -97,24 +97,17 @@
                     <span class="convention-pill pill-dark">⬛ Noir = 0</span>
                     <span class="convention-pill pill-light">⬜ Blanc = 1</span>
                 </div>
+                <!-- Convention-pills interactives servant directement de palette -->
                 <div class="convention-row" id="convention-color-decode" style="display: none;">
-                    <span class="convention-pill pill-color-noir">⬛ 00</span>
-                    <span class="convention-pill pill-color-vert">🟢 01</span>
-                    <span class="convention-pill pill-color-bleu">🔵 10</span>
-                    <span class="convention-pill pill-color-jaune">🟡 11</span>
+                    <button class="convention-pill pill-color-noir" data-color-val="0" title="Pinceau Noir">⬛ 00</button>
+                    <button class="convention-pill pill-color-vert active" data-color-val="1" title="Pinceau Vert">🟢 01</button>
+                    <button class="convention-pill pill-color-bleu" data-color-val="2" title="Pinceau Bleu">🔵 10</button>
+                    <button class="convention-pill pill-color-jaune" data-color-val="3" title="Pinceau Jaune">🟡 11</button>
                 </div>
 
                 <div class="play-area">
                     <div class="row-labels" id="decode-hints"></div>
                     <div class="grid-wrapper" id="grid-decode"></div>
-                </div>
-
-                <!-- Palette couleurs pour le dessin -->
-                <div class="color-palette" id="decode-palette" style="display: none;">
-                    <button class="palette-swatch" data-color-val="0" title="Noir">00</button>
-                    <button class="palette-swatch active" data-color-val="1" title="Vert">01</button>
-                    <button class="palette-swatch" data-color-val="2" title="Bleu">10</button>
-                    <button class="palette-swatch" data-color-val="3" title="Jaune">11</button>
                 </div>
 
                 <div class="controls">
@@ -522,7 +515,7 @@
                 const maxLen = colorMode ? size * 2 : size;
                 input.maxLength = maxLen;
                 input.placeholder = '0'.repeat(maxLen);
-                input.style.width = colorMode ? '180px' : '140px';
+                input.style.width = colorMode ? '220px' : '140px';
                 input.autocomplete = 'off';
                 input.inputMode = 'numeric';
 
@@ -847,6 +840,22 @@
         }
 
         // ==========================================
+        // SELECTION DE COULEUR DE PINCEAU UNIFIEE
+        // ==========================================
+        function selectBrushColor(colorVal) {
+            selectedColor = colorVal;
+            
+            // Mettre à jour l'état actif dans tous les sélecteurs
+            document.querySelectorAll('.palette-swatch, button.convention-pill').forEach(el => {
+                if (parseInt(el.dataset.colorVal, 10) === selectedColor) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        // ==========================================
         // SWITCH DE MODE COULEUR (N/B <-> Couleurs)
         // ==========================================
         function setColorMode(isColor, save = true) {
@@ -858,7 +867,6 @@
             const conventionColorDecode = document.getElementById('convention-color-decode');
             const conventionNbEncode = document.getElementById('convention-nb-encode');
             const conventionColorEncode = document.getElementById('convention-color-encode');
-            const decodePalette = document.getElementById('decode-palette');
             const editorPalette = document.getElementById('editor-palette');
 
             if (colorMode) {
@@ -870,8 +878,9 @@
                 if (conventionNbEncode) conventionNbEncode.style.display = 'none';
                 if (conventionColorEncode) conventionColorEncode.style.display = 'flex';
 
-                if (decodePalette) decodePalette.style.display = 'flex';
                 if (editorPalette) editorPalette.style.display = 'flex';
+                
+                selectBrushColor(1); // Vert par défaut
             } else {
                 toggleNb.classList.add('active');
                 toggleColor.classList.remove('active');
@@ -881,7 +890,6 @@
                 if (conventionNbEncode) conventionNbEncode.style.display = 'flex';
                 if (conventionColorEncode) conventionColorEncode.style.display = 'none';
 
-                if (decodePalette) decodePalette.style.display = 'none';
                 if (editorPalette) editorPalette.style.display = 'none';
             }
 
@@ -1010,17 +1018,18 @@
         document.getElementById('btn-export-editor').addEventListener('click', exportImage);
         document.getElementById('editor-output').addEventListener('input', applyEditorOutput);
 
-        // Liens d'événements pour les palettes de couleurs
+        // Liens d'événements pour les palettes de couleurs (Editeur)
         document.querySelectorAll('.palette-swatch').forEach(swatch => {
             swatch.addEventListener('click', () => {
-                selectedColor = parseInt(swatch.dataset.colorVal, 10);
-                document.querySelectorAll('.palette-swatch').forEach(s => {
-                    if (parseInt(s.dataset.colorVal, 10) === selectedColor) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
-                });
+                selectBrushColor(parseInt(swatch.dataset.colorVal, 10));
+                playSound('click');
+            });
+        });
+
+        // Liens d'événements pour les convention-pills interactives (Decode)
+        document.querySelectorAll('button.convention-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                selectBrushColor(parseInt(pill.dataset.colorVal, 10));
                 playSound('click');
             });
         });
