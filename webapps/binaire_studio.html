@@ -79,6 +79,12 @@
                 <button class="tab-btn locked-tab" id="tab-editor" disabled><i data-fa="palette"></i> Éditeur</button>
             </div>
 
+            <!-- Toggle Mode N/B ou Couleurs -->
+            <div class="encoding-toggle" id="encoding-toggle">
+                <button class="toggle-option active" id="toggle-nb">⬛ N/B</button>
+                <button class="toggle-option" id="toggle-color">🌈 Couleurs</button>
+            </div>
+
             <div id="editor-lock-message" style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
                 <i data-fa="lock"></i> L'éditeur sera débloqué après 3 décodages (<span id="unlock-progress-decode">0/3</span>) et 3 encodages (<span id="unlock-progress-encode">0/3</span>) réussis.
             </div>
@@ -86,14 +92,31 @@
             <!-- ==================== MODE DÉCODER ==================== -->
             <div id="mode-decode" class="card active">
                 <div class="game-instruction">Dessine sur la grille pour reproduire le code binaire.</div>
-                <div class="convention-row">
+                
+                <div class="convention-row" id="convention-nb-decode">
                     <span class="convention-pill pill-dark">⬛ Noir = 0</span>
                     <span class="convention-pill pill-light">⬜ Blanc = 1</span>
                 </div>
+                <div class="convention-row" id="convention-color-decode" style="display: none;">
+                    <span class="convention-pill pill-color-noir">⬛ 00</span>
+                    <span class="convention-pill pill-color-vert">🟢 01</span>
+                    <span class="convention-pill pill-color-bleu">🔵 10</span>
+                    <span class="convention-pill pill-color-jaune">🟡 11</span>
+                </div>
+
                 <div class="play-area">
                     <div class="row-labels" id="decode-hints"></div>
                     <div class="grid-wrapper" id="grid-decode"></div>
                 </div>
+
+                <!-- Palette couleurs pour le dessin -->
+                <div class="color-palette" id="decode-palette" style="display: none;">
+                    <button class="palette-swatch" data-color-val="0" title="Noir">00</button>
+                    <button class="palette-swatch active" data-color-val="1" title="Vert">01</button>
+                    <button class="palette-swatch" data-color-val="2" title="Bleu">10</button>
+                    <button class="palette-swatch" data-color-val="3" title="Jaune">11</button>
+                </div>
+
                 <div class="controls">
                     <button class="btn btn-success" id="verifyDecodeBtn"><i data-fa="check" style="margin-right:5px;"></i> Vérifier</button>
                 </div>
@@ -105,10 +128,18 @@
             <!-- ==================== MODE ENCODER ==================== -->
             <div id="mode-encode" class="card">
                 <div class="game-instruction">Trouve le code binaire correspondant à cette image.</div>
-                <div class="convention-row">
+                
+                <div class="convention-row" id="convention-nb-encode">
                     <span class="convention-pill pill-dark">⬛ Noir = 0</span>
                     <span class="convention-pill pill-light">⬜ Blanc = 1</span>
                 </div>
+                <div class="convention-row" id="convention-color-encode" style="display: none;">
+                    <span class="convention-pill pill-color-noir">⬛ 00</span>
+                    <span class="convention-pill pill-color-vert">🟢 01</span>
+                    <span class="convention-pill pill-color-bleu">🔵 10</span>
+                    <span class="convention-pill pill-color-jaune">🟡 11</span>
+                </div>
+
                 <div class="play-area">
                     <div class="grid-wrapper" id="grid-encode-static"></div>
                     <div class="binary-input-group" id="encode-inputs"></div>
@@ -132,6 +163,15 @@
                         <button class="btn btn-primary btn-small" id="btn-export-editor"><i data-fa="floppy-disk" style="margin-right:5px;"></i> Exporter</button>
                     </div>
                 </div>
+
+                <!-- Palette couleurs pour l'éditeur -->
+                <div class="color-palette" id="editor-palette" style="display: none;">
+                    <button class="palette-swatch" data-color-val="0" title="Noir">00</button>
+                    <button class="palette-swatch active" data-color-val="1" title="Vert">01</button>
+                    <button class="palette-swatch" data-color-val="2" title="Bleu">10</button>
+                    <button class="palette-swatch" data-color-val="3" title="Jaune">11</button>
+                </div>
+
                 <div class="editor-content-wrapper">
                     <div class="editor-grid-area">
                         <div class="grid-wrapper" id="grid-editor"></div>
@@ -179,7 +219,7 @@
     <script>window.fa?.createIcons?.();</script>
     <script>
         // ==========================================
-        // DONNÉES — Motifs 5×5 (0 = noir, 1 = blanc)
+        // CONSTANTES ET DONNÉES
         // ==========================================
         const patterns = [
             { name: "Cœur", data: [[1, 0, 1, 0, 1], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [1, 0, 0, 0, 1], [1, 1, 0, 1, 1]] },
@@ -196,14 +236,34 @@
             { name: "Cadeau", data: [[0, 0, 0, 0, 0], [0, 1, 0, 1, 0], [0, 0, 0, 0, 0], [0, 1, 0, 1, 0], [0, 0, 0, 0, 0]] }
         ];
 
+        const colorPatterns = [
+            { name: "Smiley", data: [[2, 2, 1, 2, 2], [3, 3, 3, 3, 3], [3, 0, 3, 0, 3], [3, 0, 0, 0, 3], [2, 3, 3, 3, 2]] },
+            { name: "Maison", data: [[2, 2, 3, 2, 2], [2, 3, 3, 3, 2], [2, 1, 1, 1, 2], [2, 1, 0, 1, 2], [1, 1, 0, 1, 1]] },
+            { name: "Cœur", data: [[3, 0, 3, 0, 3], [0, 0, 0, 0, 0], [3, 0, 0, 0, 1], [3, 3, 0, 3, 3], [3, 2, 3, 3, 3]] },
+            { name: "Arbre", data: [[3, 2, 1, 2, 2], [2, 1, 1, 1, 2], [1, 1, 1, 1, 1], [2, 2, 0, 2, 2], [2, 2, 0, 2, 2]] },
+            { name: "Bateau", data: [[2, 2, 3, 0, 2], [2, 2, 3, 3, 2], [2, 2, 3, 3, 2], [2, 1, 1, 1, 2], [2, 2, 2, 2, 2]] },
+            { name: "Fleur", data: [[1, 2, 1, 3, 1], [3, 3, 3, 3, 3], [1, 3, 0, 3, 1], [1, 1, 3, 1, 1], [1, 1, 1, 1, 1]] },
+            { name: "Monstre", data: [[2, 2, 2, 2, 2], [2, 1, 1, 1, 2], [1, 1, 3, 1, 1], [1, 0, 0, 0, 1], [2, 1, 2, 1, 2]] }
+        ];
+
+        const COLORS = [
+            { code: '00', css: 'var(--c-noir)' },
+            { code: '01', css: 'var(--c-vert)' },
+            { code: '10', css: 'var(--c-bleu)' },
+            { code: '11', css: 'var(--c-jaune)' }
+        ];
+
         // ==========================================
-        // ÉTAT
+        // ÉTAT GLOBAL
         // ==========================================
         let currentMode = 'decode';
         let currentPattern = null;
         let isDrawing = false;
         let drawingOn = true;
         let editorSize = 10;
+
+        let colorMode = false;
+        let selectedColor = 1; // Vert par défaut en mode couleurs
 
         let usedIndices = [];
 
@@ -240,11 +300,12 @@
         // SÉLECTION DE MOTIF SANS RÉPÉTITION
         // ==========================================
         function getRandomPattern() {
-            if (usedIndices.length >= patterns.length) usedIndices = [];
+            const activePatterns = colorMode ? colorPatterns : patterns;
+            if (usedIndices.length >= activePatterns.length) usedIndices = [];
             let idx;
-            do { idx = Math.floor(Math.random() * patterns.length); } while (usedIndices.includes(idx));
+            do { idx = Math.floor(Math.random() * activePatterns.length); } while (usedIndices.includes(idx));
             usedIndices.push(idx);
-            return patterns[idx];
+            return activePatterns[idx];
         }
 
         // ==========================================
@@ -268,11 +329,20 @@
                     cell.dataset.c = c;
                     cell.setAttribute('role', 'gridcell');
 
-                    const isOn = data && data[r][c] === 0;
                     if (locked) cell.classList.add('locked');
-                    if (isOn) cell.classList.add('on');
 
-                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isOn ? 'Noir' : 'Blanc'}`);
+                    if (!colorMode) {
+                        // Mode Noir et Blanc
+                        const isOn = data && data[r][c] === 0;
+                        if (isOn) cell.classList.add('on');
+                        cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isOn ? 'Noir' : 'Blanc'}`);
+                    } else {
+                        // Mode Couleurs
+                        const colVal = data ? data[r][c] : 0;
+                        cell.dataset.color = colVal;
+                        const colorNames = ['Noir', 'Vert', 'Bleu', 'Jaune'];
+                        cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${colorNames[colVal]}`);
+                    }
 
                     if (!locked) {
                         cell.tabIndex = 0;
@@ -289,6 +359,7 @@
                     }
                     row.appendChild(cell);
                 }
+                row.style.height = `${100 / size}%`;
                 wrapper.appendChild(row);
             }
 
@@ -312,33 +383,41 @@
         // ==========================================
         function startDraw(cell) {
             isDrawing = true;
-            drawingOn = !cell.classList.contains('on');
+            if (!colorMode) {
+                drawingOn = !cell.classList.contains('on');
+            }
             applyDraw(cell);
-        }
-
-        // ==========================================
-        // SOUMISSION DE DÉCODAGE/ENCODAGE
-        // ==========================================
-        function handleStreakCelebration(streak, name) {
-            playSound('success');
-            addToGallery(currentPattern.data, currentPattern.name);
-            showToast(`Bravo ! « ${name} » résolu !`, 'success');
         }
 
         function applyDraw(cell) {
             if (cell.classList.contains('locked')) return;
-            const wasOn = cell.classList.contains('on');
             let stateChanged = false;
-            if (drawingOn && !wasOn) { cell.classList.add('on'); playSound('click'); stateChanged = true; }
-            else if (!drawingOn && wasOn) { cell.classList.remove('on'); playSound('click'); stateChanged = true; }
 
-            if (stateChanged) {
-                const r = parseInt(cell.dataset.r, 10);
-                const c = parseInt(cell.dataset.c, 10);
-                cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${cell.classList.contains('on') ? 'Noir' : 'Blanc'}`);
+            if (!colorMode) {
+                const wasOn = cell.classList.contains('on');
+                if (drawingOn && !wasOn) { cell.classList.add('on'); playSound('click'); stateChanged = true; }
+                else if (!drawingOn && wasOn) { cell.classList.remove('on'); playSound('click'); stateChanged = true; }
+
+                if (stateChanged) {
+                    const r = parseInt(cell.dataset.r, 10);
+                    const c = parseInt(cell.dataset.c, 10);
+                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${cell.classList.contains('on') ? 'Noir' : 'Blanc'}`);
+                }
+            } else {
+                const oldColor = parseInt(cell.dataset.color || '0', 10);
+                if (oldColor !== selectedColor) {
+                    cell.dataset.color = selectedColor;
+                    playSound('click');
+                    stateChanged = true;
+
+                    const r = parseInt(cell.dataset.r, 10);
+                    const c = parseInt(cell.dataset.c, 10);
+                    const colorNames = ['Noir', 'Vert', 'Bleu', 'Jaune'];
+                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${colorNames[selectedColor]}`);
+                }
             }
 
-            if (currentMode === 'editor') updateEditorOutput();
+            if (currentMode === 'editor' && stateChanged) updateEditorOutput();
         }
 
         document.addEventListener('mouseup', () => { isDrawing = false; });
@@ -358,7 +437,11 @@
             for (let r = 0; r < size; r++) {
                 const lbl = document.createElement('div');
                 lbl.className = 'row-label';
-                lbl.textContent = currentPattern.data[r].join('');
+                if (!colorMode) {
+                    lbl.textContent = currentPattern.data[r].join('');
+                } else {
+                    lbl.textContent = currentPattern.data[r].map(val => COLORS[val].code).join('');
+                }
                 hints.appendChild(lbl);
             }
 
@@ -379,9 +462,15 @@
             for (let r = 0; r < size && correct; r++) {
                 const cells = rows[r].children;
                 for (let c = 0; c < size; c++) {
-                    const cellIsOn = cells[c].classList.contains('on');
-                    const shouldBeOn = currentPattern.data[r][c] === 0;
-                    if (cellIsOn !== shouldBeOn) { correct = false; break; }
+                    if (!colorMode) {
+                        const cellIsOn = cells[c].classList.contains('on');
+                        const shouldBeOn = currentPattern.data[r][c] === 0;
+                        if (cellIsOn !== shouldBeOn) { correct = false; break; }
+                    } else {
+                        const cellColor = parseInt(cells[c].dataset.color || '0', 10);
+                        const shouldBeColor = currentPattern.data[r][c];
+                        if (cellColor !== shouldBeColor) { correct = false; break; }
+                    }
                 }
             }
 
@@ -429,8 +518,11 @@
 
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.maxLength = size;
-                input.placeholder = '0'.repeat(size);
+                
+                const maxLen = colorMode ? size * 2 : size;
+                input.maxLength = maxLen;
+                input.placeholder = '0'.repeat(maxLen);
+                input.style.width = colorMode ? '180px' : '140px';
                 input.autocomplete = 'off';
                 input.inputMode = 'numeric';
 
@@ -449,7 +541,13 @@
         function validateEncodeRow(input, rowIndex) {
             if (encodeComplete) return;
 
-            const expected = currentPattern.data[rowIndex].join('');
+            let expected;
+            if (!colorMode) {
+                expected = currentPattern.data[rowIndex].join('');
+            } else {
+                expected = currentPattern.data[rowIndex].map(val => COLORS[val].code).join('');
+            }
+
             if (input.value.length < expected.length) {
                 input.style.borderColor = '';
                 return;
@@ -506,10 +604,17 @@
         function clearEditor() {
             const cells = document.querySelectorAll('#grid-editor .grid-cell');
             cells.forEach(c => {
-                c.classList.remove('on');
-                const r = parseInt(c.dataset.r, 10);
-                const col = parseInt(c.dataset.c, 10);
-                c.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${col + 1}, Blanc`);
+                if (!colorMode) {
+                    c.classList.remove('on');
+                    const r = parseInt(c.dataset.r, 10);
+                    const col = parseInt(c.dataset.c, 10);
+                    c.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${col + 1}, Blanc`);
+                } else {
+                    c.dataset.color = 0;
+                    const r = parseInt(c.dataset.r, 10);
+                    const col = parseInt(c.dataset.c, 10);
+                    c.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${col + 1}, Noir`);
+                }
             });
             updateEditorOutput();
             showToast('Grille effacée', 'info');
@@ -526,9 +631,11 @@
 
             const lines = val.replace(/\n$/, '').split('\n');
 
-            const maxLineLen = Math.max(...lines.map(l => l.replace(/\s/g, '').length));
+            const lineLengths = lines.map(l => l.replace(/\s/g, '').length);
+            const maxLineLen = Math.max(...lineLengths);
+            const requiredPixelsPerRow = colorMode ? Math.ceil(maxLineLen / 2) : maxLineLen;
             const numLines = lines.length;
-            const requiredSize = Math.max(maxLineLen, numLines);
+            const requiredSize = Math.max(requiredPixelsPerRow, numLines);
             let targetSize = editorSize;
 
             if (requiredSize > 15) targetSize = 20;
@@ -553,19 +660,34 @@
                 const line = lines[r] || '';
                 for (let c = 0; c < size; c++) {
                     const cell = row.children[c];
-                    if (c < line.length) {
-                        if (line[c] === '0') {
-                            cell.classList.add('on');
+                    if (!colorMode) {
+                        if (c < line.length) {
+                            if (line[c] === '0') {
+                                cell.classList.add('on');
+                            } else {
+                                cell.classList.remove('on');
+                            }
                         } else {
                             cell.classList.remove('on');
                         }
+                        const r_idx = parseInt(cell.dataset.r, 10);
+                        const col_idx = parseInt(cell.dataset.c, 10);
+                        const state = cell.classList.contains('on') ? 'Noir' : 'Blanc';
+                        cell.setAttribute('aria-label', `Ligne ${r_idx + 1}, colonne ${col_idx + 1}, ${state}`);
                     } else {
-                        cell.classList.remove('on');
+                        const pair = line.substring(c * 2, c * 2 + 2);
+                        if (pair.length === 2) {
+                            const colIdx = COLORS.findIndex(color => color.code === pair);
+                            cell.dataset.color = colIdx !== -1 ? colIdx : 0;
+                        } else {
+                            cell.dataset.color = 0;
+                        }
+                        const r_idx = parseInt(cell.dataset.r, 10);
+                        const col_idx = parseInt(cell.dataset.c, 10);
+                        const colorNames = ['Noir', 'Vert', 'Bleu', 'Jaune'];
+                        const colVal = parseInt(cell.dataset.color, 10);
+                        cell.setAttribute('aria-label', `Ligne ${r_idx + 1}, colonne ${col_idx + 1}, ${colorNames[colVal]}`);
                     }
-                    const r_idx = parseInt(cell.dataset.r, 10);
-                    const col_idx = parseInt(cell.dataset.c, 10);
-                    const state = cell.classList.contains('on') ? 'Noir' : 'Blanc';
-                    cell.setAttribute('aria-label', `Ligne ${r_idx + 1}, colonne ${col_idx + 1}, ${state}`);
                 }
             });
         }
@@ -579,7 +701,13 @@
             rows.forEach((row, r) => {
                 let binary = '';
                 for (let i = 0; i < row.children.length; i++) {
-                    binary += row.children[i].classList.contains('on') ? '0' : '1';
+                    const cell = row.children[i];
+                    if (!colorMode) {
+                        binary += cell.classList.contains('on') ? '0' : '1';
+                    } else {
+                        const colVal = parseInt(cell.dataset.color || '0', 10);
+                        binary += COLORS[colVal].code;
+                    }
                 }
                 output += binary + '\n';
             });
@@ -612,6 +740,9 @@
             shareUrl.search = '';
             shareUrl.searchParams.set('tab', 'editor');
             shareUrl.searchParams.set('importGrid', flatBinary);
+            if (colorMode) {
+                shareUrl.searchParams.set('colorMode', '1');
+            }
             
             navigator.clipboard.writeText(shareUrl.toString()).then(() => {
                 showToast('Lien de partage copié ! Envoie-le à tes camarades.', 'success');
@@ -641,10 +772,22 @@
             canvas.height = size * scale;
             const ctx = canvas.getContext('2d');
 
+            const colorMap = {
+                0: '#0f172a',
+                1: '#22c55e',
+                2: '#3b82f6',
+                3: '#eab308'
+            };
+
             rows.forEach((row, r) => {
                 const cells = row.children;
                 for (let c = 0; c < cells.length; c++) {
-                    ctx.fillStyle = cells[c].classList.contains('on') ? '#1e293b' : '#ffffff';
+                    if (!colorMode) {
+                        ctx.fillStyle = cells[c].classList.contains('on') ? '#1e293b' : '#ffffff';
+                    } else {
+                        const colVal = parseInt(cells[c].dataset.color || '0', 10);
+                        ctx.fillStyle = colorMap[colVal] || '#0f172a';
+                    }
                     ctx.fillRect(c * scale, r * scale, scale, scale);
                 }
             });
@@ -681,9 +824,20 @@
             canvas.height = size;
             const ctx = canvas.getContext('2d');
 
+            const colorMap = {
+                0: '#0f172a',
+                1: '#22c55e',
+                2: '#3b82f6',
+                3: '#eab308'
+            };
+
             for (let r = 0; r < size; r++) {
                 for (let c = 0; c < size; c++) {
-                    ctx.fillStyle = data[r][c] === 0 ? '#1e293b' : '#ffffff';
+                    if (!colorMode) {
+                        ctx.fillStyle = data[r][c] === 0 ? '#1e293b' : '#ffffff';
+                    } else {
+                        ctx.fillStyle = colorMap[data[r][c]] || '#0f172a';
+                    }
                     ctx.fillRect(c, r, 1, 1);
                 }
             }
@@ -693,7 +847,56 @@
         }
 
         // ==========================================
-        // NAVIGATION ENTRE MODES
+        // SWITCH DE MODE COULEUR (N/B <-> Couleurs)
+        // ==========================================
+        function setColorMode(isColor, save = true) {
+            colorMode = isColor;
+
+            const toggleNb = document.getElementById('toggle-nb');
+            const toggleColor = document.getElementById('toggle-color');
+            const conventionNbDecode = document.getElementById('convention-nb-decode');
+            const conventionColorDecode = document.getElementById('convention-color-decode');
+            const conventionNbEncode = document.getElementById('convention-nb-encode');
+            const conventionColorEncode = document.getElementById('convention-color-encode');
+            const decodePalette = document.getElementById('decode-palette');
+            const editorPalette = document.getElementById('editor-palette');
+
+            if (colorMode) {
+                toggleNb.classList.remove('active');
+                toggleColor.classList.add('active');
+
+                if (conventionNbDecode) conventionNbDecode.style.display = 'none';
+                if (conventionColorDecode) conventionColorDecode.style.display = 'flex';
+                if (conventionNbEncode) conventionNbEncode.style.display = 'none';
+                if (conventionColorEncode) conventionColorEncode.style.display = 'flex';
+
+                if (decodePalette) decodePalette.style.display = 'flex';
+                if (editorPalette) editorPalette.style.display = 'flex';
+            } else {
+                toggleNb.classList.add('active');
+                toggleColor.classList.remove('active');
+
+                if (conventionNbDecode) conventionNbDecode.style.display = 'flex';
+                if (conventionColorDecode) conventionColorDecode.style.display = 'none';
+                if (conventionNbEncode) conventionNbEncode.style.display = 'flex';
+                if (conventionColorEncode) conventionColorEncode.style.display = 'none';
+
+                if (decodePalette) decodePalette.style.display = 'none';
+                if (editorPalette) editorPalette.style.display = 'none';
+            }
+
+            if (save) {
+                localStorage.setItem('pixelStudio_colorMode', colorMode ? '1' : '0');
+            }
+
+            // Réinitialiser les modes avec les nouveaux motifs ou formats
+            if (currentMode === 'decode') initDecode();
+            if (currentMode === 'encode') initEncode();
+            if (currentMode === 'editor') initEditor(editorSize);
+        }
+
+        // ==========================================
+        // NAVIGATION ENTRE MODES DE L'APPLICATION
         // ==========================================
         function switchMode(mode) {
             currentMode = mode;
@@ -717,11 +920,22 @@
             if (mode === 'editor') initEditor(editorSize);
         }
 
+        // ==========================================
         // INITIALISATION
         // ==========================================
-        initDecode();
+        
+        // Configuration initiale du mode couleur (depuis URL ou localStorage)
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasColorParam = urlParams.get('colorMode') === '1';
+        const hasSavedColor = localStorage.getItem('pixelStudio_colorMode') === '1';
 
-        if (new URLSearchParams(window.location.search).get('unlockEditor') === '1') {
+        if (hasColorParam || hasSavedColor) {
+            setColorMode(true, false);
+        } else {
+            setColorMode(false, false);
+        }
+
+        if (urlParams.get('unlockEditor') === '1') {
             editorUnlocked = true;
             const editorTab = document.getElementById('tab-editor');
             if (editorTab) {
@@ -732,16 +946,24 @@
             if (lockMsg) lockMsg.style.display = 'none';
         }
 
-        // Check for imported grid in URL (Improved Collaborative Mode!)
-        const importGridParam = new URLSearchParams(window.location.search).get('importGrid');
+        // Gestion de l'import de dessin par URL
+        const importGridParam = urlParams.get('importGrid');
         if (importGridParam) {
             let size = 10;
-            if (importGridParam.length === 225) size = 15;
-            else if (importGridParam.length === 400) size = 20;
+            const len = importGridParam.length;
+
+            if (colorMode) {
+                if (len === 450) size = 15;
+                else if (len === 800) size = 20;
+            } else {
+                if (len === 225) size = 15;
+                else if (len === 400) size = 20;
+            }
 
             let formattedGrid = '';
+            const step = colorMode ? size * 2 : size;
             for (let i = 0; i < size; i++) {
-                formattedGrid += importGridParam.substring(i * size, (i + 1) * size) + '\n';
+                formattedGrid += importGridParam.substring(i * step, (i + 1) * step) + '\n';
             }
             formattedGrid = formattedGrid.trim();
 
@@ -766,11 +988,16 @@
             }, 300);
         }
 
-        // Événements
+        // ==========================================
+        // LIENS D'ÉVÉNEMENTS
+        // ==========================================
         document.getElementById('tab-decode').addEventListener('click', () => switchMode('decode'));
         document.getElementById('tab-encode').addEventListener('click', () => switchMode('encode'));
         document.getElementById('tab-editor').addEventListener('click', () => switchMode('editor'));
         
+        document.getElementById('toggle-nb').addEventListener('click', () => setColorMode(false));
+        document.getElementById('toggle-color').addEventListener('click', () => setColorMode(true));
+
         document.getElementById('verifyDecodeBtn').addEventListener('click', checkDecode);
         
         document.getElementById('btn-editor-10').addEventListener('click', () => initEditor(10));
@@ -782,6 +1009,21 @@
         document.getElementById('btn-clear-editor').addEventListener('click', clearEditor);
         document.getElementById('btn-export-editor').addEventListener('click', exportImage);
         document.getElementById('editor-output').addEventListener('input', applyEditorOutput);
+
+        // Liens d'événements pour les palettes de couleurs
+        document.querySelectorAll('.palette-swatch').forEach(swatch => {
+            swatch.addEventListener('click', () => {
+                selectedColor = parseInt(swatch.dataset.colorVal, 10);
+                document.querySelectorAll('.palette-swatch').forEach(s => {
+                    if (parseInt(s.dataset.colorVal, 10) === selectedColor) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+                playSound('click');
+            });
+        });
     </script>
     <script src="../assets/js/audio.js"></script>
     <script src="../assets/js/theme.js"></script>

@@ -10,7 +10,7 @@ Bienvenue dans la **Suite EdNum**, un projet développé par l'Animation Pédago
 
 Ce dépôt regroupe des **applications web interactives** (webapps) et des **outils pédagogiques**, sans publicité, et créés spécifiquement pour accompagner l'enseignement de la science informatique à l'école primaire (en complément des manuels valaisans et vaudois [Décodage](https://decodage.edu-vd.ch/)).
 
-Le but de ce projet est de fournir des outils numériques de qualité, autonomes et accessibles. La philosophie pédagogique repose sur des interfaces épurées, une progression adaptative, de la gamification et une utilisation garantie **100% hors-ligne** pour permettre aux élèves et aux enseignant·e·s de se concentrer sur l'apprentissage.
+La philosophie pédagogique repose sur des interfaces épurées, une progression adaptative, de la gamification et une utilisation garantie **100% hors-ligne** pour permettre aux élèves et aux enseignant·e·s de se concentrer sur l'apprentissage.
 
 ---
 
@@ -25,7 +25,7 @@ Ces outils sont conçus pour fonctionner de la manière la plus simple possible,
 
 ### 📦 Installation via npm (pour les responsables informatiques)
 
-Si Node.js (≥ 18) est installé sur votre machine, vous pouvez lancer la suite directement avec une seule commande — sans téléchargement manuel ni serveur à configurer :
+Si Node.js (≥ 18) is installé sur votre machine, vous pouvez lancer la suite directement avec une seule commande — sans téléchargement manuel ni serveur à configurer :
 
 ```bash
 npx @ednum/suite-ednum
@@ -62,10 +62,10 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 #### 2. Pixel Studio (`webapps/binaire_studio.html`)
 ![Pixel Studio](meta/screenshots/binaire_studio.png)
-- **À quoi sert l'outil :** Un studio de codage interactif faisant le lien entre des images matricielles en noir et blanc et leur représentation binaire (0 pour noir, 1 pour blanc).
+- **À quoi sert l'outil :** Un studio de codage interactif faisant le lien entre des images matricielles (en noir et blanc ou en 4 couleurs) et leur représentation binaire (1 ou 2 bits par pixel).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire** (Demi-cycle 5-6H)
-- **Fonctionnalités :** 3 modes : *Décoder* (dessiner d'après le code), *Encoder* (trouver le code d'une image) et *Éditeur Libre*. Avec sauvegarde locale de créations !
-- **Valeur pédagogique :** Matérialise le concept abstrait de "numérisation". Comprendre que l'information visuelle se traduit en 0 et en 1.
+- **Fonctionnalités :** 3 modes : *Décoder* (dessiner d'après le code), *Encoder* (trouver le code d'une image) et *Éditeur Libre*. Il propose un basculement instantané entre le mode Noir & Blanc (1 bit) et le mode Couleurs (2 bits : noir `00`, vert `01`, bleu `10`, jaune `11`) avec palette de dessin interactive, export d'images PNG et partage de créations par URL.
+- **Valeur pédagogique :** Matérialise le concept abstrait de "numérisation". Comprendre que l'information visuelle (pixels) se traduit en séquences binaires de 0 et de 1.
 
 #### 3. Mots secrets (`webapps/binaire_message.html`)
 ![Mots secrets](meta/screenshots/binaire_message.png)

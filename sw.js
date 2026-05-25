@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-83700537';
+const CACHE_NAME = 'ednum-bbd2d3c2';
 const ASSETS = [
     './',
     './index.html',
@@ -14,7 +14,6 @@ const ASSETS = [
     './alpha/webapps/jeu_de_la_grue.html',
     './alpha/webapps/machine_a_chiffrer.html',
     './alpha/webapps/machine_a_trier.html',
-    './alpha/webapps/pixels_binaires.html',
     './alpha/webapps/reseau_de_tri.html',
     './alpha/webapps/teacher/sim_dyslexie.html',
     './assets/css/automate.css',
