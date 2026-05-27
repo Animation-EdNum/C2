@@ -704,11 +704,17 @@
             const drawn = state.drawnParticipants.length;
             const absent = state.absentParticipants.length;
             const avail = state.availableParticipants.length;
-            statsDisplay.innerHTML = `
-                <div>Disponibles: ${avail}</div>
-                <div>Tirés: ${drawn}</div>
-                <div>Absents: ${absent}</div>
-            `;
+            
+            statsDisplay.replaceChildren();
+            const divAvail = document.createElement('div');
+            divAvail.textContent = `Disponibles: ${avail}`;
+            const divDrawn = document.createElement('div');
+            divDrawn.textContent = `Tirés: ${drawn}`;
+            const divAbsent = document.createElement('div');
+            divAbsent.textContent = `Absents: ${absent}`;
+            statsDisplay.appendChild(divAvail);
+            statsDisplay.appendChild(divDrawn);
+            statsDisplay.appendChild(divAbsent);
             
             drawBtn.disabled = avail === 0;
             finishedMsg.classList.toggle('hidden', avail > 0 || drawn === 0);
@@ -717,16 +723,29 @@
             state.allParticipants.forEach(p => {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
-                if (state.drawnParticipants.includes(p)) cell.classList.add('drawn');
-                if (state.absentParticipants.includes(p)) cell.classList.add('absent');
+                if (state.drawnParticipants.includes(p)) { cell.classList.add('drawn'); }
+                if (state.absentParticipants.includes(p)) { cell.classList.add('absent'); }
                 cell.textContent = p;
                 cell.addEventListener('click', () => toggleParticipantState(p));
                 participantItems.appendChild(cell);
             });
 
-            historyBadges.innerHTML = state.drawHistory.length > 0 
-                ? state.drawHistory.map(h => `<span class="history-badge">${h}</span>`).join('')
-                : '<span style="font-size:0.75rem; opacity:0.5; font-style:italic;">Aucun historique</span>';
+            historyBadges.replaceChildren();
+            if (state.drawHistory.length > 0) {
+                state.drawHistory.forEach(h => {
+                    const span = document.createElement('span');
+                    span.className = 'history-badge';
+                    span.textContent = h;
+                    historyBadges.appendChild(span);
+                });
+            } else {
+                const span = document.createElement('span');
+                span.style.fontSize = '0.75rem';
+                span.style.opacity = '0.5';
+                span.style.fontStyle = 'italic';
+                span.textContent = 'Aucun historique';
+                historyBadges.appendChild(span);
+            }
         }
 
         function toggleParticipantState(p) {
