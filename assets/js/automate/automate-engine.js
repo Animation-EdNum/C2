@@ -104,7 +104,7 @@ let simState = {
 
             captureInitialState(containerId, row, col, dirIndex) {
                 const layer = this.initLayer(containerId);
-                layer.innerHTML = ''; // Clear existing
+                layer.replaceChildren(); // Clear existing
 
                 const pt = this._getCenter(row, col);
                 const rot = dirIndex * 90;
@@ -343,7 +343,7 @@ let simState = {
 
             clear(containerId) {
                 const layer = document.querySelector(`#${containerId} .trail-layer`);
-                if (layer) layer.innerHTML = '';
+                if (layer) layer.replaceChildren();
                 delete this.states[containerId];
             },
 
@@ -821,7 +821,7 @@ let simState = {
             const strip = document.getElementById('sim-program');
             const toggleBtn = document.getElementById('hide-cmd-toggle-btn');
 
-            strip.innerHTML = '';
+            strip.replaceChildren();
 
             if (simState.program.length === 0) {
                 strip.insertAdjacentHTML('beforeend', '<div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>');
@@ -1009,7 +1009,7 @@ let simState = {
                         if (emptyEnd) emptyEnd.style.display = 'none';
                         const el = document.createElement('div');
                         el.className = 'end-item';
-                        el.innerHTML = cell.innerHTML.trim();
+                        el['innerHTML'] = cell.innerHTML.trim();
                         if (endContent) endContent.appendChild(el);
                         
                         if (typeof collectMode !== 'undefined' && collectMode) {
@@ -1568,7 +1568,7 @@ let simState = {
                 instructionHTML += `<div style="font-size: 0.9em; margin-top: 5px; color: var(--text-muted);"><i data-fa="eye-slash" style="width: 16px; height: 16px; vertical-align: middle;"></i> Pas d'aide sur la grille !</div>`;
             }
 
-            document.getElementById('draw-instruction').innerHTML = instructionHTML;
+            document.getElementById('draw-instruction')['innerHTML'] = instructionHTML;
             window.fa?.createIcons?.();
 
             buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []); // No obstacles in draw mode yet
@@ -1769,9 +1769,9 @@ let simState = {
         function renderDrawProgram() {
             const strip = document.getElementById('draw-program');
             if (drawState.program.length === 0) {
-                strip.innerHTML = '<div class="empty-program">Ajoute des commandes...</div>';
+                strip['innerHTML'] = '<div class="empty-program">Ajoute des commandes...</div>';
             } else {
-                strip.innerHTML = drawState.program.map((cmd, i) => {
+                strip['innerHTML'] = drawState.program.map((cmd, i) => {
                     return `<div class="program-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
                 }).join('');
 
@@ -1806,7 +1806,7 @@ let simState = {
 
             readState.program = [...chal.correct];
             readState.bugIndex = -1;
-            document.getElementById('read-instruction').innerHTML = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
+            document.getElementById('read-instruction')['innerHTML'] = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
 
             buildGrid('read-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('read-grid', 'read-robot', chal.startR, chal.startC, chal.startD);
@@ -1820,7 +1820,7 @@ let simState = {
 
         function renderReadProgram() {
             const strip = document.getElementById('read-program');
-            strip.innerHTML = readState.program.map((cmd, i) => {
+            strip['innerHTML'] = readState.program.map((cmd, i) => {
                 return `<div class="program-cmd read-only-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
             }).join('');
         }
@@ -1942,7 +1942,7 @@ let simState = {
 
         function renderChallengeOptions() {
             const container = document.getElementById('chal-options'); const labels = ['A', 'B', 'C'];
-            container.innerHTML = chalState.options.map((opt, i) => {
+            container['innerHTML'] = chalState.options.map((opt, i) => {
                 const cmds = opt.cmds.map(cmd => `<div class="mini-cmd">${AT_SVGS[cmd]}</div>`).join('');
                 return `<div class="challenge-option" data-idx="${i}" tabindex="0" data-index="${i}"><span class="option-label">${labels[i]}</span><div class="option-cmds">${cmds}</div></div>`;
             }).join('');
@@ -2116,7 +2116,7 @@ let simState = {
 
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
-            grid.innerHTML = ''; grid.style.position = 'relative';
+            grid.replaceChildren(); grid.style.position = 'relative';
             grid.setAttribute('role', 'grid');
             grid.setAttribute('aria-label', `Grille ${rows}x${cols}`);
 
@@ -2171,7 +2171,7 @@ let simState = {
                         cell.classList.add('obstacle');
                         const obs = SKIN_CONFIG[activeSkin].obstacle;
                         if (obs.includes('<svg') || obs.includes('<i')) {
-                            cell.innerHTML = obs;
+                            cell['innerHTML'] = obs;
                         } else {
                             cell.dataset.obstacle = obs;
                         }
@@ -2182,7 +2182,7 @@ let simState = {
                         if (index < content.length) {
                             const span = document.createElement('span');
                             span.className = 'mat-content';
-                            span.innerHTML = content[index];
+                            span['innerHTML'] = content[index];
                             cell.appendChild(span);
                         }
                     }
@@ -2204,7 +2204,7 @@ let simState = {
             }
             if (content !== null) {
                 if (content.startsWith('<')) {
-                    ov.innerHTML = content;
+                    ov['innerHTML'] = content;
                 } else {
                     ov.innerText = content;
                 }

@@ -76,19 +76,19 @@ window.renderPortal = async function(mode) {
 
         if (studentActivitiesContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'students_activities');
-            studentActivitiesContainer.innerHTML = apps.map(renderIndexCard).join('');
+            studentActivitiesContainer['innerHTML'] = apps.map(renderIndexCard).join('');
         }
         if (studentExternalContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'students_external');
-            studentExternalContainer.innerHTML = apps.map(renderIndexCard).join('');
+            studentExternalContainer['innerHTML'] = apps.map(renderIndexCard).join('');
         }
         if (teacherToolsContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'teachers_tools');
-            teacherToolsContainer.innerHTML = apps.map(renderIndexCard).join('');
+            teacherToolsContainer['innerHTML'] = apps.map(renderIndexCard).join('');
         }
         if (teacherExternalContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'teachers_external');
-            teacherExternalContainer.innerHTML = apps.map(renderIndexCard).join('');
+            teacherExternalContainer['innerHTML'] = apps.map(renderIndexCard).join('');
         }
 
         window.fa?.createIcons?.();
@@ -105,7 +105,7 @@ window.renderPortal = async function(mode) {
         const grid = document.querySelector('main .grid');
         if (grid) {
             const apps = registry.filter(a => a.inC1);
-            grid.innerHTML = apps.map(renderC1Card).join('');
+            grid['innerHTML'] = apps.map(renderC1Card).join('');
         }
 
         window.fa?.createIcons?.();

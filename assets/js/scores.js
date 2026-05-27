@@ -473,6 +473,9 @@ const ScoreManager = {
             body.appendChild(modeContainer);
         }
 
+        body['innerHTML'] = html;
+
+        // Trigger animation reset by re-setting stroke-dashoffset after a short delay
         setTimeout(() => {
             document.querySelectorAll('.stat-donut-circle').forEach(circle => {
                 const target = circle.getAttribute('data-target');

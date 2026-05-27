@@ -60,7 +60,7 @@ window.setSpeedLevel = function (level) {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Lent');
                 btn.setAttribute('data-tooltip', 'Vitesse : Lent');
-                btn.innerHTML = '<i data-fa="turtle"></i>';
+                btn['innerHTML'] = '<i data-fa="turtle"></i>';
                 window.fa?.createIcons?.(btn);
             }
         };
@@ -77,7 +77,7 @@ window.setSpeedLevel = function (level) {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Rapide');
                 btn.setAttribute('data-tooltip', 'Vitesse : Rapide');
-                btn.innerHTML = '<i data-fa="rabbit-running"></i>';
+                btn['innerHTML'] = '<i data-fa="rabbit-running"></i>';
                 window.fa?.createIcons?.(btn);
             }
         };
@@ -402,7 +402,7 @@ function initApplication() {
     const tgtBtn = document.getElementById('btn-target-icon');
     if (tgtBtn) {
         if (tg && tg.includes('<svg')) {
-            tgtBtn.innerHTML = tg;
+            tgtBtn['innerHTML'] = tg;
             const svg = tgtBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
@@ -418,7 +418,7 @@ function initApplication() {
     const obsBtn = document.getElementById('btn-obstacle-icon');
     if (obsBtn) {
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-            obsBtn.innerHTML = ob;
+            obsBtn['innerHTML'] = ob;
             window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
