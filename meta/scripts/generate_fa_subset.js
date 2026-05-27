@@ -7,7 +7,7 @@
  * pour générer les icônes, puis copie le résultat dans assets/js/fa-subset.js.
  */
 
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -33,7 +33,7 @@ if (!fs.existsSync(faSubsetScript)) {
 console.log(`🚀 Exécution de ${faSubsetScript} dans ${faSubsetDir}...`);
 
 try {
-    execSync(`node generate_fa_subset.js "${ROOT}"`, {
+    execFileSync('node', ['generate_fa_subset.js', ROOT], {
         cwd: faSubsetDir,
         stdio: 'inherit',
         env: { ...process.env, SUITE_DIR: ROOT }

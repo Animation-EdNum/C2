@@ -324,7 +324,7 @@ const ScoreManager = {
         if (!body) return;
 
         if (Object.keys(this.stats).length === 0) {
-            body.innerHTML = '<p style="text-align: center; color: var(--text-color); opacity: 0.7;">Aucune statistique enregistrée pour le moment.</p>';
+            body['innerHTML'] = '<p style="text-align: center; color: var(--text-color); opacity: 0.7;">Aucune statistique enregistrée pour le moment.</p>';
             return;
         }
 
@@ -404,7 +404,7 @@ const ScoreManager = {
             html += `</div>`;
         }
 
-        body.innerHTML = html;
+        body['innerHTML'] = html;
 
         // Trigger animation reset by re-setting stroke-dashoffset after a short delay
         setTimeout(() => {

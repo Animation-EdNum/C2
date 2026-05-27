@@ -60,7 +60,7 @@ window.setSpeedLevel = function (level) {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Lent');
                 btn.setAttribute('data-tooltip', 'Vitesse : Lent');
-                btn.innerHTML = '<i data-fa="turtle"></i>';
+                btn['innerHTML'] = '<i data-fa="turtle"></i>';
                 window.fa?.createIcons?.(btn);
             }
         };
@@ -77,7 +77,7 @@ window.setSpeedLevel = function (level) {
             if (btn) {
                 btn.setAttribute('title', 'Vitesse : Rapide');
                 btn.setAttribute('data-tooltip', 'Vitesse : Rapide');
-                btn.innerHTML = '<i data-fa="rabbit-running"></i>';
+                btn['innerHTML'] = '<i data-fa="rabbit-running"></i>';
                 window.fa?.createIcons?.(btn);
             }
         };
@@ -145,51 +145,6 @@ document.addEventListener('keydown', (e) => {
 
 let tabTimer = null;
 const popupsShown = { explore: false, simulator: false };
-
-let placeElementsTimer = null;
-let hasClickedPlaceElements = false;
-let placeElementsBubbleTimer = null;
-
-function showPlaceElementsBubble() {
-    if (hasClickedPlaceElements) return;
-
-    // Find visible button depending on active tab
-    const activeTab = document.querySelector('.tab-content.active');
-    if (!activeTab) return;
-
-    const btn = activeTab.querySelector('#btn-place-elements, #btn-explore-place-elements');
-    if (!btn) return;
-
-    // Don't show if already present
-    if (btn.querySelector('.skin-speech-bubble-wrapper')) return;
-
-    btn.style.position = 'relative';
-    const bubbleHtml = `<div class="skin-speech-bubble-wrapper" style="position: absolute; top: -10px; left: 50%; width: 0; height: 0; overflow: visible; z-index: 1000;"><div class="skin-speech-bubble" style="top: 0; left: 0; transform: translate(-50%, -100%);" onclick="handlePlaceElementsBubbleClick(event)"><div class="skin-speech-bubble-text">Clique-moi pour ajouter un trésor et des obstacles</div></div></div>`;
-    btn.insertAdjacentHTML('beforeend', bubbleHtml);
-
-    if (placeElementsBubbleTimer) clearTimeout(placeElementsBubbleTimer);
-    placeElementsBubbleTimer = setTimeout(() => {
-        document.querySelectorAll('.skin-speech-bubble-wrapper').forEach(b => b.remove());
-    }, 5000);
-}
-
-function handlePlaceElementsBubbleClick(e) {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const wrapper = e.target.closest('.skin-speech-bubble-wrapper');
-    if (!wrapper) return;
-
-    const textDiv = wrapper.querySelector('.skin-speech-bubble-text');
-    if (textDiv) {
-        textDiv.textContent = 'Clique sur le bouton bleu';
-    }
-
-    if (placeElementsBubbleTimer) clearTimeout(placeElementsBubbleTimer);
-    placeElementsBubbleTimer = setTimeout(() => {
-        document.querySelectorAll('.skin-speech-bubble-wrapper').forEach(b => b.remove());
-    }, 5000);
-}
 
 function showTimePopup(tab) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -269,20 +224,10 @@ function startTabTimer(tab) {
         clearTimeout(tabTimer);
         tabTimer = null;
     }
-    if (placeElementsTimer) {
-        clearTimeout(placeElementsTimer);
-        placeElementsTimer = null;
-    }
     if (tab === 'explore' && !popupsShown.explore) {
         tabTimer = setTimeout(() => showTimePopup('explore'), 240000);
     } else if (tab === 'simulator' && !popupsShown.simulator) {
         tabTimer = setTimeout(() => showTimePopup('simulator'), 360000);
-    }
-
-    if ((tab === 'simulator' || tab === 'explore') && !hasClickedPlaceElements) {
-        placeElementsTimer = setTimeout(() => showPlaceElementsBubble(), 60000);
-    } else {
-        document.querySelectorAll('.skin-speech-bubble-wrapper').forEach(b => b.remove());
     }
 }
 
@@ -457,7 +402,7 @@ function initApplication() {
     const tgtBtn = document.getElementById('btn-target-icon');
     if (tgtBtn) {
         if (tg && tg.includes('<svg')) {
-            tgtBtn.innerHTML = tg;
+            tgtBtn['innerHTML'] = tg;
             const svg = tgtBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
@@ -473,7 +418,7 @@ function initApplication() {
     const obsBtn = document.getElementById('btn-obstacle-icon');
     if (obsBtn) {
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-            obsBtn.innerHTML = ob;
+            obsBtn['innerHTML'] = ob;
             window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
@@ -586,10 +531,6 @@ document.getElementById('btn-sim-random-position').addEventListener('click', ran
 
 document.getElementById('btn-explore-reset').addEventListener('click', randomizeExplorePosition);
 document.getElementById('btn-explore-place-elements').addEventListener('click', () => {
-    hasClickedPlaceElements = true;
-    if (placeElementsTimer) clearTimeout(placeElementsTimer);
-    if (placeElementsBubbleTimer) clearTimeout(placeElementsBubbleTimer);
-    document.querySelectorAll('.skin-speech-bubble-wrapper').forEach(b => b.remove());
     placeRandomExploreTarget();
     randomizeExploreWalls();
 });
@@ -623,11 +564,6 @@ if (btnClearEnd) {
 }
 
 document.getElementById('btn-place-elements').addEventListener('click', () => {
-    hasClickedPlaceElements = true;
-    if (placeElementsTimer) clearTimeout(placeElementsTimer);
-    if (placeElementsBubbleTimer) clearTimeout(placeElementsBubbleTimer);
-    document.querySelectorAll('.skin-speech-bubble-wrapper').forEach(b => b.remove());
-
     placeRandomSimTarget();
     randomizeSimWalls();
 });
