@@ -40,8 +40,33 @@ const MIME = {
   '.txt'   : 'text/plain; charset=utf-8',
 };
 
+// ─── Rate Limiter ─────────────────────────────────────────────────────────────
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 200;
+const ipRequestCounts = new Map();
+
+// Clear the request counts periodically to prevent memory leaks.
+// unref() ensures this interval doesn't prevent Node from exiting.
+setInterval(() => {
+  ipRequestCounts.clear();
+}, RATE_LIMIT_WINDOW_MS).unref();
+
 // ─── Server ───────────────────────────────────────────────────────────────────
 const server = http.createServer((req, res) => {
+  // Rate limiting check
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  const currentCount = ipRequestCounts.get(ip) || 0;
+
+  if (currentCount >= RATE_LIMIT_MAX_REQUESTS) {
+    res.writeHead(429, {
+      'Content-Type': 'text/plain',
+      'Retry-After': Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)
+    });
+    res.end('429 Too Many Requests');
+    return;
+  }
+  ipRequestCounts.set(ip, currentCount + 1);
+
   // Parse the request URL and resolve the file path
   const parsedUrl = url.parse(req.url);
   let pathname = parsedUrl.pathname || '';
