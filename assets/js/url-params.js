@@ -228,7 +228,11 @@ function initShareModal() {
             shareBtn.id = 'btn-share';
             shareBtn.title = 'Partager';
             shareBtn.setAttribute('aria-label', 'Partager');
-            shareBtn.innerHTML = '<i data-fa="share-nodes"></i> Partager';
+            shareBtn.replaceChildren();
+            const shareIcon = document.createElement('i');
+            shareIcon.setAttribute('data-fa', 'share-nodes');
+            shareBtn.appendChild(shareIcon);
+            shareBtn.appendChild(document.createTextNode(' Partager'));
             // Insert at the bottom of the settings menu
             const divider = document.createElement('div');
             divider.className = 'dropdown-divider';
@@ -702,7 +706,11 @@ function initShareModal() {
         urlInput.value = url.toString();
 
         // Reset copy button state
-        btnCopy.innerHTML = '<i data-fa="clipboard"></i> Copier';
+        btnCopy.replaceChildren();
+        const icon = document.createElement('i');
+        icon.setAttribute('data-fa', 'clipboard');
+        btnCopy.appendChild(icon);
+        btnCopy.appendChild(document.createTextNode(' Copier'));
         btnCopy.classList.remove('btn-success');
         window.fa?.createIcons?.();
     }
@@ -803,7 +811,10 @@ function initShareModal() {
     btnToggleAdvanced.addEventListener('click', () => {
         const isVisible = advancedOptions.style.display === 'block';
         advancedOptions.style.display = isVisible ? 'none' : 'block';
-        btnToggleAdvanced.innerHTML = `Options Avancées <i data-fa="chevron-${isVisible ? 'down' : 'up'}"></i>`;
+        btnToggleAdvanced.replaceChildren(document.createTextNode('Options Avancées '));
+        const icon = document.createElement('i');
+        icon.setAttribute('data-fa', `chevron-${isVisible ? 'down' : 'up'}`);
+        btnToggleAdvanced.appendChild(icon);
         window.fa?.createIcons?.();
     });
 
@@ -817,7 +828,11 @@ function initShareModal() {
 
     btnCopy.addEventListener('click', () => {
         navigator.clipboard.writeText(urlInput.value).then(() => {
-            btnCopy.innerHTML = '<i data-fa="check"></i> Copié !';
+            btnCopy.replaceChildren();
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', 'check');
+            btnCopy.appendChild(icon);
+            btnCopy.appendChild(document.createTextNode(' Copié !'));
             btnCopy.classList.add('btn-success');
             window.fa?.createIcons?.();
 
@@ -831,7 +846,11 @@ function initShareModal() {
         if (qrContainer.style.display === 'block') {
             qrContainer.style.display = 'none';
             if (btnDownloadQr) btnDownloadQr.style.display = 'none';
-            btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Afficher le QR Code';
+            btnQrShare.replaceChildren();
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', 'qrcode');
+            btnQrShare.appendChild(icon);
+            btnQrShare.appendChild(document.createTextNode(' Afficher le QR Code'));
             window.fa?.createIcons?.();
             return;
         }
@@ -860,7 +879,11 @@ function initShareModal() {
     function generateQrCode() {
         qrContainer.style.display = 'block';
         if (btnDownloadQr) btnDownloadQr.style.display = 'inline-block';
-        btnQrShare.innerHTML = '<i data-fa="qrcode"></i> Masquer le QR Code';
+        btnQrShare.replaceChildren();
+        const icon = document.createElement('i');
+        icon.setAttribute('data-fa', 'qrcode');
+        btnQrShare.appendChild(icon);
+        btnQrShare.appendChild(document.createTextNode(' Masquer le QR Code'));
         window.fa?.createIcons?.();
         new QRious({
             element: qrCanvas,
