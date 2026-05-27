@@ -8,7 +8,7 @@ window.REGISTRY = [
     "isExternal": false,
     "isTeacher": false,
     "dataLevel": "1-2H",
-    "icon": "dt-person-carry-box",
+    "icon": "dt-shapes",
     "iconStyle": "width:32px;height:32px;flex-shrink:0;",
     "title": "Machine à trier",
     "desc": "Glisse et trie les objets par couleur ou par forme.",
@@ -36,7 +36,7 @@ window.REGISTRY = [
     "isExternal": false,
     "isTeacher": false,
     "dataLevel": "7-8H",
-    "icon": "dt-binary",
+    "icon": "dt-code",
     "iconStyle": "width:32px;height:32px;flex-shrink:0;",
     "title": "Bases du pseudocode",
     "desc": "Apprends à écrire tes premiers algorithmes pas à pas.",
@@ -85,35 +85,6 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "app-pixels-binaires",
-    "href": "alpha/webapps/pixels_binaires.html",
-    "target": null,
-    "rel": null,
-    "isAlpha": true,
-    "isExternal": false,
-    "isTeacher": false,
-    "dataLevel": "5-6H",
-    "icon": "dt-palette",
-    "iconStyle": "width:32px;height:32px;flex-shrink:0;",
-    "title": "Pixels Binaires",
-    "desc": "Découvre comment un ordinateur code une image avec des 0 et des 1.",
-    "tags": [
-      "#Codage",
-      "#Binaire",
-      "#Arts visuels"
-    ],
-    "ref": "DÉ>CODAGE 5-6 · Scénario 6",
-    "badges": [
-      {
-        "text": "5-6H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "app-machine-chiffrer",
     "href": "alpha/webapps/machine_a_chiffrer.html",
     "target": null,
@@ -150,7 +121,7 @@ window.REGISTRY = [
     "isExternal": false,
     "isTeacher": false,
     "dataLevel": "7-8H",
-    "icon": "dt-robot-astromech",
+    "icon": "dt-magnifying-glass",
     "iconStyle": "width:32px;height:32px;flex-shrink:0;",
     "title": "Détective IA",
     "desc": "Entraîne une IA à classer des objets ou résous des énigmes avec des arbres de décision.",
@@ -207,7 +178,7 @@ window.REGISTRY = [
     "isExternal": false,
     "isTeacher": false,
     "dataLevel": "3-4H",
-    "icon": "dt-shield-check",
+    "icon": "dt-lock-keyhole",
     "iconStyle": "width:32px;height:32px;flex-shrink:0;",
     "title": "Coffre-fort numérique",
     "desc": "Apprends à protéger tes données personnelles et à créer des mots de passe robustes.",
@@ -240,7 +211,7 @@ window.REGISTRY = [
     "isExternal": false,
     "isTeacher": false,
     "dataLevel": "7-8H",
-    "icon": "dt-person-carry-box",
+    "icon": "dt-file-zipper",
     "iconStyle": "width:32px;height:32px;flex-shrink:0;",
     "title": "Compresseur magique",
     "desc": "Découvre comment réduire la taille d'une image grâce à la compression RLE.",
@@ -248,6 +219,35 @@ window.REGISTRY = [
       "#Codage",
       "#Binaire",
       "#Maths"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-dresseur-neurones",
+    "href": "alpha/webapps/dresseur_neurones.html",
+    "target": null,
+    "rel": null,
+    "isAlpha": true,
+    "isExternal": false,
+    "isTeacher": false,
+    "dataLevel": "7-8H",
+    "icon": "dt-brain-circuit",
+    "iconStyle": "width:32px;height:32px;flex-shrink:0;",
+    "title": "Dresseur de neurones",
+    "desc": "Entraîne une IA à trier des fruits et découvre le biais algorithmique.",
+    "tags": [
+      "#Intelligence Artificielle",
+      "#Biais",
+      "#Classification"
     ],
     "ref": "DÉ>CODAGE 7-8 · Alpha",
     "badges": [
