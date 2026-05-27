@@ -33,7 +33,8 @@ if (!fs.existsSync(faSubsetScript)) {
 console.log(`🚀 Exécution de ${faSubsetScript} dans ${faSubsetDir}...`);
 
 try {
-    execSync(`node generate_fa_subset.js "${ROOT}"`, {
+    const { execFileSync } = require('child_process');
+    execFileSync('node', ['generate_fa_subset.js', ROOT], {
         cwd: faSubsetDir,
         stdio: 'inherit',
         env: { ...process.env, SUITE_DIR: ROOT }
