@@ -57,7 +57,7 @@
 
 
     // Gestion des événements du Header
-    document.addEventListener('DOMContentLoaded', () => {
+    function initHeaderEvents() {
         const themeBtn = document.getElementById('theme-toggle-btn');
         if (themeBtn) {
             themeBtn.addEventListener('click', window.toggleTheme);
@@ -122,7 +122,14 @@
                 }
             });
         }
-    });
+    }
+
+    // Sécurisation contre la condition de course PWA (Service Worker) : check readyState
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHeaderEvents);
+    } else {
+        initHeaderEvents();
+    }
 })();
 
 // Service Worker Registration

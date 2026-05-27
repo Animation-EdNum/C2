@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <title>💻 Bases du pseudocode</title>
+    <meta property="og:title" content="Bases du pseudocode">
+    <meta property="og:description" content="Découvre les bases du pseudocode pour écrire des algorithmes simplement.">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <style>
+        body > header, body > .container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-gradient-start: #4f46e5; --bg-gradient-end: #312e81;
+            --card-bg: rgba(255, 255, 255, 0.85); --card-border: rgba(99, 102, 241, 0.2);
+            --container-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #1e1b4b; --text-secondary: #4338ca; --text-muted: #6366f1;
+            --accent: #4f46e5; --accent-dark: #3730a3;
+            --badge-bg: #e0e7ff; --badge-color: #3730a3;
+            --input-border: #818cf8; --instructions-bg: #f5f3ff;
+            --success: #10b981; --error: #ef4444;
+            --shadow-color: rgba(79, 70, 229, 0.15);
+            --code-bg: #1e1e3f; --code-text: #f8fafc;
+        }
+
+        body.dark {
+            --bg-gradient-start: #1e1b4b; --bg-gradient-end: #0f0728;
+            --card-bg: rgba(30, 41, 59, 0.75); --card-border: rgba(99, 102, 241, 0.2);
+            --container-bg: rgba(15, 23, 42, 0.8);
+            --text-main: #f8fafc; --text-secondary: #cbd5e1; --text-muted: #94a3b8;
+            --accent: #6366f1; --accent-dark: #4f46e5;
+            --badge-bg: #1e1b4b; --badge-color: #a5b4fc;
+            --input-border: #4f46e5; --instructions-bg: #1e293b;
+            --success: #34d399; --error: #f87171;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh; padding: 20px; color: var(--text-main);
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1400px); margin: 0 auto; background: var(--container-bg);
+            padding: 30px; border-radius: var(--radius-xl); box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: var(--glass-border);
+        }
+
+        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
+        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+
+        /* ========== DIFFICULTÉ (Masqué pour imposer la progression linéaire) ========== */
+        .difficulty-bar { display: none; }
+
+        /* ========== CARD FOOTER & SCORE BAR ========== */
+        .score-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .score-item {
+            text-align: center;
+        }
+        .score-item .score-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .score-item .score-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        /* ========== WORKSPACE LAYOUT ========== */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== LEFT PANEL: CODE ZONE ========== */
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .editor-container {
+            background: var(--code-bg);
+            border-radius: var(--radius-lg);
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            color: var(--code-text);
+            overflow-x: auto;
+            position: relative;
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .code-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .code-line.active {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .line-number {
+            color: #6366f1;
+            opacity: 0.6;
+            width: 25px;
+            text-align: right;
+            user-select: none;
+        }
+
+        .code-indent-1 { margin-left: 20px; }
+        .code-indent-2 { margin-left: 40px; }
+
+        .keyword { color: #f43f5e; font-weight: 700; }
+        .variable-name { color: #38bdf8; font-weight: 600; }
+        .operator { color: #f59e0b; }
+        .string-literal { color: #10b981; }
+
+        /* Interactive Selectors inside code lines */
+        .code-selector {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: var(--radius-sm);
+            color: #f8fafc;
+            font-family: inherit;
+            font-size: inherit;
+            padding: 2px 6px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .code-selector:hover, .code-selector:focus {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: var(--accent);
+        }
+        body.dark .code-selector {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Correction : Variables lisibles dans les listes (options claires sur fond clair en mode clair, et inversement) */
+        .code-selector option {
+            background-color: #ffffff;
+            color: #1e1e3f;
+        }
+        body.dark .code-selector option {
+            background-color: #1e1e3f;
+            color: #f8fafc;
+        }
+
+        /* ========== RIGHT PANEL: RENDER ZONE ========== */
+        .render-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Metaphor 1: Magical calculating machine */
+        .magic-machine {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            border: 1px dashed var(--accent);
+            min-height: 200px;
+            justify-content: center;
+        }
+
+        .memory-slots {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .memory-slot {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 10px 15px;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transition: transform 0.3s;
+        }
+        .memory-slot.updated {
+            transform: scale(1.1);
+            border-color: var(--success);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .slot-name {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .slot-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        /* LED Output Console */
+        .led-console {
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: var(--radius-md);
+            padding: 10px 15px;
+            color: #22c55e;
+            font-family: monospace;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+            font-size: 14px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow-y: auto;
+        }
+        .led-line {
+            animation: typeAnim 0.2s ease-out;
+        }
+
+        @keyframes typeAnim {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Metaphor 2: 2D Grid robot simulation */
+        .sim-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 8px;
+            aspect-ratio: 1;
+            max-width: 320px;
+            margin: 0 auto;
+            border: 2px solid var(--accent);
+            box-shadow: 0 8px 24px var(--shadow-color);
+        }
+
+        .grid-cell {
+            background: var(--card-bg);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .grid-cell.star-cell::after {
+            content: '⭐';
+            font-size: 20px;
+            animation: floatStar 1.5s infinite ease-in-out;
+        }
+
+        @keyframes floatStar {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-4px) scale(1.1); }
+        }
+
+        .robot-agent {
+            width: 80%;
+            height: 80%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s var(--spring-easing, cubic-bezier(0.175, 0.885, 0.32, 1.275));
+            z-index: 2;
+        }
+
+        .robot-agent svg {
+            width: 100%;
+            height: 100%;
+            color: var(--accent);
+        }
+
+        /* ========== EXECUTION CONTROLS ========== */
+        .controls-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 16px var(--shadow-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .execution-info {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .speed-control input {
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        /* ========== CHALLENGE TARGET SUMMARY ========== */
+        .target-box {
+            background: var(--instructions-bg);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            font-size: 14px;
+            color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .target-box strong {
+            color: var(--accent-dark);
+            font-size: 15px;
+        }
+
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+
+        @media print { .no-print { display: none !important; } }
+    </style>
+    <script src="../../assets/js/scores.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="person-carry-box"></i>
+                </a>
+                <div>
+                    <h1>Bases du pseudocode</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <p class="subtitle">Écris tes premiers algorithmes en modifiant interactivement le pseudocode et observe le résultat en direct !</p>
+
+            <!-- TABS (Chapters) -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-pseudo_var"><i data-fa="input-numeric"></i> 1. Variables</button>
+                <button class="tab-btn" id="tab-pseudo_cond"><i data-fa="compass"></i> 2. Conditions</button>
+                <button class="tab-btn" id="tab-pseudo_loop"><i data-fa="repeat"></i> 3. Boucle Répéter</button>
+                <button class="tab-btn" id="tab-pseudo_while"><i data-fa="arrows-rotate"></i> 4. Boucle Tant que</button>
+            </div>
+
+            <!-- DIFFICULTY (Barre cachée dans l'interface mais fonctionnelle dans le moteur) -->
+            <div class="difficulty-bar">
+                <button class="diff-btn active" id="diff-easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile</button>
+                <button class="diff-btn" id="diff-medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen</button>
+                <button class="diff-btn" id="diff-hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile</button>
+            </div>
+
+            <!-- WORKSPACE -->
+            <div class="workspace">
+                <!-- Left panel: Code Editor -->
+                <section class="panel" aria-labelledby="editor-title">
+                    <h2 class="panel-title" id="editor-title">
+                        <i data-fa="clipboard"></i> L'Algorithme
+                    </h2>
+                    <div class="target-box" id="level-target">
+                        <!-- Dynamic instructions here -->
+                    </div>
+                    <div class="editor-container" id="editor-lines" aria-label="Éditeur de pseudocode">
+                        <!-- Code lines injected here -->
+                    </div>
+                </section>
+
+                <!-- Right panel: Rendering/Visualizer -->
+                <section class="panel" aria-labelledby="render-title">
+                    <h2 class="panel-title" id="render-title">
+                        <i data-fa="desktop"></i> Visualisation & Trace
+                    </h2>
+                    
+                    <div class="render-container" id="render-area">
+                        <!-- Dynamic rendering metaphor (Calcul machine OR Robot grid) -->
+                    </div>
+
+                    <!-- Memory inspector -->
+                    <div id="memory-inspector" style="display: none;">
+                        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; color: var(--text-muted);">
+                            Mémoire des Variables
+                        </h3>
+                        <div class="memory-slots" id="vars-container"></div>
+                    </div>
+
+                    <!-- Led Console -->
+                    <div>
+                        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; color: var(--text-muted);">
+                            Sortie Écran (Afficher)
+                        </h3>
+                        <div class="led-console" id="console-body">
+                            <div style="opacity: 0.5; font-style: italic;">En attente du lancement…</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- EXECUTION CONTROL BAR -->
+            <div class="controls-panel">
+                <div class="btn-group">
+                    <button class="btn btn-success" id="btn-play" title="Exécuter l'algorithme">
+                        <i data-fa="play"></i> Lancer
+                    </button>
+                    <button class="btn btn-primary" id="btn-step" title="Exécuter pas à pas">
+                        <i data-fa="forward"></i> Pas-à-pas
+                    </button>
+                    <button class="btn btn-outline" id="btn-reset" title="Réinitialiser">
+                        <i data-fa="rotate-left"></i> Réinitialiser
+                    </button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="speed-slider">Vitesse :</label>
+                    <input type="range" id="speed-slider" min="1" max="3" value="2" aria-label="Vitesse d'exécution">
+                </div>
+
+                <div class="execution-info" id="execution-msg">Prêt à l'exécution</div>
+            </div>
+
+            <!-- SCORE / STATS CARD FOOTER -->
+            <div class="card-footer">
+                <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats">
+                    <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                </button>
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Victoires</div>
+                        <div class="score-value" id="global-correct">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Série 🔥</div>
+                        <div class="score-value" id="global-streak">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/"
+                target="_blank" rel="noopener noreferrer">AP EdNum</a> avec <a href="../../merci.html" style="text-decoration: none;">❤️</a> et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <footer class="no-print">
+        <!-- Hidden icons for FA subset generator -->
+    </footer>
+
+    <script src="../../assets/js/confetti.js"></script>
+    <script>
+        // Custom translations monkey-patching for ScoreManager
+        ScoreManager.MODE_LABELS['pseudo_var'] = '1. Variables';
+        ScoreManager.MODE_LABELS['pseudo_cond'] = '2. Conditions';
+        ScoreManager.MODE_LABELS['pseudo_loop'] = '3. Boucle Répéter';
+        ScoreManager.MODE_LABELS['pseudo_while'] = '4. Boucle Tant que';
+
+        // Chapter state variables
+        let currentMode = 'pseudo_var'; // 'pseudo_var', 'pseudo_cond', 'pseudo_loop', 'pseudo_while'
+        let currentDifficulty = 'easy'; // 'easy', 'medium', 'hard'
+
+        // Scoring states
+        let globalCorrect = 0;
+        let globalStreak = 0;
+        let mistakesInCurrentLevel = 0;
+
+        // Level specifications
+        let initialVariables = {};
+        let variables = {};
+        let outputs = [];
+        let robotPos = { x: 0, y: 4 }; // columns (0-4), rows (0-4), starts bottom-left
+        let initialRobotPos = { x: 0, y: 4 };
+        let stars = [];
+        let initialStars = [];
+        let collectedStars = 0;
+        let robotDirection = 0;
+
+        // Execution Engine variables
+        let lines = [];
+        let currentLineIdx = -1;
+        let executionInterval = null;
+        let executionState = 'idle'; // 'idle', 'running', 'paused', 'finished'
+
+        // Define Chapters & Levels specifications
+        const MISSIONS = {
+            'pseudo_var': {
+                'easy': {
+                    targetText: "Modifie la valeur attribuée à <strong>A</strong> et le calcul de <strong>B</strong> pour obtenir la valeur de sortie <strong>10</strong>.",
+                    setup: () => {
+                        initialVariables = { a: 5, b: 0 };
+                        // line structures: [type, content_renderer, execution_logic]
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'var_decl', indent: 1, var: 'A', options: [2, 5, 8], selected: 5 },
+                            { type: 'var_calc', indent: 1, var: 'B', rightVar: 'A', operator: '+', options: [2, 5, 8], selected: 2 },
+                            { type: 'keyword', indent: 1, val: 'Afficher B' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    verify: () => variables.b === 10
+                },
+                'medium': {
+                    targetText: "L'algorithme doit échanger les valeurs de <strong>A</strong> (3) et <strong>B</strong> (8) pour que <strong>A</strong> devienne <strong>8</strong> et <strong>B</strong> devienne <strong>3</strong>.",
+                    setup: () => {
+                        initialVariables = { a: 3, b: 8, temp: 3 };
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'comment', indent: 1, val: '// Initialisation' },
+                            { type: 'text', indent: 1, val: 'A ← 3' },
+                            { type: 'text', indent: 1, val: 'B ← 8' },
+                            { type: 'text', indent: 1, val: 'TEMP ← A' },
+                            { type: 'var_decl', indent: 1, var: 'A', label: 'A ←', options: ['TEMP', 'B', 'A'], selected: 'TEMP' },
+                            { type: 'var_decl', indent: 1, var: 'B', label: 'B ←', options: ['TEMP', 'B', 'A'], selected: 'TEMP' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    verify: () => variables.a === 8 && variables.b === 3
+                },
+                'hard': {
+                    targetText: "Résous le calcul : la variable de sortie <strong>RÉSOLUTION</strong> doit être égale à <strong>30</strong>.",
+                    setup: () => {
+                        initialVariables = { a: 3, b: 7, c: 2, resolution: 0 };
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'A ← 3' },
+                            { type: 'text', indent: 1, val: 'B ← 7' },
+                            { type: 'var_decl', indent: 1, var: 'C', options: [2, 3, 4], selected: 2 },
+                            { type: 'comment', indent: 1, val: '// Calcul automatique : (A + B) * C' },
+                            { type: 'text', indent: 1, val: 'RÉSOLUTION ← (A + B) * C' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    verify: () => variables.resolution === 30
+                }
+            },
+            'pseudo_cond': {
+                'easy': {
+                    targetText: "Ajuste la condition de la structure pour que l'âge testé (<strong>20 ans</strong>) affiche correctement <strong>'Adulte'</strong>.",
+                    setup: () => {
+                        initialVariables = { âge: 20 };
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'âge ← 20' },
+                            { type: 'cond_select', indent: 1, var: 'âge', operator: 'op', options: ['≥', '≤'], selected: '≤', value: 18 },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Adulte"' },
+                            { type: 'keyword', indent: 1, val: 'Sinon' },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Enfant"' },
+                            { type: 'keyword', indent: 1, val: 'FinSi' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    verify: () => outputs.includes('Adulte')
+                },
+                'medium': {
+                    targetText: "Configure le seuil d'alerte de température pour que le capteur affiche <strong>'Alerte'</strong> lorsque la température est de <strong>32 °C</strong>.",
+                    setup: () => {
+                        initialVariables = { temp: 32 };
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'temp ← 32' },
+                            { type: 'cond_select', indent: 1, var: 'temp', operator: '>', options: [15, 20, 30], selected: 15 },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Alerte"' },
+                            { type: 'keyword', indent: 1, val: 'Sinon' },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Normal"' },
+                            { type: 'keyword', indent: 1, val: 'FinSi' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    verify: () => outputs.includes('Alerte') && lines[2].selected === 30
+                },
+                'hard': {
+                    targetText: "Modifie la condition de la note pour qu'une note de <strong>5</strong> affiche <strong>'Suffisant'</strong> (Seuils : 6 Excellent, >= 4 Suffisant).",
+                    setup: () => {
+                        initialVariables = { note: 5 };
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'note ← 5' },
+                            { type: 'cond_select', indent: 1, var: 'note', label: 'Si note ≥', options: [5, 6], selected: 6 },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Excellent"' },
+                            { type: 'cond_select', indent: 1, var: 'note', label: 'Sinon Si note ≥', options: [3, 4, 5], selected: 3 },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Suffisant"' },
+                            { type: 'keyword', indent: 1, val: 'Sinon' },
+                            { type: 'keyword', indent: 2, val: 'Afficher "Insuffisant"' },
+                            { type: 'keyword', indent: 1, val: 'FinSi' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    verify: () => outputs.includes('Suffisant') && lines[4].selected === 4
+                }
+            },
+            'pseudo_loop': {
+                'easy': {
+                    targetText: "Règle la boucle RÉPÉTER pour que le robot avance de <strong>4 cases</strong> vers la droite pour atteindre la cible ⭐.",
+                    setup: () => {
+                        initialRobotPos = { x: 0, y: 4 };
+                        initialStars = [{ x: 4, y: 4 }];
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'loop_select', indent: 1, label: 'Répéter', options: [3, 4, 5], selected: 3, suffix: 'fois' },
+                            { type: 'cmd', indent: 2, val: 'AvancerDroite()' },
+                            { type: 'keyword', indent: 1, val: 'FinRépéter' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    // Correction pédagogique : Le robot doit effectuer EXACTEMENT 4 répétitions
+                    verify: () => robotPos.x === 4 && robotPos.y === 4 && lines[1].selected === 4
+                },
+                'medium': {
+                    targetText: "Dirige le robot dans un zig-zag régulier pour collecter toutes les ⭐ (2 étapes vers le haut-droite).",
+                    setup: () => {
+                        initialRobotPos = { x: 0, y: 4 };
+                        initialStars = [{ x: 1, y: 3 }, { x: 2, y: 2 }];
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'loop_select', indent: 1, label: 'Répéter', options: [1, 2, 3], selected: 1, suffix: 'fois' },
+                            { type: 'cmd', indent: 2, val: 'AvancerHaut()' },
+                            { type: 'cmd', indent: 2, val: 'AvancerDroite()' },
+                            { type: 'keyword', indent: 1, val: 'FinRépéter' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    // Correction pédagogique : Le robot doit effectuer EXACTEMENT 2 répétitions
+                    verify: () => collectedStars === 2 && lines[1].selected === 2
+                },
+                'hard': {
+                    targetText: "Dessine un grand escalier montant vers la droite pour amener le robot à la cible ⭐.",
+                    setup: () => {
+                        initialRobotPos = { x: 0, y: 4 };
+                        initialStars = [{ x: 3, y: 1 }];
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'loop_select', indent: 1, label: 'Répéter', options: [2, 3, 4], selected: 2, suffix: 'fois' },
+                            { type: 'cmd', indent: 2, val: 'AvancerDroite()' },
+                            { type: 'cmd', indent: 2, val: 'AvancerHaut()' },
+                            { type: 'keyword', indent: 1, val: 'FinRépéter' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    // Correction pédagogique : Le robot doit effectuer EXACTEMENT 3 répétitions
+                    verify: () => robotPos.x === 3 && robotPos.y === 1 && lines[1].selected === 3
+                }
+            },
+            'pseudo_while': {
+                'easy': {
+                    targetText: "Modifie la condition de la boucle TANT QUE pour que le robot avance de <strong>4 cases</strong> et s'arrête pile devant l'obstacle.",
+                    setup: () => {
+                        initialRobotPos = { x: 0, y: 4 };
+                        initialVariables = { colonne: 0 };
+                        initialStars = [{ x: 4, y: 4 }];
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'colonne ← 0' },
+                            { type: 'while_select', indent: 1, var: 'colonne', operator: '<', options: [3, 4, 5], selected: 3 },
+                            { type: 'cmd', indent: 2, val: 'AvancerDroite()' },
+                            { type: 'text', indent: 2, val: 'colonne ← colonne + 1' },
+                            { type: 'keyword', indent: 1, val: 'FinTantque' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    // Correction pédagogique : La condition Tant que doit être EXACTEMENT < 4
+                    verify: () => robotPos.x === 4 && robotPos.y === 4 && lines[2].selected === 4
+                },
+                'medium': {
+                    targetText: "Fais répéter la boucle TANT QUE le compteur d'étoiles est inférieur à la cible pour ramasser exactement <strong>3 ⭐</strong>.",
+                    setup: () => {
+                        initialRobotPos = { x: 0, y: 4 };
+                        initialVariables = { étoiles: 0 };
+                        initialStars = [{ x: 1, y: 4 }, { x: 2, y: 4 }, { x: 3, y: 4 }];
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'étoiles ← 0' },
+                            { type: 'while_select', indent: 1, var: 'étoiles', operator: '<', options: [2, 3, 4], selected: 2 },
+                            { type: 'cmd', indent: 2, val: 'AvancerDroite()' },
+                            { type: 'comment', indent: 2, val: '// incrémenter les étoiles' },
+                            { type: 'text', indent: 2, val: 'étoiles ← étoiles + 1' },
+                            { type: 'keyword', indent: 1, val: 'FinTantque' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    // Correction pédagogique : La condition Tant que doit être EXACTEMENT < 3 pour collecter 3 étoiles
+                    verify: () => collectedStars === 3 && lines[2].selected === 3
+                },
+                'hard': {
+                    targetText: "Trouve la bonne condition d'arrêt sur la variable <strong>X</strong> pour que le calcul final affiche exactement <strong>6</strong>.",
+                    setup: () => {
+                        initialVariables = { x: 0, y: 0 };
+                        lines = [
+                            { type: 'keyword', val: 'Début' },
+                            { type: 'text', indent: 1, val: 'X ← 0' },
+                            { type: 'text', indent: 1, val: 'Y ← 0' },
+                            { type: 'while_select', indent: 1, var: 'X', operator: '<', options: [2, 3, 4], selected: 2 },
+                            { type: 'text', indent: 2, val: 'X ← X + 1' },
+                            { type: 'text', indent: 2, val: 'Y ← Y + 1' },
+                            { type: 'keyword', indent: 1, val: 'FinTantque' },
+                            { type: 'keyword', indent: 1, val: 'Afficher X + Y' },
+                            { type: 'keyword', val: 'Fin' }
+                        ];
+                    },
+                    // Correction pédagogique : La condition Tant que doit être EXACTEMENT < 3
+                    verify: () => outputs.includes('6') && lines[3].selected === 3
+                }
+            }
+        };
+
+        // Initialize Level
+        function initLevel() {
+            const mission = MISSIONS[currentMode][currentDifficulty];
+
+            // Load variables & structures for the new level first
+            mission.setup();
+
+            // Render difficulty badge
+            let diffBadge = '';
+            if (currentDifficulty === 'easy') {
+                diffBadge = '<span class="badge" style="background: #2ecc71; color: white; margin-bottom: 8px; display: inline-block;">Niveau Facile</span><br>';
+            } else if (currentDifficulty === 'medium') {
+                diffBadge = '<span class="badge" style="background: #f1c40f; color: white; margin-bottom: 8px; display: inline-block;">Niveau Moyen</span><br>';
+            } else if (currentDifficulty === 'hard') {
+                diffBadge = '<span class="badge" style="background: #e74c3c; color: white; margin-bottom: 8px; display: inline-block;">Niveau Difficile</span><br>';
+            }
+            document.getElementById('level-target').innerHTML = diffBadge + mission.targetText;
+
+            // Correction : Render DOM wrappers FIRST, then call resetExecution() to copy values and synchronize DOM
+            renderPseudocode();
+            renderVisualizer();
+
+            // Reset execution will now correctly copy the new initial states (variables, robotPos, stars) and synchronize visual elements in DOM
+            resetExecution();
+
+            ScoreManager.init('apprendre_pseudocode');
+            // Disable the adaptive difficulty nudge popup because this app uses automatic progression
+            ScoreManager.checkAdaptiveDifficulty = () => {};
+        }
+
+        // Render code lines dynamically
+        function renderPseudocode() {
+            const container = document.getElementById('editor-lines');
+            container.replaceChildren();
+
+            lines.forEach((line, idx) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'code-line';
+                lineDiv.id = `line-${idx}`;
+
+                if (line.indent) {
+                    lineDiv.classList.add(`code-indent-${line.indent}`);
+                }
+
+                // Line number
+                const numSpan = document.createElement('span');
+                numSpan.className = 'line-number';
+                numSpan.textContent = idx + 1;
+                lineDiv.appendChild(numSpan);
+
+                // Build line contents based on type
+                if (line.type === 'keyword') {
+                    const span = document.createElement('span');
+                    span.className = 'keyword';
+                    span.textContent = line.val;
+                    lineDiv.appendChild(span);
+                } else if (line.type === 'comment') {
+                    const span = document.createElement('span');
+                    span.className = 'comment';
+                    span.style.color = '#6b7280';
+                    span.textContent = line.val;
+                    lineDiv.appendChild(span);
+                } else if (line.type === 'text') {
+                    const span = document.createElement('span');
+                    span.textContent = line.val;
+                    lineDiv.appendChild(span);
+                } else if (line.type === 'cmd') {
+                    const span = document.createElement('span');
+                    span.className = 'keyword';
+                    span.textContent = line.val;
+                    lineDiv.appendChild(span);
+                } else if (line.type === 'var_decl') {
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'variable-name';
+                    nameSpan.textContent = line.label || `${line.var} ←`;
+                    lineDiv.appendChild(nameSpan);
+
+                    const select = document.createElement('select');
+                    select.className = 'code-selector';
+                    select.setAttribute('aria-label', `Valeur de ${line.var}`);
+                    line.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        if (opt === line.selected) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', (e) => {
+                        const val = e.target.value;
+                        line.selected = isNaN(Number(val)) ? val : Number(val);
+                        resetExecution();
+                    });
+
+                    lineDiv.appendChild(select);
+                } else if (line.type === 'var_calc') {
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'variable-name';
+                    nameSpan.textContent = `${line.var} ← ${line.rightVar} ${line.operator}`;
+                    lineDiv.appendChild(nameSpan);
+
+                    const select = document.createElement('select');
+                    select.className = 'code-selector';
+                    select.setAttribute('aria-label', `Valeur ajoutée à ${line.rightVar}`);
+                    line.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        if (opt === line.selected) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', (e) => {
+                        line.selected = Number(e.target.value);
+                        resetExecution();
+                    });
+
+                    lineDiv.appendChild(select);
+                } else if (line.type === 'cond_select') {
+                    const kw = document.createElement('span');
+                    kw.className = 'keyword';
+                    
+                    let condLabel = 'Si';
+                    if (line.label) {
+                        condLabel = line.label;
+                    } else {
+                        condLabel = `Si ${line.var}`;
+                        if (line.operator && line.operator !== 'op') {
+                            condLabel += ` ${line.operator}`;
+                        }
+                    }
+                    kw.textContent = condLabel;
+                    lineDiv.appendChild(kw);
+
+                    const select = document.createElement('select');
+                    select.className = 'code-selector';
+                    select.setAttribute('aria-label', `Opérateur de condition`);
+                    line.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        if (opt === line.selected) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', (e) => {
+                        const val = e.target.value;
+                        line.selected = isNaN(Number(val)) ? val : Number(val);
+                        resetExecution();
+                    });
+
+                    lineDiv.appendChild(select);
+
+                    if (line.value !== undefined) {
+                        const endSpan = document.createElement('span');
+                        endSpan.textContent = ` ${line.value} Alors`;
+                        lineDiv.appendChild(endSpan);
+                    } else {
+                        const endSpan = document.createElement('span');
+                        endSpan.textContent = ' Alors';
+                        lineDiv.appendChild(endSpan);
+                    }
+                } else if (line.type === 'loop_select') {
+                    const kw = document.createElement('span');
+                    kw.className = 'keyword';
+                    kw.textContent = `${line.label} `;
+                    lineDiv.appendChild(kw);
+
+                    const select = document.createElement('select');
+                    select.className = 'code-selector';
+                    select.setAttribute('aria-label', `Nombre d'itérations`);
+                    line.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        if (opt === line.selected) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', (e) => {
+                        line.selected = Number(e.target.value);
+                        resetExecution();
+                    });
+
+                    lineDiv.appendChild(select);
+
+                    const endSpan = document.createElement('span');
+                    endSpan.textContent = ` ${line.suffix}`;
+                    lineDiv.appendChild(endSpan);
+                } else if (line.type === 'while_select') {
+                    const kw = document.createElement('span');
+                    kw.className = 'keyword';
+                    kw.textContent = 'Tant que ';
+                    lineDiv.appendChild(kw);
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'variable-name';
+                    nameSpan.textContent = `${line.var} ${line.operator} `;
+                    lineDiv.appendChild(nameSpan);
+
+                    const select = document.createElement('select');
+                    select.className = 'code-selector';
+                    select.setAttribute('aria-label', `Valeur de comparaison pour la boucle`);
+                    line.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        if (opt === line.selected) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', (e) => {
+                        line.selected = Number(e.target.value);
+                        resetExecution();
+                    });
+
+                    lineDiv.appendChild(select);
+
+                    const endSpan = document.createElement('span');
+                    endSpan.className = 'keyword';
+                    endSpan.textContent = ' Faire';
+                    lineDiv.appendChild(endSpan);
+                }
+
+                container.appendChild(lineDiv);
+            });
+        }
+
+        // Render visualization elements
+        function renderVisualizer() {
+            const area = document.getElementById('render-area');
+            const inspector = document.getElementById('memory-inspector');
+            area.replaceChildren();
+
+            if (currentMode === 'pseudo_var' || currentMode === 'pseudo_cond') {
+                // Calculation Machine
+                inspector.style.display = 'block';
+
+                const machine = document.createElement('div');
+                machine.className = 'magic-machine';
+                machine.id = 'visualizer-machine';
+
+                const header = document.createElement('div');
+                header.style.textAlign = 'center';
+                header.style.fontWeight = 'bold';
+                header.style.color = 'var(--text-secondary)';
+                header.textContent = '🎰 MACHINE À CALCULER';
+                machine.appendChild(header);
+
+                const desc = document.createElement('p');
+                desc.style.textAlign = 'center';
+                desc.style.fontSize = '12px';
+                desc.style.opacity = '0.7';
+                desc.textContent = 'Déroule le code pour voir les variables se remplir !';
+                machine.appendChild(desc);
+
+                area.appendChild(machine);
+            } else {
+                // Robot grid
+                inspector.style.display = 'none';
+
+                const grid = document.createElement('div');
+                grid.className = 'sim-grid';
+                grid.id = 'visualizer-grid';
+
+                // Generate 5x5 grid cells (y: 0 to 4, x: 0 to 4)
+                for (let r = 0; r < 5; r++) {
+                    for (let c = 0; c < 5; c++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'grid-cell';
+                        cell.id = `cell-${c}-${r}`;
+                        grid.appendChild(cell);
+                    }
+                }
+
+                area.appendChild(grid);
+                syncRobotAndStarsUI();
+            }
+        }
+
+        // Reset variables inspector state
+        function updateVariablesInspector() {
+            const container = document.getElementById('vars-container');
+            container.replaceChildren();
+
+            Object.keys(variables).forEach(k => {
+                const slot = document.createElement('div');
+                slot.className = 'memory-slot';
+                slot.id = `slot-${k}`;
+
+                const name = document.createElement('div');
+                name.className = 'slot-name';
+                name.textContent = k;
+                slot.appendChild(name);
+
+                const val = document.createElement('div');
+                val.className = 'slot-val';
+                val.textContent = variables[k];
+                slot.appendChild(val);
+
+                container.appendChild(slot);
+            });
+        }
+
+        // Update single variable inside UI
+        function setVariable(name, val) {
+            variables[name] = val;
+            const slot = document.getElementById(`slot-${name}`);
+            if (slot) {
+                const valDiv = slot.querySelector('.slot-val');
+                if (valDiv) valDiv.textContent = val;
+
+                // animation pulse
+                slot.classList.remove('updated');
+                void slot.offsetWidth; // trigger reflow
+                slot.classList.add('updated');
+            }
+        }
+
+        // Sync grid UI with variables state
+        function syncRobotAndStarsUI() {
+            if (currentMode !== 'pseudo_loop' && currentMode !== 'pseudo_while') return;
+
+            // Clear old robot / stars
+            document.querySelectorAll('.grid-cell').forEach(cell => {
+                cell.classList.remove('star-cell');
+                const rob = cell.querySelector('.robot-agent');
+                if (rob) rob.remove();
+            });
+
+            // Set stars
+            stars.forEach(s => {
+                const cell = document.getElementById(`cell-${s.x}-${s.y}`);
+                if (cell) cell.classList.add('star-cell');
+            });
+
+            // Set robot
+            const robotCell = document.getElementById(`cell-${robotPos.x}-${robotPos.y}`);
+            if (robotCell) {
+                const robDiv = document.createElement('div');
+                robDiv.className = 'robot-agent';
+
+                // Rotate robot according to facing direction (0: Right, 1: Down, 2: Left, 3: Up)
+                const degrees = robotDirection * 90;
+                robDiv.style.transform = `rotate(${degrees}deg)`;
+
+                // Symmetrical high-tech abstract drone SVG (fully neutral, no front/back face)
+                robDiv.innerHTML = `
+                    <svg viewBox="0 0 100 100" fill="currentColor">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="8"/>
+                        <circle cx="50" cy="50" r="28" fill="currentColor" opacity="0.3"/>
+                        <circle cx="50" cy="50" r="16" fill="currentColor"/>
+                        <line x1="50" y1="8" x2="50" y2="92" stroke="currentColor" stroke-width="4" opacity="0.5"/>
+                        <line x1="8" y1="50" x2="92" y2="50" stroke="currentColor" stroke-width="4" opacity="0.5"/>
+                    </svg>
+                `;
+                robotCell.appendChild(robDiv);
+            }
+        }
+
+        // Print to LED screen
+        function printToConsole(text) {
+            outputs.push(text);
+            const consoleDiv = document.getElementById('console-body');
+            const placeholder = consoleDiv.querySelector('div');
+            if (placeholder && placeholder.style.fontStyle === 'italic') {
+                consoleDiv.replaceChildren();
+            }
+
+            const line = document.createElement('div');
+            line.className = 'led-line';
+            line.textContent = `> ${text}`;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    currentMode = e.currentTarget.id.replace('tab-', '');
+                    currentDifficulty = 'easy'; // Reset to easy when changing chapters
+                    initLevel();
+                });
+            });
+
+            // Difficulty
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    currentDifficulty = e.currentTarget.id.replace('diff-', '');
+                    initLevel();
+                });
+            });
+
+            // Action Buttons
+            document.getElementById('btn-play').addEventListener('click', () => {
+                if (executionState === 'running') {
+                    pauseExecution();
+                } else {
+                    startExecution();
+                }
+            });
+
+            document.getElementById('btn-step').addEventListener('click', () => {
+                if (executionState === 'idle' || executionState === 'paused') {
+                    executionState = 'paused';
+                    document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Reprendre';
+                    runStep();
+                }
+            });
+
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                resetExecution();
+            });
+
+            // Listen for global difficulty changes from ScoreManager popup
+            window.addEventListener('c2_change_difficulty', (e) => {
+                const nextDiff = e.detail.difficulty;
+                if (nextDiff === 'easy') document.getElementById('diff-easy')?.click();
+                else if (nextDiff === 'medium') document.getElementById('diff-medium')?.click();
+                else if (nextDiff === 'hard') document.getElementById('diff-hard')?.click();
+            });
+        }
+
+        // Reset Execution variables and restore initial states
+        function resetExecution() {
+            if (executionInterval) clearInterval(executionInterval);
+            executionInterval = null;
+            executionState = 'idle';
+            currentLineIdx = -1;
+
+            // Highlight reset
+            document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+
+            // Clear Console
+            const consoleDiv = document.getElementById('console-body');
+            consoleDiv.replaceChildren();
+            const placeholder = document.createElement('div');
+            placeholder.style.opacity = '0.5';
+            placeholder.style.fontStyle = 'italic';
+            placeholder.textContent = 'En attente du lancement…';
+            consoleDiv.appendChild(placeholder);
+            outputs = [];
+
+            // Restore initial variable states
+            variables = { ...initialVariables };
+            updateVariablesInspector();
+
+            // Restore initial robot / grid state
+            robotPos = { ...initialRobotPos };
+            robotDirection = 0; // facing right
+            stars = JSON.parse(JSON.stringify(initialStars));
+            collectedStars = 0;
+            syncRobotAndStarsUI();
+
+            // Reset execution status message
+            document.getElementById('execution-msg').textContent = 'Prêt à l\'exécution';
+            document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Lancer';
+            document.getElementById('btn-play').className = 'btn btn-success';
+
+            window.fa?.createIcons?.();
+        }
+
+        // Execution Controller loops
+        function startExecution() {
+            executionState = 'running';
+            document.getElementById('btn-play').innerHTML = '<i data-fa="pause"></i> Pause';
+            document.getElementById('btn-play').className = 'btn btn-clear';
+            document.getElementById('execution-msg').textContent = 'Exécution en cours…';
+            window.fa?.createIcons?.();
+
+            const speedValue = Number(document.getElementById('speed-slider').value);
+            const intervals = { 1: 1200, 2: 700, 3: 300 }; // Speed mapping
+            const ms = intervals[speedValue] || 700;
+
+            if (executionInterval) clearInterval(executionInterval);
+            executionInterval = setInterval(runStep, ms);
+        }
+
+        function pauseExecution() {
+            executionState = 'paused';
+            document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Reprendre';
+            document.getElementById('btn-play').className = 'btn btn-success';
+            document.getElementById('execution-msg').textContent = 'Exécution en pause';
+            window.fa?.createIcons?.();
+            if (executionInterval) clearInterval(executionInterval);
+        }
+
+        // The step-by-step trace machine!
+        // Loop helpers
+        let loopCounter = 0;
+        let loopLimit = 0;
+        let loopStartLine = -1;
+
+        function runStep() {
+            currentLineIdx++;
+
+            // Highlight line
+            document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+            const activeLine = document.getElementById(`line-${currentLineIdx}`);
+            if (activeLine) {
+                activeLine.classList.add('active');
+                activeLine.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // If we've reached the end
+            if (currentLineIdx >= lines.length) {
+                finishExecution();
+                return;
+            }
+
+            const currentLine = lines[currentLineIdx];
+
+            // Execution logic of instructions
+            if (currentLine.type === 'keyword') {
+                if (currentLine.val === 'Début') {
+                    // Start
+                } else if (currentLine.val === 'Fin') {
+                    finishExecution();
+                } else if (currentLine.val.startsWith('Afficher ')) {
+                    const exp = currentLine.val.replace('Afficher ', '');
+                    if (exp === 'B') {
+                        printToConsole(variables.b);
+                    } else if (exp === 'RÉSOLUTION') {
+                        printToConsole(variables.resolution);
+                    } else if (exp === 'X + Y') {
+                        printToConsole(variables.x + variables.y);
+                    } else {
+                        // strip quotes
+                        printToConsole(exp.replace(/"/g, ''));
+                    }
+                } else if (currentLine.val === 'Sinon') {
+                    // Skip 'Sinon' branches if condition was met (which is evaluated on 'Si' line)
+                    // We need to jump past the Sinon block. Let's find 'FinSi' line
+                    let finSiIdx = lines.findIndex((l, i) => i > currentLineIdx && l.val === 'FinSi');
+                    if (finSiIdx !== -1) {
+                        currentLineIdx = finSiIdx - 1; // Subtract 1 because loop will auto increment
+                    }
+                } else if (currentLine.val === 'FinSi') {
+                    // End condition block
+                } else if (currentLine.val === 'FinRépéter') {
+                    // Loop repeater
+                    loopCounter++;
+                    if (loopCounter < loopLimit) {
+                        currentLineIdx = loopStartLine; // jump back to inside repeat block
+                    } else {
+                        // Finished loop
+                        loopCounter = 0;
+                        loopLimit = 0;
+                        loopStartLine = -1;
+                    }
+                } else if (currentLine.val === 'FinTantque') {
+                    // Tand que loop repeater
+                    // We must evaluate the Tant que condition again
+                    let tantQueIdx = lines.findIndex((l, i) => l.type === 'while_select');
+                    if (tantQueIdx !== -1) {
+                        const l = lines[tantQueIdx];
+                        const val = variables[l.var.toLowerCase()];
+                        if (val < l.selected) {
+                            currentLineIdx = tantQueIdx; // Loop again
+                        }
+                    }
+                }
+            } else if (currentLine.type === 'var_decl') {
+                // Affectation simple
+                const val = currentLine.selected;
+                if (typeof val === 'string') {
+                    // Variables swap reference or dynamic value
+                    setVariable(currentLine.var.toLowerCase(), variables[val.toLowerCase()]);
+                } else {
+                    setVariable(currentLine.var.toLowerCase(), val);
+                }
+            } else if (currentLine.type === 'var_calc') {
+                // Affectation calculée
+                const rightVal = variables[currentLine.rightVar.toLowerCase()];
+                const opVal = currentLine.selected;
+                const result = rightVal + opVal;
+                setVariable(currentLine.var.toLowerCase(), result);
+            } else if (currentLine.type === 'text') {
+                // Automated execution lines
+                if (currentLine.val === 'colonne ← 0') {
+                    setVariable('colonne', 0);
+                } else if (currentLine.val === 'colonne ← colonne + 1') {
+                    setVariable('colonne', variables.colonne + 1);
+                } else if (currentLine.val === 'étoiles ← 0') {
+                    setVariable('étoiles', 0);
+                } else if (currentLine.val === 'étoiles ← étoiles + 1') {
+                    setVariable('étoiles', variables.étoiles + 1);
+                } else if (currentLine.val === 'X ← 0') {
+                    setVariable('x', 0);
+                } else if (currentLine.val === 'Y ← 0') {
+                    setVariable('y', 0);
+                } else if (currentLine.val === 'X ← X + 1') {
+                    setVariable('x', variables.x + 1);
+                } else if (currentLine.val === 'Y ← Y + 1') {
+                    setVariable('y', variables.y + 1);
+                } else if (currentLine.val === 'RÉSOLUTION ← (A + B) * C') {
+                    const opC = lines[3].selected;
+                    const result = (variables.a + variables.b) * opC;
+                    setVariable('resolution', result);
+                }
+            } else if (currentLine.type === 'cond_select') {
+                // If condition
+                const val = variables[currentLine.var ? currentLine.var.toLowerCase() : 'âge'];
+                let isConditionMet = false;
+                if (currentLine.operator === 'op') {
+                    if (currentLine.selected === '≥') isConditionMet = val >= 18;
+                    else isConditionMet = val <= 18;
+                } else if (currentLine.operator === '>') {
+                    isConditionMet = val > currentLine.selected;
+                } else if (currentLine.label && currentLine.label.includes('Si note')) {
+                    isConditionMet = val >= currentLine.selected;
+                }
+
+                if (!isConditionMet) {
+                    // Condition failed, skip to Sinon
+                    let sinonIdx = lines.findIndex((l, i) => i > currentLineIdx && (l.val === 'Sinon' || l.label === 'Sinon Si note ≥' || l.val === 'FinSi'));
+                    if (sinonIdx !== -1) {
+                        currentLineIdx = sinonIdx - 1; // subtract 1 since index increments next step
+                    }
+                }
+            } else if (currentLine.type === 'loop_select') {
+                // Enter loop Répéter
+                loopCounter = 0;
+                loopLimit = currentLine.selected;
+                loopStartLine = currentLineIdx; // next line is inside loop
+            } else if (currentLine.type === 'while_select') {
+                // Enter loop Tant que
+                const val = variables[currentLine.var.toLowerCase()];
+                const isConditionMet = val < currentLine.selected;
+                if (!isConditionMet) {
+                    // Jump past loop Tant que block. Find 'FinTantque' line
+                    let finTantqueIdx = lines.findIndex((l, i) => i > currentLineIdx && l.val === 'FinTantque');
+                    if (finTantqueIdx !== -1) {
+                        currentLineIdx = finTantqueIdx; // Skip past it
+                    }
+                }
+            } else if (currentLine.type === 'cmd') {
+                // Command to robot
+                if (currentLine.val === 'AvancerDroite()') {
+                    moveRobot(1, 0, 0); // direction Right
+                } else if (currentLine.val === 'AvancerHaut()') {
+                    moveRobot(0, -1, 3); // direction Up
+                }
+            }
+        }
+
+        // Helper to update robot state
+        function moveRobot(dx, dy, dir) {
+            robotDirection = dir;
+            const nextX = robotPos.x + dx;
+            const nextY = robotPos.y + dy;
+
+            if (nextX >= 0 && nextX < 5 && nextY >= 0 && nextY < 5) {
+                robotPos.x = nextX;
+                robotPos.y = nextY;
+                playSound('path'); // step audio
+
+                // Check star collection
+                const starIdx = stars.findIndex(s => s.x === robotPos.x && s.y === robotPos.y);
+                if (starIdx !== -1) {
+                    stars.splice(starIdx, 1);
+                    collectedStars++;
+                    playSound('success'); // collected sound
+                }
+
+                syncRobotAndStarsUI();
+            } else {
+                playSound('error');
+                showToast('Aïe ! Le robot a cogné contre un mur.', 'warn');
+            }
+        }
+
+        // Conclude step loops
+        function finishExecution() {
+            if (executionInterval) clearInterval(executionInterval);
+            executionInterval = null;
+            executionState = 'finished';
+
+            // Clear highlights
+            document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+
+            // Verification
+            const verifySuccess = MISSIONS[currentMode][currentDifficulty].verify();
+
+            if (verifySuccess) {
+                document.getElementById('execution-msg').textContent = 'Succès ! Mission accomplie 🎉';
+                document.getElementById('btn-play').className = 'btn btn-outline';
+                playSound('success');
+                updateScore(true);
+
+                // Auto-advance linear progression (Easy -> Medium -> Hard) on victory
+                if (currentDifficulty === 'easy') {
+                    setTimeout(() => {
+                        if (executionState === 'finished') {
+                            currentDifficulty = 'medium';
+                            initLevel();
+                            showToast('Niveau Suivant : Moyen ! 🚀', 'info');
+                        }
+                    }, 2500);
+                } else if (currentDifficulty === 'medium') {
+                    setTimeout(() => {
+                        if (executionState === 'finished') {
+                            currentDifficulty = 'hard';
+                            initLevel();
+                            showToast('Niveau Suivant : Difficile ! 🔥', 'info');
+                        }
+                    }, 2500);
+                } else if (currentDifficulty === 'hard') {
+                    document.getElementById('execution-msg').textContent = 'Félicitations ! Chapitre entièrement terminé ! 🏆🎉';
+                    showToast('Félicitations ! Tu as maîtrisé ce chapitre ! 🏆', 'success');
+                }
+            } else {
+                document.getElementById('execution-msg').textContent = 'Erreur… L\'algorithme n\'a pas rempli la cible.';
+                document.getElementById('btn-play').className = 'btn btn-outline-error';
+                playSound('error');
+                updateScore(false);
+
+                // Friendly custom pedagogical toast
+                let tip = 'Essaie de relire ton pseudocode attentivement.';
+                if (currentMode === 'pseudo_var' && currentDifficulty === 'easy') {
+                    tip = 'Conseil : Calcule 10 - A pour savoir quelle valeur ajouter.';
+                } else if (currentMode === 'pseudo_var' && currentDifficulty === 'medium') {
+                    tip = 'Conseil : Utilise la boîte TEMP pour sauvegarder la valeur de A avant de l\'écraser.';
+                } else if (currentMode === 'pseudo_cond') {
+                    tip = 'Conseil : Regarde le signe de comparaison ou le seuil choisi.';
+                } else if (currentMode === 'pseudo_loop') {
+                    tip = 'Conseil : Ajuste le nombre de répétitions dans la boucle.';
+                } else if (currentMode === 'pseudo_while') {
+                    tip = 'Conseil : Ta boucle doit s\'arrêter exactement au bon moment.';
+                }
+                showToast(tip, 'info');
+            }
+        }
+
+        // Update Score displays & registry
+        function updateScore(correct) {
+            if (correct) {
+                globalCorrect++;
+                globalStreak++;
+                const wasNewRecord = true; // simplicity trace
+                handleStreakCelebration(globalStreak, false, wasNewRecord);
+                ScoreManager.addSuccess(currentMode, currentDifficulty, mistakesInCurrentLevel);
+                mistakesInCurrentLevel = 0;
+            } else {
+                globalStreak = 0;
+                mistakesInCurrentLevel++;
+                ScoreManager.addMistake(currentMode, currentDifficulty);
+            }
+            document.getElementById('global-correct').textContent = globalCorrect;
+            document.getElementById('global-streak').textContent = globalStreak;
+        }
+
+        // Page main init logic
+        function init() {
+            setupEventListeners();
+            initLevel();
+        }
+
+        window.addEventListener('load', init);
+    </script>
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
+</body>
+</html>

@@ -398,15 +398,14 @@ const ScoreManager = {
                 return item;
             };
 
-            legend.appendChild(createLegendItem('color-success-1st', 'Réussite (1er coup)', String(aggSuccess1st)));
-            legend.appendChild(createLegendItem('color-success-more', 'Réussite (après essai)', String(aggSuccessMore)));
-            legend.appendChild(createLegendItem('color-mistakes', 'Erreurs (clics)', String(aggMistakes)));
+            legend.appendChild(createLegendItem('color-success-1st', 'Du 1er coup', String(aggSuccess1st)));
+            legend.appendChild(createLegendItem('color-success-more', 'Avec essais', String(aggSuccessMore)));
+            legend.appendChild(createLegendItem('color-mistakes', 'Erreurs', String(aggMistakes)));
 
             const effDiv = document.createElement('div');
             effDiv.style.marginTop = '10px';
-            effDiv.style.paddingTop = '10px';
-            effDiv.style.borderTop = '1px solid rgba(0,0,0,0.05)';
             effDiv.style.fontSize = '12px';
+            effDiv.style.fontWeight = 'bold';
             effDiv.style.opacity = '0.8';
 
             const strong = document.createElement('strong');
@@ -472,8 +471,6 @@ const ScoreManager = {
             }
             body.appendChild(modeContainer);
         }
-
-        body['innerHTML'] = html;
 
         // Trigger animation reset by re-setting stroke-dashoffset after a short delay
         setTimeout(() => {
@@ -573,7 +570,5 @@ const ScoreManager = {
         return container;
     }
 };
-
-
 
 window.ScoreManager = ScoreManager;

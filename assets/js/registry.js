@@ -28,6 +28,35 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-apprendre-pseudocode",
+    "href": "alpha/webapps/apprendre_pseudocode.html",
+    "target": null,
+    "rel": null,
+    "isAlpha": true,
+    "isExternal": false,
+    "isTeacher": false,
+    "dataLevel": "7-8H",
+    "icon": "dt-binary",
+    "iconStyle": "width:32px;height:32px;flex-shrink:0;",
+    "title": "Bases du pseudocode",
+    "desc": "Apprends à écrire tes premiers algorithmes pas à pas.",
+    "tags": [
+      "#Algorithmique",
+      "#Programmation",
+      "#Maths"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-jeu-grue",
     "href": "alpha/webapps/jeu_de_la_grue.html",
     "target": null,

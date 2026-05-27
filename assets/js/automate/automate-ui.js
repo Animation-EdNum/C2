@@ -526,6 +526,16 @@ function initApplication() {
     startTabTimer(activeTab);
     updateExtremeVisibility();
 
+    // Set initial speech bubble 1-minute timer on load if not already scheduled
+    if (window.treasureBubbleState && !window.treasureBubbleState.hasPlaced) {
+        if (!window.treasureBubbleState.timer && (activeTab === 'explore' || activeTab === 'simulator')) {
+            const tabAtLoad = activeTab;
+            window.treasureBubbleState.timer = setTimeout(() => {
+                triggerTreasureBubble(tabAtLoad);
+            }, 60000);
+        }
+    }
+
     if (activeSkin === 'pirate' || activeSkin === 'manta') startOceanRipples();
 
     if (window.cmdsHiddenByDefault && commandsVisible && !window.forceBlindcode) {
@@ -953,4 +963,3 @@ if (savedCustomMat) {
     document.documentElement.style.setProperty('--custom-mat-url', `url(${savedCustomMat})`);
 }
 updateCustomMatUI();
-
