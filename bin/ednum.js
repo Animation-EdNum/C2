@@ -53,6 +53,8 @@ setInterval(() => {
 
 // ─── Server ───────────────────────────────────────────────────────────────────
 const server = http.createServer((req, res) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+
   // Rate limiting check
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
   const currentCount = ipRequestCounts.get(ip) || 0;
