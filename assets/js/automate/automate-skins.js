@@ -152,17 +152,17 @@ const AT_SVGS = {
 
 window.addEventListener('DOMContentLoaded', () => {
     const padFwd = document.getElementById('pad-fwd');
-    if (padFwd) padFwd.innerHTML = AT_SVGS.forward;
+    if (padFwd) padFwd.replaceChildren(); padFwd.insertAdjacentHTML('beforeend', AT_SVGS.forward);
     const padBwd = document.getElementById('pad-bwd');
-    if (padBwd) padBwd.innerHTML = AT_SVGS.backward;
+    if (padBwd) padBwd.replaceChildren(); padBwd.insertAdjacentHTML('beforeend', AT_SVGS.backward);
     const padLeft = document.getElementById('pad-left');
-    if (padLeft) padLeft.innerHTML = AT_SVGS.left;
+    if (padLeft) padLeft.replaceChildren(); padLeft.insertAdjacentHTML('beforeend', AT_SVGS.left);
     const padRight = document.getElementById('pad-right');
-    if (padRight) padRight.innerHTML = AT_SVGS.right;
+    if (padRight) padRight.replaceChildren(); padRight.insertAdjacentHTML('beforeend', AT_SVGS.right);
 
     const legendContainer = document.getElementById('legend-container');
     if (legendContainer) {
-        legendContainer.innerHTML = `
+        legendContainer.replaceChildren(); legendContainer.insertAdjacentHTML('beforeend', `
         <div class="legend-item"><div class="legend-dot fwd">${AT_SVGS.forward}</div> Avancer</div>
         <div class="legend-item"><div class="legend-dot bwd">${AT_SVGS.backward}</div> Reculer</div>
         <div class="legend-item"><div class="legend-dot left">${AT_SVGS.left}</div> Gauche 90°</div>
@@ -249,7 +249,7 @@ function closeMatsModal() {
 
 function renderMatsGrid() {
     const container = document.getElementById('mats-list-container');
-    container.innerHTML = Object.keys(MAT_CONFIG).filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
+    container.replaceChildren(); container.insertAdjacentHTML('beforeend', Object.keys(MAT_CONFIG).filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
         const config = MAT_CONFIG[matId];
         const isActive = activeMat === matId;
 
@@ -293,7 +293,7 @@ function renderMatsGrid() {
                     </div>
                 </div>
             `;
-    container.innerHTML = customHtml + container.innerHTML;
+    container.insertAdjacentHTML('afterbegin', customHtml);
     window.fa?.createIcons?.();
 
     // Re-bind the upload listener here since the DOM is recreated
@@ -532,7 +532,7 @@ function closeSkinsModal() {
 
 function renderSkinsList() {
     const container = document.getElementById('skins-list-container');
-    container.innerHTML = Object.keys(SKIN_CONFIG).filter(id => {
+    container.replaceChildren(); container.insertAdjacentHTML('beforeend', Object.keys(SKIN_CONFIG).filter(id => {
         const config = SKIN_CONFIG[id];
         return !config.hidden || unlockedSkins.includes(id);
     }).map(skinId => {
@@ -613,10 +613,10 @@ function updateSkinGrids() {
         const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
         obstacles.forEach(cell => {
             if (obsSkin.includes('<svg') || obsSkin.includes('<i')) {
-                cell.innerHTML = obsSkin;
+                cell.replaceChildren(); cell.insertAdjacentHTML('beforeend', obsSkin);
                 delete cell.dataset.obstacle;
             } else {
-                cell.innerHTML = '';
+                cell.replaceChildren();
                 cell.dataset.obstacle = obsSkin;
             }
         });
@@ -664,7 +664,7 @@ function updateSkinButtons() {
     if (tgtBtn) {
         const tg = SKIN_CONFIG[activeSkin].target;
         if (tg && tg.includes('<svg')) {
-            tgtBtn.innerHTML = tg;
+            tgtBtn.replaceChildren(); tgtBtn.insertAdjacentHTML('beforeend', tg);
             const svg = tgtBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
@@ -680,7 +680,7 @@ function updateSkinButtons() {
     if (obsBtn) {
         const ob = SKIN_CONFIG[activeSkin].obstacle;
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-            obsBtn.innerHTML = ob;
+            obsBtn.replaceChildren(); obsBtn.insertAdjacentHTML('beforeend', ob);
             window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {

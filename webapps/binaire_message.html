@@ -435,7 +435,7 @@
             document.getElementById('decoder-input').disabled = true;
             document.getElementById('decoder-workspace').style.display = 'block';
 
-            document.getElementById('decode-alpha-grid').innerHTML = document.getElementById('alpha-grid').innerHTML;
+            const dag = document.getElementById('decode-alpha-grid'); dag.replaceChildren(); dag.insertAdjacentHTML('beforeend', document.getElementById('alpha-grid').innerHTML);
 
             decodeCurrentIndex = 0;
             decodeWordResult = Array(decodeBlocks.length).fill('_');
@@ -492,8 +492,8 @@
                 }
             }
 
-            document.getElementById('decode-bits-display').innerHTML = htmlBits.join('');
-            document.getElementById('decode-values-row').innerHTML = htmlVals.join('');
+            const dbd = document.getElementById('decode-bits-display'); dbd.replaceChildren(); dbd.insertAdjacentHTML('beforeend', htmlBits.join(''));
+            const dvr = document.getElementById('decode-values-row'); dvr.replaceChildren(); dvr.insertAdjacentHTML('beforeend', htmlVals.join(''));
             document.getElementById('decode-live-calc').innerText = `${sumStr.join(' + ')} = ${sum}`;
             document.getElementById('decode-live-calc').className = 'live-calc';
         }
@@ -595,7 +595,7 @@
             for (let i = 1; i <= 26; i++) {
                 html.push(`<div class="alpha-cell"><span class="alpha-cell-letter">${rankToLetter(i)}</span><span class="alpha-cell-bin">${rankToBin5(i)}</span></div>`);
             }
-            grid.innerHTML = html.join('');
+            grid.replaceChildren(); grid.insertAdjacentHTML('beforeend', html.join(''));
         }
 
         // Corrigé pour éviter des animations saccadées
@@ -647,19 +647,19 @@
 
         function renderGame() {
             const display = document.getElementById('encode-word-display');
-            display.innerHTML = encodeWord.split('').map((l, i) =>
+            display.replaceChildren(); display.insertAdjacentHTML('beforeend', encodeWord.split('').map((l, i) =>
                 `<div class="encode-letter-box ${i < encodeIndex ? 'completed' : (i === encodeIndex ? 'current' : '')}">${l}</div>`
             ).join('');
 
             const info = document.getElementById('encode-info');
-            if (encodeIndex >= encodeWord.length) info.innerHTML = '🎉 Mot complet !';
-            else info.innerHTML = `Encode la lettre <strong>${encodeWord[encodeIndex]}</strong> (rang ${letterToRank(encodeWord[encodeIndex])})`;
+            if (encodeIndex >= encodeWord.length) info.replaceChildren(); info.insertAdjacentHTML('beforeend', '🎉 Mot complet !');
+            else info.replaceChildren(); info.insertAdjacentHTML('beforeend', `Encode la lettre <strong>${encodeWord[encodeIndex]}</strong> (rang ${letterToRank(encodeWord[encodeIndex])})`;
 
             const powers = [16, 8, 4, 2, 1];
-            document.getElementById('encode-bits-row').innerHTML = powers.map((p, i) =>
+            const ebr = document.getElementById('encode-bits-row'); ebr.replaceChildren(); ebr.insertAdjacentHTML('beforeend', powers.map((p, i) =>
                 `<button class="encode-bit-btn ${encodeBits[i] ? 'active' : ''}" id="encode-bit-${i}">${encodeBits[i]}</button>`
             ).join('');
-            document.getElementById('encode-values-row').innerHTML = powers.map(p => `<div class="encode-value-label">${p}</div>`).join('');
+            const evr = document.getElementById('encode-values-row'); evr.replaceChildren(); evr.insertAdjacentHTML('beforeend', powers.map(p => `<div class="encode-value-label">${p}</div>`).join('');
         }
 
         function toggleBit(idx) {

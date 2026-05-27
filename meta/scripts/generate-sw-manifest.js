@@ -66,7 +66,7 @@ function generateManifest() {
     swContent = swContent.replace(assetRegex, assetString);
 
     // Dynamic cache-busting based on file content hash
-    const hash = crypto.createHash('sha256');
+    const hash = crypto.createHash('md5');
     for (const file of finalAssets) {
         if (file === './') continue; // Skip directory reference
         const filePath = path.join(__dirname, '..', '..', file);
