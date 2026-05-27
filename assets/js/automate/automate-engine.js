@@ -104,7 +104,7 @@ let simState = {
 
             captureInitialState(containerId, row, col, dirIndex) {
                 const layer = this.initLayer(containerId);
-                layer.innerHTML = ''; // Clear existing
+                layer.replaceChildren(); // Clear existing
 
                 const pt = this._getCenter(row, col);
                 const rot = dirIndex * 90;
@@ -343,7 +343,7 @@ let simState = {
 
             clear(containerId) {
                 const layer = document.querySelector(`#${containerId} .trail-layer`);
-                if (layer) layer.innerHTML = '';
+                if (layer) layer.replaceChildren();
                 delete this.states[containerId];
             },
 
@@ -469,7 +469,7 @@ let simState = {
             
             if (!exploreState.failed && MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#explore-grid .bot-cell[data-row="${exploreState.robotRow}"][data-col="${exploreState.robotCol}"] .mat-content`);
-                if (cell && cell.innerHTML.trim()) {
+                if (cell && cell.textContent.trim()) {
                     if (typeof collectMode !== 'undefined' && collectMode) {
                         // Remove emoji from grid cell (collected)
                         const gridCell = cell.closest('.bot-cell');
@@ -821,7 +821,7 @@ let simState = {
             const strip = document.getElementById('sim-program');
             const toggleBtn = document.getElementById('hide-cmd-toggle-btn');
 
-            strip.innerHTML = '';
+            strip.replaceChildren();
 
             if (simState.program.length === 0) {
                 strip.insertAdjacentHTML('beforeend', '<div class="empty-program">Ajoute des commandes avec les boutons ou le clavier…</div>');
@@ -1001,7 +1001,7 @@ let simState = {
             
             if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
-                if (cell && cell.innerHTML.trim()) {
+                if (cell && cell.textContent.trim()) {
                     // Only collect/store if crane is active
                     if (isCraneActive) {
                         const endContent = document.getElementById('sim-end-content');
@@ -1009,7 +1009,7 @@ let simState = {
                         if (emptyEnd) emptyEnd.style.display = 'none';
                         const el = document.createElement('div');
                         el.className = 'end-item';
-                        el.innerHTML = cell.innerHTML.trim();
+                        el.textContent = cell.textContent.trim();
                         if (endContent) endContent.appendChild(el);
                         
                         if (typeof collectMode !== 'undefined' && collectMode) {
@@ -1019,7 +1019,7 @@ let simState = {
                             if (gridCell) gridCell.classList.add('cell-collected');
                         }
                         addedItem = true;
-                        checkMemoryPair('sim-grid', cell.innerHTML.trim());
+                        checkMemoryPair('sim-grid', cell.textContent.trim());
                     }
                 }
             }
@@ -1133,7 +1133,7 @@ let simState = {
             const lastItem = items[items.length - 1];
             if (!lastItem) return false;
 
-            const match = items.slice(0, -1).find(el => el.innerHTML.trim() === content);
+            const match = items.slice(0, -1).find(el => el.textContent.trim() === content);
 
             if (match) {
                 match.classList.add('memory-matched');
@@ -1154,7 +1154,7 @@ let simState = {
                 const allCells = document.querySelectorAll(`#${gridId} .bot-cell .mat-content`);
                 let removed = 0;
                 allCells.forEach(cell => {
-                    if (cell.innerHTML.trim() === content && removed < 2) {
+                    if (cell.textContent.trim() === content && removed < 2) {
                         cell.closest('.bot-cell').classList.add('memory-cleared');
                         cell.remove();
                         removed++;
@@ -1568,7 +1568,9 @@ let simState = {
                 instructionHTML += `<div style="font-size: 0.9em; margin-top: 5px; color: var(--text-muted);"><i data-fa="eye-slash" style="width: 16px; height: 16px; vertical-align: middle;"></i> Pas d'aide sur la grille !</div>`;
             }
 
-            document.getElementById('draw-instruction').innerHTML = instructionHTML;
+            const instEl = document.getElementById('draw-instruction');
+            instEl.replaceChildren();
+            instEl.insertAdjacentHTML('beforeend', instructionHTML);
             window.fa?.createIcons?.();
 
             buildGrid('draw-grid', GRID_ROWS, GRID_COLS, []); // No obstacles in draw mode yet
@@ -1768,12 +1770,13 @@ let simState = {
 
         function renderDrawProgram() {
             const strip = document.getElementById('draw-program');
+            strip.replaceChildren();
             if (drawState.program.length === 0) {
-                strip.innerHTML = '<div class="empty-program">Ajoute des commandes...</div>';
+                strip.insertAdjacentHTML('beforeend', '<div class="empty-program">Ajoute des commandes...</div>');
             } else {
-                strip.innerHTML = drawState.program.map((cmd, i) => {
+                strip.insertAdjacentHTML('beforeend', drawState.program.map((cmd, i) => {
                     return `<div class="program-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
-                }).join('');
+                }).join(''));
 
                 // Add delete listeners
                 strip.querySelectorAll('.program-cmd').forEach(cmdEl => {
@@ -1806,7 +1809,9 @@ let simState = {
 
             readState.program = [...chal.correct];
             readState.bugIndex = -1;
-            document.getElementById('read-instruction').innerHTML = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
+            const instEl = document.getElementById('read-instruction');
+            instEl.replaceChildren();
+            instEl.insertAdjacentHTML('beforeend', "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>");
 
             buildGrid('read-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('read-grid', 'read-robot', chal.startR, chal.startC, chal.startD);
@@ -1820,9 +1825,10 @@ let simState = {
 
         function renderReadProgram() {
             const strip = document.getElementById('read-program');
-            strip.innerHTML = readState.program.map((cmd, i) => {
+            strip.replaceChildren();
+            strip.insertAdjacentHTML('beforeend', readState.program.map((cmd, i) => {
                 return `<div class="program-cmd read-only-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
-            }).join('');
+            }).join(''));
         }
 
         async function handleReadGridClick(r, c) {
@@ -1942,10 +1948,11 @@ let simState = {
 
         function renderChallengeOptions() {
             const container = document.getElementById('chal-options'); const labels = ['A', 'B', 'C'];
-            container.innerHTML = chalState.options.map((opt, i) => {
+            container.replaceChildren();
+            container.insertAdjacentHTML('beforeend', chalState.options.map((opt, i) => {
                 const cmds = opt.cmds.map(cmd => `<div class="mini-cmd">${AT_SVGS[cmd]}</div>`).join('');
                 return `<div class="challenge-option" data-idx="${i}" tabindex="0" data-index="${i}"><span class="option-label">${labels[i]}</span><div class="option-cmds">${cmds}</div></div>`;
-            }).join('');
+            }).join(''));
         }
 
         async function pickOption(idx) {
@@ -2116,7 +2123,7 @@ let simState = {
 
         function buildGrid(containerId, rows, cols, obstacles = []) {
             const grid = document.getElementById(containerId);
-            grid.innerHTML = ''; grid.style.position = 'relative';
+            grid.replaceChildren(); grid.style.position = 'relative';
             grid.setAttribute('role', 'grid');
             grid.setAttribute('aria-label', `Grille ${rows}x${cols}`);
 
@@ -2171,7 +2178,7 @@ let simState = {
                         cell.classList.add('obstacle');
                         const obs = SKIN_CONFIG[activeSkin].obstacle;
                         if (obs.includes('<svg') || obs.includes('<i')) {
-                            cell.innerHTML = obs;
+                            cell.insertAdjacentHTML('beforeend', obs);
                         } else {
                             cell.dataset.obstacle = obs;
                         }
@@ -2182,7 +2189,7 @@ let simState = {
                         if (index < content.length) {
                             const span = document.createElement('span');
                             span.className = 'mat-content';
-                            span.innerHTML = content[index];
+                            span.textContent = content[index];
                             cell.appendChild(span);
                         }
                     }
@@ -2204,7 +2211,8 @@ let simState = {
             }
             if (content !== null) {
                 if (content.startsWith('<')) {
-                    ov.innerHTML = content;
+                    ov.replaceChildren();
+                    ov.insertAdjacentHTML('beforeend', content);
                 } else {
                     ov.innerText = content;
                 }
