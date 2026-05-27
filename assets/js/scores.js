@@ -55,11 +55,7 @@ const ScoreManager = {
         return (difficulty === null || difficulty === undefined) ? this._NO_DIFF : String(difficulty);
     },
 
-    _escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    },
+
 
     init(appId) {
         this.appId = appId;
@@ -323,17 +319,22 @@ const ScoreManager = {
         const body = document.getElementById('score-modal-body');
         if (!body) return;
 
+        body.replaceChildren();
+
         if (Object.keys(this.stats).length === 0) {
-            body.innerHTML = '<p style="text-align: center; color: var(--text-color); opacity: 0.7;">Aucune statistique enregistrée pour le moment.</p>';
+            const p = document.createElement('p');
+            p.style.textAlign = 'center';
+            p.style.color = 'var(--text-color)';
+            p.style.opacity = '0.7';
+            p.textContent = 'Aucune statistique enregistrée pour le moment.';
+            body.appendChild(p);
             return;
         }
 
-        let html = '';
         for (const mode in this.stats) {
-            const modeName = this.MODE_LABELS[mode] || this._escapeHtml(mode);
+            const modeName = this.MODE_LABELS[mode] || mode;
             const diffs = Object.keys(this.stats[mode]);
 
-            // Aggregation for the chart
             let aggSuccess1st = 0;
             let aggSuccessMore = 0;
             let aggMistakes = 0;
@@ -349,64 +350,119 @@ const ScoreManager = {
 
             const totalActions = totalSuccess + aggMistakes;
 
-            html += `<div class="stat-mode-container">
-                        <h3 class="stat-mode-title">${modeName}</h3>
-                        <div class="stat-chart-wrapper">
-                            ${this.generateDonutChart(aggSuccess1st, aggSuccessMore, aggMistakes)}
-                            <div class="stat-legend">
-                                <div class="stat-legend-item">
-                                    <div class="stat-legend-color color-success-1st"></div>
-                                    <span class="stat-legend-label">Réussite (1er coup)</span>
-                                    <span class="stat-legend-value">${this._escapeHtml(String(aggSuccess1st))}</span>
-                                </div>
-                                <div class="stat-legend-item">
-                                    <div class="stat-legend-color color-success-more"></div>
-                                    <span class="stat-legend-label">Réussite (après essai)</span>
-                                    <span class="stat-legend-value">${this._escapeHtml(String(aggSuccessMore))}</span>
-                                </div>
-                                <div class="stat-legend-item">
-                                    <div class="stat-legend-color color-mistakes"></div>
-                                    <span class="stat-legend-label">Erreurs (clics)</span>
-                                    <span class="stat-legend-value">${this._escapeHtml(String(aggMistakes))}</span>
-                                </div>
-                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); font-size: 12px; opacity: 0.8;">
-                                    <strong>Efficacité globale :</strong> ${totalActions > 0 ? Math.round((totalSuccess / totalActions) * 100) : 0}%
-                                </div>
-                            </div>
-                        </div>`;
+            const modeContainer = document.createElement('div');
+            modeContainer.className = 'stat-mode-container';
 
-            // Detailed table
+            const title = document.createElement('h3');
+            title.className = 'stat-mode-title';
+            title.textContent = modeName;
+            modeContainer.appendChild(title);
+
+            const chartWrapper = document.createElement('div');
+            chartWrapper.className = 'stat-chart-wrapper';
+
+            const donutChart = this.generateDonutChart(aggSuccess1st, aggSuccessMore, aggMistakes);
+            chartWrapper.appendChild(donutChart);
+
+            const legend = document.createElement('div');
+            legend.className = 'stat-legend';
+
+            const createLegendItem = (colorClass, labelText, valueText) => {
+                const item = document.createElement('div');
+                item.className = 'stat-legend-item';
+
+                const colorDiv = document.createElement('div');
+                colorDiv.className = `stat-legend-color ${colorClass}`;
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'stat-legend-label';
+                labelSpan.textContent = labelText;
+
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'stat-legend-value';
+                valueSpan.textContent = valueText;
+
+                item.appendChild(colorDiv);
+                item.appendChild(labelSpan);
+                item.appendChild(valueSpan);
+                return item;
+            };
+
+            legend.appendChild(createLegendItem('color-success-1st', 'Réussite (1er coup)', String(aggSuccess1st)));
+            legend.appendChild(createLegendItem('color-success-more', 'Réussite (après essai)', String(aggSuccessMore)));
+            legend.appendChild(createLegendItem('color-mistakes', 'Erreurs (clics)', String(aggMistakes)));
+
+            const effDiv = document.createElement('div');
+            effDiv.style.marginTop = '10px';
+            effDiv.style.paddingTop = '10px';
+            effDiv.style.borderTop = '1px solid rgba(0,0,0,0.05)';
+            effDiv.style.fontSize = '12px';
+            effDiv.style.opacity = '0.8';
+
+            const strong = document.createElement('strong');
+            strong.textContent = 'Efficacité globale : ';
+            effDiv.appendChild(strong);
+
+            const effText = document.createTextNode(`${totalActions > 0 ? Math.round((totalSuccess / totalActions) * 100) : 0}%`);
+            effDiv.appendChild(effText);
+
+            legend.appendChild(effDiv);
+            chartWrapper.appendChild(legend);
+            modeContainer.appendChild(chartWrapper);
+
             const isNoDiff = diffs.length === 1 && diffs[0] === this._NO_DIFF;
             if (!isNoDiff) {
-                html += `<div class="stat-table-wrapper"><table class="stat-table">
-                            <thead><tr>
-                                <th>Difficulté</th>
-                                <th>1er coup</th>
-                                <th>Total</th>
-                                <th>Erreurs</th>
-                            </tr></thead>
-                            <tbody>`;
+                const tableWrapper = document.createElement('div');
+                tableWrapper.className = 'stat-table-wrapper';
 
+                const table = document.createElement('table');
+                table.className = 'stat-table';
+
+                const thead = document.createElement('thead');
+                const trHead = document.createElement('tr');
+                ['Difficulté', '1er coup', 'Total', 'Erreurs'].forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
                 for (const diff in this.stats[mode]) {
                     if (diff === this._NO_DIFF) continue;
                     const st = this.stats[mode][diff];
-                    const diffName = this.DIFF_LABELS[diff] || this._escapeHtml(diff);
+                    const diffName = this.DIFF_LABELS[diff] || diff;
 
-                    html += `<tr>
-                                <td><strong>${diffName}</strong></td>
-                                <td>${this._escapeHtml(String(st.firstTrySuccess))}</td>
-                                <td>${this._escapeHtml(String(st.totalSuccess))}</td>
-                                <td>${this._escapeHtml(String(st.mistakes))}</td>
-                             </tr>`;
+                    const tr = document.createElement('tr');
+
+                    const tdDiff = document.createElement('td');
+                    const tdStrong = document.createElement('strong');
+                    tdStrong.textContent = diffName;
+                    tdDiff.appendChild(tdStrong);
+                    tr.appendChild(tdDiff);
+
+                    const td1 = document.createElement('td');
+                    td1.textContent = String(st.firstTrySuccess);
+                    tr.appendChild(td1);
+
+                    const td2 = document.createElement('td');
+                    td2.textContent = String(st.totalSuccess);
+                    tr.appendChild(td2);
+
+                    const td3 = document.createElement('td');
+                    td3.textContent = String(st.mistakes);
+                    tr.appendChild(td3);
+
+                    tbody.appendChild(tr);
                 }
-                html += `</tbody></table></div>`;
+                table.appendChild(tbody);
+                tableWrapper.appendChild(table);
+                modeContainer.appendChild(tableWrapper);
             }
-            html += `</div>`;
+            body.appendChild(modeContainer);
         }
 
-        body.innerHTML = html;
-
-        // Trigger animation reset by re-setting stroke-dashoffset after a short delay
         setTimeout(() => {
             document.querySelectorAll('.stat-donut-circle').forEach(circle => {
                 const target = circle.getAttribute('data-target');
@@ -415,9 +471,22 @@ const ScoreManager = {
         }, 50);
     },
 
+
     generateDonutChart(s1, s2, m) {
         const total = s1 + s2 + m;
-        if (total === 0) return `<div class="stat-donut-container" style="display:flex; align-items:center; justify-content:center; border: 2px dashed rgba(0,0,0,0.1); border-radius:50%; font-size:12px; color:rgba(0,0,0,0.4);">Aucune donnée</div>`;
+        if (total === 0) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'stat-donut-container';
+            emptyDiv.style.display = 'flex';
+            emptyDiv.style.alignItems = 'center';
+            emptyDiv.style.justifyContent = 'center';
+            emptyDiv.style.border = '2px dashed rgba(0,0,0,0.1)';
+            emptyDiv.style.borderRadius = '50%';
+            emptyDiv.style.fontSize = '12px';
+            emptyDiv.style.color = 'rgba(0,0,0,0.4)';
+            emptyDiv.textContent = 'Aucune donnée';
+            return emptyDiv;
+        }
 
         const radius = 50;
         const circ = 2 * Math.PI * radius;
@@ -426,38 +495,72 @@ const ScoreManager = {
         const p2 = (s2 / total) * 100;
         const p3 = (m / total) * 100;
 
-        // Cumulative offsets
         const off1 = 0;
         const off2 = (p1 / 100) * circ;
         const off3 = ((p1 + p2) / 100) * circ;
 
-        const drawSegment = (percent, offset, colorClass) => {
+        const createCircle = (percent, offset, colorClass) => {
             const dash = (percent / 100) * circ;
-            // Use negative dashoffset for cumulative segments
-            return `<circle class="stat-donut-circle ${colorClass}"
-                        cx="70" cy="70" r="${radius}"
-                        stroke-dasharray="${circ}"
-                        stroke-dashoffset="${circ}"
-                        data-target="${circ - dash}"
-                        style="transform: rotate(${(offset / circ) * 360}deg); transform-origin: center;">
-                    </circle>`;
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('class', `stat-donut-circle ${colorClass}`);
+            circle.setAttribute('cx', '70');
+            circle.setAttribute('cy', '70');
+            circle.setAttribute('r', String(radius));
+            circle.setAttribute('stroke-dasharray', String(circ));
+            circle.setAttribute('stroke-dashoffset', String(circ));
+            circle.setAttribute('data-target', String(circ - dash));
+            circle.setAttribute('style', `transform: rotate(${(offset / circ) * 360}deg); transform-origin: center;`);
+            return circle;
         };
 
-        return `
-            <div class="stat-donut-container">
-                <svg class="stat-donut" viewBox="0 0 140 140">
-                    <circle class="stat-donut-bg" cx="70" cy="70" r="${radius}"></circle>
-                    ${drawSegment(p1, 0, 'color-success-1st')}
-                    ${drawSegment(p2, (p1/100)*circ, 'color-success-more')}
-                    ${drawSegment(p3, ((p1+p2)/100)*circ, 'color-mistakes')}
-                </svg>
-                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; line-height:1;">
-                    <div style="font-size:24px; font-weight:800;">${this._escapeHtml(String(s1+s2))}</div>
-                    <div style="font-size:10px; text-transform:uppercase; opacity:0.6;">Succès</div>
-                </div>
-            </div>
-        `;
+        const container = document.createElement('div');
+        container.className = 'stat-donut-container';
+
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'stat-donut');
+        svg.setAttribute('viewBox', '0 0 140 140');
+
+        const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        bgCircle.setAttribute('class', 'stat-donut-bg');
+        bgCircle.setAttribute('cx', '70');
+        bgCircle.setAttribute('cy', '70');
+        bgCircle.setAttribute('r', String(radius));
+
+        svg.appendChild(bgCircle);
+        svg.appendChild(createCircle(p1, 0, 'color-success-1st'));
+        svg.appendChild(createCircle(p2, (p1/100)*circ, 'color-success-more'));
+        svg.appendChild(createCircle(p3, ((p1+p2)/100)*circ, 'color-mistakes'));
+
+        container.appendChild(svg);
+
+        const overlay = document.createElement('div');
+        overlay.style.position = 'absolute';
+        overlay.style.top = '50%';
+        overlay.style.left = '50%';
+        overlay.style.transform = 'translate(-50%, -50%)';
+        overlay.style.textAlign = 'center';
+        overlay.style.lineHeight = '1';
+
+        const numberDiv = document.createElement('div');
+        numberDiv.style.fontSize = '24px';
+        numberDiv.style.fontWeight = '800';
+        numberDiv.textContent = String(s1 + s2);
+
+        const labelDiv = document.createElement('div');
+        labelDiv.style.fontSize = '10px';
+        labelDiv.style.textTransform = 'uppercase';
+        labelDiv.style.opacity = '0.6';
+        labelDiv.textContent = 'Succès';
+
+        overlay.appendChild(numberDiv);
+        overlay.appendChild(labelDiv);
+
+        container.appendChild(overlay);
+
+        return container;
     }
 };
+
+
 
 window.ScoreManager = ScoreManager;
