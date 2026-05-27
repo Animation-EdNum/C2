@@ -5,7 +5,7 @@ window.treasureBubbleState = { active: false, timer: null, removeTimer: null, ha
 
 function handleTreasureBubbleClick(e) {
     e.stopPropagation();
-    window.treasureBubbleState.text = "Clique sur le bouton bleu";
+    window.treasureBubbleState.text = "Clique sur le bouton ci-dessous";
     if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
 
     const textDivs = document.querySelectorAll('.treasure-speech-bubble-text');
