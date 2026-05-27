@@ -53,6 +53,8 @@ setInterval(() => {
 
 // ─── Server ───────────────────────────────────────────────────────────────────
 const server = http.createServer((req, res) => {
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { 'Content-Type': 'text/plain' });
     res.end('405 Method Not Allowed');
