@@ -587,7 +587,11 @@ function showExploreOnboardingHint() {
 
         const hint = document.createElement('div');
         hint.className = 'explore-onboarding-hint';
-        hint.innerHTML = `<i data-fa="hand-pointer"></i> Appuie pour avancer !`;
+
+        const icon = document.createElement('i');
+        icon.setAttribute('data-fa', 'hand-pointer');
+        hint.appendChild(icon);
+        hint.appendChild(document.createTextNode(' Appuie pour avancer !'));
 
         fwdBtn.style.position = 'relative';
         fwdBtn.appendChild(hint);
