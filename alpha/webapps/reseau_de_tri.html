@@ -556,6 +556,30 @@
             border-color: #fff;
             color: #fff;
         }
+
+        .sort-axis {
+            position: absolute;
+            left: -55px;       /* à gauche du network-inner */
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .axis-line {
+            flex: 1;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--success), var(--accent), var(--error));
+            border-radius: 2px;
+            margin: 6px 0;
+        }
+        @media (max-width: 600px) {
+            .sort-axis { left: -35px; font-size: 10px; }
+        }
     </style>
     <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
@@ -628,7 +652,12 @@
         <main>
 
             <div class="chal-instruction">
-                <p>Clique sur les comparateurs ⇅ (barres oranges actives) pour échanger les deux éléments connectés. Le plus petit va en haut !</p>
+                <p>
+                    <strong>Objectif :</strong> trier les éléments du plus petit (en haut) au plus grand (en bas)
+                    — <span id="instr-mode-hint">de 1 à 20</span>.<br>
+                    Clique sur les comparateurs ⇅ actifs pour échanger
+                    les éléments connectés, puis valide l'étape.
+                </p>
             </div>
 
             <!-- TABS -->
@@ -650,6 +679,17 @@
                 <div class="network-scroll-container">
                     <div class="network-wrapper" id="network-wrapper">
                         <div class="network-inner" id="network-inner">
+                            <div class="sort-axis" id="sort-axis">
+                                <div class="axis-top">
+                                    <span class="axis-label-top" id="axis-top-label">1 — petit</span>
+                                    <i data-fa="arrow-up"></i>
+                                </div>
+                                <div class="axis-line"></div>
+                                <div class="axis-bottom">
+                                    <i data-fa="arrow-down"></i>
+                                    <span class="axis-label-bottom" id="axis-bottom-label">9 — grand</span>
+                                </div>
+                            </div>
                             <!-- SVG generated dynamically -->
                             <svg class="network-svg" id="network-svg"></svg>
                             <div class="network-grid" id="network-grid">
@@ -786,6 +826,7 @@
         function init() {
             setupEventListeners();
             ScoreManager.init('reseau_de_tri');
+            updateSortAxisLabels();
             setDifficulty('medium'); // Will trigger startNewLevel
 
 
@@ -829,10 +870,24 @@
             });
         }
 
+        function updateSortAxisLabels() {
+            const topEl = document.getElementById('axis-top-label');
+            const botEl = document.getElementById('axis-bottom-label');
+            if (currentMode === 'nombres') {
+                topEl.textContent = '1 — petit';
+                botEl.textContent = '20 — grand';
+            } else {
+                topEl.textContent = 'A — début';
+                botEl.textContent = 'Z — fin';
+            }
+        }
+
         function setMode(mode) {
             currentMode = mode;
             document.getElementById('tab-nombres').classList.toggle('active', mode === 'nombres');
             document.getElementById('tab-lettres').classList.toggle('active', mode === 'lettres');
+            document.getElementById('instr-mode-hint').textContent = mode === 'nombres' ? 'de 1 à 20' : 'de A à Z';
+            updateSortAxisLabels();
             startNewLevel();
         }
 
