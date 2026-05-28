@@ -35,20 +35,20 @@ window.REGISTRY = [
     "isAlpha": true,
     "isExternal": false,
     "isTeacher": false,
-    "dataLevel": "7-8H",
+    "dataLevel": "9CO",
     "icon": "dt-code",
     "iconStyle": "width:32px;height:32px;flex-shrink:0;",
-    "title": "Bases du pseudocode",
+    "title": "Pseudo-code",
     "desc": "Apprends à écrire tes premiers algorithmes pas à pas.",
     "tags": [
       "#Algorithmique",
       "#Programmation",
       "#Maths"
     ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "ref": "Connected 3 · 2C | Un programme adéquat",
     "badges": [
       {
-        "text": "7-8H",
+        "text": "9CO",
         "grey": false
       }
     ],

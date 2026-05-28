@@ -866,6 +866,7 @@
                 <button class="filter-btn" id="filter-3-4H">3-4H</button>
                 <button class="filter-btn" id="filter-5-6H">5-6H</button>
                 <button class="filter-btn" id="filter-7-8H">7-8H</button>
+                <button class="filter-btn" id="filter-9-10CO">9-10 CO</button>
             </div>
 
             <div class="grid searchable-grid">
@@ -1030,6 +1031,19 @@
                         let matchesLevel = false;
                         if (currentFilter === 'all') {
                             matchesLevel = true;
+                        } else if (currentFilter === '9-10 CO') {
+                            // Regroupe 9CO, 10CO et 9-10 CO (Collège Orientation)
+                            const coLevels = ['9CO', '10CO', '9-10 CO'];
+                            if (coLevels.includes(level)) {
+                                matchesLevel = true;
+                            } else {
+                                const badges = card.querySelectorAll('.badge');
+                                badges.forEach(badge => {
+                                    if (coLevels.includes(badge.innerText.trim())) {
+                                        matchesLevel = true;
+                                    }
+                                });
+                            }
                         } else {
                             if (level === currentFilter) {
                                 matchesLevel = true;
@@ -1141,6 +1155,7 @@
         document.getElementById('filter-3-4H').addEventListener('click', () => filterApps('3-4H'));
         document.getElementById('filter-5-6H').addEventListener('click', () => filterApps('5-6H'));
         document.getElementById('filter-7-8H').addEventListener('click', () => filterApps('7-8H'));
+        document.getElementById('filter-9-10CO').addEventListener('click', () => filterApps('9-10 CO'));
 
         document.getElementById('clearSearch').addEventListener('click', clearSearch);
         document.getElementById('searchInput').addEventListener('input', searchApps);
