@@ -648,7 +648,8 @@ let simState = {
                 attempts++;
             } while (attempts < 100 && (
                 simState.obstacles.some(o => o.r === newRow && o.c === newCol) ||
-                (simState.targetRow !== null && newRow === simState.targetRow && newCol === simState.targetCol)
+                (simState.targetRow !== null && newRow === simState.targetRow && newCol === simState.targetCol) ||
+                (GRID_ROWS > 2 && GRID_COLS > 2 && (newRow === 0 || newRow === GRID_ROWS - 1 || newCol === 0 || newCol === GRID_COLS - 1))
             ));
 
             simState.robotRow = newRow;
@@ -796,7 +797,8 @@ let simState = {
                 attempts++;
             } while (attempts < 100 && (
                 exploreState.obstacles.some(o => o.r === newRow && o.c === newCol) ||
-                (exploreState.targetRow !== null && newRow === exploreState.targetRow && newCol === exploreState.targetCol)
+                (exploreState.targetRow !== null && newRow === exploreState.targetRow && newCol === exploreState.targetCol) ||
+                (GRID_ROWS > 2 && GRID_COLS > 2 && (newRow === 0 || newRow === GRID_ROWS - 1 || newCol === 0 || newCol === GRID_COLS - 1))
             ));
 
             exploreState.robotRow = newRow;
