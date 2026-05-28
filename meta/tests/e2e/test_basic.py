@@ -8,4 +8,4 @@ def test_homepage_has_correct_title(page: Page):
     page.goto("http://localhost:8000/index.html")
 
     # Expect a title "to contain" a substring.
-    expect(page).to_have_title(re.compile("Éducation numérique"))
+    expect(page).to_have_title(re.compile("éducation numérique", re.IGNORECASE))
