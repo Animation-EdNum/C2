@@ -824,7 +824,45 @@
             }
         }
 
-    </style>
+
+.grue-onboarding-hint {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent, #f59e0b);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+    z-index: 1000;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    animation: bounceGrueHint 1.2s ease-in-out infinite;
+}
+.grue-onboarding-hint::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 7px;
+    border-style: solid;
+    border-color: var(--accent, #f59e0b) transparent transparent transparent;
+}
+@keyframes bounceGrueHint {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(-5px); }
+}
+
+</style>
     <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
@@ -1018,6 +1056,7 @@
             setupEventListeners();
             startNewLevel();
             ScoreManager.init('jeu_de_la_grue');
+            showGrueOnboardingHint();
         }
 
         function setupEventListeners() {
@@ -1520,6 +1559,52 @@
         }
 
         window.addEventListener('load', init);
+
+        function showGrueOnboardingHint() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('noNudges') === '1') return;
+            if (localStorage.getItem('grue_seen_hint')) return;
+            const INSTRUCTION_BTN_SELECTOR = '.instruction-btn';
+            let hintTimer;
+            const cancelHint = () => {
+                clearTimeout(hintTimer);
+                localStorage.setItem('grue_seen_hint', '1');
+                document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
+                    btn.removeEventListener('click', cancelHint)
+                );
+            };
+            document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
+                btn.addEventListener('click', cancelHint, { once: true })
+            );
+            hintTimer = setTimeout(() => {
+                document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
+                    btn.removeEventListener('click', cancelHint)
+                );
+                if (localStorage.getItem('grue_seen_hint')) return;
+                const upBtn = document.querySelector('.instruction-btn.up-color');
+                if (!upBtn) return;
+                localStorage.setItem('grue_seen_hint', '1');
+                const hint = document.createElement('div');
+                hint.className = 'grue-onboarding-hint';
+                hint.innerHTML = '<i data-fa="hand-pointer"></i> Clique pour ajouter une commande !';
+                upBtn.style.position = 'relative';
+                upBtn.appendChild(hint);
+                window.fa?.createIcons?.();
+                const removeHint = () => {
+                    if (!hint.parentNode) return;
+                    hint.style.opacity = '0';
+                    setTimeout(() => hint.remove(), 300);
+                    document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
+                        btn.removeEventListener('click', removeHint)
+                    );
+                };
+                document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
+                    btn.addEventListener('click', removeHint, { once: true })
+                );
+                setTimeout(removeHint, 5000);
+            }, 3000);
+        }
+
     </script>
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
@@ -1529,6 +1614,7 @@
 <i data-fa="cubes" style="display:none;"></i>
 <i data-fa="layer-group" style="display:none;"></i>
     <script src="../../assets/js/url-params.js"></script>
+
 </body>
 
 </html>
