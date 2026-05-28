@@ -2349,6 +2349,11 @@ let simState = {
             }
         }
 
+        const ROBOT_SVG_ID_REGEX = /id="([^"]+)"/g;
+        const ROBOT_SVG_URL_REGEX = /url\(#([^)]+)\)/g;
+        const ROBOT_SVG_HREF_REGEX = /href="#([^"]+)"/g;
+        const renderedRobotSvgCache = {};
+
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
             const deg = dirIndex * 90;
             const normalizedDir = ((dirIndex % 4) + 4) % 4;
@@ -2360,10 +2365,17 @@ let simState = {
             const needsFullRender = !existingOverlay || existingOverlay.dataset.skin !== activeSkin;
 
             if (needsFullRender) {
-                let svg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
-                svg = svg.replace(/id="([^"]+)"/g, `id="$1_${containerId}"`)
-                         .replace(/url\(#([^)]+)\)/g, `url(#$1_${containerId})`)
-                         .replace(/href="#([^"]+)"/g, `href="#$1_${containerId}"`);
+                const cacheKey = activeSkin + "_" + containerId;
+                let svg = renderedRobotSvgCache[cacheKey];
+
+                if (!svg) {
+                    let baseSvg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
+                    svg = baseSvg.replace(ROBOT_SVG_ID_REGEX, `id="$1_${containerId}"`)
+                                 .replace(ROBOT_SVG_URL_REGEX, `url(#$1_${containerId})`)
+                                 .replace(ROBOT_SVG_HREF_REGEX, `href="#$1_${containerId}"`);
+                    renderedRobotSvgCache[cacheKey] = svg;
+                }
+
                 let bubbleHtml = '';
                 if (window.skinUnlockBubbleState && window.skinUnlockBubbleState.active) {
                     bubbleHtml = `<div class="skin-speech-bubble-wrapper" style="position: absolute; top: 50%; left: 50%; width: 0; height: 0; overflow: visible; transform: rotate(-${deg}deg); z-index: 1000;"><div class="skin-speech-bubble" style="top: 0; left: 0; transform: translate(-50%, calc(-100% - 40px));" onclick="handleSpeechBubbleClick(event)"><div class="skin-speech-bubble-text">${window.skinUnlockBubbleState.text}</div></div></div>`;
