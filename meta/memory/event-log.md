@@ -35,10 +35,10 @@
 - **[2026-05-20]** [Quality] Cleaned up redundant `!important` in `components.css` and added 4 new E2E test suites (CI updated).
 - **[2026-05-21]** [Refactor] Extracted inline CSS of 5 stable webapps to `assets/css/` and migrated all inline `onclick` handlers of alpha apps (`machine_a_chiffrer`, `jeu_de_la_grue`) to `addEventListener`.
 - **[2026-05-22]** [Feature] Coffre-fort: added Easy/Hard difficulty levels (5 questions each) and strictly excluded the Password utility from scoring (with defensive cleanup of legacy stats in `scores.js`).
-- **[2026-05-25]** [Feature] Integrated **color mode (4 colors, 2 bits/pixel)** into `binaire_studio.html`: B&W ↔ color toggle, palette, custom encode/decode levels, cooperative share links, CSS variables mapping.
+- **[2026-05-25]** [Feature] Integrated color mode (4 colors, 2 bits/pixel) into `binaire_studio.html`: B&W ↔ color toggle, palette, custom encode/decode levels, cooperative share links, CSS variables mapping.
 - **[2026-05-25]** [Cleanup] Removed alpha app `pixels_binaires.html` (functionality fully absorbed by `binaire_studio.html`).
 - **[2026-05-27]** [Feature] Polished *Bases du pseudocode*: enforced linear progression (Easy → Medium → Hard), replaced the bluebot with a neutral symmetrical drone SVG, and fixed the global stats modal rendering crash.
 - **[2026-05-27]** [Bugfix] Cross-cutting critical fixes: timer race condition in the Simulateur d'automate speech bubble, dark mode race conditions in `theme.js`, unreadable `<select>` option text on Chrome/Windows, duplicate difficulty-nudge popups in `ScoreManager`, DOM reordering breaking robot/stars/memory in `initLevel()`.
 - **[2026-05-27]** [Bugfix] Strict validation of loop/while levels in the pseudocode webapp (rejects over-stepping cases such as "3 stars in 4 moves").
 - **[2026-05-27]** [Registry] Added *Dresseur de neurones*, removed orphan *Pixels Binaires*, deduplicated 6 alpha-app icons, and diversified 5 alpha app backgrounds (cyan/purple/pink/red/amber).
-- **[2026-05-28]** [Feature] Machine à Trier scoring overhaul: victories and streaks count **only on full bin completion**, while errors are tracked instantly. Stats modal adapted (hides "Avec essais", uses standard "Succès").
+- **[2026-05-28]** [Feature] Machine à Trier scoring overhaul: victories and streaks count only on full bin completion, while errors are tracked instantly. Stats modal adapted (hides "Avec essais", uses standard "Succès").
