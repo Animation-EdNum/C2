@@ -15,7 +15,7 @@
 - **Offline-First (Critical):** Installable PWA. Zero internet dependency.
 - **Service Worker:** `sw.js` caches `webapps/`, `webapps/teacher/`, `assets/css/`, `assets/js/`, and `assets/fonts/`.
   - *Rule:* Run `node meta/scripts/generate-sw-manifest.js` after adding/modifying files to auto-update the cache manifest.
-- **Vanilla Stack:** Pure HTML, CSS, JS. No frameworks (React, Vue, Tailwind) allowed.
+- **Vanilla Stack:** Pure HTML, JS, CSS. No frameworks (React, Vue, Tailwind) allowed.
 - **Asset Centralization:** ALL static assets (JS, CSS, fonts, images) are strictly in `/assets/`.
 - **Global Interactions:** Portal interactions (theme, cache reset) are centralized in `assets/js/theme.js`.
 
@@ -37,7 +37,7 @@
 ## 6. Attribution & Licensing
 - **License:** AGPL-3.0.
 - **Attribution Footer (Critical):** ALL HTML files must use exactly this `<footer class="no-print">` content:
-  - Text: "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec ❤️ et quelques neurones artificiels" (link strictly on "AP EdNum"). The '❤️' must link to `merci.html`.
+  - Text: "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec <i data-fa=\"heart\"></i> et quelques neurones artificiels" (link strictly on "AP EdNum"). The `<i data-fa="heart"></i>` (red, solid FA heart with hover scale effect) must link to `merci.html`.
   - Source Link: "Code 100% libre (AGPL-3.0)".
 - **Support Contact:** vivian.epiney@hepvs.ch.
 
@@ -45,4 +45,4 @@
 - **Images**: When adding image files, resize or compress them if they are excessively large to maintain optimal load times (e.g., resizing to 1920x1080 via ImageMagick).
 - **Security**: Never reveal or hardcode sensitive tokens (such as GitHub PATs) in the codebase, markdown documentation, or memory files.
 - **Alpha Paths**: Alpha versions of teacher-specific web applications in `alpha/webapps/teacher/` must use the relative path `../../../` to correctly reference global resources in the root `assets/` directory.
-- **HTML Footer**: The HTML footer serves as 'Appropriate Legal Notices' for AGPL-3.0 compliance. It must contain the copyright notice attributing 'Animation-EdNum (HEP-VS)' alongside the link to the source code and the license. The '❤️' must be a link to `merci.html`.
+- **HTML Footer**: The HTML footer serves as 'Appropriate Legal Notices' for AGPL-3.0 compliance. It must contain the copyright notice attributing 'Animation-EdNum (HEP-VS)' alongside the link to the source code and the license. The `<i data-fa="heart"></i>` (red, solid FA heart with hover scale effect) must be a link to `merci.html`.
