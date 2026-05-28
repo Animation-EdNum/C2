@@ -271,6 +271,7 @@
                 trainAnswers.push(row);
             }
             renderTrainGrid();
+            showParityOnboardingHint();
         }
 
         function renderTrainGrid() {
@@ -650,6 +651,42 @@
         document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
         document.getElementById('verifyBtn').addEventListener('click', checkTrainAnswer);
         document.getElementById('newDetectBtn').addEventListener('click', initDetectMode);
+
+        function showParityOnboardingHint() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('noNudges') === '1') return;
+            if (localStorage.getItem('bit_parite_seen_hint')) return;
+            const grid = document.getElementById('train-grid');
+            let hintTimer;
+            const cancelHint = () => {
+                clearTimeout(hintTimer);
+                localStorage.setItem('bit_parite_seen_hint', '1');
+                grid.removeEventListener('click', cancelHint);
+            };
+            grid.addEventListener('click', cancelHint, { once: true });
+            hintTimer = setTimeout(() => {
+                grid.removeEventListener('click', cancelHint);
+                if (localStorage.getItem('bit_parite_seen_hint')) return;
+                const firstParityCell = grid.querySelector('.cell.parity-line:not(.locked)');
+                if (!firstParityCell) return;
+                localStorage.setItem('bit_parite_seen_hint', '1');
+                const hint = document.createElement('div');
+                hint.className = 'parity-onboarding-hint';
+                hint.innerHTML = '<i data-fa="hand-pointer"></i> Clique pour mettre 0 ou 1 !';
+                firstParityCell.style.position = 'relative';
+                firstParityCell.appendChild(hint);
+                window.fa?.createIcons?.();
+                const removeHint = () => {
+                    if (!hint.parentNode) return;
+                    hint.style.opacity = '0';
+                    setTimeout(() => hint.remove(), 300);
+                    grid.removeEventListener('click', removeHint);
+                };
+                grid.addEventListener('click', removeHint, { once: true });
+                setTimeout(removeHint, 5000);
+            }, 3000);
+        }
+
     </script>
     <script src="../assets/js/audio.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -666,6 +703,7 @@
         });
     </script>
     <script src="../assets/js/url-params.js"></script>
+
 </body>
 
 </html>

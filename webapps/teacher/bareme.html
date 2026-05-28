@@ -810,11 +810,13 @@
                 showToast('Tableau copié (format compatible Word/Excel)', 'success');
             } catch (err) {
                 console.warn("ClipboardItem API failed, falling back to text copy", err);
-                navigator.clipboard.writeText(text).then(() => {
+                try {
+                    await navigator.clipboard.writeText(text);
                     showToast('Tableau copié (format texte uniquement)', 'success');
-                }).catch(() => {
+                } catch (fallbackErr) {
+                    console.error("Fallback text copy failed", fallbackErr);
                     showToast('Erreur lors de la copie', 'error');
-                });
+                }
             }
         }
 
