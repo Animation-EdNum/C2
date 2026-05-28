@@ -72,3 +72,11 @@ def test_score_manager_reset_scores_dismiss(page: Page):
     stats = page.evaluate("ScoreManager.stats")
     assert stats != {}
     assert 'dec_to_bin' in stats
+
+def test_score_manager_load_stats_invalid_json(page: Page):
+    """Verify loadStats handles invalid JSON gracefully by catching the exception and returning an empty dict."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+    page.evaluate("localStorage.setItem('c2_stats_binaire_codage', 'invalid_json_string')")
+    page.reload()
+    stats = page.evaluate("ScoreManager.stats")
+    assert stats == {}

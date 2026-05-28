@@ -451,6 +451,7 @@
             document.getElementById('feedback').className = 'feedback'; // Hide feedback 
             document.getElementById('btn-next-challenge').style.display = 'none';
             render();
+            showRoutingOnboardingHint();
         }
 
         function render() {
@@ -728,6 +729,46 @@
         window.__onThemeChange = function () {
             if (parsedEdges && parsedEdges.length > 0) renderEdges();
         };
+
+        function showRoutingOnboardingHint() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('noNudges') === '1') return;
+            if (localStorage.getItem('routage_reseau_seen_hint')) return;
+            let hintTimer;
+            const cancelHint = () => {
+                clearTimeout(hintTimer);
+                localStorage.setItem('routage_reseau_seen_hint', '1');
+                document.getElementById('network-inner')
+                    .removeEventListener('click', cancelHint);
+            };
+            document.getElementById('network-inner')
+                .addEventListener('click', cancelHint, { once: true });
+            hintTimer = setTimeout(() => {
+                document.getElementById('network-inner')
+                    .removeEventListener('click', cancelHint);
+                if (localStorage.getItem('routage_reseau_seen_hint')) return;
+                const firstClickable = document.querySelector('.node.clickable-next');
+                if (!firstClickable) return;
+                localStorage.setItem('routage_reseau_seen_hint', '1');
+                const hint = document.createElement('div');
+                hint.className = 'routing-onboarding-hint';
+                hint.innerHTML = '<i data-fa="hand-pointer"></i> Clique sur un routeur !';
+                firstClickable.style.position = 'relative';
+                firstClickable.appendChild(hint);
+                window.fa?.createIcons?.();
+                const removeHint = () => {
+                    if (!hint.parentNode) return;
+                    hint.style.opacity = '0';
+                    setTimeout(() => hint.remove(), 300);
+                    document.getElementById('network-inner')
+                        .removeEventListener('click', removeHint);
+                };
+                document.getElementById('network-inner')
+                    .addEventListener('click', removeHint, { once: true });
+                setTimeout(removeHint, 5000);
+            }, 3000);
+        }
+
     </script>
     <script src="../assets/js/audio.js"></script>
     <script src="../assets/js/theme.js"></script>
@@ -744,6 +785,7 @@
         });
     </script>
     <script src="../assets/js/url-params.js"></script>
+
 </body>
 
 </html>
