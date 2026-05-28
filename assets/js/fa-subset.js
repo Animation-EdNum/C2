@@ -209,7 +209,7 @@
   function createIcons({ attrs = {}, nameAttr = "data-fa" } = {}) {
     // Injecter le CSS duotone une seule fois
     if (typeof document !== "undefined" && !document.getElementById("fa-duotone-styles")) {
-      var style = document.createElement("style");
+      const style = document.createElement("style");
       style.id = "fa-duotone-styles";
       style.textContent = ".fa-icon path.fa-secondary{fill:var(--fa-secondary,currentColor);opacity:var(--fa-secondary-opacity,.4)}.fa-icon path.fa-primary{fill:var(--fa-primary,currentColor);opacity:var(--fa-primary-opacity,1)}";
       document.head.appendChild(style);
