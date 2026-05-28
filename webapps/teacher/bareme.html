@@ -810,12 +810,11 @@
                 showToast('Tableau copié (format compatible Word/Excel)', 'success');
             } catch (err) {
                 console.warn("ClipboardItem API failed, falling back to text copy", err);
-                const ta = document.createElement('textarea');
-                ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-                document.body.appendChild(ta); ta.select();
-                try { document.execCommand('copy'); showToast('Tableau copié (format texte uniquement)', 'success'); }
-                catch { showToast('Erreur lors de la copie', 'error'); }
-                document.body.removeChild(ta);
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Tableau copié (format texte uniquement)', 'success');
+                }).catch(() => {
+                    showToast('Erreur lors de la copie', 'error');
+                });
             }
         }
 
