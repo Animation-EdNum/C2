@@ -398,8 +398,12 @@ const ScoreManager = {
                 return item;
             };
 
-            legend.appendChild(createLegendItem('color-success-1st', 'Du 1er coup', String(aggSuccess1st)));
-            legend.appendChild(createLegendItem('color-success-more', 'Avec essais', String(aggSuccessMore)));
+            if (this.appId === 'machine_a_trier') {
+                legend.appendChild(createLegendItem('color-success-1st', 'Succès', String(aggSuccess1st)));
+            } else {
+                legend.appendChild(createLegendItem('color-success-1st', 'Du 1er coup', String(aggSuccess1st)));
+                legend.appendChild(createLegendItem('color-success-more', 'Avec essais', String(aggSuccessMore)));
+            }
             legend.appendChild(createLegendItem('color-mistakes', 'Erreurs', String(aggMistakes)));
 
             const effDiv = document.createElement('div');
@@ -429,7 +433,10 @@ const ScoreManager = {
 
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
-                ['Difficulté', '1er coup', 'Total', 'Erreurs'].forEach(text => {
+                const headers = this.appId === 'machine_a_trier' 
+                    ? ['Difficulté', 'Succès', 'Erreurs']
+                    : ['Difficulté', '1er coup', 'Total', 'Erreurs'];
+                headers.forEach(text => {
                     const th = document.createElement('th');
                     th.textContent = text;
                     trHead.appendChild(th);
@@ -451,13 +458,19 @@ const ScoreManager = {
                     tdDiff.appendChild(tdStrong);
                     tr.appendChild(tdDiff);
 
-                    const td1 = document.createElement('td');
-                    td1.textContent = String(st.firstTrySuccess);
-                    tr.appendChild(td1);
+                    if (this.appId === 'machine_a_trier') {
+                        const td1 = document.createElement('td');
+                        td1.textContent = String(st.totalSuccess);
+                        tr.appendChild(td1);
+                    } else {
+                        const td1 = document.createElement('td');
+                        td1.textContent = String(st.firstTrySuccess);
+                        tr.appendChild(td1);
 
-                    const td2 = document.createElement('td');
-                    td2.textContent = String(st.totalSuccess);
-                    tr.appendChild(td2);
+                        const td2 = document.createElement('td');
+                        td2.textContent = String(st.totalSuccess);
+                        tr.appendChild(td2);
+                    }
 
                     const td3 = document.createElement('td');
                     td3.textContent = String(st.mistakes);
@@ -502,7 +515,7 @@ const ScoreManager = {
         const circ = 2 * Math.PI * radius;
 
         const p1 = (s1 / total) * 100;
-        const p2 = (s2 / total) * 100;
+        const p2 = this.appId === 'machine_a_trier' ? 0 : (s2 / total) * 100;
         const p3 = (m / total) * 100;
 
         const off1 = 0;
@@ -538,7 +551,9 @@ const ScoreManager = {
 
         svg.appendChild(bgCircle);
         svg.appendChild(createCircle(p1, 0, 'color-success-1st'));
-        svg.appendChild(createCircle(p2, (p1/100)*circ, 'color-success-more'));
+        if (this.appId !== 'machine_a_trier') {
+            svg.appendChild(createCircle(p2, (p1/100)*circ, 'color-success-more'));
+        }
         svg.appendChild(createCircle(p3, ((p1+p2)/100)*circ, 'color-mistakes'));
 
         container.appendChild(svg);
