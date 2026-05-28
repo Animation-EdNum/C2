@@ -23,7 +23,7 @@
     <title>💻 Pseudo-code</title>
     <meta property="og:title" content="Pseudo-code">
     <meta property="og:description" content="Découvre les bases du pseudo-code pour écrire des algorithmes simplement.">
-    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <link class="no-print" rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
@@ -118,9 +118,349 @@
             font-size: 14px;
         }
 
-        /* ========== DIFFICULTÉ (Masqué pour imposer la progression linéaire) ========== */
+        /* ========== DIFFICULTÉ (Masqué par défaut, affiché dans les modes qui en ont besoin) ========== */
         .difficulty-bar {
             display: none;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .diff-btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--card-border, #e2e8f0);
+            background: var(--card-bg, #ffffff);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s var(--spring-easing, ease);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 44px;
+            min-height: 44px;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        .diff-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            color: var(--text-main);
+        }
+
+        .diff-btn:active {
+            transform: scale(0.95);
+        }
+
+        .diff-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        body.dark .diff-btn {
+            background: var(--card-bg);
+            border-color: #334155;
+            color: #94a3b8;
+        }
+        
+        body.dark .diff-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        /* Correct SVG scale and prevent distortions */
+        .dist-btn svg,
+        .coin-slot svg,
+        .ticket-slot svg,
+        .diff-btn svg {
+            width: auto !important;
+            height: 1.2em !important;
+            max-width: 2em !important;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        /* INTERLIGNE TACTILE COMPACT ET BOUTON "+" CIRCULAIRE */
+        .interline {
+            display: flex;
+            align-items: center;
+            padding: 2px 0;
+            margin: 2px 0;
+            border-top: 1px dashed rgba(8, 145, 178, 0.1);
+            position: relative;
+            min-height: 24px;
+        }
+
+        .interline-btn {
+            background: var(--card-bg, #ffffff);
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .interline-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .interline-btn svg {
+            width: 10px !important;
+            height: 10px !important;
+        }
+
+        /* DROPDOWN INLINE */
+        .inline-dropdown {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            margin: 6px 0 12px 0;
+            box-shadow: 0 8px 24px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            max-width: 450px;
+            animation: slideDown 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+        }
+
+        .inline-dropdown-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .inline-dropdown-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .inline-dropdown-option:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* hardware screen & slot tweaks */
+        .distributeur-svg {
+            background: var(--card-bg);
+            border: 3px solid var(--card-border);
+            border-radius: var(--radius-2xl);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .dist-screen {
+            background: #0f172a;
+            border: 2px solid #1e293b;
+            border-radius: var(--radius-lg);
+            padding: 15px;
+            color: #38bdf8;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dist-screen-sub {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .dist-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dist-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .dist-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .dist-btn:active {
+            transform: scale(0.95);
+        }
+
+        .dist-btn.active-btn {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .dist-slots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .ticket-slot, .coin-slot {
+            height: 60px;
+            border: 2px dashed var(--card-border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .coin-slot:hover {
+            background: rgba(8, 145, 178, 0.05);
+            border-color: var(--accent);
+        }
+
+        /* Ticket out rendering */
+        .ticket-out {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: absolute;
+            width: 110px;
+            text-align: center;
+            pointer-events: none;
+            animation: ticketSprout 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+        }
+
+        @keyframes ticketSprout {
+            0% { transform: translateY(10px) scale(0.8); opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Speaker led & vibrations */
+        .speaker-led {
+            transition: background-color 0.2s, box-shadow 0.2s, fill 0.2s, filter 0.2s;
+        }
+        
+        .led-solid-blue {
+            background-color: #2563eb !important;
+            box-shadow: 0 0 12px #2563eb !important;
+            fill: #2563eb !important;
+            filter: drop-shadow(0 0 6px #2563eb) !important;
+        }
+        
+        .led-solid-green {
+            background-color: #10b981 !important;
+            box-shadow: 0 0 12px #10b981 !important;
+            fill: #10b981 !important;
+            filter: drop-shadow(0 0 6px #10b981) !important;
+        }
+
+        .led-blink-blue {
+            animation: blinkBlue 1s infinite alternate;
+        }
+
+        @keyframes blinkBlue {
+            0% {
+                background-color: #475569;
+                box-shadow: 0 0 0px transparent;
+                fill: #475569;
+                filter: none;
+            }
+            100% {
+                background-color: #2563eb;
+                box-shadow: 0 0 12px #2563eb;
+                fill: #2563eb;
+                filter: drop-shadow(0 0 6px #2563eb);
+            }
+        }
+
+        .vibrating {
+            animation: shake 0.1s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(2px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-8px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         /* ========== CARD FOOTER & SCORE BAR ========== */
@@ -159,6 +499,15 @@
         @media (max-width: 900px) {
             .workspace {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sticky panel placement for desktop viewports */
+        @media (min-width: 901px) {
+            .workspace > .panel:nth-child(2) {
+                position: sticky;
+                top: 20px;
+                align-self: start;
             }
         }
 
@@ -233,6 +582,10 @@
             margin-left: 40px;
         }
 
+        .code-indent-3 {
+            margin-left: 60px;
+        }
+
         .keyword {
             color: #f43f5e;
             font-weight: 700;
@@ -271,7 +624,7 @@
             border-color: var(--accent);
         }
 
-        body.dark .code-selector {
+        .body.dark .code-selector {
             background: rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.1);
         }
@@ -379,7 +732,7 @@
             }
         }
 
-        /* Metaphor 2: 2D Grid robot simulation */
+        /* ========== GRID ROBOT ========== */
         .sim-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -478,7 +831,7 @@
             accent-color: var(--accent);
         }
 
-        /* ========== CHALLENGE TARGET SUMMARY ========== */
+        /* ========== TARGET BOX ========== */
         .target-box {
             background: var(--instructions-bg);
             border-left: 4px solid var(--accent);
@@ -591,6 +944,7 @@
                 <button class="tab-btn" id="tab-pseudo_loop"><i data-fa="repeat"></i> 3. Boucle Répéter</button>
                 <button class="tab-btn" id="tab-pseudo_while"><i data-fa="arrows-rotate"></i> 4. Boucle Tant
                     que</button>
+                <button class="tab-btn" id="tab-pseudo_bug"><i data-fa="bug"></i> 5. Débogage</button>
             </div>
 
             <!-- DIFFICULTY (Barre cachée dans l'interface mais fonctionnelle dans le moteur) -->
@@ -638,7 +992,7 @@
                     </div>
 
                     <!-- Led Console -->
-                    <div>
+                    <div id="console-wrapper">
                         <h3
                             style="font-size: 14px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; color: var(--text-muted);">
                             Sortie écran (instruction "Afficher")
@@ -718,9 +1072,30 @@
         ScoreManager.MODE_LABELS['pseudo_cond'] = '2. Conditions';
         ScoreManager.MODE_LABELS['pseudo_loop'] = '3. Boucle Répéter';
         ScoreManager.MODE_LABELS['pseudo_while'] = '4. Boucle Tant que';
+        ScoreManager.MODE_LABELS['pseudo_bug'] = '5. Débogage';
 
         // Chapter state variables
         let currentMode = 'pseudo_var'; // 'pseudo_var', 'pseudo_cond', 'pseudo_loop', 'pseudo_while'
+        let activeDropdownIdx = null;
+        let removedLine = null;
+        let removedLineIdx = -1;
+        let choices = [];
+        let isWaitingForInput = false;
+
+        let hardwareState = {
+            screen_text: "CHOISIR TRAJET",
+            sub_text: "",
+            montant_introduit: 0,
+            selection: null,
+            payment_method: null,
+            pin_correct: null,
+            tickets: [],
+            power_on: false,
+            bluetooth_searching: false,
+            phone_connected: false,
+            music_playing: false,
+            led_state: 'off'
+        };
         let currentDifficulty = 'easy'; // 'easy', 'medium', 'hard'
 
         // Scoring states
@@ -747,6 +1122,71 @@
 
         // Define Chapters & Levels specifications
         const MISSIONS = {
+            'pseudo_bug': {
+                'easy': {
+                    targetText: "Une erreur s'est glissée dans le pseudo-code du distributeur. Teste l'appareil et corrige le code du logiciel en insérant l'instruction manquante !",
+                    setup: () => {
+                        originalLines = [
+                            { type: 'keyword', val: 'répéter indéfiniment' },
+                            { type: 'wait_input', indent: 1, event: 'selection', val: 'attendre la sélection du trajet' },
+                            { type: 'text', indent: 1, val: 'si la touche "adulte" est sélectionnée' },
+                            { type: 'keyword', indent: 1, val: 'alors' },
+                            { type: 'cmd', indent: 2, val: 'afficher Fr. 2.30' },
+                            { type: 'wait_input', indent: 2, event: 'pay_230', val: 'attendre paiement >= 2.30' },
+                            { type: 'text', indent: 2, val: 'si le montant introduit ≥ Fr. 2.30' },
+                            { type: 'keyword', indent: 2, val: 'alors' },
+                            { type: 'cmd', indent: 3, val: 'imprimer le billet et rendre la monnaie' },
+                            { type: 'text', indent: 1, val: 'si la touche "enfant" est sélectionnée' },
+                            { type: 'keyword', indent: 1, val: 'alors' },
+                            { type: 'cmd', indent: 2, val: 'afficher Fr. 1.80' },
+                            { type: 'wait_input', indent: 2, event: 'pay_180', val: 'attendre paiement >= 1.80' },
+                            { type: 'text', indent: 2, val: 'si le montant introduit ≥ Fr. 1.80' },
+                            { type: 'keyword', indent: 2, val: 'alors' },
+                            { type: 'cmd', indent: 3, val: 'imprimer le billet et rendre la monnaie' }
+                        ];
+                    },
+                    verify: () => {
+                        if (lines.length !== originalLines.length) {
+                            return false;
+                        }
+                        return lines.every((l, idx) => {
+                            return l.val === originalLines[idx].val;
+                        });
+                    }
+                },
+                'hard': {
+                    targetText: "Le haut-parleur sans fil ne fonctionne pas correctement. Teste l'appareil et corrige le code du logiciel en insérant l'instruction manquante !",
+                    setup: () => {
+                        originalLines = [
+                            { type: 'keyword', val: 'répéter indéfiniment' },
+                            { type: 'wait_input', indent: 1, event: 'power_btn', val: 'attendre la pression sur le bouton "Power"' },
+                            { type: 'cmd', indent: 1, val: 'activer la recherche Bluetooth' },
+                            { type: 'cmd', indent: 1, val: 'faire clignoter la LED en bleu' },
+                            { type: 'wait_input', indent: 1, event: 'bluetooth_conn', val: 'attendre la connexion d\'un téléphone' },
+                            { type: 'text', indent: 1, val: 'si le téléphone est connecté' },
+                            { type: 'keyword', indent: 1, val: 'alors' },
+                            { type: 'cmd', indent: 2, val: 'allumer la LED en bleu fixe' },
+                            { type: 'wait_input', indent: 2, event: 'speaker_cmd', val: 'attendre une commande' },
+                            { type: 'text', indent: 2, val: 'si le bouton "Play" est pressé' },
+                            { type: 'keyword', indent: 2, val: 'alors' },
+                            { type: 'cmd', indent: 3, val: 'allumer la LED en vert fixe' },
+                            { type: 'cmd', indent: 3, val: 'jouer la musique' },
+                            { type: 'text', indent: 2, val: 'si le bouton "Pause" est pressé' },
+                            { type: 'keyword', indent: 2, val: 'alors' },
+                            { type: 'cmd', indent: 3, val: 'allumer la LED en bleu fixe' },
+                            { type: 'cmd', indent: 3, val: 'mettre la musique en pause' }
+                        ];
+                    },
+                    verify: () => {
+                        if (lines.length !== originalLines.length) {
+                            return false;
+                        }
+                        return lines.every((l, idx) => {
+                            return l.val === originalLines[idx].val;
+                        });
+                    }
+                }
+            },
             'pseudo_var': {
                 'easy': {
                     targetText: "Modifie la valeur attribuée à <strong>A</strong> et le calcul de <strong>B</strong> pour obtenir la valeur de sortie <strong>10</strong>.",
@@ -968,7 +1408,113 @@
 
         // Initialize Level
         function initLevel() {
+            // Dynamically show/hide difficulty buttons and adjust titles for pseudo_bug
+            const diffBar = document.querySelector('.difficulty-bar');
+            const diffMedium = document.getElementById('diff-medium');
+            const diffEasy = document.getElementById('diff-easy');
+            const diffHard = document.getElementById('diff-hard');
+
+            if (currentMode === 'pseudo_bug') {
+                if (diffBar) {
+                    diffBar.style.display = 'flex';
+                }
+                if (diffMedium) {
+                    diffMedium.style.display = 'none';
+                }
+                if (diffEasy) {
+                    diffEasy.innerHTML = '<i data-fa="ticket"></i> Distributeur de billets';
+                }
+                if (diffHard) {
+                    diffHard.innerHTML = '<i data-fa="volume-high"></i> Haut-parleur connecté';
+                }
+                
+                // If it was medium, reset to easy
+                if (currentDifficulty === 'medium') {
+                    currentDifficulty = 'easy';
+                    document.querySelectorAll('.diff-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    if (diffEasy) {
+                        diffEasy.classList.add('active');
+                    }
+                }
+            } else {
+                if (diffBar) {
+                    diffBar.style.display = 'none';
+                }
+                if (diffMedium) {
+                    diffMedium.style.display = '';
+                }
+                if (diffEasy) {
+                    diffEasy.innerHTML = '<i data-fa="circle" style="color: #2ecc71;"></i> Facile';
+                }
+                if (diffHard) {
+                    diffHard.innerHTML = '<i data-fa="circle" style="color: #e74c3c;"></i> Difficile';
+                }
+            }
+
+            // Update panel titles and console visibility based on mode
+            const editorTitle = document.getElementById('editor-title');
+            const renderTitle = document.getElementById('render-title');
+            const consoleWrapper = document.getElementById('console-wrapper');
+
+            if (currentMode === 'pseudo_bug') {
+                editorTitle.innerHTML = '<i data-fa="code"></i> Code du logiciel (software)';
+                renderTitle.innerHTML = '<i data-fa="microchip"></i> Appareil (hardware)';
+                if (consoleWrapper) consoleWrapper.style.display = 'none';
+            } else {
+                editorTitle.innerHTML = '<i data-fa="clipboard"></i> Algorithme';
+                renderTitle.innerHTML = '<i data-fa="desktop"></i> Résultat';
+                if (consoleWrapper) consoleWrapper.style.display = '';
+            }
+            window.fa?.createIcons?.();
+
             const mission = MISSIONS[currentMode][currentDifficulty];
+
+            if (currentMode === 'pseudo_bug') {
+                hardwareState = {
+                    screen_text: currentDifficulty === 'easy' ? "CHOISIR TRAJET" : "ÉTEINT",
+                    sub_text: currentDifficulty === 'easy' ? "" : "Silence",
+                    montant_introduit: 0,
+                    selection: null,
+                    payment_method: null,
+                    pin_correct: null,
+                    tickets: [],
+                    power_on: false,
+                    bluetooth_searching: false,
+                    phone_connected: false,
+                    music_playing: false,
+                    led_state: 'off'
+                };
+                activeDropdownIdx = null;
+                mission.setup();
+
+                lines = JSON.parse(JSON.stringify(originalLines));
+
+                // Supprime une ligne au hasard (sauf la première)
+                removedLineIdx = Math.floor(Math.random() * (lines.length - 1)) + 1;
+                removedLine = lines.splice(removedLineIdx, 1)[0];
+
+                // Récupère les autres textes de lignes uniques pour créer les fausses options
+                const uniqueTexts = [...new Set(originalLines.map(l => { return l.val; }).filter(val => { return val && val !== removedLine.val; }))];
+                let option2 = uniqueTexts[Math.floor(Math.random() * uniqueTexts.length)] || "terminer le processus";
+                let remainingTexts = uniqueTexts.filter(t => { return t !== option2; });
+                let option3 = remainingTexts[Math.floor(Math.random() * remainingTexts.length)] || "afficher \"Erreur\"";
+
+                choices = [removedLine.val, option2, option3];
+                choices.sort(() => { return Math.random() - 0.5; });
+
+                let diffBadge = ''; // Pas de niveaux/difficultés ici, ce sont deux hardwares différents
+                document.getElementById('level-target').innerHTML = diffBadge + mission.targetText;
+
+                renderPseudocode();
+                renderVisualizer();
+                resetExecution();
+
+                ScoreManager.init('apprendre_pseudocode');
+                ScoreManager.checkAdaptiveDifficulty = () => { };
+                return;
+            }
 
             // Load variables & structures for the new level first
             mission.setup();
@@ -999,6 +1545,105 @@
         // Render code lines dynamically
         function renderPseudocode() {
             const container = document.getElementById('editor-lines');
+            if (currentMode === 'pseudo_bug') {
+                container.replaceChildren();
+
+                lines.forEach((line, idx) => {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = `code-line code-indent-${line.indent || 0}`;
+                    if (line.isUserAdded) {
+                        lineDiv.classList.add('user-added');
+                    }
+                    lineDiv.id = `line-${idx}`;
+
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'line-number';
+                    numSpan.textContent = idx + 1;
+                    lineDiv.appendChild(numSpan);
+
+                    const span = document.createElement('span');
+                    if (line.type === 'keyword' || line.type === 'cmd') {
+                        span.className = line.type === 'keyword' ? 'keyword' : 'variable-name';
+                    }
+                    if (line.type === 'wait_input') {
+                        span.style.color = '#eab308';
+                        span.style.fontStyle = 'italic';
+                    }
+
+                    span.textContent = (line.type === 'wait_input' ? '⏳ ' : '') + (line.val || '');
+                    lineDiv.appendChild(span);
+
+                    if (line.isUserAdded) {
+                        const delBtn = document.createElement('span');
+                        delBtn.className = 'del-btn';
+                        delBtn.innerHTML = '<i data-fa="trash"></i>';
+                        delBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            lines.splice(idx, 1);
+                            renderPseudocode();
+                            resetExecution();
+                        });
+                        lineDiv.appendChild(delBtn);
+                    }
+
+                    container.appendChild(lineDiv);
+
+                    // INTERLIGNE TACTILE COMPACT ET BOUTON "+" CIRCULAIRE
+                    const interline = document.createElement('div');
+                    interline.className = `interline code-indent-${line.indent || 0}`;
+                    if (activeDropdownIdx === idx) {
+                        interline.classList.add('active');
+                    }
+
+                    const interlineBtn = document.createElement('button');
+                    interlineBtn.className = 'interline-btn';
+                    interlineBtn.setAttribute('title', 'Insérer une instruction');
+                    interlineBtn.innerHTML = '<i data-fa="plus"></i>';
+                    interline.appendChild(interlineBtn);
+
+                    interline.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (activeDropdownIdx === idx) {
+                            activeDropdownIdx = null;
+                        } else {
+                            activeDropdownIdx = idx;
+                        }
+                        renderPseudocode();
+                    });
+
+                    container.appendChild(interline);
+
+                    // DROPDOWN INLINE IMMÉDIATEMENT OUVERT
+                    if (activeDropdownIdx === idx) {
+                        const dropdown = document.createElement('div');
+                        dropdown.className = `inline-dropdown code-indent-${line.indent || 0}`;
+
+                        const title = document.createElement('div');
+                        title.className = 'inline-dropdown-title';
+                        title.textContent = 'Sélectionnez la ligne manquante :';
+                        dropdown.appendChild(title);
+
+                        choices.forEach(choiceText => {
+                            const option = document.createElement('button');
+                            option.className = 'inline-dropdown-option';
+                            option.textContent = choiceText;
+                            option.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                insertLineAt(idx, choiceText);
+                            });
+                            dropdown.appendChild(option);
+                        });
+
+                        container.appendChild(dropdown);
+                    }
+                });
+
+                if (window.fa && window.fa.createIcons) {
+                    window.fa.createIcons(container);
+                }
+                return;
+            }
+
             container.replaceChildren();
 
             lines.forEach((line, idx) => {
@@ -1168,7 +1813,7 @@
 
                     const select = document.createElement('select');
                     select.className = 'code-selector';
-                    select.setAttribute('aria-label', `Valeur de comparaison pour la boucle`);
+                    select.setAttribute('aria-label', `Condition d'arrêt de boucle`);
                     line.options.forEach(opt => {
                         const option = document.createElement('option');
                         option.value = opt;
@@ -1183,22 +1828,176 @@
                     });
 
                     lineDiv.appendChild(select);
-
-                    const endSpan = document.createElement('span');
-                    endSpan.className = 'keyword';
-                    endSpan.textContent = ' Faire';
-                    lineDiv.appendChild(endSpan);
                 }
-
                 container.appendChild(lineDiv);
             });
+
+            if (window.fa && window.fa.createIcons) {
+                window.fa.createIcons(container);
+            }
         }
 
-        // Render visualization elements
+        // Insert code at index
+        function insertLineAt(idx, text) {
+            const addedLineObj = originalLines.find(l => l.val === text);
+            if (!addedLineObj) return;
+
+            const duplicate = { ...addedLineObj, isUserAdded: true };
+            lines.splice(idx + 1, 0, duplicate);
+            activeDropdownIdx = null;
+
+            renderPseudocode();
+            resetExecution();
+        }
+
+        // UI Synchronization helper
+        function updateHardwareUI() {
+            if (currentMode === 'pseudo_bug') {
+                const screen = document.getElementById('hw-screen');
+                const subtext = document.getElementById('hw-subtext');
+
+                if (screen) {
+                    screen.textContent = hardwareState.screen_text;
+                }
+                if (subtext) {
+                    subtext.textContent = hardwareState.sub_text;
+                }
+
+                if (currentDifficulty === 'easy') {
+                    // Update tickets container
+                    const ticketSlot = document.getElementById('hw-ticket-slot');
+                    if (ticketSlot) {
+                        ticketSlot.querySelectorAll('.ticket-out').forEach(t => t.remove());
+                        hardwareState.tickets.forEach((tk, idx) => {
+                            const tkDiv = document.createElement('div');
+                            tkDiv.className = 'ticket-out';
+                            tkDiv.textContent = tk;
+                            tkDiv.style.bottom = `${15 + idx * 8}px`;
+                            tkDiv.style.transform = `rotate(${(idx % 2 === 0 ? 3 : -3) * idx}deg) scale(0.95)`;
+                            ticketSlot.appendChild(tkDiv);
+                        });
+                    }
+                } else {
+                    // SPEAKER LED update
+                    const led = document.getElementById('spk-led');
+                    if (led) {
+                        led.className = 'speaker-led';
+                        if (hardwareState.led_state === 'solid_blue') {
+                            led.classList.add('led-solid-blue');
+                        } else if (hardwareState.led_state === 'solid_green') {
+                            led.classList.add('led-solid-green');
+                        } else if (hardwareState.led_state === 'blink_blue') {
+                            led.classList.add('led-blink-blue');
+                        }
+                    }
+
+                    // VIBRATIONS
+                    const svgSpk = document.querySelector('.distributeur-svg svg');
+                    if (svgSpk) {
+                        svgSpk.classList.toggle('vibrating', hardwareState.music_playing);
+                    }
+
+                    // BTN ACTIVE STYLING
+                    const btnPower = document.getElementById('btn-power');
+                    const btnBluetooth = document.getElementById('btn-bluetooth');
+                    const btnPlayHw = document.getElementById('btn-play-hw');
+                    const btnPauseHw = document.getElementById('btn-pause-hw');
+
+                    if (btnPower) {
+                        btnPower.classList.toggle('active-btn', hardwareState.power_on);
+                    }
+                    if (btnBluetooth) {
+                        btnBluetooth.classList.toggle('active-btn', hardwareState.phone_connected);
+                    }
+                    if (btnPlayHw) {
+                        btnPlayHw.classList.toggle('active-btn', hardwareState.music_playing);
+                    }
+                    if (btnPauseHw) {
+                        btnPauseHw.classList.toggle('active-btn', !hardwareState.music_playing && hardwareState.phone_connected);
+                    }
+                }
+
+                if (window.fa && window.fa.createIcons) {
+                    window.fa.createIcons(document.getElementById('render-area'));
+                }
+                return;
+            }
+        }
+
         function renderVisualizer() {
             const area = document.getElementById('render-area');
             const inspector = document.getElementById('memory-inspector');
             area.replaceChildren();
+
+            if (currentMode === 'pseudo_bug') {
+                inspector.style.display = 'none';
+
+                if (currentDifficulty === 'easy') {
+                    // Distributeur de billets
+                    const machine = document.createElement('div');
+                    machine.className = 'distributeur-svg';
+                    machine.innerHTML = `
+                        <div class="dist-screen">
+                            <div id="hw-screen">CHOISIR TRAJET</div>
+                            <div id="hw-subtext" class="dist-screen-sub"></div>
+                        </div>
+                        <div class="dist-btn-group">
+                            <button class="dist-btn" id="btn-adulte"><i data-fa="user"></i> Adulte</button>
+                            <button class="dist-btn" id="btn-enfant"><i data-fa="children"></i> Enfant</button>
+                        </div>
+                        <div class="dist-slots">
+                            <div class="ticket-slot" id="hw-ticket-slot"><i data-fa="ticket"></i> Billet</div>
+                            <div class="coin-slot" id="btn-coin"><i data-fa="coins"></i> Cash (+2.00)</div>
+                        </div>
+                    `;
+                    area.appendChild(machine);
+
+                    document.getElementById('btn-adulte').addEventListener('click', () => triggerHardwareEvent('adulte'));
+                    document.getElementById('btn-enfant').addEventListener('click', () => triggerHardwareEvent('enfant'));
+                    document.getElementById('btn-coin').addEventListener('click', () => triggerHardwareEvent('cash'));
+                } else {
+                    // Haut-parleur sans fil
+                    const speaker = document.createElement('div');
+                    speaker.className = 'distributeur-svg';
+                    speaker.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; padding: 15px;">
+                            <svg viewBox="0 0 120 120" width="120" height="120" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));">
+                                <!-- Cabinet box -->
+                                <rect x="25" y="10" width="70" height="100" rx="8" fill="#334155" stroke="#1e293b" stroke-width="3"/>
+                                <!-- LED on the speaker cabinet -->
+                                <circle id="spk-led" class="speaker-led" cx="80" cy="22" r="7" fill="#475569" stroke="#1e293b" stroke-width="1.5"/>
+                                <!-- Tweeter cone -->
+                                <circle cx="60" cy="40" r="12" fill="#0f172a" stroke="#475569" stroke-width="2"/>
+                                <circle cx="60" cy="40" r="4" fill="#475569"/>
+                                <!-- Woofer cone -->
+                                <circle cx="60" cy="80" r="22" fill="#0f172a" stroke="#475569" stroke-width="3" id="spk-cone-inner"/>
+                                <circle cx="60" cy="80" r="8" fill="#475569"/>
+                            </svg>
+                        </div>
+                        <div class="dist-screen">
+                            <div id="hw-screen">ÉTEINT</div>
+                            <div id="hw-subtext" class="dist-screen-sub">Silence</div>
+                        </div>
+                        <div class="dist-btn-group">
+                            <button class="dist-btn" id="btn-power"><i data-fa="power-off"></i> Power</button>
+                            <button class="dist-btn" id="btn-bluetooth"><i data-fa="bluetooth"></i> Appairer</button>
+                        </div>
+                        <div class="dist-btn-group">
+                            <button class="dist-btn" id="btn-play-hw"><i data-fa="play"></i> Play</button>
+                            <button class="dist-btn" id="btn-pause-hw"><i data-fa="pause"></i> Pause</button>
+                        </div>
+                    `;
+                    area.appendChild(speaker);
+
+                    document.getElementById('btn-power').addEventListener('click', () => triggerHardwareEvent('power'));
+                    document.getElementById('btn-bluetooth').addEventListener('click', () => triggerHardwareEvent('bluetooth'));
+                    document.getElementById('btn-play-hw').addEventListener('click', () => triggerHardwareEvent('play'));
+                    document.getElementById('btn-pause-hw').addEventListener('click', () => triggerHardwareEvent('pause'));
+                }
+
+                window.fa?.createIcons?.(area);
+                return;
+            }
 
             if (currentMode === 'pseudo_var' || currentMode === 'pseudo_cond') {
                 // Calculation Machine
@@ -1418,6 +2217,44 @@
 
         // Reset Execution variables and restore initial states
         function resetExecution() {
+            if (currentMode === 'pseudo_bug') {
+                if (executionInterval) {
+                    clearInterval(executionInterval);
+                }
+                executionInterval = null;
+                executionState = 'idle';
+                currentLineIdx = -1;
+                isWaitingForInput = false;
+
+                document.querySelectorAll('.code-line').forEach(el => {
+                    el.classList.remove('active');
+                });
+                hardwareState = {
+                    screen_text: currentDifficulty === 'easy' ? "CHOISIR TRAJET" : "ÉTEINT",
+                    sub_text: currentDifficulty === 'easy' ? "" : "Silence",
+                    montant_introduit: 0,
+                    selection: null,
+                    payment_method: null,
+                    pin_correct: null,
+                    tickets: [],
+                    power_on: false,
+                    bluetooth_searching: false,
+                    phone_connected: false,
+                    music_playing: false,
+                    led_state: 'off'
+                };
+                renderVisualizer();
+
+                document.getElementById('execution-msg').textContent = 'Prêt';
+                document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Lancer';
+                document.getElementById('btn-play').className = 'btn btn-success';
+                
+                if (window.fa && window.fa.createIcons) {
+                    window.fa.createIcons();
+                }
+                return;
+            }
+
             if (executionInterval) clearInterval(executionInterval);
             executionInterval = null;
             executionState = 'idle';
@@ -1487,6 +2324,199 @@
         }
 
         function runStep() {
+            if (currentMode === 'pseudo_bug') {
+                if (isWaitingForInput) {
+                    return;
+                }
+
+                currentLineIdx++;
+                document.querySelectorAll('.code-line').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                if (currentLineIdx >= lines.length) {
+                    finishExecution();
+                    return;
+                }
+
+                const line = lines[currentLineIdx];
+                const activeLine = document.getElementById(`line-${currentLineIdx}`);
+                if (activeLine) {
+                    activeLine.classList.add('active');
+                    activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                const text = line.val || '';
+                const indent = line.indent || 0;
+
+                if (currentDifficulty === 'easy') {
+                    // --- SAUTS DISTRIBUTEUR ---
+                    if (text.includes('si la touche "adulte" est sélectionnée')) {
+                        if (hardwareState.selection !== 'adulte') {
+                            let nextIdx = lines.findIndex((l, i) => {
+                                return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                            });
+                            if (nextIdx !== -1) {
+                                currentLineIdx = nextIdx - 1;
+                            } else {
+                                currentLineIdx = lines.length;
+                            }
+                        }
+                    } else if (text.includes('si la touche "enfant" est sélectionnée')) {
+                        if (hardwareState.selection !== 'enfant') {
+                            let nextIdx = lines.findIndex((l, i) => {
+                                return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                            });
+                            if (nextIdx !== -1) {
+                                currentLineIdx = nextIdx - 1;
+                            } else {
+                                currentLineIdx = lines.length;
+                            }
+                        }
+                    } else if (text.includes('si le montant introduit')) {
+                        if (text.includes('2.30')) {
+                            if (hardwareState.montant_introduit < 2.30) {
+                                let nextIdx = lines.findIndex((l, i) => {
+                                    return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                                });
+                                if (nextIdx !== -1) {
+                                    currentLineIdx = nextIdx - 1;
+                                } else {
+                                    currentLineIdx = lines.length;
+                                }
+                            }
+                        } else if (text.includes('1.80')) {
+                            if (hardwareState.montant_introduit < 1.80) {
+                                let nextIdx = lines.findIndex((l, i) => {
+                                    return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                                });
+                                if (nextIdx !== -1) {
+                                    currentLineIdx = nextIdx - 1;
+                                } else {
+                                    currentLineIdx = lines.length;
+                                }
+                            }
+                        }
+                    }
+
+                    // --- ACTIONS ET ATTENTES DISTRIBUTEUR ---
+                    if (line.type === 'wait_input') {
+                        isWaitingForInput = true;
+                        if (line.event === 'selection') {
+                            document.getElementById('execution-msg').textContent = '⏳ En attente du choix du passager...';
+                        } else {
+                            document.getElementById('execution-msg').textContent = '⏳ En attente de la monnaie...';
+                        }
+
+                        if (line.event === 'pay_230' && hardwareState.montant_introduit >= 2.30) {
+                            isWaitingForInput = false;
+                        }
+                        if (line.event === 'pay_180' && hardwareState.montant_introduit >= 1.80) {
+                            isWaitingForInput = false;
+                        }
+                        if (line.event === 'selection' && hardwareState.selection !== null) {
+                            isWaitingForInput = false;
+                        }
+                    } else if (line.type === 'cmd') {
+                        if (text.includes('afficher Fr. 2.30') || text.includes('afficher 2.30')) {
+                            hardwareState.screen_text = "PRIX: CHF 2.30";
+                        } else if (text.includes('afficher Fr. 1.80') || text.includes('afficher 1.80')) {
+                            hardwareState.screen_text = "PRIX: CHF 1.80";
+                        } else if (text.includes('imprimer le billet')) {
+                            const ticketType = hardwareState.selection === 'adulte' ? "CFF - ADULTE" : "CFF - ENFANT";
+                            hardwareState.tickets.push(ticketType);
+                            hardwareState.screen_text = "BON VOYAGE";
+                            playSound('click');
+                        } else if (text.includes('Erreur')) {
+                            hardwareState.screen_text = "ERREUR LOGICIELLE";
+                        }
+                    }
+                } else {
+                    // --- SAUTS & ACTIONS HAUT-PARLEUR ---
+                    if (text.includes('si le téléphone est connecté')) {
+                        if (!hardwareState.phone_connected) {
+                            let nextIdx = lines.findIndex((l, i) => {
+                                return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                            });
+                            if (nextIdx !== -1) {
+                                currentLineIdx = nextIdx - 1;
+                            } else {
+                                currentLineIdx = lines.length;
+                            }
+                        }
+                    } else if (text.includes('si le bouton "Play" est pressé')) {
+                        if (!hardwareState.music_playing) {
+                            let nextIdx = lines.findIndex((l, i) => {
+                                return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                            });
+                            if (nextIdx !== -1) {
+                                currentLineIdx = nextIdx - 1;
+                            } else {
+                                currentLineIdx = lines.length;
+                            }
+                        }
+                    } else if (text.includes('si le bouton "Pause" est pressé')) {
+                        if (hardwareState.music_playing) {
+                            let nextIdx = lines.findIndex((l, i) => {
+                                return i > currentLineIdx && l.indent <= indent && l.val !== 'alors';
+                            });
+                            if (nextIdx !== -1) {
+                                currentLineIdx = nextIdx - 1;
+                            } else {
+                                currentLineIdx = lines.length;
+                            }
+                        }
+                    }
+
+                    if (line.type === 'wait_input') {
+                        isWaitingForInput = true;
+                        if (line.event === 'power_btn') {
+                            document.getElementById('execution-msg').textContent = "⏳ En attente de l'allumage (Bouton Power)...";
+                            hardwareState.screen_text = "ÉTEINT";
+                            hardwareState.sub_text = "Silence";
+                        } else if (line.event === 'bluetooth_conn') {
+                            document.getElementById('execution-msg').textContent = '⏳ En attente de connexion du téléphone...';
+                            hardwareState.screen_text = "CONNEXION...";
+                            hardwareState.sub_text = "Attente téléphone";
+                        } else if (line.event === 'speaker_cmd') {
+                            document.getElementById('execution-msg').textContent = '⏳ En attente de commandes (Play, Pause ou Power)...';
+                        }
+
+                        if (line.event === 'power_btn' && hardwareState.power_on) {
+                            isWaitingForInput = false;
+                        }
+                        if (line.event === 'bluetooth_conn' && hardwareState.phone_connected) {
+                            isWaitingForInput = false;
+                        }
+                        if (line.event === 'speaker_cmd' && (!hardwareState.power_on || hardwareState.music_playing || !hardwareState.music_playing)) {
+                            isWaitingForInput = true;
+                        }
+                    } else if (line.type === 'cmd') {
+                        if (text.includes('activer la recherche Bluetooth')) {
+                            hardwareState.bluetooth_searching = true;
+                            hardwareState.screen_text = "RECHERCHE...";
+                        } else if (text.includes('faire clignoter la LED en bleu')) {
+                            hardwareState.led_state = 'blink_blue';
+                        } else if (text.includes('allumer la LED en bleu fixe')) {
+                            hardwareState.led_state = 'solid_blue';
+                            hardwareState.screen_text = "CONNECTÉ";
+                            hardwareState.sub_text = "Prêt";
+                        } else if (text.includes('allumer la LED en vert fixe')) {
+                            hardwareState.led_state = 'solid_green';
+                            hardwareState.screen_text = "MUSIQUE";
+                            hardwareState.sub_text = "Lecture...";
+                        } else if (text.includes('jouer la musique')) {
+                            hardwareState.music_playing = true;
+                        } else if (text.includes('mettre la musique en pause')) {
+                            hardwareState.music_playing = false;
+                        }
+                    }
+                }
+
+                updateHardwareUI();
+                return;
+            }
+
             currentLineIdx++;
 
             // Highlight line
@@ -1667,6 +2697,64 @@
 
         // Conclude step loops
         function finishExecution() {
+            if (currentMode === 'pseudo_bug') {
+                if (executionInterval) {
+                    clearInterval(executionInterval);
+                }
+                executionInterval = null;
+                executionState = 'finished';
+
+                document.querySelectorAll('.code-line').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                const isCodeCorrect = MISSIONS['pseudo_bug'][currentDifficulty].verify();
+
+                if (currentDifficulty === 'easy') {
+                    if (isCodeCorrect && hardwareState.tickets.length > 0) {
+                        document.getElementById('execution-msg').textContent = 'Mission accomplie ! Tu as inséré le code au bon endroit. 🎉';
+                        document.getElementById('btn-play').className = 'btn btn-outline';
+                        playSound('success');
+                        updateScore(true);
+                    } else if (hardwareState.tickets.length > 0) {
+                        document.getElementById('execution-msg').textContent = 'Le billet est sorti, mais est-ce que tu as vraiment corrigé le bug du logiciel ?';
+                        document.getElementById('btn-play').className = 'btn btn-outline';
+                        playSound('warn');
+                    } else if (hardwareState.montant_introduit > 0 || hardwareState.selection !== null) {
+                        document.getElementById('execution-msg').textContent = "Aïe ! L'action a été lancée mais le billet n'est pas sorti ! Trouve le bon endroit pour insérer ton code.";
+                        document.getElementById('btn-play').className = 'btn btn-outline-error';
+                        playSound('error');
+                        updateScore(false);
+                    } else {
+                        document.getElementById('execution-msg').textContent = 'Programme terminé sans action.';
+                        document.getElementById('btn-play').className = 'btn btn-outline';
+                    }
+                } else {
+                    // SPEAKER FINISH
+                    if (isCodeCorrect && hardwareState.music_playing) {
+                        document.getElementById('execution-msg').textContent = 'Mission accomplie ! Le haut-parleur fonctionne à merveille. 🎉';
+                        document.getElementById('btn-play').className = 'btn btn-outline';
+                        playSound('success');
+                        updateScore(true);
+                    } else if (hardwareState.music_playing) {
+                        document.getElementById('execution-msg').textContent = "La musique joue, mais ton pseudo-code n'est pas tout à fait correct...";
+                        document.getElementById('btn-play').className = 'btn btn-outline';
+                        playSound('warn');
+                    } else if (hardwareState.power_on || hardwareState.phone_connected) {
+                        document.getElementById('execution-msg').textContent = "L'appareil est connecté mais la musique ne joue pas. Trouve l'instruction manquante.";
+                        document.getElementById('btn-play').className = 'btn btn-outline-error';
+                        playSound('error');
+                        updateScore(false);
+                    } else {
+                        document.getElementById('execution-msg').textContent = 'Programme terminé sans action.';
+                        document.getElementById('btn-play').className = 'btn btn-outline';
+                    }
+                }
+
+                updateHardwareUI();
+                return;
+            }
+
             if (executionInterval) clearInterval(executionInterval);
             executionInterval = null;
             executionState = 'finished';
@@ -1744,6 +2832,103 @@
             }
             document.getElementById('global-correct').textContent = globalCorrect;
             document.getElementById('global-streak').textContent = globalStreak;
+        }
+
+        // --- GESTION DES EVENEMENTS MATERIELS ---
+        function triggerHardwareEvent(type) {
+            if (currentMode !== 'pseudo_bug') return;
+
+            // Start the code execution automatically if it is idle!
+            if (executionState === 'idle') {
+                startExecution();
+            }
+
+            if (currentDifficulty === 'easy') {
+                // Distributeur
+                if (type === 'adulte' || type === 'enfant') {
+                    hardwareState.selection = type;
+                    hardwareState.screen_text = type === 'adulte' ? "TICKET ADULTE" : "TICKET ENFANT";
+                    hardwareState.sub_text = type === 'adulte' ? "Fr. 2.30" : "Fr. 1.80";
+                    playSound('click');
+                } else if (type === 'cash') {
+                    if (hardwareState.selection === null) {
+                        showToast("Sélectionnez d'abord un type de ticket !", "warn");
+                        return;
+                    }
+                    hardwareState.montant_introduit += 2.00;
+                    hardwareState.screen_text = `INTRODUIT: Fr. ${hardwareState.montant_introduit.toFixed(2)}`;
+                    playSound('coins');
+                }
+            } else {
+                // Haut-parleur
+                if (type === 'power') {
+                    hardwareState.power_on = !hardwareState.power_on;
+                    if (!hardwareState.power_on) {
+                        // Reset everything when turned off
+                        hardwareState.power_on = false;
+                        hardwareState.bluetooth_searching = false;
+                        hardwareState.phone_connected = false;
+                        hardwareState.music_playing = false;
+                        hardwareState.led_state = 'off';
+                        hardwareState.screen_text = "ÉTEINT";
+                        hardwareState.sub_text = "Silence";
+                    } else {
+                        hardwareState.screen_text = "ALLUMÉ";
+                        hardwareState.sub_text = "Prêt";
+                    }
+                    playSound('click');
+                } else if (type === 'bluetooth') {
+                    if (!hardwareState.power_on) {
+                        showToast("Allumez d'abord l'appareil (Bouton Power) !", "warn");
+                        return;
+                    }
+                    if (hardwareState.bluetooth_searching && !hardwareState.phone_connected) {
+                        hardwareState.phone_connected = true;
+                        hardwareState.bluetooth_searching = false;
+                        hardwareState.screen_text = "CONNECTÉ";
+                        hardwareState.sub_text = "Prêt";
+                        playSound('success');
+                    } else if (!hardwareState.bluetooth_searching && !hardwareState.phone_connected) {
+                        showToast("Activez la recherche bluetooth sur l'appareil avant !", "warn");
+                    }
+                } else if (type === 'play') {
+                    if (!hardwareState.power_on || !hardwareState.phone_connected) {
+                        showToast("L'appareil doit être allumé et connecté par bluetooth !", "warn");
+                        return;
+                    }
+                    hardwareState.music_playing = true;
+                    playSound('click');
+                } else if (type === 'pause') {
+                    if (!hardwareState.power_on || !hardwareState.phone_connected) {
+                        showToast("L'appareil doit être allumé et connecté par bluetooth !", "warn");
+                        return;
+                    }
+                    hardwareState.music_playing = false;
+                    playSound('click');
+                }
+            }
+
+            // Débloque l'exécution pas-à-pas ou en continu s'il attendait une action valide
+            if (isWaitingForInput) {
+                const line = lines[currentLineIdx];
+                if (line) {
+                    if (line.event === 'selection' && hardwareState.selection !== null) {
+                        isWaitingForInput = false;
+                    } else if (line.event === 'pay_230' && hardwareState.montant_introduit >= 2.30) {
+                        isWaitingForInput = false;
+                    } else if (line.event === 'pay_180' && hardwareState.montant_introduit >= 1.80) {
+                        isWaitingForInput = false;
+                    } else if (line.event === 'power_btn' && hardwareState.power_on) {
+                        isWaitingForInput = false;
+                    } else if (line.event === 'bluetooth_conn' && hardwareState.phone_connected) {
+                        isWaitingForInput = false;
+                    } else if (line.event === 'speaker_cmd') {
+                        isWaitingForInput = false;
+                    }
+                }
+            }
+
+            updateHardwareUI();
         }
 
         // Page main init logic

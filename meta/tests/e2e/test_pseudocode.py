@@ -11,7 +11,7 @@ def test_apprendre_pseudocode_loads_correctly(page: Page):
     page.goto("http://localhost:8000/alpha/webapps/apprendre_pseudocode.html")
     
     # Assertions
-    expect(page).to_have_title(re.compile("Bases du pseudocode"))
+    expect(page).to_have_title(re.compile("Pseudo-code"))
     
     # Verify no console errors
     assert len(errors) == 0, f"Found console errors: {errors}"
