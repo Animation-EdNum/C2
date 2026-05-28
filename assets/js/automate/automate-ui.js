@@ -548,6 +548,67 @@ function initApplication() {
         if (toggleBtn) toggleBtn.style.display = 'none';
         if (commandsVisible) toggleCommands(); // trigger hiding if currently visible
     }
+
+    // Onboarding éphémère mode Exploration (first-time hint)
+    showExploreOnboardingHint();
+}
+
+function showExploreOnboardingHint() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('noNudges') === '1') return;
+    if (localStorage.getItem('automate_explore_seen_hint')) return;
+
+    const EXPLORE_PAD_IDS = ['explore-pad-fwd', 'explore-pad-bwd', 'explore-pad-left', 'explore-pad-right'];
+    let hintTimer;
+
+    // Annule la bulle si l'enfant clique avant le délai de 3 s
+    const cancelHint = () => {
+        clearTimeout(hintTimer);
+        localStorage.setItem('automate_explore_seen_hint', '1');
+        EXPLORE_PAD_IDS.forEach(id =>
+            document.getElementById(id)?.removeEventListener('click', cancelHint)
+        );
+    };
+    EXPLORE_PAD_IDS.forEach(id =>
+        document.getElementById(id)?.addEventListener('click', cancelHint, { once: true })
+    );
+
+    // Déclenche la bulle après 3 secondes si aucune interaction
+    hintTimer = setTimeout(() => {
+        EXPLORE_PAD_IDS.forEach(id =>
+            document.getElementById(id)?.removeEventListener('click', cancelHint)
+        );
+        if (localStorage.getItem('automate_explore_seen_hint')) return;
+
+        const fwdBtn = document.getElementById('explore-pad-fwd');
+        if (!fwdBtn) return;
+
+        localStorage.setItem('automate_explore_seen_hint', '1');
+
+        const hint = document.createElement('div');
+        hint.className = 'explore-onboarding-hint';
+        hint.innerHTML = `<i data-fa="hand-pointer"></i> Appuie pour avancer !`;
+
+        fwdBtn.style.position = 'relative';
+        fwdBtn.appendChild(hint);
+        window.fa?.createIcons?.();
+
+        const removeHint = () => {
+            if (!hint.parentNode) return;
+            hint.style.opacity = '0';
+            setTimeout(() => hint.remove(), 300);
+            EXPLORE_PAD_IDS.forEach(id =>
+                document.getElementById(id)?.removeEventListener('click', removeOnClick)
+            );
+        };
+        const removeOnClick = () => removeHint();
+
+        // Disparaît au premier clic sur le pad ou après 5 secondes
+        EXPLORE_PAD_IDS.forEach(id =>
+            document.getElementById(id)?.addEventListener('click', removeOnClick, { once: true })
+        );
+        setTimeout(removeHint, 5000);
+    }, 3000);
 }
 
 document.getElementById('btn-open-mats').addEventListener('click', openMatsModal);

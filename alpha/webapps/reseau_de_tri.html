@@ -297,6 +297,91 @@
             cursor: not-allowed;
         }
 
+        /* Tooltip styles */
+        .comparator-btn[data-tooltip] {
+            position: absolute;
+        }
+
+        .comparator-btn[data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translate(-50%, 10px) scale(0.9);
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark .comparator-btn[data-tooltip]::before {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .comparator-btn[data-tooltip]:hover::before {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1);
+        }
+
+        /* SVG swap icons styles */
+        .svg-comp-swap-icon {
+            pointer-events: none;
+            transition: opacity 0.3s ease, color 0.3s ease;
+            opacity: 0;
+            color: transparent;
+        }
+
+        /* Onboarding hint */
+        .onboarding-hint {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%);
+            margin-left: 15px;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: var(--radius-lg);
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+            z-index: 1000;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            animation: bounceHint 1.5s ease-in-out infinite;
+        }
+
+        .onboarding-hint::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 100%;
+            transform: translateY(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent var(--accent) transparent transparent;
+        }
+
+        @keyframes bounceHint {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            50%      { transform: translateY(-50%) translateX(5px); }
+        }
+
         /* Elements moving on the grid */
         .element {
             position: absolute;
@@ -543,8 +628,7 @@
         <main>
 
             <div class="chal-instruction">
-                <p>Clique sur les barres verticales actives pour échanger les éléments si nécessaire, puis valide l'étape.
-                    Le plus petit va en haut !</p>
+                <p>Clique sur les comparateurs ⇅ (barres oranges actives) pour échanger les deux éléments connectés. Le plus petit va en haut !</p>
             </div>
 
             <!-- TABS -->
@@ -821,7 +905,7 @@
 
             // Draw comparators
             networkDef.forEach((stage, stageIdx) => {
-                cachedStageElements[stageIdx] = { lines: [], circles: [], buttons: [] };
+                cachedStageElements[stageIdx] = { lines: [], circles: [], buttons: [], swapIcons: [] };
 
                 // Check if any comparators in this stage overlap vertically
                 let hasOverlap = false;
@@ -872,6 +956,19 @@
                     svgContainer.appendChild(node2);
                     cachedStageElements[stageIdx].circles.push(node2);
 
+                    // Swap Icon at center
+                    const midY = (y1 + y2) / 2;
+                    const swapIcon = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    swapIcon.setAttribute("class", `svg-comp-swap-icon stage-${stageIdx}`);
+                    swapIcon.setAttribute("transform", `translate(${x}, ${midY})`);
+                    swapIcon.innerHTML = `
+                      <circle r="11" fill="var(--element-bg)" stroke="currentColor" stroke-width="2"/>
+                      <path d="M-3,-4 L0,-7 L3,-4 M0,-7 L0,7 M-3,4 L0,7 L3,4" 
+                            stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    `;
+                    svgContainer.appendChild(swapIcon);
+                    cachedStageElements[stageIdx].swapIcons.push(swapIcon);
+
                     // Clickable overlay button for the comparator
                     const btn = document.createElement('div');
                     btn.className = `comparator-btn stage-${stageIdx}`;
@@ -881,6 +978,7 @@
                     btn.dataset.stage = stageIdx;
                     btn.dataset.w1 = comp.w1;
                     btn.dataset.w2 = comp.w2;
+                    btn.setAttribute('data-tooltip', 'Cliquer pour échanger les éléments');
                     cachedStageElements[stageIdx].buttons.push(btn);
 
                     btn.addEventListener('click', () => {
@@ -896,6 +994,7 @@
                             line.style.stroke = 'var(--comp-hover)';
                             node1.style.fill = 'var(--comp-hover)';
                             node2.style.fill = 'var(--comp-hover)';
+                            swapIcon.style.color = 'var(--comp-hover)';
                         }
                     });
                     btn.addEventListener('mouseleave', () => {
@@ -971,6 +1070,17 @@
                     el.style.fill = isActive ? 'var(--comp-active)' : 'var(--comp-color)';
                 });
 
+                // SVG swap icons
+                stageEls.swapIcons?.forEach(icon => {
+                    if (isActive) {
+                        icon.style.color = 'var(--comp-active)';
+                        icon.style.opacity = '1';
+                    } else {
+                        icon.style.color = 'transparent';
+                        icon.style.opacity = '0';
+                    }
+                });
+
                 // HTML buttons
                 stageEls.buttons.forEach(el => {
                     if (isActive) {
@@ -1031,6 +1141,52 @@
             updateHighlights();
 
             window.fa?.createIcons?.();
+
+            // Tour guidé éphémère (Onboarding hint)
+            showFirstTimeHint();
+        }
+
+        function showFirstTimeHint() {
+            if (localStorage.getItem('reseau_tri_seen_hint')) return;
+            if (document.querySelectorAll('.comparator-btn.active').length === 0) return;
+
+            let hintTimer;
+
+            // Annule la bulle si l'enfant clique avant le délai de 3 s
+            const cancelHint = () => {
+                clearTimeout(hintTimer);
+                localStorage.setItem('reseau_tri_seen_hint', '1');
+                document.querySelectorAll('.comparator-btn').forEach(btn =>
+                    btn.removeEventListener('click', cancelHint)
+                );
+            };
+            document.querySelectorAll('.comparator-btn').forEach(btn =>
+                btn.addEventListener('click', cancelHint, { once: true })
+            );
+
+            // Déclenche la bulle après 3 secondes si aucune interaction
+            hintTimer = setTimeout(() => {
+                document.querySelectorAll('.comparator-btn').forEach(btn =>
+                    btn.removeEventListener('click', cancelHint)
+                );
+                if (localStorage.getItem('reseau_tri_seen_hint')) return;
+
+                const firstActiveBtn = document.querySelector('.comparator-btn.active');
+                if (!firstActiveBtn) return;
+
+                localStorage.setItem('reseau_tri_seen_hint', '1');
+
+                const hint = document.createElement('div');
+                hint.className = 'onboarding-hint';
+                hint.innerHTML = `<i data-fa="hand-pointer"></i> Clique ici pour échanger !`;
+                firstActiveBtn.appendChild(hint);
+                window.fa?.createIcons?.();
+
+                setTimeout(() => {
+                    hint.style.opacity = '0';
+                    setTimeout(() => hint.remove(), 300);
+                }, 5000);
+            }, 3000);
         }
 
         function handleNextStep() {
