@@ -61,6 +61,22 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // CSRF Protection: Validate Origin header if present
+  if (req.headers.origin) {
+    try {
+      const originUrl = new URL(req.headers.origin);
+      if (originUrl.hostname !== 'localhost' && originUrl.hostname !== '127.0.0.1') {
+        res.writeHead(403, { 'Content-Type': 'text/plain' });
+        res.end('403 Forbidden: Invalid Origin');
+        return;
+      }
+    } catch (e) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end('400 Bad Request: Malformed Origin');
+      return;
+    }
+  }
+
   // Rate limiting check
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
   const currentCount = ipRequestCounts.get(ip) || 0;
