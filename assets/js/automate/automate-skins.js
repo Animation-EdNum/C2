@@ -530,6 +530,12 @@ function closeSkinsModal() {
     document.getElementById('ui-panel').setAttribute('aria-hidden', 'true');
 }
 
+const PREVIEW_ANIMATION_REGEX = /<\/?animate[a-zA-Z]*[\s\S]*?>/gi;
+const PREVIEW_CSS_ANIMATION_REGEX = /animation:[^;]+;/gi;
+const PREVIEW_FILTER_TAG_REGEX = /<filter[\s\S]*?<\/filter>/gi;
+const PREVIEW_FILTER_ATTR_REGEX = /filter="[^"]+"/gi;
+const PREVIEW_VOLCANO_TRANSFORM_REGEX = /<g transform="scale\(1\.4\) translate\(-14, -14\)">/;
+
 function renderSkinsList() {
     const container = document.getElementById('skins-list-container');
     container['innerHTML'] = Object.keys(SKIN_CONFIG).filter(id => {
@@ -541,12 +547,12 @@ function renderSkinsList() {
         const isActive = activeSkin === skinId;
 
         let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
-        svg = svg.replace(/<\/?animate[a-zA-Z]*[\s\S]*?>/gi, ''); // Remove animations for preview
-        svg = svg.replace(/animation:[^;]+;/gi, ''); // Remove CSS animations
-        svg = svg.replace(/<filter[\s\S]*?<\/filter>/gi, ''); // Remove SVG filters for better performance
-        svg = svg.replace(/filter="[^"]+"/gi, ''); // Remove filter attributes
+        svg = svg.replace(PREVIEW_ANIMATION_REGEX, ''); // Remove animations for preview
+        svg = svg.replace(PREVIEW_CSS_ANIMATION_REGEX, ''); // Remove CSS animations
+        svg = svg.replace(PREVIEW_FILTER_TAG_REGEX, ''); // Remove SVG filters for better performance
+        svg = svg.replace(PREVIEW_FILTER_ATTR_REGEX, ''); // Remove filter attributes
         if (skinId === 'volcano') {
-            svg = svg.replace(/<g transform="scale\(1\.4\) translate\(-14, -14\)">/, '<g transform="scale(0.6) translate(36, 0)">');
+            svg = svg.replace(PREVIEW_VOLCANO_TRANSFORM_REGEX, '<g transform="scale(0.6) translate(36, 0)">');
         }
         let lockIcon = '';
 
