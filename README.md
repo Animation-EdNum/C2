@@ -145,6 +145,8 @@ sleep 5
 python3 -m pytest meta/tests/e2e/
 kill $(lsof -t -i :8000) 2>/dev/null || true
 ```
+*   **Security:** A `_headers` file must exist in the root configuring HSTS (`Strict-Transport-Security`) for static deployments to enforce HTTPS.
+*   **Experimental Features:** Alpha-stage applications are hosted under the `alpha/webapps/` directory.
 
 ## 📜 Changelog and Internal Documentation
 Our entire development process (architecture decisions, logs) is archived in the `meta/memory/` folder. If you modify the global architecture, remember to update `project-context.md` or `event-log.md`.

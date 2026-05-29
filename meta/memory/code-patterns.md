@@ -20,6 +20,8 @@
 - **SVG Styling:** Always add `px` to SVG units in CSS (e.g., `r: 14px;`). Apply `overflow: visible` to prevent `.fa-icon` cropping. Scale SVGs via `width/height`, NOT `font-size`. Add `transform-box: fill-box; transform-origin: center;` for proper CSS scaling.
 - **CSS Specificity:** Do NOT use `!important` to override. Increase selector specificity (e.g., `html body .class`).
 - **Animations:** Use CSS `transform` on `.target-inner` wrappers, not the parent overlay. Use `requestAnimationFrame` for continuous JS animations, not `setInterval`.
+- **DOM & UI:** Always provide explicit fallback colors (e.g., `var(--card-bg, #ffffff)`) for CSS variables. Use `overflow: visible` to prevent absolute overlays from clipping.
+- **Automate Grid Layers:** To ensure grid lines render above image mats applied via `.bot-grid::before`, the intermediate `.grid-row` container must have `position: relative` and `z-index: 1`, and `.bot-cell` borders must have increased opacity.
 
 ## 3. Navigation & UI Components
 - **Primary Navigation:** Exclusively use top tabs (`.tabs` > `.tab-btn`). NEVER use bottom tab bars (`.nav-bar` is deprecated).
@@ -37,6 +39,11 @@
 - **No Inline Events (Critical):** Do NOT use inline event attributes (e.g. `onclick="..."`, `onchange="..."`) in HTML code across all stable and alpha apps. Always bind events programmatically via `.addEventListener('click', ...)` on elements identified with unique `id` attributes or structural selectors.
 - **Audio (`audio.js`):** Use `playSound(id)`. Apps must start muted (`isMuted = true`).
 - **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
+- **JS Performance Patterns:** Extract regular expression literals used in loops into module-level constants. Use `getElementsByClassName` with a `while` loop over the live `HTMLCollection` instead of `querySelectorAll` for rapid element removal. Use `Array.prototype.map().join('')` or push to an array and `.join('')` instead of `+=` for string concatenation in loops. For animation loops, replace `Array.splice()` with an O(1) swap-and-pop pattern when element order doesn't matter. Avoid nested `querySelector` calls within iterations; use a single, flat `document.querySelectorAll()` call. Implement memoization caches when applying regex replacements to large strings inside render loops.
+- **DOM Manipulations:** Avoid using `element.innerHTML` for dynamic content to prevent XSS. Use native DOM APIs (`document.createElement`, `textContent`). Avoid inserting code inside a `<script>` tag that already has a `src` attribute. Ensure functions are defined before callers if spanning multiple `<script>` blocks.
+- **Theme Callbacks:** Define `window.__onThemeChange(theme)` to execute page-specific logic when the global dark/light theme changes.
+- **Clipboard API:** Deprecate `document.execCommand('copy')`. Use `navigator.clipboard.writeText()` or `ClipboardItem` APIs, relying on Promise-based `.catch()` blocks for errors instead of legacy hidden textarea hacks.
+- **Audio Scoping:** Webapps should not locally redeclare variables like `isMuted` or functions like `playSound` to avoid collisions with the centralized `audio.js`.
 
 ## 5. App-Specific Quirks
 - **Drawing Apps:** Call `e.preventDefault()` on `touchstart/move`.
@@ -59,3 +66,5 @@
 - **AGPL-3.0 Headers**: New or modified source files (.html, .css, .js) should include a standard AGPL-3.0 copyright header attributing 'Animation-EdNum (HEP-VS)'.
 - **Back Navigation**: To implement 'back' navigation in static offline HTML pages, use `<a href="javascript:history.back()">`.
 - **FontAwesome Subset Tweaks**: Do not manually modify the generated data inside `assets/js/fa-subset.js`. Fix icon appearance issues (like duotone paths or mismatching viewBoxes) via standard CSS overrides. Ensure custom icons use the exact same `viewBox` width and height dimensions as the original icon.
+- **Specific Instructions:** Place 'short instruction' texts directly inside the `.exercise-card` using inline styles instead of `.chal-instruction` classes.
+- **Visual Overlays (Automate):** When attaching visual overlays to the rotating `.robot-body`, use a wrapper element to apply counter-rotation (`transform: rotate(-${deg}deg)`) and apply translation to the inner element to ensure positioning relative to global screen axes.
