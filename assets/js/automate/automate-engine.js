@@ -366,7 +366,7 @@ let simState = {
         };
 
         /* ================================================================
-           MOTEUR DU ROBOT (SIMULATEUR)
+           MOTEUR DE L'AUTOMATE (SIMULATEUR)
            ================================================================ */
         function addCmd(cmd) {
             if (simState.running) return;
@@ -892,7 +892,7 @@ let simState = {
             ScoreManager.addMistake('simulator', null);
             if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
 
-            // Shake du robot
+            // Shake de l'automate
             document.getElementById('sim-robot').classList.add('shake');
             setTimeout(() => document.getElementById('sim-robot').classList.remove('shake'), 350);
             // Shake global de la fenêtre
@@ -1041,7 +1041,7 @@ let simState = {
             }
             playSound('click'); simState.running = true; simState.paused = false; simState.stopped = false; simState.failed = false; toggleCmdButtons(true);
 
-            // Nouvelle origine du ghost à l'endroit où le robot démarre
+            // Nouvelle origine du ghost à l'endroit où l'automate démarre
             simState.startRow = simState.robotRow; simState.startCol = simState.robotCol; simState.startDir = simState.robotDir;
 
             TrailManager.clear('sim-grid');
@@ -1070,9 +1070,9 @@ let simState = {
                     break;
                 }
 
-                // Tracé synchronisé : attendre la fin de la transition CSS du robot, puis tracer
+                // Tracé synchronisé : attendre la fin de la transition CSS de l'automate, puis tracer
                 if (cmd === 'forward' || cmd === 'backward') {
-                    await sleep(350); // Durée transition CSS du robot
+                    await sleep(350); // Durée transition CSS de l'automate
                     TrailManager.addSegment('sim-grid', simState.robotRow, simState.robotCol);
                 }
 
@@ -1091,7 +1091,7 @@ let simState = {
                 simState.paused = false;
                 simState.stopped = false;
                 toggleCmdButtons(false);
-                // Reset robot position
+                // Reset automate position
                 simState.robotRow = simState.startRow;
                 simState.robotCol = simState.startCol;
                 simState.robotDir = simState.startDir;
@@ -1247,7 +1247,7 @@ let simState = {
         }
 
         /**
-         * Vérifie qu'au moins un obstacle se trouve "entre" le robot et la cible,
+         * Vérifie qu'au moins un obstacle se trouve "entre" l'automate et la cible,
          * c'est-à-dire qu'un chemin en ligne droite (même row ou même col) est bloqué,
          * ou qu'un obstacle se situe dans le rectangle délimité par les deux positions.
          */
@@ -1298,7 +1298,7 @@ let simState = {
                     }
                 }
 
-                // Pour Medium et plus, forcer un obstacle entre robot et cible si possible
+                // Pour Medium et plus, forcer un obstacle entre automate et cible si possible
                 if (diff !== 'easy' && !hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) {
                     const minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
                     const minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
@@ -1563,7 +1563,7 @@ let simState = {
             drawState.startC = chal.startC;
 
             const article = chal.fem ? 'une' : 'un';
-            let instructionHTML = `Programme le robot pour tracer ${article} <strong>${chal.name}</strong> !<br>`;
+            let instructionHTML = `Programme l\'automate pour tracer ${article} <strong>${chal.name}</strong> !<br>`;
             instructionHTML += generateShapeThumbnail(chal.path, chal.startD);
 
             if (drawState.difficulty === 'hard' || drawState.difficulty === 'extreme') {
@@ -1589,7 +1589,7 @@ let simState = {
                 }
             }
 
-            // Re-render robot to ensure it is above the target cells
+            // Re-render automate to ensure it is above the target cells
             renderRobot('draw-grid', 'draw-robot', chal.startR, chal.startC, chal.startD);
         }
 
@@ -1682,7 +1682,7 @@ let simState = {
                 drawState.paused = false;
                 drawState.stopped = false;
                 drawState.locked = false;
-                // Reset robot position & trail
+                // Reset automate position & trail
                 drawState.robotRow = drawState.startR;
                 drawState.robotCol = drawState.startC;
                 drawState.robotDir = drawState.startD;
@@ -1756,7 +1756,7 @@ let simState = {
                 setTimeout(() => {
                     if (activeTab === 'draw') {
                         drawState.locked = false;
-                        // Reset robot position
+                        // Reset automate position
                         renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
                         TrailManager.clear('draw-grid');
                         // Remove visited classes
@@ -1808,7 +1808,7 @@ let simState = {
 
             readState.program = [...chal.correct];
             readState.bugIndex = -1;
-            document.getElementById('read-instruction')['innerHTML'] = "Où va s'arrêter le robot ? <strong>Clique sur la case finale.</strong>";
+            document.getElementById('read-instruction')['innerHTML'] = "Où va s\'arrêter l\'automate ? <strong>Clique sur la case finale.</strong>";
 
             buildGrid('read-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('read-grid', 'read-robot', chal.startR, chal.startC, chal.startD);
@@ -1860,7 +1860,7 @@ let simState = {
                 document.getElementById('read-global-score').textContent = readGlobalScore;
                 document.getElementById('read-global-streak').textContent = readGlobalStreak;
 
-                // Animate robot to destination
+                // Animate automate to destination
                 let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
                 TrailManager.captureInitialState('read-grid', currR, currC, currD);
                 for (const cmd of readState.program) {
@@ -1960,7 +1960,7 @@ let simState = {
 
             const option = chalState.options[idx]; const el = opts[idx];
 
-            // Reset robot to start for this attempt
+            // Reset automate to start for this attempt
             let startR = chalState.robotRow, startC = chalState.robotCol, startD = chalState.robotDir;
             let r = startR, c = startC, d = startD;
 
@@ -1972,7 +1972,7 @@ let simState = {
                 const result = moveRobot({ robotRow: r, robotCol: c, robotDir: d, obstacles: chalState.obstacles }, cmd);
                 r = result.robotRow; c = result.robotCol; d = result.robotDir;
 
-                // Déplacer le robot d'abord (déclenche la transition CSS)
+                // Déplacer l'automate d'abord (déclenche la transition CSS)
                 renderRobot('chal-grid', 'chal-robot', r, c, d);
 
                 if (result.blocked) {
@@ -1986,7 +1986,7 @@ let simState = {
                     break;
                 }
 
-                // Tracé synchronisé : attendre la fin de la transition CSS du robot, puis tracer
+                // Tracé synchronisé : attendre la fin de la transition CSS de l'automate, puis tracer
                 if (cmd === 'forward' || cmd === 'backward') {
                     await sleep(350);
                     TrailManager.addSegment('chal-grid', r, c);
@@ -2257,7 +2257,7 @@ let simState = {
                 let parts = [];
                 let frameCount = 0;
 
-                // Calculate angle and origin based on current robot orientation
+                // Calculate angle and origin based on current automate orientation
                 let currentDir = 0;
                 const body = activeOverlay.querySelector('.robot-body');
                 if (body && body.style.transform) {
@@ -2359,7 +2359,7 @@ let simState = {
             const normalizedDir = ((dirIndex % 4) + 4) % 4;
             const directions = ['Haut', 'Droite', 'Bas', 'Gauche'];
             const dirStr = directions[normalizedDir] || 'Haut';
-            const ariaMsg = `Robot en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`;
+            const ariaMsg = `Automate en ligne ${row + 1}, colonne ${col + 1}, orienté vers ${dirStr}`;
 
             const existingOverlay = document.getElementById(overlayId);
             const needsFullRender = !existingOverlay || existingOverlay.dataset.skin !== activeSkin;
@@ -2486,7 +2486,7 @@ let simState = {
                 if (window.dragonFireAnimFrame) cancelAnimationFrame(window.dragonFireAnimFrame);
                 window.dragonFireActive = false;
 
-                // Clear the canvas to ensure no frozen fire particles are left when robot changes/moves
+                // Clear the canvas to ensure no frozen fire particles are left when automate changes/moves
                 const cvs = document.getElementById('dragon-fire-canvas');
                 if (cvs) {
                     const ctx = cvs.getContext('2d');
