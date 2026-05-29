@@ -113,10 +113,15 @@
                     const initialText = savedTheme === 'high-contrast' ? 'Désactiver contraste' : 'Contraste élevé';
                     const initialIcon = savedTheme === 'high-contrast' ? 'circle-check' : 'eye';
 
-                    hcBtn.innerHTML = `
-                        <i data-fa="${initialIcon}"></i>
-                        <span id="hcToggleText">${initialText}</span>
-                    `;
+                    const hcIcon = document.createElement('i');
+                    hcIcon.setAttribute('data-fa', initialIcon);
+                    hcBtn.appendChild(hcIcon);
+
+                    const hcText = document.createElement('span');
+                    hcText.id = 'hcToggleText';
+                    hcText.textContent = initialText;
+                    hcBtn.appendChild(hcText);
+
                     // Insérer le bouton après le diviseur
                     dropdownContent.insertBefore(hcBtn, divider.nextSibling);
 
