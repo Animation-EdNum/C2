@@ -1,4 +1,4 @@
-# 🤖 Mode d'emploi : Simulateur d'automate (Blue-Bot)
+# 🤖 Mode d'emploi : Simulateur d'automate
 
 Bienvenue dans le guide d'utilisation du **Simulateur d'automate**, une application web interactive conçue pour accompagner l'enseignement de la robotique et de la pensée algorithmique à l'école primaire.
 
@@ -32,7 +32,7 @@ Ce mode permet de comprendre le comportement de l'automate sans avoir à anticip
 **Comment l'utiliser :**
 - Utilisez les boutons du panneau de contrôle (Avancer, Reculer, Pivoter à gauche, Pivoter à droite).
 - À chaque clic, l'automate exécute immédiatement l'action sur la grille.
-- Vous pouvez positionner le robot où vous le souhaitez en cliquant sur le bouton **« Position aléatoire »** (icône dé) ou en cliquant directement sur une case de la grille.
+- Vous pouvez positionner le robot où vous le souhaitez en cliquant sur le bouton **« Position aléatoire »** (icône punaise 📍) ou en cliquant directement sur une case de la grille.
 - Le bouton **« Trésors & Obstacles »** permet de placer des éléments à récolter et des obstacles à contourner sur la grille.
 - C'est le mode idéal pour faire de la découverte ou pour les plus jeunes élèves.
 
@@ -104,7 +104,7 @@ Dans ce mode, l'automate est équipé d'un stylo imaginaire et **laisse une trac
 
 ## 6. Partager l'activité (Options pour la classe)
 
-Le menu **Options** (icône engrenage ⚙ en haut à droite) permet de **partager l'activité** 🔗. Cette fonctionnalité ouvre une modale permettant de générer un lien spécifique pour les élèves.
+Le bouton **Partager** 🔗 (disponible en bas de la modale de partage ou via l'URL) permet de **générer un lien** vers l'activité configurée. Cette fonctionnalité ouvre une modale permettant de créer un lien spécifique pour les élèves.
 
 Cette option est **cruciale en classe**, car ses paramètres avancés permettent à l'enseignant de :
 - **Canaliser l'attention :** Forcer un mode de jeu spécifique, masquer le retour à l'accueil et verrouiller le menu des réglages pour éviter que les élèves ne s'éparpillent.
@@ -119,7 +119,7 @@ Cette option est **cruciale en classe**, car ses paramètres avancés permettent
 
 Le reste du menu **Options** donne accès à d'autres réglages pour personnaliser l'application :
 
-- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité**, de régler la **taille de la grille** (de 4×4 à 10×10), et de **masquer le quadrillage**.
+- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité**, de régler la **largeur** et la **hauteur de la grille** indépendamment (de 4 à 10 cases), et de **masquer le quadrillage**.
 - **Changer de skin** 🎨 : permet de personnaliser l'apparence du robot et de la piste (Bee-Bot, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.). Certains skins se débloquent en progressant.
 - **Voir mes statistiques** 📊 : accès au tableau de bord des scores.
 - **Vitesse** ⏱ : bascule entre vitesse normale et vitesse rapide (2×).

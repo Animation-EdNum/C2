@@ -52,6 +52,7 @@ Un clic sur **« Options Avancées »** donne accès à des paramètres supplém
 
 #### A. Apparence & Confort
 - **Contraste élevé** : Active le thème sombre à fort contraste dès l'ouverture de la page.
+- **Couleurs de poids** *(Routage Réseau)* : Affiche les poids du réseau avec une coloration dynamique pour faciliter la lecture.
 - **Pas de son** : Coupe les effets sonores par défaut.
 - **Couleurs directionnelles** *(Automate)* : Applique les couleurs de déplacement (Mode Jeu de la grue).
 - **Sans instructions** : Masque le bloc d'instructions situé sous le titre de la page.
@@ -62,6 +63,7 @@ Un clic sur **« Options Avancées »** donne accès à des paramètres supplém
 - **Mode aveugle (Blindcoding)** : Le bouton pour révéler la séquence de commandes est entièrement désactivé, l'affichage de la séquence est donc impossible. L'élève doit concevoir son programme uniquement de tête.
 - **Pas de dictionnaire ASCII** *(Binaire & Message)* : Masque le tableau de correspondance entre code binaire et caractères.
 - **Mode strict** *(Bit de parité)* : Désactive le retour visuel immédiat en cas d'erreur.
+- **Mode Couleurs** *(Pixel Studio)* : Force l'application à s'ouvrir directement en mode 4 couleurs (2 bits).
 - **Débloquer l'éditeur** *(Pixel Art Binaire)* : Ouvre directement l'onglet créatif, même si les défis de base ne sont pas réussis.
 
 #### C. Restrictions de navigation & d'Interface
@@ -71,7 +73,8 @@ Un clic sur **« Options Avancées »** donne accès à des paramètres supplém
 - **Pas de réglages** : Enlève complètement l'icône de la roue dentée. L'élève n'aura plus accès aux options (son, couleur, skins, vitesse, etc.).
 
 #### D. Restrictions et verrouillages divers
-- **Sans tapis / Pas de skins** *(Automate)* : Désactive la personnalisation cosmétique.
+- **Sans tapis** *(Automate)* : Désactive le bouton de choix de tapis de sol.
+- **Pas de skins** *(Automate)* : Désactive la personnalisation visuelle du robot.
 - **Tapis imposé** *(Automate)* : Charge automatiquement le dernier tapis que l'enseignant a sélectionné. L'élève ne peut plus le changer.
 - **Vitesse imposée** *(Automate)* : Charge automatiquement le niveau de vitesse actuel et désactive le sélecteur chez l'élève.
 - **Carte réseau fixe** *(Routage Réseau)* : Bloque la carte (la topologie du réseau générée aléatoirement) afin que chaque élève de la classe ait exactement le même problème à résoudre.
@@ -89,6 +92,8 @@ Quelques paramètres avancés ne sont pas disponibles directement dans l'interfa
 - `&unlockAllSkins=1` : (*Automate*) Débloque instantanément tous les personnages et tapis de sol cachés du simulateur.
 - `&noDrag=1` : (*Automate*) Désactive le glisser-déposer des blocs de commande, forçant l'utilisation des clics (pratique pour les publics DYS ou sur tableau interactif peu précis).
 - `&seed=1234` : Utilisé avec l'option "Carte réseau fixe" pour définir explicitement un numéro de graine aléatoire. Permet de générer la même topologie sur tous les appareils si la graine est identique.
+- `&importGrid=0110...` : (*Pixel Studio*) Permet de précharger et d'importer directement un dessin binaire dans l'éditeur libre à partir de sa chaîne de caractères (composée de `0` et de `1` pour le mode Noir et Blanc, ou de paires comme `01`, `10`, etc. pour le mode 4 couleurs).
+- `&noNudges=1` : Désactive complètement l'affichage des bulles d'aide et d'onboarding animées éphémères (les "nudges") au démarrage des activités pour ne pas perturber l'attention de l'élève.
 
 ---
 
