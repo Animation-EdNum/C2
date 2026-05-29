@@ -513,9 +513,9 @@ window.REGISTRY = [
     "dataLevel": null,
     "style": "--theme-start: #15803d; --theme-end: #166534;",
     "title": "Machine à trier",
-    "c1Icon": "person-carry-box",
+    "c1Icon": "dt-shapes",
     "c1SmallIcons": [
-      "shapes",
+      "person-carry-box",
       "hand-pointer",
       "check"
     ],
@@ -534,7 +534,7 @@ window.REGISTRY = [
     "dataLevel": null,
     "style": "--theme-start: #f6d365; --theme-end: #fda085;",
     "title": "Jeu de la grue",
-    "c1Icon": "arrow-up-from-square",
+    "c1Icon": "dt-arrow-up-from-square",
     "c1SmallIcons": [
       "arrows-up-down-left-right",
       "magnet",
@@ -555,7 +555,7 @@ window.REGISTRY = [
     "dataLevel": null,
     "style": "--theme-start: #3b82f6; --theme-end: #1d4ed8;",
     "title": "Simulateur d'automate",
-    "c1Icon": "robot-astromech",
+    "c1Icon": "dt-robot-astromech",
     "c1SmallIcons": [
       "gamepad-modern",
       "sign-post",
