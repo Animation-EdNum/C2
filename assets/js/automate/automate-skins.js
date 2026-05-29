@@ -34,7 +34,7 @@ const MAT_CONFIG = {
     'city': {
         name: 'Cité',
         desc: 'Des routes et une ville.',
-        example: 'Amène le robot au supermarché.',
+        example: 'Amène l\'automate au supermarché.',
         icon: '🏙️'
     },
     'valais': {
@@ -98,7 +98,7 @@ const MAT_CONFIG = {
     },
     'fairy_tale': {
         name: 'Conte personnalisable',
-        desc: 'Raconte ton histoire avec le robot.',
+        desc: 'Raconte ton histoire avec l\'automate.',
         icon: '🧚',
         content: [],
         baseContent: [
@@ -140,7 +140,7 @@ const SKIN_CONFIG = {
     'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.', hidden: false },
     'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
     'pedago': { name: 'Colorigami', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Aile orange ou verte ? Appuie sur le bouton de la même couleur pour tourner du bon côté.', hidden: true },
-    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'Le robot que tu connais bien.', hidden: false }
+    'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'L\'automate que tu connais bien.', hidden: false }
 };
 
 const AT_SVGS = {
@@ -631,13 +631,13 @@ function updateSkinGrids() {
 }
 
 function updateSkinEntities() {
-    // Mettre à jour les robots et cibles pour sim-grid
+    // Mettre à jour les automates et cibles pour sim-grid
     renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
     if (simState.targetRow !== null && simState.targetCol !== null) {
         renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
     }
 
-    // Mettre à jour les robots et cibles pour explore-grid
+    // Mettre à jour les automates et cibles pour explore-grid
     if (typeof exploreState !== 'undefined' && exploreState.robotRow !== undefined && exploreState.robotRow !== null) {
         renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
         if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
@@ -645,7 +645,7 @@ function updateSkinEntities() {
         }
     }
 
-    // Mettre à jour les robots et cibles pour chal-grid
+    // Mettre à jour les automates et cibles pour chal-grid
     if (chalState.robotRow !== null) {
         renderRobot('chal-grid', 'chal-robot', chalState.robotRow, chalState.robotCol, chalState.robotDir);
         if (chalState.targetRow !== null) {
@@ -653,13 +653,13 @@ function updateSkinEntities() {
         }
     }
 
-    // Mettre à jour les robots et cibles pour read-grid
+    // Mettre à jour les automates et cibles pour read-grid
     if (typeof readState !== 'undefined' && readState.robotRow !== undefined && readState.robotRow !== null) {
         renderRobot('read-grid', 'read-robot', readState.robotRow, readState.robotCol, readState.robotDir);
         // La cible n'est pas rendue ici pour ne pas révéler la solution dans le mode lecture
     }
 
-    // Mettre à jour les robots et cibles pour draw-grid
+    // Mettre à jour les automates et cibles pour draw-grid
     if (typeof drawState !== 'undefined' && drawState.robotRow !== undefined && drawState.robotRow !== null) {
         renderRobot('draw-grid', 'draw-robot', drawState.robotRow, drawState.robotCol, drawState.robotDir);
     }
