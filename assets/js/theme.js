@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 /**
- * theme.js — Gestion du thème clair/sombre partagée entre toutes les pages.
+ * theme.js — Gestion du thème clair/sombre/contraste élevé partagée entre toutes les pages.
  *
  * Usage : inclure ce fichier APRÈS le DOM (bas de <body>) ou avec defer.
  * Prérequis dans le HTML :
@@ -9,20 +9,20 @@
  *   - Un svg     id="icon-sun"  (affiché en mode sombre)
  *   - Un svg     id="icon-moon" (affiché en mode clair)
  *
- * Persistance : localStorage('global_theme') = 'light' | 'dark'
- *
- * Note : certaines pages (routage_reseau) peuvent définir un callback
- * window.__onThemeChange(theme) pour déclencher des traitements supplémentaires.
+ * Persistance : localStorage('global_theme') = 'light' | 'dark' | 'high-contrast'
  */
 
 (function () {
 
-
     function setTheme(theme) {
         if (theme === 'dark') {
-            document.body.classList.remove('high-contrast'); document.body.classList.add('dark');
+            document.body.classList.remove('high-contrast');
+            document.body.classList.add('dark');
+        } else if (theme === 'high-contrast') {
+            document.body.classList.remove('dark');
+            document.body.classList.add('high-contrast');
         } else {
-            if (theme === 'high-contrast') { document.body.classList.remove('dark'); document.body.classList.add('high-contrast'); } else { document.body.classList.remove('dark', 'high-contrast'); }
+            document.body.classList.remove('dark', 'high-contrast');
         }
         localStorage.setItem('global_theme', theme);
 
@@ -35,6 +35,30 @@
         if (themeToggleText) {
             if (theme === 'dark') themeToggleText.textContent = 'Clair';
             else themeToggleText.textContent = 'Sombre';
+        }
+
+        // Mettre à jour le texte du bouton contraste élevé s'il existe
+        const hcToggleText = document.getElementById('hcToggleText');
+        if (hcToggleText) {
+            if (theme === 'high-contrast') {
+                hcToggleText.textContent = 'Désactiver contraste';
+            } else {
+                hcToggleText.textContent = 'Contraste élevé';
+            }
+        }
+
+        // Mettre à jour l'icône du bouton contraste élevé s'il existe
+        const hcBtn = document.getElementById('high-contrast-toggle-btn');
+        if (hcBtn) {
+            const hcIcon = hcBtn.querySelector('i');
+            if (hcIcon) {
+                if (theme === 'high-contrast') {
+                    hcIcon.setAttribute('data-fa', 'circle-check');
+                } else {
+                    hcIcon.setAttribute('data-fa', 'eye');
+                }
+                window.fa?.createIcons?.();
+            }
         }
 
         if (typeof window.__onThemeChange === 'function') {
@@ -55,12 +79,51 @@
         }
     };
 
+    window.toggleHighContrast = function () {
+        if (document.body.classList.contains('high-contrast')) {
+            setTheme('light');
+        } else {
+            setTheme('high-contrast');
+        }
+    };
 
     // Gestion des événements du Header
     function initHeaderEvents() {
         const themeBtn = document.getElementById('theme-toggle-btn');
         if (themeBtn) {
             themeBtn.addEventListener('click', window.toggleTheme);
+
+            // Inscription proactive du bouton Contraste Élevé si un menu dropdown existe
+            const dropdownContent = themeBtn.parentElement;
+            if (dropdownContent && dropdownContent.classList.contains('settings-dropdown-content')) {
+                if (!document.getElementById('high-contrast-toggle-btn')) {
+                    // Créer un diviseur avant le bouton
+                    const divider = document.createElement('div');
+                    divider.className = 'dropdown-divider';
+                    divider.id = 'hc-dropdown-divider';
+                    dropdownContent.insertBefore(divider, themeBtn.nextSibling);
+
+                    // Créer le bouton Contraste Élevé
+                    const hcBtn = document.createElement('button');
+                    hcBtn.className = 'menu-item-btn';
+                    hcBtn.id = 'high-contrast-toggle-btn';
+                    hcBtn.setAttribute('aria-label', 'Activer/Désactiver le contraste élevé');
+                    
+                    const savedTheme = localStorage.getItem('global_theme') || 'light';
+                    const initialText = savedTheme === 'high-contrast' ? 'Désactiver contraste' : 'Contraste élevé';
+                    const initialIcon = savedTheme === 'high-contrast' ? 'circle-check' : 'eye';
+
+                    hcBtn.innerHTML = `
+                        <i data-fa="${initialIcon}"></i>
+                        <span id="hcToggleText">${initialText}</span>
+                    `;
+                    // Insérer le bouton après le diviseur
+                    dropdownContent.insertBefore(hcBtn, divider.nextSibling);
+
+                    hcBtn.addEventListener('click', window.toggleHighContrast);
+                    window.fa?.createIcons?.();
+                }
+            }
         }
 
         const optionsBtn = document.getElementById('options-menu-btn');
