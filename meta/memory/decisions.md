@@ -12,7 +12,8 @@
 
 ## 3. Assets & Design
 - **Local Hosting (2026-04-12):** NO CDN. Fonts and scripts hosted locally.
-- **Glassmorphism (2026-04-10):** Semi-transparent UI. Colors managed via `shared.css` variables.
+- **Glassmorphism (2026-04-10):** Semi-transparent UI. Colors managed via CSS variables in `tokens.css` and `base.css`.
+- **CSS Cascade (2026-05-21):** Decomposed `shared.css` into `tokens.css` (design tokens) → `base.css` (reset, typography, glassmorphism) → `components.css` (buttons, cards, modals, tabs) → `utilities.css` (utility classes). Loaded via parallel `<link>` tags for FCP optimization.
 - **FontAwesome 7 Pro (2026-04-30):** Generated via script `meta/scripts/generate_fa_subset.js` accessing a private repo. Do NOT cache icon DOM nodes before modification.
 - **Top-Tabs Navigation (2026-05-01):** Standardized on top `.tabs`. Deprecated `.nav-bar` bottom tabs to prevent OS gesture conflicts.
 - **Image Optimization:** Large mats optimized to 256-color PNGs via Python Pillow.
@@ -37,7 +38,6 @@
 - **Compresseur Magique:** RLE compression percentage must accurately reflect negative compression (loss of space). Do not clamp to 0%; update UI text to indicate the loss but keep CSS dimensions clamped.
 - **Binaire Studio:** Avoid trailing newlines when parsing/generating pixel strings to prevent inflation of grid sizes.
 - **UI Nudges:** Ephemeral onboarding nudges follow a 3-second delay, disappear on interaction/5 seconds, persist state in `localStorage`, and opt-out via `?noNudges=1`.
-- **Navigation:** Use `<a href="javascript:history.back()">` for 'back' navigation in static offline HTML pages.
 
 ## 6. Security & Exports
 - **XSS Mitigation (2026-04-25):** `.innerHTML` is strictly regulated. Use `document.createElement`, `textContent`, or `ScoreManager._escapeHtml()`.

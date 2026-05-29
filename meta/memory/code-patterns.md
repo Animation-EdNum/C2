@@ -12,7 +12,7 @@
   - `<canvas id="confetti-canvas">`: Mandatory for celebrations.
 
 ## 2. CSS & Design System (Glassmorphism)
-- **Centralization:** NO local styles in HTML files. All variables (`--text-main`) and utility classes (`.btn`) reside in `assets/css/shared.css`.
+- **Centralization:** NO local styles in stable HTML files. CSS variables (`--text-main`) reside in `assets/css/tokens.css` and `base.css`. Components (`.btn`) are in `components.css`. See §6 FCP Optimization for cascade order.
 - **Glassmorphism:** Use `var(--glass-bg)` with `backdrop-filter: blur(12px) saturate(180%)`. Border is `--glass-border`.
 - **Border Radii:** `--radius-sm` (6px), `--radius-md` (8px), `--radius-lg` (12px), `--radius-2xl` (20px).
 - **Tooltips:** NEVER use native `title` attributes on buttons. Use `data-tooltip="..."` for CSS-animated tooltips.
@@ -59,6 +59,7 @@
 - **Teacher Webapps Layout**: Teacher webapps (e.g., `tirage.html`, `bareme.html`) use a consistent structural layout that should be replicated for new tools: an `.app-shell` holding a `<header>` and a `<main>`. Inside the main area, use an `.app-main` container typically split into a left `.config-panel` (an `<aside>` for settings) and a right `.results-panel` (or `.main-content` for the output/simulation).
 - **Standalone Pages**: For standalone HTML pages (like `index.html` and `merci.html`), the universal CSS reset (`* { margin: 0; padding: 0; box-sizing: border-box; }`) is defined directly inline within the page's `<style>` block rather than being centralized in `assets/css/base.css` or other shared stylesheets.
 - **FCP Optimization**: To optimize First Contentful Paint (FCP), HTML files must include direct, parallel `<link>` tags for `tokens.css`, `base.css`, `components.css`, and `utilities.css` (in that specific cascade order). Do not bundle CSS into a single file.
+- **Per-App CSS**: Stable webapps include a dedicated `assets/css/<app_name>.css` file (e.g., `automate.css`, `binaire_codage.css`, `routage_reseau.css`). Alpha apps may still use inline `<style>` blocks.
 - **CSS Specificity vs `!important`**: Override styles by naturally increasing selector specificity (e.g., prefixing selectors with `html body `) rather than deleting `!important` flags across the codebase, which can break utility classes and accessibility features.
 - **Duplicate SVG IDs**: In webapps with multiple tabs or hidden containers, when dynamically injecting identical SVG strings containing `<filter>` or `<linearGradient>`, append a unique suffix to all `id="..."`, `url(#...)`, and `href="#..."` strings to prevent invisibility bugs in Chromium/WebKit.
 - **Event Delegation**: For dynamically generated elements (like `.program-cmd` in `#sim-program`), handle click events using event delegation on their static parent containers combined with `e.target.closest()`.
