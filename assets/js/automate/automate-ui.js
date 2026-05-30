@@ -160,6 +160,24 @@ window.getCurrentSpeed = function () {
 document.addEventListener('keydown', (e) => {
     if (!['explore', 'simulator', 'challenge', 'read', 'draw'].includes(activeTab)) return;
 
+    if (e.key === 'Tab') {
+        if (activeTab === 'explore' || activeTab === 'simulator') {
+            const exploreBtn = document.getElementById('btn-explore-edit-mode');
+            const simBtn = document.getElementById('btn-sim-edit-mode');
+            if (exploreBtn && !exploreBtn.classList.contains('keyboard-visible')) {
+                exploreBtn.classList.add('keyboard-visible');
+                simBtn?.classList.add('keyboard-visible');
+                if (!window.keyboardEditMode) {
+                    window.keyboardEditMode = true;
+                    exploreBtn.classList.add('active');
+                    simBtn?.classList.add('active');
+                    playSound('click');
+                    showToast('Mode édition clavier activé (flèches pour naviguer, O/T pour éditer)', 'info');
+                }
+            }
+        }
+    }
+
     if (activeTab === 'draw') {
         if (drawState.isAnimating || drawState.locked) return;
         switch (e.key) {
@@ -181,7 +199,7 @@ document.addEventListener('keydown', (e) => {
                 break;
         }
     } else if (activeTab === 'explore') {
-        if (exploreState.running) return;
+        if (exploreState.running || window.keyboardEditMode) return;
         switch (e.key) {
             case 'ArrowUp': e.preventDefault(); runSingleCommandExploration('forward'); break;
             case 'ArrowDown': e.preventDefault(); runSingleCommandExploration('backward'); break;
@@ -189,7 +207,7 @@ document.addEventListener('keydown', (e) => {
             case 'ArrowRight': e.preventDefault(); runSingleCommandExploration('right'); break;
         }
     } else {
-        if (simState.running) return;
+        if (simState.running || window.keyboardEditMode) return;
         switch (e.key) {
             case 'ArrowUp': e.preventDefault(); addCmd('forward'); break;
             case 'ArrowDown': e.preventDefault(); addCmd('backward'); break;
@@ -299,6 +317,7 @@ function startTabTimer(tab) {
 }
 
 let activeTab = 'explore';
+window.activeTab = activeTab;
 
 function switchTab(event, tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -306,6 +325,7 @@ function switchTab(event, tab) {
     event.currentTarget.classList.add('active');
     document.getElementById(`view-${tab}`).classList.add('active');
     activeTab = tab;
+    window.activeTab = tab;
     startTabTimer(tab);
 
     if (window.treasureBubbleState) {
@@ -515,10 +535,25 @@ function initApplication() {
     // Update UI/Grid
     updateGridSizeSlidersState();
     if (typeof updateEndModesVisibility === 'function') updateEndModesVisibility();
-    buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
-    randomizeSimulatorPosition();
-    buildGrid('explore-grid', GRID_ROWS, GRID_COLS);
-    randomizeExplorePosition();
+    
+    if (window.hasSharedGrid) {
+        buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+        renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+        if (simState.targetRow !== null && simState.targetCol !== null) {
+            renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+        }
+        
+        buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles);
+        renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+        if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+            renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+        }
+    } else {
+        buildGrid('sim-grid', GRID_ROWS, GRID_COLS);
+        randomizeSimulatorPosition();
+        buildGrid('explore-grid', GRID_ROWS, GRID_COLS);
+        randomizeExplorePosition();
+    }
     updateCustomMatUI();
 
     // Additional initializations
@@ -682,9 +717,38 @@ document.getElementById('diff-extreme').addEventListener('click', () => setDiffi
 
 document.getElementById('btn-next-challenge').addEventListener('click', newChallenge);
 
-document.getElementById('btn-sim-random-position').addEventListener('click', randomizeSimulatorPosition);
+document.getElementById('btn-sim-random-position').addEventListener('click', () => {
+    window.hasSharedGrid = false;
+    randomizeSimulatorPosition();
+});
 
-document.getElementById('btn-explore-reset').addEventListener('click', randomizeExplorePosition);
+window.keyboardEditMode = false;
+function toggleKeyboardEditMode() {
+    window.keyboardEditMode = !window.keyboardEditMode;
+    playSound('click');
+    
+    const exploreBtn = document.getElementById('btn-explore-edit-mode');
+    const simBtn = document.getElementById('btn-sim-edit-mode');
+    
+    if (window.keyboardEditMode) {
+        exploreBtn?.classList.add('active');
+        simBtn?.classList.add('active');
+        showToast('Mode édition clavier activé (flèches pour naviguer, O/T pour éditer)', 'info');
+    } else {
+        exploreBtn?.classList.remove('active');
+        simBtn?.classList.remove('active');
+        showToast('Mode édition clavier désactivé (flèches pour déplacer l\'automate)', 'info');
+    }
+}
+const btnExploreEditMode = document.getElementById('btn-explore-edit-mode');
+if (btnExploreEditMode) btnExploreEditMode.addEventListener('click', toggleKeyboardEditMode);
+const btnSimEditMode = document.getElementById('btn-sim-edit-mode');
+if (btnSimEditMode) btnSimEditMode.addEventListener('click', toggleKeyboardEditMode);
+
+document.getElementById('btn-explore-reset').addEventListener('click', () => {
+    window.hasSharedGrid = false;
+    randomizeExplorePosition();
+});
 document.getElementById('btn-explore-place-elements').addEventListener('click', () => {
     if (window.treasureBubbleState) {
         window.treasureBubbleState.hasPlaced = true;
@@ -1028,3 +1092,198 @@ if (savedCustomMat) {
     document.documentElement.style.setProperty('--custom-mat-url', `url(${savedCustomMat})`);
 }
 updateCustomMatUI();
+
+// ==========================================
+// ACCESSIBILITÉ CLAVIER DE LA GRILLE (A11Y)
+// ==========================================
+document.addEventListener('keydown', (e) => {
+    const cell = e.target.closest('.bot-cell');
+    if (!cell) return;
+
+    const grid = cell.closest('.bot-grid');
+    if (!grid) return;
+
+    const gridId = grid.id;
+    
+    // Garde : Mode édition requis pour naviguer et éditer les grilles de simulateur / exploration
+    if ((gridId === 'sim-grid' || gridId === 'explore-grid') && !window.keyboardEditMode) {
+        return;
+    }
+
+    const r = parseInt(cell.dataset.row);
+    const c = parseInt(cell.dataset.col);
+
+    // Navigation entre les cellules avec les flèches du clavier
+    let nextR = r;
+    let nextC = c;
+    let handled = false;
+
+    if (e.key === 'ArrowUp') {
+        nextR = Math.max(0, r - 1);
+        handled = true;
+    } else if (e.key === 'ArrowDown') {
+        nextR = Math.min(GRID_ROWS - 1, r + 1);
+        handled = true;
+    } else if (e.key === 'ArrowLeft') {
+        nextC = Math.max(0, c - 1);
+        handled = true;
+    } else if (e.key === 'ArrowRight') {
+        nextC = Math.min(GRID_COLS - 1, c + 1);
+        handled = true;
+    }
+
+    if (handled) {
+        e.preventDefault();
+        const nextCell = document.getElementById(`${gridId}-cell-${nextR}-${nextC}`);
+        if (nextCell) {
+            nextCell.focus();
+        }
+        return;
+    }
+
+    // Touches d'action principale : Entrée ou Espace
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (gridId === 'sim-grid') {
+            if (simState.running) return;
+            const isObstacle = simState.obstacles && simState.obstacles.some(o => o.r === r && o.c === c);
+            if (isObstacle) return;
+            const isTarget = simState.targetRow === r && simState.targetCol === c;
+            playSound('click');
+            window.keyboardModified = true;
+            simState.robotRow = r; simState.robotCol = c;
+            simState.startRow = r; simState.startCol = c;
+            simState.startDir = simState.robotDir;
+            resetSimulatorPosition();
+            if (isTarget) {
+                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+                placeRandomSimTarget(true);
+            }
+        } else if (gridId === 'explore-grid') {
+            if (exploreState.running) return;
+            const isObstacle = exploreState.obstacles && exploreState.obstacles.some(o => o.r === r && o.c === c);
+            if (isObstacle) return;
+            const isTarget = exploreState.targetRow === r && exploreState.targetCol === c;
+            playSound('click');
+            window.keyboardModified = true;
+            exploreState.robotRow = r; exploreState.robotCol = c;
+            exploreState.startRow = r; exploreState.startCol = c;
+            exploreState.absoluteStartRow = r; exploreState.absoluteStartCol = c; exploreState.absoluteStartDir = exploreState.robotDir;
+            exploreState.startDir = exploreState.robotDir;
+            exploreState.history = [];
+            exploreState.stepsThisRun = 0;
+
+            TrailManager.clear('explore-grid');
+            renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+
+            if (isTarget) {
+                showToast('Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+                placeRandomExploreTarget(true);
+            }
+        } else if (gridId === 'read-grid') {
+            handleReadGridClick(r, c);
+        }
+        return;
+    }
+
+    // Touche 'o' ou 'O' : ajoute ou retire un obstacle sur la cellule focalisée
+    if (e.key.toLowerCase() === 'o') {
+        if (gridId === 'sim-grid' || gridId === 'explore-grid') {
+            e.preventDefault();
+            window.keyboardModified = true;
+            if (gridId === 'sim-grid') {
+                if (simState.running) return;
+                if (r === simState.robotRow && c === simState.robotCol) return;
+                if (r === simState.targetRow && c === simState.targetCol) return;
+                playSound('click');
+                const idx = simState.obstacles.findIndex(o => o.r === r && o.c === c);
+                if (idx !== -1) {
+                    simState.obstacles.splice(idx, 1);
+                } else {
+                    simState.obstacles.push({ r, c });
+                }
+                buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+                renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+                if (simState.targetRow !== null && simState.targetCol !== null) {
+                    renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+                }
+            } else {
+                if (exploreState.running) return;
+                if (r === exploreState.robotRow && c === exploreState.robotCol) return;
+                if (r === exploreState.targetRow && c === exploreState.targetCol) return;
+                playSound('click');
+                const idx = exploreState.obstacles.findIndex(o => o.r === r && o.c === c);
+                if (idx !== -1) {
+                    exploreState.obstacles.splice(idx, 1);
+                } else {
+                    exploreState.obstacles.push({ r, c });
+                }
+                buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles);
+                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                if (exploreState.targetRow !== null && exploreState.targetCol !== null) {
+                    renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+                }
+            }
+            const newCell = document.getElementById(`${gridId}-cell-${r}-${c}`);
+            if (newCell) newCell.focus();
+        }
+        return;
+    }
+
+    // Touche 't' ou 'T' : place la cible/trésor sur la cellule focalisée
+    if (e.key.toLowerCase() === 't') {
+        if (gridId === 'sim-grid' || gridId === 'explore-grid') {
+            e.preventDefault();
+            window.keyboardModified = true;
+            if (gridId === 'sim-grid') {
+                if (simState.running) return;
+                if (r === simState.robotRow && c === simState.robotCol) return;
+                const isObstacle = simState.obstacles.some(o => o.r === r && o.c === c);
+                if (isObstacle) return;
+                playSound('click');
+                simState.targetRow = r;
+                simState.targetCol = c;
+                simState.firstAttempt = true;
+                buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+                renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+                renderTarget('sim-grid', 'sim-target', r, c);
+            } else {
+                if (exploreState.running) return;
+                if (r === exploreState.robotRow && c === exploreState.robotCol) return;
+                const isObstacle = exploreState.obstacles.some(o => o.r === r && o.c === c);
+                if (isObstacle) return;
+                playSound('click');
+                exploreState.targetRow = r;
+                exploreState.targetCol = c;
+                buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles);
+                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                renderTarget('explore-grid', 'explore-target', r, c);
+            }
+            const newCell = document.getElementById(`${gridId}-cell-${r}-${c}`);
+            if (newCell) newCell.focus();
+        }
+        return;
+    }
+
+    // Touche 'r' ou 'R' : pivote l'automate dans le sens horaire
+    if (e.key.toLowerCase() === 'r') {
+        if (gridId === 'sim-grid' || gridId === 'explore-grid') {
+            e.preventDefault();
+            playSound('click');
+            window.keyboardModified = true;
+            if (gridId === 'sim-grid') {
+                if (simState.running) return;
+                simState.robotDir = (simState.robotDir + 1) % 4;
+                simState.startDir = simState.robotDir;
+                renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+            } else {
+                if (exploreState.running) return;
+                exploreState.robotDir = (exploreState.robotDir + 1) % 4;
+                exploreState.startDir = exploreState.robotDir;
+                exploreState.absoluteStartDir = exploreState.robotDir;
+                renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+            }
+        }
+        return;
+    }
+});

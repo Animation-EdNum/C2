@@ -49,3 +49,4 @@
 - **[2026-05-28]** [UI/UX] Pseudo-code : refonte esthétique du haut-parleur (enceinte double-voie réaliste) avec LED d'état intégrée sur le boîtier, bouton "+" tactile compact pour insérer le code, et panneau matériel sticky sur desktop.
 - **[2026-05-28]** [Bugfix] Pseudo-code : gestion du bouton Play/Pause matériel de l'enceinte (mise à jour de l'état `music_playing`, déblocage de la boucle d'attente de commandes) et démarrage automatique de l'exécution du code lors de l'interaction avec le matériel.
 - **[2026-05-29]** [System/UI] Unified memory/tutorials. Updated Cycle 1 portal (`indexC1.html`) to use premium duotone icons, fixed action buttons overlap, and integrated explicit High Contrast toggles into all Option dropdowns (`theme.js`).
+- **[2026-05-30]** [Feature/A11y] Grid keyboard accessibility, unclipped styling, custom grid sharing and user manual updates for the Automate simulator. Added CI smoke test.

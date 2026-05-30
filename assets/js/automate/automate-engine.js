@@ -638,6 +638,7 @@ let simState = {
         }
         function randomizeSimulatorPosition() {
             if (simState.running) return;
+            if (window.hasSharedGrid) return;
             playSound('click');
 
             let newRow, newCol;
@@ -787,6 +788,7 @@ let simState = {
 
         function randomizeExplorePosition() {
             if (exploreState.running) return;
+            if (window.hasSharedGrid) return;
             playSound('click');
 
             let newRow, newCol;
@@ -2167,6 +2169,7 @@ let simState = {
                     const cell = document.createElement('div');
                     cell.className = 'bot-cell ' + ((r + c) % 2 === 0 ? 'cell-light' : 'cell-dark');
                     cell.setAttribute('role', 'gridcell');
+                    cell.setAttribute('tabindex', '0');
                     cell.id = `${containerId}-cell-${r}-${c}`;
                     const isObstacle = obsGrid[r][c];
                     if (isObstacle) {

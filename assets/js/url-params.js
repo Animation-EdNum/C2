@@ -9,8 +9,127 @@ document.addEventListener('DOMContentLoaded', () => {
     initShareModal();
 });
 
+window.hasSharedGrid = false;
+window.keyboardModified = false;
+
 function applyUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
+
+    // Analyse des paramètres de partage de grille personnalisée
+    const rowsVal = urlParams.get('rows');
+    const colsVal = urlParams.get('cols');
+    const robotVal = urlParams.get('robot');
+    const obstaclesVal = urlParams.get('obstacles');
+    const targetVal = urlParams.get('target');
+
+    if (rowsVal && colsVal) {
+        window.hasSharedGrid = true;
+        
+        if (typeof GRID_ROWS !== 'undefined') {
+            GRID_ROWS = parseInt(rowsVal, 10);
+            GRID_COLS = parseInt(colsVal, 10);
+        }
+
+        const parsedObstacles = [];
+        if (obstaclesVal !== null) {
+            if (obstaclesVal !== '') {
+                obstaclesVal.split(';').forEach(pair => {
+                    const parts = pair.split(',');
+                    if (parts.length === 2) {
+                        parsedObstacles.push({ r: parseInt(parts[0], 10), c: parseInt(parts[1], 10) });
+                    }
+                });
+            }
+        }
+
+        let parsedRobot = null;
+        if (robotVal) {
+            const parts = robotVal.split(',');
+            if (parts.length === 3) {
+                parsedRobot = {
+                    r: parseInt(parts[0], 10),
+                    c: parseInt(parts[1], 10),
+                    d: parseInt(parts[2], 10)
+                };
+            }
+        }
+
+        let parsedTarget = null;
+        if (targetVal) {
+            const parts = targetVal.split(',');
+            if (parts.length === 2) {
+                parsedTarget = {
+                    r: parseInt(parts[0], 10),
+                    c: parseInt(parts[1], 10)
+                };
+            }
+        }
+
+        setTimeout(() => {
+            if (typeof exploreState !== 'undefined') {
+                exploreState.obstacles = [...parsedObstacles];
+                if (parsedRobot) {
+                    exploreState.robotRow = parsedRobot.r;
+                    exploreState.robotCol = parsedRobot.c;
+                    exploreState.robotDir = parsedRobot.d;
+                    exploreState.startRow = parsedRobot.r;
+                    exploreState.startCol = parsedRobot.c;
+                    exploreState.startDir = parsedRobot.d;
+                    exploreState.absoluteStartRow = parsedRobot.r;
+                    exploreState.absoluteStartCol = parsedRobot.c;
+                    exploreState.absoluteStartDir = parsedRobot.d;
+                }
+                if (parsedTarget) {
+                    exploreState.targetRow = parsedTarget.r;
+                    exploreState.targetCol = parsedTarget.c;
+                } else {
+                    exploreState.targetRow = null;
+                    exploreState.targetCol = null;
+                }
+
+                // Redessiner la grille d'exploration
+                if (typeof buildGrid === 'function') {
+                    buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles);
+                    if (parsedRobot && typeof renderRobot === 'function') {
+                        renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
+                    }
+                    if (parsedTarget && typeof renderTarget === 'function') {
+                        renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
+                    }
+                }
+            }
+
+            if (typeof simState !== 'undefined') {
+                simState.obstacles = [...parsedObstacles];
+                if (parsedRobot) {
+                    simState.robotRow = parsedRobot.r;
+                    simState.robotCol = parsedRobot.c;
+                    simState.robotDir = parsedRobot.d;
+                    simState.startRow = parsedRobot.r;
+                    simState.startCol = parsedRobot.c;
+                    simState.startDir = parsedRobot.d;
+                }
+                if (parsedTarget) {
+                    simState.targetRow = parsedTarget.r;
+                    simState.targetCol = parsedTarget.c;
+                } else {
+                    simState.targetRow = null;
+                    simState.targetCol = null;
+                }
+
+                // Redessiner la grille du simulateur
+                if (typeof buildGrid === 'function') {
+                    buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
+                    if (parsedRobot && typeof renderRobot === 'function') {
+                        renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+                    }
+                    if (parsedTarget && typeof renderTarget === 'function') {
+                        renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
+                    }
+                }
+            }
+        }, 100);
+    }
 
     if (urlParams.get('spellMode') === '1') {
         localStorage.setItem('at_spell_mode', 'true');
@@ -349,6 +468,16 @@ function initShareModal() {
                             </div>
 
                             <h3 style="margin-top: 20px;">🧠 Pédagogie</h3>
+                            <div class="share-option" id="lbl-customGrid" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-customGrid">Partager ma grille personnalisée <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Inclut la taille de grille, les obstacles, le trésor et l'automate tels que vous les avez positionnés au clavier.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-customGrid">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
                             <div class="share-option" id="lbl-noCmdToggle">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-noCmdToggle">Commandes masquées</label>
@@ -651,6 +780,28 @@ function initShareModal() {
             }
         });
 
+        // Handle customGrid specifically if it exists and is checked
+        const customGridCb = document.getElementById('opt-customGrid');
+        if (customGridCb && customGridCb.checked) {
+            let currentTab = window.activeTab;
+            if (!currentTab) {
+                const activeTabBtn = document.querySelector('.tab-btn.active');
+                if (activeTabBtn) {
+                    currentTab = activeTabBtn.id.replace('tab-', '');
+                }
+            }
+            const state = currentTab === 'explore' ? window.exploreState : window.simState;
+            if (state) {
+                url.searchParams.set('rows', GRID_ROWS);
+                url.searchParams.set('cols', GRID_COLS);
+                url.searchParams.set('robot', `${state.robotRow},${state.robotCol},${state.robotDir}`);
+                url.searchParams.set('obstacles', state.obstacles.map(o => `${o.r},${o.c}`).join(';'));
+                if (state.targetRow !== null && state.targetCol !== null) {
+                    url.searchParams.set('target', `${state.targetRow},${state.targetCol}`);
+                }
+            }
+        }
+
         const optLockDiff = document.getElementById('opt-lockDiff');
         const optOnly = document.getElementById('opt-only');
         if ((optLockDiff && optLockDiff.checked) || (optOnly && optOnly.checked)) {
@@ -737,6 +888,17 @@ function initShareModal() {
             optColorMode.checked = window.colorMode;
         }
 
+        const lblCustomGrid = document.getElementById('lbl-customGrid');
+        if (lblCustomGrid) {
+            if (window.keyboardModified) {
+                lblCustomGrid.style.display = 'flex';
+            } else {
+                lblCustomGrid.style.display = 'none';
+                const optCustomGrid = document.getElementById('opt-customGrid');
+                if (optCustomGrid) optCustomGrid.checked = false;
+            }
+        }
+
         updateShareUrl();
         modalOverlay.classList.add('active');
     });
@@ -747,6 +909,12 @@ function initShareModal() {
 
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
+            modalOverlay.classList.remove('active');
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
             modalOverlay.classList.remove('active');
         }
     });

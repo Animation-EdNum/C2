@@ -117,19 +117,45 @@ Cette option est **cruciale en classe**, car ses paramètres avancés permettent
 
 ## 🎨 Personnalisation
 
-Le reste du menu **Options** donne accès à d'autres réglages pour personnaliser l'application :
+Le menu **Options** donne accès à des réglages pour personnaliser l'application :
 
-- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité**, de régler la **largeur** et la **hauteur de la grille** indépendamment (de 4 à 10 cases), et de **masquer le quadrillage**.
-- **Changer de skin** 🎨 : permet de personnaliser l'apparence du robot et de la piste (Bee-Bot, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.). Certains skins se débloquent en progressant.
-- **Voir mes statistiques** 📊 : accès au tableau de bord des scores.
+- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité**, de régler la **largeur** et la **hauteur de la grille** de 4 à 10 cases, et de **masquer le quadrillage**.
+  - Un bouton **« Ajouter un tapis personnalisé »** vous permet d'importer votre propre image locale pour en faire un tapis de jeu. L'image est sauvegardée localement dans le navigateur pour rester disponible hors-ligne.
+- **Changer de skin** 🎨 : permet de personnaliser l'apparence du robot et de la piste (Bee-Bot, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.). Certains skins se débloquent en progressant dans l'application.
+- **Voir mes statistiques** 📊 : accès au tableau de bord des scores et victoires.
 - **Vitesse** ⏱ : bascule entre vitesse normale et vitesse rapide (2×).
-- **Commandes colorées** 🧒 : colore les boutons de commandes pour faciliter le repérage.
-- **Thème clair / sombre** 🌙 : bascule entre les deux modes d'affichage.
+- **Commandes colorées** 🧒 : colore les boutons de commandes pour faciliter le repérage spatial (particulièrement utile pour les élèves non latéralisés).
+- **Thème clair / sombre** 🌙 : bascule entre les modes d'affichage.
 - **Son** 🔊 : active ou désactive les effets sonores.
 
 ---
 
-### 💡 Astuces supplémentaires
+## 💡 Astuces & Fonctionnalités Cachées
 
-- **Accessibilité au clavier ⌨️ :** Pour les élèves plus à l'aise avec un clavier ou pour des besoins d'accessibilité, l'application est entièrement contrôlable au clavier dans le mode Simulateur : utilisez les **flèches directionnelles** pour programmer les déplacements, la touche **Espace** ou **Entrée** pour lancer l'exécution (GO), et la touche **Retour arrière (Backspace)** pour effacer la séquence.
-- **Utilisation 100% Hors-ligne 📶 :** Pensée pour les écoles où la connexion internet est parfois capricieuse, l'application peut fonctionner **entièrement sans connexion**. Il suffit de charger la page une première fois lorsque vous êtes connecté. Ensuite, vous pouvez même couper le Wi-Fi, toutes les ressources (images, tapis, logique) sont stockées localement dans le navigateur !
+### ⌨️ Raccourcis Clavier Classiques
+Dans le mode **Simulateur** ou **Dessin**, vous pouvez programmer et piloter le robot entièrement au clavier :
+* **Flèches directionnelles** : Ajoutent les commandes de mouvement correspondantes (Avancer, Reculer, Gauche, Droite) dans la bande de programme.
+* **Retour arrière (Backspace)** : Efface la dernière instruction ajoutée.
+* **Entrée** : Déclenche l'exécution du programme (équivalent du bouton **« GO »**).
+
+### 🖥️ Mode Édition Clavier de la Grille (Accessibilité Avancée)
+Pour éviter de surcharger l'interface sur mobile ou tablette, le **bouton d'édition clavier** est masqué par défaut.
+* **Comment l'activer ?** Appuyez sur la touche **Tabulation (`Tab`)** pour faire apparaître et activer le mode édition clavier.
+* **Comment naviguer ?** Une fois activé, utilisez les **flèches directionnelles** pour déplacer le curseur de sélection sur les cases (le focus est mis en valeur par un contour néon interactif).
+* **Actions disponibles sur la case sélectionnée :**
+  * **Entrée ou Espace** : Déplace le robot sur la case sélectionnée (alternative complète au glisser-déposer).
+  * **Touche `R` ou `r`** : Fait pivoter l'automate de 90° dans le sens des aiguilles d'une montre.
+  * **Touche `O` ou `o`** : Ajoute ou retire un obstacle (brique rouge) sur la case.
+  * **Touche `T` ou `t`** : Déplace le trésor / la cible sur la case sélectionnée.
+
+### 🔗 Partager une Grille Personnalisée
+Si vous modifiez manuellement le plateau de jeu à l'aide des fonctions d'édition au clavier (obstacles, trésors, déplacement ou orientation du robot) :
+* Une option supplémentaire **« Partager ma grille personnalisée »** apparaît dans la modale de partage.
+* En l'activant, le lien URL généré encode la taille exacte de votre grille, les obstacles posés, l'emplacement du trésor et l'orientation de départ du robot. Vos élèves démarreront ainsi l'activité sur votre configuration personnalisée.
+
+### 👁️ Mode Aveugle (Blindcoding)
+* À côté de la bande de programme, un bouton **œil barré** permet de masquer les cartes d'instructions.
+* L'élève saisit ses commandes de tête sans voir la trace visuelle de sa séquence, ce qui fait travailler la mémoire de travail et l'anticipation mentale.
+
+### 📶 Utilisation 100% Hors-ligne
+* Conçue pour pallier les connexions réseau capricieuses des établissements scolaires, l'application fonctionne **sans internet** après un premier chargement. Les ressources, images et tapis de jeu sont conservés en cache local.

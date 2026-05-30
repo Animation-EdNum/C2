@@ -68,3 +68,7 @@
 - **Bit de Parité Grid**: The grid elements are represented by the `.cell` class. The total cell count for an N x N grid is (N+1) x (N+1).
 - **GitHub Actions:** Use exact 40-character commit SHAs instead of mutable version tags (e.g., `@v3`).
 - **Keyboard Targets:** Prioritize compatibility with Swiss keyboard layouts (avoid characters like '#' or '¨') for keyboard-dependent features or passwords.
+- **Automate Grid Accessibility (2026-05-30):** Hidden by default to avoid tablet/mobile clutter. Automatically triggers and reveals the keyboard edit mode toolbar buttons upon `Tab` keydown. Uses `.grid-row:focus-within` styling to raise the active row and cell above subsequent rows, preventing clipping of custom outlines.
+- **Automate Overlays Layering (2026-05-30):** Keeps the robot overlay and target overlays stacked above all cells and outlines by assigning them `z-index: 100 !important` and `z-index: 90 !important` respectively.
+- **Custom Grid Sharing (2026-05-30):** Renders custom shared grids on page load. A robust active tab fallback is included in `url-params.js` to ensure the correct state (exploration or simulation) is serialized. Grid rebuilding and robot/target rendering are executed inside the URL load callback.
+

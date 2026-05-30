@@ -8,6 +8,35 @@ on:
 
 jobs:
 
+  # ── Smoke Test ─────────────────────────────────────────────────────────────
+  smoke-test:
+    name: "Smoke Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@398f5287559dd6b69e5d4e30a21adfe3f29fcc0f
+        with:
+          node-version: 20
+
+      - name: Start Local Server
+        run: node bin/ednum.js --no-open &
+
+      - name: Wait for server to be responsive
+        run: |
+          for i in {1..10}; do
+            curl -s -f http://localhost:3000/index.html && echo "Server is up!" && exit 0
+            echo "Waiting for server to start..."
+            sleep 1
+          done
+          echo "Server failed to start!" && exit 1
+
+      - name: Fetch Portail and Cycle 1 Pages
+        run: |
+          curl -s -f http://localhost:3000/index.html > /dev/null
+          curl -s -f http://localhost:3000/indexC1.html > /dev/null
+
   # ── Detect which files changed ─────────────────────────────────────────────
   changes:
     name: "Detect changed files"
