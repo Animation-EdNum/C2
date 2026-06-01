@@ -21,7 +21,7 @@ L'utilisation de ce simulateur en classe va bien au-delà du simple jeu. Il dév
 Avant de détailler les 5 modes principaux, voici deux fonctionnalités activables via des interrupteurs (toggles) présents dans l'interface, particulièrement utiles dans les modes **Exploration** et **Simulateur** :
 
 - **Ramasser les objets (Mode Collecte) :** Lorsque cette option est activée, l'automate doit se déplacer sur les éléments interactifs du tapis (ex: des formes géométriques, des personnages de contes) pour les "ramasser". Cela permet de créer des missions de collecte avec un compteur de victoires et une série 🔥.
-- **🃏 Mode Memory :** Ce mode transforme la grille en un jeu de mémory géant ! Des cartes retournées apparaissent sur la grille. Déplacez l'automate sur les cartes pour les révéler et formez des paires. Un excellent moyen de combiner repérage spatial et mémoire.
+- **🃏 Mode Chasse aux paires :** Ce mode transforme la grille en un jeu de chasse aux paires géant ! Des cartes retournées apparaissent sur la grille. Déplacez l'automate sur les cartes pour les révéler et formez des paires. Un excellent moyen de combiner repérage spatial et mémoire.
 
 ---
 
