@@ -2373,9 +2373,17 @@ let simState = {
 
                 if (!svg) {
                     let baseSvg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
-                    svg = baseSvg.replace(ROBOT_SVG_ID_REGEX, `id="$1_${containerId}"`)
-                                 .replace(ROBOT_SVG_URL_REGEX, `url(#$1_${containerId})`)
-                                 .replace(ROBOT_SVG_HREF_REGEX, `href="#$1_${containerId}"`);
+                    const GLOBAL_SVG_IDS = ['cyber-neon', 'cyber-arrow', 'lava-glow', 'glow', 'lava-gradient', 'gold-glow', 'coin-grad'];
+                    svg = baseSvg.replace(ROBOT_SVG_ID_REGEX, (match, p1) => {
+                        if (GLOBAL_SVG_IDS.includes(p1)) return `id="${p1}"`;
+                        return `id="${p1}_${containerId}"`;
+                    }).replace(ROBOT_SVG_URL_REGEX, (match, p1) => {
+                        if (GLOBAL_SVG_IDS.includes(p1)) return `url(#${p1})`;
+                        return `url(#${p1}_${containerId})`;
+                    }).replace(ROBOT_SVG_HREF_REGEX, (match, p1) => {
+                        if (GLOBAL_SVG_IDS.includes(p1)) return `href="#${p1}"`;
+                        return `href="#${p1}_${containerId}"`;
+                    });
                     renderedRobotSvgCache[cacheKey] = svg;
                 }
 

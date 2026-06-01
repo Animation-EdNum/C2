@@ -1605,7 +1605,7 @@ const ROBOT_SVGS = {
                         </g>
                     </g>
                     <path d="M 50 22 C 68 28 72 60 50 82 C 28 60 32 28 50 22 Z" fill="#991b1b" stroke="#991b1b" stroke-width="2"/>
-                    <path d="M 50 32 C 57 45 56 60 50 72 C 44 60 43 45 50 32 Z" fill="url(#lava)" filter="url(#glow)"/>
+                    <path d="M 50 32 C 57 45 56 60 50 72 C 44 60 43 45 50 32 Z" fill="url(#lava-gradient)" filter="url(#glow)"/>
                     <path d="M 40 26 C 40 8 46 3 50 -2 C 54 3 60 8 60 26 Z" fill="#ea580c" stroke="#7f1d1d" stroke-width="1.5"/>
                     <path d="M 40 20 Q 25 8 20 25 Q 32 18 40 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
                     <path d="M 60 20 Q 75 8 80 25 Q 68 18 60 23" fill="#991b1b" stroke="#f97316" stroke-width="1"/>
