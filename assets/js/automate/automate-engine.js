@@ -2233,7 +2233,8 @@ let simState = {
 
                 let activeOverlay = null;
                 if (typeof activeTab !== 'undefined') {
-                    activeOverlay = document.getElementById(activeTab + '-robot');
+                    const prefix = activeTab === 'simulator' ? 'sim' : activeTab === 'challenge' ? 'chal' : activeTab;
+                    activeOverlay = document.getElementById(prefix + '-robot');
                 } else {
                     const overlays = document.querySelectorAll('.robot-overlay');
                     for (let i = 0; i < overlays.length; i++) {
