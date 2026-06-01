@@ -26,7 +26,7 @@
 - **[2026-05-10]** [PWA] Introduced `scripts/generate-sw-manifest.js` for automatic SW cache generation.
 - **[2026-05-12]** [Distribution] Created `package.json` and `bin/ednum.js` to publish as `@ednum/suite-ednum`.
 - **[2026-05-14]** [Testing] Reorganized tests to `meta/tests/unit/` and `meta/tests/e2e/`.
-- **[2026-05-14]** [UX/Refactor] Redesigned Simulateur Automate "Memory" and "Spell" modes.
+- **[2026-05-14]** [UX/Refactor] Redesigned Simulateur Automate "Chasse aux paires" and "Spell" modes.
 - **[2026-05-14]** [UI/UX] Replaced native `title` tooltips with custom `data-tooltip` CSS tooltips.
 - **[2026-05-14]** [Code Quality] Centralized victory streaks API to `handleStreakCelebration()` (`confetti.js`).
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html` (red/white palette).

@@ -138,7 +138,7 @@ const SKIN_CONFIG = {
     'f1': { name: 'Formule 1', obstacle: '<i data-fa="dt-traffic-light-stop" class="f1-obstacle" style="--fa-primary: #e74c3c; --fa-secondary: #34495e; width: 55%; height: 55%;"></i>', target: '🏁', desc: 'Enchaîne 3 victoires de suite (mode Pilotage, difficulté moyenne ou plus) sans faire une seule erreur.', hidden: false },
     'manta': { name: 'Raie Manta', obstacle: '<i data-fa="narwhal"></i>', target: '🦐', desc: 'Prends garde au vertige...', hidden: true },
     'train': { name: 'Loco', obstacle: '<i data-fa="cow" style="color: #FF10F0;"></i>', target: '🚉', desc: 'Parcours un total de 100 cases.', hidden: false },
-    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Trouve 4 paires dans le mode Memory.', hidden: false },
+    'helicopter': { name: 'Hélico', obstacle: '<i data-fa="dt-volcano" style="--fa-primary: #e74c3c; --fa-secondary: #f39c12;"></i>', target: '🏥', desc: 'Trouve 4 paires dans le mode Chasse aux paires.', hidden: false },
     'pedago': { name: 'Colorigami', obstacle: '<i data-fa="ghost" style="color: grey;"></i>', target: '🧭', desc: 'Aile orange ou verte ? Appuie sur le bouton de la même couleur pour tourner du bon côté.', hidden: true },
     'default': { name: 'Automate', obstacle: '<i data-fa="block-brick" style="color: #c0392b;"></i>', target: '⭐', desc: 'L\'automate que tu connais bien.', hidden: false }
 };
