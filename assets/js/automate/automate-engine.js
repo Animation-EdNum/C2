@@ -2112,10 +2112,6 @@ let simState = {
                 container.style.setProperty('--grid-cols', GRID_COLS);
                 container.style.setProperty('--grid-rows', GRID_ROWS);
             });
-            const grids = document.querySelectorAll('.bot-grid');
-            grids.forEach(grid => {
-                grid.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
-            });
         }
 
         function buildGrid(containerId, rows, cols, obstacles = []) {
