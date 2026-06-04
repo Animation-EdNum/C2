@@ -158,3 +158,21 @@ test('renderIndexCard', async (t) => {
         assert.strictEqual(tagSpan.textContent, 'robotics', 'Should contain tag text');
     });
 });
+
+test('loadRegistry', async (t) => {
+    await t.test('returns empty array when window.REGISTRY is undefined', async () => {
+        const window = setupDOM();
+        delete window.REGISTRY;
+        const result = await window.loadRegistry();
+        assert.strictEqual(Array.isArray(result), true, 'Should return an array');
+        assert.strictEqual(result.length, 0, 'Should return an empty array');
+    });
+
+    await t.test('returns the populated array when window.REGISTRY is defined', async () => {
+        const window = setupDOM();
+        const mockRegistry = [{ id: 'app1' }, { id: 'app2' }];
+        window.REGISTRY = mockRegistry;
+        const result = await window.loadRegistry();
+        assert.strictEqual(result, mockRegistry, 'Should return the exact same registry reference');
+    });
+});
