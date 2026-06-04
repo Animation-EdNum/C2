@@ -1253,20 +1253,19 @@ let simState = {
          * c'est-à-dire qu'un chemin en ligne droite (même row ou même col) est bloqué,
          * ou qu'un obstacle se situe dans le rectangle délimité par les deux positions.
          */
-        function hasObstacleBetween(startR, startC, targetR, targetC, obstacles) {
+        function hasObstacleBetween(startR, startC, targetR, targetC, obsGrid) {
             const minR = Math.min(startR, targetR);
             const maxR = Math.max(startR, targetR);
             const minC = Math.min(startC, targetC);
             const maxC = Math.max(startC, targetC);
 
-            return obstacles.some(o => {
-                // L'obstacle est dans le rectangle englobant (exclus les coins start/target)
-                if (o.r >= minR && o.r <= maxR && o.c >= minC && o.c <= maxC) {
-                    if ((o.r === startR && o.c === startC) || (o.r === targetR && o.c === targetC)) return false;
-                    return true;
+            for (let r = minR; r <= maxR; r++) {
+                for (let c = minC; c <= maxC; c++) {
+                    if ((r === startR && c === startC) || (r === targetR && c === targetC)) continue;
+                    if (obsGrid[r] && obsGrid[r][c]) return true;
                 }
-                return false;
-            });
+            }
+            return false;
         }
 
         function generateChallengePath(diff) {
@@ -1287,6 +1286,8 @@ let simState = {
                 if (startR === targetR && startC === targetC) continue;
 
                 let obstacles = [];
+                const obsGrid = Array(GRID_ROWS);
+                for (let r = 0; r < GRID_ROWS; r++) obsGrid[r] = Array(GRID_COLS).fill(false);
                 let numObs = 0;
                 if (diff === 'medium') numObs = randomInt(1, 2);
                 else if (diff === 'hard') numObs = randomInt(3, 4);
@@ -1296,19 +1297,25 @@ let simState = {
                     let or = randomInt(0, GRID_ROWS - 1);
                     let oc = randomInt(0, GRID_COLS - 1);
                     if ((or !== startR || oc !== startC) && (or !== targetR || oc !== targetC)) {
-                        if (!obstacles.some(o => o.r === or && o.c === oc)) obstacles.push({ r: or, c: oc });
+                        if (!obsGrid[or][oc]) {
+                            obstacles.push({ r: or, c: oc });
+                            obsGrid[or][oc] = true;
+                        }
                     }
                 }
 
                 // Pour Medium et plus, forcer un obstacle entre automate et cible si possible
-                if (diff !== 'easy' && !hasObstacleBetween(startR, startC, targetR, targetC, obstacles)) {
+                if (diff !== 'easy' && !hasObstacleBetween(startR, startC, targetR, targetC, obsGrid)) {
                     const minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
                     const minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
                     if (maxR - minR > 0 || maxC - minC > 0) {
                         let or = randomInt(minR, maxR);
                         let oc = randomInt(minC, maxC);
                         if ((or !== startR || oc !== startC) && (or !== targetR || oc !== targetC)) {
-                            if (!obstacles.some(o => o.r === or && o.c === oc)) obstacles.push({ r: or, c: oc });
+                            if (!obsGrid[or][oc]) {
+                                obstacles.push({ r: or, c: oc });
+                                obsGrid[or][oc] = true;
+                            }
                         }
                     }
                 }
