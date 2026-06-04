@@ -158,3 +158,98 @@ test('renderIndexCard', async (t) => {
         assert.strictEqual(tagSpan.textContent, 'robotics', 'Should contain tag text');
     });
 });
+
+test('renderBadges', async (t) => {
+    await t.test('returns empty string for null/undefined badges', () => {
+        const window = setupDOM();
+        assert.strictEqual(window.renderBadges(null), '', 'Should return empty string for null');
+        assert.strictEqual(window.renderBadges(undefined), '', 'Should return empty string for undefined');
+    });
+
+    await t.test('returns wrapper with no badges for empty array', () => {
+        const window = setupDOM();
+        const html = window.renderBadges([]);
+        assert.strictEqual(html, '<div class="badges-wrapper"></div>', 'Should return empty wrapper');
+    });
+
+    await t.test('renders standard text badge', () => {
+        const window = setupDOM();
+        const html = window.renderBadges([{ text: 'Standard' }]);
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const wrapper = tempDiv.querySelector('.badges-wrapper');
+        assert.ok(wrapper, 'Wrapper should exist');
+
+        const badge = wrapper.querySelector('.badge');
+        assert.ok(badge, 'Badge should exist');
+        assert.strictEqual(badge.textContent, 'Standard', 'Should have correct text');
+        assert.strictEqual(badge.className.trim(), 'badge', 'Should only have "badge" class');
+    });
+
+    await t.test('renders grey badge', () => {
+        const window = setupDOM();
+        const html = window.renderBadges([{ text: 'Old', grey: true }]);
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const badge = tempDiv.querySelector('.badge');
+
+        assert.ok(badge.classList.contains('grey'), 'Should contain "grey" class');
+    });
+
+    await t.test('renders prof badge for specific texts', () => {
+        const window = setupDOM();
+        const profTexts = ['Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Ressources'];
+
+        for (const text of profTexts) {
+            const html = window.renderBadges([{ text }]);
+            const tempDiv = window.document.createElement('div');
+            tempDiv.innerHTML = html;
+            const badge = tempDiv.querySelector('.badge');
+
+            assert.ok(badge.classList.contains('prof'), `Should contain "prof" class for text "${text}"`);
+        }
+    });
+
+    await t.test('renders combination of grey and prof classes', () => {
+        const window = setupDOM();
+        const html = window.renderBadges([{ text: 'Ressources', grey: true }]);
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const badge = tempDiv.querySelector('.badge');
+
+        assert.ok(badge.classList.contains('grey'), 'Should contain "grey" class');
+        assert.ok(badge.classList.contains('prof'), 'Should contain "prof" class');
+    });
+
+    await t.test('does not render prof badge for normal texts', () => {
+        const window = setupDOM();
+        const html = window.renderBadges([{ text: 'Not Prof' }]);
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const badge = tempDiv.querySelector('.badge');
+
+        assert.strictEqual(badge.classList.contains('prof'), false, 'Should not contain "prof" class');
+    });
+
+    await t.test('renders multiple badges correctly', () => {
+        const window = setupDOM();
+        const html = window.renderBadges([
+            { text: 'First' },
+            { text: 'Second', grey: true },
+            { text: 'Animation' }
+        ]);
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const badges = tempDiv.querySelectorAll('.badge');
+
+        assert.strictEqual(badges.length, 3, 'Should render 3 badges');
+        assert.strictEqual(badges[0].textContent, 'First', 'First badge text correct');
+        assert.strictEqual(badges[0].className.trim(), 'badge', 'First badge class correct');
+
+        assert.strictEqual(badges[1].textContent, 'Second', 'Second badge text correct');
+        assert.strictEqual(badges[1].className.trim(), 'badge grey', 'Second badge class correct');
+
+        assert.strictEqual(badges[2].textContent, 'Animation', 'Third badge text correct');
+        assert.strictEqual(badges[2].className.trim(), 'badge prof', 'Third badge class correct');
+    });
+});
