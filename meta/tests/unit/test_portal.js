@@ -174,6 +174,9 @@ test('loadRegistry', async (t) => {
         window.REGISTRY = mockRegistry;
         const result = await window.loadRegistry();
         assert.strictEqual(result, mockRegistry, 'Should return the exact same registry reference');
+    });
+});
+
 test('renderBadges', async (t) => {
     await t.test('returns empty string for null/undefined badges', () => {
         const window = setupDOM();
