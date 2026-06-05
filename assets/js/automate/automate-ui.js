@@ -1,21 +1,24 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 
-window.treasureBubbleState = { active: false, timer: null, removeTimer: null, hasPlaced: false, text: 'Clique-moi pour ajouter un trésor et des obstacles' };
+window.treasureBubbleState = { active: false, timer: null, removeTimer: null, hasPlaced: false, text: 'Clique-moi pour ajouter un trésor et des obstacles', wrapper: null, textDiv: null };
 
 function handleTreasureBubbleClick(e) {
     e.stopPropagation();
     window.treasureBubbleState.text = "Clique sur le bouton ci-dessous";
     if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
 
-    const textDivs = document.querySelectorAll('.treasure-speech-bubble-text');
-    textDivs.forEach(textDiv => {
-        textDiv.textContent = window.treasureBubbleState.text;
-    });
+    if (window.treasureBubbleState.textDiv) {
+        window.treasureBubbleState.textDiv.textContent = window.treasureBubbleState.text;
+    }
 
     window.treasureBubbleState.removeTimer = setTimeout(() => {
         window.treasureBubbleState.active = false;
-        document.querySelectorAll('.treasure-speech-bubble-wrapper').forEach(b => b.remove());
+        if (window.treasureBubbleState.wrapper) {
+            window.treasureBubbleState.wrapper.remove();
+            window.treasureBubbleState.wrapper = null;
+            window.treasureBubbleState.textDiv = null;
+        }
     }, 5000);
 }
 
@@ -31,7 +34,11 @@ function triggerTreasureBubble(tab) {
 
     if (btn) {
         btn.style.position = 'relative';
-        document.querySelectorAll('.treasure-speech-bubble-wrapper').forEach(b => b.remove());
+        if (window.treasureBubbleState.wrapper) {
+            window.treasureBubbleState.wrapper.remove();
+            window.treasureBubbleState.wrapper = null;
+            window.treasureBubbleState.textDiv = null;
+        }
 
         const wrapper = document.createElement('div');
         wrapper.className = 'treasure-speech-bubble-wrapper';
@@ -59,10 +66,17 @@ function triggerTreasureBubble(tab) {
         wrapper.appendChild(bubble);
         btn.appendChild(wrapper);
 
+        window.treasureBubbleState.wrapper = wrapper;
+        window.treasureBubbleState.textDiv = textDiv;
+
         if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
         window.treasureBubbleState.removeTimer = setTimeout(() => {
             window.treasureBubbleState.active = false;
-            document.querySelectorAll('.treasure-speech-bubble-wrapper').forEach(b => b.remove());
+            if (window.treasureBubbleState.wrapper) {
+                window.treasureBubbleState.wrapper.remove();
+                window.treasureBubbleState.wrapper = null;
+                window.treasureBubbleState.textDiv = null;
+            }
         }, 5000);
     }
 }
@@ -331,7 +345,11 @@ function switchTab(event, tab) {
     if (window.treasureBubbleState) {
         if (window.treasureBubbleState.timer) clearTimeout(window.treasureBubbleState.timer);
         if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
-        document.querySelectorAll('.treasure-speech-bubble-wrapper').forEach(b => b.remove());
+        if (window.treasureBubbleState.wrapper) {
+            window.treasureBubbleState.wrapper.remove();
+            window.treasureBubbleState.wrapper = null;
+            window.treasureBubbleState.textDiv = null;
+        }
         window.treasureBubbleState.active = false;
 
         if (!window.treasureBubbleState.hasPlaced && (tab === 'explore' || tab === 'simulator')) {
@@ -754,7 +772,11 @@ document.getElementById('btn-explore-place-elements').addEventListener('click', 
         window.treasureBubbleState.hasPlaced = true;
         if (window.treasureBubbleState.timer) clearTimeout(window.treasureBubbleState.timer);
         if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
-        document.querySelectorAll('.treasure-speech-bubble-wrapper').forEach(b => b.remove());
+        if (window.treasureBubbleState.wrapper) {
+            window.treasureBubbleState.wrapper.remove();
+            window.treasureBubbleState.wrapper = null;
+            window.treasureBubbleState.textDiv = null;
+        }
         window.treasureBubbleState.active = false;
     }
     placeRandomExploreTarget();
@@ -794,7 +816,11 @@ document.getElementById('btn-place-elements').addEventListener('click', () => {
         window.treasureBubbleState.hasPlaced = true;
         if (window.treasureBubbleState.timer) clearTimeout(window.treasureBubbleState.timer);
         if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
-        document.querySelectorAll('.treasure-speech-bubble-wrapper').forEach(b => b.remove());
+        if (window.treasureBubbleState.wrapper) {
+            window.treasureBubbleState.wrapper.remove();
+            window.treasureBubbleState.wrapper = null;
+            window.treasureBubbleState.textDiv = null;
+        }
         window.treasureBubbleState.active = false;
     }
     placeRandomSimTarget();
