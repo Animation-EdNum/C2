@@ -28,14 +28,12 @@
                     coloredCmdsBtn.style.color = 'var(--accent)';
                     if (typeof unlockSkin === 'function') {
                         unlockSkin('pedago');
-                        // Do not force selection on load if user chose another skin, but unlock it
-                        // if (typeof activeSkin === 'undefined' || activeSkin === 'default') selectSkin('pedago');
+
                     }
                 } else {
                     coloredCmdsBtn.style.color = '';
                 }
             }
-
 
             // Tab key navigation
             const tabBtns = document.querySelectorAll('.tab-btn');
