@@ -2364,6 +2364,7 @@ let simState = {
         const ROBOT_SVG_URL_REGEX = /url\(#([^)]+)\)/g;
         const ROBOT_SVG_HREF_REGEX = /href="#([^"]+)"/g;
         const renderedRobotSvgCache = {};
+        const precompiledRobotSvgCache = {};
 
         function renderRobot(containerId, overlayId, row, col, dirIndex) {
             const deg = dirIndex * 90;
@@ -2380,18 +2381,23 @@ let simState = {
                 let svg = renderedRobotSvgCache[cacheKey];
 
                 if (!svg) {
-                    let baseSvg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
-                    const GLOBAL_SVG_IDS = ['cyber-neon', 'cyber-arrow', 'lava-glow', 'glow', 'lava-gradient', 'gold-glow', 'coin-grad'];
-                    svg = baseSvg.replace(ROBOT_SVG_ID_REGEX, (match, p1) => {
-                        if (GLOBAL_SVG_IDS.includes(p1)) return `id="${p1}"`;
-                        return `id="${p1}_${containerId}"`;
-                    }).replace(ROBOT_SVG_URL_REGEX, (match, p1) => {
-                        if (GLOBAL_SVG_IDS.includes(p1)) return `url(#${p1})`;
-                        return `url(#${p1}_${containerId})`;
-                    }).replace(ROBOT_SVG_HREF_REGEX, (match, p1) => {
-                        if (GLOBAL_SVG_IDS.includes(p1)) return `href="#${p1}"`;
-                        return `href="#${p1}_${containerId}"`;
-                    });
+                    let precompiled = precompiledRobotSvgCache[activeSkin];
+                    if (!precompiled) {
+                        let baseSvg = ROBOT_SVGS[activeSkin] || ROBOT_SVGS['default'];
+                        const GLOBAL_SVG_IDS = ['cyber-neon', 'cyber-arrow', 'lava-glow', 'glow', 'lava-gradient', 'gold-glow', 'coin-grad'];
+                        precompiled = baseSvg.replace(ROBOT_SVG_ID_REGEX, (match, p1) => {
+                            if (GLOBAL_SVG_IDS.includes(p1)) return `id="${p1}"`;
+                            return `id="${p1}_CONTAINER_ID_PLACEHOLDER"`;
+                        }).replace(ROBOT_SVG_URL_REGEX, (match, p1) => {
+                            if (GLOBAL_SVG_IDS.includes(p1)) return `url(#${p1})`;
+                            return `url(#${p1}_CONTAINER_ID_PLACEHOLDER)`;
+                        }).replace(ROBOT_SVG_HREF_REGEX, (match, p1) => {
+                            if (GLOBAL_SVG_IDS.includes(p1)) return `href="#${p1}"`;
+                            return `href="#${p1}_CONTAINER_ID_PLACEHOLDER"`;
+                        });
+                        precompiledRobotSvgCache[activeSkin] = precompiled;
+                    }
+                    svg = precompiled.replaceAll('_CONTAINER_ID_PLACEHOLDER', '_' + containerId);
                     renderedRobotSvgCache[cacheKey] = svg;
                 }
 
