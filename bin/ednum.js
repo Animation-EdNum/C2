@@ -170,13 +170,23 @@ server.on('error', (err) => {
 // ─── Open browser helper ──────────────────────────────────────────────────────
 function openBrowser(url) {
   const { platform } = process;
+  const { execFile } = require('node:child_process');
+
   let cmd;
+  let args = [];
 
-  if (platform === 'win32')       cmd = `start "" "${url}"`;
-  else if (platform === 'darwin') cmd = `open "${url}"`;
-  else                            cmd = `xdg-open "${url}"`;
+  if (platform === 'win32') {
+    cmd = 'rundll32';
+    args = ['url.dll,FileProtocolHandler', url];
+  } else if (platform === 'darwin') {
+    cmd = 'open';
+    args = [url];
+  } else {
+    cmd = 'xdg-open';
+    args = [url];
+  }
 
-  require('node:child_process').exec(cmd, (err) => {
+  execFile(cmd, args, (err) => {
     if (err) {
       // Silently fail — the URL is already printed in the console
     }
