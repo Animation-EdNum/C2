@@ -2105,15 +2105,22 @@ let simState = {
             }
         }
 
+        let cachedGridContainers = null;
+        let cachedGrids = null;
+
         function updateGridContainersAspectRatio() {
-            const containers = document.querySelectorAll('.bot-grid-container');
-            containers.forEach(container => {
+            if (!cachedGridContainers) {
+                cachedGridContainers = document.querySelectorAll('.bot-grid-container');
+            }
+            cachedGridContainers.forEach(container => {
                 container.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
                 container.style.setProperty('--grid-cols', GRID_COLS);
                 container.style.setProperty('--grid-rows', GRID_ROWS);
             });
-            const grids = document.querySelectorAll('.bot-grid');
-            grids.forEach(grid => {
+            if (!cachedGrids) {
+                cachedGrids = document.querySelectorAll('.bot-grid');
+            }
+            cachedGrids.forEach(grid => {
                 grid.style.aspectRatio = `${GRID_COLS} / ${GRID_ROWS}`;
             });
         }
