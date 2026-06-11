@@ -5,47 +5,127 @@ async function loadRegistry() {
 }
 
 function renderBadges(badges) {
-    if (!badges) return '';
-    return `<div class="badges-wrapper">${badges.map(b => `<span class="badge${b.grey ? ' grey' : ''}${b.text === 'Évaluation' || b.text === 'Gestion de classe' || b.text === 'Animation' || b.text === 'Outils libres' || b.text === 'Ressources' ? ' prof' : ''}">${b.text}</span>`).join('')}</div>`;
+    if (!badges) return null;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'badges-wrapper';
+    badges.forEach(b => {
+        const span = document.createElement('span');
+        span.className = 'badge';
+        if (b.grey) span.classList.add('grey');
+        if (b.text === 'Évaluation' || b.text === 'Gestion de classe' || b.text === 'Animation' || b.text === 'Outils libres' || b.text === 'Ressources') {
+            span.classList.add('prof');
+        }
+        span.textContent = b.text;
+        wrapper.appendChild(span);
+    });
+    return wrapper;
 }
 
 function renderTags(tags) {
-    if (!tags) return '';
-    return `<div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join(' ')}</div>`;
+    if (!tags) return null;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'card-tags';
+    tags.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = t;
+        wrapper.appendChild(span);
+    });
+    return wrapper;
 }
 
 function renderIndexCard(app) {
-    const classes = ['card'];
-    if (app.isAlpha) classes.push('alpha-app');
-    if (app.isExternal) classes.push('external');
-    if (app.isTeacher) classes.push('teacher');
+    const a = document.createElement('a');
+    a.href = app.href;
+    if (app.target) a.target = app.target;
+    if (app.rel) a.rel = app.rel;
 
-    const displayStyle = (app.id === 'app-reseau-tri' || app.id === 'app-jeu-grue') ? 'display: none;' : '';
+    a.classList.add('card');
+    if (app.isAlpha) a.classList.add('alpha-app');
+    if (app.isExternal) a.classList.add('external');
+    if (app.isTeacher) a.classList.add('teacher');
 
-    return `
-                <a href="${app.href}" ${app.target ? `target="${app.target}"` : ''} ${app.rel ? `rel="${app.rel}"` : ''} class="${classes.join(' ')}" data-level="${app.dataLevel || ''}" ${app.id ? `data-id="${app.id}"` : ''} ${displayStyle ? `style="${displayStyle}"` : ''}>
-                    ${renderBadges(app.badges)}
-                    <div class="card-title">
-                        ${app.icon ? `<i data-fa="${app.icon}" style="${app.iconStyle || ''}"></i>` : ''}
-                        ${app.title}
-                    </div>
-                    ${app.desc ? `<div class="card-desc">${app.desc}</div>` : ''}
-                    ${renderTags(app.tags)}
-                    ${app.ref ? `<div class="card-ref"><i data-fa="book-open-reader"></i> ${app.ref}</div>` : ''}
-                </a>`;
+    if (app.dataLevel) a.setAttribute('data-level', app.dataLevel);
+    if (app.id) a.setAttribute('data-id', app.id);
+
+    if (app.id === 'app-reseau-tri' || app.id === 'app-jeu-grue') {
+        a.style.display = 'none';
+    }
+
+    const badgesEl = renderBadges(app.badges);
+    if (badgesEl) a.appendChild(badgesEl);
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'card-title';
+    if (app.icon) {
+        const i = document.createElement('i');
+        i.setAttribute('data-fa', app.icon);
+        if (app.iconStyle) {
+            i.style.cssText = app.iconStyle;
+        }
+        titleDiv.appendChild(i);
+        titleDiv.appendChild(document.createTextNode(' '));
+    }
+    titleDiv.appendChild(document.createTextNode(app.title));
+    a.appendChild(titleDiv);
+
+    if (app.desc) {
+        const descDiv = document.createElement('div');
+        descDiv.className = 'card-desc';
+        descDiv.textContent = app.desc;
+        a.appendChild(descDiv);
+    }
+
+    const tagsEl = renderTags(app.tags);
+    if (tagsEl) a.appendChild(tagsEl);
+
+    if (app.ref) {
+        const refDiv = document.createElement('div');
+        refDiv.className = 'card-ref';
+        const i = document.createElement('i');
+        i.setAttribute('data-fa', 'book-open-reader');
+        refDiv.appendChild(i);
+        refDiv.appendChild(document.createTextNode(' ' + app.ref));
+        a.appendChild(refDiv);
+    }
+
+    return a;
 }
 
 function renderC1Card(app) {
-    return `
-            <a href="${app.href}" class="card" style="${app.style || ''}">
-                <div class="card-icon-main">
-                    ${app.c1Icon ? `<i data-fa="${app.c1Icon}" style="color: #fff;"></i>` : ''}
-                </div>
-                <div class="card-icons-small" style="color: #fff;">
-                    ${(app.c1SmallIcons || []).map(icon => `<i data-fa="${icon}"></i>`).join('\n                    ')}
-                </div>
-                <div class="card-title">${app.title}</div>
-            </a>`;
+    const a = document.createElement('a');
+    a.href = app.href;
+    a.className = 'card';
+    if (app.style) {
+        a.style.cssText = app.style;
+    }
+
+    const iconMainDiv = document.createElement('div');
+    iconMainDiv.className = 'card-icon-main';
+    if (app.c1Icon) {
+        const i = document.createElement('i');
+        i.setAttribute('data-fa', app.c1Icon);
+        i.style.color = '#fff';
+        iconMainDiv.appendChild(i);
+    }
+    a.appendChild(iconMainDiv);
+
+    const iconsSmallDiv = document.createElement('div');
+    iconsSmallDiv.className = 'card-icons-small';
+    iconsSmallDiv.style.color = '#fff';
+    (app.c1SmallIcons || []).forEach(icon => {
+        const i = document.createElement('i');
+        i.setAttribute('data-fa', icon);
+        iconsSmallDiv.appendChild(i);
+    });
+    a.appendChild(iconsSmallDiv);
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'card-title';
+    titleDiv.textContent = app.title;
+    a.appendChild(titleDiv);
+
+    return a;
 }
 
 window.renderPortal = async function(mode) {
@@ -76,19 +156,19 @@ window.renderPortal = async function(mode) {
 
         if (studentActivitiesContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'students_activities');
-            studentActivitiesContainer['innerHTML'] = apps.map(renderIndexCard).join('');
+            studentActivitiesContainer.replaceChildren(...apps.map(renderIndexCard));
         }
         if (studentExternalContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'students_external');
-            studentExternalContainer['innerHTML'] = apps.map(renderIndexCard).join('');
+            studentExternalContainer.replaceChildren(...apps.map(renderIndexCard));
         }
         if (teacherToolsContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'teachers_tools');
-            teacherToolsContainer['innerHTML'] = apps.map(renderIndexCard).join('');
+            teacherToolsContainer.replaceChildren(...apps.map(renderIndexCard));
         }
         if (teacherExternalContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'teachers_external');
-            teacherExternalContainer['innerHTML'] = apps.map(renderIndexCard).join('');
+            teacherExternalContainer.replaceChildren(...apps.map(renderIndexCard));
         }
 
         window.fa?.createIcons?.();
@@ -105,7 +185,7 @@ window.renderPortal = async function(mode) {
         const grid = document.querySelector('main .grid');
         if (grid) {
             const apps = registry.filter(a => a.inC1);
-            grid['innerHTML'] = apps.map(renderC1Card).join('');
+            grid.replaceChildren(...apps.map(renderC1Card));
         }
 
         window.fa?.createIcons?.();
