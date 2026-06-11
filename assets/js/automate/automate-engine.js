@@ -1783,7 +1783,8 @@ let simState = {
                 strip['innerHTML'] = '<div class="empty-program">Ajoute des commandes...</div>';
             } else {
                 strip['innerHTML'] = drawState.program.map((cmd, i) => {
-                    return `<div class="program-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
+                    const cls = cmd === 'forward' ? 'fwd' : cmd === 'backward' ? 'bwd' : cmd;
+                    return `<div class="program-cmd ${cls}" data-index="${i}">${AT_SVGS[cmd]}</div>`;
                 }).join('');
 
                 // Add delete listeners
@@ -1832,7 +1833,8 @@ let simState = {
         function renderReadProgram() {
             const strip = document.getElementById('read-program');
             strip['innerHTML'] = readState.program.map((cmd, i) => {
-                return `<div class="program-cmd read-only-cmd" data-index="${i}">${AT_SVGS[cmd]}</div>`;
+                const cls = cmd === 'forward' ? 'fwd' : cmd === 'backward' ? 'bwd' : cmd;
+                return `<div class="program-cmd read-only-cmd ${cls}" data-index="${i}">${AT_SVGS[cmd]}</div>`;
             }).join('');
         }
 
@@ -1954,7 +1956,10 @@ let simState = {
         function renderChallengeOptions() {
             const container = document.getElementById('chal-options'); const labels = ['A', 'B', 'C'];
             container['innerHTML'] = chalState.options.map((opt, i) => {
-                const cmds = opt.cmds.map(cmd => `<div class="mini-cmd">${AT_SVGS[cmd]}</div>`).join('');
+                const cmds = opt.cmds.map(cmd => {
+                    const cls = cmd === 'forward' ? 'fwd' : cmd === 'backward' ? 'bwd' : cmd;
+                    return `<div class="mini-cmd ${cls}">${AT_SVGS[cmd]}</div>`;
+                }).join('');
                 return `<div class="challenge-option" data-idx="${i}" tabindex="0" data-index="${i}"><span class="option-label">${labels[i]}</span><div class="option-cmds">${cmds}</div></div>`;
             }).join('');
         }
