@@ -2182,21 +2182,13 @@ let simState = {
             }
 
             // Pre-calculate obstacle HTML and MAT content to avoid O(N) operations in the nested loop
-            const obsStr = SKIN_CONFIG[activeSkin].obstacle;
+            const obsStr = SKIN_CONFIG[activeSkin]?.obstacle || '';
             const obsIsHTML = obsStr.includes('<svg') || obsStr.includes('<i');
             let cachedObsNode = null;
             if (obsIsHTML) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = obsStr;
-                if (tempDiv.childNodes.length > 1) {
-                    const frag = document.createDocumentFragment();
-                    while(tempDiv.firstChild) {
-                        frag.appendChild(tempDiv.firstChild);
-                    }
-                    cachedObsNode = frag;
-                } else {
-                    cachedObsNode = tempDiv.firstChild;
-                }
+                const template = document.createElement('template');
+                template.innerHTML = obsStr;
+                cachedObsNode = template.content;
             }
             const hasMatContent = MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content;
             const cachedMatContent = hasMatContent ? MAT_CONFIG[activeMat].content : null;
@@ -2213,7 +2205,7 @@ let simState = {
                     const isObstacle = obsGrid[r][c];
                     if (isObstacle) {
                         cell.classList.add('obstacle');
-                        if (obsIsHTML) {
+                        if (obsIsHTML && cachedObsNode) {
                             cell.appendChild(cachedObsNode.cloneNode(true));
                         } else {
                             cell.dataset.obstacle = obsStr;
@@ -2224,7 +2216,7 @@ let simState = {
                         if (index < cachedMatContent.length) {
                             const span = document.createElement('span');
                             span.className = 'mat-content';
-                            span.textContent = cachedMatContent[index];
+                            span['innerHTML'] = cachedMatContent[index];
                             cell.appendChild(span);
                         }
                     }
