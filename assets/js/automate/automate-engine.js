@@ -508,8 +508,9 @@ let simState = {
 
         function countReachable(startR, startC, startD, obstacles) {
             const queue = [{ r: startR, c: startC, d: startD }];
-            const visited = new Set([`${startR},${startC},${startD}`]);
-            const visitedCells = new Set([`${startR},${startC}`]);
+            const startNormD = ((startD % 4) + 4) % 4;
+            const visited = new Set([startR * 1000 + startC * 10 + startNormD]);
+            const visitedCells = new Set([startR * 1000 + startC]);
             const cmds = ['forward', 'left', 'right', 'backward'];
 
             while (queue.length > 0) {
@@ -517,11 +518,12 @@ let simState = {
                 for (let cmd of cmds) {
                     const res = moveRobot({ robotRow: curr.r, robotCol: curr.c, robotDir: curr.d, obstacles }, cmd);
                     if (!res.blocked) {
-                        const key = `${res.robotRow},${res.robotCol},${res.robotDir}`;
+                        const normD = ((res.robotDir % 4) + 4) % 4;
+                        const key = res.robotRow * 1000 + res.robotCol * 10 + normD;
                         if (!visited.has(key)) {
                             visited.add(key);
-                            visitedCells.add(`${res.robotRow},${res.robotCol}`);
-                            queue.push({ r: res.robotRow, c: res.robotCol, d: res.robotDir });
+                            visitedCells.add(res.robotRow * 1000 + res.robotCol);
+                            queue.push({ r: res.robotRow, c: res.robotCol, d: normD });
                         }
                     }
                 }
@@ -1225,7 +1227,8 @@ let simState = {
 
         function findShortestPath(startR, startC, startD, targetR, targetC, obstacles) {
             const queue = [{ r: startR, c: startC, d: startD, path: [] }];
-            const visited = new Set([`${startR},${startC},${startD}`]);
+            const startNormD = ((startD % 4) + 4) % 4;
+            const visited = new Set([startR * 1000 + startC * 10 + startNormD]);
             const cmds = ['forward', 'left', 'right', 'backward'];
 
             while (queue.length > 0) {
@@ -1235,11 +1238,12 @@ let simState = {
                 for (let cmd of cmds) {
                     const res = moveRobot({ robotRow: curr.r, robotCol: curr.c, robotDir: curr.d, obstacles }, cmd);
                     if (!res.blocked) {
-                        const key = `${res.robotRow},${res.robotCol},${res.robotDir}`;
+                        const normD = ((res.robotDir % 4) + 4) % 4;
+                        const key = res.robotRow * 1000 + res.robotCol * 10 + normD;
                         if (!visited.has(key)) {
                             visited.add(key);
                             if (curr.path.length < 12) {
-                                queue.push({ r: res.robotRow, c: res.robotCol, d: res.robotDir, path: [...curr.path, cmd] });
+                                queue.push({ r: res.robotRow, c: res.robotCol, d: normD, path: [...curr.path, cmd] });
                             }
                         }
                     }
