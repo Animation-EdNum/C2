@@ -1,5 +1,32 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+
+function sanitizeHTML(html) {
+    if (!html) return '';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const unwantedTags = ['script', 'style', 'object', 'embed', 'iframe', 'frame', 'frameset', 'applet', 'meta', 'link', 'base'];
+    unwantedTags.forEach(tag => {
+        const elements = doc.querySelectorAll(tag);
+        elements.forEach(el => el.remove());
+    });
+
+    const allElements = doc.querySelectorAll('*');
+    allElements.forEach(el => {
+        Array.from(el.attributes).forEach(attr => {
+            if (attr.name.toLowerCase().startsWith('on')) {
+                el.removeAttribute(attr.name);
+            } else if ((attr.name.toLowerCase() === 'href' || attr.name.toLowerCase() === 'src' || attr.name.toLowerCase() === 'data') &&
+                attr.value.toLowerCase().trim().startsWith('javascript:')) {
+                el.removeAttribute(attr.name);
+            }
+        });
+    });
+
+    return doc.body.innerHTML;
+}
+
 /* ================================================================
    SVGS DES BOUTONS DU BLUE-BOT
    ================================================================ */
@@ -619,7 +646,7 @@ function updateSkinGrids() {
         const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
         obstacles.forEach(cell => {
             if (obsSkin.includes('<svg') || obsSkin.includes('<i')) {
-                cell['innerHTML'] = obsSkin;
+                cell.innerHTML = sanitizeHTML(obsSkin);
                 delete cell.dataset.obstacle;
             } else {
                 cell.replaceChildren();
@@ -670,7 +697,7 @@ function updateSkinButtons() {
     if (tgtBtn) {
         const tg = SKIN_CONFIG[activeSkin].target;
         if (tg && tg.includes('<svg')) {
-            tgtBtn['innerHTML'] = tg;
+            tgtBtn.innerHTML = sanitizeHTML(tg);
             const svg = tgtBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
@@ -686,7 +713,7 @@ function updateSkinButtons() {
     if (obsBtn) {
         const ob = SKIN_CONFIG[activeSkin].obstacle;
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-            obsBtn['innerHTML'] = ob;
+            obsBtn.innerHTML = sanitizeHTML(ob);
             window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
