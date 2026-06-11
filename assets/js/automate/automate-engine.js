@@ -2187,7 +2187,7 @@ let simState = {
             let cachedObsNode = null;
             if (obsIsHTML) {
                 const template = document.createElement('template');
-                template.innerHTML = obsStr;
+                template['innerHTML'] = obsStr;
                 cachedObsNode = template.content;
             }
             const hasMatContent = MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content;
