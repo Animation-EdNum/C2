@@ -4,7 +4,8 @@
 function _setHtmlSafely(el, htmlStr) {
     if (!el || typeof htmlStr !== 'string') return;
     if (typeof DOMPurify !== 'undefined') {
-        el.innerHTML = DOMPurify.sanitize(htmlStr);
+        const fragment = DOMPurify.sanitize(htmlStr, { RETURN_DOM_FRAGMENT: true });
+        el.replaceChildren(fragment);
     } else {
         // Fallback simple sanitization
         el.replaceChildren();
