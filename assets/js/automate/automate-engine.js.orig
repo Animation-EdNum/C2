@@ -380,17 +380,17 @@ let simState = {
 
         async function runSingleCommandExploration(cmd) {
             if (exploreState.running) return;
-            playSound('click'); 
-            exploreState.running = true; 
-            exploreState.failed = false; 
+            playSound('click');
+            exploreState.running = true;
+            exploreState.failed = false;
 
             // Track history for rendering or future needs (but NO SKIN UNLOCKS)
             if (!exploreState.history) exploreState.history = [];
             exploreState.history.push(cmd);
             if (!exploreState.stepsThisRun) exploreState.stepsThisRun = 0;
 
-            exploreState.startRow = exploreState.robotRow; 
-            exploreState.startCol = exploreState.robotCol; 
+            exploreState.startRow = exploreState.robotRow;
+            exploreState.startCol = exploreState.robotCol;
             exploreState.startDir = exploreState.robotDir;
 
             if (!TrailManager.states['explore-grid']) {
@@ -398,8 +398,8 @@ let simState = {
             }
 
             const result = moveRobot(exploreState, cmd);
-            exploreState.robotRow = result.robotRow; 
-            exploreState.robotCol = result.robotCol; 
+            exploreState.robotRow = result.robotRow;
+            exploreState.robotCol = result.robotCol;
             exploreState.robotDir = result.robotDir;
 
             if (!result.blocked && (cmd === 'forward' || cmd === 'backward')) exploreState.stepsThisRun++;
@@ -442,7 +442,7 @@ let simState = {
                 exploreState.consecutiveMistakes = 0;
 
                 showToast('Trésor trouvé ! Félicitations !', 'success');
-                
+
                 const counterVal = document.getElementById('sim-star-counter-val');
                 if (counterVal) counterVal.textContent = exploreState.starCount;
                 const firstTryVal = document.getElementById('sim-first-try-val');
@@ -466,7 +466,7 @@ let simState = {
                     }, 500);
                 }
             }
-            
+
             if (!exploreState.failed && MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#explore-grid .bot-cell[data-row="${exploreState.robotRow}"][data-col="${exploreState.robotCol}"] .mat-content`);
                 if (cell && cell.innerHTML.trim()) {
@@ -479,7 +479,7 @@ let simState = {
                 }
             }
 
-            exploreState.running = false; 
+            exploreState.running = false;
         }
         function removeSpecificCmd(index) {
             if (simState.running) return;
@@ -1002,7 +1002,7 @@ let simState = {
             let addedItem = false;
             const endContainer = document.getElementById('sim-end-container');
             const isCraneActive = endContainer && (endContainer.style.display !== 'none' && endContainer.style.display !== '');
-            
+
             if (MAT_CONFIG[activeMat] && (MAT_CONFIG[activeMat].content || MAT_CONFIG[activeMat].baseContent)) {
                 const cell = document.querySelector(`#sim-grid .bot-cell[data-row="${simState.robotRow}"][data-col="${simState.robotCol}"] .mat-content`);
                 if (cell && cell.innerHTML.trim()) {
@@ -1015,7 +1015,7 @@ let simState = {
                         el.className = 'end-item';
                         el['innerHTML'] = cell.innerHTML.trim();
                         if (endContent) endContent.appendChild(el);
-                        
+
                         if (typeof collectMode !== 'undefined' && collectMode) {
                             // Remove emoji from grid cell (collected)
                             const gridCell = cell.closest('.bot-cell');
@@ -2031,7 +2031,7 @@ let simState = {
 
                     // Déblocages
                     if (chalState.difficulty === 'extreme' && (!chalState.mistakes || chalState.mistakes === 0)) unlockSkin('cyberbot');
-                    
+
                     if (chalState.difficulty !== 'easy') {
                         f1Streak++;
                     } else {
@@ -2186,9 +2186,9 @@ let simState = {
             const obs = SKIN_CONFIG[activeSkin].obstacle;
             const isHtmlObs = obs.includes('<svg') || obs.includes('<i');
             if (isHtmlObs) {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(obs, 'text/html');
-                parsedObstacleNodes = Array.from(doc.body.childNodes);
+                const temp = document.createElement('div');
+                temp.innerHTML = obs;
+                parsedObstacleNodes = Array.from(temp.childNodes);
             }
 
             for (let r = 0; r < rows; r++) {
@@ -2520,7 +2520,7 @@ let simState = {
                 overlay.setAttribute('draggable', 'true');
                 overlay.ondragstart = (e) => {
                     const isExplore = containerId === 'explore-grid';
-                    if ((isExplore && typeof exploreState !== 'undefined' && exploreState.running) || 
+                    if ((isExplore && typeof exploreState !== 'undefined' && exploreState.running) ||
                         (!isExplore && typeof simState !== 'undefined' && simState.running)) {
                         e.preventDefault();
                         return;
@@ -2563,4 +2563,3 @@ let simState = {
                 else targetOverlay.classList.remove('glow-space');
             }
         }
-
