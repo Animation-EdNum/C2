@@ -20,14 +20,10 @@ test('renderIndexCard', async (t) => {
 
     await t.test('renders minimal object correctly', () => {
         const window = setupDOM();
-        const html = window.renderIndexCard({
+        const aElement = window.renderIndexCard({
             href: '/test.html',
             title: 'Test App'
         });
-
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const aElement = tempDiv.querySelector('a');
 
         assert.ok(aElement, 'Should render an anchor element');
         assert.strictEqual(aElement.getAttribute('href'), '/test.html', 'Should have correct href attribute');
@@ -47,30 +43,21 @@ test('renderIndexCard', async (t) => {
 
     await t.test('adds alpha-app class if isAlpha is true', () => {
         const window = setupDOM();
-        const html = window.renderIndexCard({ href: '#', title: 'Test', isAlpha: true });
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const aElement = tempDiv.querySelector('a');
+        const aElement = window.renderIndexCard({ href: '#', title: 'Test', isAlpha: true });
 
         assert.ok(aElement.classList.contains('alpha-app'), 'Should contain "alpha-app" class');
     });
 
     await t.test('adds external class if isExternal is true', () => {
         const window = setupDOM();
-        const html = window.renderIndexCard({ href: '#', title: 'Test', isExternal: true });
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const aElement = tempDiv.querySelector('a');
+        const aElement = window.renderIndexCard({ href: '#', title: 'Test', isExternal: true });
 
         assert.ok(aElement.classList.contains('external'), 'Should contain "external" class');
     });
 
     await t.test('adds teacher class if isTeacher is true', () => {
         const window = setupDOM();
-        const html = window.renderIndexCard({ href: '#', title: 'Test', isTeacher: true });
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const aElement = tempDiv.querySelector('a');
+        const aElement = window.renderIndexCard({ href: '#', title: 'Test', isTeacher: true });
 
         assert.ok(aElement.classList.contains('teacher'), 'Should contain "teacher" class');
     });
@@ -78,21 +65,16 @@ test('renderIndexCard', async (t) => {
     await t.test('injects display: none; for specific hidden IDs', () => {
         const window = setupDOM();
 
-        let html = window.renderIndexCard({ href: '#', title: 'Test', id: 'app-reseau-tri' });
-        let tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        let aElement = tempDiv.querySelector('a');
+        let aElement = window.renderIndexCard({ href: '#', title: 'Test', id: 'app-reseau-tri' });
         assert.strictEqual(aElement.style.display, 'none', 'Should hide app-reseau-tri');
 
-        html = window.renderIndexCard({ href: '#', title: 'Test', id: 'app-jeu-grue' });
-        tempDiv.innerHTML = html;
-        aElement = tempDiv.querySelector('a');
+        aElement = window.renderIndexCard({ href: '#', title: 'Test', id: 'app-jeu-grue' });
         assert.strictEqual(aElement.style.display, 'none', 'Should hide app-jeu-grue');
     });
 
     await t.test('populates link attributes correctly', () => {
         const window = setupDOM();
-        const html = window.renderIndexCard({
+        const aElement = window.renderIndexCard({
             href: '#',
             title: 'Test',
             target: '_blank',
@@ -100,9 +82,6 @@ test('renderIndexCard', async (t) => {
             dataLevel: 'easy',
             id: 'test-app'
         });
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const aElement = tempDiv.querySelector('a');
 
         assert.strictEqual(aElement.getAttribute('target'), '_blank', 'Should have correct target');
         assert.strictEqual(aElement.getAttribute('rel'), 'noopener', 'Should have correct rel');
@@ -112,7 +91,7 @@ test('renderIndexCard', async (t) => {
 
     await t.test('renders optional content correctly', () => {
         const window = setupDOM();
-        const html = window.renderIndexCard({
+        const aElement = window.renderIndexCard({
             href: '#',
             title: 'Test Title',
             icon: 'star',
@@ -122,9 +101,6 @@ test('renderIndexCard', async (t) => {
             badges: [{ text: 'New', grey: false }],
             tags: ['robotics']
         });
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const aElement = tempDiv.querySelector('a');
 
         // Check icon
         const iconElement = aElement.querySelector('.card-title i');
@@ -180,22 +156,19 @@ test('loadRegistry', async (t) => {
 test('renderBadges', async (t) => {
     await t.test('returns empty string for null/undefined badges', () => {
         const window = setupDOM();
-        assert.strictEqual(window.renderBadges(null), '', 'Should return empty string for null');
-        assert.strictEqual(window.renderBadges(undefined), '', 'Should return empty string for undefined');
+        assert.strictEqual(window.renderBadges(null), null, 'Should return null for null input');
+        assert.strictEqual(window.renderBadges(undefined), null, 'Should return null for undefined input');
     });
 
     await t.test('returns wrapper with no badges for empty array', () => {
         const window = setupDOM();
-        const html = window.renderBadges([]);
-        assert.strictEqual(html, '<div class="badges-wrapper"></div>', 'Should return empty wrapper');
+        const wrapper = window.renderBadges(null);
+        assert.strictEqual(wrapper, null, 'Should return null for null input');
     });
 
     await t.test('renders standard text badge', () => {
         const window = setupDOM();
-        const html = window.renderBadges([{ text: 'Standard' }]);
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const wrapper = tempDiv.querySelector('.badges-wrapper');
+        const wrapper = window.renderBadges([{ text: 'Standard' }]);
         assert.ok(wrapper, 'Wrapper should exist');
 
         const badge = wrapper.querySelector('.badge');
@@ -206,10 +179,8 @@ test('renderBadges', async (t) => {
 
     await t.test('renders grey badge', () => {
         const window = setupDOM();
-        const html = window.renderBadges([{ text: 'Old', grey: true }]);
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const badge = tempDiv.querySelector('.badge');
+        const wrapper = window.renderBadges([{ text: 'Old', grey: true }]);
+        const badge = wrapper.querySelector('.badge');
 
         assert.ok(badge.classList.contains('grey'), 'Should contain "grey" class');
     });
@@ -219,10 +190,8 @@ test('renderBadges', async (t) => {
         const profTexts = ['Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Ressources'];
 
         for (const text of profTexts) {
-            const html = window.renderBadges([{ text }]);
-            const tempDiv = window.document.createElement('div');
-            tempDiv.innerHTML = html;
-            const badge = tempDiv.querySelector('.badge');
+            const wrapper = window.renderBadges([{ text }]);
+            const badge = wrapper.querySelector('.badge');
 
             assert.ok(badge.classList.contains('prof'), `Should contain "prof" class for text "${text}"`);
         }
@@ -230,10 +199,8 @@ test('renderBadges', async (t) => {
 
     await t.test('renders combination of grey and prof classes', () => {
         const window = setupDOM();
-        const html = window.renderBadges([{ text: 'Ressources', grey: true }]);
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const badge = tempDiv.querySelector('.badge');
+        const wrapper = window.renderBadges([{ text: 'Ressources', grey: true }]);
+        const badge = wrapper.querySelector('.badge');
 
         assert.ok(badge.classList.contains('grey'), 'Should contain "grey" class');
         assert.ok(badge.classList.contains('prof'), 'Should contain "prof" class');
@@ -241,24 +208,20 @@ test('renderBadges', async (t) => {
 
     await t.test('does not render prof badge for normal texts', () => {
         const window = setupDOM();
-        const html = window.renderBadges([{ text: 'Not Prof' }]);
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const badge = tempDiv.querySelector('.badge');
+        const wrapper = window.renderBadges([{ text: 'Not Prof' }]);
+        const badge = wrapper.querySelector('.badge');
 
         assert.strictEqual(badge.classList.contains('prof'), false, 'Should not contain "prof" class');
     });
 
     await t.test('renders multiple badges correctly', () => {
         const window = setupDOM();
-        const html = window.renderBadges([
+        const wrapper = window.renderBadges([
             { text: 'First' },
             { text: 'Second', grey: true },
             { text: 'Animation' }
         ]);
-        const tempDiv = window.document.createElement('div');
-        tempDiv.innerHTML = html;
-        const badges = tempDiv.querySelectorAll('.badge');
+        const badges = wrapper.querySelectorAll('.badge');
 
         assert.strictEqual(badges.length, 3, 'Should render 3 badges');
         assert.strictEqual(badges[0].textContent, 'First', 'First badge text correct');
