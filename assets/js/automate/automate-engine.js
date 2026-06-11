@@ -2181,6 +2181,16 @@ let simState = {
                 }
             }
 
+            // Pre-parse the obstacle HTML if it contains SVG or FontAwesome tags
+            let parsedObstacleNodes = null;
+            const obs = SKIN_CONFIG[activeSkin].obstacle;
+            const isHtmlObs = obs.includes('<svg') || obs.includes('<i');
+            if (isHtmlObs) {
+                const temp = document.createElement('div');
+                temp.innerHTML = obs;
+                parsedObstacleNodes = Array.from(temp.childNodes);
+            }
+
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
                 row.setAttribute('role', 'row');
@@ -2193,9 +2203,12 @@ let simState = {
                     const isObstacle = obsGrid[r][c];
                     if (isObstacle) {
                         cell.classList.add('obstacle');
-                        const obs = SKIN_CONFIG[activeSkin].obstacle;
-                        if (obs.includes('<svg') || obs.includes('<i')) {
-                            cell['innerHTML'] = obs;
+                        if (isHtmlObs) {
+                            if (parsedObstacleNodes) {
+                                for (let i = 0; i < parsedObstacleNodes.length; i++) {
+                                    cell.appendChild(parsedObstacleNodes[i].cloneNode(true));
+                                }
+                            }
                         } else {
                             cell.dataset.obstacle = obs;
                         }
@@ -2206,7 +2219,7 @@ let simState = {
                         if (index < content.length) {
                             const span = document.createElement('span');
                             span.className = 'mat-content';
-                            span['innerHTML'] = content[index];
+                            span.textContent = content[index];
                             cell.appendChild(span);
                         }
                     }
