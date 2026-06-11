@@ -212,30 +212,87 @@
 
         // UI GENERATION (Adaptative Bits) 
         function buildUI() {
-            // Calc Table 
-            let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>';
-            let togglesHtml = '';
+            const trBitsRow = document.createElement('tr');
+            const trPowRow = document.createElement('tr');
+            const trValsRow = document.createElement('tr');
+
+            const thBits = document.createElement('th');
+            thBits.textContent = 'Bits';
+            trBitsRow.appendChild(thBits);
+
+            const thPow = document.createElement('th');
+            thPow.textContent = 'Puissances';
+            trPowRow.appendChild(thPow);
+
+            const thVals = document.createElement('th');
+            thVals.textContent = 'Valeurs';
+            trValsRow.appendChild(thVals);
+
+            const bitTogglesFragment = document.createDocumentFragment();
 
             for (let i = 0; i < 8; i++) {
-                let isHidden = (8 - i) > currentBits ? 'hidden-col' : '';
+                let isHidden = (8 - i) > currentBits;
 
-                // Calc HTML 
-                trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" >0</button></td>`;
-                trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7 - i}</sup></td>`;
-                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0">${powers[i]}</div></td>`;
+                // Calc HTML - Bits Row
+                const tdBit = document.createElement('td');
+                if (isHidden) tdBit.className = 'hidden-col';
+                const btnBit = document.createElement('button');
+                btnBit.className = 'calc-bit';
+                btnBit.id = `calc-bit-${i}`;
+                btnBit.textContent = '0';
+                tdBit.appendChild(btnBit);
+                trBitsRow.appendChild(tdBit);
 
-                // Exercise HTML (Toggles only, no kb hints) 
+                // Calc HTML - Powers Row
+                const tdPow = document.createElement('td');
+                tdPow.className = isHidden ? 'calc-power-cell hidden-col' : 'calc-power-cell ';
+                tdPow.appendChild(document.createTextNode('2'));
+                const sup = document.createElement('sup');
+                sup.textContent = (7 - i).toString();
+                tdPow.appendChild(sup);
+                trPowRow.appendChild(tdPow);
+
+                // Calc HTML - Values Row
+                const tdVal = document.createElement('td');
+                if (isHidden) tdVal.className = 'hidden-col';
+                const divVal = document.createElement('div');
+                divVal.className = 'calc-box';
+                divVal.id = `calc-box-${i}`;
+                divVal.setAttribute('tabindex', '0');
+                divVal.textContent = powers[i].toString();
+                tdVal.appendChild(divVal);
+                trValsRow.appendChild(tdVal);
+
+                // Exercise HTML
                 if (!isHidden) {
-                    togglesHtml += ` 
-            <div class="bit-toggle-container"> 
-                <button class="bit-toggle" id="tog-${i}" >0</button>
-                <div class="vault-bit-power">2<sup>${7 - i}</sup></div>
-            </div>`;
+                    const toggleContainer = document.createElement('div');
+                    toggleContainer.className = 'bit-toggle-container';
+
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.className = 'bit-toggle';
+                    toggleBtn.id = `tog-${i}`;
+                    toggleBtn.textContent = '0';
+                    toggleContainer.appendChild(toggleBtn);
+
+                    const powerDiv = document.createElement('div');
+                    powerDiv.className = 'vault-bit-power';
+                    powerDiv.appendChild(document.createTextNode('2'));
+                    const powerSup = document.createElement('sup');
+                    powerSup.textContent = (7 - i).toString();
+                    powerDiv.appendChild(powerSup);
+                    toggleContainer.appendChild(powerDiv);
+
+                    bitTogglesFragment.appendChild(toggleContainer);
                 }
             }
 
-            document.getElementById('calc-table').innerHTML = `<tr>${trBits}</tr><tr>${trPow}</tr><tr>${trVals}</tr>`;
-            document.getElementById('bit-toggles').innerHTML = togglesHtml;
+            const calcTable = document.getElementById('calc-table');
+            const tbody = document.createElement('tbody');
+            tbody.replaceChildren(trBitsRow, trPowRow, trValsRow);
+            calcTable.replaceChildren(tbody);
+
+            const bitToggles = document.getElementById('bit-toggles');
+            bitToggles.replaceChildren(bitTogglesFragment);
 
             for (let i = 0; i < 8; i++) {
                 cachedCalcBits[i] = document.getElementById(`calc-bit-${i}`);
