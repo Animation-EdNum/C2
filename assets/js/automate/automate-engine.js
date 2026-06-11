@@ -2181,6 +2181,26 @@ let simState = {
                 }
             }
 
+            // Pre-calculate obstacle HTML and MAT content to avoid O(N) operations in the nested loop
+            const obsStr = SKIN_CONFIG[activeSkin].obstacle;
+            const obsIsHTML = obsStr.includes('<svg') || obsStr.includes('<i');
+            let cachedObsNode = null;
+            if (obsIsHTML) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = obsStr;
+                if (tempDiv.childNodes.length > 1) {
+                    const frag = document.createDocumentFragment();
+                    while(tempDiv.firstChild) {
+                        frag.appendChild(tempDiv.firstChild);
+                    }
+                    cachedObsNode = frag;
+                } else {
+                    cachedObsNode = tempDiv.firstChild;
+                }
+            }
+            const hasMatContent = MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content;
+            const cachedMatContent = hasMatContent ? MAT_CONFIG[activeMat].content : null;
+
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
                 row.setAttribute('role', 'row');
@@ -2193,20 +2213,18 @@ let simState = {
                     const isObstacle = obsGrid[r][c];
                     if (isObstacle) {
                         cell.classList.add('obstacle');
-                        const obs = SKIN_CONFIG[activeSkin].obstacle;
-                        if (obs.includes('<svg') || obs.includes('<i')) {
-                            cell['innerHTML'] = obs;
+                        if (obsIsHTML) {
+                            cell.appendChild(cachedObsNode.cloneNode(true));
                         } else {
-                            cell.dataset.obstacle = obs;
+                            cell.dataset.obstacle = obsStr;
                         }
-                    } else if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                    } else if (hasMatContent) {
                         // Ajouter le texte du tapis si ce n'est pas un obstacle et si un tapis avec du contenu est sélectionné
-                        const content = MAT_CONFIG[activeMat].content;
                         const index = r * cols + c;
-                        if (index < content.length) {
+                        if (index < cachedMatContent.length) {
                             const span = document.createElement('span');
                             span.className = 'mat-content';
-                            span['innerHTML'] = content[index];
+                            span.textContent = cachedMatContent[index];
                             cell.appendChild(span);
                         }
                     }
