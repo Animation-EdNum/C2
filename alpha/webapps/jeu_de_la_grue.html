@@ -244,15 +244,22 @@
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .cup {
-            width: 70px;
-            height: 180px;
+        .large-cup {
+            display: flex;
+            gap: 6px;
             background: rgba(255, 255, 255, 0.5);
             border-radius: 0 0 var(--radius-xl) var(--radius-xl);
             border: 4px solid #cbd5e1;
             border-top: none;
-            position: relative;
             box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
+            padding: 0 5px 5px 5px;
+            margin: 0 -5px -5px -5px;
+        }
+
+        .cup {
+            width: 70px;
+            height: 200px;
+            position: relative;
             overflow: hidden;
         }
 
@@ -311,16 +318,22 @@
             gap: 5px;
         }
 
-        body.dark .cup {
+        body.dark .large-cup {
             background: rgba(0, 0, 0, 0.2);
             border-color: #475569;
         }
 
         .target-board .cup {
-            width: 45px;
+            width: 42px;
             height: 120px;
+        }
+
+        .target-board .large-cup {
             border-width: 3px;
             border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            padding: 0 3px 3px 3px;
+            margin: 0 -3px -3px -3px;
+            gap: 6px;
         }
 
         .target-board .cup-slots {
@@ -345,7 +358,7 @@
 
         .cube {
             width: 100%;
-            height: 50px;
+            height: 60px;
             background: var(--cube-color, linear-gradient(135deg, #3b82f6, #2563eb));
             border-radius: var(--radius-md);
             box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2), 0 5px 5px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3);
@@ -360,7 +373,7 @@
         }
 
         .target-board .cube {
-            height: 35px;
+            height: 36px;
             box-shadow: 0 2px 0 #1d4ed8, 0 3px 3px rgba(0, 0, 0, 0.2);
             border-radius: var(--radius-sm);
         }
@@ -451,8 +464,8 @@
 
         .crane.holding .crane-claw::after {
             content: '';
-            width: 44px;
-            height: 44px;
+            width: 60px;
+            height: 60px;
             background: var(--held-color, linear-gradient(135deg, #3b82f6, #2563eb));
             border-radius: var(--radius-md);
             position: absolute;
@@ -936,9 +949,11 @@
                 <div class="board-wrapper">
                     <div class="board-title">Objectif</div>
                     <div class="board target-board" id="target-board">
-                        <div class="cup"></div>
-                        <div class="cup"></div>
-                        <div class="cup"></div>
+                        <div class="large-cup">
+                            <div class="cup"></div>
+                            <div class="cup"></div>
+                            <div class="cup"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -953,9 +968,11 @@
                         </div>
                     </div>
                     <div class="board main-board" id="main-board">
-                        <div class="cup" id="cup-0"></div>
-                        <div class="cup" id="cup-1"></div>
-                        <div class="cup" id="cup-2"></div>
+                        <div class="large-cup">
+                            <div class="cup" id="cup-0"></div>
+                            <div class="cup" id="cup-1"></div>
+                            <div class="cup" id="cup-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1160,6 +1177,11 @@
         function renderBoard(boardState, container, isTarget) {
             container.innerHTML = '';
             if (!isTarget) cachedCups = [];
+
+            let largeCupEl = document.createElement('div');
+            largeCupEl.className = 'large-cup';
+            container.appendChild(largeCupEl);
+
             for (let i = 0; i < NUM_CUPS; i++) {
                 let cupEl = document.createElement('div');
                 cupEl.className = 'cup';
@@ -1195,13 +1217,13 @@
                 }
                 cupEl.appendChild(blocksContainer);
 
-                container.appendChild(cupEl);
+                largeCupEl.appendChild(cupEl);
             }
         }
 
         function updateCraneVisuals() {
             const cupWidth = 70; // updated CSS
-            const gap = 15; // gap in flex is 15px
+            const gap = 6; // gap in flex is 6px
             // Main board has 15px padding inside, but relative position inside crane-layer matches
             const baseX = craneState.pos * (cupWidth + gap);
 
@@ -1209,7 +1231,7 @@
 
             // Height visual mapping
             const baseArmHeight = 10;
-            const dropPerLevel = 55; // visual slot height
+            const dropPerLevel = 62; // visual slot height
             craneArmEl.style.height = `${baseArmHeight + (craneState.height * dropPerLevel)}px`;
 
             if (craneState.holding) {
