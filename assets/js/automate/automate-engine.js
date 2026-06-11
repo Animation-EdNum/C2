@@ -2181,6 +2181,34 @@ let simState = {
                 }
             }
 
+            // Pre-process obstacle template for performance
+            const obsStr = SKIN_CONFIG[activeSkin].obstacle;
+            const isHtmlObstacle = obsStr && (obsStr.includes('<svg') || obsStr.includes('<i'));
+            let obsTemplate = null;
+            if (isHtmlObstacle) {
+                const temp = document.createElement('template');
+                temp.innerHTML = obsStr;
+                obsTemplate = temp.content;
+            }
+
+            // Pre-process mat content
+            let preprocessedMatContent = null;
+            if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                const contentArray = MAT_CONFIG[activeMat].content;
+                preprocessedMatContent = new Array(contentArray.length);
+                for (let i = 0; i < contentArray.length; i++) {
+                    const item = contentArray[i];
+                    const span = document.createElement('span');
+                    span.className = 'mat-content';
+                    if (item && (item.includes('<svg') || item.includes('<i'))) {
+                        span.innerHTML = item;
+                    } else {
+                        span.textContent = item;
+                    }
+                    preprocessedMatContent[i] = span;
+                }
+            }
+
             for (let r = 0; r < rows; r++) {
                 const row = document.createElement('div'); row.className = 'grid-row';
                 row.setAttribute('role', 'row');
@@ -2193,21 +2221,16 @@ let simState = {
                     const isObstacle = obsGrid[r][c];
                     if (isObstacle) {
                         cell.classList.add('obstacle');
-                        const obs = SKIN_CONFIG[activeSkin].obstacle;
-                        if (obs.includes('<svg') || obs.includes('<i')) {
-                            cell['innerHTML'] = obs;
+                        if (isHtmlObstacle) {
+                            cell.appendChild(obsTemplate.cloneNode(true));
                         } else {
-                            cell.dataset.obstacle = obs;
+                            cell.dataset.obstacle = obsStr;
                         }
-                    } else if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
+                    } else if (preprocessedMatContent) {
                         // Ajouter le texte du tapis si ce n'est pas un obstacle et si un tapis avec du contenu est sélectionné
-                        const content = MAT_CONFIG[activeMat].content;
                         const index = r * cols + c;
-                        if (index < content.length) {
-                            const span = document.createElement('span');
-                            span.className = 'mat-content';
-                            span['innerHTML'] = content[index];
-                            cell.appendChild(span);
+                        if (index < preprocessedMatContent.length && preprocessedMatContent[index]) {
+                            cell.appendChild(preprocessedMatContent[index].cloneNode(true));
                         }
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
