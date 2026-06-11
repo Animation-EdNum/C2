@@ -644,8 +644,15 @@
             ).join('');
 
             const info = document.getElementById('encode-info');
-            if (encodeIndex >= encodeWord.length) info.innerHTML = '🎉 Mot complet !';
-            else info.innerHTML = `Encode la lettre <strong>${encodeWord[encodeIndex]}</strong> (rang ${letterToRank(encodeWord[encodeIndex])})`;
+            if (encodeIndex >= encodeWord.length) {
+                info.textContent = '🎉 Mot complet !';
+            } else {
+                info.textContent = 'Encode la lettre ';
+                const strong = document.createElement('strong');
+                strong.textContent = encodeWord[encodeIndex];
+                info.appendChild(strong);
+                info.appendChild(document.createTextNode(` (rang ${letterToRank(encodeWord[encodeIndex])})`));
+            }
 
             const powers = [16, 8, 4, 2, 1];
             document.getElementById('encode-bits-row').innerHTML = powers.map((p, i) =>
