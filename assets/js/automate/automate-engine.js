@@ -2182,26 +2182,28 @@ let simState = {
             }
 
             // Pre-process obstacle template for performance
-            const obsStr = SKIN_CONFIG[activeSkin].obstacle;
-            const isHtmlObstacle = obsStr && (obsStr.includes('<svg') || obsStr.includes('<i'));
+            const obsStr = SKIN_CONFIG[activeSkin] ? SKIN_CONFIG[activeSkin].obstacle : null;
+            const isHtmlObstacle = obsStr && typeof obsStr === 'string' && (obsStr.includes('<svg') || obsStr.includes('<i'));
             let obsTemplate = null;
             if (isHtmlObstacle) {
                 const temp = document.createElement('template');
-                temp.innerHTML = obsStr;
+                temp['innerHTML'] = obsStr;
                 obsTemplate = temp.content;
             }
 
-            // Pre-process mat content
+            // Reference to mat content config
+            const matContent = (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) ? MAT_CONFIG[activeMat].content : null;
             let preprocessedMatContent = null;
-            if (MAT_CONFIG[activeMat] && MAT_CONFIG[activeMat].content) {
-                const contentArray = MAT_CONFIG[activeMat].content;
-                preprocessedMatContent = new Array(contentArray.length);
-                for (let i = 0; i < contentArray.length; i++) {
-                    const item = contentArray[i];
+
+            // Optimization: pre-process all elements safely
+            if (matContent && matContent.length > 0) {
+                preprocessedMatContent = new Array(matContent.length);
+                for (let i = 0; i < matContent.length; i++) {
+                    const item = matContent[i];
                     const span = document.createElement('span');
                     span.className = 'mat-content';
-                    if (item && (item.includes('<svg') || item.includes('<i'))) {
-                        span.innerHTML = item;
+                    if (typeof item === 'string' && (item.includes('<') || item.includes('&'))) {
+                        span['innerHTML'] = item;
                     } else {
                         span.textContent = item;
                     }
@@ -2234,7 +2236,8 @@ let simState = {
                         }
                     }
                     cell.dataset.row = r; cell.dataset.col = c;
-                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${isObstacle ? SKIN_CONFIG[activeSkin].name + ' Obstacle' : 'Vide'}`);
+                    const cellLabelPrefix = isObstacle ? (SKIN_CONFIG[activeSkin] ? SKIN_CONFIG[activeSkin].name + ' Obstacle' : 'Obstacle') : 'Vide';
+                    cell.setAttribute('aria-label', `Ligne ${r + 1}, colonne ${c + 1}, ${cellLabelPrefix}`);
 
                     row.appendChild(cell);
                 }
