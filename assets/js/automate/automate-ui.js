@@ -1,6 +1,35 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 
+function setSafeHTML(element, html) {
+    element.replaceChildren();
+    if (!html) return;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    const unwantedTags = ['script', 'style', 'object', 'embed', 'iframe', 'frame', 'frameset', 'applet', 'meta', 'link', 'base'];
+    unwantedTags.forEach(tag => {
+        const elements = doc.querySelectorAll(tag);
+        elements.forEach(el => el.remove());
+    });
+
+    const allElements = doc.querySelectorAll('*');
+    allElements.forEach(el => {
+        Array.from(el.attributes).forEach(attr => {
+            if (attr.name.toLowerCase().startsWith('on')) {
+                el.removeAttribute(attr.name);
+            } else if ((attr.name.toLowerCase() === 'href' || attr.name.toLowerCase() === 'src' || attr.name.toLowerCase() === 'data') &&
+                attr.value.toLowerCase().trim().startsWith('javascript:')) {
+                el.removeAttribute(attr.name);
+            }
+        });
+    });
+
+    while (doc.body.firstChild) {
+        element.appendChild(doc.body.firstChild);
+    }
+}
+
 window.treasureBubbleState = { active: false, timer: null, removeTimer: null, hasPlaced: false, text: 'Clique-moi pour ajouter un trésor et des obstacles', wrapper: null, textDiv: null };
 
 function handleTreasureBubbleClick(e) {
@@ -520,7 +549,7 @@ function initApplication() {
     const tgtBtn = document.getElementById('btn-target-icon');
     if (tgtBtn) {
         if (tg && tg.includes('<svg')) {
-            tgtBtn['innerHTML'] = tg;
+            setSafeHTML(tgtBtn, tg);
             const svg = tgtBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
@@ -536,7 +565,7 @@ function initApplication() {
     const obsBtn = document.getElementById('btn-obstacle-icon');
     if (obsBtn) {
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-            obsBtn['innerHTML'] = ob;
+            setSafeHTML(obsBtn, ob);
             window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
