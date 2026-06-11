@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>💻 Codage binaire</title>
+    <meta property="og:title" content="Codage binaire">
+    <meta property="og:description"
+        content="Plateforme d'entraînement au passage des nombres entiers vers leur écriture en binaire, et inversement.">
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/tokens.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/utilities.css">
+    <link rel="stylesheet" href="../assets/css/binaire_codage.css">
+    <script src="../assets/js/scores.js"></script>
+    <script src="../assets/js/audio.js"></script>
+    <script src="../assets/js/fa-subset.js"></script>
+</head>
+
+<body>
+    <i data-fa="vault" style="display:none;"></i>
+    <i data-fa="unlock" style="display:none;"></i>
+    <i data-fa="lock-keyhole" style="display:none;"></i>
+    <i data-fa="lock-keyhole-open" style="display:none;"></i>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="binary"></i>
+                </a>
+                <div>
+                    <h1>Codage binaire</h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                            </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-dec-bin"><i data-fa="calculator"></i> Décimal → Binaire</button>
+                <button class="tab-btn" id="tab-bin-dec"><i data-fa="desktop"></i> Binaire → Décimal</button>
+            </div>
+
+            <p class="subtitle">Appuie sur la touche <strong>Entrée</strong> pour valider tes réponses.</p>
+
+            <!-- DIFFICULTÉ -->
+            <div class="difficulty-bar">
+                <button class="diff-btn active" id="playstyle-classic"><i data-fa="box" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Classique</button>
+                <button class="diff-btn" id="playstyle-factory"><i data-fa="conveyor-belt-boxes" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Usine (Tapis)</button>
+            </div>
+
+            <div class="difficulty-bar">
+                <button class="diff-btn active" id="diff-easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile (4 bits)</button>
+                <button class="diff-btn" id="diff-medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen (6 bits)</button>
+                <button class="diff-btn" id="diff-hard"><i data-fa="circle" style="color: #e74c3c;"></i> Difficile (8 bits)</button>
+            </div>
+
+            <!-- CALCULATRICE -->
+            <div id="calc-open-container" style="text-align: center; margin-bottom: 25px;">
+                <button class="btn calc-open-btn" id="calc-open-btn">
+                    <i data-fa="calculator"></i> Ouvrir la mini-calculatrice
+                </button>
+            </div>
+
+            <!-- PANEL DEC -> BIN -->
+            <div class="tab-panel active" id="panel-dec-bin">
+                <div class="vault-container" id="card-dec-bin">
+                    <div class="vault-header">
+                        <i data-fa="vault" class="vault-icon" id="chest-icon"></i>
+                    </div>
+                    <div class="vault-screen" id="vault-screen">
+                        <div class="vault-screen-label">CODE CIBLE</div>
+                        <div class="vault-screen-number" id="decBin-number">–</div>
+                    </div>
+
+                    <div class="vault-panel">
+                        <div class="vault-screen-label" style="color:#a0aec0; margin-bottom: 15px;">ENTRÉE BINAIRE</div>
+                        <div class="vault-switches" id="bit-toggles">
+                            <!-- Généré en JS -->
+                        </div>
+                        <button class="vault-btn-check" id="decBin-check-btn">DÉVERROUILLER</button>
+                    </div>
+                    <div id="decBin-feedback" class="vault-feedback"></div>
+                </div>
+            </div>
+
+            <!-- PANEL BIN -> DEC -->
+            <div class="tab-panel" id="panel-bin-dec">
+                <div class="card" id="card-bin-dec">
+                    <div class="bin-dec-split">
+                        <div class="bin-dec-col">
+                            <div class="chal-instruction">Binaire à décoder :</div>
+                            <div class="big-number" id="binDec-binary" style="letter-spacing: 4px; font-size: 32px;">–</div>
+                        </div>
+                        <div class="bin-dec-col">
+                            <div class="chal-instruction">Ta réponse en base 10 :</div>
+                            <div class="input-row">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="binDec-input" placeholder="ex. 20" autocomplete="off">
+                                <button class="btn btn-check" id="binDec-check-btn">Vérifier</button>
+                            </div>
+                            <div id="binDec-feedback" class="feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Victoires</div>
+                        <div class="score-value" id="global-correct">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Série 🔥</div>
+                        <div class="score-value" id="global-streak">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="ui-modal-overlay z-top" id="calc-modal-overlay">
+        <div class="ui-modal-content" id="calc-modal-content" style="max-width: 650px; text-align: center;">
+            <button class="ui-btn-close" id="calc-close-btn" title="Fermer" aria-label="Fermer">
+                <i data-fa="xmark"></i>
+            </button>
+            <h2 style="margin-top:0; color: var(--badge-color);">🧮 Mini-calculatrice binaire</h2>
+            <div class="calc-panel-body" style="background: transparent;">
+                <div class="calc-table-wrapper">
+                    <table class="calc-table" id="calc-table">
+                        <!-- Généré en JS -->
+                    </table>
+                </div>
+                <div class="calc-result-area" id="calc-result-area">Clique sur les bits pour calculer</div>
+                <div style="text-align: center;">
+                    <button class="btn" style="background: var(--badge-bg); color: var(--badge-color);" id="reset-calc-btn">Remise à zéro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // ETAT & CONFIG
+        const powers = [128, 64, 32, 16, 8, 4, 2, 1];
+
+        let currentBits = 4; // Easy default
+        let calcState = [0, 0, 0, 0, 0, 0, 0, 0]; // 0=MSB(128), 7=LSB(1)
+        let vaultState = [0, 0, 0, 0, 0, 0, 0, 0];
+        let decBinLocked = false;
+        let binDecLocked = false;
+        let currentDecNumber = null;
+        let currentBinString = null;
+        let globalCorrect = 0;
+        let globalStreak = 0;
+        let globalBest = 0;
+        let helpTimer = null;
+        let decBinMistakes = 0;
+        let binDecMistakes = 0;
+        let decBinConsecutiveSuccess = 0;
+        let binDecConsecutiveSuccess = 0;
+
+        let cachedCalcBits = [];
+        let cachedCalcBoxes = [];
+        let cachedTogs = [];
+
+        // UI GENERATION (Adaptative Bits)
+        function buildUI() {
+            // Calc Table
+            let trBits = '<th>Bits</th>', trPow = '<th>Puissances</th>', trVals = '<th>Valeurs</th>';
+            let togglesHtml = '';
+
+            for (let i = 0; i < 8; i++) {
+                let isHidden = (8 - i) > currentBits ? 'hidden-col' : '';
+
+                // Calc HTML
+                trBits += `<td class="${isHidden}"><button class="calc-bit" id="calc-bit-${i}" >0</button></td>`;
+                trPow += `<td class="calc-power-cell ${isHidden}">2<sup>${7 - i}</sup></td>`;
+                trVals += `<td class="${isHidden}"><div class="calc-box" id="calc-box-${i}" tabindex="0">${powers[i]}</div></td>`;
+
+                // Exercise HTML (Toggles only, no kb hints)
+                if (!isHidden) {
+                    togglesHtml += `
+            <div class="bit-toggle-container">
+                <button class="bit-toggle" id="tog-${i}" >0</button>
+                <div class="vault-bit-power">2<sup>${7 - i}</sup></div>
+            </div>`;
+                }
+            }
+
+            document.getElementById('calc-table').innerHTML = `<tr>${trBits}</tr><tr>${trPow}</tr><tr>${trVals}</tr>`;
+            document.getElementById('bit-toggles').innerHTML = togglesHtml;
+
+            for (let i = 0; i < 8; i++) {
+                cachedCalcBits[i] = document.getElementById(`calc-bit-${i}`);
+                cachedCalcBoxes[i] = document.getElementById(`calc-box-${i}`);
+                cachedTogs[i] = document.getElementById(`tog-${i}`);
+            }
+        }
+
+        function setDifficulty(lvl) {
+            const targetBits = lvl === 'easy' ? 4 : (lvl === 'medium' ? 6 : 8);
+            if (targetBits === currentBits && (currentDecNumber !== null || currentBinString !== null)) return; // Prevent changing if already at this difficulty
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lvl === 'easy' ? 'facile' : lvl === 'medium' ? 'moyen' : 'difficile')));
+            currentBits = lvl === 'easy' ? 4 : (lvl === 'medium' ? 6 : 8);
+            decBinConsecutiveSuccess = 0;
+            binDecConsecutiveSuccess = 0;
+            setCalcDisplay(true);
+            buildUI(); resetCalc();
+            initChallenges();
+        }
+
+        // CALCULATRICE & SYNC
+        function toggleCalc(forceState = null) {
+            const modalOverlay = document.getElementById('calc-modal-overlay');
+            const isOpen = modalOverlay.classList.contains('active');
+
+            let shouldOpen = !isOpen;
+            if (forceState === 'open') shouldOpen = true;
+            if (forceState === 'close') shouldOpen = false;
+
+            if (shouldOpen && !isOpen) {
+                modalOverlay.classList.add('active');
+                document.getElementById('calc-open-btn').classList.remove('pulse-help');
+            } else if (!shouldOpen && isOpen) {
+                modalOverlay.classList.remove('active');
+            }
+        }
+
+        function setCalcDisplay(visible) {
+            const container = document.getElementById('calc-open-container');
+            if (visible) {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+                toggleCalc('close');
+            }
+        }
+
+        // --- BUTTONS INTERACT ---
+        function toggleCalcBitIndex(i) {
+            playSound('click'); resetHelpTimer();
+
+            calcState[i] = calcState[i] ? 0 : 1;
+
+            const cBit = cachedCalcBits[i];
+            const cBox = cachedCalcBoxes[i];
+
+            if (calcState[i]) {
+                if (cBit) { cBit.textContent = '1'; cBit.classList.add('active'); cBox.classList.add('selected'); }
+            } else {
+                if (cBit) { cBit.textContent = '0'; cBit.classList.remove('active'); cBox.classList.remove('selected'); }
+            }
