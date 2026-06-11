@@ -1,5 +1,34 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+
+function _setHtmlSafely(el, htmlStr) {
+    if (!el || typeof htmlStr !== 'string') return;
+    if (typeof DOMPurify !== 'undefined') {
+        el.innerHTML = DOMPurify.sanitize(htmlStr);
+    } else {
+        // Fallback simple sanitization
+        el.replaceChildren();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlStr, 'text/html');
+        const scripts = doc.querySelectorAll('script');
+        scripts.forEach(s => s.remove());
+        const allElements = doc.querySelectorAll('*');
+        allElements.forEach(element => {
+            for (let i = element.attributes.length - 1; i >= 0; i--) {
+                const attr = element.attributes[i];
+                const name = attr.name.toLowerCase();
+                if (name.startsWith('on') ||
+                    (name === 'href' && attr.value.trim().toLowerCase().startsWith('javascript:'))) {
+                    element.removeAttribute(attr.name);
+                }
+            }
+        });
+        while (doc.body.firstChild) {
+            el.appendChild(doc.body.firstChild);
+        }
+    }
+}
+
 /* ================================================================
    SVGS DES BOUTONS DU BLUE-BOT
    ================================================================ */
@@ -619,7 +648,7 @@ function updateSkinGrids() {
         const obsSkin = SKIN_CONFIG[activeSkin].obstacle;
         obstacles.forEach(cell => {
             if (obsSkin.includes('<svg') || obsSkin.includes('<i')) {
-                cell['innerHTML'] = obsSkin;
+                _setHtmlSafely(cell, obsSkin);
                 delete cell.dataset.obstacle;
             } else {
                 cell.replaceChildren();
@@ -670,7 +699,7 @@ function updateSkinButtons() {
     if (tgtBtn) {
         const tg = SKIN_CONFIG[activeSkin].target;
         if (tg && tg.includes('<svg')) {
-            tgtBtn['innerHTML'] = tg;
+            _setHtmlSafely(tgtBtn, tg);
             const svg = tgtBtn.querySelector('svg');
             if (svg) {
                 svg.style.width = '1.2em';
@@ -686,7 +715,7 @@ function updateSkinButtons() {
     if (obsBtn) {
         const ob = SKIN_CONFIG[activeSkin].obstacle;
         if (ob && (ob.includes('<svg') || ob.includes('<i'))) {
-            obsBtn['innerHTML'] = ob;
+            _setHtmlSafely(obsBtn, ob);
             window.fa?.createIcons?.();
             const svg = obsBtn.querySelector('svg');
             if (svg) {
