@@ -463,8 +463,8 @@
         }
 
         function renderEdges() {
-            const svgEdges = document.getElementById('network-svg-edges'); svgEdges.innerHTML = '';
-            const svgWeights = document.getElementById('network-svg-weights'); svgWeights.innerHTML = '';
+            const svgEdges = document.getElementById('network-svg-edges'); svgEdges.replaceChildren();
+            const svgWeights = document.getElementById('network-svg-weights'); svgWeights.replaceChildren();
             const isDark = document.body.classList.contains('dark');
             const edgeColor = isDark ? '#475569' : '#c5cbe9';
             const weightColor = isDark ? '#334155' : '#9fa8da';
@@ -588,7 +588,41 @@
                     iconSpan.textContent = '🖥️';
                 } else {
                     // Icône routeur SVG (Lucide router)
-                    iconSpan.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-router-icon lucide-router"><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6.01 18H6"/><path d="M10.01 18H10"/><path d="M15 10v4"/><path d="M17.84 7.17a4 4 0 0 0-5.66 0"/><path d="M20.66 4.34a8 8 0 0 0-11.31 0"/></svg>`;
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '24');
+                    svg.setAttribute('height', '24');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke', 'currentColor');
+                    svg.setAttribute('stroke-width', '2');
+                    svg.setAttribute('stroke-linecap', 'round');
+                    svg.setAttribute('stroke-linejoin', 'round');
+                    svg.setAttribute('class', 'lucide lucide-router-icon lucide-router');
+
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect.setAttribute('width', '20');
+                    rect.setAttribute('height', '8');
+                    rect.setAttribute('x', '2');
+                    rect.setAttribute('y', '14');
+                    rect.setAttribute('rx', '2');
+
+                    const path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path1.setAttribute('d', 'M6.01 18H6');
+
+                    const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path2.setAttribute('d', 'M10.01 18H10');
+
+                    const path3 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path3.setAttribute('d', 'M15 10v4');
+
+                    const path4 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path4.setAttribute('d', 'M17.84 7.17a4 4 0 0 0-5.66 0');
+
+                    const path5 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path5.setAttribute('d', 'M20.66 4.34a8 8 0 0 0-11.31 0');
+
+                    svg.replaceChildren(rect, path1, path2, path3, path4, path5);
+                    iconSpan.replaceChildren(svg);
                 }
                 div.appendChild(iconSpan);
 
@@ -613,7 +647,7 @@
 
         function renderPathDisplay() {
             const container = document.getElementById('path-text');
-            container.innerHTML = '';
+            container.replaceChildren();
 
             currentPath.forEach((id, index) => {
                 const n = getNode(id);
@@ -624,8 +658,42 @@
                 } else if (n.type === 'd') {
                     span.textContent = '🖥️ B';
                 } else {
-                    span.innerHTML = `<span style="display:inline-flex; align-items:center; vertical-align:middle; margin-right:2px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 14v-4"/><path d="M18 14v-4"/><path d="M6 10a6 6 0 0 1 12 0"/></svg></span>`;
-                    span.appendChild(document.createTextNode(` ${n.id}`));
+                    const iconWrapper = document.createElement('span');
+                    iconWrapper.style.display = 'inline-flex';
+                    iconWrapper.style.alignItems = 'center';
+                    iconWrapper.style.verticalAlign = 'middle';
+                    iconWrapper.style.marginRight = '2px';
+
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '14');
+                    svg.setAttribute('height', '14');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    svg.setAttribute('fill', 'none');
+                    svg.setAttribute('stroke', 'currentColor');
+                    svg.setAttribute('stroke-width', '2');
+                    svg.setAttribute('stroke-linecap', 'round');
+                    svg.setAttribute('stroke-linejoin', 'round');
+
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect.setAttribute('x', '2');
+                    rect.setAttribute('y', '14');
+                    rect.setAttribute('width', '20');
+                    rect.setAttribute('height', '8');
+                    rect.setAttribute('rx', '2');
+
+                    const path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path1.setAttribute('d', 'M6 14v-4');
+
+                    const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path2.setAttribute('d', 'M18 14v-4');
+
+                    const path3 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path3.setAttribute('d', 'M6 10a6 6 0 0 1 12 0');
+
+                    svg.replaceChildren(rect, path1, path2, path3);
+                    iconWrapper.replaceChildren(svg);
+
+                    span.replaceChildren(iconWrapper, document.createTextNode(` ${n.id}`));
                 }
                 container.appendChild(span);
 
@@ -665,7 +733,12 @@
                 mistakesInCurrentNetwork++;
                 fb.className = 'feedback show error';
                 ScoreManager.addMistake("path", difficulty);
-                fb.innerHTML = `<strong>❌ Le paquet n'est pas arrivé !</strong><br>Tu dois atteindre l'ordinateur B. Continue à cliquer sur les routeurs.`;
+
+                const strongError = document.createElement('strong');
+                strongError.textContent = "❌ Le paquet n'est pas arrivé !";
+                const brError = document.createElement('br');
+                const textError = document.createTextNode("Tu dois atteindre l'ordinateur B. Continue à cliquer sur les routeurs.");
+                fb.replaceChildren(strongError, brError, textError);
                 return;
             }
 
@@ -675,7 +748,16 @@
             if (userTime === optimalTime) {
                 // SUCCÈS TOTAL 
                 fb.className = 'feedback show success';
-                fb.innerHTML = `<strong>✅ Mission accomplie !</strong><br>C'est bien le chemin le plus rapide ! Temps total : <strong>${ScoreManager._escapeHtml(userTime)} UTI</strong>.`;
+
+                const strongSuccess = document.createElement('strong');
+                strongSuccess.textContent = "✅ Mission accomplie !";
+                const brSuccess = document.createElement('br');
+                const textSuccess1 = document.createTextNode("C'est bien le chemin le plus rapide ! Temps total : ");
+                const strongTime = document.createElement('strong');
+                strongTime.textContent = `${userTime} UTI`;
+                const textSuccess2 = document.createTextNode(".");
+                fb.replaceChildren(strongSuccess, brSuccess, textSuccess1, strongTime, textSuccess2);
+
                 isLocked = true; globalCorrect++;
                 ScoreManager.addSuccess("path", difficulty, mistakesInCurrentNetwork);
                 globalStreak++;
@@ -696,7 +778,23 @@
             } else {
                 // ARRIVÉ MAIS TROP LENT 
                 fb.className = 'feedback show warn';
-                fb.innerHTML = `<strong>⚠️ Le paquet est arrivé, mais…</strong><br>Ton chemin prend <strong>${ScoreManager._escapeHtml(userTime)} UTI</strong>. Il existe un chemin plus rapide qui prend seulement <strong>${ScoreManager._escapeHtml(optimalTime)} UTI</strong> !<br><br><em>Astuce : Utilise le bouton "Reset" pour chercher une meilleure route.</em>`;
+
+                const strongWarn = document.createElement('strong');
+                strongWarn.textContent = "⚠️ Le paquet est arrivé, mais…";
+                const brWarn1 = document.createElement('br');
+                const textWarn1 = document.createTextNode("Ton chemin prend ");
+                const strongUserTime = document.createElement('strong');
+                strongUserTime.textContent = `${userTime} UTI`;
+                const textWarn2 = document.createTextNode(". Il existe un chemin plus rapide qui prend seulement ");
+                const strongOptimalTime = document.createElement('strong');
+                strongOptimalTime.textContent = `${optimalTime} UTI`;
+                const textWarn3 = document.createTextNode(" !");
+                const brWarn2 = document.createElement('br');
+                const brWarn3 = document.createElement('br');
+                const emHint = document.createElement('em');
+                emHint.textContent = 'Astuce : Utilise le bouton "Reset" pour chercher une meilleure route.';
+                fb.replaceChildren(strongWarn, brWarn1, textWarn1, strongUserTime, textWarn2, strongOptimalTime, textWarn3, brWarn2, brWarn3, emHint);
+
                 mistakesInCurrentNetwork++;
                 globalStreak = 0;
                 ScoreManager.addMistake("path", difficulty);
@@ -754,7 +852,9 @@
                 localStorage.setItem('routage_reseau_seen_hint', '1');
                 const hint = document.createElement('div');
                 hint.className = 'routing-onboarding-hint';
-                hint.innerHTML = '<i data-fa="hand-pointer"></i> Clique sur un routeur !';
+                const iIcon = document.createElement('i');
+                iIcon.setAttribute('data-fa', 'hand-pointer');
+                hint.replaceChildren(iIcon, document.createTextNode(' Clique sur un routeur !'));
                 firstClickable.style.position = 'relative';
                 firstClickable.appendChild(hint);
                 window.fa?.createIcons?.();
