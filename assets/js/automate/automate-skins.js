@@ -566,6 +566,24 @@ const PREVIEW_FILTER_TAG_REGEX = /<filter[\s\S]*?<\/filter>/gi;
 const PREVIEW_FILTER_ATTR_REGEX = /filter="[^"]+"/gi;
 const PREVIEW_VOLCANO_TRANSFORM_REGEX = /<g transform="scale\(1\.4\) translate\(-14, -14\)">/;
 
+const PREVIEW_ROBOT_SVGS = {};
+
+function getPreviewSvg(skinId) {
+    if (PREVIEW_ROBOT_SVGS[skinId]) return PREVIEW_ROBOT_SVGS[skinId];
+
+    let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
+    svg = svg.replace(PREVIEW_ANIMATION_REGEX, ''); // Remove animations for preview
+    svg = svg.replace(PREVIEW_CSS_ANIMATION_REGEX, ''); // Remove CSS animations
+    svg = svg.replace(PREVIEW_FILTER_TAG_REGEX, ''); // Remove SVG filters for better performance
+    svg = svg.replace(PREVIEW_FILTER_ATTR_REGEX, ''); // Remove filter attributes
+    if (skinId === 'volcano') {
+        svg = svg.replace(PREVIEW_VOLCANO_TRANSFORM_REGEX, '<g transform="scale(0.6) translate(36, 0)">');
+    }
+
+    PREVIEW_ROBOT_SVGS[skinId] = svg;
+    return svg;
+}
+
 function renderSkinsList() {
     const container = document.getElementById('skins-list-container');
     container['innerHTML'] = Object.keys(SKIN_CONFIG).filter(id => {
@@ -576,14 +594,7 @@ function renderSkinsList() {
         const isUnlocked = unlockedSkins.includes(skinId);
         const isActive = activeSkin === skinId;
 
-        let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
-        svg = svg.replace(PREVIEW_ANIMATION_REGEX, ''); // Remove animations for preview
-        svg = svg.replace(PREVIEW_CSS_ANIMATION_REGEX, ''); // Remove CSS animations
-        svg = svg.replace(PREVIEW_FILTER_TAG_REGEX, ''); // Remove SVG filters for better performance
-        svg = svg.replace(PREVIEW_FILTER_ATTR_REGEX, ''); // Remove filter attributes
-        if (skinId === 'volcano') {
-            svg = svg.replace(PREVIEW_VOLCANO_TRANSFORM_REGEX, '<g transform="scale(0.6) translate(36, 0)">');
-        }
+        let svg = getPreviewSvg(skinId);
         let lockIcon = '';
 
         if (!isUnlocked) {
