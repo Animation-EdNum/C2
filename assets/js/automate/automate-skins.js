@@ -576,14 +576,7 @@ function renderSkinsList() {
         const isUnlocked = unlockedSkins.includes(skinId);
         const isActive = activeSkin === skinId;
 
-        let svg = ROBOT_SVGS[skinId] || ROBOT_SVGS['default'];
-        svg = svg.replace(PREVIEW_ANIMATION_REGEX, ''); // Remove animations for preview
-        svg = svg.replace(PREVIEW_CSS_ANIMATION_REGEX, ''); // Remove CSS animations
-        svg = svg.replace(PREVIEW_FILTER_TAG_REGEX, ''); // Remove SVG filters for better performance
-        svg = svg.replace(PREVIEW_FILTER_ATTR_REGEX, ''); // Remove filter attributes
-        if (skinId === 'volcano') {
-            svg = svg.replace(PREVIEW_VOLCANO_TRANSFORM_REGEX, '<g transform="scale(0.6) translate(36, 0)">');
-        }
+        const svg = ROBOT_PREVIEW_SVGS[skinId] || ROBOT_PREVIEW_SVGS['default'];
         let lockIcon = '';
 
         if (!isUnlocked) {
@@ -1812,3 +1805,15 @@ const ROBOT_SVGS = {
 </svg>`
 };
 
+const ROBOT_PREVIEW_SVGS = {};
+for (const skinId in ROBOT_SVGS) {
+    let svg = ROBOT_SVGS[skinId];
+    svg = svg.replace(PREVIEW_ANIMATION_REGEX, ''); // Remove animations for preview
+    svg = svg.replace(PREVIEW_CSS_ANIMATION_REGEX, ''); // Remove CSS animations
+    svg = svg.replace(PREVIEW_FILTER_TAG_REGEX, ''); // Remove SVG filters for better performance
+    svg = svg.replace(PREVIEW_FILTER_ATTR_REGEX, ''); // Remove filter attributes
+    if (skinId === 'volcano') {
+        svg = svg.replace(PREVIEW_VOLCANO_TRANSFORM_REGEX, '<g transform="scale(0.6) translate(36, 0)">');
+    }
+    ROBOT_PREVIEW_SVGS[skinId] = svg;
+}
