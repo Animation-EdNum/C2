@@ -2530,7 +2530,8 @@ let simState = {
                     }
 
                     // Calculate next skin based on SKIN_CONFIG order, filtering for unlocked ones
-                    const availableSkins = Object.keys(SKIN_CONFIG).filter(id => unlockedSkins.includes(id));
+                    const unlockedSet = new Set(unlockedSkins);
+                    const availableSkins = Object.keys(SKIN_CONFIG).filter(id => unlockedSet.has(id));
                     const currentIndex = availableSkins.indexOf(activeSkin);
                     if (currentIndex !== -1 && availableSkins.length > 1) {
                         const nextSkinId = availableSkins[(currentIndex + 1) % availableSkins.length];
