@@ -150,6 +150,8 @@ const MAT_CONFIG = {
     }
 };
 
+const MAT_KEYS = Object.keys(MAT_CONFIG);
+
 const SKIN_CONFIG = {
     'volcano': {
         name: 'En feu 🔥',
@@ -279,7 +281,7 @@ function closeMatsModal() {
 
 function renderMatsGrid() {
     const container = document.getElementById('mats-list-container');
-    container['innerHTML'] = Object.keys(MAT_CONFIG).filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
+    container['innerHTML'] = MAT_KEYS.filter(matId => matId !== 'none' && matId !== 'custom').map(matId => {
         const config = MAT_CONFIG[matId];
         const isActive = activeMat === matId;
 
@@ -456,18 +458,16 @@ function updateEndModesVisibility() {
 
 
 function cycleMat() {
-    const matKeys = Object.keys(MAT_CONFIG).filter(key => {
-        if (key === 'custom' && !localStorage.getItem('at_custom_mat_image')) {
-            return false;
-        }
-        return true;
-    });
-
-    let currentIndex = matKeys.indexOf(activeMat);
+    let currentIndex = MAT_KEYS.indexOf(activeMat);
     if (currentIndex === -1) currentIndex = 0;
 
-    const nextIndex = (currentIndex + 1) % matKeys.length;
-    selectMat(matKeys[nextIndex]);
+    let nextIndex = (currentIndex + 1) % MAT_KEYS.length;
+
+    while (MAT_KEYS[nextIndex] === 'custom' && !localStorage.getItem('at_custom_mat_image')) {
+        nextIndex = (nextIndex + 1) % MAT_KEYS.length;
+    }
+
+    selectMat(MAT_KEYS[nextIndex]);
 }
 
 function selectMat(matId) {
