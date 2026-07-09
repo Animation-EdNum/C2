@@ -1275,7 +1275,14 @@ let simState = {
             else if (diff === 'hard') { minL = 6; maxL = 8; minBack = 0; }
             else { minL = 6; maxL = 10; minBack = 1; } // extreme
 
+            let obstacles = [];
+            const obsGrid = Array(GRID_ROWS);
+            for (let r = 0; r < GRID_ROWS; r++) obsGrid[r] = Array(GRID_COLS).fill(false);
+
             for (let attempts = 0; attempts < 1000; attempts++) {
+                for (const o of obstacles) obsGrid[o.r][o.c] = false;
+                obstacles = [];
+
                 let startR = randomInt(0, GRID_ROWS - 1);
                 let startC = randomInt(0, GRID_COLS - 1);
                 let startD = randomInt(0, 3);
@@ -1285,9 +1292,6 @@ let simState = {
 
                 if (startR === targetR && startC === targetC) continue;
 
-                let obstacles = [];
-                const obsGrid = Array(GRID_ROWS);
-                for (let r = 0; r < GRID_ROWS; r++) obsGrid[r] = Array(GRID_COLS).fill(false);
                 let numObs = 0;
                 if (diff === 'medium') numObs = randomInt(1, 2);
                 else if (diff === 'hard') numObs = randomInt(3, 4);
