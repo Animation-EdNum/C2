@@ -1,5 +1,35 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+
+function _setHtmlSafely(el, htmlStr) {
+    if (!el || typeof htmlStr !== 'string') return;
+    if (typeof DOMPurify !== 'undefined') {
+        const fragment = DOMPurify.sanitize(htmlStr, { RETURN_DOM_FRAGMENT: true });
+        el.replaceChildren(fragment);
+    } else {
+        // Fallback simple sanitization
+        el.replaceChildren();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlStr, 'text/html');
+        const scripts = doc.querySelectorAll('script');
+        scripts.forEach(s => s.remove());
+        const allElements = doc.querySelectorAll('*');
+        allElements.forEach(element => {
+            for (let i = element.attributes.length - 1; i >= 0; i--) {
+                const attr = element.attributes[i];
+                const name = attr.name.toLowerCase();
+                if (name.startsWith('on') ||
+                    (name === 'href' && attr.value.trim().toLowerCase().startsWith('javascript:'))) {
+                    element.removeAttribute(attr.name);
+                }
+            }
+        });
+        while (doc.body.firstChild) {
+            el.appendChild(doc.body.firstChild);
+        }
+    }
+}
+
 const createSVG = (tag) => document.createElementNS("http://www.w3.org/2000/svg", tag);
 
 window.skinUnlockBubbleState = { active: false, timer: null, text: 'Clique-moi pour changer de skin !' };
