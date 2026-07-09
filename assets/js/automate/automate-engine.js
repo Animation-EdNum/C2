@@ -2146,9 +2146,10 @@ let simState = {
             updateGridContainersAspectRatio();
 
             // Appliquer la classe du skin à la grille pour le CSS
-            Array.from(grid.classList).forEach(cls => {
+            for (let i = grid.classList.length - 1; i >= 0; i--) {
+                const cls = grid.classList[i];
                 if (cls.startsWith('skin-')) grid.classList.remove(cls);
-            });
+            }
             if (activeSkin !== 'volcano') {
                 grid.classList.remove('ground-fire');
             }
@@ -2160,9 +2161,10 @@ let simState = {
             grid.classList.add(`skin-${activeSkin}`);
 
             // Appliquer la classe du tapis
-            Array.from(grid.classList).forEach(cls => {
+            for (let i = grid.classList.length - 1; i >= 0; i--) {
+                const cls = grid.classList[i];
                 if (cls.startsWith('mat-')) grid.classList.remove(cls);
-            });
+            }
             if (activeMat !== 'none') {
                 grid.classList.add(`mat-${activeMat}`);
             }

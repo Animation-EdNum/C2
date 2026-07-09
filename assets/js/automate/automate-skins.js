@@ -636,9 +636,10 @@ function updateSkinGrids() {
         if (!grid) return;
 
         // Mettre à jour les classes
-        Array.from(grid.classList).forEach(cls => {
+        for (let i = grid.classList.length - 1; i >= 0; i--) {
+            const cls = grid.classList[i];
             if (cls.startsWith('skin-')) grid.classList.remove(cls);
-        });
+        }
         if (activeSkin !== 'volcano') grid.classList.remove('ground-fire');
         if (activeSkin !== 'pirate' && activeSkin !== 'manta') grid.classList.remove('ground-ocean');
         else grid.classList.add('ground-ocean');
