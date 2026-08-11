@@ -1123,17 +1123,16 @@
             localStorage.setItem('ednum_recent_apps', JSON.stringify(recentIds));
         }
 
-        // Initialisation des listeners sur les cartes d'origine
-        document.querySelectorAll('.card[data-id]').forEach(card => {
-            card.addEventListener('click', (e) => {
-                // L'événement est déclenché juste avant la navigation du href
-                const id = card.getAttribute('data-id');
-                saveRecent(id);
+        function initRecentApps() {
+            document.querySelectorAll('.card[data-id]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const id = card.getAttribute('data-id');
+                    saveRecent(id);
+                });
             });
-        });
-
-        // Chargement au démarrage
-        loadRecents();
+            loadRecents();
+        }
+        window.initRecentApps = initRecentApps;
 
         // Gérer le clic sur les tags
         document.addEventListener('click', (e) => {
@@ -1164,17 +1163,18 @@
     <script>
         window.fa?.createIcons?.();
     </script>
-    <i data-fa="download" style="display:none;"></i>
+    <!-- Hidden icons for subset generation -->
+    <div style="display:none;" aria-hidden="true">
+        <i data-fa="download"></i>
+        <i data-fa="share-nodes"></i>
+        <i data-fa="clipboard"></i>
+        <i data-fa="chevron-down"></i>
+        <i data-fa="chevron-up"></i>
+        <i data-fa="copy"></i>
+    </div>
     <script src="assets/js/registry.js"></script>
     <script src="assets/js/portal.js"></script>
     <script>window.renderPortal('index');</script>
 </body>
 
-</html><!-- Hidden icons for subset generation -->
-<div style="display:none;" aria-hidden="true">
-    <i data-fa="share-nodes"></i>
-    <i data-fa="clipboard"></i>
-    <i data-fa="chevron-down"></i>
-    <i data-fa="chevron-up"></i>
-    <i data-fa="copy"></i>
-</div>
+</html>
