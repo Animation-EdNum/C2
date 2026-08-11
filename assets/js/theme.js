@@ -200,7 +200,11 @@
     }
 })();
 
-// Service Worker Registration
+/* ============================================================
+   Service Worker — Registration & Update Management
+   Independent concern; lives here because theme.js is loaded
+   on every page of the suite.
+   ============================================================ */
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         // Find the relative path to the root from the current page.

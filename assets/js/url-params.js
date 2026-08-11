@@ -12,6 +12,40 @@ document.addEventListener('DOMContentLoaded', () => {
 window.hasSharedGrid = false;
 window.keyboardModified = false;
 
+function applyGridToState(state, gridId, robotId, targetId, parsedObstacles, parsedRobot, parsedTarget) {
+    state.obstacles = [...parsedObstacles];
+    if (parsedRobot) {
+        state.robotRow = parsedRobot.r;
+        state.robotCol = parsedRobot.c;
+        state.robotDir = parsedRobot.d;
+        state.startRow = parsedRobot.r;
+        state.startCol = parsedRobot.c;
+        state.startDir = parsedRobot.d;
+        if ('absoluteStartRow' in state) {
+            state.absoluteStartRow = parsedRobot.r;
+            state.absoluteStartCol = parsedRobot.c;
+            state.absoluteStartDir = parsedRobot.d;
+        }
+    }
+    if (parsedTarget) {
+        state.targetRow = parsedTarget.r;
+        state.targetCol = parsedTarget.c;
+    } else {
+        state.targetRow = null;
+        state.targetCol = null;
+    }
+
+    if (typeof buildGrid === 'function') {
+        buildGrid(gridId, GRID_ROWS, GRID_COLS, state.obstacles);
+        if (parsedRobot && typeof renderRobot === 'function') {
+            renderRobot(gridId, robotId, state.robotRow, state.robotCol, state.robotDir);
+        }
+        if (parsedTarget && typeof renderTarget === 'function') {
+            renderTarget(gridId, targetId, state.targetRow, state.targetCol);
+        }
+    }
+}
+
 function applyUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -67,66 +101,10 @@ function applyUrlParameters() {
 
         setTimeout(() => {
             if (typeof exploreState !== 'undefined') {
-                exploreState.obstacles = [...parsedObstacles];
-                if (parsedRobot) {
-                    exploreState.robotRow = parsedRobot.r;
-                    exploreState.robotCol = parsedRobot.c;
-                    exploreState.robotDir = parsedRobot.d;
-                    exploreState.startRow = parsedRobot.r;
-                    exploreState.startCol = parsedRobot.c;
-                    exploreState.startDir = parsedRobot.d;
-                    exploreState.absoluteStartRow = parsedRobot.r;
-                    exploreState.absoluteStartCol = parsedRobot.c;
-                    exploreState.absoluteStartDir = parsedRobot.d;
-                }
-                if (parsedTarget) {
-                    exploreState.targetRow = parsedTarget.r;
-                    exploreState.targetCol = parsedTarget.c;
-                } else {
-                    exploreState.targetRow = null;
-                    exploreState.targetCol = null;
-                }
-
-                // Redessiner la grille d'exploration
-                if (typeof buildGrid === 'function') {
-                    buildGrid('explore-grid', GRID_ROWS, GRID_COLS, exploreState.obstacles);
-                    if (parsedRobot && typeof renderRobot === 'function') {
-                        renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
-                    }
-                    if (parsedTarget && typeof renderTarget === 'function') {
-                        renderTarget('explore-grid', 'explore-target', exploreState.targetRow, exploreState.targetCol);
-                    }
-                }
+                applyGridToState(exploreState, 'explore-grid', 'explore-robot', 'explore-target', parsedObstacles, parsedRobot, parsedTarget);
             }
-
             if (typeof simState !== 'undefined') {
-                simState.obstacles = [...parsedObstacles];
-                if (parsedRobot) {
-                    simState.robotRow = parsedRobot.r;
-                    simState.robotCol = parsedRobot.c;
-                    simState.robotDir = parsedRobot.d;
-                    simState.startRow = parsedRobot.r;
-                    simState.startCol = parsedRobot.c;
-                    simState.startDir = parsedRobot.d;
-                }
-                if (parsedTarget) {
-                    simState.targetRow = parsedTarget.r;
-                    simState.targetCol = parsedTarget.c;
-                } else {
-                    simState.targetRow = null;
-                    simState.targetCol = null;
-                }
-
-                // Redessiner la grille du simulateur
-                if (typeof buildGrid === 'function') {
-                    buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles);
-                    if (parsedRobot && typeof renderRobot === 'function') {
-                        renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
-                    }
-                    if (parsedTarget && typeof renderTarget === 'function') {
-                        renderTarget('sim-grid', 'sim-target', simState.targetRow, simState.targetCol);
-                    }
-                }
+                applyGridToState(simState, 'sim-grid', 'sim-robot', 'sim-target', parsedObstacles, parsedRobot, parsedTarget);
             }
         }, 100);
     }
@@ -156,8 +134,6 @@ function applyUrlParameters() {
     if (urlParams.get('only') === '1') {
         const tabs = document.querySelector('.tabs');
         if (tabs) tabs.style.display = 'none';
-
-
     }
 
     if (urlParams.get('noHome') === '1') {
@@ -680,8 +656,6 @@ function initShareModal() {
         if (lblLockDiff) lblLockDiff.style.display = 'none';
     }
 
-    const optLockDiff = document.getElementById('opt-lockDiff');
-
     if (document.querySelector('.alpha-section')) {
         document.getElementById('lbl-hideDict').style.display = 'flex';
     }
@@ -864,6 +838,10 @@ function initShareModal() {
         btnCopy.appendChild(document.createTextNode(' Copier'));
         btnCopy.classList.remove('btn-success');
         window.fa?.createIcons?.();
+
+        if (qrContainer && qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
+            generateQrCode();
+        }
     }
 
     shareBtn.addEventListener('click', () => {
@@ -931,49 +909,28 @@ function initShareModal() {
         });
     }
 
-    if (btnPresetMission) {
-        btnPresetMission.addEventListener('click', () => {
-            resetAllCheckboxes();
-            const toCheck = ['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'];
-            toCheck.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.checked = true;
-            });
-            updateShareUrl();
-            if (typeof showToast === 'function') {
-                showToast("Mode Mission appliqué");
-            }
+    function applyPreset(ids, toastText) {
+        resetAllCheckboxes();
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = true;
         });
+        updateShareUrl();
+        if (typeof showToast === 'function') {
+            showToast(toastText);
+        }
+    }
+
+    if (btnPresetMission) {
+        btnPresetMission.addEventListener('click', () => applyPreset(['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'], "Mode Mission appliqué"));
     }
 
     if (btnPresetEntrainement) {
-        btnPresetEntrainement.addEventListener('click', () => {
-            resetAllCheckboxes();
-            const toCheck = ['opt-noHome', 'opt-only'];
-            toCheck.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.checked = true;
-            });
-            updateShareUrl();
-            if (typeof showToast === 'function') {
-                showToast("Mode Entraînement appliqué");
-            }
-        });
+        btnPresetEntrainement.addEventListener('click', () => applyPreset(['opt-noHome', 'opt-only'], "Mode Entraînement appliqué"));
     }
 
     if (btnPresetInclusif) {
-        btnPresetInclusif.addEventListener('click', () => {
-            resetAllCheckboxes();
-            const toCheck = ['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'];
-            toCheck.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.checked = true;
-            });
-            updateShareUrl();
-            if (typeof showToast === 'function') {
-                showToast("Mode Inclusif appliqué");
-            }
-        });
+        btnPresetInclusif.addEventListener('click', () => applyPreset(['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'], "Mode Inclusif appliqué"));
     }
 
     btnToggleAdvanced.addEventListener('click', () => {
@@ -998,7 +955,7 @@ function initShareModal() {
         navigator.clipboard.writeText(urlInput.value).then(() => {
             btnCopy.replaceChildren();
             const icon = document.createElement('i');
-            icon.setAttribute('data-fa', 'check');
+            icon.setAttribute('data-fa', 'clipboard');
             btnCopy.appendChild(icon);
             btnCopy.appendChild(document.createTextNode(' Copié !'));
             btnCopy.classList.add('btn-success');
@@ -1025,16 +982,11 @@ function initShareModal() {
 
         // Dynamically load QRious if not present
         if (typeof QRious === 'undefined') {
+            const rootLink = document.querySelector('link[rel="root"]');
+            let rootPath = rootLink ? rootLink.getAttribute('href') : './';
+            if (!rootPath.endsWith('/')) rootPath += '/';
             const script = document.createElement('script');
-            script.src = (window.location.pathname.includes('alpha/') ? '../' : '') + '../assets/js/vendor/qrious.min.js';
-            // Adjust path based on relative location
-            let basePath = '../assets/js/vendor/qrious.min.js';
-            if (window.location.pathname.includes('/alpha/webapps/')) {
-                basePath = '../../assets/js/vendor/qrious.min.js';
-            } else if (!window.location.pathname.includes('webapps/')) {
-                basePath = 'assets/js/vendor/qrious.min.js';
-            }
-            script.src = basePath;
+            script.src = rootPath + 'assets/js/vendor/qrious.min.js';
             script.onload = () => {
                 generateQrCode();
             };
@@ -1071,20 +1023,5 @@ function initShareModal() {
             a.click();
             document.body.removeChild(a);
         });
-    }
-
-    // Re-generate QR if URL changes and QR is visible
-    urlInput.addEventListener('change', () => {
-        if (qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
-            generateQrCode();
-        }
-    });
-    // Or simpler, just hook into updateShareUrl, but it's simpler to do it here
-    const originalUpdateShareUrl = updateShareUrl;
-    updateShareUrl = function () {
-        originalUpdateShareUrl();
-        if (qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
-            generateQrCode();
-        }
     }
 }

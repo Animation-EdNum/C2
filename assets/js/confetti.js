@@ -1,15 +1,21 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-function launchConfetti() {
-    // Create a dedicated temporary canvas so multiple confetti bursts
-    // can render simultaneously without conflicts
-    const cvs = document.createElement('canvas');
-    cvs.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
-    document.body.appendChild(cvs);
 
+function createAnimCanvas(zIndex) {
+    const cvs = document.createElement('canvas');
+    cvs.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:${zIndex};`;
+    document.body.appendChild(cvs);
     const ctx = cvs.getContext('2d');
     cvs.width = window.innerWidth;
     cvs.height = window.innerHeight;
+    return { cvs, ctx };
+}
+
+function launchConfetti() {
+    // Create a dedicated temporary canvas so multiple confetti bursts
+    // can render simultaneously without conflicts
+    const { cvs, ctx } = createAnimCanvas(9998);
+
     let parts = [];
     let cols = ['#667eea', '#4caf50', '#ff9800', '#e91e63', '#d946ef'];
     for (let i = 0; i < 80; i++) {
@@ -64,13 +70,8 @@ function launchFire() {
 
     // Create a dedicated temporary canvas so multiple fires
     // and fire+confetti can render simultaneously without conflicts
-    const cvs = document.createElement('canvas');
-    cvs.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
-    document.body.appendChild(cvs);
+    const { cvs, ctx } = createAnimCanvas(9999);
 
-    const ctx = cvs.getContext('2d');
-    cvs.width = window.innerWidth;
-    cvs.height = window.innerHeight;
     let parts = [];
 
     // Create particles iteratively so it looks like a continuous breath over time

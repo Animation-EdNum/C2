@@ -6,6 +6,20 @@
 let audioCtx = null;
 let isMuted = localStorage.getItem('c2_audio_muted') === 'false' ? false : true;
 
+function tone(waveType, freq, gain, start, duration, freqEnd) {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = waveType;
+    o.frequency.setValueAtTime(freq, start);
+    if (freqEnd) {
+        o.frequency.exponentialRampToValueAtTime(freqEnd, start + duration);
+    }
+    g.gain.setValueAtTime(gain, start);
+    g.gain.exponentialRampToValueAtTime(0.001, start + duration);
+    o.start(start); o.stop(start + duration);
+    return o;
+}
+
 function playSound(type) {
     if (isMuted) return;
     if (!audioCtx) {
@@ -18,66 +32,24 @@ function playSound(type) {
     const t = audioCtx.currentTime;
 
     if (type === 'click') {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = 'square';
-        o.frequency.setValueAtTime(600, t);
-        g.gain.setValueAtTime(0.04, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
-        o.start(); o.stop(t + 0.04);
+        tone('square', 600, 0.04, t, 0.04);
     } else if (type === 'success') {
-        [523.25, 659.25, 783.99].forEach((f, i) => {
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-            o.connect(g); g.connect(audioCtx.destination);
-            o.type = 'sine'; o.frequency.value = f;
-            g.gain.setValueAtTime(0.15, t + i * 0.12);
-            g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.3);
-            o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.3);
-        });
+        [523.25, 659.25, 783.99].forEach((f, i) => tone('sine', f, 0.15, t + i * 0.12, 0.3));
     } else if (type === 'tick') {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = 'square';
-        o.frequency.setValueAtTime(600, t);
-        o.frequency.exponentialRampToValueAtTime(800, t + 0.05);
-        g.gain.setValueAtTime(0.05, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-        o.start(); o.stop(t + 0.05);
+        tone('square', 600, 0.05, t, 0.05, 800);
     } else if (type === 'ding') {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = 'sine';
-        o.frequency.setValueAtTime(523.25, t);
+        const o = tone('sine', 523.25, 0.2, t, 0.8);
         o.frequency.setValueAtTime(659.25, t + 0.1);
-        g.gain.setValueAtTime(0.2, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
-        o.start(); o.stop(t + 0.8);
     } else if (type === 'win') {
-        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-            o.connect(g); g.connect(audioCtx.destination);
-            o.type = 'sine'; o.frequency.value = f;
-            g.gain.setValueAtTime(0.15, t + i * 0.12);
-            g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.4);
-            o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.4);
-        });
+        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => tone('sine', f, 0.15, t + i * 0.12, 0.4));
     } else if (type === 'error') {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = 'sawtooth';
-        o.frequency.setValueAtTime(300, t);
-        o.frequency.exponentialRampToValueAtTime(150, t + 0.25);
-        g.gain.setValueAtTime(0.1, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-        o.start(); o.stop(t + 0.25);
+        tone('sawtooth', 300, 0.1, t, 0.25, 150);
     }
 }
 
 function updateAudioUI() {
     const iconOn = document.getElementById('icon-vol-on');
     const iconOff = document.getElementById('icon-vol-off');
-    // Si isMuted est true (le son est coupé), on veut proposer de l'activer (donc icône on)
-    // S'il est false (le son est actif), on veut proposer de le couper (donc icône off)
     if (iconOn) iconOn.style.display = isMuted ? 'block' : 'none';
     if (iconOff) iconOff.style.display = isMuted ? 'none' : 'block';
 
@@ -100,5 +72,3 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAudioUI();
     }
 });
-
-

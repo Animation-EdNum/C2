@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-async function loadRegistry() {
+function loadRegistry() {
     return window.REGISTRY || [];
 }
 
@@ -21,12 +21,13 @@ function renderIndexCard(app) {
     if (app.isTeacher) classes.push('teacher');
 
     const displayStyle = (app.id === 'app-reseau-tri' || app.id === 'app-jeu-grue') ? 'display: none;' : '';
+    const iconStyle = app.iconStyle === null ? '' : (app.iconStyle || 'width:32px;height:32px;flex-shrink:0;');
 
     return `
                 <a href="${app.href}" ${app.target ? `target="${app.target}"` : ''} ${app.rel ? `rel="${app.rel}"` : ''} class="${classes.join(' ')}" data-level="${app.dataLevel || ''}" ${app.id ? `data-id="${app.id}"` : ''} ${displayStyle ? `style="${displayStyle}"` : ''}>
                     ${renderBadges(app.badges)}
                     <div class="card-title">
-                        ${app.icon ? `<i data-fa="${app.icon}" style="${app.iconStyle || ''}"></i>` : ''}
+                        ${app.icon ? `<i data-fa="${app.icon}" style="${iconStyle}"></i>` : ''}
                         ${app.title}
                     </div>
                     ${app.desc ? `<div class="card-desc">${app.desc}</div>` : ''}
@@ -48,8 +49,8 @@ function renderC1Card(app) {
             </a>`;
 }
 
-window.renderPortal = async function(mode) {
-    const registry = await loadRegistry();
+window.renderPortal = function(mode) {
+    const registry = loadRegistry();
 
     if (mode === 'index') {
         const studentActivitiesContainer = document.querySelector('#view-students .searchable-grid');
