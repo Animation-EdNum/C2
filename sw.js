@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-70181fab';
+const CACHE_NAME = 'ednum-356ec136';
 const ASSETS = [
     './',
     './index.html',
@@ -34,8 +34,8 @@ const ASSETS = [
     './assets/fonts/outfit.woff2',
     './assets/icon-192.png',
     './assets/icon-512.png',
-    './assets/img/mats/city.png',
-    './assets/img/mats/valais.png',
+    './assets/img/mats/city.webp',
+    './assets/img/mats/valais.webp',
     './assets/js/audio.js',
     './assets/js/automate/automate-engine.js',
     './assets/js/automate/automate-main.js',
@@ -43,6 +43,7 @@ const ASSETS = [
     './assets/js/automate/automate-ui.js',
     './assets/js/confetti.js',
     './assets/js/fa-subset.js',
+    './assets/js/index-main.js',
     './assets/js/portal.js',
     './assets/js/registry.js',
     './assets/js/scores.js',
