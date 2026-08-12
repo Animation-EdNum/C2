@@ -32,7 +32,7 @@
 - **Specific Instructions:** Place 'short instruction' texts directly inside the `.exercise-card` using inline styles instead of `.chal-instruction` classes.
 
 ## 4. JS & State Management
-- **ScoreManager (`scores.js`):** Centralizes all adaptive difficulty and scores via `localStorage`. Call `ScoreManager.addSuccess(level)` or `addMistake(level)`. Pass `null` for `level` if difficulty logic is disabled.
+- **ScoreManager (`scores.js`):** Centralizes all adaptive difficulty and scores via `localStorage`. Call `ScoreManager.addSuccess(mode, level, mistakesMade)` or `addMistake(mode, level)`. Pass `null` for `level` if difficulty logic is disabled. Both `addSuccess` and `addMistake` increment `totalAttempts` so that attempts accurately equal `totalSuccess + mistakes` (with auto-healing on `loadStats()`). Every mode string must have a clear human-readable translation in `MODE_LABELS` matching the UI tabs. Card footers for interactive exercise tabs include a `.score-bar` (Victoires and Série 🔥) linked to live score counters.
 - **Confetti (`confetti.js`):** Use `window.handleStreakCelebration(currentStreak, isExtreme, score)` instead of raw `launchConfetti()`.
 - **Toasts (`toast.js`):** `showToast(msg, type)`. Types: `success`, `error`, `warn`, `info`.
 - **DOM Queries:** Pre-cache DOM elements. Do NOT use `Array.from(document.querySelectorAll).find()` inside loops. Use `DocumentFragment` for batch inserts.

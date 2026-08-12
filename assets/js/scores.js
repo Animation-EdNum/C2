@@ -12,14 +12,19 @@ const ScoreManager = {
         'bin_to_dec': 'Binaire → Décimal',
         'encode': 'Encodage',
         'decode': 'Décodage',
-        'train': 'Entraînement',
-        'path': 'Routage',
-        'chal': 'Pilotage',
-        'read': 'Décodage',
+        'train': 'Entraînement (Parité)',
+        'path': 'Routage réseau',
+        'chal': 'Mode Pilotage',
+        'read': 'Mode Décodage',
         'detect': 'Détection d\'erreur',
-        'simulator': 'Simulateur',
-        'draw': 'Dessin',
+        'simulator': 'Chasse au trésor (simulateur)',
+        'draw': 'Mode Dessin',
         'jeu_de_la_grue': 'Jeu de la grue',
+        'reseau_de_tri': 'Réseau de tri',
+        'dresseur_neurones': 'Dresseur de neurones',
+        'guided': 'Détective IA (Guidé)',
+        'free': 'Détective IA (Libre)',
+        'challenge': 'Détective IA (Défi)',
         'color': 'Par couleur',
         'shape': 'Par forme',
         'quantity': 'Par quantité',
@@ -92,6 +97,18 @@ const ScoreManager = {
                     delete this.stats.password;
                     this.saveStats();
                 }
+                // Heal totalAttempts if needed
+                for (const mode in this.stats) {
+                    for (const key in this.stats[mode]) {
+                        const st = this.stats[mode][key];
+                        if (st) {
+                            const minAttempts = (st.totalSuccess || 0) + (st.mistakes || 0);
+                            if ((st.totalAttempts || 0) < minAttempts) {
+                                st.totalAttempts = minAttempts;
+                            }
+                        }
+                    }
+                }
             } catch (e) {
                 this.stats = {};
             }
@@ -138,6 +155,7 @@ const ScoreManager = {
     addMistake(mode, difficulty) {
         this.ensurePath(mode, difficulty);
         const st = this.stats[mode][this._diffKey(difficulty)];
+        st.totalAttempts++;
         st.mistakes++;
         st.streak = 0;
         this.saveStats();
@@ -433,7 +451,7 @@ const ScoreManager = {
 
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
-                const headers = this.appId === 'machine_a_trier' 
+                const headers = this.appId === 'machine_a_trier'
                     ? ['Difficulté', 'Succès', 'Erreurs']
                     : ['Difficulté', '1er coup', 'Total', 'Erreurs'];
                 headers.forEach(text => {
@@ -552,9 +570,9 @@ const ScoreManager = {
         svg.appendChild(bgCircle);
         svg.appendChild(createCircle(p1, 0, 'color-success-1st'));
         if (this.appId !== 'machine_a_trier') {
-            svg.appendChild(createCircle(p2, (p1/100)*circ, 'color-success-more'));
+            svg.appendChild(createCircle(p2, (p1 / 100) * circ, 'color-success-more'));
         }
-        svg.appendChild(createCircle(p3, ((p1+p2)/100)*circ, 'color-mistakes'));
+        svg.appendChild(createCircle(p3, ((p1 + p2) / 100) * circ, 'color-mistakes'));
 
         container.appendChild(svg);
 

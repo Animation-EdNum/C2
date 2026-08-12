@@ -64,13 +64,14 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 ![Pixel Studio](meta/screenshots/binaire_studio.png)
 - **À quoi sert l'outil :** Un studio de codage interactif faisant le lien entre des images matricielles (en noir et blanc ou en 4 couleurs) et leur représentation binaire (1 ou 2 bits par pixel).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire** (Demi-cycle 5-6H)
-- **Fonctionnalités :** 3 modes : *Décoder* (dessiner d'après le code), *Encoder* (trouver le code d'une image) et *Éditeur Libre*. Il propose un basculement instantané entre le mode Noir & Blanc (1 bit) et le mode Couleurs (2 bits : noir `00`, vert `01`, bleu `10`, jaune `11`) avec palette de dessin interactive, export d'images PNG et partage de créations par URL.
+- **Fonctionnalités :** 3 modes : *Décoder* (dessiner d'après le code), *Encoder* (trouver le code d'une image) et *Éditeur Libre*. Propose un suivi des scores sur les modes *Décoder* et *Encoder*, un basculement instantané entre le mode Noir & Blanc (1 bit) et le mode Couleurs (2 bits : noir `00`, vert `01`, bleu `10`, jaune `11`), export PNG et partage par URL.
 - **Valeur pédagogique :** Matérialise le concept abstrait de "numérisation". Comprendre que l'information visuelle (pixels) se traduit en séquences binaires de 0 et de 1.
 
 #### 3. Mots secrets (`webapps/binaire_message.html`)
 ![Mots secrets](meta/screenshots/binaire_message.png)
 - **À quoi sert l'outil :** Un jeu interactif pour chiffrer et déchiffrer des mots en utilisant l'alphabet binaire.
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)** (Demi-cycle 7-8H)
+- **Fonctionnalités :** 2 modes principaux (*Encoder* un mot secret et *Décoder* un message secret), avec suivi des scores.
 - **Valeur pédagogique :** Les élèves découvrent que les lettres sont représentées par des nombres, eux-mêmes encodés en binaire. Stimule le calcul mental (puissances de 2) et renforce la collaboration avec le mode (dé)codeur de messages.
 
 #### 4. Routage Réseau (`webapps/routage_reseau.html`)

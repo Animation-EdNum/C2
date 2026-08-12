@@ -117,6 +117,16 @@
                 </div>
                 <div class="card-footer">
                     <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="decode-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="decode-streak">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -141,6 +151,16 @@
                 </div>
                 <div class="card-footer">
                     <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="encode-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="encode-streak">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -421,7 +441,16 @@
         // ==========================================
         // MODE : DÉCODER
         // ==========================================
+        let decodeMistakes = 0;
+        let decodeCorrect = 0;
+        let decodeStreak = 0;
+
+        let encodeMistakes = 0;
+        let encodeCorrect = 0;
+        let encodeStreak = 0;
+
         function initDecode() {
+            decodeMistakes = 0;
             currentPattern = getRandomPattern();
             const size = currentPattern.data.length;
 
@@ -471,6 +500,16 @@
 
             if (correct) {
                 playSound('success');
+                decodeCorrect++;
+                decodeStreak++;
+                const decCorrEl = document.getElementById('decode-correct');
+                const decStrkEl = document.getElementById('decode-streak');
+                if (decCorrEl) decCorrEl.innerText = decodeCorrect;
+                if (decStrkEl) decStrkEl.innerText = decodeStreak;
+
+                ScoreManager.addSuccess("decode", null, decodeMistakes);
+                decodeMistakes = 0;
+
                 addToGallery(currentPattern.data, currentPattern.name);
                 showToast('Bravo ! « ' + currentPattern.name + ' » décodé !', 'success');
                 decodeSuccessCount++;
@@ -481,6 +520,12 @@
                 }, 1200);
             } else {
                 playSound('error');
+                decodeMistakes++;
+                decodeStreak = 0;
+                const decStrkEl = document.getElementById('decode-streak');
+                if (decStrkEl) decStrkEl.innerText = decodeStreak;
+
+                ScoreManager.addMistake("decode", null);
                 showToast('Pas encore correct… Essaie encore !', 'error');
 
                 setTimeout(() => {
@@ -495,6 +540,7 @@
         let encodeComplete = false;
 
         function initEncode() {
+            encodeMistakes = 0;
             encodeComplete = false;
             currentPattern = getRandomPattern();
             const size = currentPattern.data.length;
@@ -562,6 +608,16 @@
 
                 if (allInputs.every(i => i.classList.contains('correct'))) {
                     encodeComplete = true;
+                    encodeCorrect++;
+                    encodeStreak++;
+                    const encCorrEl = document.getElementById('encode-correct');
+                    const encStrkEl = document.getElementById('encode-streak');
+                    if (encCorrEl) encCorrEl.innerText = encodeCorrect;
+                    if (encStrkEl) encStrkEl.innerText = encodeStreak;
+
+                    ScoreManager.addSuccess("encode", null, encodeMistakes);
+                    encodeMistakes = 0;
+
                     setTimeout(() => {
                         playSound('success');
                         addToGallery(currentPattern.data, currentPattern.name);
@@ -575,10 +631,16 @@
                 }
             } else {
                 playSound('error');
+                encodeMistakes++;
+                encodeStreak = 0;
+                const encStrkEl = document.getElementById('encode-streak');
+                if (encStrkEl) encStrkEl.innerText = encodeStreak;
+
+                ScoreManager.addMistake("encode", null);
+
                 input.style.borderColor = 'var(--error)';
                 setTimeout(() => {
                     input.style.borderColor = '';
-                    input.value = '';
                 }, 1000);
             }
         }

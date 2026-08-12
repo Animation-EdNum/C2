@@ -203,6 +203,16 @@
 
                 <div class="card-footer">
                     <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                    <div class="score-bar">
+                        <div class="score-item">
+                            <div class="score-label">Victoires</div>
+                            <div class="score-value" id="decode-correct">0</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="score-label">Série 🔥</div>
+                            <div class="score-value" id="decode-streak">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -408,6 +418,8 @@
         let decodeCurrentIndex = 0;
         let decodeWordResult = [];
         let decodeMistakes = 0;
+        let decodeCorrect = 0;
+        let decodeStreak = 0;
 
         function prepareDecode() {
             const input = document.getElementById('decoder-input').value.trim();
@@ -497,6 +509,13 @@
 
             if (typedChar === expectedChar) {
                 playSound('success');
+                decodeCorrect++;
+                decodeStreak++;
+                const decCorrEl = document.getElementById('decode-correct');
+                const decStrkEl = document.getElementById('decode-streak');
+                if (decCorrEl) decCorrEl.innerText = decodeCorrect;
+                if (decStrkEl) decStrkEl.innerText = decodeStreak;
+
                 ScoreManager.addSuccess("decode", null, decodeMistakes);
                 decodeMistakes = 0; // Reset for next letter
                 inputEl.style.borderColor = 'var(--success)';
@@ -530,6 +549,9 @@
                 playSound('error');
                 inputEl.style.borderColor = 'var(--error)';
                 decodeMistakes++;
+                decodeStreak = 0;
+                const decStrkEl = document.getElementById('decode-streak');
+                if (decStrkEl) decStrkEl.innerText = decodeStreak;
                 ScoreManager.addMistake("decode", null);
 
                 if (decodeMistakes === 1) {

@@ -22,13 +22,13 @@
 
 ## 4. Gamification & Pedagogy
 - **Metaphors:** Emphasize physical/immersive mechanics (cracking a safe) over generic buttons.
-- **Adaptive Difficulty (2026-04-25):** Centralized in `ScoreManager`. Triggered via `c2_change_difficulty`. Apps tracking stats must define translations in `MODE_LABELS` (`assets/js/scores.js`).
+- **Adaptive Difficulty & Score Tracking (2026-04-25, updated 2026-08-12):** Centralized in `ScoreManager`. Triggered via `c2_change_difficulty`. Apps tracking stats define translations in `MODE_LABELS` (`assets/js/scores.js`) matching exact UI tab names (e.g. "Chasse au trésor (simulateur)", "Encodage", "Décodage"). Total attempts increment on both success and mistake with self-healing migration on load.
 - **State-Level Constraints (2026-04-24):** Enforce game rules in state generation, not UI.
 - **Binary Display (2026-04-25):** Always show inactive "0" weights (e.g., `128 + 0 + 32 + 0`).
 - **URL Overrides:** Used to enforce pedagogical constraints (e.g., `hideDict`, `lockTopology`, `unlockAllSkins`). Configured in `assets/js/url-params.js`. Prefix Share Modal checkboxes with `opt-`.
 
 ## 5. Webapp Specific Mechanics
-- **Automate Simulator:** 5 modes. 'Chasse aux paires' mode shuffles items. Grid configs in `MAT_CONFIG` (`automate-skins.js`). State sync required when loops halt.
+- **Automate Simulator:** 5 modes. 'Chasse au trésor' (simulator mode), 'Dessin', 'Décodage', and 'Pilotage' modes track success and mistakes in `ScoreManager`. Grid configs in `MAT_CONFIG` (`automate-skins.js`). State sync required when loops halt.
 - **Pixel Studio:** `#grid-editor` row/cell uses `flex: 1` to fix grid size. 'Éditeur' mode requires 6 completed challenges to unlock. Integrated color mode (4 colors, 2 bits per pixel) with N/B toggle (2026-05-25), using a selective palette brush instead of color cycling to improve drag-painting ergonomics. Shared URL formats encode color mode and compact 2-bit strings. Editor unlocks at 6 total successes (N/B or Colors).
 - **Codage Binaire:** Calculator overlay is a full-page modal to manage cognitive load on mobile.
 - **Bit de Parité:** Uses a 1D DOM structure factoring in the extra parity row/column.
