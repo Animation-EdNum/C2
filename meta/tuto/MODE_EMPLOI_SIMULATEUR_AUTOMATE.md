@@ -1,57 +1,59 @@
 # 🤖 Mode d'emploi : Simulateur d'automate
 
-Bienvenue dans le guide d'utilisation du **Simulateur d'automate**, une application web interactive conçue pour accompagner l'enseignement de la robotique et de la pensée algorithmique à l'école primaire.
+Bienvenue dans le guide d'utilisation complet du **Simulateur d'automate**, une application web interactive conçue pour accompagner l'enseignement de la robotique et de la pensée algorithmique à l'école primaire et au début du secondaire (Cycles 1 et 2 PER, Décodages 3-4H à 7-8H).
 
-Ce simulateur permet aux élèves de s'entraîner à la programmation d'un automate (de type Blue-Bot) de manière ludique, à travers **5 modes** de difficulté progressive.
+Ce simulateur permet aux élèves de programmer un automate (de type Blue-Bot / Bee-Bot) de manière ludique et intuitive, à travers **5 modes principaux** de difficulté progressive et plusieurs modes transversaux.
 
 ---
 
 ## 🌟 Enjeux Pédagogiques (Utilité en classe)
 
-L'utilisation de ce simulateur en classe va bien au-delà du simple jeu. Il développe des compétences clés chez l'élève :
-- **Pensée algorithmique :** Décomposer un problème complexe (un cheminement) en une suite d'instructions simples et ordonnées.
-- **Décentration cognitive :** Apprendre à distinguer la gauche et la droite relatives au robot, indépendamment de sa propre position (essentiel dans les modes Pilotage et Décodage).
-- **Repérage spatial et géométrie :** Évaluer des distances (nombre de cases) et appréhender des concepts géométriques comme les angles et les périmètres (particulièrement dans le mode Dessin).
-- **Anticipation et mémoire de travail :** Planifier mentalement une séquence complète avant son exécution, en s'appuyant sur des fonctionnalités comme le **Blindcoding** (programmation à l'aveugle ou mode mémoire).
+L'utilisation de ce simulateur en classe développe des compétences fondamentales en éducation numérique et en mathématiques :
+- **Pensée algorithmique :** Décomposer un cheminement complexe en une suite d'instructions simples, ordonnées et sans ambiguïté.
+- **Décentration cognitive :** Distinguer la gauche et la droite relatives au robot, indépendamment de sa propre position (essentiel dans les modes *Pilotage* et *Décodage*).
+- **Repérage spatial et géométrie :** Évaluer des distances (nombre de cases), anticiper des trajectoires et appréhender des concepts géométriques (angles droits, périmètres, surfaces).
+- **Anticipation et mémoire de travail :** Planifier mentalement une séquence complète avant son exécution, en s'appuyant sur des fonctionnalités comme le **Blindcoding** (programmation à l'aveugle).
+- **Démarche essai-erreur positive :** Analyser les bugs, comprendre l'origine d'un écart de trajectoire et corriger son programme pas-à-pas.
 
 ---
 
-## 🎮 Les Modes Additionnels (Fonctionnalités Transversales)
+## 🎮 Les Modes Transversaux (Fonctionnalités Activables)
 
-Avant de détailler les 5 modes principaux, voici deux fonctionnalités activables via des interrupteurs (toggles) présents dans l'interface, particulièrement utiles dans les modes **Exploration** et **Simulateur** :
+Avant de détailler les 5 modes principaux, voici les fonctionnalités activables via des boutons dédiés dans l'interface, particulièrement utiles dans les modes **Exploration** et **Simulateur** :
 
-- **Ramasser les objets (Mode Collecte) :** Lorsque cette option est activée, l'automate doit se déplacer sur les éléments interactifs du tapis (ex: des formes géométriques, des personnages de contes) pour les "ramasser". Cela permet de créer des missions de collecte avec un compteur de victoires et une série 🔥.
-- **🃏 Mode Chasse aux paires :** Ce mode transforme la grille en un jeu de chasse aux paires géant ! Des cartes retournées apparaissent sur la grille. Déplacez l'automate sur les cartes pour les révéler et formez des paires. Un excellent moyen de combiner repérage spatial et mémoire.
+- **🎒 Ramasser les objets (Mode Collecte) :** Lorsque cette option est activée, l'automate doit se déplacer sur les éléments interactifs du tapis (ex: formes géométriques, trésors, personnages de contes) pour les collecter. Un compteur de victoires et une série 🔥 récompensent la réussite.
+- **🃏 Mode Chasse aux paires :** Ce mode transforme la grille en un jeu de mémoire géant ! Des cartes retournées apparaissent sur la grille. Déplacez l'automate sur les cartes pour les révéler et formez des paires (illustrations, chiffres, mots).
+- **🔤 Mode Épeler (Spell Mode) :** Sur les tapis alphabétiques, l'automate est guidé pour épeler des mots lettre après lettre en se déplaçant sur les cases correspondantes.
+- **💡 Bulle d'aide d'onboarding :** Lors de la toute première visite en mode Exploration, une infobulle animée attire l'attention sur le bouton « Avancer » pour faciliter la prise en main immédiate par les jeunes élèves (désactivable via le paramètre `?noNudges=1`).
 
 ---
 
 ## 1. Mode Exploration (Déplacement direct)
 
-Ce mode permet de comprendre le comportement de l'automate sans avoir à anticiper une séquence complète. Le robot se déplace immédiatement à chaque appui sur une touche.
+Ce mode permet de comprendre le comportement mécanique de l'automate sans avoir à anticiper une séquence complète. Le robot réagit instantanément à chaque appui.
 
 **Comment l'utiliser :**
-- Utilisez les boutons du panneau de contrôle (Avancer, Reculer, Pivoter à gauche, Pivoter à droite).
-- À chaque clic, l'automate exécute immédiatement l'action sur la grille.
-- Vous pouvez positionner le robot où vous le souhaitez en cliquant sur le bouton **« Position aléatoire »** (icône punaise 📍) ou en cliquant directement sur une case de la grille.
-- Le bouton **« Trésors & Obstacles »** permet de placer des éléments à récolter et des obstacles à contourner sur la grille.
-- C'est le mode idéal pour faire de la découverte ou pour les plus jeunes élèves.
+- Utilisez le panneau de contrôle directionnel (**Avancer ⬆**, **Reculer ⬇**, **Pivoter à gauche ↺**, **Pivoter à droite ↻**).
+- À chaque clic ou appui clavier, l'automate exécute immédiatement l'action sur la grille.
+- **Positionner le robot :** Cliquez sur le bouton **« Position aléatoire »** (icône punaise 📍) ou cliquez directement sur une case de la grille pour y téléporter le robot.
+- **Trésors & Obstacles :** Le bouton dédié permet d'ajouter des cibles à atteindre et des briques d'obstacles à contourner.
+- *Idéal pour :* la découverte en Cycle 1 (4-7 ans) ou l'expérimentation libre au TBI.
 
 ---
 
-## 2. Mode Simulateur (Programmation)
+## 2. Mode Simulateur (Programmation par blocs)
 
 ![Mode Simulateur](../screenshots/sim_simulateur.png)
 
-Ce mode est idéal pour créer et tester des séquences de déplacement entières avant exécution.
+Ce mode reproduit fidèlement la programmation par touches d'un robot de sol physique (Blue-Bot).
 
 **Comment l'utiliser :**
-- Utilisez les boutons directionnels pour créer une séquence d'instructions.
-- Les instructions s'affichent sous forme de cartes dans la barre du programme.
-- Appuyez sur le bouton **« GO »** (vert) pour lancer l'exécution de votre programme. L'automate se déplacera en suivant vos instructions.
-- Le bouton **« X »** (bleu) permet d'effacer la séquence d'instructions.
-- Comme en mode Exploration, vous pouvez ajouter des trésors et des obstacles. Les éléments atteints par le robot s'affichent dans la zone « Éléments atteints ».
-- Un bouton **œil barré** (à côté de la barre du programme) permet de **masquer les commandes** pour transformer l'exercice en défi mémoire.
-- Un compteur **Victoires** et une **Série 🔥** apparaissent lorsque vous collectez des trésors.
+- Construisez votre séquence en cliquant sur les boutons d'ordres. Chaque commande s'ajoute dans la **bande de programme**.
+- Pour supprimer une instruction précise, cliquez directement sur sa carte dans la bande.
+- Le bouton **« GO »** (vert) lance l'exécution pas-à-pas de l'ensemble du programme.
+- Le bouton **« X »** (bleu) efface toute la séquence d'instructions.
+- Le bouton **œil barré** (à côté de la bande) permet de **masquer les commandes** pour transformer l'exercice en défi de mémorisation.
+- Les compteurs **Victoires** et **Série 🔥** valorisent les réussites consécutives sans erreur.
 
 ---
 
@@ -59,32 +61,28 @@ Ce mode est idéal pour créer et tester des séquences de déplacement entière
 
 ![Mode Pilotage](../screenshots/sim_pilotage.png)
 
-Ce mode propose des défis à résoudre : l'automate doit atteindre une cible précise. **Contrairement au mode Simulateur, vous ne programmez pas la séquence vous-même** : plusieurs propositions de séquences vous sont données, et vous devez choisir celle qui est correcte.
+Dans ce mode, la cible est fixée et plusieurs propositions de programmes complets sont soumises à l'élève. L'objectif est d'identifier la seule séquence correcte menant au but sans percuter d'obstacle.
 
-**Comment l'utiliser :**
-- Observez la position de l'automate et celle de la cible sur la grille.
-- Analysez chaque proposition de séquence affichée au-dessus de la grille.
-- Cliquez sur la proposition que vous pensez correcte. Les bonnes réponses se colorent en vert, les mauvaises en rouge.
-- **Niveaux de difficulté :**
-  - **🟢 Facile :** Mouvements simples, pas d'obstacles.
-  - **🟡 Moyen :** Introduction d'obstacles à contourner.
-  - **🔴 Difficile :** Obstacles et chemins plus complexes à optimiser.
-  - **🔥 Extrême :** Niveau **débloqué** uniquement après avoir progressé dans les niveaux précédents ; chemins maximaux avec contraintes renforcées.
+**Niveaux de difficulté :**
+- **🟢 Facile :** Trajets courts, aucun obstacle sur la grille.
+- **🟡 Moyen :** Trajets plus longs avec des obstacles simples à contourner.
+- **🔴 Difficile :** Grilles encombrées nécessitant des détours précis.
+- **🔥 Extrême :** Niveau débloqué après progression dans les niveaux précédents ; labyrinthes complexes avec contraintes renforcées.
 
 ---
 
-## 4. Mode Décodage (Lecture de code)
+## 4. Mode Décodage (Lecture et prédiction de trajectoire)
 
 ![Mode Décodage](../screenshots/sim_decodage.png)
 
-Ce mode inverse la logique : le programme est déjà écrit, et vous devez deviner où l'automate va s'arrêter !
+Ce mode inverse la démarche : le programme est déjà affiché, et l'élève doit deviner mentalement où l'automate terminera sa course.
 
 **Comment l'utiliser :**
-- Une séquence d'instructions est affichée à l'écran et l'automate est positionné sur la grille.
-- Lisez la séquence de gauche à droite et imaginez mentalement le parcours du robot.
-- **Cliquez sur la case de la grille** où vous pensez que l'automate terminera son parcours après l'exécution complète du programme.
-- Une fois que vous avez cliqué, le programme s'exécute visuellement pour vérifier votre prédiction.
-- C'est un excellent exercice pour travailler la **décentration cognitive** (distinguer gauche/droite relatives au robot) et la **mémoire de travail**.
+1. Observez l'orientation initiale de l'automate et la séquence de commandes.
+2. Déplacez mentalement le robot case par case en intégrant les rotations sur place.
+3. **Cliquez sur la case d'arrivée présumée.**
+4. L'automate exécute alors le programme pour valider ou invalider la réponse.
+5. *Bénéfice clé :* Renforce puissamment la **décentration spatiale** et l'anticipation sans support matériel.
 
 ---
 
@@ -92,70 +90,58 @@ Ce mode inverse la logique : le programme est déjà écrit, et vous devez devin
 
 ![Mode Dessin](../screenshots/sim_dessin.png)
 
-Dans ce mode, l'automate est équipé d'un stylo imaginaire et **laisse une trace** derrière lui au fil de ses déplacements. Le but est de reproduire des formes géométriques ou des motifs.
+Dans ce mode créatif, l'automate laisse une trace colorée sur chaque case parcourue.
 
 **Comment l'utiliser :**
-- Le défi affiche les cases à parcourir (cases cibles en **pointillés bleus**) pour former la figure demandée.
-- Programmez les mouvements de l'automate de manière à passer par toutes les cases cibles. Les cases parcourues se remplissent progressivement.
-- **Attention :** pour les formes fermées (carré, rectangle…), l'automate doit passer par toutes les cases du contour. Veillez à bien compter les déplacements et les rotations.
-- Ce mode permet d'introduire des concepts de **géométrie** : angles droits, longueurs, polygones.
+- **Défis de reproduction :** Le plateau met en surbrillance des cases cibles en pointillés bleus formant un carré, un rectangle, un chiffre ou un motif.
+- Programmez la trajectoire exacte pour colorier toutes les cases demandées sans en oublier.
+- *Lien interdisciplinaire :* Travaille la géométrie (angles droits, polygones, périmètre).
 
 ---
 
-## 6. Partager l'activité (Options pour la classe)
+## 6. Accessibilité & Raccourcis Clavier Avancés
 
-Le bouton **Partager** 🔗 (disponible en bas de la modale de partage ou via l'URL) permet de **générer un lien** vers l'activité configurée. Cette fonctionnalité ouvre une modale permettant de créer un lien spécifique pour les élèves.
+L'application est 100% accessible sans souris ni écran tactile grâce à son système de navigation au clavier :
 
-Cette option est **cruciale en classe**, car ses paramètres avancés permettent à l'enseignant de :
-- **Canaliser l'attention :** Forcer un mode de jeu spécifique, masquer le retour à l'accueil et verrouiller le menu des réglages pour éviter que les élèves ne s'éparpillent.
-- **Différencier l'apprentissage :** Verrouiller un niveau de difficulté adapté à chaque groupe d'élèves, ou imposer un tapis pédagogique particulier.
-- **Stimuler la mémorisation :** Activer le mode aveugle (Blindcoding) ou masquer les commandes par défaut pour forcer l'élève à anticiper et mémoriser l'ensemble du parcours, empêchant ainsi la résolution par essais-erreurs.
+### ⌨️ Programmation au clavier (Modes Simulateur & Dessin)
+| Touche | Action |
+|---|---|
+| ⬆ ⬇ ⬅ ➡ | Ajouter les commandes Avancer, Reculer, Pivoter à gauche, Pivoter à droite |
+| `Retour arrière` (Backspace) | Effacer la dernière instruction |
+| `Entrée` | Exécuter le programme (Bouton GO) |
 
-*(cf. [Tutoriel de partage détaillé](MODE_EMPLOI_PARTAGE.md))*
-
----
-
-## 🎨 Personnalisation
-
-Le menu **Options** donne accès à des réglages pour personnaliser l'application :
-
-- **Changer de tapis** 🗺 : ouvre un tiroir latéral permettant de choisir un fond de grille (tapis pédagogique), d'ajuster son **opacité**, de régler la **largeur** et la **hauteur de la grille** de 4 à 10 cases, et de **masquer le quadrillage**.
-  - Un bouton **« Ajouter un tapis personnalisé »** vous permet d'importer votre propre image locale pour en faire un tapis de jeu. L'image est sauvegardée localement dans le navigateur pour rester disponible hors-ligne.
-- **Changer de skin** 🎨 : permet de personnaliser l'apparence du robot et de la piste (Bee-Bot, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.). Certains skins se débloquent en progressant dans l'application.
-- **Voir mes statistiques** 📊 : accès au tableau de bord des scores et victoires.
-- **Vitesse** ⏱ : bascule entre vitesse normale et vitesse rapide (2×).
-- **Commandes colorées** 🧒 : colore les boutons de commandes pour faciliter le repérage spatial (particulièrement utile pour les élèves non latéralisés).
-- **Thème clair / sombre** 🌙 : bascule entre les modes d'affichage.
-- **Son** 🔊 : active ou désactive les effets sonores.
+### 🖥️ Mode Édition de Grille au Clavier (Navigation tactile/DYS)
+Appuyez sur la touche **Tabulation (`Tab`)** pour activer le curseur néon interactif sur la grille :
+- **Flèches directionnelles :** Déplacer le curseur de sélection sur les cases.
+- **`Entrée` ou `Espace` :** Téléporter le robot sur la case sélectionnée.
+- **Touche `R` :** Pivoter l'automate de 90° dans le sens horaire.
+- **Touche `O` :** Poser ou retirer un obstacle (brique rouge).
+- **Touche `T` :** Placer la cible / trésor sur la case.
 
 ---
 
-## 💡 Astuces & Fonctionnalités Cachées
+## 🎨 Personnalisation & Réglages (Engrenage ⚙)
 
-### ⌨️ Raccourcis Clavier Classiques
-Dans le mode **Simulateur** ou **Dessin**, vous pouvez programmer et piloter le robot entièrement au clavier :
-* **Flèches directionnelles** : Ajoutent les commandes de mouvement correspondantes (Avancer, Reculer, Gauche, Droite) dans la bande de programme.
-* **Retour arrière (Backspace)** : Efface la dernière instruction ajoutée.
-* **Entrée** : Déclenche l'exécution du programme (équivalent du bouton **« GO »**).
+- **Changer de tapis 🗺 :** Sélection parmi des dizaines de tapis pédagogiques (Ville, Espace, Forêt, Formes géométriques, etc.), réglage de l'opacité et choix des dimensions de grille (de 4×4 à 10×10 cases).
+  - **Tapis personnalisé :** Importez votre propre image depuis votre ordinateur ou tablette. L'image est stockée localement dans le navigateur pour fonctionner hors-ligne.
+- **Changer de skin 🎨 :** Personnalisation de l'apparence du robot (Bee-Bot classique, Licorne 🌈, Cyber-Bot, Volcan 🌋, etc.).
+- **Vitesse ⏱ :** Bascule entre vitesse normale et accélérée (2×).
+- **Commandes colorées 🧒 :** Attribution de couleurs distinctes à chaque bouton directionnel pour les élèves non latéralisés.
+- **Thèmes 🌙 :** Thème clair, sombre et mode **Contraste Élevé** (WCAG AA).
+- **Son 🔊 :** Effets sonores Web Audio synthétisés (zéro fichier externe).
 
-### 🖥️ Mode Édition Clavier de la Grille (Accessibilité Avancée)
-Pour éviter de surcharger l'interface sur mobile ou tablette, le **bouton d'édition clavier** est masqué par défaut.
-* **Comment l'activer ?** Appuyez sur la touche **Tabulation (`Tab`)** pour faire apparaître et activer le mode édition clavier.
-* **Comment naviguer ?** Une fois activé, utilisez les **flèches directionnelles** pour déplacer le curseur de sélection sur les cases (le focus est mis en valeur par un contour néon interactif).
-* **Actions disponibles sur la case sélectionnée :**
-  * **Entrée ou Espace** : Déplace le robot sur la case sélectionnée (alternative complète au glisser-déposer).
-  * **Touche `R` ou `r`** : Fait pivoter l'automate de 90° dans le sens des aiguilles d'une montre.
-  * **Touche `O` ou `o`** : Ajoute ou retire un obstacle (brique rouge) sur la case.
-  * **Touche `T` ou `t`** : Déplace le trésor / la cible sur la case sélectionnée.
+---
 
-### 🔗 Partager une Grille Personnalisée
-Si vous modifiez manuellement le plateau de jeu à l'aide des fonctions d'édition au clavier (obstacles, trésors, déplacement ou orientation du robot) :
-* Une option supplémentaire **« Partager ma grille personnalisée »** apparaît dans la modale de partage.
-* En l'activant, le lien URL généré encode la taille exacte de votre grille, les obstacles posés, l'emplacement du trésor et l'orientation de départ du robot. Vos élèves démarreront ainsi l'activité sur votre configuration personnalisée.
+## 🔗 Partage & Différenciation en Classe
 
-### 👁️ Mode Aveugle (Blindcoding)
-* À côté de la bande de programme, un bouton **œil barré** permet de masquer les cartes d'instructions.
-* L'élève saisit ses commandes de tête sans voir la trace visuelle de sa séquence, ce qui fait travailler la mémoire de travail et l'anticipation mentale.
+Le menu **Partager l'activité** permet de générer un lien ou un QR Code sur mesure :
+- **Verrouiller un niveau ou un mode unique** (ex. `&only=1&lockDiff=1`).
+- **Imposer un tapis et des dimensions précises** (`&forceMat=city&rows=6&cols=6`).
+- **Partager une grille personnalisée** conçue par l'enseignant avec ses propres obstacles et trésors (`&rows=5&cols=5&robot=0,0,0&obstacles=1,2;2,3&target=4,4`).
+- **Activer le Blindcoding** pour évaluer la mémoire (`&blindcode=1`).
 
-### 📶 Utilisation 100% Hors-ligne
-* Conçue pour pallier les connexions réseau capricieuses des établissements scolaires, l'application fonctionne **sans internet** après un premier chargement. Les ressources, images et tapis de jeu sont conservés en cache local.
+*(Consultez le [Guide complet de partage](MODE_EMPLOI_PARTAGE.md) pour la liste exhaustive des paramètres).*
+
+---
+
+*Conçu par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0. 100% hors-ligne et respectueux des données personnelles.*

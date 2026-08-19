@@ -1,115 +1,104 @@
-# Partager une activité avec ses élèves
+# 🔗 Partager une activité avec ses élèves
 
-Ce tutoriel décrit la procédure pour transmettre une activité paramétrée à une classe via un lien ou un QR Code.
+Ce guide de référence décrit la procédure complète pour configurer, personnaliser et transmettre une activité de la **Suite EdNum** à vos élèves via un lien direct ou un QR Code prêt à imprimer / projeter.
 
 ---
 
 ## 1. Ouvrir le menu de partage
 
-Depuis l'application concernée (ex. *Simulateur d'automate*) :
+Depuis n'importe quelle application de la suite :
 
-1. Cliquer sur l'icône **Engrenage ⚙** en haut à droite.
-2. Sélectionner **« Partager l'activité »**.
+1. Cliquez sur l'icône **Engrenage ⚙** (en haut à droite de l'écran).
+2. Sélectionnez **« Partager l'activité »** (ou cliquez sur le bouton Partager présent dans certaines activités).
 
 ![Menu Paramètres](../screenshots/share_settings.png)
 
 ---
 
-## 2. Fenêtre de partage
+## 2. Fenêtre de partage & Exportation
 
-Une fenêtre modale s'ouvre. Le lien généré intègre automatiquement :
-
-- **L'onglet actif** (mode de jeu, ex. *Décodage*, *Pilotage*).
-- **Le niveau de difficulté** sélectionné.
+La modale de partage prépare automatiquement une URL enrichie encodant :
+- **L'onglet / mode de jeu actif** (ex. *Décoder*, *Pilotage*, *Entraînement*).
+- **Le niveau de difficulté en cours** (Facile, Moyen, Difficile, Extrême).
 
 ![Modale de partage basique](../screenshots/share_basic.png)
 
-Trois boutons sont disponibles pour exporter le lien :
-
+### Boutons d'exportation disponibles :
 | Bouton | Fonction |
 |---|---|
-| **Tester le lien** | Ouvre le lien dans un nouvel onglet pour vérifier le rendu côté élève. |
-| **Copier** | Copie le lien dans le presse-papiers. |
-| **Afficher le QR Code** | Génère un QR Code (voir § 6). |
+| ↗ **Tester le lien** | Ouvre l'URL dans un nouvel onglet pour vérifier le rendu exact côté élève. |
+| 📋 **Copier** | Copie le lien sécurisé dans votre presse-papiers. |
+| 📱 **QR** | Génère instantanément le QR Code à l'écran. |
+| 💾 **Télécharger le QR** | Enregistre l'image du QR Code (PNG) sur votre machine pour vos fiches pédagogiques. |
 
 ---
 
-## 3. Profils rapides (Presets)
+## 3. Profils rapides (Presets pédagogiques)
 
-Pour faciliter la préparation, trois boutons de profils permettent d'appliquer automatiquement une sélection de réglages adaptés à différentes situations pédagogiques :
-
-- **🎯 Mission :** « Mes élèves font exactement ce que j'ai préparé ». Ce profil verrouille le niveau de difficulté, force le mode de jeu actuel, empêche le retour à l'accueil et masque le menu des réglages.
-- **🏋️ Entraînement :** « Je leur donne l'outil, ils explorent / refont à leur rythme ». Ce profil permet le changement de difficulté, force le mode de jeu actuel et empêche le retour à l'accueil.
-- **🫶 Inclusif :** « J'ai un·e élève dys, TSA, ou non-latéralisé·e dans le groupe ». Ce profil active le thème à contraste élevé, désactive le son, active les couleurs directionnelles (si disponible), force le mode de jeu actuel et empêche le retour à l'accueil.
+| Profil Rapide | Intention pédagogique | Réglages appliqués automatiquement |
+|---|---|---|
+| 🎯 **Mission** | *« Mes élèves font exactement ce que j'ai préparé. »* | Verrouille la difficulté + force le mode sélectionné + masque les réglages + retire le lien d'accueil. |
+| 🏋️ **Entraînement** | *« Je leur donne l'outil, ils s'entraînent à leur rythme. »* | Force le mode sélectionné + retire le lien d'accueil + laisse la difficulté libre. |
+| 🫶 **Inclusif** | *« J'ai un·e élève DYS, TSA ou non-latéralisé·e dans le groupe. »* | Active le contraste élevé + coupe le son + active les commandes colorées + retire le lien d'accueil. |
 
 ---
 
-## 4. Options avancées
+## 4. Options avancées détaillées
 
-Un clic sur **« Options Avancées »** donne accès à des paramètres supplémentaires, regroupés en trois catégories.
+Cliquez sur **« Options Avancées »** pour affiner la configuration selon vos besoins pédagogiques :
 
 ![Options avancées](../screenshots/share_advanced.png)
 
-#### A. Apparence & Confort
-- **Contraste élevé** : Active le thème sombre à fort contraste dès l'ouverture de la page.
-- **Couleurs de poids** *(Routage Réseau)* : Affiche les poids du réseau avec une coloration dynamique pour faciliter la lecture.
-- **Pas de son** : Coupe les effets sonores par défaut.
-- **Couleurs directionnelles** *(Automate)* : Applique les couleurs de déplacement (Mode Jeu de la grue).
-- **Sans instructions** : Masque le bloc d'instructions situé sous le titre de la page.
-- **Sans quadrillage** *(Automate)* : Supprime la grille visuelle du simulateur pour plus de difficulté.
+### 🎨 A. Apparence & Confort
+- **Contraste élevé (`&highContrast=1`) :** Active le thème sombre à haut contraste pour les élèves malvoyants ou les pièces très éclairées.
+- **Couleurs de poids (`&coloredWeights=1`)** *(Routage Réseau)* : Colore dynamiquement les arêtes selon leur coût (UTI) pour faciliter l'estimation.
+- **Pas de son (`&noAudio=1`) :** Coupe tous les effets sonores par défaut pour préserver le calme en classe.
+- **Commandes colorées (`&coloredCmds=1`)** *(Automate)* : Associe une couleur distincte à chaque ordre de direction.
+- **Masquer les instructions (`&noInstructions=1`) :** Retire les bandeaux d'explications sous le titre.
+- **Pas de quadrillage (`&hideGrid=1`)** *(Automate)* : Supprime les lignes de repère pour corser l'évaluation des distances.
 
-#### B. Comportement & Pédagogie
-- **Séquence masquée (toggle)** : La séquence d'ordres est cachée au démarrage ; l'élève doit l'ouvrir manuellement.
-- **Mode aveugle (Blindcoding)** : Le bouton pour révéler la séquence de commandes est entièrement désactivé, l'affichage de la séquence est donc impossible. L'élève doit concevoir son programme uniquement de tête.
-- **Pas de dictionnaire ASCII** *(Binaire & Message)* : Masque le tableau de correspondance entre code binaire et caractères.
-- **Mode strict** *(Bit de parité)* : Désactive le retour visuel immédiat en cas d'erreur.
-- **Mode Couleurs** *(Pixel Studio)* : Force l'application à s'ouvrir directement en mode 4 couleurs (2 bits).
-- **Débloquer l'éditeur** *(Pixel Art Binaire)* : Ouvre directement l'onglet créatif, même si les défis de base ne sont pas réussis.
+### 🧠 B. Pédagogie & Démarche cognitive
+- **Partager ma grille personnalisée** *(Automate)* : Encode la taille de la grille, les obstacles posés, le trésor et l'orientation du robot créés au clavier (`&rows=...&cols=...&robot=...&obstacles=...&target=...`).
+- **Commandes masquées (`&noCmdToggle=1`) :** Cache la liste des ordres saisis au démarrage ; l'élève doit cliquer pour l'ouvrir.
+- **Mode aveugle / Blindcoding (`&blindcode=1`) :** Rend la séquence totalement invisible. L'élève doit concevoir et exécuter son programme de tête.
+- **Pas de dictionnaire ASCII (`&hideDict=1`)** *(Mots secrets)* : Masque la table de correspondance pour forcer le calcul des puissances de 2.
+- **Mode strict (`&strictMode=1`)** *(Bit de parité)* : Ne signale pas instantanément les erreurs pour évaluer l'auto-correction.
+- **Mode Couleurs (`&colorMode=1`)** *(Pixel Studio)* : Ouvre directement l'activité en mode 4 couleurs (2 bits par pixel).
 
-#### C. Restrictions de navigation & d'Interface
-- **Difficulté verrouillée** : Grise les boutons de niveau de difficulté (1 à 3 / Easy à Hard).
-- **Mode actuel uniquement** : Masque la navigation entre les onglets pour bloquer l'élève sur le mode de jeu ou l'onglet sélectionné.
-- **Pas de lien accueil** : Supprime le bouton pour revenir au portail EdNum (utile pour l'intégration plein écran ou l'encapsulation de l'outil).
-- **Pas de réglages** : Enlève complètement l'icône de la roue dentée. L'élève n'aura plus accès aux options (son, couleur, skins, vitesse, etc.).
-
-#### D. Restrictions et verrouillages divers
-- **Sans tapis** *(Automate)* : Désactive le bouton de choix de tapis de sol.
-- **Pas de skins** *(Automate)* : Désactive la personnalisation visuelle du robot.
-- **Tapis imposé** *(Automate)* : Charge automatiquement le dernier tapis que l'enseignant a sélectionné. L'élève ne peut plus le changer.
-- **Vitesse imposée** *(Automate)* : Charge automatiquement le niveau de vitesse actuel et désactive le sélecteur chez l'élève.
-- **Carte réseau fixe** *(Routage Réseau)* : Bloque la carte (la topologie du réseau générée aléatoirement) afin que chaque élève de la classe ait exactement le même problème à résoudre.
-
-![Options cochées](../screenshots/share_checked.png)
-
-> **Remarque :** chaque option cochée ajoute un paramètre à l'URL (ex. `&only=1&lockDiff=1`).
+### 🔐 C. Restrictions d'interface & Navigation
+- **Difficulté verrouillée (`&lockDiff=1`) :** Grise le sélecteur de niveau (l'élève reste sur le palier imposé).
+- **Mode actuel uniquement (`&only=1`) :** Masque la barre d'onglets pour empêcher de changer de jeu.
+- **Pas de lien accueil (`&noHome=1`) :** Désactive le bouton retour au portail général.
+- **Pas de réglages (`&noSettings=1`) :** Supprime l'icône d'engrenage (aucun accès aux options).
+- **Pas de skins (`&lockSkin=1`)** *(Automate)* : Empêche la modification de l'apparence du robot.
+- **Sans choix de tapis (`&lockMat=1`)** *(Automate)* : Désactive le tiroir de choix des tapis.
+- **Tapis imposé (`&forceMat=nom_tapis`)** *(Automate)* : Force le chargement d'un tapis spécifique.
+- **Vitesse imposée (`&lockSpeed=1`)** *(Automate)* : Bloque la vitesse d'exécution.
+- **Carte réseau fixe (`&lockTopology=1`)** *(Routage Réseau)* : Génère le même réseau pour toute la classe.
 
 ---
 
-## 5. Paramètres cachés de l'URL
+## 5. Paramètres d'URL experts (Ajout manuel)
 
-Quelques paramètres avancés ne sont pas disponibles directement dans l'interface et doivent être ajoutés manuellement à la fin du lien généré (par exemple : `&noDrag=1`).
+Vous pouvez compléter manuellement vos URL avec les paramètres suivants :
 
-- `&unlockAllSkins=1` : (*Automate*) Débloque instantanément tous les personnages et tapis de sol cachés du simulateur.
-- `&noDrag=1` : (*Automate*) Désactive le glisser-déposer des blocs de commande, forçant l'utilisation des clics (pratique pour les publics DYS ou sur tableau interactif peu précis).
-- `&seed=1234` : Utilisé avec l'option "Carte réseau fixe" pour définir explicitement un numéro de graine aléatoire. Permet de générer la même topologie sur tous les appareils si la graine est identique.
-- `&importGrid=0110...` : (*Pixel Studio*) Permet de précharger et d'importer directement un dessin binaire dans l'éditeur libre à partir de sa chaîne de caractères (composée de `0` et de `1` pour le mode Noir et Blanc, ou de paires comme `01`, `10`, etc. pour le mode 4 couleurs).
-- `&noNudges=1` : Désactive complètement l'affichage des bulles d'aide et d'onboarding animées éphémères (les "nudges") au démarrage des activités pour ne pas perturber l'attention de l'élève.
+| Paramètre | Application | Effet |
+|---|---|---|
+| `&unlockAllSkins=1` | Simulateur Automate | Débloque immédiatement l'ensemble des skins et tapis secrets. |
+| `&noDrag=1` | Automate / Trier | Désactive le glisser-déposer au profit du clic direct (idéal TBI peu précis). |
+| `&seed=1234` | Routage Réseau | Définit une graine aléatoire pour obtenir une topologie identique sur tous les postes. |
+| `&importGrid=0110...` | Pixel Studio | Précharge un dessin matriciel dans l'éditeur libre à partir de sa chaîne binaire. |
+| `&noNudges=1` | Toutes | Désactive les bulles d'aide et d'onboarding animées au démarrage. |
 
 ---
 
-## 6. Diffusion par QR Code
+## 6. Diffusion par QR Code en Classe
 
-Procédure :
+1. Ajustez vos paramètres dans la modale de partage.
+2. Cliquez sur **« QR »** puis sur **« Télécharger le QR »**.
+3. Insérez le fichier image dans votre feuille de consignes ou projetez-le directement au tableau interactif.
+4. Les tablettes ou smartphones des élèves scannent le code et ouvrent l'application préconfigurée sans aucune manipulation technique.
 
-1. Régler les options avancées.
-2. Cliquer sur **« Afficher le QR Code »**.
-3. Cliquer sur **« Télécharger le QR »** pour enregistrer l'image.
+---
 
-![Génération QR Code](../screenshots/share_qr.png)
-
-Le QR Code peut ensuite être :
-- imprimé et distribué aux élèves ;
-- affiché au TBI ;
-- inséré dans un document (polycopié, fiche, support numérique).
-
-Une fois scanné, le QR Code ouvre directement l'application dans la configuration définie par l'enseignant.
+*Documentation mise à jour pour la Suite EdNum — AP EdNum (HEP-VS).*

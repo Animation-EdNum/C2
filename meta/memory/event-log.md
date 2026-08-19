@@ -52,3 +52,4 @@
 - **[2026-05-30]** [Feature/A11y] Grid keyboard accessibility, unclipped styling, custom grid sharing and user manual updates for the Automate simulator. Added CI smoke test.
 - **[2026-08-12]** [Scores] Audit des scores : harmonisation de `MODE_LABELS` (ex: "Chasse au trésor"), incrémentation de `totalAttempts` dans `addMistake()` et auto-guérison sur chargement (`scores.js`), et ajout de la barre de score visuelle dans l'onglet Décodage de Mots secrets (`binaire_message.html`).
 - **[2026-08-12]** [Scores] Pixel Studio (`binaire_studio.html`) : intégration du suivi des scores dans `ScoreManager` et ajout des barres de score pour les modes **Décoder** et **Encoder**.
+- **[2026-08-19]** [Docs/Tuto] Refonte et enrichissement des modes d'emploi (`meta/tuto/`) pour l'ensemble des applications stables, alpha et enseignants (14 tutoriels complets, liens dans le README, alignement PER / Décodages).

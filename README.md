@@ -62,47 +62,47 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 #### 2. Pixel Studio (`webapps/binaire_studio.html`)
 ![Pixel Studio](meta/screenshots/binaire_studio.png)
-- **À quoi sert l'outil :** Un studio de codage interactif faisant le lien entre des images matricielles (en noir et blanc ou en 4 couleurs) et leur représentation binaire (1 ou 2 bits par pixel).
+- **À quoi sert l'outil :** Un studio de codage interactif faisant le lien entre des images matricielles (en noir et blanc ou en 4 couleurs) et leur représentation binaire (1 ou 2 bits par pixel). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_PIXEL_STUDIO.md).
 - **Lien DÉ>CODAGE :** [5-6e](https://decodage.edu-vd.ch/5-6/) · **Scénario 4 — Codage de données, codage binaire** (Demi-cycle 5-6H)
 - **Fonctionnalités :** 3 modes : *Décoder* (dessiner d'après le code), *Encoder* (trouver le code d'une image) et *Éditeur Libre*. Propose un suivi des scores sur les modes *Décoder* et *Encoder*, un basculement instantané entre le mode Noir & Blanc (1 bit) et le mode Couleurs (2 bits : noir `00`, vert `01`, bleu `10`, jaune `11`), export PNG et partage par URL.
 - **Valeur pédagogique :** Matérialise le concept abstrait de "numérisation". Comprendre que l'information visuelle (pixels) se traduit en séquences binaires de 0 et de 1.
 
 #### 3. Mots secrets (`webapps/binaire_message.html`)
 ![Mots secrets](meta/screenshots/binaire_message.png)
-- **À quoi sert l'outil :** Un jeu interactif pour chiffrer et déchiffrer des mots en utilisant l'alphabet binaire.
+- **À quoi sert l'outil :** Un jeu interactif pour chiffrer et déchiffrer des mots en utilisant l'alphabet binaire. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_MOTS_SECRETS.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 2)** (Demi-cycle 7-8H)
 - **Fonctionnalités :** 2 modes principaux (*Encoder* un mot secret et *Décoder* un message secret), avec suivi des scores.
 - **Valeur pédagogique :** Les élèves découvrent que les lettres sont représentées par des nombres, eux-mêmes encodés en binaire. Stimule le calcul mental (puissances de 2) et renforce la collaboration avec le mode (dé)codeur de messages.
 
 #### 4. Routage Réseau (`webapps/routage_reseau.html`)
 ![Routage Réseau](meta/screenshots/routage_reseau.png)
-- **À quoi sert l'outil :** Simulation visuelle pour trouver le chemin le plus rapide pour acheminer un "paquet" dans un réseau.
+- **À quoi sert l'outil :** Simulation visuelle pour trouver le chemin le plus rapide pour acheminer un "paquet" dans un réseau. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_ROUTAGE_RESEAU.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 8 — Les réseaux, Niveau 2** (Demi-cycle 7-8H)
 - **Valeur pédagogique :** Montre qu'un chemin court "visuellement" n'est pas le plus rapide (coût des routes). Sensibilise à l'infrastructure d'Internet et développe des stratégies d'optimisation face à des graphes complexes.
 
 #### 5. Codage binaire (`webapps/binaire_codage.html`)
 ![Codage binaire](meta/screenshots/binaire_codage.png)
-- **À quoi sert l'outil :** Entraînement intensif au passage des nombres entiers (décimal) vers le binaire, et inversement.
+- **À quoi sert l'outil :** Entraînement intensif au passage des nombres entiers (décimal) vers le binaire, et inversement. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_CODAGE_BINAIRE.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 2 — Codages en folie (séance 1)** (Demi-cycle 7-8H)
 - **Valeur pédagogique :** Consolide la numération de position sur 8 bits (jusqu'à 255) et guide l'élève de manière proactive et étayée (feedback "trop grand / trop petit").
 
 #### 6. Bit de Parité (`webapps/bit_de_parite.html`)
 ![Bit de Parité](meta/screenshots/bit_de_parite.png)
-- **À quoi sert l'outil :** Jeu sur la parité (paire) permettant de comprendre comment l'ordinateur détecte qu'un message a été altéré.
+- **À quoi sert l'outil :** Jeu sur la parité (paire) permettant de comprendre comment l'ordinateur détecte qu'un message a été altéré. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_BIT_DE_PARITE.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs... ?** (Demi-cycle 7-8H)
 - **Valeur pédagogique :** Initie à l'intégrité de la donnée via des métadonnées (le bit de parité) et développe le repérage spatial via des coordonnées sur une grille.
 
 
 ### 🛠️ Ressources pratiques pour les enseignant·e·s
-Trouvez ces outils dans le portail central `index.html` ou directement dans le dossier `webapps/teacher/`.
+Trouvez ces outils dans le portail central `index.html` ou directement dans le dossier `webapps/teacher/`. [Mode d'emploi des outils enseignants](meta/tuto/MODE_EMPLOI_OUTILS_ENSEIGNANT.md).
 
 #### Générateur de Barème (`webapps/teacher/bareme.html`)
 ![Générateur de Barème](meta/screenshots/bareme.png)
-Un petit utilitaire sans publicité permettant de générer instantanément un barème de points pour la correction d'évaluations (avec option d'impression PDF au format propre).
+Un petit utilitaire sans publicité permettant de générer instantanément un barème de points pour la correction d'évaluations (avec option d'impression PDF au format propre). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_BAREME.md).
 
 #### Tirage au Sort (`webapps/teacher/tirage.html`)
 ![Tirage au Sort](meta/screenshots/tirage.png)
-Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages.
+Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
 
 ---
 
