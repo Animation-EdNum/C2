@@ -104,6 +104,17 @@ Un petit utilitaire sans publicité permettant de générer instantanément un b
 ![Tirage au Sort](meta/screenshots/tirage.png)
 Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
 
+### 🧪 Applications en avant-première (Dossier `alpha/`)
+- 🏗️ **Jeu de la grue** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_JEU_DE_LA_GRUE.md)
+- 💻 **Pseudo-code** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
+- ⚡ **Compresseur magique (RLE)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COMPRESSEUR_MAGIQUE.md)
+- 🔐 **Machine à chiffrer (César)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_MACHINE_A_CHIFFRER.md)
+- 📦 **Machine à trier** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_MACHINE_A_TRIER.md)
+- 🔀 **Réseau de tri** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
+- 🔒 **Coffre-fort numérique** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
+- 🧠 **IA, Neurones & Détective** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
+- 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
+
 ---
 
 ## 💻 For Developers and Contributors

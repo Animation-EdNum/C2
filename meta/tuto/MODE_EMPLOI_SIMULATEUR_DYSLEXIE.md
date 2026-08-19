@@ -1,58 +1,61 @@
-# 👓 Mode d'emploi : Lentille de dyslexie (Simulateur DYS)
+# 👓 Mode d'emploi : Lentille de dyslexie
 
-Bienvenue dans le guide d'utilisation de la **Lentille de dyslexie**, un outil immersif de sensibilisation pédagogique conçu pour les enseignant·e·s, les parents, les professionnels de l'éducation et les élèves.
+La **Lentille de dyslexie** est un simulateur immersif qui reproduit les perturbations visuelles vécues par les personnes dyslexiques lors de la lecture. Il permet aussi d'expérimenter en direct l'efficacité des aménagements compensatoires.
 
-Ce simulateur reproduit fidèlement la charge cognitive, la fatigue visuelle et les perturbations perceptives vécues au quotidien par les personnes atteintes de troubles spécifiques des apprentissages (dyslexie visuo-spatiale, dyslexie phonologique, encombrement visuel / *crowding*).
-
----
-
-## 🌟 Enjeux Pédagogiques & Inclusion
-
-- **Développer l'empathie pédagogique :** Ressentir concrètement l'effort épuisant qu'exige le simple déchiffrage d'un texte court pour un élève dyslexique non compensé.
-- **Comprendre la double tâche :** Prendre conscience que lorsque 90% des ressources attentionnelles sont mobilisées par le décodage des graphèmes, il ne reste plus d'énergie disponible pour la compréhension du sens ou la mémorisation des consignes.
-- **Expérimenter l'efficacité des aménagements :** Tester en direct l'impact spectaculaire des adaptations typographiques (polices adaptées, espacement, règles de lecture, contrastes doux) pour faciliter la lecture.
+Destiné aux enseignant·e·s, parents, professionnels de l'éducation et élèves.
 
 ---
 
-| Pilier du Simulateur | Manifestations / Outils disponibles | Objectif pédagogique |
+## Pourquoi cet outil ?
+
+- **Développer l'empathie :** Ressentir physiquement l'effort épuisant qu'exige le déchiffrage d'un texte court pour un élève non compensé.
+- **Comprendre la double tâche :** Quand 90% de l'énergie cognitive est absorbée par le décodage, il ne reste rien pour la compréhension du sens.
+- **Valider l'impact des aménagements :** Tester en direct la différence spectaculaire que produisent une police adaptée, un espacement aéré ou une règle de lecture.
+
+---
+
+## 1. Les perturbations simulées
+
+L'application reproduit les manifestations les plus fréquentes de la dyslexie visuo-spatiale :
+
+| Perturbation | Ce qui se passe à l'écran |
+|---|---|
+| 🔄 **Confusions de lettres miroirs** | Les lettres proches se permutent en temps réel : `b` ↔ `d`, `p` ↔ `q`, `u` ↔ `n`. |
+| 🌊 **Lettres flottantes** | Les caractères bougent, glissent ou dansent le long de la ligne. |
+| 🌫️ **Encombrement visuel** (*crowding*) | Les mots se rapprochent, se chevauchent, se brouillent. |
+| 🔀 **Sauts de ligne** | Le regard perd sa ligne et saute ou relit involontairement la même. |
+
+---
+
+## 2. Les aménagements compensatoires
+
+Des interrupteurs permettent d'activer chaque outil de compensation et d'en constater l'effet immédiat :
+
+| Aménagement | Effet | Équivalent en classe |
 |---|---|---|
-| 🌪️ **Simulation des Perturbations** | Confusions b/d, lettres flottantes, instabilité, encombrement visuel | Ressentir la fatigue et la surcharge cognitive de l'élève DYS. |
-| 🛠️ **Outils de Compensation** | Police OpenDyslexic, interlettrage aéré, règle de guidage, syllabes bicolores | Expérimenter l'efficacité des aménagements raisonnables en classe. |
+| **Police OpenDyslexic** | Base alourdie des lettres pour empêcher la rotation mentale. | Utiliser une police sans empattement claire (OpenDyslexic, Lexie Readable, Andika). |
+| **Interlettrage & interlignage accrus** | Aère le texte et évite le télescopage des mots. | Régler l'interligne à 1.5 ou 2.0, espacer les caractères. |
+| **Règle de lecture / Guide visuel** | Bandeau sombre qui suit le curseur pour focaliser une seule ligne. | Fournir un cache plastique ou une règle ajourée. |
+| **Coloration syllabique** | Découpe visuellement les unités phonologiques en bicolore. | Colorer les syllabes dans les supports distribués. |
+| **Fond teinté pastel** | Réduit l'éblouissement du blanc pur et la fatigue oculaire. | Imprimer sur papier ivoire ou bleu pâle plutôt que blanc. |
 
 ---
 
-## 2. Les Types de Perturbations Simulées
+## 3. Scénario d'atelier (15-20 min)
 
-L'application permet d'activer et de doser différentes manifestations fréquentes :
+Ce déroulé fonctionne en réunion de parents, formation enseignante ou séance de sensibilisation en classe :
 
-- **🔄 Confusion de lettres miroirs :** Interversion dynamique des lettres proches en miroir horizontal ou vertical (`b` $\leftrightarrow$ `d`, `p` $\leftrightarrow$ `q`, `u` $\leftrightarrow$ `n`).
-- **🌊 Instabilité & Lettres flottantes :** Micro-déplacements aléatoires des lettres qui semblent bouger, danser ou glisser le long de la ligne.
-- **🌫️ Encombrement visuel (*Visual Crowding*) :** Rapprochement optique excessif des caractères et des mots qui se chevauchent ou se brouillent.
-- **🔀 Sauts de ligne & Perte de repère :** Difficulté à passer d'une ligne à la suivante sans sauter de ligne ou relire la même.
+**Étape 1 — Immersion (5 min) :**
+Projetez un texte au tableau avec toutes les perturbations activées. Demandez à un volontaire de lire à voix haute en chronométrant.
 
----
+**Étape 2 — Question piège (3 min) :**
+Posez une question de compréhension sur le contenu. Constatez que le lecteur n'a souvent rien retenu : toute son énergie a été absorbée par le décodage.
 
-## 3. Les Outils de Compensation (Aménagements en classe)
+**Étape 3 — Compensation (5 min) :**
+Activez la règle de lecture, la police OpenDyslexic et l'espacement aéré. Faites relire le même passage : la fluidité s'améliore immédiatement et visiblement.
 
-Le simulateur intègre des interrupteurs permettant d'appliquer immédiatement les bonnes pratiques de mise en page inclusive :
-
-| Aménagement | Effet observé | Recommandation en classe |
-|---|---|---|
-| **Police OpenDyslexic** | Base alourdie des lettres pour éviter la rotation mentale. | Utiliser des polices sans empattement claires (*OpenDyslexic*, *Lexie Readable*, *Andika*, *Outfit*). |
-| **Interlettrage & Interlignage accrus** | Évite le télescopage des mots et aère le regard. | Régler l'interligne à `1.5` ou `2.0` et espacer les caractères de `1.2 pt`. |
-| **Règle de lecture / Guide visuel** | Bandeau sombre qui suit le curseur pour focaliser l'attention sur une seule ligne. | Fournir un cache plastique ou une règle ajourée sur papier. |
-| **Coloration alternée des syllabes** | Découpe visuellement les unités phonologiques. | Colorer les syllabes en bicolore pour les élèves en début d'apprentissage. |
-| **Fonds teintés doux (Pastel)** | Réduit l'éblouissement et la fatigue oculaire du blanc pur. | Imprimer sur papier ivoire, beige ou bleu pâle plutôt que blanc brillant. |
-
----
-
-## 4. Utilisation en Formation & Sensibilisation
-
-### Scénario d'atelier (15 à 20 min) :
-1. **Étape 1 (Immersion) :** Projetez un texte au tableau avec les perturbations activées. Demandez à un adulte ou à un élève volontaire de lire à voix haute un paragraphe en chronométrant.
-2. **Étape 2 (Question de compréhension) :** Posez une question sur le contenu du texte. Constatez que le lecteur n'a souvent rien retenu de l'histoire, car toute son énergie a été absorbée par le décodage.
-3. **Étape 3 (Application des compensations) :** Activez la règle de lecture, la police OpenDyslexic et l'espacement aéré. Faites relire : la fluidité s'améliore immédiatement.
-4. **Conclusion :** Rappelez que la dyslexie n'est pas un manque d'intelligence, mais un mode de traitement neurovisuel différent qui nécessite des supports adaptés.
+**Conclusion :**
+La dyslexie n'est pas un manque d'intelligence. C'est un mode de traitement neurovisuel différent qui nécessite des supports adaptés — et ces adaptations sont simples à mettre en place.
 
 ---
 

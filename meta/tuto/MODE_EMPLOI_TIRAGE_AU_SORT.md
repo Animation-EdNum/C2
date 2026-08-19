@@ -1,64 +1,61 @@
 # 🎲 Mode d'emploi : Tirage au Sort
 
-Bienvenue dans le guide d'utilisation du **Tirage au Sort**, une application web conçue pour désigner des élèves au hasard de manière ludique, visuelle, parfaitement équitable et sans contestation.
+Le **Tirage au Sort** désigne un·e élève au hasard de manière ludique, transparente et équitable. Idéal pour interroger, attribuer des rôles ou former des groupes sans contestation.
 
-L'outil fonctionne **100% hors-ligne**, sans collecte de données personnelles, et conserve automatiquement votre liste de classe sur votre appareil.
-
----
-
-## 🌟 Enjeux Pédagogiques (Utilité en classe)
-
-- **Participation équitable & Climat de classe serein :** Garantir que chaque élève a une probabilité identique d'être interrogé, évitant le biais involontaire de faire participer toujours les mêmes élèves (ou de solliciter systématiquement les élèves discrets).
-- **Maintien de l'attention & Engagement :** L'animation de tirage crée un moment de suspense collectif bienveillant qui capte l'attention du groupe.
-- **Gestion des responsabilités & Rôles :** Idéal pour attribuer les métiers de la classe (responsable du tableau, distributeur, messager), désigner l'ordre de passage d'un exposé ou former des groupes.
+100% hors-ligne · Aucune donnée transmise · Liste de classe sauvegardée localement.
 
 ---
 
-| Étape | Fonctionnalité | Avantage pratique |
-|---|---|---|
-| 📝 **Saisie & Import** | Collage libre de prénoms (virgules ou retours à la ligne) | Importation de classe en 3 secondes. |
-| 💾 **Sauvegarde locale** | Mémorisation automatique dans le navigateur (`localStorage`) | Aucune reconfiguration d'un jour à l'autre. |
-| 🚫 **Gestion des absents** | Clic direct sur l'étiquette pour exclure temporairement | Évite de modifier ou réécrire la liste. |
-| 🔄 **Tirage sans remise** | Sortie temporaire de l'urne des élèves déjà tirés | Équité absolue : tout le monde participe une fois. |
+## Pourquoi cet outil ?
 
-### 1.1. Saisie des Prénoms
-- Entrez la liste des prénoms dans la zone de texte dédiée.
-- Les prénoms peuvent être séparés par des **retours à la ligne** ou par des **virgules**.
-- L'outil nettoie automatiquement les espaces superflus et met à jour le compteur du nombre d'élèves inscrits.
-
-### 1.2. Sauvegarde Locale Automatique (`localStorage`)
-- Dès que vous modifiez votre liste, elle est enregistrée dans le navigateur de votre ordinateur ou tablette.
-- Lorsque vous rouvrez l'application le lendemain, votre liste est prête à l'emploi sans manipulation.
-
-### 1.3. Gestion des Absents (En un clic)
-- En dessous du champ de saisie, chaque élève apparaît sous forme d'étiquette interactive.
-- **Un élève est absent aujourd'hui ?** Cliquez simplement sur son étiquette pour le barrer/griser : il est instantanément exclu des tirages du jour sans être supprimé de votre liste générale. Recliquez pour le réactiver.
+- **Équité garantie :** Chaque élève a strictement la même probabilité d'être tiré·e. Fini le biais involontaire de toujours interroger les mêmes.
+- **Engagement du groupe :** L'animation de tirage crée un court suspense collectif qui capte l'attention.
+- **Polyvalence :** Interrogation orale, ordre de passage d'un exposé, attribution des métiers de la classe, formation de binômes.
 
 ---
 
-## 2. Lancer le Tirage au Sort
+## 1. Préparer la liste de classe
 
-1. Cliquez sur le grand bouton vert **« 🎲 Lancer le tirage »** (ou appuyez sur la touche `Espace` / `Entrée` du clavier).
-2. La roue / animation de défilement visuel s'active à grande vitesse avec un suspense sonore.
-3. Le prénom sélectionné s'affiche en grand au centre de l'écran sous une pluie festive de confettis 🎉 !
+### Saisir les prénoms
+- Collez ou tapez les prénoms dans la zone de texte.
+- Séparateurs acceptés : **retour à la ligne** ou **virgule**.
+- L'outil nettoie les espaces et met à jour le compteur d'élèves automatiquement.
+
+### Sauvegarde locale automatique
+La liste est enregistrée dans le navigateur (`localStorage`). Le lendemain, elle est prête sans manipulation.
+
+### Gérer les absents
+Sous la zone de saisie, chaque élève apparaît sous forme d'étiquette cliquable :
+- **Cliquez** sur un prénom → il est barré/grisé et exclu des tirages du jour.
+- **Recliquez** → il est réactivé.
+- La liste principale n'est jamais modifiée.
 
 ---
 
-## 3. Tirage Sans Répétition & Historique
+## 2. Lancer un tirage
 
-- **Mode sans remise :** L'outil retire automatiquement l'élève tiré du panier actif pour la séance en cours, assurant que **tous les élèves de la classe passent une fois** avant qu'un élève ne puisse être tiré une seconde fois.
-- **Historique horodaté :** Un panneau latéral garde la trace de l'ordre exact de passage de la séance.
-- **Bouton Réinitialiser :** Permet de remettre tous les élèves dans l'urne pour démarrer une nouvelle rotation en un clic.
+1. Cliquez sur le bouton vert **« 🎲 Lancer le tirage »** (ou `Espace` / `Entrée` au clavier).
+2. L'animation de défilement crée un moment de suspense.
+3. Le prénom sélectionné s'affiche en grand avec une pluie de confettis 🎉.
 
 ---
 
-## 🎨 Options & Accessibilité
+## 3. Tirage sans remise & historique
 
-- **Thème Clair / Sombre 🌙 :** S'adapte à la luminosité de la salle de classe ou du TBI.
-- **Gestion du Son 🔊 :** Activez ou coupez les effets sonores selon le degré de concentration souhaité dans la pièce.
-- **Raccourcis Clavier :**
-  - `Espace` ou `Entrée` : Déclencher le tirage.
-  - `Échap` : Réinitialiser la vue.
+- **Sans remise :** L'élève tiré est automatiquement retiré du panier pour la séance. **Tous les élèves passent une fois** avant qu'un deuxième tour ne commence.
+- **Historique :** Un panneau latéral conserve l'ordre exact de passage avec horodatage.
+- **Réinitialiser :** Remettez tous les élèves dans l'urne en un clic pour démarrer une nouvelle rotation.
+
+---
+
+## 4. Options & raccourcis
+
+| Réglage | Détail |
+|---|---|
+| 🌙 Thème clair / sombre | Adapté au TBI ou à la luminosité de la salle. |
+| 🔊 Son on / off | Coupez les effets sonores en période de concentration. |
+| `Espace` ou `Entrée` | Lancer le tirage. |
+| `Échap` | Réinitialiser la vue. |
 
 ---
 

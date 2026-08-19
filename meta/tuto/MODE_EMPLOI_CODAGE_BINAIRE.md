@@ -1,62 +1,59 @@
 # 💻 Mode d'emploi : Codage binaire
 
-Bienvenue dans le guide d'utilisation de **Codage binaire**, une application web interactive dédiée à l'apprentissage et à l'entraînement intensif au passage des nombres entiers décimaux vers leur écriture binaire (et réciproquement).
+**Codage binaire** est une application d'entraînement intensif à la conversion décimal ↔ binaire. L'élève manipule des cartes à points (méthode CS Unplugged) ou un tapis roulant industriel pour maîtriser la numération en base 2.
 
-Cette application s'aligne sur le plan d'études romand (Cycle 2, Décodages 7-8H · Activité 2 — *Codages en folie, séance 1*).
-
----
-
-## 🌟 Enjeux Pédagogiques (Utilité en classe)
-
-- **Numération de position en base 2 :** Comprendre que chaque colonne binaire a un poids qui double à chaque rangée vers la gauche ($1, 2, 4, 8, 16, 32, 64, 128$).
-- **Algorithme de conversion :** Développer des automatismes de décomposition gloutonne (retirer la plus grande puissance de 2 possible) ou d'addition binaire.
-- **Différenciation de la taille des données :** Découvrir la capacité maximale d'un quartet (4 bits $\rightarrow 0$ à $15$), de 6 bits ($0$ à $63$) et d'un octet complet (8 bits $\rightarrow 0$ à $255$).
+Alignement programme : Cycle 2, Décodages 7-8H · Activité 2 — *Codages en folie, séance 1*.
 
 ---
 
-## 1. Les 2 Modes de Conversion
+## Pourquoi cet outil ?
 
-L'application propose une double navigation dans les deux sens de conversion :
+- **Numération de position :** Comprendre que chaque colonne binaire a un poids qui double vers la gauche ($1, 2, 4, 8, 16, 32, 64, 128$).
+- **Décomposition gloutonne :** Automatiser le réflexe de retirer la plus grande puissance de 2 possible à chaque étape.
+- **Notion de capacité :** Découvrir qu'un quartet (4 bits) peut stocker 0 à 15, et qu'un octet (8 bits) peut stocker 0 à 255.
 
-| Mode | Principe | Démarche pour l'élève |
+---
+
+## 1. Deux sens de conversion
+
+| Mode | L'élève reçoit… | L'élève doit… |
 |---|---|---|
-| 🧮 **Décimal → Binaire** | Un nombre entier est donné (ex: `45`). | L'élève active/désactive les cartes de bits pour former la somme exacte ($32 + 8 + 4 + 1 = 45$). |
-| 🖥️ **Binaire → Décimal** | Une suite de 0 et 1 est affichée (ex: `00101100`). | L'élève calcule la somme des bits actifs ($32 + 8 + 4 = 44$) et saisit la valeur numérique. |
+| 🧮 **Décimal → Binaire** | Un nombre entier (ex. `45`) | Activer/désactiver les cartes de bits pour obtenir la somme exacte ($32+8+4+1 = 45$). |
+| 🖥️ **Binaire → Décimal** | Une suite de 0 et 1 (ex. `00101100`) | Additionner les bits actifs ($32+8+4 = 44$) et saisir le résultat. |
 
 ---
 
-## 2. Les Styles de Jeu : « Classique » vs « Usine (Tapis) »
+## 2. Deux styles visuels
 
-Au-dessus du sélecteur de difficulté, deux modes de visualisation sont disponibles :
-
-- **📦 Mode Classique (Cartes à points) :** Représente les bits sous forme de cartes d'inspiration méthode CS Unplugged. Chaque carte montre le nombre exact de points correspondant à sa valeur ($1, 2, 4, 8, \dots$). Les cartes retournées faces cachées valent 0, les cartes visibles valent 1.
-- **🏭 Mode Usine (Tapis roulant) :** Présentation gamifiée sous forme de tapis roulant industriel avec boîtes de composants électroniques et ambiance mécanique.
+- **📦 Classique (Cartes à points) :** Chaque bit est représenté par une carte montrant le nombre de points correspondant ($1, 2, 4, 8…$). Carte visible = 1, carte retournée = 0.
+- **🏭 Usine (Tapis roulant) :** Même mécanique, mais habillée d'un tapis roulant industriel avec boîtes et ambiance mécanique.
 
 ---
 
-## 3. Les 3 Niveaux de Difficulté
+## 3. Trois niveaux de difficulté
 
-- **🟢 Facile (4 bits) :** Nombres de **0 à 15** (colonnes : $8, 4, 2, 1$). Idéal pour appréhender le mécanisme sans surcharge cognitive.
-- **🟡 Moyen (6 bits) :** Nombres de **0 à 63** (colonnes : $32, 16, 8, 4, 2, 1$). Permet de manipuler des valeurs intermédiaires.
-- **🔴 Difficile (8 bits / 1 Octet) :** Nombres de **0 à 255** (colonnes : $128, 64, 32, 16, 8, 4, 2, 1$). Représente l'unité standard de la mémoire informatique.
-
----
-
-## 4. Feedback Interactif & Aide bienveillante
-
-- **Validation dynamique :** L'élève peut appuyer sur la touche **Entrée** du clavier ou cliquer sur **Valider**.
-- **Indices en cas d'erreur :** Si la somme proposée est incorrecte, un message d'aide adaptatif indique immédiatement si le résultat est *« Trop grand ! »* ou *« Trop petit ! »*, guidant l'élève dans son réajustement par essais-erreurs.
-- **Célébration des séries :** Après 3 victoires consécutives, une animation spéciale de feu 🔥 récompense la maîtrise du calcul.
+| Niveau | Bits | Valeurs possibles |
+|---|---|---|
+| 🟢 Facile | 4 bits | 0 à 15 (colonnes $8, 4, 2, 1$) |
+| 🟡 Moyen | 6 bits | 0 à 63 (colonnes $32, 16, 8, 4, 2, 1$) |
+| 🔴 Difficile | 8 bits (1 octet) | 0 à 255 (colonnes $128, 64, 32, 16, 8, 4, 2, 1$) |
 
 ---
 
-## 5. Raccourcis Clavier & Confort
+## 4. Aide bienveillante
+
+- **Feedback immédiat :** Si la somme est incorrecte, un message indique « Trop grand ! » ou « Trop petit ! » pour guider le réajustement.
+- **Célébration des séries :** Après 3 victoires consécutives, une animation de feu 🔥 récompense la maîtrise.
+
+---
+
+## 5. Raccourcis clavier
 
 | Touche | Action |
 |---|---|
-| `1` à `8` | Basculer directement l'état du bit correspondant |
+| `1` à `8` | Basculer l'état du bit correspondant |
 | `Entrée` | Valider la réponse |
-| `Espace` | Passer au défi suivant après une victoire |
+| `Espace` | Passer au défi suivant |
 
 ---
 

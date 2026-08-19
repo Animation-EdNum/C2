@@ -1,41 +1,79 @@
 # 📦 Mode d'emploi : Machine à trier
 
-Bienvenue dans le guide d'utilisation de la **Machine à trier**, une application web interactive conçue pour faire découvrir aux élèves les principes des **algorithmes de tri par comparaison** (tri par sélection, tri à bulles) de manière tactile et manipulatoire.
+**Machine à trier** est une application web interactive qui enseigne les principes du **classement, du tri et de la catégorisation** à travers une activité de manipulation ludique. L'élève doit ranger des objets dans des bacs étiquetés en fonction d'un critère donné (couleur, forme, quantité ou taille).
 
 ---
 
-## 🌟 Enjeux Pédagogiques (Utilité en classe)
+## 🌟 Pourquoi utiliser cet outil en classe ?
 
-- **Comprendre la notion d'ordre et de tri :** Ranger des éléments (nombres, lettres, objets de poids différents) selon un critère croissant ou décroissant.
-- **La comparaison 2 à 2 :** Prendre conscience qu'un ordinateur ne peut pas "voir" toute une liste d'un coup d'œil, mais doit comparer les éléments deux par deux à l'aide d'un opérateur de comparaison ($A < B$ ou $A > B$).
-- **Stratégie algorithmique :** Développer une méthode systématique pour minimiser le nombre de pesées et de comparaisons nécessaires.
-
----
-
-## 1. Comment fonctionne l'activité
-
-1. Une série de conteneurs fermés ou d'objets aux masses inconnues est présentée en vrac.
-2. Une **balance à deux plateaux** est mise à disposition au centre de la zone de travail.
-3. L'élève fait glisser deux objets sur les plateaux de la balance pour observer lequel est le plus lourd (ou le plus léger).
-4. En répétant ces comparaisons logiques, l'élève replace les objets dans les bacs finaux numérotés dans l'ordre croissant exact.
-5. Une fois tous les bacs remplis, la machine valide le résultat :
-   - Si le rangement est parfait : succès avec confettis et progression du score !
-   - En cas d'erreur de classement : les éléments mal placés sont mis en évidence pour permettre une analyse immédiate.
+- **Classer et catégoriser :** Identifier un critère de tri parmi les propriétés d'un objet et l'appliquer de façon systématique.
+- **Préparer la notion d'algorithme de tri :** Comprendre qu'un ordinateur trie en suivant des règles précises, une pièce à la fois — il ne peut pas « voir d'un coup d'œil » où va chaque élément.
+- **Développer la rigueur logique :** Distinguer les propriétés pertinentes d'un objet (sa couleur, sa forme, son nombre de points, sa taille) et ignorer les distracteurs.
+- **Travail de la motricité fine :** Glisser-déposer les objets vers les bacs (tactile ou souris).
 
 ---
 
-## 2. Niveaux de Difficulté & Modes
+## 1. Les 4 critères de tri (onglets)
 
-- **🟢 Facile :** 3 à 4 éléments à trier (idéal pour introduire la balance).
-- **🟡 Moyen :** 5 à 6 éléments à ordonner.
-- **🔴 Difficile :** 7 à 8 éléments (impose d'appliquer une stratégie rigoureuse comme le tri par sélection).
+L'application propose 4 modes, chacun accessible via un onglet en haut de l'écran :
+
+| Onglet | Critère de tri | Exemples de bacs |
+|---|---|---|
+| 🎨 **Par couleur** | La couleur de l'objet | Rouge, Bleu, Vert, Jaune, Violet |
+| ⭐ **Par forme** | La forme géométrique | Cercle, Carré, Triangle, Étoile, Hexagone |
+| 🔢 **Par quantité** | Le nombre de points affichés (dé) | 1, 2, 3, 4, 5, 6 |
+| 📏 **Par taille** | La grandeur de l'objet | Petit, Moyen, Grand, Très grand |
+
+> 💡 L'application alterne automatiquement entre les critères au bout de quelques niveaux réussis pour maintenir l'attention et varier les compétences sollicitées.
 
 ---
 
-## 3. Ergonomie & Accessibilité Tactile
+## 2. Niveaux de difficulté
 
-- **Glisser-Déposer tactile universel :** Fonctionne de manière fluide aussi bien à la souris que sur tablette tactile ou tableau blanc interactif (TBI).
-- **Mode sans glisser (`&noDrag=1`) :** Permet de sélectionner les objets par simple clic successif pour les élèves ayant des difficultés de motricité fine.
+Trois niveaux sont disponibles sous les onglets :
+
+- **🟢 Facile :** Peu d'objets à trier et peu de bacs — idéal pour la découverte.
+- **🟡 Moyen :** Davantage d'objets à répartir dans des bacs plus nombreux.
+- **🔴 Difficile :** Grand nombre d'objets avec des critères exigeant une observation fine.
+
+---
+
+## 3. Comment jouer
+
+1. **Observez les bacs :** Chaque bac porte une étiquette indiquant quel type d'objet il accueille (ex. « Rouge », « Triangle », « 4 »).
+2. **Triez les objets :**
+   - **Glisser-déposer :** Faites glisser un objet depuis la zone de départ et déposez-le dans le bac correspondant.
+   - **Clic / Tap :** Cliquez sur un objet (il s'illumine), puis cliquez sur le bac de destination.
+3. **Vérification :** Une fois tous les objets placés, le résultat est vérifié :
+   - ✅ Tous les objets correctement classés → célébration et confettis 🎉 !
+   - ❌ Erreur de classement → les objets mal rangés sont mis en évidence pour correction.
+
+---
+
+## 4. Deux styles de jeu
+
+| Style | Présentation visuelle | Interaction |
+|---|---|---|
+| 📦 **Classique** | Les objets sont posés librement dans une zone statique. | L'élève trie à son rythme. |
+| 🏭 **Usine (Tapis roulant)** | Les objets défilent sur un tapis roulant animé. | L'élève doit attraper les objets au vol et les ranger avant qu'ils ne défilent ! |
+
+> Le mode Usine ajoute une dimension de rapidité et transforme l'activité en défi chronométré stimulant.
+
+---
+
+## 5. Suivi des scores
+
+- **Compteur de victoires :** S'incrémente à chaque niveau parfaitement trié.
+- **Série 🔥 :** Compte les niveaux réussis du premier coup consécutivement.
+- **Statistiques détaillées :** Accessibles via le bouton camembert en bas de l'écran.
+
+---
+
+## 6. Accessibilité
+
+- **Glisser-déposer tactile :** Fonctionne sur tablettes, TBI et écrans tactiles.
+- **Mode sans glisser (`&noDrag=1`) :** Sélection par simple clic/tap successif pour les élèves ayant des difficultés de motricité fine.
+- **Thème sombre 🌙** et **Son on/off 🔊** via le menu engrenage ⚙.
 
 ---
 

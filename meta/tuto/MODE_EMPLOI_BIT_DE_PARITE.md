@@ -1,65 +1,77 @@
 # 🛡️ Mode d'emploi : Bit de parité
 
-Bienvenue dans le guide d'utilisation de **Bit de parité – Entraînement & Détection**, une application web interactive permettant aux élèves de comprendre les principes fondamentaux de l'**intégrité des données** et de la **détection automatique d'erreurs** lors d'une transmission réseau.
+**Bit de parité** enseigne comment un ordinateur détecte qu'un message a été altéré pendant sa transmission. L'élève apprend à calculer des bits de contrôle et à localiser un bit corrompu par croisement de coordonnées.
 
-Cette ressource s'intègre dans le programme du Cycle 2 (Décodages 7-8H · Enquête 5 — *Peut-on détecter des erreurs dans un message transmis ?*).
-
----
-
-## 🌟 Enjeux Pédagogiques (Utilité en classe)
-
-- **Notion de métadonnée :** Comprendre qu'un ordinateur n'envoie pas seulement des données brutes, mais ajoute des bits de contrôle (bits de parité) pour vérifier la fiabilité du transport.
-- **Principe de parité paire :** Savoir compter les bits à 1 sur une ligne ou une colonne et choisir la valeur du bit de contrôle pour que le total de "1" soit toujours **pair** ($0, 2, 4, 6\dots$).
-- **Localisation par coordonnées (Croisement 2D) :** Détecter une case erronée au croisement précis de la ligne impaire et de la colonne impaire.
-- **Pensée logique et rigueur :** Développer un raisonnement structuré de vérification ligne par ligne et colonne par colonne.
+Alignement programme : Cycle 2, Décodages 7-8H · Enquête 5 — *Peut-on détecter des erreurs… ?*
 
 ---
 
-| Mode | Défi | Mécanisme de résolution |
+## Pourquoi cet outil ?
+
+- **Métadonnées :** Comprendre qu'un ordinateur ajoute des bits de contrôle aux données brutes pour vérifier leur intégrité.
+- **Parité paire :** Savoir compter les bits à 1 sur une ligne ou colonne et choisir le bit de contrôle pour que le total soit toujours **pair**.
+- **Localisation 2D :** Détecter une case erronée au croisement exact de la ligne impaire et de la colonne impaire.
+
+---
+
+## 1. Deux modes de jeu
+
+| Mode | Mission | Ce que fait l'élève |
 |---|---|---|
-| 🖊️ **Entraînement** | Calculer et placer les bits de parité en bordure | Compléter les cases vides pour que chaque ligne et colonne ait un nombre pair de "1". |
-| 🔍 **Trouve l'erreur** | Identifier le bit corrompu lors d'une transmission | Repérer la ligne impaire et la colonne impaire, puis cliquer à leur intersection. |
-
-### 1.1. Mode « Entraînement » (Générer la parité)
-- **Principe :** Une matrice de données est remplie aléatoirement de 0 et de 1.
-- **Action de l'élève :** Remplir les cases de bordure vides (la dernière case de chaque ligne, la dernière case de chaque colonne, et la case du coin inférieur droit) avec un `0` ou un `1` de telle sorte que chaque ligne et chaque colonne contienne un **nombre pair de 1**.
-- **Méthode :**
-  - Si une ligne contient trois "1" (nombre impair), l'élève ajoute un `1` pour obtenir quatre "1" (nombre pair).
-  - Si une ligne contient déjà deux "1" (nombre pair), l'élève ajoute un `0` pour conserver la parité.
-
-### 1.2. Mode « Trouve l'erreur » (Détecter la corruption)
-- **Scénario :** Un parasite réseau a altéré un bit pendant la transmission. Une grille complète vous est soumise, mais un des bits s'est inversé (un 0 est devenu un 1, ou inversement).
-- **Action de l'élève :**
-  1. Inspectez chaque ligne et chaque colonne.
-  2. Repérez la seule **ligne** qui contient un nombre **impair** de 1.
-  3. Repérez la seule **colonne** qui contient un nombre **impair** de 1.
-  4. Cliquez sur la case située à l'**intersection** de cette ligne et de cette colonne pour corriger l'erreur !
+| 🖊️ **Entraînement** | Calculer et placer les bits de parité | Compléter les cases vides en bordure pour que chaque ligne et colonne contienne un nombre pair de 1. |
+| 🔍 **Trouve l'erreur** | Identifier un bit corrompu | Repérer la ligne impaire et la colonne impaire, cliquer à leur intersection. |
 
 ---
 
-## 2. Les 3 Tailles de Grille (Niveaux de difficulté)
+## 2. Mode « Entraînement »
 
-- **🟢 Facile :** Grille $4 \times 4$ ($3 \times 3$ données + bordure de parité).
-- **🟡 Moyen :** Grille $5 \times 5$ ($4 \times 4$ données + bordure de parité).
-- **🔴 Difficile :** Grille $6 \times 6$ ($5 \times 5$ données + bordure de parité).
+Une matrice de 0 et de 1 est générée aléatoirement. Les **cases de bordure** (dernière colonne, dernière ligne) sont vides.
 
----
-
-## 3. Mode Normal vs Mode Strict
-
-- **Mode Normal :** Les compteurs de parité fournissent un guidage immédiat.
-- **Mode Strict (via partage `&strictMode=1`) :** Aucun indice visuel en temps réel. L'élève doit compter mentalement et valider sa grille d'un seul bloc, simulant un véritable protocole de communication informatique sans assistance.
+**Méthode :**
+- Comptez les 1 dans chaque ligne.
+  - Si le nombre est **impair** → placez `1` pour rétablir la parité.
+  - Si le nombre est **pair** → placez `0` pour la conserver.
+- Procédez de même pour chaque colonne, puis pour la case du coin.
 
 ---
 
-## 🏫 Activité magique en classe débranchée (Le Tour de Magie)
+## 3. Mode « Trouve l'erreur »
 
-Avant d'utiliser l'application sur écran, réalisez le célèbre **tour de magie de la parité** avec des cartes bicolores (ex. faces noires et blanches) :
-1. L'enseignant dispose une grille de 5x5 cartes au hasard.
-2. L'enseignant ajoute une 6e ligne et une 6e colonne en expliquant qu'il "complique le jeu" (en réalité, il pose la parité paire).
-3. L'enseignant se retourne. Un élève retourne **une seule carte** dans la grille.
-4. L'enseignant se retourne, balaie la grille du regard et désigne instantanément la carte retournée en cherchant l'intersection des lignes et colonnes impaires !
-5. Les élèves découvrent ensuite le secret mathématique en s'exerçant sur l'application Web.
+Un parasite réseau a inversé **un seul bit** dans une grille complète (un 0 est devenu un 1, ou inversement).
+
+1. Inspectez chaque **ligne** : laquelle a un nombre impair de 1 ?
+2. Inspectez chaque **colonne** : laquelle a un nombre impair de 1 ?
+3. Cliquez sur la case à l'**intersection** de cette ligne et de cette colonne.
+
+---
+
+## 4. Niveaux de difficulté
+
+| Niveau | Taille de la grille | Zone de données |
+|---|---|---|
+| 🟢 Facile | $4 \times 4$ | $3 \times 3$ données + bordure de parité |
+| 🟡 Moyen | $5 \times 5$ | $4 \times 4$ données + bordure de parité |
+| 🔴 Difficile | $6 \times 6$ | $5 \times 5$ données + bordure de parité |
+
+---
+
+## 5. Mode strict
+
+En mode normal, des compteurs de parité guident l'élève en temps réel.
+
+Avec l'option de partage `&strictMode=1`, aucun indice visuel n'est affiché : l'élève doit compter mentalement et valider d'un bloc, comme un véritable protocole réseau.
+
+---
+
+## 🏫 Activité débranchée : Le Tour de Magie
+
+Avant l'écran, réalisez ce tour classique avec des cartes bicolores (noir / blanc) :
+
+1. Disposez une grille de 5×5 cartes au hasard devant la classe.
+2. Ajoutez « innocemment » une 6ᵉ ligne et une 6ᵉ colonne (en réalité : la parité paire).
+3. Retournez-vous. Un élève retourne **une seule carte**.
+4. Retournez-vous, balayez la grille du regard et désignez instantanément la carte modifiée.
+5. Les élèves découvrent ensuite le secret mathématique en s'exerçant sur l'application.
 
 ---
 

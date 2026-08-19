@@ -1,52 +1,59 @@
 # 🛠️ Mode d'emploi : Outils Enseignants & Inclusion
 
-Bienvenue dans le portail des utilitaires pratiques conçus pour faciliter le travail quotidien des enseignant·e·s et favoriser l'inclusion scolaire.
+Portail des utilitaires pratiques pour les enseignant·e·s de la **Suite EdNum** : barème de notes, tirage au sort équitable, et simulateur de troubles d'apprentissage.
 
-Tous ces outils fonctionnent **100% hors-ligne**, sans aucune publicité, sans inscription, sans collecte de données personnelles, et sont distribués sous licence libre **AGPL-3.0**.
+Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscription, sans collecte de données personnelles (conformité LPD / RGPD), et sont distribués sous licence libre **AGPL-3.0**.
 
 ---
 
-| Outil | Mission principale | Guide détaillé |
+## Guides détaillés
+
+| Outil | En bref | Guide |
 |---|---|---|
-| 📊 **Générateur de Barèmes** | Conversion points $\rightarrow$ notes, seuil 4.0, arrondis et export PDF propre | 👉 [Guide du Barème](MODE_EMPLOI_BAREME.md) |
-| 🎲 **Tirage au Sort** | Désignation équitable sans remise, gestion des absents et historique | 👉 [Guide du Tirage au Sort](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
-| 👓 **Lentille de Dyslexie** | Simulation des troubles DYS et expérimentation des aménagements inclusifs | 👉 [Guide de la Lentille DYS](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
-
-### 1. [📊 Générateur de Barèmes](MODE_EMPLOI_BAREME.md)
-*Établissez des grilles de notation précises, équitables et adaptées à vos évaluations sommatiques ou formatives.*
-- Calcul instantané de la table de conversion Points $\rightarrow$ Notes (échelle suisse 1 à 6).
-- Définition libre du seuil de suffisance pour le 4.0 (pourcentage ou nombre de points).
-- Courbes linéaires standard ou bi-linéaires ajustées.
-- Choix de l'arrondi (dixième `0.1`, quart de point `0.25`, demi-point `0.5`).
-- Calculateur rapide et mise en page d'impression PDF épurée sur une seule page.
-- 👉 **[Consulter le mode d'emploi complet du Barème](MODE_EMPLOI_BAREME.md)**
+| 📊 **Générateur de Barèmes** | Table de conversion points → notes (échelle suisse 1 à 6), seuil du 4.0 ajustable, export PDF | [Ouvrir le guide](MODE_EMPLOI_BAREME.md) |
+| 🎲 **Tirage au Sort** | Désignation aléatoire équitable, gestion des absents, tirage sans remise | [Ouvrir le guide](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
+| 👓 **Lentille de Dyslexie** | Simulateur immersif DYS et aménagements compensatoires en direct | [Ouvrir le guide](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
 
 ---
 
-### 2. [🎲 Tirage au Sort](MODE_EMPLOI_TIRAGE_AU_SORT.md)
-*Désignez des élèves au hasard de manière ludique, transparente et rigoureusement équitable.*
-- Saisie rapide et sauvegarde locale automatique de la liste de classe dans le navigateur.
-- Gestion instantanée des élèves absents en un clic sans modifier la liste principale.
-- Mode sans remise (garantit que tous les élèves passent une fois par rotation).
-- Animation festive avec confettis et suivi de l'historique de passage de la séance.
-- 👉 **[Consulter le mode d'emploi complet du Tirage au Sort](MODE_EMPLOI_TIRAGE_AU_SORT.md)**
+### 📊 Générateur de Barèmes
+
+*Calculez instantanément la grille de notation de vos évaluations.*
+
+- Courbe linéaire standard ou bi-linéaire avec seuil du 4.0 ajustable (en % ou en points).
+- Choix de l'arrondi : au dixième, au quart de note, au demi-point ou à l'unité.
+- Calculateur rapide : tapez un score, la note s'affiche immédiatement.
+- Impression / PDF : mise en page propre et compacte sur une seule page A4.
+- 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_BAREME.md)
 
 ---
 
-### 3. [👓 Lentille de Dyslexie (Simulateur DYS)](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
-*Un outil d'immersion et de sensibilisation aux troubles des apprentissages pour la formation et la classe inclusive.*
-- Reproduction visuelle des perturbations de lecture (permutations $b/d$, lettres flottantes, encombrement visuel).
-- Expérimentation en direct des outils de compensation : police OpenDyslexic, règle de guidage visuel, coloration de syllabes, interlignage aéré, fonds teintés pastel.
-- Scénario d'atelier pédagogique pour les réunions de parents, formations ou sensibilisation des élèves.
-- 👉 **[Consulter le mode d'emploi complet de la Lentille de Dyslexie](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)**
+### 🎲 Tirage au Sort
+
+*Désignez un·e élève au hasard de manière ludique et incontestable.*
+
+- Saisie rapide de la liste de classe (virgules ou retours à la ligne), sauvegarde locale automatique.
+- Gestion des absents en un clic — pas besoin de modifier la liste.
+- Mode sans remise : chaque élève passe une fois avant qu'un deuxième tour ne commence.
+- Animation festive avec confettis et historique de passage horodaté.
+- 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_TIRAGE_AU_SORT.md)
 
 ---
 
-## 🔒 Confidentialité & Respect de la vie privée (LPD / RGPD)
+### 👓 Lentille de Dyslexie
 
-Toutes les applications pour enseignants s'exécutent intégralement côté client dans votre navigateur :
-- **Zéro transmission de données :** Les noms de vos élèves et les résultats d'évaluations ne quittent jamais votre machine.
-- **Fonctionnement hors-ligne :** Même en cas de coupure de réseau en classe, tous les outils restent 100% opérationnels grâce au cache PWA.
+*Vivez l'expérience de lecture d'un élève dyslexique — et découvrez comment l'aider.*
+
+- Perturbations visuelles simulées : confusions b/d, lettres flottantes, encombrement visuel.
+- Outils de compensation activables en direct : police OpenDyslexic, règle de lecture, coloration syllabique, fond pastel.
+- Scénario d'atelier clé en main pour réunions de parents ou formations enseignantes (15-20 min).
+- 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
+
+---
+
+## 🔒 Confidentialité
+
+Les noms de vos élèves et vos résultats d'évaluations ne quittent **jamais** votre appareil. Tout s'exécute dans le navigateur, même sans connexion Internet.
 
 ---
 
