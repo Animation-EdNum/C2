@@ -152,7 +152,7 @@ function loadRecents() {
 
     const recentsGrid = document.getElementById('recents-grid');
     if (!recentsGrid) return;
-    recentsGrid.innerHTML = '';
+    recentsGrid.textContent = '';
 
     let addedCount = 0;
 
