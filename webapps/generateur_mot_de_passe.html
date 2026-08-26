@@ -85,68 +85,87 @@
         </header>
 
         <main>
-            <details class="instructions">
-                <summary><strong>📖 Consigne & conseils (cliquer pour ouvrir)</strong></summary>
-                <div style="margin-top:10px;">
-                    Utilise le générateur ci-dessous pour créer un mot de passe solide et facile à retenir.<br><br>
-                    <strong>🪄 Comment ça marche ?</strong>
-                    <ol style="margin: 6px 0 8px 0; padding-left: 22px;">
-                        <li>Choisis un <strong>mot de base</strong> que tu connais bien (un animal, un objet, un lieu…).
-                        </li>
-                        <li>Ajoute un <strong>nombre</strong> qui compte pour toi (numéro préféré…).</li>
-                        <li>Indique le <strong>nom du service</strong> concerné (ednum, ENT…) : les 4 premières lettres
-                            seront ajoutées automatiquement.</li>
-                        <li>Choisis un <strong>caractère spécial</strong> (!, @, #, $…) pour renforcer le tout.</li>
-                        <li>Réarrange l'ordre des blocs comme tu veux, puis clique sur <em>Générer</em> !</li>
-                    </ol>
-                    <strong>💡 Exemple :</strong> avec le mot <em>« liCorne »</em>, le nombre <em>« 27 »</em>,
-                    le service <em>« outlook »</em> et le caractère <em>« ! »</em>, tu obtiens le mot de passe
-                    <em>« liCorne27!outl »</em> — bien plus dur à pirater qu'un simple mot court !
-                </div>
-            </details>
+            <!-- Navigation par Onglets / Modes -->
+            <nav class="app-tabs-nav" role="tablist" aria-label="Modes de l'application">
+                <button class="tab-btn active" id="tab-create" role="tab" aria-selected="true"
+                    aria-controls="view-create" data-tab="create">
+                    <i data-fa="key"></i> 🪄 Créer un mot de passe
+                </button>
+                <button class="tab-btn" id="tab-test" role="tab" aria-selected="false" aria-controls="view-test"
+                    data-tab="test">
+                    <i data-fa="flask"></i> 🧪 Tester un mot de passe
+                </button>
+                <button class="tab-btn" id="tab-tips" role="tab" aria-selected="false" aria-controls="view-tips"
+                    data-tab="tips">
+                    <i data-fa="shield-check"></i> 🛡️ Bonnes pratiques
+                </button>
+            </nav>
 
-            <div class="password-grid">
-                <!-- Inputs, Generator & Rules -->
-                <div class="pw-tester-card">
-                    <!-- Générateur guidé -->
-                    <div class="pw-generator">
-                        <div class="pw-title">🪄 Crée un mot de passe fort</div>
+            <!-- VUE 1 : CRÉATION GUIDÉE -->
+            <section id="view-create" class="tab-content active" role="tabpanel" aria-labelledby="tab-create">
+                <details class="instructions">
+                    <summary><strong>📖 Comment fonctionne la méthode des blocs ? (cliquer pour ouvrir)</strong>
+                    </summary>
+                    <div style="margin-top:10px;">
+                        Pour créer un mot de passe facile à retenir pour toi mais impossible à deviner pour les pirates,
+                        associe 4 ingrédients simples :<br><br>
+                        <ol style="margin: 6px 0 8px 0; padding-left: 22px;">
+                            <li>Un <strong>mot de base</strong> que tu connais bien (un animal, un objet, un lieu…).
+                            </li>
+                            <li>Un <strong>nombre</strong> (une date importante, un numéro préféré…).</li>
+                            <li>Le <strong>nom du site ou de l'application</strong> (ex: instagram, scratch, gmail…) :
+                                les 4 premières lettres seront ajoutées automatiquement !</li>
+                            <li>Un <strong>caractère spécial</strong> (!, @, #, $, %…) pour verrouiller le tout.</li>
+                        </ol>
+                        <strong>💡 Exemple :</strong> avec le mot <em>« liCorne »</em>, le nombre <em>« 2026 »</em>,
+                        le site <em>« instagram »</em> et le caractère <em>« ! »</em>, tu obtiens le mot de passe
+                        <em>« liCorne2026!inst »</em> !
+                    </div>
+                </details>
+
+                <div class="password-grid">
+                    <!-- Formulaire de génération par blocs -->
+                    <div class="pw-tester-card">
+                        <div class="pw-title">🪄 Remplis les 4 blocs de construction</div>
 
                         <div class="pw-generator-grid">
                             <!-- Mot de base -->
                             <div class="form-group">
-                                <label for="generator-base-word">Mot de base (min. 4 lettres, dont une MAJUSCULE)
-                                    :</label>
+                                <label for="generator-base-word">1. Mot de base (min. 4 lettres) :</label>
                                 <input type="text" id="generator-base-word" class="pw-input" placeholder="Ex: laPin"
                                     aria-label="Mot de base pour générer un mot de passe">
+                                <span class="field-help">Met au moins une MAJUSCULE pour le rendre plus fort.</span>
                             </div>
 
                             <!-- Nombre -->
                             <div class="form-group">
-                                <label for="generator-number">Nombre (1 à 4 chiffres) :</label>
+                                <label for="generator-number">2. Nombre (1 à 4 chiffres) :</label>
                                 <input type="text" id="generator-number" class="pw-input" placeholder="Ex: 2026"
                                     maxlength="4" aria-label="Nombre à ajouter">
+                                <span class="field-help">Une année, un chiffre fétiche...</span>
                             </div>
 
-                            <!-- Nom du service -->
+                            <!-- Nom du site ou application -->
                             <div class="form-group">
-                                <label for="generator-service">Nom du service :</label>
-                                <input type="text" id="generator-service" class="pw-input" placeholder="Ex: instagram"
-                                    aria-label="Nom du service (optionnel)">
+                                <label for="generator-service">3. Nom du site ou de l'application :</label>
+                                <input type="text" id="generator-service" class="pw-input"
+                                    placeholder="Ex: instagram, tiktok, gmail…"
+                                    aria-label="Nom du site ou de l'application">
+                                <span class="field-help">Les 4 premières lettres seront utilisées.</span>
                             </div>
 
                             <!-- Caractère spécial -->
                             <div class="form-group">
-                                <label for="generator-special-char">Caractère spécial :</label>
+                                <label for="generator-special-char">4. Caractère spécial :</label>
                                 <input type="text" id="generator-special-char" class="pw-input"
                                     placeholder="Ex: !, $, @, % ou +" maxlength="1"
                                     aria-label="Caractère spécial à inclure">
+                                <span class="field-help">Un symbole pour renforcer ton mot de passe.</span>
                             </div>
 
                             <!-- Position des éléments -->
                             <div class="form-group" style="grid-column: span 2;">
-                                <label>Position des éléments (clique sur les flèches ou utilise ← / → au clavier)
-                                    :</label>
+                                <label>Ordre des éléments (glisse ou utilise les flèches ← / →) :</label>
                                 <div id="elements-order-container" class="elements-order-row"></div>
                             </div>
                         </div>
@@ -164,94 +183,191 @@
                                 aria-label="Longueur minimale du mot de passe">
                         </div>
 
-                        <button class="btn btn-primary" id="generate-pw-btn" style="width: 100%;">Générer le mot de
-                            passe</button>
-                    </div>
-
-                    <!-- Input mot de passe testé -->
-                    <div class="pw-title">🔑 Mot de passe testé</div>
-                    <div class="pw-input-wrapper">
-                        <input type="text" id="password-input" class="pw-input" placeholder="Tape un mot de passe ici…"
-                            aria-label="Mot de passe à tester">
-                        <button id="password-copy" class="copy-pw-btn" title="Copier dans le presse-papier"
-                            aria-label="Copier le mot de passe">
-                            <i data-fa="copy"></i>
-                        </button>
-                        <button id="password-toggle" class="toggle-pw-btn" title="Afficher/Masquer le mot de passe"
-                            aria-label="Afficher/Masquer le mot de passe">
-                            <i data-fa="dt-eye-slash"></i>
+                        <button class="btn btn-primary" id="generate-pw-btn" style="width: 100%;">
+                            <i data-fa="key"></i> Générer mon mot de passe
                         </button>
                     </div>
 
-                    <!-- Visualisation par blocs colorés -->
-                    <div id="password-colored-preview" class="password-colored-preview" aria-live="polite"></div>
+                    <!-- Visualisation du mot de passe généré -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="pw-locker-card">
+                            <h2>🔑 Ton mot de passe personnalisé</h2>
 
-                    <!-- Strength Meter -->
-                    <div class="strength-container">
-                        <div class="strength-bar-bg">
-                            <div class="strength-bar-fill" id="strength-bar"></div>
-                        </div>
-                        <div class="strength-label-row">
-                            <span>Robustesse :</span>
-                            <span class="strength-status" id="strength-status">Vide</span>
-                        </div>
-                    </div>
+                            <div class="pw-input-wrapper" style="width: 100%;">
+                                <input type="text" id="created-password-input" class="pw-input" readonly
+                                    placeholder="Remplis les champs à gauche..."
+                                    aria-label="Mot de passe généré par la méthode des blocs">
+                                <button id="created-password-copy" class="copy-pw-btn"
+                                    title="Copier dans le presse-papier" aria-label="Copier le mot de passe généré">
+                                    <i data-fa="copy"></i>
+                                </button>
+                                <button id="created-password-toggle" class="toggle-pw-btn"
+                                    title="Afficher/Masquer le mot de passe"
+                                    aria-label="Afficher/Masquer le mot de passe généré">
+                                    <i data-fa="dt-eye-slash"></i>
+                                </button>
+                            </div>
 
-                    <!-- Rules list -->
-                    <div class="criteria-checklist">
-                        <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins
-                            12 caractères</div>
-                        <div class="crit-item" id="crit-types"><span class="crit-icon crit-ko"></span> 🔀 Remplir au
-                            moins 3 des critères suivants :</div>
-                        <div style="padding-left: 30px; display: flex; flex-direction: column; gap: 8px;">
-                            <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au
-                                moins une lettre MAJUSCULE</div>
-                            <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au
-                                moins une lettre minuscule</div>
-                            <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au
-                                moins un chiffre (0-9)</div>
-                            <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au
-                                moins un caractère spécial (@, #, !, ?, etc.)</div>
-                        </div>
-                    </div>
+                            <!-- Visualisation par blocs colorés -->
+                            <div id="created-colored-preview" class="password-colored-preview" style="width: 100%;"
+                                aria-live="polite"></div>
 
-                    <!-- Avertissements sur les motifs faibles -->
-                    <div id="pattern-warning" class="pattern-warning" aria-live="polite"></div>
-                </div>
+                            <div class="strength-container" style="width: 100%;">
+                                <div class="strength-bar-bg">
+                                    <div class="strength-bar-fill" id="created-strength-bar"></div>
+                                </div>
+                                <div class="strength-label-row">
+                                    <span>Robustesse :</span>
+                                    <span class="strength-status" id="created-strength-status">En attente</span>
+                                </div>
+                            </div>
 
-                <!-- Right Column: Visual Gauge & Tips -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div class="pw-locker-card">
-                        <h2>Niveau de sécurité</h2>
-                        <div class="gauge-container">
-                            <svg viewBox="0 0 200 100" class="gauge-svg" role="img"
-                                aria-label="Jauge de sécurité du mot de passe">
-                                <!-- Background arc -->
-                                <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0" stroke-width="16"
-                                    stroke-linecap="round" />
-                                <!-- Foreground arc -->
-                                <path id="gauge-fill" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#ef4444"
-                                    stroke-width="16" stroke-linecap="round" stroke-dasharray="251.3"
-                                    stroke-dashoffset="251.3" />
-                            </svg>
-                            <div class="gauge-badge vulnerable" id="gauge-badge">Vulnérable</div>
+                            <hr class="gauge-separator">
+                            <div class="time-estimate-text" id="created-time-estimate">
+                                Remplis les 4 blocs pour tester la solidité de ton mot de passe !
+                            </div>
                         </div>
-                        <hr class="gauge-separator">
-                        <div class="time-estimate-text" id="time-estimate-text">
-                            <strong>instantané</strong> pour pirater ce mot de passe
-                        </div>
-                    </div>
-
-                    <div class="pw-tips-card">
-                        <strong>🛡️ Bonnes pratiques :</strong>
-                        <ul style="margin: 8px 0 0 0; padding-left: 18px;">
-                            <li>N'utilise jamais le même mot de passe pour deux comptes différents.</li>
-                            <li>Ne partage jamais tes mots de passe, même avec tes amis.</li>
-                            <li>Active la double authentification (2FA) dès que c'est possible.</li>
-                        </ul>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- VUE 2 : TESTEUR LIBRE -->
+            <section id="view-test" class="tab-content" role="tabpanel" aria-labelledby="tab-test" hidden>
+                <div class="password-grid">
+                    <!-- Champ de test et checklist -->
+                    <div class="pw-tester-card">
+                        <div class="pw-title">🧪 Saisis n'importe quel mot de passe à tester</div>
+
+                        <div class="pw-input-wrapper">
+                            <input type="text" id="password-input" class="pw-input"
+                                placeholder="Tape un mot de passe à tester ici…" aria-label="Mot de passe à tester">
+                            <button id="password-copy" class="copy-pw-btn" title="Copier dans le presse-papier"
+                                aria-label="Copier le mot de passe">
+                                <i data-fa="copy"></i>
+                            </button>
+                            <button id="password-toggle" class="toggle-pw-btn" title="Afficher/Masquer le mot de passe"
+                                aria-label="Afficher/Masquer le mot de passe">
+                                <i data-fa="dt-eye-slash"></i>
+                            </button>
+                        </div>
+
+                        <!-- Visualisation par blocs colorés -->
+                        <div id="password-colored-preview" class="password-colored-preview" aria-live="polite"></div>
+
+                        <!-- Strength Meter -->
+                        <div class="strength-container">
+                            <div class="strength-bar-bg">
+                                <div class="strength-bar-fill" id="strength-bar"></div>
+                            </div>
+                            <div class="strength-label-row">
+                                <span>Robustesse :</span>
+                                <span class="strength-status" id="strength-status">Vide</span>
+                            </div>
+                        </div>
+
+                        <!-- Rules list -->
+                        <div class="criteria-checklist">
+                            <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins
+                                12 caractères</div>
+                            <div class="crit-item" id="crit-types"><span class="crit-icon crit-ko"></span> 🔀 Remplir au
+                                moins 3 des critères suivants :</div>
+                            <div style="padding-left: 30px; display: flex; flex-direction: column; gap: 8px;">
+                                <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au
+                                    moins une lettre MAJUSCULE</div>
+                                <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au
+                                    moins une lettre minuscule</div>
+                                <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au
+                                    moins un chiffre (0-9)</div>
+                                <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au
+                                    moins un caractère spécial (@, #, !, ?, etc.)</div>
+                            </div>
+                        </div>
+
+                        <!-- Avertissements sur les motifs faibles -->
+                        <div id="pattern-warning" class="pattern-warning" aria-live="polite"></div>
+                    </div>
+
+                    <!-- Colonne Droite : Jauge SVG et Estimation -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="pw-locker-card">
+                            <h2>Niveau de sécurité face aux pirates</h2>
+                            <div class="gauge-container">
+                                <svg viewBox="0 0 200 100" class="gauge-svg" role="img"
+                                    aria-label="Jauge de sécurité du mot de passe">
+                                    <!-- Background arc -->
+                                    <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0"
+                                        stroke-width="16" stroke-linecap="round" />
+                                    <!-- Foreground arc -->
+                                    <path id="gauge-fill" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#ef4444"
+                                        stroke-width="16" stroke-linecap="round" stroke-dasharray="251.3"
+                                        stroke-dashoffset="251.3" />
+                                </svg>
+                                <div class="gauge-badge vulnerable" id="gauge-badge">Vulnérable</div>
+                            </div>
+                            <hr class="gauge-separator">
+                            <div class="time-estimate-text" id="time-estimate-text">
+                                <strong>instantané</strong> pour pirater ce mot de passe
+                            </div>
+                        </div>
+
+                        <div class="pw-tips-card">
+                            <strong>🛡️ Rappel important :</strong>
+                            <p style="margin: 6px 0 0 0;">
+                                Un mot de passe court ou basé sur un simple mot du dictionnaire (ex: <em>chocolat123</em>)
+                                peut être piraté en quelques secondes par un ordinateur de pirate !
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VUE 3 : BONNES PRATIQUES -->
+            <section id="view-tips" class="tab-content" role="tabpanel" aria-labelledby="tab-tips" hidden>
+                <div class="golden-rules-section">
+                    <h2>🛡️ Les 5 règles d'or de la sécurité des mots de passe</h2>
+                    <p class="section-intro">Pour protéger tes comptes sur Internet (école, réseaux sociaux, jeux),
+                        suis toujours ces conseils fondamentaux :</p>
+
+                    <div class="golden-rules-grid">
+                        <div class="rule-card">
+                            <div class="rule-icon">🔑</div>
+                            <h3>1. Un compte = un mot de passe unique</h3>
+                            <p>N'utilise jamais le même mot de passe pour plusieurs comptes. Si un pirate découvre le
+                                mot de passe de ton compte de jeu, il ne pourra pas accéder à ton e-mail !</p>
+                        </div>
+
+                        <div class="rule-card">
+                            <div class="rule-icon">🤫</div>
+                            <h3>2. Garde-le 100% secret</h3>
+                            <p>Ne donne jamais tes mots de passe à un ami, même à ton/ta meilleur(e) ami(e). Les seules
+                                personnes autorisées à les connaître sont tes parents ou ton enseignant(e).</p>
+                        </div>
+
+                        <div class="rule-card">
+                            <div class="rule-icon">🧱</div>
+                            <h3>3. Utilise la méthode des blocs</h3>
+                            <p>Associe un <strong>mot mémorisable</strong>, un <strong>nombre</strong>, le <strong>nom du
+                                    site</strong> et un <strong>symbole</strong>. C'est facile à retenir pour toi et
+                                impossible à deviner pour les pirates !</p>
+                        </div>
+
+                        <div class="rule-card">
+                            <div class="rule-icon">📱</div>
+                            <h3>4. Active la double authentification (2FA)</h3>
+                            <p>Dès que c'est proposé, active la vérification en 2 étapes. Même si quelqu'un découvre
+                                ton mot de passe, il aura besoin d'un code secret envoyé sur ton téléphone pour se
+                                connecter.</p>
+                        </div>
+
+                        <div class="rule-card">
+                            <div class="rule-icon">📓</div>
+                            <h3>5. Comment s'en souvenir sans danger ?</h3>
+                            <p>N'écris pas tes mots de passe sur un papier collé à ton écran. Utilise un gestionnaire
+                                de mots de passe ou conserve un cahier secret rangé en lieu sûr à la maison.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -299,6 +415,9 @@
         <i data-fa="dt-eye-slash"></i>
         <i data-fa="copy"></i>
         <i data-fa="heart"></i>
+        <i data-fa="flask"></i>
+        <i data-fa="shield-check"></i>
+        <i data-fa="dt-shield-check"></i>
     </div>
 </body>
 

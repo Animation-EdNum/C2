@@ -28,6 +28,30 @@
     // ==========================================
     // DOM REFERENCES
     // ==========================================
+    // Tabs
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    // Generator inputs (Mode 1 - Créer)
+    const elBaseWordInput = document.getElementById('generator-base-word');
+    const elNumberInput = document.getElementById('generator-number');
+    const elServiceInput = document.getElementById('generator-service');
+    const elSpecCharInput = document.getElementById('generator-special-char');
+    const elMinLengthSlider = document.getElementById('generator-min-length');
+    const elMinLengthVal = document.getElementById('min-length-val');
+    const elElementsOrderContainer = document.getElementById('elements-order-container');
+    const elGenerateBtn = document.getElementById('generate-pw-btn');
+
+    // Created password output elements (Mode 1)
+    const elCreatedPwInput = document.getElementById('created-password-input');
+    const elCreatedPwCopy = document.getElementById('created-password-copy');
+    const elCreatedPwToggle = document.getElementById('created-password-toggle');
+    const elCreatedColoredPreview = document.getElementById('created-colored-preview');
+    const elCreatedStrengthBar = document.getElementById('created-strength-bar');
+    const elCreatedStrengthStatus = document.getElementById('created-strength-status');
+    const elCreatedTimeEstimate = document.getElementById('created-time-estimate');
+
+    // Tested password elements (Mode 2 - Tester)
     const elPasswordInput = document.getElementById('password-input');
     const elPasswordToggle = document.getElementById('password-toggle');
     const elPasswordCopy = document.getElementById('password-copy');
@@ -38,24 +62,87 @@
     const elGaugeFill = document.getElementById('gauge-fill');
     const elGaugeBadge = document.getElementById('gauge-badge');
     const elTimeEstimate = document.getElementById('time-estimate-text');
+
+    // Projection & Header
     const elProjectionBtn = document.getElementById('projection-toggle-btn');
     const elProjectionText = document.getElementById('projectionToggleText');
-    const elElementsOrderContainer = document.getElementById('elements-order-container');
-    const elGenerateBtn = document.getElementById('generate-pw-btn');
-
-    const elBaseWordInput = document.getElementById('generator-base-word');
-    const elNumberInput = document.getElementById('generator-number');
-    const elServiceInput = document.getElementById('generator-service');
-    const elSpecCharInput = document.getElementById('generator-special-char');
-    const elMinLengthSlider = document.getElementById('generator-min-length');
-    const elMinLengthVal = document.getElementById('min-length-val');
 
     // ==========================================
     // STATE
     // ==========================================
-    let passwordUnlocked = false;
+    let passwordUnlockedMode1 = false;
+    let passwordUnlockedMode2 = false;
     let elementsOrder = ['word', 'number', 'service'];
     let lastGeneratedParts = null;
+    let currentTab = 'create';
+
+    // ==========================================
+    // TAB MANAGEMENT
+    // ==========================================
+    function switchTab(tabId, updateUrl = true) {
+        currentTab = tabId;
+
+        tabButtons.forEach(btn => {
+            const isSelected = btn.dataset.tab === tabId;
+            btn.classList.toggle('active', isSelected);
+            btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            btn.setAttribute('tabindex', isSelected ? '0' : '-1');
+        });
+
+        tabContents.forEach(content => {
+            const matches = content.id === `view-${tabId}`;
+            content.classList.toggle('active', matches);
+            content.hidden = !matches;
+        });
+
+        if (updateUrl) {
+            try {
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', tabId);
+                window.history.replaceState({}, '', url.toString());
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        window.fa?.createIcons?.();
+    }
+
+    // Keyboard navigation between tabs (ArrowLeft, ArrowRight, Home, End)
+    const tabList = document.querySelector('.app-tabs-nav');
+    if (tabList) {
+        tabList.addEventListener('keydown', (e) => {
+            const tabsArray = Array.from(tabButtons);
+            const index = tabsArray.indexOf(document.activeElement);
+            if (index === -1) return;
+
+            let nextIndex = index;
+            if (e.key === 'ArrowRight') {
+                nextIndex = (index + 1) % tabsArray.length;
+            } else if (e.key === 'ArrowLeft') {
+                nextIndex = (index - 1 + tabsArray.length) % tabsArray.length;
+            } else if (e.key === 'Home') {
+                nextIndex = 0;
+            } else if (e.key === 'End') {
+                nextIndex = tabsArray.length - 1;
+            } else {
+                return;
+            }
+
+            e.preventDefault();
+            tabsArray[nextIndex].focus();
+            const newTabId = tabsArray[nextIndex].dataset.tab;
+            if (typeof playSound === 'function') playSound('click');
+            switchTab(newTabId);
+        });
+    }
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (typeof playSound === 'function') playSound('click');
+            switchTab(btn.dataset.tab);
+        });
+    });
 
     // ==========================================
     // WEAK PATTERNS DETECTION
@@ -91,7 +178,7 @@
     }
 
     // ==========================================
-    // CRACK TIME ESTIMATION (REFINED)
+    // CRACK TIME ESTIMATION
     // ==========================================
     function estimateCrackTime(pw, patterns = []) {
         if (!pw) return "instantané";
@@ -185,8 +272,6 @@
         const k = Math.max(1, Math.ceil((minLength - otherLength) / word.length));
 
         // Capitalize deterministically for memorability:
-        // - All lowercase or all uppercase → first letter uppercase, rest lowercase
-        // - Mixed case → keep as entered by the student
         let modifiedBase;
         const isAllLower = word === word.toLowerCase();
         const isAllUpper = word === word.toUpperCase();
@@ -207,20 +292,20 @@
         return { password: pw, parts: parts };
     }
 
-    function renderColoredPreview(parts, order) {
-        if (!elColoredPreview) return;
+    function renderColoredPreviewInto(containerEl, parts, order) {
+        if (!containerEl) return;
 
         if (!parts || !parts.word) {
-            elColoredPreview.innerHTML = '';
-            elColoredPreview.style.display = 'none';
+            containerEl.innerHTML = '';
+            containerEl.style.display = 'none';
             return;
         }
 
-        elColoredPreview.innerHTML = '';
+        containerEl.innerHTML = '';
         const blockConfig = {
             word: { className: 'pw-block-word', label: 'Mot' },
             number: { className: 'pw-block-number', label: 'Nombre' },
-            service: { className: 'pw-block-service', label: 'Caractère / Service' }
+            service: { className: 'pw-block-service', label: 'Caractère / Site' }
         };
 
         for (const key of order) {
@@ -230,10 +315,10 @@
                 span.className = `pw-block ${blockConfig[key].className}`;
                 span.textContent = text;
                 span.title = `${blockConfig[key].label} : ${text}`;
-                elColoredPreview.appendChild(span);
+                containerEl.appendChild(span);
             }
         }
-        elColoredPreview.style.display = 'flex';
+        containerEl.style.display = 'flex';
     }
 
     function autoGeneratePassword() {
@@ -246,17 +331,78 @@
         if (baseWord.length >= 4 && /^\d{1,4}$/.test(numberVal)) {
             const res = generatePedagogicalPassword(baseWord, numberVal, serviceVal, specChar, elementsOrder, minLength);
             lastGeneratedParts = res.parts;
-            elPasswordInput.value = res.password;
-            updatePasswordChecklist(res.password, res.parts);
+            if (elCreatedPwInput) elCreatedPwInput.value = res.password;
+            updateCreatedPasswordUI(res.password, res.parts);
         } else {
             lastGeneratedParts = null;
-            elPasswordInput.value = '';
-            updatePasswordChecklist('', null);
+            if (elCreatedPwInput) elCreatedPwInput.value = '';
+            updateCreatedPasswordUI('', null);
+        }
+    }
+
+    function updateCreatedPasswordUI(pw, parts) {
+        if (!elCreatedStrengthBar || !elCreatedStrengthStatus) return;
+
+        if (!pw) {
+            elCreatedStrengthBar.style.width = '0%';
+            elCreatedStrengthBar.style.backgroundColor = 'var(--error)';
+            elCreatedStrengthStatus.textContent = 'En attente';
+            if (elCreatedTimeEstimate) {
+                elCreatedTimeEstimate.innerHTML = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
+            }
+            renderColoredPreviewInto(elCreatedColoredPreview, null, elementsOrder);
+            return;
+        }
+
+        const len = pw.length;
+        const hasUpper = /[A-Z]/.test(pw);
+        const hasLower = /[a-z]/.test(pw);
+        const hasNumber = /[0-9]/.test(pw);
+        const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+        const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
+        const patterns = detectWeakPatterns(pw);
+
+        let score = Math.min(40, Math.floor((len / 12) * 40)) + Math.min(60, typesCount * 15);
+        if (patterns.length > 0) score = Math.max(5, score - (patterns.length * 15));
+
+        elCreatedStrengthBar.style.width = `${score}%`;
+
+        let color = 'var(--error)';
+        let status = 'Faible ⚠️';
+
+        if (score > 40 && score <= 60) {
+            status = 'Moyen 🔏';
+            color = 'var(--warn)';
+        } else if (score > 60 && score < 100) {
+            status = 'Fort 👍';
+            color = 'var(--accent)';
+        } else if (score >= 100) {
+            status = 'Très fort ! 💪';
+            color = 'var(--success)';
+        }
+
+        elCreatedStrengthBar.style.backgroundColor = color;
+        elCreatedStrengthStatus.textContent = status;
+
+        const timeStr = estimateCrackTime(pw, patterns);
+        if (elCreatedTimeEstimate) {
+            elCreatedTimeEstimate.innerHTML = `Estimation : <strong>${timeStr}</strong> pour pirater ce mot de passe par force brute.`;
+        }
+
+        renderColoredPreviewInto(elCreatedColoredPreview, parts, elementsOrder);
+
+        const isSecure = len >= 12 && typesCount >= 3 && patterns.length === 0;
+        if (isSecure && !passwordUnlockedMode1) {
+            passwordUnlockedMode1 = true;
+            if (typeof playSound === 'function') playSound('success');
+            if (typeof launchConfetti === 'function') launchConfetti();
+        } else if (!isSecure && passwordUnlockedMode1) {
+            passwordUnlockedMode1 = false;
         }
     }
 
     // ==========================================
-    // UI UPDATES & CHECKLIST EVALUATION
+    // TESTER MODE UI (Mode 2)
     // ==========================================
     function updateCriterionUI(id, isOk) {
         const item = document.getElementById(id);
@@ -273,6 +419,8 @@
     }
 
     function updatePasswordChecklist(pw, parts = null) {
+        if (!elStrengthBar || !elStrengthStatus) return;
+
         // Rules
         const hasLength = pw.length >= 12;
         const hasUpper = /[A-Z]/.test(pw);
@@ -310,17 +458,14 @@
         // Strength calculations
         let score = 0;
         if (pw.length > 0) {
-            // Length up to 40 points
             if (hasLength) {
                 score += 40;
             } else {
                 score += Math.min(20, Math.floor((pw.length / 12) * 20));
             }
 
-            // Types up to 60 points
             score += Math.min(60, typesCount * 20);
 
-            // Penalty for weak patterns
             if (patterns.length > 0) {
                 score = Math.max(5, score - (patterns.length * 15));
             }
@@ -351,7 +496,6 @@
         elStrengthBar.style.backgroundColor = color;
         elStrengthStatus.textContent = status;
 
-        // Is the password secure?
         const isSecure = hasLength && hasTypes && patterns.length === 0;
 
         // Progressive SVG Gauge color & fill
@@ -393,20 +537,15 @@
         }
 
         // Colored preview rendering
-        const expectedGeneratedPw = parts ? elementsOrder.map(k => parts[k]).join('') : null;
-        if (parts && pw === expectedGeneratedPw) {
-            renderColoredPreview(parts, elementsOrder);
-        } else {
-            renderColoredPreview(null, elementsOrder);
-        }
+        renderColoredPreviewInto(elColoredPreview, parts, elementsOrder);
 
-        // Handle success audio & confetti
-        if (isSecure && !passwordUnlocked) {
-            passwordUnlocked = true;
+        // Handle success audio & confetti for Mode 2
+        if (isSecure && !passwordUnlockedMode2) {
+            passwordUnlockedMode2 = true;
             if (typeof playSound === 'function') playSound('success');
             if (typeof launchConfetti === 'function') launchConfetti();
-        } else if (!isSecure && passwordUnlocked) {
-            passwordUnlocked = false;
+        } else if (!isSecure && passwordUnlockedMode2) {
+            passwordUnlockedMode2 = false;
         }
     }
 
@@ -446,11 +585,11 @@
         const labels = {
             word: { text: 'Mot', name: 'Mot' },
             number: { text: 'Nombre', name: 'Nombre' },
-            service: { text: 'Caractère', name: 'Caractère / Service' }
+            service: { text: 'Site/App', name: 'Caractère / Site' }
         };
 
-        const specChar = elSpecCharInput.value;
-        const serviceVal = elServiceInput.value.trim();
+        const specChar = elSpecCharInput ? elSpecCharInput.value : "";
+        const serviceVal = elServiceInput ? elServiceInput.value.trim() : "";
         const serviceAbbr = serviceVal ? serviceVal.substring(0, 4).toLowerCase() : "";
         const servicePreviewText = specChar + serviceAbbr;
 
@@ -460,7 +599,7 @@
         } else if (specChar) {
             serviceText = specChar;
         } else {
-            serviceText = "Caractère";
+            serviceText = "Site/App";
         }
         labels.service.text = serviceText;
 
@@ -595,6 +734,44 @@
         elProjectionBtn.addEventListener('click', toggleProjectionMode);
     }
 
+    // Helper for clipboard copying
+    function setupCopyButton(btnEl, inputEl) {
+        if (!btnEl || !inputEl) return;
+        btnEl.addEventListener('click', () => {
+            const val = inputEl.value;
+            if (!val) {
+                if (typeof showToast === 'function') showToast('Aucun mot de passe à copier.', 'warn');
+                return;
+            }
+            navigator.clipboard.writeText(val).then(() => {
+                const masked = val.length <= 6
+                    ? val[0] + '•'.repeat(val.length - 1)
+                    : val.substring(0, 3) + '•••' + val.substring(val.length - 2);
+                if (typeof showToast === 'function') {
+                    showToast(`Copié : ${masked}`, 'success');
+                }
+                if (typeof playSound === 'function') playSound('click');
+            }).catch(() => {
+                if (typeof showToast === 'function') showToast('Impossible de copier automatiquement.', 'error');
+            });
+        });
+    }
+
+    // Helper for password visibility toggle
+    function setupToggleVisibility(btnEl, inputEl) {
+        if (!btnEl || !inputEl) return;
+        btnEl.addEventListener('click', () => {
+            if (inputEl.type === 'password') {
+                inputEl.type = 'text';
+                btnEl.innerHTML = '<i data-fa="dt-eye-slash"></i>';
+            } else {
+                inputEl.type = 'password';
+                btnEl.innerHTML = '<i data-fa="dt-eye"></i>';
+            }
+            window.fa?.createIcons?.();
+        });
+    }
+
     // ==========================================
     // EVENT LISTENERS
     // ==========================================
@@ -617,38 +794,22 @@
 
             const res = generatePedagogicalPassword(baseWord, numberVal, serviceVal, specChar, elementsOrder, minLength);
             lastGeneratedParts = res.parts;
-            elPasswordInput.value = res.password;
+            if (elCreatedPwInput) elCreatedPwInput.value = res.password;
 
-            if (elPasswordInput.type === 'password') {
-                elPasswordToggle.click();
+            if (elCreatedPwInput && elCreatedPwInput.type === 'password') {
+                if (elCreatedPwToggle) elCreatedPwToggle.click();
             }
 
-            updatePasswordChecklist(res.password, res.parts);
+            updateCreatedPasswordUI(res.password, res.parts);
             if (typeof showToast === 'function') showToast('Mot de passe généré !', 'success');
         });
     }
 
-    // Copy button with masked preview
-    if (elPasswordCopy) {
-        elPasswordCopy.addEventListener('click', () => {
-            const val = elPasswordInput.value;
-            if (!val) {
-                if (typeof showToast === 'function') showToast('Aucun mot de passe à copier.', 'warn');
-                return;
-            }
-            navigator.clipboard.writeText(val).then(() => {
-                const masked = val.length <= 6
-                    ? val[0] + '•'.repeat(val.length - 1)
-                    : val.substring(0, 3) + '•••' + val.substring(val.length - 2);
-                if (typeof showToast === 'function') {
-                    showToast(`Copié : ${masked}`, 'success');
-                }
-                if (typeof playSound === 'function') playSound('click');
-            }).catch(() => {
-                if (typeof showToast === 'function') showToast('Impossible de copier automatiquement.', 'error');
-            });
-        });
-    }
+    setupCopyButton(elCreatedPwCopy, elCreatedPwInput);
+    setupToggleVisibility(elCreatedPwToggle, elCreatedPwInput);
+
+    setupCopyButton(elPasswordCopy, elPasswordInput);
+    setupToggleVisibility(elPasswordToggle, elPasswordInput);
 
     // Generator inputs live reactions
     [elBaseWordInput, elNumberInput, elServiceInput, elSpecCharInput].forEach(input => {
@@ -669,21 +830,7 @@
         });
     }
 
-    // Password input toggle (eye / eye-slash)
-    if (elPasswordToggle) {
-        elPasswordToggle.addEventListener('click', () => {
-            if (elPasswordInput.type === 'password') {
-                elPasswordInput.type = 'text';
-                elPasswordToggle.innerHTML = '<i data-fa="dt-eye-slash"></i>';
-            } else {
-                elPasswordInput.type = 'password';
-                elPasswordToggle.innerHTML = '<i data-fa="dt-eye"></i>';
-            }
-            window.fa?.createIcons?.();
-        });
-    }
-
-    // Manual typing inside password input
+    // Manual typing inside test password input (Mode 2)
     if (elPasswordInput) {
         elPasswordInput.addEventListener('input', () => {
             updatePasswordChecklist(elPasswordInput.value, null);
@@ -694,11 +841,19 @@
     // INITIALIZATION
     // ==========================================
     renderElementsOrder();
+    autoGeneratePassword();
     updatePasswordChecklist('', null);
 
-    // URL parameter detection for TBI mode
+    // URL parameter detection for tab & TBI mode
     try {
         const urlParams = new URLSearchParams(window.location.search);
+        const tabParam = urlParams.get('tab');
+        if (tabParam && ['create', 'test', 'tips'].includes(tabParam)) {
+            switchTab(tabParam, false);
+        } else {
+            switchTab('create', false);
+        }
+
         if (urlParams.get('mode') === 'tbi' || urlParams.get('tbi') === '1' || urlParams.get('projection') === '1') {
             setProjectionMode(true);
         }
