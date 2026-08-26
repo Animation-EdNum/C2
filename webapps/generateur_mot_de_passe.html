@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Apprends à créer des mots de passe robustes et teste leur résistance en temps réel.">
+    <title>🔑 Générateur de mot de passe</title>
+    <meta property="og:title" content="Générateur de mot de passe">
+    <meta property="og:description"
+        content="Apprends à créer des mots de passe robustes et teste leur résistance en temps réel.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/tokens.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/utilities.css">
+    <link rel="stylesheet" href="../assets/css/generateur_mot_de_passe.css">
+    <script src="../assets/js/scores.js"></script>
+    <script src="../assets/js/fa-subset.js"></script>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../index.html" class="header-icon" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
+                    <i data-fa="dt-key"></i>
+                </a>
+                <div>
+                    <h1>Générateur de mot de passe</h1>
+                    <div class="subtitle">Crée des mots de passe robustes et teste leur résistance face aux pirates</div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" id="options-menu-btn" title="Options" aria-label="Options">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <details class="instructions">
+                <summary><strong>📖 Consigne & conseils (cliquer pour ouvrir)</strong></summary>
+                <div style="margin-top:10px;">
+                    Tape un mot de passe dans la zone de test ou utilise le générateur ci-dessous pour créer une combinaison mémorisable et solide.<br><br>
+                    <strong>💡 L'astuce de la <em>passphrase</em> :</strong> Une phrase facile à retenir pour toi qui combine un mot, un nombre, un nom de service et un caractère spécial (ex. : <em>« J'aimeuhLesL1c0rnes! »</em>) est bien plus facile à retenir et des millions de fois plus dure à deviner qu'un simple mot court !
+                </div>
+            </details>
+
+            <div class="password-grid">
+                <!-- Inputs, Generator & Rules -->
+                <div class="pw-tester-card">
+                    <!-- Générateur guidé -->
+                    <div class="pw-generator">
+                        <div class="pw-title">🪄 Crée un mot de passe fort</div>
+
+                        <div class="pw-generator-grid">
+                            <!-- Mot de base -->
+                            <div class="form-group">
+                                <label for="generator-base-word">Mot de base (min. 4 lettres) :</label>
+                                <input type="text" id="generator-base-word" class="pw-input" placeholder="Ex: lapin"
+                                    aria-label="Mot de base pour générer un mot de passe">
+                            </div>
+
+                            <!-- Nombre -->
+                            <div class="form-group">
+                                <label for="generator-number">Nombre (1 à 4 chiffres) :</label>
+                                <input type="text" id="generator-number" class="pw-input" placeholder="Ex: 2026"
+                                    maxlength="4" aria-label="Nombre à ajouter">
+                            </div>
+
+                            <!-- Nom du service -->
+                            <div class="form-group">
+                                <label for="generator-service">Nom du service :</label>
+                                <input type="text" id="generator-service" class="pw-input" placeholder="Ex: instagram" aria-label="Nom du service (optionnel)">
+                            </div>
+
+                            <!-- Caractère spécial -->
+                            <div class="form-group">
+                                <label for="generator-special-char">Caractère spécial :</label>
+                                <input type="text" id="generator-special-char" class="pw-input" placeholder="Ex: !, $, @, % ou +" maxlength="1" aria-label="Caractère spécial à inclure">
+                            </div>
+
+                            <!-- Position des éléments -->
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Position des éléments (clique sur les flèches pour changer l'ordre) :</label>
+                                <div id="elements-order-container" class="elements-order-row"></div>
+                            </div>
+                        </div>
+
+                        <!-- Slider Longueur Minimale -->
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <label for="generator-min-length">Longueur minimale du mot de passe :</label>
+                                <span id="min-length-val"
+                                    style="font-weight: 700; color: var(--accent); font-size: 13px;">12
+                                    caractères</span>
+                            </div>
+                            <input type="range" id="generator-min-length" min="4" max="32" value="12"
+                                style="width: 100%; height: 6px; border-radius: 3px; cursor: pointer; accent-color: var(--accent);"
+                                aria-label="Longueur minimale du mot de passe">
+                        </div>
+
+                        <button class="btn btn-primary" id="generate-pw-btn" style="width: 100%;">Générer le mot de passe</button>
+                    </div>
+
+                    <!-- Input mot de passe testé -->
+                    <div class="pw-title">🔑 Mot de passe testé</div>
+                    <div class="pw-input-wrapper">
+                        <input type="text" id="password-input" class="pw-input"
+                            placeholder="Tape un mot de passe ici…" aria-label="Mot de passe à tester">
+                        <button id="password-copy" class="copy-pw-btn" title="Copier dans le presse-papier"
+                            aria-label="Copier le mot de passe">
+                            <i data-fa="copy"></i>
+                        </button>
+                        <button id="password-toggle" class="toggle-pw-btn" title="Afficher/Masquer le mot de passe"
+                            aria-label="Afficher/Masquer le mot de passe">
+                            <i data-fa="dt-eye-slash"></i>
+                        </button>
+                    </div>
+
+                    <!-- Strength Meter -->
+                    <div class="strength-container">
+                        <div class="strength-bar-bg">
+                            <div class="strength-bar-fill" id="strength-bar"></div>
+                        </div>
+                        <div class="strength-label-row">
+                            <span>Robustesse :</span>
+                            <span class="strength-status" id="strength-status">Vide</span>
+                        </div>
+                    </div>
+
+                    <!-- Rules list -->
+                    <div class="criteria-checklist">
+                        <div class="crit-item" id="crit-length"><span class="crit-icon crit-ko"></span> 📏 Au moins
+                            12 caractères</div>
+                        <div class="crit-item" id="crit-types"><span class="crit-icon crit-ko"></span> 🔀 Remplir au
+                            moins 3 des critères suivants :</div>
+                        <div style="padding-left: 30px; display: flex; flex-direction: column; gap: 8px;">
+                            <div class="crit-item" id="crit-upper"><span class="crit-icon crit-ko"></span> 🔠 Au
+                                moins une lettre MAJUSCULE</div>
+                            <div class="crit-item" id="crit-lower"><span class="crit-icon crit-ko"></span> 🔤 Au
+                                moins une lettre minuscule</div>
+                            <div class="crit-item" id="crit-number"><span class="crit-icon crit-ko"></span> 🔢 Au
+                                moins un chiffre (0-9)</div>
+                            <div class="crit-item" id="crit-special"><span class="crit-icon crit-ko"></span> 🔣 Au
+                                moins un caractère spécial (@, #, !, ?, etc.)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual Gauge & Tips -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="pw-locker-card">
+                        <h2>Niveau de sécurité</h2>
+                        <div class="gauge-container">
+                            <svg viewBox="0 0 200 100" class="gauge-svg">
+                                <!-- Background arc -->
+                                <path d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#e2e8f0" stroke-width="16"
+                                    stroke-linecap="round" />
+                                <!-- Foreground arc -->
+                                <path id="gauge-fill" d="M 20 90 A 80 80 0 0 1 180 90" fill="none" stroke="#ef4444"
+                                    stroke-width="16" stroke-linecap="round" stroke-dasharray="251.3"
+                                    stroke-dashoffset="251.3" />
+                            </svg>
+                            <div class="gauge-badge vulnerable" id="gauge-badge">Vulnérable</div>
+                        </div>
+                        <hr class="gauge-separator">
+                        <div class="time-estimate-text" id="time-estimate-text">
+                            <strong>instantané</strong> pour pirater ce mot de passe
+                        </div>
+                    </div>
+
+                    <div class="pw-tips-card">
+                        <strong>🛡️ Bonnes pratiques :</strong>
+                        <ul style="margin: 8px 0 0 0; padding-left: 18px;">
+                            <li>N'utilise jamais le même mot de passe pour deux comptes différents.</li>
+                            <li>Ne partage jamais tes mots de passe, même avec tes amis.</li>
+                            <li>Active la double authentification (2FA) dès que c'est possible.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/toast.js"></script>
+
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum</a> avec <a href="../merci.html"
+                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones
+            artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                    libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script>window.fa?.createIcons?.();</script>
+
+    <script>
+        // ==========================================
+        // PASSWORD GENERATOR & METER LOGIC
+        // ==========================================
+        const elPasswordInput = document.getElementById('password-input');
+        const elPasswordToggle = document.getElementById('password-toggle');
+        const elPasswordCopy = document.getElementById('password-copy');
+        const elStrengthBar = document.getElementById('strength-bar');
+        const elStrengthStatus = document.getElementById('strength-status');
+
+        let passwordUnlocked = false;
+        let elementsOrder = ['word', 'number', 'service'];
+
+        function generatePedagogicalPassword(word, number, service, specChar, order, minLength) {
+            if (!word || word.length < 4) return "";
+
+            // Calculate service abbreviation (first 4 characters or less)
+            const serviceAbbr = service ? service.substring(0, 4).toLowerCase() : "";
+            
+            // serviceBlock is: specChar + serviceAbbr
+            const serviceBlock = specChar + serviceAbbr;
+
+            // otherLength: length of number + length of serviceBlock
+            const otherLength = number.length + serviceBlock.length;
+
+            // Calculate repetitions needed for base word
+            const k = Math.max(1, Math.ceil((minLength - otherLength) / word.length));
+
+            // Modify base word (single) first: lowercase and capitalize exactly one letter (excluding first character)
+            let wordArr = word.toLowerCase().split('');
+            if (wordArr.length > 1) {
+                let upperIdx = Math.floor(Math.random() * (wordArr.length - 1)) + 1;
+                wordArr[upperIdx] = wordArr[upperIdx].toUpperCase();
+            }
+            let singleModifiedWord = wordArr.join('');
+
+            // Repeat the modified base word k times identically
+            let modifiedWord = singleModifiedWord.repeat(k);
+
+            // Assemble parts according to elementsOrder
+            const parts = {
+                word: modifiedWord,
+                number: number,
+                service: serviceBlock
+            };
+
+            let pw = order.map(key => parts[key]).join('');
+            return pw;
+        }
+
+        function autoGeneratePassword() {
+            const baseWord = document.getElementById('generator-base-word').value.trim();
+            const numberVal = document.getElementById('generator-number').value.trim();
+            const serviceVal = document.getElementById('generator-service').value.trim();
+            const specChar = document.getElementById('generator-special-char').value;
+            const minLength = parseInt(document.getElementById('generator-min-length').value, 10);
+
+            if (baseWord.length >= 4 && /^\d{1,4}$/.test(numberVal)) {
+                const newPassword = generatePedagogicalPassword(baseWord, numberVal, serviceVal, specChar, elementsOrder, minLength);
+                elPasswordInput.value = newPassword;
+                updatePasswordChecklist(newPassword);
+            } else {
+                elPasswordInput.value = '';
+                updatePasswordChecklist('');
+            }
+        }
+
+        document.getElementById('generate-pw-btn').addEventListener('click', () => {
+            const baseWordInput = document.getElementById('generator-base-word');
+            const numberInput = document.getElementById('generator-number');
+            const serviceInput = document.getElementById('generator-service');
+            const specCharInput = document.getElementById('generator-special-char');
+            const minLengthSlider = document.getElementById('generator-min-length');
+
+            const baseWord = baseWordInput.value.trim();
+            const numberVal = numberInput.value.trim();
+            const serviceVal = serviceInput.value.trim();
+            const specChar = specCharInput.value;
+            const minLength = parseInt(minLengthSlider.value, 10);
+
+            if (baseWord.length < 4) {
+                showToast('Le mot de base doit contenir au moins 4 caractères.', 'error');
+                return;
+            }
+            if (!numberVal || !/^\d{1,4}$/.test(numberVal)) {
+                showToast('Veuillez donner un nombre entre 1 et 4 chiffres.', 'error');
+                return;
+            }
+
+            const newPassword = generatePedagogicalPassword(baseWord, numberVal, serviceVal, specChar, elementsOrder, minLength);
+            elPasswordInput.value = newPassword;
+            if (elPasswordInput.type === 'password') {
+                elPasswordToggle.click();
+            }
+            updatePasswordChecklist(newPassword);
+            showToast('Mot de passe généré !', 'success');
+        });
+
+        // Copy button
+        elPasswordCopy.addEventListener('click', () => {
+            const val = elPasswordInput.value;
+            if (!val) {
+                showToast('Aucun mot de passe à copier.', 'warn');
+                return;
+            }
+            navigator.clipboard.writeText(val).then(() => {
+                showToast('Mot de passe copié dans le presse-papier !', 'success');
+                playSound('click');
+            }).catch(() => {
+                showToast('Impossible de copier automatiquement.', 'error');
+            });
+        });
+
+        // Add event listeners to trigger generation in real-time and update labels
+        document.getElementById('generator-base-word').addEventListener('input', () => {
+            renderElementsOrder();
+            autoGeneratePassword();
+        });
+        document.getElementById('generator-number').addEventListener('input', () => {
+            renderElementsOrder();
+            autoGeneratePassword();
+        });
+        document.getElementById('generator-service').addEventListener('input', () => {
+            renderElementsOrder();
+            autoGeneratePassword();
+        });
+        document.getElementById('generator-special-char').addEventListener('input', () => {
+            renderElementsOrder();
+            autoGeneratePassword();
+        });
+
+        // Add event listener to range input to update min-length counter display
+        document.getElementById('generator-min-length').addEventListener('input', (e) => {
+            document.getElementById('min-length-val').textContent = e.target.value + ' caractères';
+            autoGeneratePassword();
+        });
+
+        // Toggle text/password visibility
+        elPasswordToggle.addEventListener('click', () => {
+            if (elPasswordInput.type === 'password') {
+                elPasswordInput.type = 'text';
+                elPasswordToggle.innerHTML = '<i data-fa="dt-eye-slash"></i>';
+            } else {
+                elPasswordInput.type = 'password';
+                elPasswordToggle.innerHTML = '<i data-fa="dt-eye"></i>';
+            }
+            window.fa?.createIcons?.();
+        });
+
+        elPasswordInput.addEventListener('input', () => {
+            updatePasswordChecklist(elPasswordInput.value);
+        });
+
+        function estimateCrackTime(pw) {
+            if (!pw) {
+                return "instantané";
+            }
+
+            const len = pw.length;
+            const hasUpper = /[A-Z]/.test(pw);
+            const hasLower = /[a-z]/.test(pw);
+            const hasNumber = /[0-9]/.test(pw);
+            const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+            const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
+
+            // Attacker cracking speed: 100 billion guesses per second
+            let poolSize = 0;
+            if (hasLower) poolSize += 26;
+            if (hasUpper) poolSize += 26;
+            if (hasNumber) poolSize += 10;
+            if (hasSpecial) poolSize += 32;
+            if (poolSize === 0) poolSize = 1;
+
+            let combinations = Math.pow(poolSize, len);
+
+            // Apply dictionary/pattern discount if it contains repeated sub-strings
+            let hasRepeatedPattern = false;
+            for (let i = 2; i <= Math.floor(len / 2); i++) {
+                let sub = pw.substring(0, i);
+                if (pw.replace(new RegExp(sub, 'g'), '').length === 0) {
+                    hasRepeatedPattern = true;
+                    break;
+                }
+            }
+            if (hasRepeatedPattern) {
+                combinations = Math.pow(poolSize, Math.floor(len / 2));
+            }
+
+            const guessesPerSecond = 1e11; // 100 billion/sec
+            let seconds = combinations / guessesPerSecond;
+
+            // Enforce realistic bounds based on security guidelines to align with "vulnerable vs secure"
+            if (len < 8) {
+                seconds = Math.min(seconds, 5); // Cracked instantly or in seconds
+            } else if (len < 12) {
+                if (typesCount < 3) {
+                    seconds = Math.min(seconds, 3600); // Cracked in less than an hour (minutes/heures)
+                } else {
+                    seconds = Math.min(seconds, 86400 * 7); // Cracked in a few days
+                }
+            } else { // len >= 12
+                if (typesCount < 3) {
+                    seconds = Math.min(seconds, 86400 * 30); // Cracked in less than a month (jours/mois)
+                }
+            }
+
+            if (seconds < 1) {
+                return "instantané";
+            } else if (seconds < 60) {
+                return "quelques secondes";
+            } else if (seconds < 3600) {
+                return "quelques minutes";
+            } else if (seconds < 86400) {
+                return "quelques heures";
+            } else if (seconds < 2592000) {
+                return "quelques jours";
+            } else if (seconds < 31536000) {
+                return "quelques mois";
+            } else if (seconds < 315360000) {
+                return "quelques années";
+            } else {
+                return "des milliers d'années";
+            }
+        }
+
+        function updatePasswordChecklist(pw) {
+            // Rules
+            const hasLength = pw.length >= 12;
+            const hasUpper = /[A-Z]/.test(pw);
+            const hasLower = /[a-z]/.test(pw);
+            const hasNumber = /[0-9]/.test(pw);
+            const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+
+            const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
+            const hasTypes = typesCount >= 3;
+
+            updateCriterionUI('crit-length', hasLength);
+            updateCriterionUI('crit-types', hasTypes);
+            updateCriterionUI('crit-upper', hasUpper);
+            updateCriterionUI('crit-lower', hasLower);
+            updateCriterionUI('crit-number', hasNumber);
+            updateCriterionUI('crit-special', hasSpecial);
+
+            // Strength calculations
+            let score = 0;
+            if (pw.length > 0) {
+                // Length is worth 40 points
+                if (hasLength) {
+                    score += 40;
+                } else {
+                    // Partial score for length (e.g. up to 20 points if at least 6 chars)
+                    score += Math.min(20, Math.floor((pw.length / 12) * 20));
+                }
+
+                // Each type is worth 20 points, up to 60 points max (3 types)
+                score += Math.min(60, typesCount * 20);
+            }
+
+            // Adjust fill and labels
+            elStrengthBar.style.width = `${score}%`;
+
+            let color = 'var(--error)';
+            let status = 'Vide';
+
+            if (score === 0 && pw.length > 0) {
+                status = 'Très faible ❌';
+            } else if (score > 0 && score <= 40) {
+                status = 'Faible ⚠️';
+                color = 'var(--error)';
+            } else if (score > 40 && score <= 60) {
+                status = 'Moyen 🔏';
+                color = 'var(--warn)';
+            } else if (score > 60 && score < 100) {
+                status = 'Fort 👍';
+                color = 'var(--accent)';
+            } else if (score === 100) {
+                status = 'Très fort ! 💪';
+                color = 'var(--success)';
+            }
+
+            elStrengthBar.style.backgroundColor = color;
+            elStrengthStatus.textContent = status;
+
+            // Is the password secure?
+            const isSecure = hasLength && hasTypes;
+
+            // Update gauge fill percentage
+            const elGaugeFill = document.getElementById('gauge-fill');
+            const elGaugeBadge = document.getElementById('gauge-badge');
+
+            // If secure, gauge fill is 100% (green), otherwise proportional to score (capped at 85% so it's not complete)
+            const fillPercent = isSecure ? 100 : Math.min(85, Math.max(10, Math.floor(score * 0.8)));
+            const dashoffset = 251.3 - (251.3 * fillPercent / 100);
+            if (elGaugeFill) {
+                elGaugeFill.style.strokeDashoffset = dashoffset;
+                elGaugeFill.style.stroke = isSecure ? '#008f5a' : '#d32f2f';
+            }
+
+            if (elGaugeBadge) {
+                if (isSecure) {
+                    elGaugeBadge.className = 'gauge-badge secure';
+                    elGaugeBadge.textContent = 'Fort';
+                } else {
+                    elGaugeBadge.className = 'gauge-badge vulnerable';
+                    elGaugeBadge.textContent = 'Vulnérable';
+                }
+            }
+
+            // Crack time estimation
+            const timeStr = estimateCrackTime(pw);
+            const elTimeEstimate = document.getElementById('time-estimate-text');
+            if (elTimeEstimate) {
+                elTimeEstimate.innerHTML = `<strong>${timeStr}</strong> pour pirater ce mot de passe`;
+            }
+
+            // Handle success audio & confetti
+            if (isSecure && !passwordUnlocked) {
+                passwordUnlocked = true;
+                playSound('success');
+                launchConfetti();
+            } else if (!isSecure && passwordUnlocked) {
+                passwordUnlocked = false;
+            }
+        }
+
+        function updateCriterionUI(id, isOk) {
+            const item = document.getElementById(id);
+            if (!item) return;
+            const icon = item.querySelector('.crit-icon');
+
+            if (isOk) {
+                item.classList.add('ok');
+                if (icon) icon.className = 'crit-icon crit-ok';
+            } else {
+                item.classList.remove('ok');
+                if (icon) icon.className = 'crit-icon crit-ko';
+            }
+        }
+
+        function renderElementsOrder() {
+            const container = document.getElementById('elements-order-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const labels = {
+                word: { text: 'Mot' },
+                number: { text: 'Nombre' },
+                service: { text: 'Caractère' }
+            };
+
+            const specChar = document.getElementById('generator-special-char').value;
+            const serviceVal = document.getElementById('generator-service').value.trim();
+            const serviceAbbr = serviceVal ? serviceVal.substring(0, 4).toLowerCase() : "";
+            const servicePreviewText = specChar + serviceAbbr;
+
+            let serviceText = "";
+            if (serviceVal) {
+                serviceText = servicePreviewText; // e.g. "@insta"
+            } else if (specChar) {
+                serviceText = specChar; // e.g. "@"
+            } else {
+                serviceText = "Caractère";
+            }
+            labels.service.text = serviceText;
+
+            for (let i = 0; i < elementsOrder.length; i++) {
+                const key = elementsOrder[i];
+                const item = document.createElement('div');
+                item.className = 'order-item';
+
+                // Left Arrow Button (◀)
+                if (i > 0) {
+                    const leftBtn = document.createElement('button');
+                    leftBtn.className = 'order-arrow-btn';
+                    leftBtn.type = 'button';
+                    leftBtn.innerHTML = '◀';
+                    leftBtn.title = 'Déplacer à gauche';
+                    leftBtn.setAttribute('aria-label', 'Déplacer à gauche');
+                    leftBtn.addEventListener('click', () => {
+                        moveElement(i, -1);
+                        playSound('click');
+                    });
+                    item.appendChild(leftBtn);
+                }
+
+                // Text
+                const span = document.createElement('span');
+                span.textContent = labels[key].text;
+                item.appendChild(span);
+
+                // Right Arrow Button (▶)
+                if (i < elementsOrder.length - 1) {
+                    const rightBtn = document.createElement('button');
+                    rightBtn.className = 'order-arrow-btn';
+                    rightBtn.type = 'button';
+                    rightBtn.innerHTML = '▶';
+                    rightBtn.title = 'Déplacer à droite';
+                    rightBtn.setAttribute('aria-label', 'Déplacer à droite');
+                    rightBtn.addEventListener('click', () => {
+                        moveElement(i, 1);
+                        playSound('click');
+                    });
+                    item.appendChild(rightBtn);
+                }
+
+                container.appendChild(item);
+            }
+
+            window.fa?.createIcons?.();
+        }
+
+        function moveElement(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= elementsOrder.length) return;
+
+            const temp = elementsOrder[index];
+            elementsOrder[index] = elementsOrder[targetIndex];
+            elementsOrder[targetIndex] = temp;
+
+            renderElementsOrder();
+            autoGeneratePassword();
+        }
+
+        // Init
+        renderElementsOrder();
+        updatePasswordChecklist('');
+    </script>
+    <script src="../assets/js/audio.js"></script>
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/confetti.js"></script>
+    <script src="../assets/js/url-params.js"></script>
+    <!-- FontAwesome dynamic subsets declaration (do not remove, parsed by generate_fa_subset) -->
+    <div style="display:none;">
+        <i data-fa="key"></i>
+        <i data-fa="dt-key"></i>
+        <i data-fa="gear"></i>
+        <i data-fa="volume-high"></i>
+        <i data-fa="volume-xmark"></i>
+        <i data-fa="sun-bright"></i>
+        <i data-fa="moon"></i>
+        <i data-fa="dt-eye"></i>
+        <i data-fa="dt-eye-slash"></i>
+        <i data-fa="copy"></i>
+        <i data-fa="heart"></i>
+    </div>
+</body>
+
+</html>

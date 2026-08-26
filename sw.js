@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-ae8e966a';
+const CACHE_NAME = 'ednum-78857794';
 const ASSETS = [
     './',
     './index.html',
@@ -25,6 +25,7 @@ const ASSETS = [
     './assets/css/bit_de_parite.css',
     './assets/css/components.css',
     './assets/css/compresseur_magique.css',
+    './assets/css/generateur_mot_de_passe.css',
     './assets/css/routage_reseau.css',
     './assets/css/teacher.css',
     './assets/css/tokens.css',
@@ -57,6 +58,7 @@ const ASSETS = [
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
     './webapps/bit_de_parite.html',
+    './webapps/generateur_mot_de_passe.html',
     './webapps/routage_reseau.html',
     './webapps/simulateur_automate.html',
     './webapps/teacher/bareme.html',

@@ -146,7 +146,7 @@ window.REGISTRY = [
     "dataLevel": "3-4H",
     "icon": "dt-lock-keyhole",
     "title": "Coffre-fort numérique",
-    "desc": "Apprends à protéger tes données personnelles et à créer des mots de passe robustes.",
+    "desc": "Apprends à protéger tes données personnelles et à identifier les secrets.",
     "tags": [
       "#Sécurité",
       "#Vie privée",
@@ -266,6 +266,33 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "5-6H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-mot-de-passe",
+    "href": "webapps/generateur_mot_de_passe.html",
+    "dataLevel": "5-6H",
+    "icon": "dt-key",
+    "title": "Générateur de mot de passe",
+    "desc": "Apprends à créer des mots de passe robustes et teste leur sécurité.",
+    "tags": [
+      "#Sécurité",
+      "#Protection",
+      "#Mot de passe"
+    ],
+    "ref": "DÉ>CODAGE 5-6 · Sécurité",
+    "badges": [
+      {
+        "text": "5-6H",
+        "grey": false
+      },
+      {
+        "text": "7-8H",
         "grey": false
       }
     ],
