@@ -68,7 +68,12 @@
                             <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
                             <i data-fa="moon" id="icon-moon"></i>
                             <span id="themeToggleText">Sombre</span>
-                            </button>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="projection-toggle-btn" aria-label="Activer/Désactiver le mode TBI">
+                            <i data-fa="chalkboard-user"></i>
+                            <span id="projectionToggleText">Mode TBI</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -705,9 +710,35 @@
                 document.getElementById('diff-hard')?.click();
             }
         });
+
+        // Mode TBI / Projection
+        const elProjBtn = document.getElementById('projection-toggle-btn');
+        const elProjText = document.getElementById('projectionToggleText');
+
+        function setProjectionMode(active) {
+            if (active) {
+                document.body.classList.add('projection');
+                if (elProjText) elProjText.textContent = 'Mode normal';
+            } else {
+                document.body.classList.remove('projection');
+                if (elProjText) elProjText.textContent = 'Mode TBI';
+            }
+        }
+
+        if (elProjBtn) {
+            elProjBtn.addEventListener('click', () => {
+                const isProj = document.body.classList.contains('projection');
+                setProjectionMode(!isProj);
+                if (typeof playSound === 'function') playSound('click');
+            });
+        }
     </script>
     <script src="../assets/js/url-params.js"></script>
 
+    <!-- FontAwesome dynamic subsets declaration -->
+    <div style="display:none;">
+        <i data-fa="chalkboard-user"></i>
+    </div>
 </body>
 
 </html>

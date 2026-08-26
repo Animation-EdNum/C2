@@ -413,6 +413,53 @@
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
         }
+
+        /* ========== PROJECTION / TBI MODE ========== */
+        body.projection {
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        body.projection .app-shell {
+            max-width: 1400px;
+            min-height: calc(100vh - 20px);
+        }
+
+        body.projection footer,
+        body.projection .legend-container {
+            display: none !important;
+        }
+
+        body.projection .draw-container {
+            max-width: 1100px;
+            gap: 2.5rem;
+        }
+
+        body.projection .result-stage {
+            min-height: 320px;
+            padding: 4rem 2rem;
+        }
+
+        body.projection .result-number {
+            font-size: 5.5rem;
+        }
+
+        body.projection .result-number.is-number {
+            font-size: 7.5rem;
+        }
+
+        body.projection .cell {
+            min-width: 58px;
+            height: 52px;
+            font-size: 1.15rem;
+            padding: 0 16px;
+        }
+
+        body.projection .btn-primary {
+            font-size: 1.5rem;
+            padding: 18px 42px;
+            border-radius: var(--radius-xl);
+        }
     </style>
 </head>
 
@@ -426,6 +473,9 @@
         <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
             <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
             <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
+        </button>
+        <button class="icon-action-btn" id="projection-toggle-btn" title="Activer/Désactiver le mode TBI" aria-label="Mode TBI">
+            <i data-fa="chalkboard-user" style="width:20px;height:20px;"></i>
         </button>
     </div>
 
@@ -788,12 +838,35 @@
             }
         });
 
+        // Mode TBI / Projection
+        const elProjBtn = document.getElementById('projection-toggle-btn');
+        function setProjectionMode(active) {
+            if (active) {
+                document.body.classList.add('projection');
+            } else {
+                document.body.classList.remove('projection');
+            }
+        }
+
+        if (elProjBtn) {
+            elProjBtn.addEventListener('click', () => {
+                const isProj = document.body.classList.contains('projection');
+                setProjectionMode(!isProj);
+                if (typeof playSound === 'function') playSound('click');
+            });
+        }
+
         loadState();
     </script>
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/url-params.js"></script>
+
+    <!-- FontAwesome dynamic subsets declaration -->
+    <div style="display:none;">
+        <i data-fa="chalkboard-user"></i>
+    </div>
 </body>
 
 </html>

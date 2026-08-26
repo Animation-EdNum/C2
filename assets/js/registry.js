@@ -285,7 +285,7 @@ window.REGISTRY = [
       "#Protection",
       "#Mot de passe"
     ],
-    "ref": "DÉ>CODAGE 5-6 · Sécurité",
+    "ref": "Environnement numérique de travail",
     "badges": [
       {
         "text": "5-6H",

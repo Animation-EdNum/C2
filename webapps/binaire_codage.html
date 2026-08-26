@@ -72,7 +72,12 @@
                             <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
                             <i data-fa="moon" id="icon-moon"></i>
                             <span id="themeToggleText">Sombre</span>
-                            </button>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="projection-toggle-btn" aria-label="Activer/Désactiver le mode TBI">
+                            <i data-fa="chalkboard-user"></i>
+                            <span id="projectionToggleText">Mode TBI</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -88,11 +93,6 @@
             <p class="subtitle">Appuie sur la touche <strong>Entrée</strong> pour valider tes réponses.</p>
 
             <!-- DIFFICULTÉ -->
-            <div class="difficulty-bar">
-                <button class="diff-btn active" id="playstyle-classic"><i data-fa="box" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Classique</button>
-                <button class="diff-btn" id="playstyle-factory"><i data-fa="conveyor-belt-boxes" style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> Usine (Tapis)</button>
-            </div>
-
             <div class="difficulty-bar">
                 <button class="diff-btn active" id="diff-easy"><i data-fa="circle" style="color: #2ecc71;"></i> Facile (4 bits)</button>
                 <button class="diff-btn" id="diff-medium"><i data-fa="circle" style="color: #f1c40f;"></i> Moyen (6 bits)</button>
@@ -815,8 +815,35 @@
                 document.getElementById('diff-hard')?.click();
             }
         });
+
+        // Mode TBI / Projection
+        const elProjBtn = document.getElementById('projection-toggle-btn');
+        const elProjText = document.getElementById('projectionToggleText');
+
+        function setProjectionMode(active) {
+            if (active) {
+                document.body.classList.add('projection');
+                if (elProjText) elProjText.textContent = 'Mode normal';
+            } else {
+                document.body.classList.remove('projection');
+                if (elProjText) elProjText.textContent = 'Mode TBI';
+            }
+        }
+
+        if (elProjBtn) {
+            elProjBtn.addEventListener('click', () => {
+                const isProj = document.body.classList.contains('projection');
+                setProjectionMode(!isProj);
+                if (typeof playSound === 'function') playSound('click');
+            });
+        }
     </script>
     <script src="../assets/js/url-params.js"></script>
+
+    <!-- FontAwesome dynamic subsets declaration -->
+    <div style="display:none;">
+        <i data-fa="chalkboard-user"></i>
+    </div>
 </body>
 
 </html>
