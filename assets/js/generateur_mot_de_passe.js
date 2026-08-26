@@ -131,7 +131,8 @@
             combinations = combinations / Math.pow(1000, patterns.length);
         }
 
-        const guessesPerSecond = 1e11; // 100 billion guesses/sec
+        // Conservative: assume a multi-GPU rig with a fast hash (MD5/NTLM)
+        const guessesPerSecond = 1e12; // 1 trillion guesses/sec
         let seconds = combinations / guessesPerSecond;
 
         // Enforce realistic bounds based on length and types
@@ -163,11 +164,11 @@
             return "quelques jours";
         } else if (seconds < 31536000) {
             return "quelques mois";
-        } else if (seconds < 315360000) {
+        } else if (seconds < 3153600000) {         // < 100 years
             return "quelques années";
-        } else if (seconds < 3.1536e10) {
+        } else if (seconds < 3.1536e12) {          // < 100 000 years
             return "des siècles";
-        } else if (seconds < 3.1536e15) {
+        } else if (seconds < 3.1536e16) {          // < 1 billion years
             return "des millions d'années";
         } else {
             return "des milliards d'années";
@@ -185,13 +186,18 @@
         const otherLength = number.length + serviceBlock.length;
         const k = Math.max(1, Math.ceil((minLength - otherLength) / word.length));
 
-        let wordArr = word.toLowerCase().split('');
-        if (wordArr.length > 1) {
-            let upperIdx = Math.floor(Math.random() * (wordArr.length - 1)) + 1;
-            wordArr[upperIdx] = wordArr[upperIdx].toUpperCase();
+        // Capitalize deterministically for memorability:
+        // - All lowercase or all uppercase → first letter uppercase, rest lowercase
+        // - Mixed case → keep as entered by the student
+        let modifiedBase;
+        const isAllLower = word === word.toLowerCase();
+        const isAllUpper = word === word.toUpperCase();
+        if (isAllLower || isAllUpper) {
+            modifiedBase = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        } else {
+            modifiedBase = word;
         }
-        let singleModifiedWord = wordArr.join('');
-        let modifiedWord = singleModifiedWord.repeat(k);
+        let modifiedWord = modifiedBase.repeat(k);
 
         const parts = {
             word: modifiedWord,
