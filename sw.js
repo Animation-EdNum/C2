@@ -85,7 +85,7 @@ self.addEventListener('activate', event => {
                     return caches.delete(name);
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
 });
 

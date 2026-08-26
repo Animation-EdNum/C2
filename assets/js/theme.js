@@ -27,8 +27,8 @@
         localStorage.setItem('global_theme', theme);
 
         const iconSun = document.getElementById('icon-sun');
-        const iconMoon= document.getElementById('icon-moon');
-        if (iconSun)  iconSun.style.display  = theme === 'dark' ? 'block' : 'none';
+        const iconMoon = document.getElementById('icon-moon');
+        if (iconSun) iconSun.style.display = theme === 'dark' ? 'block' : 'none';
         if (iconMoon) iconMoon.style.display = theme === 'light' ? 'block' : 'none';
 
         const themeToggleText = document.getElementById('themeToggleText');
@@ -108,7 +108,7 @@
                     hcBtn.className = 'menu-item-btn';
                     hcBtn.id = 'high-contrast-toggle-btn';
                     hcBtn.setAttribute('aria-label', 'Activer/Désactiver le contraste élevé');
-                    
+
                     const savedTheme = localStorage.getItem('global_theme') || 'light';
                     const initialText = savedTheme === 'high-contrast' ? 'Désactiver contraste' : 'Contraste élevé';
                     const initialIcon = savedTheme === 'high-contrast' ? 'circle-check' : 'eye';
@@ -228,6 +228,11 @@ if ('serviceWorker' in navigator) {
             }
         });
 
+        // Grace period: auto-apply updates silently within 6s of page load.
+        // After that, show a toast to avoid disrupting an active session.
+        let justLoaded = true;
+        setTimeout(() => { justLoaded = false; }, 6000);
+
         navigator.serviceWorker.register(rootPath + 'sw.js').then(registration => {
             registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
@@ -235,16 +240,19 @@ if ('serviceWorker' in navigator) {
 
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        // A new update is available
-                        if (typeof showToast === 'function') {
+                        if (justLoaded) {
+                            // Page just loaded — apply update silently
+                            newWorker.postMessage('skipWaiting');
+                        } else if (typeof showToast === 'function') {
+                            // User may be mid-interaction — show non-blocking toast
                             const content = document.createElement('div');
                             content.style.display = 'flex';
                             content.style.flexDirection = 'column';
                             content.style.gap = '10px';
-                            
+
                             const text = document.createElement('span');
                             text.textContent = 'Une mise à jour de la Suite EdNum est disponible.';
-                            
+
                             const btn = document.createElement('button');
                             btn.className = 'btn btn-primary btn-small';
                             btn.textContent = 'Mettre à jour maintenant';
@@ -252,15 +260,28 @@ if ('serviceWorker' in navigator) {
                             btn.addEventListener('click', () => {
                                 newWorker.postMessage('skipWaiting');
                             });
-                            
+
                             content.appendChild(text);
                             content.appendChild(btn);
-                            
+
                             showToast(content, 'info', 86400000); // 24 hours
                         }
                     }
                 });
             });
+
+            // --- Proactive update checks ---
+
+            // 1. When the user returns to the tab after it was hidden
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    registration.update();
+                }
+            });
+
+            // 2. Periodic check every 60 minutes for long-lived sessions
+            setInterval(() => { registration.update(); }, 60 * 60 * 1000);
+
         }).catch(() => {
             // silent fail
         });
