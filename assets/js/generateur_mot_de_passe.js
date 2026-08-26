@@ -15,7 +15,7 @@
     ];
 
     const COMMON_SEQUENCES = [
-        '12', '21', '123', '321', '1234', '2345', '3456', '4567', '5678', '6789', '7890',
+        '123', '321', '1234', '2345', '3456', '4567', '5678', '6789', '7890',
         '111', '222', '333', '444', '555', '666', '777', '888', '999', '000',
         'abcd', 'bcde', 'cdef', 'defg', 'efgh', 'fghi', 'ghij', 'hijk', 'ijkl', 'jklm',
         'klmn', 'lmno', 'mnop', 'nopq', 'opqr', 'pqrs', 'qrst', 'rstu', 'stuv', 'tuvw', 'uvwx', 'vwxy', 'wxyz',
@@ -168,10 +168,8 @@
             return "quelques années";
         } else if (seconds < 3.1536e12) {          // < 100 000 years
             return "des siècles";
-        } else if (seconds < 3.1536e16) {          // < 1 billion years
-            return "des millions d'années";
         } else {
-            return "des milliards d'années";
+            return "des millions d'années";
         }
     }
 
