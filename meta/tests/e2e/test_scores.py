@@ -21,17 +21,18 @@ def test_score_manager_add_success(page: Page):
 def test_score_manager_adaptive_difficulty(page: Page):
     """Verify adaptive difficulty popup appears after 3 successes."""
     page.goto("http://localhost:8000/webapps/binaire_codage.html")
-    page.evaluate("localStorage.clear()")
-    page.reload()
-    # Need 3 successes to trigger adaptive difficulty
-    page.evaluate("ScoreManager.addSuccess('dec_to_bin', 6, 0)")
-    page.evaluate("ScoreManager.addSuccess('dec_to_bin', 6, 0)")
-    page.evaluate("ScoreManager.addSuccess('dec_to_bin', 6, 0)")
+    page.evaluate("""() => {
+        localStorage.clear();
+        ScoreManager.init('binaire_codage');
+        ScoreManager.addSuccess('dec_to_bin', 6, 0);
+        ScoreManager.addSuccess('dec_to_bin', 6, 0);
+        ScoreManager.addSuccess('dec_to_bin', 6, 0);
+    }""")
 
     # Wait for the adaptive popup (1500ms delay in JS)
-    page.wait_for_timeout(2000)
     popup = page.locator("#adaptive-difficulty-popup")
-    expect(popup).to_be_visible()
+    expect(popup).to_be_visible(timeout=5000)
+
 
 def test_score_manager_add_mistake(page: Page):
     """Verify addMistake increments mistakes and resets streak."""

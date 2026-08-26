@@ -20,26 +20,19 @@ def test_launch_fire_canvas(page: Page):
 
     # Inject a mock context before canvas is created
     page.evaluate("""() => {
-        const originalGetContext = HTMLCanvasElement.prototype.getContext;
-        HTMLCanvasElement.prototype.getContext = function(type, options) {
-            const ctx = originalGetContext.call(this, type, options);
-            if (type === '2d' && ctx) {
-                window.mockArcCalled = false;
-                window.mockFillCalled = false;
+        window.mockArcCalled = false;
+        window.mockFillCalled = false;
 
-                const originalArc = ctx.arc;
-                const originalFill = ctx.fill;
+        const originalArc = CanvasRenderingContext2D.prototype.arc;
+        const originalFill = CanvasRenderingContext2D.prototype.fill;
 
-                ctx.arc = function() {
-                    window.mockArcCalled = true;
-                    return originalArc.apply(this, arguments);
-                };
-                ctx.fill = function() {
-                    window.mockFillCalled = true;
-                    return originalFill.apply(this, arguments);
-                };
-            }
-            return ctx;
+        CanvasRenderingContext2D.prototype.arc = function() {
+            window.mockArcCalled = true;
+            return originalArc.apply(this, arguments);
+        };
+        CanvasRenderingContext2D.prototype.fill = function() {
+            window.mockFillCalled = true;
+            return originalFill.apply(this, arguments);
         };
     }""")
 
@@ -66,20 +59,13 @@ def test_launch_confetti_canvas(page: Page):
 
     # Inject a mock context before canvas is created
     page.evaluate("""() => {
-        const originalGetContext = HTMLCanvasElement.prototype.getContext;
-        HTMLCanvasElement.prototype.getContext = function(type, options) {
-            const ctx = originalGetContext.call(this, type, options);
-            if (type === '2d' && ctx) {
-                window.mockFillRectCalled = false;
+        window.mockFillRectCalled = false;
 
-                const originalFillRect = ctx.fillRect;
+        const originalFillRect = CanvasRenderingContext2D.prototype.fillRect;
 
-                ctx.fillRect = function() {
-                    window.mockFillRectCalled = true;
-                    return originalFillRect.apply(this, arguments);
-                };
-            }
-            return ctx;
+        CanvasRenderingContext2D.prototype.fillRect = function() {
+            window.mockFillRectCalled = true;
+            return originalFillRect.apply(this, arguments);
         };
     }""")
 
@@ -97,4 +83,3 @@ def test_launch_confetti_canvas(page: Page):
 
     assert fillrect_called is True
     assert dimensions_match is True
-
