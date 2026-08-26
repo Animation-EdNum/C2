@@ -867,5 +867,31 @@ window.REGISTRY = [
     "category": "teachers_tools",
     "inIndex": true,
     "inC1": false
+  },
+  {
+    "id": "tool-qrcode",
+    "href": "alpha/webapps/teacher/qrcode.html",
+    "isAlpha": true,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "qrcode",
+    "title": "Créateur de QR codes",
+    "desc": "Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables).",
+    "tags": [
+      "#Outil",
+      "#QR",
+      "#Classe",
+      "#Partage"
+    ],
+    "ref": "Alpha",
+    "badges": [
+      {
+        "text": "Outil",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
   }
 ];

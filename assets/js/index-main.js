@@ -8,18 +8,22 @@
    GESTION DES ONGLETS (TABS)
    ========================================= */
 function switchTab(event, tabId) {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) searchInput.value = '';
-    searchApps(); // Reset l'affichage
-
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if (event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     }
 
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => {
+        v.classList.remove('active');
+        v.style.display = '';
+    });
     const targetView = document.getElementById(`view-${tabId}`);
-    if (targetView) targetView.classList.add('active');
+    if (targetView) {
+        targetView.classList.add('active');
+        targetView.style.display = 'block';
+    }
+
+    executeFilters();
 }
 
 /* =========================================
@@ -64,27 +68,19 @@ function executeFilters() {
     const searchInput = document.getElementById('searchInput');
     if (!searchInput) return;
     const rawQuery = searchInput.value;
-    const query = rawQuery.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const query = rawQuery.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     const isSearching = query.length > 0;
 
-    if (isSearching) {
-        document.querySelectorAll('.view').forEach(v => v.style.display = 'block');
-        const tabs = document.querySelector('.tabs');
-        if (tabs) tabs.style.display = 'none';
-    } else {
-        document.querySelectorAll('.view').forEach(v => v.style.display = '');
-        const tabs = document.querySelector('.tabs');
-        if (tabs) tabs.style.display = 'flex';
-    }
-
+    // Filter cards
     document.querySelectorAll('.searchable-grid .card').forEach(card => {
         const isAlphaApp = card.classList.contains('alpha-app');
 
         if (query === 'alpha') {
             if (isAlphaApp) {
-                card.style.display = 'block';
+                card.style.display = '';
                 card.classList.remove('filter-hidden');
             } else {
+                card.style.display = 'none';
                 card.classList.add('filter-hidden');
             }
         } else {
@@ -127,11 +123,58 @@ function executeFilters() {
                 const matchesFilter = isSearching ? true : matchesLevel;
 
                 if (matchesSearch && matchesFilter) {
+                    card.style.display = '';
                     card.classList.remove('filter-hidden');
                 } else {
+                    card.style.display = 'none';
                     card.classList.add('filter-hidden');
                 }
             }
+        }
+    });
+
+    // Hide/show section headers and empty grids
+    document.querySelectorAll('.view').forEach(view => {
+        const grids = view.querySelectorAll('.searchable-grid');
+        let viewTotalVisible = 0;
+
+        grids.forEach(grid => {
+            const cards = Array.from(grid.querySelectorAll('.card'));
+            const visibleCards = cards.filter(c => !c.classList.contains('filter-hidden') && c.style.display !== 'none');
+            const hasVisible = visibleCards.length > 0;
+            viewTotalVisible += visibleCards.length;
+
+            grid.style.display = hasVisible ? '' : 'none';
+
+            // Find preceding section header
+            let prev = grid.previousElementSibling;
+            while (prev && !prev.classList.contains('section-header')) {
+                if (prev.classList.contains('filter-bar')) {
+                    prev.style.display = (query === 'alpha' || !hasVisible) ? 'none' : '';
+                }
+                prev = prev.previousElementSibling;
+            }
+            if (prev && prev.classList.contains('section-header')) {
+                prev.style.display = hasVisible ? '' : 'none';
+            }
+        });
+
+        // No results message per view
+        let noResults = view.querySelector('.no-results-msg');
+        if (viewTotalVisible === 0) {
+            if (!noResults) {
+                noResults = document.createElement('div');
+                noResults.className = 'no-results-msg';
+                noResults.style.textAlign = 'center';
+                noResults.style.padding = '3rem 1rem';
+                noResults.style.color = 'var(--text-light)';
+                noResults.style.fontSize = '1.1rem';
+                noResults.textContent = 'Aucune application trouvée pour cette recherche.';
+                view.appendChild(noResults);
+            }
+            noResults.style.display = 'block';
+        } else if (noResults) {
+            noResults.style.display = 'none';
         }
     });
 }

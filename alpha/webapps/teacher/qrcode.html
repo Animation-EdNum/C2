@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créateur de QR codes</title>
+    <meta property="og:title" content="Créateur de QR codes">
+    <meta property="og:description"
+        content="Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables).">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <link rel="stylesheet" href="../../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../../assets/css/base.css">
+    <link rel="stylesheet" href="../../../assets/css/components.css">
+    <link rel="stylesheet" href="../../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <style>
+        .action-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        body > header, body > .app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: #ccfbf1;
+            --bg-gradient-start: #0d9488;
+            --bg-gradient-end: #064e4b;
+            
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-color: rgba(0, 0, 0, 0.12);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #064e4b;
+            --glass-bg: rgba(15, 23, 42, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --primary-light: rgba(13, 148, 136, 0.25);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 40px);
+        }
+
+        /* HEADER */
+        header {
+            padding: 1.75rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s var(--spring-easing, ease);
+        }
+
+        .header-icon:hover {
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-alpha {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        body.dark .badge-alpha {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        /* MAIN CONTENT GRID */
+        .app-main {
+            display: grid;
+            grid-template-columns: 1fr;
+            flex: 1;
+        }
+
+        @media (min-width: 900px) {
+            .app-main {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+
+        /* SIDEBAR / CONFIG */
+        .config-panel {
+            padding: 0;
+            background: rgba(0, 0, 0, 0.02);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 900px) {
+            .config-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+
+        body.dark .config-panel {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .panel-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            transition: padding 0.3s ease;
+        }
+
+        .panel-section.collapsed {
+            padding-bottom: 0.75rem;
+            gap: 0;
+        }
+
+        .panel-section-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-header {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+        }
+
+        .toggle-header:hover {
+            color: var(--primary);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s var(--spring-easing);
+        }
+
+        .collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .toggle-content {
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 1200px;
+            opacity: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .collapsed .toggle-content {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            pointer-events: none;
+            gap: 0;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            background: var(--border);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            gap: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            font-size: 0.75rem;
+            padding: 8px 6px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .input-help {
+            font-size: 0.75rem;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+            line-height: 1.4;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: white;
+        }
+
+        body.dark input:focus, body.dark select:focus, body.dark textarea:focus {
+            background: #0f172a;
+        }
+
+        .input-with-action {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-input-action {
+            background: var(--border);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-input-action:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Color presets */
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .color-chip {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .color-chip:hover {
+            transform: scale(1.15);
+        }
+
+        .color-chip.active {
+            border-color: white;
+            box-shadow: 0 0 0 2px var(--primary);
+            transform: scale(1.1);
+        }
+
+        .custom-color-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .custom-color-input {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            border: 2px solid var(--border);
+            padding: 0;
+            cursor: pointer;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .custom-color-input::-webkit-color-swatch-wrapper { padding: 0; }
+        .custom-color-input::-webkit-color-swatch { border: none; border-radius: var(--radius-full); }
+
+        .checkbox-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 10px 12px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: rgba(0,0,0,0.02);
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .checkbox-card:hover {
+            border-color: var(--primary);
+            background: rgba(13, 148, 136, 0.05);
+        }
+
+        /* PREVIEW AREA */
+        .results-panel {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.75rem;
+            min-height: 480px;
+        }
+
+        .qr-display-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        body.dark .qr-display-card {
+            background: #ffffff;
+            color: #0f172a; /* Keep card clean white for scan contrast */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .qr-title-display {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .qr-canvas-wrapper {
+            padding: 12px;
+            background: white;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+        }
+
+        .qr-subtext-display {
+            margin-top: 0.9rem;
+            font-size: 0.85rem;
+            color: #475569;
+            word-break: break-all;
+            max-width: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            border: 1px dashed #cbd5e1;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .preview-controls .btn {
+            flex: 1 1 140px;
+        }
+
+        /* BATCH GRID DISPLAY */
+        .batch-grid-container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .batch-card {
+            background: white;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-xl);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            gap: 0.5rem;
+        }
+
+        .batch-card-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .batch-card-subtext {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
+        }
+
+        /* ========== PROJECTION / TBI MODE ========== */
+        body.projection {
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        body.projection .app-shell {
+            max-width: 1400px;
+            min-height: calc(100vh - 20px);
+        }
+
+        body.projection .config-panel,
+        body.projection footer,
+        body.projection .header-actions {
+            display: none !important;
+        }
+
+        body.projection .app-main {
+            grid-template-columns: 1fr;
+        }
+
+        body.projection .results-panel {
+            padding: 3rem 1rem;
+        }
+
+        body.projection .qr-display-card {
+            max-width: 700px;
+            padding: 3rem;
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body.projection .qr-title-display {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        body.projection .qr-subtext-display {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin-top: 1.5rem;
+        }
+
+        body.projection .qr-canvas-wrapper canvas {
+            width: 380px !important;
+            height: 380px !important;
+        }
+
+        /* PRINT STYLES */
+        .print-only { display: none; }
+        @media print {
+            body {
+                touch-action: manipulation;
+                background: white !important;
+                padding: 0;
+                font-family: 'Outfit', sans-serif;
+                color: black !important;
+            }
+            .no-print { display: none !important; }
+            .app-shell {
+                border: none;
+                box-shadow: none;
+                background: white;
+                backdrop-filter: none;
+                max-width: 100%;
+                display: block;
+                border-radius: 0;
+                min-height: auto;
+            }
+            .print-only { display: block !important; }
+            .results-panel { padding: 0; min-height: auto; }
+
+            /* Single Print Layout */
+            .print-single-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 3rem 1rem;
+                min-height: 80vh;
+            }
+
+            .print-single-title {
+                font-size: 28pt;
+                font-weight: 800;
+                margin-bottom: 2rem;
+                color: black;
+            }
+
+            .print-single-qr canvas {
+                width: 320px !important;
+                height: 320px !important;
+            }
+
+            .print-single-url {
+                font-size: 14pt;
+                margin-top: 2rem;
+                font-family: 'JetBrains Mono', monospace;
+                padding: 8px 16px;
+                border: 2px dashed #666;
+                border-radius: 8px;
+                color: black;
+            }
+
+            .print-single-meta {
+                margin-top: 3rem;
+                font-size: 10pt;
+                color: #555;
+            }
+
+            /* Batch Print Grid */
+            .print-batch-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                padding: 10px;
+            }
+
+            .print-batch-card {
+                border: 2px dashed #999;
+                border-radius: 12px;
+                padding: 15px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                page-break-inside: avoid;
+            }
+
+            .print-batch-card h3 {
+                font-size: 14pt;
+                margin-bottom: 10px;
+            }
+
+            .print-batch-card canvas {
+                width: 160px !important;
+                height: 160px !important;
+            }
+
+            .print-batch-card p {
+                font-size: 9pt;
+                font-family: 'JetBrains Mono', monospace;
+                margin-top: 8px;
+                word-break: break-all;
+            }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    
+    <div class="action-buttons no-print">
+        <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+            <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
+            <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
+        </button>
+        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode Projection TBI (Plein écran)" aria-label="Mode TBI">
+            <i data-fa="chalkboard-user" style="width:20px;height:20px;"></i>
+        </button>
+    </div>
+
+    <div class="app-shell" id="main-content">
+        <header class="no-print">
+            <div class="header-title-wrapper">
+                <a href="../../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="qrcode"></i>
+                </a>
+                <div>
+                    <h1>
+                        Créateur de QR codes
+                        <span class="badge-alpha">Alpha</span>
+                    </h1>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="resetBtn" title="Réinitialiser les champs">
+                    <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
+                    <span>Effacer</span>
+                </button>
+                <button class="btn btn-secondary" id="copyImgHeaderBtn" title="Copier l'image du QR code">
+                    <i data-fa="copy" style="width:16px;height:16px;"></i>
+                    <span>Copier</span>
+                </button>
+                <button class="btn btn-secondary" id="downloadImgHeaderBtn" title="Télécharger le QR code en HD">
+                    <i data-fa="download" style="width:16px;height:16px;"></i>
+                    <span>Télécharger</span>
+                </button>
+                <button class="btn btn-primary" id="printHeaderBtn" title="Imprimer le QR code ou la planche">
+                    <i data-fa="print" style="width:16px;height:16px;"></i>
+                    <span>Imprimer</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Printable Document (Only shown when printing) -->
+        <div class="print-only" id="printContainer">
+            <!-- Dynamically populated during print -->
+        </div>
+
+        <div class="app-main">
+            <!-- Sidebar / Settings Panel -->
+            <aside class="config-panel no-print">
+                <!-- Section 1 : Contenu -->
+                <div class="panel-section">
+                    <div class="panel-section-title">
+                        <i data-fa="pen" style="width:13px;height:13px;"></i>
+                        Type de contenu
+                    </div>
+
+                    <div class="tabs">
+                        <button class="tab-btn active" data-type="url">Lien web</button>
+                        <button class="tab-btn" data-type="text">Texte</button>
+                        <button class="tab-btn" data-type="wifi">Wi-Fi</button>
+                        <button class="tab-btn" data-type="batch">Lot</button>
+                    </div>
+
+                    <!-- Mode URL -->
+                    <div id="content-url-view" class="input-group">
+                        <label for="inputUrl">
+                            <span>Adresse web (URL)</span>
+                        </label>
+                        <div class="input-with-action">
+                            <input type="text" id="inputUrl" placeholder="https://ednum.org" value="https://ednum.org">
+                            <button class="btn-input-action" id="testLinkBtn" title="Tester le lien dans un nouvel onglet">
+                                <i data-fa="arrow-up-right-from-square" style="width:12px;height:12px;"></i>
+                                Tester
+                            </button>
+                        </div>
+                        <span class="input-help">Ex: Lien vers un exercice LearningApps, une vidéo ou un Genially.</span>
+                    </div>
+
+                    <!-- Mode Texte -->
+                    <div id="content-text-view" class="input-group hidden">
+                        <label for="inputText">Texte ou consigne pour les élèves</label>
+                        <textarea id="inputText" placeholder="Bravo ! Tu as trouvé l'indice n°3. Rends-toi maintenant à la bibliothèque pour ouvrir le coffre."></textarea>
+                        <span class="input-help">Idéal pour un escape game, rallye ou message secret.</span>
+                    </div>
+
+                    <!-- Mode Wi-Fi -->
+                    <div id="content-wifi-view" class="input-group hidden">
+                        <div class="input-group">
+                            <label for="wifiSsid">Nom du réseau (SSID)</label>
+                            <input type="text" id="wifiSsid" placeholder="Ex: WiFi_Classe_5H">
+                        </div>
+                        <div class="input-group" style="margin-top: 6px;">
+                            <label for="wifiPassword">Mot de passe</label>
+                            <div class="input-with-action">
+                                <input type="password" id="wifiPassword" placeholder="Clé de sécurité">
+                                <button class="btn-input-action" id="toggleWifiPassBtn" title="Afficher/Masquer le mot de passe">
+                                    <i data-fa="eye" id="wifiPassIcon" style="width:13px;height:13px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-top: 6px;">
+                            <label for="wifiType">Sécurité</label>
+                            <select id="wifiType">
+                                <option value="WPA" selected>WPA / WPA2 / WPA3 (Standard)</option>
+                                <option value="WEP">WEP (Ancien)</option>
+                                <option value="nopass">Aucun (Réseau ouvert)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mode Batch / Multi-QR -->
+                    <div id="content-batch-view" class="input-group hidden">
+                        <label for="inputBatch">
+                            <span>Liste des QR codes (1 par ligne)</span>
+                        </label>
+                        <textarea id="inputBatch" style="min-height: 130px;" placeholder="Atelier 1 | https://site.ch/1&#10;Atelier 2 | https://site.ch/2&#10;Atelier 3 | https://site.ch/3"></textarea>
+                        <span class="input-help">Format : <code>Titre | Lien ou texte</code> (ou juste une liste de liens).</span>
+                    </div>
+                </div>
+
+                <!-- Section 2 : Étiquettes & Textes -->
+                <div class="panel-section" id="labelsSection">
+                    <div class="panel-section-title">
+                        <i data-fa="marker" style="width:13px;height:13px;"></i>
+                        Étiquettes & Légendes
+                    </div>
+
+                    <div class="input-group">
+                        <label for="inputTitle">Titre au-dessus du QR code</label>
+                        <input type="text" id="inputTitle" placeholder="Ex: Activité Numérique 5H" value="Portail Éducation Numérique">
+                    </div>
+
+                    <label class="checkbox-card" for="showSubtext">
+                        <input type="checkbox" id="showSubtext" checked>
+                        <span style="font-size: 0.82rem; font-weight: 600;">Afficher l'adresse / le texte en clair en dessous</span>
+                    </label>
+                </div>
+
+                <!-- Section 3 : Options avancées -->
+                <div class="panel-section" id="advancedSection">
+                    <div class="panel-section-title toggle-header" id="advancedToggle">
+                        <i data-fa="sliders-up" style="width:13px;height:13px;"></i>
+                        Style & Précision
+                        <i data-fa="chevron-down" class="toggle-icon" style="margin-left:auto; width:13px;height:13px;"></i>
+                    </div>
+
+                    <div class="toggle-content">
+                        <!-- Couleur -->
+                        <div class="input-group">
+                            <label>Couleur du QR code</label>
+                            <div class="color-palette">
+                                <button class="color-chip active" data-color="#000000" style="background: #000000;" title="Noir classique"></button>
+                                <button class="color-chip" data-color="#0d9488" style="background: #0d9488;" title="Teal EdNum"></button>
+                                <button class="color-chip" data-color="#2563eb" style="background: #2563eb;" title="Bleu Éducation"></button>
+                                <button class="color-chip" data-color="#7c3aed" style="background: #7c3aed;" title="Violet"></button>
+                                <button class="color-chip" data-color="#b91c1c" style="background: #b91c1c;" title="Rouge"></button>
+                                <div class="custom-color-wrapper" title="Couleur personnalisée">
+                                    <input type="color" id="customColorInput" class="custom-color-input" value="#000000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Correction d'erreur -->
+                        <div class="input-group">
+                            <label for="eccLevel">
+                                <span>Correction d'erreur (ECC)</span>
+                            </label>
+                            <select id="eccLevel">
+                                <option value="L">L (7% - Moins dense)</option>
+                                <option value="M" selected>M (15% - Équilibré)</option>
+                                <option value="Q">Q (25% - Robuste)</option>
+                                <option value="H">H (30% - Recommandé pour la classe & découpage)</option>
+                            </select>
+                            <span class="input-help">Un niveau plus élevé (H) permet au QR code de rester lisible même s'il est abîmé ou manipulé par les élèves.</span>
+                        </div>
+
+                        <!-- Taille du rendu -->
+                        <div class="input-group">
+                            <label for="renderSize">Résolution d'export</label>
+                            <select id="renderSize">
+                                <option value="300">Standard (300 px)</option>
+                                <option value="600" selected>Haute Définition (600 px)</option>
+                                <option value="1200">Impression Pro HD (1200 px)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Display Area -->
+            <main class="results-panel">
+                <!-- Single Mode Preview -->
+                <div id="singlePreviewContainer" class="qr-display-card">
+                    <div class="qr-title-display" id="displayTitle">Portail Éducation Numérique</div>
+                    <div class="qr-canvas-wrapper">
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
+                    <div class="qr-subtext-display" id="displaySubtext">https://ednum.org</div>
+                </div>
+
+                <!-- Batch Mode Preview -->
+                <div id="batchPreviewContainer" class="batch-grid-container hidden">
+                    <!-- Populated dynamically in batch mode -->
+                </div>
+
+                <!-- Action Controls Below Preview -->
+                <div class="preview-controls no-print">
+                    <button class="btn btn-secondary" id="copyImgBtn">
+                        <i data-fa="copy" style="width:16px;height:16px;"></i>
+                        <span>Copier l'image</span>
+                    </button>
+                    <button class="btn btn-secondary" id="downloadImgBtn">
+                        <i data-fa="download" style="width:16px;height:16px;"></i>
+                        <span>Télécharger PNG</span>
+                    </button>
+                    <button class="btn btn-primary" id="printActionBtn">
+                        <i data-fa="print" style="width:16px;height:16px;"></i>
+                        <span>Imprimer A4</span>
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <footer class="no-print">
+            <p>
+                Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum</a> avec <a href="../../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                <br>
+                <span style="font-size: 0.9em; opacity: 0.85;">
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Hidden icons for FA subset compiler/bundler -->
+    <div style="display:none;">
+        <i data-fa="chalkboard-user"></i>
+        <i data-fa="qrcode"></i>
+        <i data-fa="sun-bright"></i>
+        <i data-fa="moon"></i>
+        <i data-fa="rotate-left"></i>
+        <i data-fa="copy"></i>
+        <i data-fa="download"></i>
+        <i data-fa="print"></i>
+        <i data-fa="pen"></i>
+        <i data-fa="marker"></i>
+        <i data-fa="sliders-up"></i>
+        <i data-fa="chevron-down"></i>
+        <i data-fa="arrow-up-right-from-square"></i>
+        <i data-fa="eye"></i>
+        <i data-fa="eye-slash"></i>
+        <i data-fa="circle-check"></i>
+        <i data-fa="heart"></i>
+    </div>
+
+    <!-- Vendor & Shared Helpers -->
+    <script src="../../../assets/js/vendor/qrious.min.js"></script>
+    <script src="../../../assets/js/toast.js"></script>
+    <script src="../../../assets/js/theme.js"></script>
+
+    <script>
+        window.fa?.createIcons?.();
+
+        // ==========================================
+        // ÉTAT ET VARIABLES GLOBALES
+        // ==========================================
+        const STORAGE_KEY = 'c2_qrcode_prefs_v1';
+        let state = {
+            type: 'url',           // 'url' | 'text' | 'wifi' | 'batch'
+            url: 'https://ednum.org',
+            text: 'Bravo ! Tu as trouvé l\'indice.',
+            wifiSsid: 'WiFi_Classe',
+            wifiPass: '',
+            wifiType: 'WPA',
+            batchText: 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu',
+            title: 'Portail Éducation Numérique',
+            showSubtext: true,
+            color: '#000000',
+            ecc: 'M',
+            size: 600
+        };
+
+        let qrInstance = null;
+
+        // ==========================================
+        // ÉLÉMENTS DOM
+        // ==========================================
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const viewUrl = document.getElementById('content-url-view');
+        const viewText = document.getElementById('content-text-view');
+        const viewWifi = document.getElementById('content-wifi-view');
+        const viewBatch = document.getElementById('content-batch-view');
+        
+        const inputUrl = document.getElementById('inputUrl');
+        const inputText = document.getElementById('inputText');
+        const inputWifiSsid = document.getElementById('wifiSsid');
+        const inputWifiPass = document.getElementById('wifiPassword');
+        const selectWifiType = document.getElementById('wifiType');
+        const inputBatch = document.getElementById('inputBatch');
+        const inputTitle = document.getElementById('inputTitle');
+        const checkShowSubtext = document.getElementById('showSubtext');
+        const selectEcc = document.getElementById('eccLevel');
+        const selectRenderSize = document.getElementById('renderSize');
+        const customColorInput = document.getElementById('customColorInput');
+
+        const singlePreviewContainer = document.getElementById('singlePreviewContainer');
+        const batchPreviewContainer = document.getElementById('batchPreviewContainer');
+        const displayTitle = document.getElementById('displayTitle');
+        const displaySubtext = document.getElementById('displaySubtext');
+        const qrCanvas = document.getElementById('qrCanvas');
+        const printContainer = document.getElementById('printContainer');
+
+        // ==========================================
+        // GESTION DES ONGLETS ET AFFICHAGE
+        // ==========================================
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.type = btn.dataset.type;
+
+                viewUrl.classList.toggle('hidden', state.type !== 'url');
+                viewText.classList.toggle('hidden', state.type !== 'text');
+                viewWifi.classList.toggle('hidden', state.type !== 'wifi');
+                viewBatch.classList.toggle('hidden', state.type !== 'batch');
+
+                singlePreviewContainer.classList.toggle('hidden', state.type === 'batch');
+                batchPreviewContainer.classList.toggle('hidden', state.type !== 'batch');
+
+                updateQR();
+                saveState();
+            });
+        });
+
+        // Advanced collapsible
+        const advancedToggle = document.getElementById('advancedToggle');
+        const advancedSection = document.getElementById('advancedSection');
+        if (advancedToggle) {
+            advancedToggle.addEventListener('click', () => {
+                advancedSection.classList.toggle('collapsed');
+            });
+        }
+
+        // Palette de couleurs
+        document.querySelectorAll('.color-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                state.color = chip.dataset.color;
+                customColorInput.value = state.color;
+                updateQR();
+                saveState();
+            });
+        });
+
+        customColorInput.addEventListener('input', (e) => {
+            document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+            state.color = e.target.value;
+            updateQR();
+            saveState();
+        });
+
+        // Toggle Wi-Fi password visibility
+        const toggleWifiPassBtn = document.getElementById('toggleWifiPassBtn');
+        const wifiPassIcon = document.getElementById('wifiPassIcon');
+        if (toggleWifiPassBtn) {
+            toggleWifiPassBtn.addEventListener('click', () => {
+                const isPass = inputWifiPass.type === 'password';
+                inputWifiPass.type = isPass ? 'text' : 'password';
+                if (wifiPassIcon) {
+                    wifiPassIcon.setAttribute('data-fa', isPass ? 'eye-slash' : 'eye');
+                    window.fa?.createIcons?.();
+                }
+            });
+        }
+
+        // Test Link button
+        document.getElementById('testLinkBtn')?.addEventListener('click', () => {
+            let url = inputUrl.value.trim();
+            if (!url) return showToast('Veuillez saisir une adresse web', 'warn');
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+            window.open(url, '_blank', 'noopener,noreferrer');
+        });
+
+        // ==========================================
+        // GÉNÉRATION ET MISE À JOUR DU QR CODE
+        // ==========================================
+        function getQRValue() {
+            if (state.type === 'url') {
+                let url = inputUrl.value.trim();
+                if (url && !/^https?:\/\//i.test(url) && !url.startsWith('mailto:') && !url.startsWith('tel:')) {
+                    url = 'https://' + url;
+                }
+                return url || 'https://ednum.org';
+            } else if (state.type === 'text') {
+                return inputText.value.trim() || 'Exemple de texte';
+            } else if (state.type === 'wifi') {
+                const ssid = inputWifiSsid.value.trim() || 'WiFi_Classe';
+                const pass = inputWifiPass.value;
+                const type = selectWifiType.value;
+                return `WIFI:S:${ssid};T:${type};P:${pass};;`;
+            }
+            return '';
+        }
+
+        function getSubtextDisplay() {
+            if (state.type === 'url') {
+                return inputUrl.value.trim() || 'https://ednum.org';
+            } else if (state.type === 'text') {
+                const val = inputText.value.trim();
+                return val.length > 60 ? val.substring(0, 57) + '...' : val;
+            } else if (state.type === 'wifi') {
+                return `Réseau Wi-Fi : ${inputWifiSsid.value.trim() || 'WiFi_Classe'}`;
+            }
+            return '';
+        }
+
+        function updateQR() {
+            state.title = inputTitle.value;
+            state.showSubtext = checkShowSubtext.checked;
+            state.ecc = selectEcc.value;
+            state.size = parseInt(selectRenderSize.value, 10) || 600;
+
+            if (state.type !== 'batch') {
+                const value = getQRValue();
+                displayTitle.textContent = state.title || '';
+                displayTitle.classList.toggle('hidden', !state.title);
+
+                const subtext = getSubtextDisplay();
+                displaySubtext.textContent = subtext;
+                displaySubtext.classList.toggle('hidden', !state.showSubtext || !subtext);
+
+                if (!qrInstance) {
+                    qrInstance = new QRious({
+                        element: qrCanvas,
+                        size: 260,
+                        value: value,
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        padding: 12
+                    });
+                } else {
+                    qrInstance.set({
+                        value: value,
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        size: 260,
+                        padding: 12
+                    });
+                }
+            } else {
+                renderBatch();
+            }
+        }
+
+        function renderBatch() {
+            batchPreviewContainer.replaceChildren();
+            const lines = inputBatch.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            if (lines.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.style.gridColumn = '1 / -1';
+                emptyMsg.style.textAlign = 'center';
+                emptyMsg.style.padding = '2rem';
+                emptyMsg.style.color = 'var(--text-muted)';
+                emptyMsg.textContent = 'Collez vos liens dans la zone de texte à gauche pour générer les QR codes.';
+                batchPreviewContainer.appendChild(emptyMsg);
+                return;
+            }
+
+            lines.forEach((line, index) => {
+                let title = `Atelier ${index + 1}`;
+                let value = line;
+
+                if (line.includes('|')) {
+                    const parts = line.split('|');
+                    title = parts[0].trim();
+                    value = parts.slice(1).join('|').trim();
+                }
+
+                if (!/^https?:\/\//i.test(value) && value.includes('.')) {
+                    value = 'https://' + value;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'batch-card';
+
+                const cardTitle = document.createElement('div');
+                cardTitle.className = 'batch-card-title';
+                cardTitle.textContent = title;
+                card.appendChild(cardTitle);
+
+                const canvas = document.createElement('canvas');
+                new QRious({
+                    element: canvas,
+                    size: 150,
+                    value: value,
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: 8
+                });
+                card.appendChild(canvas);
+
+                if (state.showSubtext) {
+                    const cardSub = document.createElement('div');
+                    cardSub.className = 'batch-card-subtext';
+                    cardSub.textContent = value.length > 35 ? value.substring(0, 32) + '...' : value;
+                    card.appendChild(cardSub);
+                }
+
+                batchPreviewContainer.appendChild(card);
+            });
+        }
+
+        // Live input listeners
+        [inputUrl, inputText, inputWifiSsid, inputWifiPass, selectWifiType, inputBatch, inputTitle].forEach(el => {
+            el.addEventListener('input', () => {
+                updateQR();
+                saveState();
+            });
+        });
+
+        checkShowSubtext.addEventListener('change', () => {
+            updateQR();
+            saveState();
+        });
+
+        selectEcc.addEventListener('change', () => {
+            updateQR();
+            saveState();
+        });
+
+        selectRenderSize.addEventListener('change', () => {
+            updateQR();
+            saveState();
+        });
+
+        // ==========================================
+        // EXPORT : COPIER L'IMAGE DANS LE PRESSE-PAPIER
+        // ==========================================
+        async function copyQRImage() {
+            try {
+                // Generate a clean high-res canvas with title and subtext included if desired
+                const exportCanvas = createExportCanvas();
+                exportCanvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        return showToast('Erreur lors de la génération de l\'image', 'error');
+                    }
+                    try {
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([item]);
+                        showToast('Image du QR code copiée !', 'success');
+                    } catch (err) {
+                        console.error('Clipboard copy failed:', err);
+                        // Fallback: Copy URL/Text
+                        navigator.clipboard.writeText(getQRValue());
+                        showToast('Texte/Lien copié dans le presse-papier !', 'info');
+                    }
+                }, 'image/png');
+            } catch (e) {
+                console.error(e);
+                showToast('Impossible de copier l\'image directement', 'error');
+            }
+        }
+
+        // ==========================================
+        // EXPORT : TÉLÉCHARGEMENT PNG HAUTE DÉFINITION
+        // ==========================================
+        function downloadQRImage() {
+            try {
+                const exportCanvas = createExportCanvas();
+                const link = document.createElement('a');
+                const cleanTitle = (state.title || 'qrcode').toLowerCase().replace(/[^a-z0-9_-]/gi, '_');
+                link.download = `${cleanTitle}.png`;
+                link.href = exportCanvas.toDataURL('image/png');
+                link.click();
+                showToast('Téléchargement du QR code lancé', 'success');
+            } catch (e) {
+                console.error('Download error:', e);
+                showToast('Erreur lors du téléchargement', 'error');
+            }
+        }
+
+        // Create clean standalone canvas for export
+        function createExportCanvas() {
+            const size = state.size || 600;
+            const tempCanvas = document.createElement('canvas');
+            
+            new QRious({
+                element: tempCanvas,
+                size: size,
+                value: getQRValue(),
+                level: state.ecc,
+                foreground: state.color,
+                background: '#ffffff',
+                padding: Math.round(size * 0.05)
+            });
+
+            // If user wants title on export
+            const hasTitle = Boolean(state.title && state.title.trim().length > 0);
+            const hasSubtext = Boolean(state.showSubtext && getSubtextDisplay());
+
+            if (!hasTitle && !hasSubtext) {
+                return tempCanvas;
+            }
+
+            // Composite canvas with title/subtext
+            const composite = document.createElement('canvas');
+            const ctx = composite.getContext('2d');
+            const titleHeight = hasTitle ? Math.round(size * 0.12) : 0;
+            const subtextHeight = hasSubtext ? Math.round(size * 0.1) : 0;
+            const margin = Math.round(size * 0.06);
+
+            composite.width = size + (margin * 2);
+            composite.height = size + titleHeight + subtextHeight + (margin * 2);
+
+            // Background white
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, composite.width, composite.height);
+
+            let currentY = margin;
+
+            // Draw title
+            if (hasTitle) {
+                ctx.fillStyle = '#0f172a';
+                ctx.font = `bold ${Math.round(size * 0.065)}px Outfit, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText(state.title, composite.width / 2, currentY);
+                currentY += titleHeight;
+            }
+
+            // Draw QR Code
+            ctx.drawImage(tempCanvas, margin, currentY);
+            currentY += size;
+
+            // Draw Subtext
+            if (hasSubtext) {
+                ctx.fillStyle = '#475569';
+                ctx.font = `${Math.round(size * 0.038)}px JetBrains Mono, monospace`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const sub = getSubtextDisplay();
+                const displaySub = sub.length > 50 ? sub.substring(0, 47) + '...' : sub;
+                ctx.fillText(displaySub, composite.width / 2, currentY + (subtextHeight / 2));
+            }
+
+            return composite;
+        }
+
+        // ==========================================
+        // IMPRESSION A4 OPTIMISÉE
+        // ==========================================
+        function handlePrint() {
+            printContainer.replaceChildren();
+
+            if (state.type !== 'batch') {
+                // Single A4 Sheet layout
+                const singleWrap = document.createElement('div');
+                singleWrap.className = 'print-single-container';
+
+                if (state.title) {
+                    const h1 = document.createElement('h1');
+                    h1.className = 'print-single-title';
+                    h1.textContent = state.title;
+                    singleWrap.appendChild(h1);
+                }
+
+                const qrWrap = document.createElement('div');
+                qrWrap.className = 'print-single-qr';
+                const printCanvas = document.createElement('canvas');
+                new QRious({
+                    element: printCanvas,
+                    size: 450,
+                    value: getQRValue(),
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: 16
+                });
+                qrWrap.appendChild(printCanvas);
+                singleWrap.appendChild(qrWrap);
+
+                if (state.showSubtext) {
+                    const urlP = document.createElement('div');
+                    urlP.className = 'print-single-url';
+                    urlP.textContent = getSubtextDisplay();
+                    singleWrap.appendChild(urlP);
+                }
+
+                const meta = document.createElement('div');
+                meta.className = 'print-single-meta';
+                meta.textContent = 'Document pédagogique généré avec Suite EdNum';
+                singleWrap.appendChild(meta);
+
+                printContainer.appendChild(singleWrap);
+            } else {
+                // Batch Grid Layout
+                const batchGrid = document.createElement('div');
+                batchGrid.className = 'print-batch-grid';
+
+                const lines = inputBatch.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                lines.forEach((line, index) => {
+                    let title = `Atelier ${index + 1}`;
+                    let value = line;
+                    if (line.includes('|')) {
+                        const parts = line.split('|');
+                        title = parts[0].trim();
+                        value = parts.slice(1).join('|').trim();
+                    }
+                    if (!/^https?:\/\//i.test(value) && value.includes('.')) {
+                        value = 'https://' + value;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'print-batch-card';
+
+                    const h3 = document.createElement('h3');
+                    h3.textContent = title;
+                    card.appendChild(h3);
+
+                    const canvas = document.createElement('canvas');
+                    new QRious({
+                        element: canvas,
+                        size: 220,
+                        value: value,
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        padding: 10
+                    });
+                    card.appendChild(canvas);
+
+                    if (state.showSubtext) {
+                        const p = document.createElement('p');
+                        p.textContent = value;
+                        card.appendChild(p);
+                    }
+
+                    batchGrid.appendChild(card);
+                });
+
+                printContainer.appendChild(batchGrid);
+            }
+
+            window.print();
+        }
+
+        // ==========================================
+        // PROJECTION TBI / PLEIN ÉCRAN
+        // ==========================================
+        const projBtn = document.getElementById('projection-toggle-btn');
+        function toggleProjectionMode() {
+            const isProj = document.body.classList.toggle('projection');
+            if (isProj) {
+                showToast('Mode TBI activé (Échap pour quitter)', 'info');
+            }
+        }
+
+        if (projBtn) {
+            projBtn.addEventListener('click', toggleProjectionMode);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                document.body.classList.remove('projection');
+            }
+        });
+
+        // Reset
+        document.getElementById('resetBtn')?.addEventListener('click', () => {
+            inputUrl.value = '';
+            inputText.value = '';
+            inputWifiSsid.value = '';
+            inputWifiPass.value = '';
+            inputBatch.value = '';
+            inputTitle.value = '';
+            updateQR();
+            showToast('Champs réinitialisés', 'info');
+            saveState();
+        });
+
+        // Action buttons bindings
+        document.getElementById('copyImgBtn')?.addEventListener('click', copyQRImage);
+        document.getElementById('copyImgHeaderBtn')?.addEventListener('click', copyQRImage);
+        document.getElementById('downloadImgBtn')?.addEventListener('click', downloadQRImage);
+        document.getElementById('downloadImgHeaderBtn')?.addEventListener('click', downloadQRImage);
+        document.getElementById('printActionBtn')?.addEventListener('click', handlePrint);
+        document.getElementById('printHeaderBtn')?.addEventListener('click', handlePrint);
+
+        // ==========================================
+        // PERSISTANCE D'ÉTAT
+        // ==========================================
+        function saveState() {
+            try {
+                state.url = inputUrl.value;
+                state.text = inputText.value;
+                state.wifiSsid = inputWifiSsid.value;
+                state.wifiPass = inputWifiPass.value;
+                state.wifiType = selectWifiType.value;
+                state.batchText = inputBatch.value;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error('Save state error:', e);
+            }
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    Object.assign(state, parsed);
+                    
+                    inputUrl.value = state.url || '';
+                    inputText.value = state.text || '';
+                    inputWifiSsid.value = state.wifiSsid || '';
+                    inputWifiPass.value = state.wifiPass || '';
+                    selectWifiType.value = state.wifiType || 'WPA';
+                    inputBatch.value = state.batchText || '';
+                    inputTitle.value = state.title !== undefined ? state.title : 'Portail Éducation Numérique';
+                    checkShowSubtext.checked = state.showSubtext !== undefined ? state.showSubtext : true;
+                    selectEcc.value = state.ecc || 'M';
+                    selectRenderSize.value = state.size || '600';
+                    customColorInput.value = state.color || '#000000';
+
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.type === state.type);
+                    });
+                    viewUrl.classList.toggle('hidden', state.type !== 'url');
+                    viewText.classList.toggle('hidden', state.type !== 'text');
+                    viewWifi.classList.toggle('hidden', state.type !== 'wifi');
+                    viewBatch.classList.toggle('hidden', state.type !== 'batch');
+                    singlePreviewContainer.classList.toggle('hidden', state.type === 'batch');
+                    batchPreviewContainer.classList.toggle('hidden', state.type !== 'batch');
+
+                    document.querySelectorAll('.color-chip').forEach(chip => {
+                        chip.classList.toggle('active', chip.dataset.color === state.color);
+                    });
+                }
+            } catch (e) {
+                console.error('Load state error:', e);
+            }
+            updateQR();
+        }
+
+        // Initial launch
+        loadState();
+    </script>
+</body>
+
+</html>
