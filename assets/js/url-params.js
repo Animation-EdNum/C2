@@ -172,6 +172,12 @@ function applyUrlParameters() {
         instructions.forEach(el => el.style.display = 'none');
     }
 
+    if (urlParams.get('mode') === 'tbi' || urlParams.get('tbi') === '1' || urlParams.get('projection') === '1') {
+        document.body.classList.add('projection');
+        const projText = document.getElementById('projectionToggleText');
+        if (projText) projText.textContent = 'Mode normal';
+    }
+
     // 2. Locks
     if (urlParams.get('lockDiff') === '1') {
         const diffBtns = document.querySelectorAll('.diff-btn');
@@ -504,6 +510,16 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
+                            <div class="share-option" id="lbl-tbi" style="display: none;">
+                                <div class="share-option-text">
+                                    <label class="share-option-label" for="opt-tbi">Mode TBI <span class="badge-specific" title="Spécifique à l'application">*</span></label>
+                                    <div class="share-option-desc">Ouvre l'application directement en mode projection pour grand écran.</div>
+                                </div>
+                                <label class="share-toggle">
+                                    <input type="checkbox" id="opt-tbi">
+                                    <span class="share-toggle-slider"></span>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="options-column" id="col-restrictions">
@@ -677,6 +693,14 @@ function initShareModal() {
     if (window.location.pathname.includes('binaire_studio.html')) {
         document.getElementById('lbl-unlockEditor').style.display = 'flex';
         document.getElementById('lbl-colorMode').style.display = 'flex';
+    }
+    if (document.getElementById('projection-toggle-btn') || document.body.classList.contains('projection') || window.location.pathname.includes('generateur_mot_de_passe.html')) {
+        const lblTbi = document.getElementById('lbl-tbi');
+        if (lblTbi) lblTbi.style.display = 'flex';
+        const optTbi = document.getElementById('opt-tbi');
+        if (optTbi && document.body.classList.contains('projection')) {
+            optTbi.checked = true;
+        }
     }
 
 
