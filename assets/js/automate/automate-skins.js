@@ -287,7 +287,7 @@ function renderMatsGrid() {
                         <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;" onclick="event.stopPropagation()">
                             <label for="customMatUpload" class="btn btn-outline btn-small"
                                 style="cursor: pointer; flex-grow: 1; text-align: center; font-size: 0.85em; padding: 4px 8px;">
-                                <i data-fa="upload" style="width: 14px; height: 14px; margin-right: 5px; vertical-align: middle;"></i>
+                                <i data-fa="arrow-up-from-square" style="width: 14px; height: 14px; margin-right: 5px; vertical-align: middle;"></i>
                                 Télécharger image
                             </label>
                             <input type="file" id="customMatUpload" accept="image/*" style="display: none;">
@@ -1210,7 +1210,7 @@ const ROBOT_SVGS = {
                 <rect x="135" y="40" width="130" height="510" fill="rgba(0,0,0,0.15)" rx="10" />
 
                 <!-- === STRUCTURE DE LA LOCOMOTIVE === -->
-                <!-- Cabine (Le "cul" du train) -->
+                <!-- Cabine (Partie arrière du train) -->
                 <rect x="130" y="450" width="140" height="90" fill="#700" rx="3" />
                 <rect x="135" y="455" width="130" height="80" fill="#333" rx="5" />
                 <rect x="187" y="442" width="6" height="4" fill="#666" rx="1" />
@@ -1569,7 +1569,7 @@ const ROBOT_SVGS = {
                     <path d="M 20 70 L 5 90 L 25 80 Z" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
                     <path d="M 80 70 L 95 90 L 75 80 Z" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
 
-                    <!-- Flames (CSS animated later if possible, but basic SVG here) -->
+                    <!-- Flammes de propulsion -->
                     <path class="rocket-flame" d="M 35 70 Q 50 100 65 70 Q 50 85 35 70 Z" fill="#f97316"/>
                     <path class="rocket-flame-inner" d="M 42 70 Q 50 90 58 70 Q 50 80 42 70 Z" fill="#fef08a"/>
                 </svg>`,

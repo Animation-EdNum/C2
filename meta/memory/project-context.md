@@ -39,7 +39,7 @@
 ## 6. Attribution & Licensing
 - **License:** AGPL-3.0.
 - **Attribution Footer (Critical):** The footer serves as 'Appropriate Legal Notices' for AGPL-3.0 compliance. ALL HTML files must include the copyright "Animation-EdNum (HEP-VS)", a link to the source code, the license, and the footer content:
-  - Text: "Webapp conçue par Vivian de l'[AP EdNum](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec <i data-fa=\"heart\"></i> et quelques neurones artificiels" (link strictly on "AP EdNum"). The `<i data-fa=\"heart\"></i>` (red, solid FA heart with hover scale effect) must link to `merci.html`.
+  - Text: "Webapp conçue par Vivian de l'[AP EdNum, HEP-VS](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec <i data-fa=\"heart\"></i> et quelques neurones artificiels" (link strictly on "AP EdNum, HEP-VS"). The `<i data-fa=\"heart\"></i>` (red, solid FA heart with hover scale effect) must link to `merci.html`.
   - Source Link: "Code 100% libre (AGPL-3.0)".
 - **Support Contact:** vivian.epiney@hepvs.ch.
 
