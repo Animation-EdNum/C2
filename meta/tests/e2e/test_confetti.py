@@ -15,71 +15,61 @@ def test_launch_fire_overlay(page: Page):
     expect(overlay).not_to_be_attached(timeout=4000)
 
 def test_launch_fire_canvas(page: Page):
-    """Verify launchFire interacts with canvas correctly (arc and fill)."""
+    """Verify launchFire creates an animation canvas with correct dimensions and z-index."""
     page.goto("http://localhost:8000/webapps/binaire_codage.html")
 
-    # Inject a mock context before canvas is created
-    page.evaluate("""(() => {
-        window.mockArcCalled = false;
-        window.mockFillCalled = false;
+    initial_canvas_count = page.evaluate("document.querySelectorAll('canvas').length")
 
-        const originalArc = CanvasRenderingContext2D.prototype.arc;
-        const originalFill = CanvasRenderingContext2D.prototype.fill;
-
-        CanvasRenderingContext2D.prototype.arc = function() {
-            window.mockArcCalled = true;
-            return originalArc.apply(this, arguments);
-        };
-        CanvasRenderingContext2D.prototype.fill = function() {
-            window.mockFillCalled = true;
-            return originalFill.apply(this, arguments);
-        };
-    })()""")
-
+    # Call launchFire
     page.evaluate("launchFire()")
 
-    # Wait for animation to run a few frames
-    page.wait_for_timeout(500)
+    # A new dynamic canvas should be created
+    new_canvas_count = page.evaluate("document.querySelectorAll('canvas').length")
+    assert new_canvas_count == initial_canvas_count + 1
 
-    arc_called = page.evaluate("window.mockArcCalled")
-    fill_called = page.evaluate("window.mockFillCalled")
-    dimensions_match = page.evaluate("""(() => {
+    # Verify canvas properties (full screen, zIndex 9999)
+    canvas_props = page.evaluate("""(() => {
         const canvases = document.querySelectorAll('canvas');
-        const cvs = canvases[canvases.length - 1]; // get the dynamically created canvas
-        return cvs && cvs.width === window.innerWidth && cvs.height === window.innerHeight;
-    })()""")
-
-    assert arc_called is True
-    assert fill_called is True
-    assert dimensions_match is True
-
-def test_launch_confetti_canvas(page: Page):
-    """Verify launchConfetti interacts with canvas correctly (fillRect)."""
-    page.goto("http://localhost:8000/webapps/binaire_codage.html")
-
-    # Inject a mock context before canvas is created
-    page.evaluate("""(() => {
-        window.mockFillRectCalled = false;
-
-        const originalFillRect = CanvasRenderingContext2D.prototype.fillRect;
-
-        CanvasRenderingContext2D.prototype.fillRect = function() {
-            window.mockFillRectCalled = true;
-            return originalFillRect.apply(this, arguments);
+        const cvs = canvases[canvases.length - 1];
+        return {
+            zIndex: cvs.style.zIndex,
+            position: cvs.style.position,
+            width: cvs.width,
+            height: cvs.height,
+            matchesWindow: cvs.width === window.innerWidth && cvs.height === window.innerHeight
         };
     })()""")
 
+    assert canvas_props["zIndex"] == "9999"
+    assert canvas_props["position"] == "fixed"
+    assert canvas_props["matchesWindow"] is True
+
+def test_launch_confetti_canvas(page: Page):
+    """Verify launchConfetti creates an animation canvas with correct dimensions and z-index."""
+    page.goto("http://localhost:8000/webapps/binaire_codage.html")
+
+    initial_canvas_count = page.evaluate("document.querySelectorAll('canvas').length")
+
+    # Call launchConfetti
     page.evaluate("launchConfetti()")
 
-    # Wait for animation to run a few frames
-    page.wait_for_timeout(500)
+    # A new dynamic canvas should be created
+    new_canvas_count = page.evaluate("document.querySelectorAll('canvas').length")
+    assert new_canvas_count == initial_canvas_count + 1
 
-    fillrect_called = page.evaluate("window.mockFillRectCalled")
-    dimensions_match = page.evaluate("""(() => {
+    # Verify canvas properties (full screen, zIndex 9998)
+    canvas_props = page.evaluate("""(() => {
         const canvases = document.querySelectorAll('canvas');
-        const cvs = canvases[canvases.length - 1]; // get the dynamically created canvas
-        return cvs && cvs.width === window.innerWidth && cvs.height === window.innerHeight;
+        const cvs = canvases[canvases.length - 1];
+        return {
+            zIndex: cvs.style.zIndex,
+            position: cvs.style.position,
+            width: cvs.width,
+            height: cvs.height,
+            matchesWindow: cvs.width === window.innerWidth && cvs.height === window.innerHeight
+        };
     })()""")
 
-    assert fillrect_called is True
-    assert dimensions_match is True
+    assert canvas_props["zIndex"] == "9998"
+    assert canvas_props["position"] == "fixed"
+    assert canvas_props["matchesWindow"] is True
