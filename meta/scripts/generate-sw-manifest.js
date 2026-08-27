@@ -16,11 +16,12 @@ const ROOT_FILES = [
 function getFiles(dir, files = []) {
     const fileList = fs.readdirSync(dir);
     for (const file of fileList) {
+        if (file.startsWith('.') || file === 'Thumbs.db') continue;
         const name = path.join(dir, file);
         if (fs.statSync(name).isDirectory()) {
             getFiles(name, files);
         } else {
-            // Convert to posix path format (for Windows support if needed) and ensure it starts with ./
+            // Convert to posix path format (for Windows support) and ensure it starts with ./
             const posixPath = './' + name.split(path.sep).join('/');
             files.push(posixPath);
         }
@@ -30,11 +31,18 @@ function getFiles(dir, files = []) {
 
 
 function generateManifest() {
+    const isCheckMode = process.argv.includes('--check');
+    const rootDir = path.resolve(path.join(__dirname, '..', '..'));
     let allFiles = [...ROOT_FILES];
 
     for (const dir of DIRECTORIES_TO_SCAN) {
-        if (fs.existsSync(dir)) {
-            const filesInDir = getFiles(dir);
+        const fullDirPath = path.join(rootDir, dir);
+        if (fs.existsSync(fullDirPath)) {
+            const filesInDir = getFiles(fullDirPath).map(f => {
+                // Relativize path to rootDir and prefix with ./
+                const rel = path.relative(rootDir, path.resolve(f)).split(path.sep).join('/');
+                return './' + rel;
+            });
             allFiles = allFiles.concat(filesInDir);
         }
     }
@@ -44,13 +52,14 @@ function generateManifest() {
     // Reorder to put ROOT_FILES first for readability
     const finalAssets = [...ROOT_FILES, ...allFiles.filter(f => !ROOT_FILES.includes(f))];
 
-    const swPath = path.join(__dirname, '..', '..', 'sw.js');
+    const swPath = path.join(rootDir, 'sw.js');
     if (!fs.existsSync(swPath)) {
         console.error('sw.js not found in repository root');
         process.exit(1);
     }
 
-    let swContent = fs.readFileSync(swPath, 'utf8');
+    const originalContent = fs.readFileSync(swPath, 'utf8');
+    let swContent = originalContent;
 
     // Regex to match the ASSETS array block
     const assetRegex = /const ASSETS = \[\s*[\s\S]*?\s*\];/;
@@ -69,7 +78,7 @@ function generateManifest() {
     const hash = crypto.createHash('sha256');
     for (const file of finalAssets) {
         if (file === './') continue; // Skip directory reference
-        const filePath = path.join(__dirname, '..', '..', file);
+        const filePath = path.join(rootDir, file);
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             hash.update(fs.readFileSync(filePath));
         }
@@ -86,8 +95,20 @@ function generateManifest() {
         swContent = swContent.replace(fallbackRegex, `const CACHE_NAME = 'ednum-${version}'`);
     }
 
-    fs.writeFileSync(swPath, swContent, 'utf8');
-    console.log(`Successfully updated sw.js with cache version ednum-${version} and ${finalAssets.length} assets.`);
+    if (isCheckMode) {
+        if (swContent.replace(/\r\n/g, '\n') === originalContent.replace(/\r\n/g, '\n')) {
+            console.log(`✅ sw.js is up to date (cache version: ednum-${version}, ${finalAssets.length} assets).`);
+            process.exit(0);
+        } else {
+            console.error(`❌ sw.js is outdated!`);
+            console.error(`Expected cache version: ednum-${version} with ${finalAssets.length} assets.`);
+            console.error(`Run 'npm run build:sw' to update sw.js.`);
+            process.exit(1);
+        }
+    } else {
+        fs.writeFileSync(swPath, swContent, 'utf8');
+        console.log(`Successfully updated sw.js with cache version ednum-${version} and ${finalAssets.length} assets.`);
+    }
 }
 
 generateManifest();

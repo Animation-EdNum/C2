@@ -1,0 +1,45 @@
+name: Sync Service Worker Manifest
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'sw.js'
+      - '.github/**'
+      - 'meta/tests/**'
+      - 'README.md'
+      - 'LICENSE'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+
+permissions:
+  contents: write
+
+jobs:
+  update-sw:
+    name: "Auto-sync sw.js"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20
+
+      - name: Regenerate Service Worker Manifest
+        run: node meta/scripts/generate-sw-manifest.js
+
+      - name: Commit and push if sw.js changed
+        run: |
+          if ! git diff --quiet sw.js; then
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add sw.js
+            git commit -m "chore(sw): auto-update cache version and assets manifest [skip ci]"
+            git push
+          else
+            echo "sw.js is already up to date."
+          fi
