@@ -19,7 +19,7 @@ def test_launch_fire_canvas(page: Page):
     page.goto("http://localhost:8000/webapps/binaire_codage.html")
 
     # Inject a mock context before canvas is created
-    page.evaluate("""() => {
+    page.evaluate("""(() => {
         window.mockArcCalled = false;
         window.mockFillCalled = false;
 
@@ -34,7 +34,7 @@ def test_launch_fire_canvas(page: Page):
             window.mockFillCalled = true;
             return originalFill.apply(this, arguments);
         };
-    }""")
+    })()""")
 
     page.evaluate("launchFire()")
 
@@ -43,11 +43,11 @@ def test_launch_fire_canvas(page: Page):
 
     arc_called = page.evaluate("window.mockArcCalled")
     fill_called = page.evaluate("window.mockFillCalled")
-    dimensions_match = page.evaluate("""() => {
+    dimensions_match = page.evaluate("""(() => {
         const canvases = document.querySelectorAll('canvas');
         const cvs = canvases[canvases.length - 1]; // get the dynamically created canvas
         return cvs && cvs.width === window.innerWidth && cvs.height === window.innerHeight;
-    }""")
+    })()""")
 
     assert arc_called is True
     assert fill_called is True
@@ -58,7 +58,7 @@ def test_launch_confetti_canvas(page: Page):
     page.goto("http://localhost:8000/webapps/binaire_codage.html")
 
     # Inject a mock context before canvas is created
-    page.evaluate("""() => {
+    page.evaluate("""(() => {
         window.mockFillRectCalled = false;
 
         const originalFillRect = CanvasRenderingContext2D.prototype.fillRect;
@@ -67,7 +67,7 @@ def test_launch_confetti_canvas(page: Page):
             window.mockFillRectCalled = true;
             return originalFillRect.apply(this, arguments);
         };
-    }""")
+    })()""")
 
     page.evaluate("launchConfetti()")
 
@@ -75,11 +75,11 @@ def test_launch_confetti_canvas(page: Page):
     page.wait_for_timeout(500)
 
     fillrect_called = page.evaluate("window.mockFillRectCalled")
-    dimensions_match = page.evaluate("""() => {
+    dimensions_match = page.evaluate("""(() => {
         const canvases = document.querySelectorAll('canvas');
         const cvs = canvases[canvases.length - 1]; // get the dynamically created canvas
         return cvs && cvs.width === window.innerWidth && cvs.height === window.innerHeight;
-    }""")
+    })()""")
 
     assert fillrect_called is True
     assert dimensions_match is True
