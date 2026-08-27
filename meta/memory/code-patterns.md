@@ -27,6 +27,7 @@
 - **Primary Navigation:** Exclusively use top tabs (`.tabs` > `.tab-btn`). NEVER use bottom tab bars (`.nav-bar` is deprecated).
 - **Cards:** `.exercise-card` must use a `.card-footer` with a `.score-bar` and an icon-only stats button (`.icon-action-btn`).
 - **Modals/Drawers:** Styled as side-panels. Must support swipe-to-close and Escape key.
+- **TBI Projection Mode:** Classroom interactive whiteboard mode triggered via `.tbi-mode` button. Maximizes UI scaling, removes non-essential panels, applies `.tbi-projection` container classes with explicit `overflow: hidden` / `overflow: auto` safeguards to prevent projection viewport clipping.
 - **Icons (FontAwesome 7 Pro):** `data-fa="<name>"` (solid), `data-fa="dt-<name>"` (duotone). Run `generate_fa_subset.js` after adding. Do not manually modify the generated data inside `assets/js/fa-subset.js`. Fix icon appearance issues via standard CSS overrides. Ensure custom icons use the exact same `viewBox` width and height dimensions as the original icon.
 - **Accessibility:** Minimum 44x44px touch targets. Maintain `:focus-visible` rings. Add `tabindex="0"`.
 - **Specific Instructions:** Place 'short instruction' texts directly inside the `.exercise-card` using inline styles instead of `.chal-instruction` classes.
@@ -36,7 +37,7 @@
 - **Confetti (`confetti.js`):** Use `window.handleStreakCelebration(currentStreak, isExtreme, score)` instead of raw `launchConfetti()`.
 - **Toasts (`toast.js`):** `showToast(msg, type)`. Types: `success`, `error`, `warn`, `info`.
 - **DOM Queries:** Pre-cache DOM elements. Do NOT use `Array.from(document.querySelectorAll).find()` inside loops. Use `DocumentFragment` for batch inserts.
-- **XSS Prevention (Critical):** Always sanitize untrusted dynamic strings with `ScoreManager._escapeHtml()` before insertion. Prefer native browser DOM APIs (`document.createElement`, `textContent`) over `innerHTML`.
+- **XSS Prevention (Critical):** Always sanitize untrusted dynamic strings with `ScoreManager._escapeHtml()` before insertion. Prefer native browser DOM APIs (`document.createElement`, `textContent`) over `innerHTML`. Use `container.textContent = ''` instead of `container.innerHTML = ''` when clearing DOM nodes.
 - **No Inline Events (Critical):** Do NOT use inline event attributes (e.g. `onclick="..."`, `onchange="..."`) in HTML code. Always bind events programmatically via `.addEventListener('click', ...)` on elements identified with unique `id` attributes or structural selectors.
 - **Audio (`audio.js`):** Use `playSound(id)`. Apps must start muted (`isMuted = true`). Do not locally redeclare variables like `isMuted` or functions like `playSound` to avoid collisions with the centralized `audio.js`.
 - **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
@@ -45,6 +46,7 @@
 - **Clipboard API:** Deprecate `document.execCommand('copy')`. Use `navigator.clipboard.writeText()` or `ClipboardItem` APIs, relying on Promise-based `.catch()` blocks for errors instead of legacy hidden textarea hacks.
 
 ## 5. App-Specific Quirks
+- **Password Generator (`generateur_mot_de_passe.html`):** Tabbed interface (Générateur, Tester, Conseils). Interactive slider & character options update entropy calculation real-time. Drag-and-drop elements for password construction. TBI mode supported.
 - **Drawing Apps:** Call `e.preventDefault()` on `touchstart/move`.
 - **Simulateur Automate:**
   - Robot orientation is an integer `0-3` (Up, Right, Down, Left).

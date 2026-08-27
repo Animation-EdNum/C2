@@ -7,24 +7,25 @@
 
 ## 2. Application Structure
 - **Student Portals:** `index.html` (general use), `indexC1.html` (simplified for 4-7 year olds).
-- **Stable Student Apps (`webapps/`):** Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau.
+- **Stable Student Apps (`webapps/`):** Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
 - **Alpha Student Apps (`alpha/webapps/`):** Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`).
-- **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. Alpha: Sim Dyslexie (`alpha/webapps/teacher/`).
+- **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. Alpha: Sim Dyslexie (`alpha/webapps/teacher/`), Générateur QR (`alpha/webapps/teacher/`).
   - *Rule:* They use a distinct stylesheet (`assets/css/teacher.css`). Do NOT extract their shared styles into the global CSS cascade.
+- **TBI Projection Mode:** Interactive Whiteboard (Tableau Blanc Interactif) mode supported across apps (Codage binaire, Bit de Parité, Générateur de Mot de Passe, Tirage au Sort) with container overflow safeguards.
 
 ## 3. Technical Architecture & Constraints
 - **Offline-First (Critical):** Installable PWA. Zero internet dependency.
 - **Service Worker:** `sw.js` caches `webapps/`, `webapps/teacher/`, `assets/css/`, `assets/js/`, and `assets/fonts/`.
-  - *Rule:* Run `node meta/scripts/generate-sw-manifest.js` after adding/modifying files to auto-update the cache manifest.
+  - *Rule:* Run `node meta/scripts/generate-sw-manifest.js` (or `npm run build:sw`) after adding/modifying files. CI workflow `sw-sync.yml` automatically updates and commits `sw.js` on push to `main`.
 - **Vanilla Stack:** Pure HTML, JS, CSS. No frameworks (React, Vue, Tailwind) allowed.
-- **Asset Centralization:** ALL static assets (JS, CSS, fonts, images) are strictly in `/assets/`.
-- **Global Interactions:** Portal interactions (theme, cache reset) are centralized in `assets/js/theme.js`.
+- **Asset Centralization:** ALL static assets (JS, CSS, fonts, images) are strictly in `/assets/`. Mat images optimized as WebP (`assets/img/mats/`).
+- **Global Interactions:** Portal interactions (theme, cache reset) are centralized in `assets/js/theme.js` and portal logic in `assets/js/index-main.js`.
 
 ## 4. Repository Rules
 - **Main Branch:** `main` (not `master`).
 - **Alpha Apps (`alpha/webapps/`):** Experimental apps (e.g., `jeu_de_la_grue.html`). Must remain hidden and undocumented in README unless explicitly promoted.
 - **Removed Folders:** `standalone/` is permanently removed. Do not recreate.
-- **Security:** Never hardcode sensitive tokens (e.g., GitHub PATs) anywhere.
+- **Security:** Never hardcode sensitive tokens (e.g., GitHub PATs) anywhere. Use safe DOM text node insertion (`textContent`) to prevent DOM XSS vulnerabilities.
 
 ## 5. Documentation & Presentation
 - **Aesthetics:** Modern "Glassmorphism", "Outfit" typography, micro-animations, WCAG AA compliance.
@@ -32,8 +33,8 @@
   - Descriptions: Max 12 words.
   - Tags: Max 4 tags, end with educational domain (e.g., `#Maths`). Do NOT use `#Jeu`.
   - Icons: Duotone (`dt-`) with specific primary/secondary colors (Blue for students, Green for teachers).
-- **README:** Must contain screenshots (desktop/mobile) for every app, saved in `meta/screenshots/`. Keep tone professional (English for devs, French for users).
-- **Images:** Always compress large images (e.g., resize to 1920x1080) before committing.
+- **README & Tutorials:** README links to 14+ comprehensive pedagogical user guides in `meta/tuto/` aligned with PER / Décodages. Screenshots saved in `meta/screenshots/`.
+- **Images:** Always compress large images (e.g., resize to 1920x1080 / convert to WebP) before committing.
 
 ## 6. Attribution & Licensing
 - **License:** AGPL-3.0.

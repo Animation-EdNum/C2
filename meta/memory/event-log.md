@@ -55,3 +55,6 @@
 - **[2026-08-19]** [Docs/Tuto] Refonte et enrichissement des modes d'emploi (`meta/tuto/`) pour l'ensemble des applications stables, alpha et enseignants (14 tutoriels complets, liens dans le README, alignement PER / Décodages).
 - **[2026-08-20]** [Security] Fixed VICE security issue #75 (`vice/code/xss-dom`) in `assets/js/index-main.js`: replaced `recentsGrid.innerHTML = ''` with `recentsGrid.textContent = ''`.
 - **[2026-08-20]** [Security] Fixed VICE security issue #74 (`vice/deps/vulnerable-dep`): updated vulnerable transitive dependency (`undici`) via `npm audit fix`.
+- **[2026-08-22]** [Feature/TBI] Added classroom projection mode (TBI mode) across binary coding, parity bit, password generator, and lucky draw apps with container overflow safeguards.
+- **[2026-08-24]** [Feature/Apps] Extracted Password Generator (`generateur_mot_de_passe.html`) into a standalone webapp with tabbed interface (create, test, tips), drag-and-drop mechanics, pattern detection, and crack time estimation. Added QR Code Generator alpha tool for teachers.
+- **[2026-08-25]** [CI/PWA] Integrated `sw-sync.yml` workflow for automated Service Worker manifest hashing and commits on `main`. Added immediate client SW update notifications (`skipWaiting`).
