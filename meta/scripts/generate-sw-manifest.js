@@ -21,9 +21,7 @@ function getFiles(dir, files = []) {
         if (fs.statSync(name).isDirectory()) {
             getFiles(name, files);
         } else {
-            // Convert to posix path format (for Windows support) and ensure it starts with ./
-            const posixPath = './' + name.split(path.sep).join('/');
-            files.push(posixPath);
+            files.push(name);
         }
     }
     return files;
@@ -40,7 +38,7 @@ function generateManifest() {
         if (fs.existsSync(fullDirPath)) {
             const filesInDir = getFiles(fullDirPath).map(f => {
                 // Relativize path to rootDir and prefix with ./
-                const rel = path.relative(rootDir, path.resolve(f)).split(path.sep).join('/');
+                const rel = path.relative(rootDir, f).split(path.sep).join('/');
                 return './' + rel;
             });
             allFiles = allFiles.concat(filesInDir);
@@ -80,7 +78,10 @@ function generateManifest() {
         if (file === './') continue; // Skip directory reference
         const filePath = path.join(rootDir, file);
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-            hash.update(fs.readFileSync(filePath));
+            const content = fs.readFileSync(filePath);
+            // Normalize CRLF to LF for deterministic cross-platform hashing (Windows vs Linux CI)
+            const normalized = content.toString('utf8').replace(/\r\n/g, '\n');
+            hash.update(normalized);
         }
     }
     const version = hash.digest('hex').substring(0, 8);
