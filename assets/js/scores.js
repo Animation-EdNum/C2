@@ -253,7 +253,7 @@ const ScoreManager = {
         setTimeout(() => {
             popup.classList.add('active');
             popup.setAttribute('aria-hidden', 'false');
-        }, 1500);
+        }, 400);
     },
 
     resetScores() {

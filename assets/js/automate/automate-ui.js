@@ -334,10 +334,21 @@ let activeTab = 'explore';
 window.activeTab = activeTab;
 
 function switchTab(event, tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+    });
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-    document.getElementById(`view-${tab}`).classList.add('active');
+
+    const targetBtn = document.getElementById(`tab-${tab}`);
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+        targetBtn.setAttribute('aria-selected', 'true');
+    }
+    const targetView = document.getElementById(`view-${tab}`);
+    if (targetView) {
+        targetView.classList.add('active');
+    }
     activeTab = tab;
     window.activeTab = tab;
     startTabTimer(tab);
@@ -363,6 +374,13 @@ function switchTab(event, tab) {
             buildGrid('explore-grid', GRID_ROWS, GRID_COLS, []);
             renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
             TrailManager.clear('explore-grid');
+        }
+    }
+    if (tab === 'simulator') {
+        if (!document.getElementById('sim-grid').innerHTML) {
+            buildGrid('sim-grid', GRID_ROWS, GRID_COLS, simState.obstacles || []);
+            renderRobot('sim-grid', 'sim-robot', simState.robotRow, simState.robotCol, simState.robotDir);
+            TrailManager.clear('sim-grid');
         }
     }
     if (tab === 'challenge') newChallenge();

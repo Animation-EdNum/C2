@@ -109,7 +109,7 @@
     }
 
     // Keyboard navigation between tabs (ArrowLeft, ArrowRight, Home, End)
-    const tabList = document.querySelector('.app-tabs-nav');
+    const tabList = document.querySelector('.tabs, .app-tabs-nav');
     if (tabList) {
         tabList.addEventListener('keydown', (e) => {
             const tabsArray = Array.from(tabButtons);

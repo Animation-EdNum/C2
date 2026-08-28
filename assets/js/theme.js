@@ -220,9 +220,10 @@ if ('serviceWorker' in navigator) {
             }
         }
 
+        const hadPreviousController = !!navigator.serviceWorker.controller;
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) {
+            if (!refreshing && hadPreviousController) {
                 refreshing = true;
                 window.location.reload();
             }
