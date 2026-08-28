@@ -13,6 +13,7 @@
 
 ## 2. CSS & Design System (Glassmorphism)
 - **Centralization:** NO local styles in stable HTML files. CSS variables (`--text-main`) reside in `assets/css/tokens.css` and `base.css`. Components (`.btn`) are in `components.css`. See §6 FCP Optimization for cascade order.
+- **"No Tailwind" Rule Clarification:** Importing the Tailwind CSS framework, build tools, or utility classes into HTML is strictly prohibited to maintain zero-dependency, 100% Vanilla CSS portability. However, using harmonious color palettes and gradients inspired by Tailwind (transposed into pure Vanilla CSS custom properties in `tokens.css` and `base.css`) is recommended and standardized for visual consistency across all webapps.
 - **Glassmorphism:** Use `var(--glass-bg)` with `backdrop-filter: blur(12px) saturate(180%)`. Border is `--glass-border`.
 - **Border Radii:** `--radius-sm` (6px), `--radius-md` (8px), `--radius-lg` (12px), `--radius-2xl` (20px).
 - **Tooltips:** NEVER use native `title` attributes on buttons. Use `data-tooltip="..."` for CSS-animated tooltips.
@@ -41,6 +42,7 @@
 - **No Inline Events (Critical):** Do NOT use inline event attributes (e.g. `onclick="..."`, `onchange="..."`) in HTML code. Always bind events programmatically via `.addEventListener('click', ...)` on elements identified with unique `id` attributes or structural selectors.
 - **Audio (`audio.js`):** Use `playSound(id)`. Apps must start muted (`isMuted = true`). Do not locally redeclare variables like `isMuted` or functions like `playSound` to avoid collisions with the centralized `audio.js`.
 - **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
+- **Service Worker Manifest Line Endings (`generate-sw-manifest.js`):** The automated SW manifest generator must normalize line endings (CRLF/LF) across all hashed files before computing checksums. This guarantees deterministic cache hashes across Windows, macOS, and Linux build environments.
 - **JS Performance Patterns:** Extract regular expression literals used in loops into module-level constants. Use `getElementsByClassName` with a `while` loop over the live `HTMLCollection` instead of `querySelectorAll` for rapid element removal. Use `Array.prototype.map().join('')` or push to an array and `.join('')` instead of `+=` for string concatenation in loops. For animation loops, replace `Array.splice()` with an O(1) swap-and-pop pattern when element order doesn't matter. Avoid nested `querySelector` calls within iterations; use a single, flat `document.querySelectorAll()` call. Implement memoization caches when applying regex replacements to large strings inside render loops.
 - **Theme Callbacks:** Define `window.__onThemeChange(theme)` to execute page-specific logic when the global dark/light theme changes.
 - **Clipboard API:** Deprecate `document.execCommand('copy')`. Use `navigator.clipboard.writeText()` or `ClipboardItem` APIs, relying on Promise-based `.catch()` blocks for errors instead of legacy hidden textarea hacks.

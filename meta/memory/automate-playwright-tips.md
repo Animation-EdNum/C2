@@ -41,12 +41,29 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## 2. Mocking Canvas Context
-`confetti.js` functions dynamically append `<canvas>` elements to the body.
-To mock these in E2E tests, override `HTMLCanvasElement.prototype.getContext` via `page.evaluate()` before triggering the function.
+## 2. Mocking Canvas Context (DEPRECATED)
+> **DEPRECATED (2026-08-27):** Monkey-patching the canvas prototype (`HTMLCanvasElement.prototype.getContext`) via `page.evaluate()` proved brittle and flaky across browser engines in CI environments.
+> **Current Standard:** Use direct DOM assertions to validate the creation, attributes, and lifecycle of celebratory visual containers (e.g., verifying `#confetti-canvas` existence, dynamic overlay DOM nodes, or score counter changes) rather than mocking canvas context methods.
 
-## 3. General E2E Testing Tips
-- **localStorage Setup:** Execute `page.evaluate('localStorage.clear();')` *after* navigating to the page context (e.g., via `page.goto()`), as `localStorage` requires a valid origin.
+## 3. IIFE Encapsulation in `page.evaluate()`
+All JavaScript snippets executed via Playwright's `page.evaluate()` MUST be strictly encapsulated in Immediately Invoked Function Expressions (`(() => { ... })()` or `(function() { ... })()`).
+This prevents leaking temporary variables or functions into the global `window` scope, eliminating naming collisions and state contamination across sequential test steps.
+
+Example:
+```python
+await page.evaluate("""
+    (() => {
+        const target = document.querySelector('#action-btn');
+        if (target) {
+            target.click();
+        }
+    })()
+""")
+```
+
+## 4. General E2E Testing Tips
+- **localStorage Setup:** Execute `page.evaluate('(() => { localStorage.clear(); })()')` *after* navigating to the page context (e.g., via `page.goto()`), as `localStorage` requires a valid origin.
 - **binaire_message.html:** The `#alpha-section` help block is revealed naturally by making 2 consecutive mistakes with a validation cooldown. Simulate this interaction instead of forcing DOM visibility.
 - **binaire_studio.html:** In encode mode, verification happens automatically upon input; do not attempt to click a manual verify button.
 - **Local Server:** Ensure a local web server is running on port 8000 to allow the test framework to successfully navigate and avoid connection refused errors.
+

@@ -34,7 +34,7 @@
 - **Unit Tests:** `npm run test:unit` (`meta/tests/unit/`).
 - **Service Worker Manifest:** `npm run check:sw` (update using `npm run build:sw`).
 - **E2E Tests (Playwright):** `python3 -m pytest meta/tests/e2e/`. Requires a local HTTP server (`python3 -m http.server 8000`).
-- **Test Setup Requirements:** Ensure Node dependencies are installed via `npm ci` (`jsdom` for unit tests), and `pip install pytest pytest-playwright && python -m playwright install chromium` for E2E tests.
+- **Test Setup Requirements:** Ensure the local test environment is strictly initialized using `npm ci` (never a loose `npm install`) to match the CI environment exactly and guarantee the stable installation of `jsdom` required by `npm run test:unit`. For E2E tests, install Python dependencies via `pip install pytest pytest-playwright && python -m playwright install chromium`.
 - **JSDOM Techniques:** When testing browser-side JS files via `node:test`, instantiate JSDOM with `runScripts: "dangerously"`, read the source via `fs.readFileSync`, and execute it via `window.eval()`. Override `window.setTimeout = (cb) => { cb(); }` in JSDOM to execute callbacks synchronously for deterministic staggered animations.
 
 ## 5. Visual Verification (Playwright)

@@ -59,7 +59,8 @@
 - **Testing Structure (2026-05-14, updated 2026-08-27):**
   - **Unit Tests:** 80 Node.js unit tests in `meta/tests/unit/` (`npm run test:unit`). Requires `jsdom`.
   - **E2E Tests:** Playwright suite in `meta/tests/e2e/`. Replaced fragile canvas prototype patching with direct DOM assertions; execute JS evaluate functions as IIFEs to prevent global scope leakage.
-  - **CI Integration:** GitHub Actions `e2e-tests.yml` includes an explicit `npm ci` step in `smoke-test` to ensure `jsdom` is present for unit tests.
+  - **CI Integration & Clean Node Environment:** GitHub Actions `e2e-tests.yml` includes an explicit `npm ci` step in `smoke-test` to ensure `jsdom` is reliably present for unit tests, eliminating runtime missing module errors.
+  - **CI Memory Sync Workflow:** Automated synchronization workflow ensures memory files (`meta/memory/`) between the coding agent and the GitHub repository stay seamlessly updated upon push, maintaining persistent, living project context.
 - **Clean Code:** No `console.log` in production. No work-in-progress files committed. Use surgical edits via `replace_file_content` or `write_to_file`.
 
 ## 8. Specific Architectural Rules
