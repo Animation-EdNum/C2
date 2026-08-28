@@ -150,7 +150,7 @@ function executeFilters() {
             let prev = grid.previousElementSibling;
             while (prev && !prev.classList.contains('section-header')) {
                 if (prev.classList.contains('filter-bar')) {
-                    prev.style.display = (query === 'alpha' || !hasVisible) ? 'none' : '';
+                    prev.style.display = (query === 'alpha') ? 'none' : '';
                 }
                 prev = prev.previousElementSibling;
             }
