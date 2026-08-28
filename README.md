@@ -92,6 +92,12 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs... ?** (Demi-cycle 7-8H)
 - **Valeur pédagogique :** Initie à l'intégrité de la donnée via des métadonnées (le bit de parité) et développe le repérage spatial via des coordonnées sur une grille.
 
+#### 7. Générateur de mot de passe (`webapps/generateur_mot_de_passe.html`)
+![Générateur de mot de passe](meta/screenshots/generateur_mot_de_passe.png)
+- **À quoi sert l'outil :** Création et audit interactif de mots de passe robustes (briques de construction, mot de passe magique, détection de motifs, estimation du temps de craquage et 4 règles d'or de cybersécurité).
+- **Contexte & Utilisation :** Outil pratique pour aider les élèves (dès 5-6H) à concevoir et mémoriser un mot de passe sécurisé pour se connecter à leur environnement numérique de travail ([edu.vs.ch](https://edu.vs.ch)).
+- **Valeur pédagogique :** Sensibilise à la cyberhygiène, à l'importance de la longueur et de la complexité face aux attaques par force brute ou dictionnaires.
+
 
 ### 🛠️ Ressources pratiques pour les enseignant·e·s
 Trouvez ces outils dans le portail central `index.html` ou directement dans le dossier `webapps/teacher/`. [Mode d'emploi des outils enseignants](meta/tuto/MODE_EMPLOI_OUTILS_ENSEIGNANT.md).
@@ -108,11 +114,12 @@ Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automat
 - 🏗️ **Jeu de la grue** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_JEU_DE_LA_GRUE.md)
 - 💻 **Pseudo-code** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
 - ⚡ **Compresseur magique (RLE)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COMPRESSEUR_MAGIQUE.md)
-- 🔐 **Machine à chiffrer (César)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_MACHINE_A_CHIFFRER.md)
+- 🔐 **Machine à chiffrer (César, Vigenère, Morse)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_MACHINE_A_CHIFFRER.md)
 - 📦 **Machine à trier** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_MACHINE_A_TRIER.md)
 - 🔀 **Réseau de tri** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
 - 🔒 **Coffre-fort numérique** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
-- 🧠 **IA, Neurones & Détective** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
+- 🧠 **Dresseur de neurones & Détective IA** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
+- 📱 **Générateur QR Codes** (`alpha/webapps/teacher/qrcode.html`)
 - 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
 
 ---

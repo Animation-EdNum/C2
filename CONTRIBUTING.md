@@ -38,64 +38,78 @@ Le projet repose sur trois principes fondamentaux :
 ```
 C2/
 ├── index.html              # Portail d'accueil (point d'entrée)
+├── indexC1.html            # Portail simplifié Cycle 1 (4-7 ans)
+├── merci.html              # Page de remerciements
 ├── sw.js                   # Service Worker (cache PWA)
 ├── manifest.json           # Manifeste PWA
 │
-├── webapps/                # Applications élèves (6 apps)
+├── webapps/                # Applications élèves stables
 │   ├── simulateur_automate.html
 │   ├── binaire_studio.html
 │   ├── binaire_message.html
 │   ├── binaire_codage.html
 │   ├── bit_de_parite.html
-│   └── routage_reseau.html
+│   ├── routage_reseau.html
+│   └── generateur_mot_de_passe.html
 │
-├── alpha/webapps/          # Applications expérimentales (non documentées)
+├── alpha/webapps/          # Applications expérimentales en avant-première
+│   ├── apprendre_pseudocode.html
+│   ├── coffre_fort.html
+│   ├── compresseur_magique.html
+│   ├── detective_ia.html
+│   ├── dresseur_neurones.html
 │   ├── jeu_de_la_grue.html
-│   ├── machine_a_trier.html
 │   ├── machine_a_chiffrer.html
+│   ├── machine_a_trier.html
 │   ├── reseau_de_tri.html
-│   └── pixels_binaires.html
+│   └── teacher/            # Outils enseignants alpha (qrcode, sim_dyslexie)
 │
-├── webapps/teacher/             # Outils enseignant·e·s
+├── webapps/teacher/        # Outils enseignant·e·s stables
 │   ├── bareme.html
 │   └── tirage.html
 │
-├── assets/css/
-│   └── shared.css          # Styles partagés (design system)
+├── assets/css/             # Système de design modulaire & styles par app
+│   ├── tokens.css          # Variables CSS de design (couleurs, rayons, ombres)
+│   ├── base.css            # Reset, typographie et glassmorphism
+│   ├── components.css      # Composants partagés (boutons, onglets, cartes, modales)
+│   ├── utilities.css       # Classes utilitaires légères
+│   └── *.css               # Feuilles de style dédiées par application
 │
-├── assets/js/
-│   ├── theme.js            # Thème global + registration SW
-│   ├── scores.js           # ScoreManager (gamification)
-│   ├── confetti.js         # Effets visuels de récompense
+├── assets/js/              # Modules JavaScript autonomes
+│   ├── theme.js            # Thème global + enregistrement Service Worker
+│   ├── scores.js           # ScoreManager (gamification, séries, persistance)
+│   ├── confetti.js         # Effets visuels de célébration
 │   ├── audio.js            # Audio synthétique (Web Audio API)
-│   └── fa-subset.js    # Icônes FontAwesome
+│   ├── toast.js            # Notifications toast légères
+│   ├── url-params.js       # Gestion des paramètres URL et partages
+│   └── fa-subset.js        # Subset vectoriel FontAwesome
 │
-├── assets/fonts/                  # Polices auto-hébergées
-├── meta/                   # Audits, tests, scripts et ressources non-déployées
-│   ├── audits/
+├── assets/fonts/           # Polices auto-hébergées (Outfit, Inter, JetBrains Mono)
+├── meta/                   # Audits, tests, scripts et mémoire IA
 │   ├── tests/
 │   │   ├── unit/           # Tests unitaires Node.js
 │   │   └── e2e/            # Tests End-to-End Playwright (Python)
-│   ├── memory/             # Contexte agents IA
-│   ├── ressources/
-│   │   ├── solid_icons.js   # Source pour la génération du subset FA
-│   │   ├── regular_icons.js
-│   │   └── duotone.js
-│   ├── screenshots/        # Captures pour le README
-│   └── scripts/            # Scripts utilitaires (Node.js)
-└── .github/workflows/      # CI/CD GitHub Actions
+│   ├── memory/             # Documentation d'architecture et mémoire des agents
+│   ├── tuto/               # Modes d'emploi et tutoriels des applications
+│   ├── screenshots/        # Captures d'écran pour la documentation
+│   └── scripts/            # Scripts utilitaires d'automatisation
+└── .github/workflows/      # CI/CD GitHub Actions (sw-sync, e2e-tests)
 ```
 
 ### Fichiers partagés clés
 
 | Fichier | Rôle |
 |---|---|
-| `assets/css/shared.css` | Design system complet : variables CSS, glassmorphism, dark mode, composants réutilisables |
+| `assets/css/tokens.css` | Variables de design system : palettes de couleurs, rayons, dégradés, glassmorphism |
+| `assets/css/base.css` | Réinitialisation standard, polices auto-hébergées et conteneurs |
+| `assets/css/components.css` | Composants UI partagés : boutons, onglets, tiroirs latéraux, cartes d'exercices |
+| `assets/css/utilities.css` | Classes utilitaires d'espacement, d'alignement et d'affichage |
 | `assets/js/theme.js` | Gestion du thème clair/sombre, enregistrement du Service Worker, callback `__onThemeChange` |
 | `assets/js/scores.js` | `ScoreManager` — suivi des scores, séries, records, difficulté adaptative, modale de stats |
-| `assets/js/confetti.js` | Effets de confettis et récompenses visuelles (`launchConfetti()`, `launchFire()`) |
+| `assets/js/confetti.js` | Effets de confettis et récompenses visuelles (`handleStreakCelebration()`, `launchFire()`) |
 | `assets/js/audio.js` | Sons synthétiques via Web Audio API (`playSound('success')`, etc.) |
-| `assets/js/fa-subset.js` | Icônes FontAwesome (auto-généré) |
+| `assets/js/toast.js` | Système de notification toast accessible (`showToast()`) |
+| `assets/js/fa-subset.js` | Icônes vectorielles FontAwesome (généré automatiquement) |
 
 ### Service Worker
 
@@ -126,7 +140,7 @@ Le projet utilise un **subset personnalisé** de FontAwesome 7 Pro. Pour ajouter
 - Utiliser `innerHTML` avec des données non échappées (risque XSS)
 - Hardcoder des couleurs au lieu d'utiliser les CSS variables
 - Ajouter des `console.log` en production
-- Créer des doublons de styles déjà définis dans `shared.css`
+- Créer des doublons de styles déjà définis dans les feuilles de style partagées
 
 ---
 
@@ -134,13 +148,13 @@ Le projet utilise un **subset personnalisé** de FontAwesome 7 Pro. Pour ajouter
 
 ### HTML
 - Structure standard : `header.app-header` → `main.container` → `footer.no-print`
-- Chaque page inclut `assets/css/shared.css`, puis ses styles locaux dans un `<style>`
+- Les applications stables incluent en parallèle `tokens.css`, `base.css`, `components.css`, `utilities.css`, puis leur feuille de style dédiée `assets/css/<app_name>.css`.
 - Les scripts partagés sont chargés via `<script src="../assets/js/...">`
 
 ### CSS
 - Utiliser les variables CSS (`var(--accent)`, `var(--text-main)`, `var(--glass-bg)`, etc.)
 - Préfixer les animations avec `var(--spring-easing)` pour la cohérence
-- Mobile-first : `min-width` dans les media queries
+- Responsive multi-supports : adapter les grilles (`minmax(0, 1fr)`) et conteneurs pour mobile (`<= 600px`)
 - Touch targets minimum 44×44px (`clamp()` recommandé)
 
 ### JavaScript
@@ -148,15 +162,21 @@ Le projet utilise un **subset personnalisé** de FontAwesome 7 Pro. Pour ajouter
 - Ellipse typographique `…` (U+2026) dans le texte affiché, jamais `...`
 - Bloquer les répétitions clavier avec `if (e.repeat) return;`
 - Audio muet par défaut : `let isMuted = true;`
-- Utiliser `ScoreManager.init('app_name')` pour la gamification
+- Utiliser `ScoreManager` pour la gamification
 
 ---
 
 ## Tests
 
+### Préparation de l'environnement
+```bash
+# Installation propre et déterministe des dépendances de test
+npm ci
+```
+
 ### Tests unitaires (Node.js)
 
-Ces tests vérifient la logique métier isolée (calculs, mélanges, etc.).
+Ces tests vérifient la logique métier isolée (calculs, mélanges, scores, etc.).
 
 ```bash
 # Lancer les tests unitaires
