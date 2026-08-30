@@ -55,25 +55,15 @@ window.renderPortal = function(mode) {
     if (mode === 'index') {
         const studentActivitiesContainer = document.querySelector('#view-students .searchable-grid');
 
-        let studentExternalContainer = null;
         const studentHeaders = document.querySelectorAll('#view-students h2');
-        for (const h of studentHeaders) {
-            if (h.textContent.includes('Ressources externes')) {
-                studentExternalContainer = h.parentElement.nextElementSibling;
-                break;
-            }
-        }
+        const extStudentHeader = Array.prototype.find.call(studentHeaders, h => h.textContent.includes('Ressources externes'));
+        const studentExternalContainer = extStudentHeader ? extStudentHeader.parentElement.nextElementSibling : null;
 
         const teacherToolsContainer = document.querySelector('#view-teachers .searchable-grid');
 
-        let teacherExternalContainer = null;
         const teacherHeaders = document.querySelectorAll('#view-teachers h2');
-        for (const h of teacherHeaders) {
-            if (h.textContent.includes('Ressources externes')) {
-                teacherExternalContainer = h.parentElement.nextElementSibling;
-                break;
-            }
-        }
+        const extTeacherHeader = Array.prototype.find.call(teacherHeaders, h => h.textContent.includes('Ressources externes'));
+        const teacherExternalContainer = extTeacherHeader ? extTeacherHeader.parentElement.nextElementSibling : null;
 
         if (studentActivitiesContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'students_activities');
