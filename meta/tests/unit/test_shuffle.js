@@ -1,21 +1,27 @@
 const test = require('node:test');
 const assert = require('node:assert');
+const { JSDOM } = require('jsdom');
+const fs = require('fs');
 
-/**
- * Isolated copy of shuffleArray from assets/js/automate/automate-skins.js
- * This function is kept here to allow standalone unit testing in Node.js
- * without environmental side-effects from the browser-based source file.
- */
-function shuffleArray(array) {
-    let newArr = [...array];
-    let currentIndex = newArr.length, randomIndex;
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-        [newArr[currentIndex], newArr[randomIndex]] = [newArr[randomIndex], newArr[currentIndex]];
-    }
-    return newArr;
+const skinsSrc = fs.readFileSync('assets/js/automate/automate-skins.js', 'utf-8');
+const engineSrc = fs.readFileSync('assets/js/automate/automate-engine.js', 'utf-8');
+
+function setupDOM() {
+    const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { runScripts: 'dangerously', url: 'http://localhost/' });
+    const window = dom.window;
+
+    // Define globals needed by skins/engine
+    window.GRID_ROWS = 6;
+    window.GRID_COLS = 6;
+    window.eval('let GRID_ROWS = 6; let GRID_COLS = 6;');
+
+    window.eval(engineSrc);
+    window.eval(skinsSrc);
+    return window;
 }
+
+const window = setupDOM();
+const shuffleArray = window.shuffleArray;
 
 test('shuffleArray', async (t) => {
     await t.test('returns an empty array when input is empty', () => {
@@ -65,7 +71,7 @@ test('shuffleArray', async (t) => {
     });
 
     await t.test('throws an error if input is null or undefined', () => {
-        assert.throws(() => shuffleArray(null), TypeError);
-        assert.throws(() => shuffleArray(undefined), TypeError);
+        assert.throws(() => shuffleArray(null), { name: 'TypeError' });
+        assert.throws(() => shuffleArray(undefined), { name: 'TypeError' });
     });
 });
