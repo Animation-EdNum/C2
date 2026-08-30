@@ -6,6 +6,7 @@
 const ScoreManager = {
     appId: null,
     stats: {}, // structure: { mode: { diffKey: { totalAttempts, totalSuccess, firstTrySuccess, mistakes } } }
+    _difficultySupportedCache: {}, // cache for difficulty queries
 
     MODE_LABELS: {
         'dec_to_bin': 'Décimal → Binaire',
@@ -184,27 +185,40 @@ const ScoreManager = {
     },
 
     isDifficultySupported(nextDiff) {
-        if (document.querySelector(`[data-diff="${nextDiff}"]`)) return true;
-        const idMap = {
-            'easy': ['diff-easy', 'read-diff-easy'],
-            'medium': ['diff-medium', 'read-diff-medium'],
-            'hard': ['diff-hard', 'read-diff-hard'],
-            'extreme': ['diff-extreme', 'read-diff-extreme'],
-            '4': ['diff-easy'],
-            '6': ['diff-medium'],
-            '8': ['diff-hard'],
-            '10': ['diff-extreme'],
-            'grid4': ['diff-easy'],
-            'grid5': ['diff-medium'],
-            'grid6': ['diff-hard'],
-            'grid7': ['diff-extreme']
-        };
-        if (idMap[nextDiff]) {
-            for (const id of idMap[nextDiff]) {
-                if (document.getElementById(id)) return true;
+        if (this._difficultySupportedCache[nextDiff] !== undefined) {
+            return this._difficultySupportedCache[nextDiff];
+        }
+
+        let supported = false;
+        if (document.querySelector(`[data-diff="${nextDiff}"]`)) {
+            supported = true;
+        } else {
+            const idMap = {
+                'easy': ['diff-easy', 'read-diff-easy'],
+                'medium': ['diff-medium', 'read-diff-medium'],
+                'hard': ['diff-hard', 'read-diff-hard'],
+                'extreme': ['diff-extreme', 'read-diff-extreme'],
+                '4': ['diff-easy'],
+                '6': ['diff-medium'],
+                '8': ['diff-hard'],
+                '10': ['diff-extreme'],
+                'grid4': ['diff-easy'],
+                'grid5': ['diff-medium'],
+                'grid6': ['diff-hard'],
+                'grid7': ['diff-extreme']
+            };
+            if (idMap[nextDiff]) {
+                for (const id of idMap[nextDiff]) {
+                    if (document.getElementById(id)) {
+                        supported = true;
+                        break;
+                    }
+                }
             }
         }
-        return false;
+
+        this._difficultySupportedCache[nextDiff] = supported;
+        return supported;
     },
 
     showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
