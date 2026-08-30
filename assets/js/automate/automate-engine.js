@@ -2277,6 +2277,8 @@ let simState = {
             if (isNew) document.getElementById(containerId).appendChild(ov);
         }
 
+        let cachedRobotOverlays = null;
+
         function initVolcanoAnimation() {
             const triggerDragonFire = () => {
                 const scheduleNext = () => {
@@ -2291,11 +2293,13 @@ let simState = {
                     const prefix = activeTab === 'simulator' ? 'sim' : activeTab === 'challenge' ? 'chal' : activeTab;
                     activeOverlay = document.getElementById(prefix + '-robot');
                 } else {
-                    const overlays = document.querySelectorAll('.robot-overlay');
-                    for (let i = 0; i < overlays.length; i++) {
-                        const rect = overlays[i].getBoundingClientRect();
+                    if (!cachedRobotOverlays) {
+                        cachedRobotOverlays = document.getElementsByClassName('robot-overlay');
+                    }
+                    for (let i = 0; i < cachedRobotOverlays.length; i++) {
+                        const rect = cachedRobotOverlays[i].getBoundingClientRect();
                         if (rect.width > 0 && rect.height > 0) {
-                            activeOverlay = overlays[i];
+                            activeOverlay = cachedRobotOverlays[i];
                             break;
                         }
                     }
