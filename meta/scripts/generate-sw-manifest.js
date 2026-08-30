@@ -74,14 +74,20 @@ function generateManifest() {
 
     // Dynamic cache-busting based on file content hash
     const hash = crypto.createHash('sha256');
+    const TEXT_EXTS = ['.html', '.css', '.js', '.json', '.svg', '.md', '.txt'];
     for (const file of finalAssets) {
         if (file === './') continue; // Skip directory reference
         const filePath = path.join(rootDir, file);
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             const content = fs.readFileSync(filePath);
-            // Normalize CRLF to LF for deterministic cross-platform hashing (Windows vs Linux CI)
-            const normalized = content.toString('utf8').replace(/\r\n/g, '\n');
-            hash.update(normalized);
+            const ext = path.extname(filePath).toLowerCase();
+            if (TEXT_EXTS.includes(ext)) {
+                // Normalize CRLF to LF for deterministic cross-platform hashing (Windows vs Linux CI)
+                const normalized = content.toString('utf8').replace(/\r\n/g, '\n');
+                hash.update(normalized);
+            } else {
+                hash.update(content);
+            }
         }
     }
     const version = hash.digest('hex').substring(0, 8);
