@@ -56,23 +56,23 @@ window.renderPortal = function(mode) {
         const studentActivitiesContainer = document.querySelector('#view-students .searchable-grid');
 
         let studentExternalContainer = null;
-        const studentHeaders = document.querySelectorAll('#view-students h2');
-        for (const h of studentHeaders) {
-            if (h.textContent.includes('Ressources externes')) {
-                studentExternalContainer = h.parentElement.nextElementSibling;
-                break;
-            }
+        const studentExtHeader = Array.prototype.find.call(
+            document.querySelectorAll('#view-students h2'),
+            h => h.textContent.includes('Ressources externes')
+        );
+        if (studentExtHeader) {
+            studentExternalContainer = studentExtHeader.parentElement.nextElementSibling;
         }
 
         const teacherToolsContainer = document.querySelector('#view-teachers .searchable-grid');
 
         let teacherExternalContainer = null;
-        const teacherHeaders = document.querySelectorAll('#view-teachers h2');
-        for (const h of teacherHeaders) {
-            if (h.textContent.includes('Ressources externes')) {
-                teacherExternalContainer = h.parentElement.nextElementSibling;
-                break;
-            }
+        const teacherExtHeader = Array.prototype.find.call(
+            document.querySelectorAll('#view-teachers h2'),
+            h => h.textContent.includes('Ressources externes')
+        );
+        if (teacherExtHeader) {
+            teacherExternalContainer = teacherExtHeader.parentElement.nextElementSibling;
         }
 
         if (studentActivitiesContainer) {
