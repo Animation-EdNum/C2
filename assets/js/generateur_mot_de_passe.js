@@ -296,12 +296,12 @@
         if (!containerEl) return;
 
         if (!parts || !parts.word) {
-            containerEl.innerHTML = '';
+            containerEl.textContent = '';
             containerEl.style.display = 'none';
             return;
         }
 
-        containerEl.innerHTML = '';
+        containerEl.textContent = '';
         const blockConfig = {
             word: { className: 'pw-block-word', label: 'Mot' },
             number: { className: 'pw-block-number', label: 'Nombre' },
@@ -348,7 +348,7 @@
             elCreatedStrengthBar.style.backgroundColor = 'var(--error)';
             elCreatedStrengthStatus.textContent = 'En attente';
             if (elCreatedTimeEstimate) {
-                elCreatedTimeEstimate.innerHTML = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
+                elCreatedTimeEstimate.textContent = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
             }
             renderColoredPreviewInto(elCreatedColoredPreview, null, elementsOrder);
             return;
@@ -386,7 +386,11 @@
 
         const timeStr = estimateCrackTime(pw, patterns);
         if (elCreatedTimeEstimate) {
-            elCreatedTimeEstimate.innerHTML = `Estimation : <strong>${timeStr}</strong> pour pirater ce mot de passe par force brute.`;
+            elCreatedTimeEstimate.textContent = 'Estimation : ';
+            const strongStr = document.createElement('strong');
+            strongStr.textContent = timeStr;
+            elCreatedTimeEstimate.appendChild(strongStr);
+            elCreatedTimeEstimate.appendChild(document.createTextNode(' pour pirater ce mot de passe par force brute.'));
         }
 
         renderColoredPreviewInto(elCreatedColoredPreview, parts, elementsOrder);
@@ -442,15 +446,25 @@
         const patterns = detectWeakPatterns(pw);
         if (elPatternWarning) {
             if (patterns.length > 0) {
-                elPatternWarning.innerHTML = `
-                    <div class="pattern-warning-title">⚠️ <strong>Motif détecté :</strong></div>
-                    <ul class="pattern-warning-list">
-                        ${patterns.map(p => `<li>${p}</li>`).join('')}
-                    </ul>
-                `;
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'pattern-warning-title';
+                titleDiv.textContent = '⚠️ ';
+                const strongTitle = document.createElement('strong');
+                strongTitle.textContent = 'Motif détecté :';
+                titleDiv.appendChild(strongTitle);
+
+                const ulList = document.createElement('ul');
+                ulList.className = 'pattern-warning-list';
+                patterns.forEach(p => {
+                    const liItem = document.createElement('li');
+                    liItem.textContent = p;
+                    ulList.appendChild(liItem);
+                });
+
+                elPatternWarning.replaceChildren(titleDiv, ulList);
                 elPatternWarning.style.display = 'block';
             } else {
-                elPatternWarning.innerHTML = '';
+                elPatternWarning.textContent = '';
                 elPatternWarning.style.display = 'none';
             }
         }
@@ -533,7 +547,9 @@
         // Crack time estimation
         const timeStr = estimateCrackTime(pw, patterns);
         if (elTimeEstimate) {
-            elTimeEstimate.innerHTML = `<strong>${timeStr}</strong> pour pirater ce mot de passe`;
+            const strongStr = document.createElement('strong');
+            strongStr.textContent = timeStr;
+            elTimeEstimate.replaceChildren(strongStr, document.createTextNode(' pour pirater ce mot de passe'));
         }
 
         // Colored preview rendering
@@ -578,7 +594,7 @@
     function renderElementsOrder() {
         if (!elElementsOrderContainer) return;
 
-        elElementsOrderContainer.innerHTML = '';
+        elElementsOrderContainer.textContent = '';
         elElementsOrderContainer.setAttribute('role', 'list');
         elElementsOrderContainer.setAttribute('aria-label', 'Ordre des blocs du mot de passe');
 
@@ -670,7 +686,7 @@
                 leftBtn.className = 'order-arrow-btn';
                 leftBtn.type = 'button';
                 leftBtn.setAttribute('draggable', 'false');
-                leftBtn.innerHTML = '◀';
+                leftBtn.textContent = '◀';
                 leftBtn.title = 'Déplacer à gauche';
                 leftBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à gauche`);
                 leftBtn.setAttribute('tabindex', '-1');
@@ -693,7 +709,7 @@
                 rightBtn.className = 'order-arrow-btn';
                 rightBtn.type = 'button';
                 rightBtn.setAttribute('draggable', 'false');
-                rightBtn.innerHTML = '▶';
+                rightBtn.textContent = '▶';
                 rightBtn.title = 'Déplacer à droite';
                 rightBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à droite`);
                 rightBtn.setAttribute('tabindex', '-1');
@@ -761,13 +777,15 @@
     function setupToggleVisibility(btnEl, inputEl) {
         if (!btnEl || !inputEl) return;
         btnEl.addEventListener('click', () => {
+            const icon = document.createElement('i');
             if (inputEl.type === 'password') {
                 inputEl.type = 'text';
-                btnEl.innerHTML = '<i data-fa="dt-eye-slash"></i>';
+                icon.setAttribute('data-fa', 'dt-eye-slash');
             } else {
                 inputEl.type = 'password';
-                btnEl.innerHTML = '<i data-fa="dt-eye"></i>';
+                icon.setAttribute('data-fa', 'dt-eye');
             }
+            btnEl.replaceChildren(icon);
             window.fa?.createIcons?.();
         });
     }
