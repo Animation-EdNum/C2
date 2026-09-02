@@ -159,6 +159,23 @@ test('theme.js - toggleTheme and setTheme functionality', async (t) => {
         window.toggleTheme();
         assert.strictEqual(calledTheme, 'light', 'Should call __onThemeChange with light theme');
     });
+
+    await t.test('does not throw when icon-sun or icon-moon are missing', () => {
+        const window = setupDOM('', { global_theme: 'light' });
+        const document = window.document;
+
+        // Remove the icons to simulate pages that don't have them
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+        if (iconSun) iconSun.remove();
+        if (iconMoon) iconMoon.remove();
+
+        // toggleTheme calls setTheme internally
+        window.toggleTheme();
+
+        assert.strictEqual(window.localStorage.getItem('global_theme'), 'dark', 'Should save dark to localStorage without throwing an error');
+        assert.strictEqual(document.body.classList.contains('dark'), true, 'Should add dark class without throwing an error');
+    });
 });
 
 test('theme.js - Event Listeners', async (t) => {

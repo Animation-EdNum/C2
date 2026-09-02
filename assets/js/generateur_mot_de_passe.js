@@ -297,10 +297,12 @@
 
         if (!parts || !parts.word) {
             containerEl.textContent = '';
+            containerEl.textContent = '';
             containerEl.style.display = 'none';
             return;
         }
 
+        containerEl.textContent = '';
         containerEl.textContent = '';
         const blockConfig = {
             word: { className: 'pw-block-word', label: 'Mot' },
@@ -348,6 +350,7 @@
             elCreatedStrengthBar.style.backgroundColor = 'var(--error)';
             elCreatedStrengthStatus.textContent = 'En attente';
             if (elCreatedTimeEstimate) {
+                elCreatedTimeEstimate.textContent = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
                 elCreatedTimeEstimate.textContent = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
             }
             renderColoredPreviewInto(elCreatedColoredPreview, null, elementsOrder);
@@ -600,6 +603,7 @@
         if (!elElementsOrderContainer) return;
 
         elElementsOrderContainer.textContent = '';
+        elElementsOrderContainer.textContent = '';
         elElementsOrderContainer.setAttribute('role', 'list');
         elElementsOrderContainer.setAttribute('aria-label', 'Ordre des blocs du mot de passe');
 
@@ -692,6 +696,7 @@
                 leftBtn.type = 'button';
                 leftBtn.setAttribute('draggable', 'false');
                 leftBtn.textContent = '◀';
+                leftBtn.textContent = '◀';
                 leftBtn.title = 'Déplacer à gauche';
                 leftBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à gauche`);
                 leftBtn.setAttribute('tabindex', '-1');
@@ -714,6 +719,7 @@
                 rightBtn.className = 'order-arrow-btn';
                 rightBtn.type = 'button';
                 rightBtn.setAttribute('draggable', 'false');
+                rightBtn.textContent = '▶';
                 rightBtn.textContent = '▶';
                 rightBtn.title = 'Déplacer à droite';
                 rightBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à droite`);
@@ -787,8 +793,10 @@
             if (inputEl.type === 'password') {
                 inputEl.type = 'text';
                 icon.setAttribute('data-fa', 'dt-eye-slash');
+                icon.setAttribute('data-fa', 'dt-eye-slash');
             } else {
                 inputEl.type = 'password';
+                icon.setAttribute('data-fa', 'dt-eye');
                 icon.setAttribute('data-fa', 'dt-eye');
             }
             btnEl.appendChild(icon);
