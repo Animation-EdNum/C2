@@ -296,14 +296,12 @@
         if (!containerEl) return;
 
         if (!parts || !parts.word) {
-            containerEl.textContent = '';
-            containerEl.textContent = '';
+            containerEl.innerHTML = '';
             containerEl.style.display = 'none';
             return;
         }
 
-        containerEl.textContent = '';
-        containerEl.textContent = '';
+        containerEl.innerHTML = '';
         const blockConfig = {
             word: { className: 'pw-block-word', label: 'Mot' },
             number: { className: 'pw-block-number', label: 'Nombre' },
@@ -350,8 +348,7 @@
             elCreatedStrengthBar.style.backgroundColor = 'var(--error)';
             elCreatedStrengthStatus.textContent = 'En attente';
             if (elCreatedTimeEstimate) {
-                elCreatedTimeEstimate.textContent = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
-                elCreatedTimeEstimate.textContent = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
+                elCreatedTimeEstimate.innerHTML = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
             }
             renderColoredPreviewInto(elCreatedColoredPreview, null, elementsOrder);
             return;
@@ -389,14 +386,7 @@
 
         const timeStr = estimateCrackTime(pw, patterns);
         if (elCreatedTimeEstimate) {
-            elCreatedTimeEstimate.textContent = '';
-            const prefix = document.createTextNode('Estimation : ');
-            const strong = document.createElement('strong');
-            strong.textContent = timeStr;
-            const suffix = document.createTextNode(' pour pirater ce mot de passe par force brute.');
-            elCreatedTimeEstimate.appendChild(prefix);
-            elCreatedTimeEstimate.appendChild(strong);
-            elCreatedTimeEstimate.appendChild(suffix);
+            elCreatedTimeEstimate.innerHTML = `Estimation : <strong>${timeStr}</strong> pour pirater ce mot de passe par force brute.`;
         }
 
         renderColoredPreviewInto(elCreatedColoredPreview, parts, elementsOrder);
@@ -451,25 +441,16 @@
         // Pattern warnings
         const patterns = detectWeakPatterns(pw);
         if (elPatternWarning) {
-            elPatternWarning.textContent = '';
             if (patterns.length > 0) {
-                const titleDiv = document.createElement('div');
-                titleDiv.className = 'pattern-warning-title';
-                const strongTitle = document.createElement('strong');
-                strongTitle.textContent = 'Motif détecté :';
-                titleDiv.append('⚠️ ', strongTitle);
-
-                const ul = document.createElement('ul');
-                ul.className = 'pattern-warning-list';
-                for (const p of patterns) {
-                    const li = document.createElement('li');
-                    li.textContent = p;
-                    ul.appendChild(li);
-                }
-                elPatternWarning.appendChild(titleDiv);
-                elPatternWarning.appendChild(ul);
+                elPatternWarning.innerHTML = `
+                    <div class="pattern-warning-title">⚠️ <strong>Motif détecté :</strong></div>
+                    <ul class="pattern-warning-list">
+                        ${patterns.map(p => `<li>${p}</li>`).join('')}
+                    </ul>
+                `;
                 elPatternWarning.style.display = 'block';
             } else {
+                elPatternWarning.innerHTML = '';
                 elPatternWarning.style.display = 'none';
             }
         }
@@ -552,12 +533,7 @@
         // Crack time estimation
         const timeStr = estimateCrackTime(pw, patterns);
         if (elTimeEstimate) {
-            elTimeEstimate.textContent = '';
-            const strong = document.createElement('strong');
-            strong.textContent = timeStr;
-            const suffix = document.createTextNode(' pour pirater ce mot de passe');
-            elTimeEstimate.appendChild(strong);
-            elTimeEstimate.appendChild(suffix);
+            elTimeEstimate.innerHTML = `<strong>${timeStr}</strong> pour pirater ce mot de passe`;
         }
 
         // Colored preview rendering
@@ -602,8 +578,7 @@
     function renderElementsOrder() {
         if (!elElementsOrderContainer) return;
 
-        elElementsOrderContainer.textContent = '';
-        elElementsOrderContainer.textContent = '';
+        elElementsOrderContainer.innerHTML = '';
         elElementsOrderContainer.setAttribute('role', 'list');
         elElementsOrderContainer.setAttribute('aria-label', 'Ordre des blocs du mot de passe');
 
@@ -695,8 +670,7 @@
                 leftBtn.className = 'order-arrow-btn';
                 leftBtn.type = 'button';
                 leftBtn.setAttribute('draggable', 'false');
-                leftBtn.textContent = '◀';
-                leftBtn.textContent = '◀';
+                leftBtn.innerHTML = '◀';
                 leftBtn.title = 'Déplacer à gauche';
                 leftBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à gauche`);
                 leftBtn.setAttribute('tabindex', '-1');
@@ -719,8 +693,7 @@
                 rightBtn.className = 'order-arrow-btn';
                 rightBtn.type = 'button';
                 rightBtn.setAttribute('draggable', 'false');
-                rightBtn.textContent = '▶';
-                rightBtn.textContent = '▶';
+                rightBtn.innerHTML = '▶';
                 rightBtn.title = 'Déplacer à droite';
                 rightBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à droite`);
                 rightBtn.setAttribute('tabindex', '-1');
@@ -788,8 +761,6 @@
     function setupToggleVisibility(btnEl, inputEl) {
         if (!btnEl || !inputEl) return;
         btnEl.addEventListener('click', () => {
-            btnEl.textContent = '';
-            const icon = document.createElement('i');
             if (inputEl.type === 'password') {
                 inputEl.type = 'text';
                 icon.setAttribute('data-fa', 'dt-eye-slash');
@@ -799,7 +770,6 @@
                 icon.setAttribute('data-fa', 'dt-eye');
                 icon.setAttribute('data-fa', 'dt-eye');
             }
-            btnEl.appendChild(icon);
             window.fa?.createIcons?.();
         });
     }
