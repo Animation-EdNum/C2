@@ -11,6 +11,8 @@ Le module de partage de la **Suite EdNum** permet de préparer une activité ave
 
 L'URL générée contient automatiquement le mode et la difficulté en cours.
 
+![Fenêtre de partage](../screenshots/share_basic.png)
+
 ### Boutons d'exportation
 
 | Bouton | Action |
@@ -32,11 +34,15 @@ Trois profils en un clic pour configurer l'activité selon l'intention pédagogi
 | 🏋️ **Entraînement** | *« Je leur donne l'outil, ils s'entraînent à leur rythme. »* | Force le mode sélectionné + retire le lien d'accueil + laisse la difficulté libre. |
 | 🫶 **Inclusif** | *« J'ai un·e élève DYS, TSA ou non-latéralisé·e dans le groupe. »* | Contraste élevé + son coupé + commandes colorées + retire le lien d'accueil. |
 
+![Profils rapides sélectionnés](../screenshots/share_checked.png)
+
 ---
 
 ## 3. Options avancées détaillées
 
 Cliquez sur **« Options Avancées »** dans la modale pour affiner la configuration :
+
+![Options avancées](../screenshots/share_advanced.png)
 
 ### 🎨 Apparence & Confort
 - **Contraste élevé (`&highContrast=1`) :** Thème sombre à fort contraste (WCAG AA).
@@ -78,6 +84,8 @@ Cliquez sur **« Options Avancées »** dans la modale pour affiner la configura
 1. Choisissez vos options ou un profil rapide dans la fenêtre de partage.
 2. Cliquez sur **« 💾 Télécharger le QR »** pour l'intégrer dans votre fiche de cours, ou affichez-le en grand au TBI.
 3. Les élèves scannent le QR Code avec leur tablette : l'activité s'ouvre configurée à l'identique, prête à l'emploi.
+
+![QR Code généré](../screenshots/share_qr.png)
 
 ---
 
