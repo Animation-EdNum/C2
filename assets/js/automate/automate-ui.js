@@ -1102,7 +1102,6 @@ window.handleCustomMatUpload = function (e) {
                 customMatStatus.style.color = "var(--success)";
                 setTimeout(() => { customMatStatus.textContent = ""; }, 3000);
             } catch (err) {
-                console.error("Erreur lors de la sauvegarde de l'image (peut-être trop grande pour le localStorage) :", err);
                 customMatStatus.textContent = "Erreur : image trop grande.";
                 customMatStatus.style.color = "var(--error)";
             }
