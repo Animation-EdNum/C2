@@ -611,34 +611,6 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "ext-iletaitunehistoire",
-    "href": "https://www.iletaitunehistoire.com/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "isTeacher": true,
-    "dataLevel": "3H-8H",
-    "icon": "book-open",
-    "iconStyle": null,
-    "title": "Il était une histoire",
-    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
-    "tags": [
-      "#Lecture",
-      "#Histoires",
-      "#Français"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "3H-8H",
-        "grey": false
-      }
-    ],
-    "category": "teachers_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "ext-monkeytype",
     "href": "https://monkeytype.com/",
     "target": "_blank",
@@ -878,6 +850,34 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "Exercices",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-iletaitunehistoire",
+    "href": "https://www.iletaitunehistoire.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "3H-8H",
+    "icon": "book-open",
+    "iconStyle": null,
+    "title": "Il était une histoire",
+    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
+    "tags": [
+      "#Lecture",
+      "#Histoires",
+      "#Français"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-8H",
         "grey": false
       }
     ],

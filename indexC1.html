@@ -111,25 +111,38 @@
 
         main {
             flex: 1;
-            padding: 5.5rem 1.5rem 2rem;
+            max-width: var(--container-max-width, 1400px);
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
             position: relative;
             box-sizing: border-box;
         }
 
-        .action-buttons {
-            position: absolute;
-            top: 20px;
-            right: 1.5rem;
+        .header-content {
             display: flex;
-            gap: 12px;
-            z-index: 100;
+            align-items: center;
+            justify-content: space-between;
+            max-width: var(--container-max-width, 1400px);
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            gap: 1.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            z-index: 10;
         }
 
         .icon-action-btn {
             background-color: white;
             color: var(--primary);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             width: 42px;
             height: 42px;
             display: flex;
@@ -137,7 +150,7 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         body.dark .icon-action-btn {
@@ -148,9 +161,10 @@
         }
 
         .icon-action-btn:hover {
-            background-color: var(--primary-hover);
-            color: white;
-            transform: scale(1.1);
+            background-color: #ffffff;
+            color: var(--primary-hover);
+            transform: scale(1.08);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
         }
 
         .icon-action-btn svg,
@@ -168,12 +182,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 2rem 2.2rem;
+            padding: 1.25rem 2rem;
             background: var(--header-bg);
             color: var(--header-text);
             box-shadow: 0 8px 24px -4px rgba(165, 42, 35, 0.25);
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
             overflow: hidden;
+        }
+
+        header.header-hidden {
+            transform: translateY(-100%);
+            box-shadow: none;
         }
 
         header::before {
@@ -198,11 +221,7 @@
             display: flex;
             align-items: center;
             gap: 1.25rem;
-            max-width: 1200px;
-            width: 100%;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
+            flex-shrink: 1;
         }
 
         .header-text-group {
@@ -241,13 +260,37 @@
             letter-spacing: 0.01em;
         }
 
-        @media (max-width: 600px) {
-            header {
-                padding: 1.5rem 1rem;
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+                text-align: center;
             }
 
             .header-main {
-                gap: 0.8rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+
+            .header-text-group {
+                text-align: center;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            header {
+                position: static;
+                transform: none !important;
+                padding: 1.5rem 1rem;
+            }
+
+            main {
+                padding: 1.5rem 1rem;
             }
 
             .header-logo {
@@ -267,31 +310,9 @@
                 line-height: 1.2;
             }
 
-            main {
-                padding: 4.5rem 1rem 1rem;
-            }
-
-            .action-buttons {
-                top: 10px;
-                right: 1rem;
-                gap: 8px;
-            }
-
             .icon-action-btn {
-                width: 36px;
-                height: 36px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            main {
-                flex: 1;
-                padding: 5.5rem 1.5rem 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
-                width: 100%;
-                box-sizing: border-box;
-                position: relative;
+                width: 38px;
+                height: 38px;
             }
         }
 
@@ -441,75 +462,77 @@
 
 <body>
     <header>
-        <div class="header-main">
-            <svg class="header-logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <clipPath id="screen-clip-portal-c1">
-                        <rect x="44" y="64" width="424" height="340" rx="16" />
-                    </clipPath>
-                    <filter id="shadow-portal-c1" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.20" />
-                    </filter>
-                </defs>
-                <rect x="28" y="48" width="456" height="416" rx="32" fill="#a52a23" />
-                <rect x="44" y="64" width="424" height="340" rx="16" fill="#cc362d" />
-                <polygon points="44,404 468,64 468,404" fill="#b02f26" clip-path="url(#screen-clip-portal-c1)" />
-                <rect x="220" y="426" width="72" height="12" rx="6" fill="#da5c55" />
-                <circle cx="410" cy="432" r="8" fill="#da5c55" />
-                <g filter="url(#shadow-portal-c1)">
-                    <polygon points="256,90 232,166 151,166 216,213 191,289 256,242" fill="#ffffff" />
-                    <polygon points="256,90 280,166 361,166 296,213 321,289 256,242" fill="#e2e6eb" />
-                </g>
-                <text x="256" y="385" font-family="Arial, sans-serif" font-size="90" font-weight="900" fill="#ffffff"
-                    text-anchor="middle"
-                    style="letter-spacing: 2px; opacity: 0.9;">EdNum</text>
-            </svg>
-            <div class="header-text-group">
-                <h1 class="site-title">EdNum.org</h1>
-                <p>Applications interactives et ressources pour le Cycle 1</p>
+        <div class="header-content">
+            <div class="header-main">
+                <svg class="header-logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <clipPath id="screen-clip-portal-c1">
+                            <rect x="44" y="64" width="424" height="340" rx="16" />
+                        </clipPath>
+                        <filter id="shadow-portal-c1" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.20" />
+                        </filter>
+                    </defs>
+                    <rect x="28" y="48" width="456" height="416" rx="32" fill="#a52a23" />
+                    <rect x="44" y="64" width="424" height="340" rx="16" fill="#cc362d" />
+                    <polygon points="44,404 468,64 468,404" fill="#b02f26" clip-path="url(#screen-clip-portal-c1)" />
+                    <rect x="220" y="426" width="72" height="12" rx="6" fill="#da5c55" />
+                    <circle cx="410" cy="432" r="8" fill="#da5c55" />
+                    <g filter="url(#shadow-portal-c1)">
+                        <polygon points="256,90 232,166 151,166 216,213 191,289 256,242" fill="#ffffff" />
+                        <polygon points="256,90 280,166 361,166 296,213 321,289 256,242" fill="#e2e6eb" />
+                    </g>
+                    <text x="256" y="385" font-family="Arial, sans-serif" font-size="90" font-weight="900" fill="#ffffff"
+                        text-anchor="middle"
+                        style="letter-spacing: 2px; opacity: 0.9;">EdNum</text>
+                </svg>
+                <div class="header-text-group">
+                    <h1 class="site-title">EdNum.org</h1>
+                    <p>Applications interactives et ressources pour le Cycle 1</p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="index.html" class="icon-action-btn" title="Cycle 2" aria-label="Aller au Cycle 2"
+                    style="text-decoration: none;">
+                    <i data-fa="children"></i>
+                </a>
+                <button class="icon-action-btn" id="theme-toggle-btn" title="Mode sombre/clair"
+                    aria-label="Changer de thème">
+                    <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <button class="icon-action-btn" id="installBtn" title="Installer l'application"
+                    aria-label="Installer l'application">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </button>
+                <button class="icon-action-btn" id="reset-cache-btn" title="Réinitialiser l'application"
+                    aria-label="Réinitialiser le cache et l'application">
+                    <i data-fa="arrows-rotate"></i>
+                </button>
             </div>
         </div>
     </header>
 
     <main id="main-content">
-        <div class="action-buttons">
-            <a href="index.html" class="icon-action-btn" title="Cycle 2" aria-label="Aller au Cycle 2"
-                style="text-decoration: none;">
-                <i data-fa="children"></i>
-            </a>
-            <button class="icon-action-btn" id="reset-cache-btn" title="Réinitialiser l'application"
-                aria-label="Réinitialiser le cache et l'application">
-                <i data-fa="arrows-rotate"></i>
-            </button>
-            <button class="icon-action-btn" id="installBtn" title="Installer l'application"
-                aria-label="Installer l'application">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-            </button>
-            <button class="icon-action-btn" id="theme-toggle-btn" title="Mode sombre/clair"
-                aria-label="Changer de thème">
-                <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-            </button>
-        </div>
         <div class="grid">
         </div>
     </main>
@@ -537,6 +560,23 @@
     <script src="assets/js/fa-subset.js"></script>
     <script>
         window.fa?.createIcons?.();
+
+        // Parallax smart sticky header
+        let lastScrollY = window.scrollY;
+        const header = document.querySelector('header');
+        if (header) {
+            window.addEventListener('scroll', () => {
+                const currentScrollY = window.scrollY;
+                if (currentScrollY <= 80) {
+                    header.classList.remove('header-hidden');
+                } else if (currentScrollY > lastScrollY + 10) {
+                    header.classList.add('header-hidden');
+                } else if (currentScrollY < lastScrollY - 10) {
+                    header.classList.remove('header-hidden');
+                }
+                lastScrollY = currentScrollY;
+            }, { passive: true });
+        }
     </script>
     <script src="assets/js/registry.js"></script>
     <script src="assets/js/portal.js"></script>

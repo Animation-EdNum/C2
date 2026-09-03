@@ -10,15 +10,21 @@
 function updateRoleButton(tabId) {
     const roleBtn = document.getElementById('role-toggle-btn');
     if (!roleBtn) return;
+
+    roleBtn.textContent = '';
+    const icon = document.createElement('i');
+
     if (tabId === 'teachers') {
         roleBtn.setAttribute('title', "Passer à l'Espace Élèves");
         roleBtn.setAttribute('aria-label', "Passer à l'Espace Élèves");
-        roleBtn.innerHTML = '<i data-fa="graduation-cap"></i>';
+        icon.setAttribute('data-fa', 'graduation-cap');
     } else {
         roleBtn.setAttribute('title', "Passer à l'Espace Enseignant·e·s");
         roleBtn.setAttribute('aria-label', "Passer à l'Espace Enseignant·e·s");
-        roleBtn.innerHTML = '<i data-fa="chalkboard-user"></i>';
+        icon.setAttribute('data-fa', 'chalkboard-user');
     }
+
+    roleBtn.appendChild(icon);
     window.fa?.createIcons?.();
 }
 
