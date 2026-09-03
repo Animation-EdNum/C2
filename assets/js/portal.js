@@ -41,6 +41,22 @@ function renderIndexCard(app) {
                 </a>`;
 }
 
+function renderExternalCard(app) {
+    const classes = ['card', 'card-compact', 'external'];
+    if (app.isAlpha) classes.push('alpha-app');
+    const iconStyle = app.iconStyle === null ? '' : (app.iconStyle || 'width:32px;height:32px;flex-shrink:0;');
+
+    return `
+                <a href="${app.href}" ${app.target ? `target="${app.target}"` : ''} ${app.rel ? `rel="${app.rel}"` : ''} class="${classes.join(' ')}" data-level="${app.dataLevel || ''}" ${app.id ? `data-id="${app.id}"` : ''}>
+                    ${renderBadges(app.badges)}
+                    <div class="card-title">
+                        ${app.icon ? `<i data-fa="${app.icon}" style="${iconStyle}"></i>` : ''}
+                        <span>${app.title}</span>
+                        <i data-fa="arrow-up-right-from-square" class="external-link-icon" style="margin-left: auto; width: 14px; height: 14px; opacity: 0.5;" aria-hidden="true"></i>
+                    </div>
+                </a>`;
+}
+
 function renderC1Card(app) {
     return `
             <a href="${app.href}" class="card" style="${app.style || ''}">
@@ -58,27 +74,37 @@ window.renderPortal = function(mode) {
     const registry = loadRegistry();
 
     if (mode === 'index') {
-        const studentActivitiesContainer = document.querySelector('#view-students .searchable-grid');
+        const studentActivitiesContainer = document.getElementById('grid-students-activities') ||
+            document.querySelector('#view-students .searchable-grid');
 
-        let studentExternalContainer = null;
-        const studentHeaders = document.querySelectorAll('#view-students h2');
-        for (const h of studentHeaders) {
-            if (h.textContent.includes('Ressources recommandées') || h.textContent.includes('Ressources externes')) {
-                studentExternalContainer = h.parentElement.nextElementSibling;
-                break;
+        let studentExternalContainer = document.getElementById('grid-students-sites');
+        let studentUtilitiesContainer = document.getElementById('grid-students-utilities');
+
+        if (!studentExternalContainer || !studentUtilitiesContainer) {
+            const studentHeaders = document.querySelectorAll('#view-students h2');
+            for (const h of studentHeaders) {
+                if (h.textContent.includes('Sites utiles') || h.textContent.includes('Ressources recommandées') || h.textContent.includes('Ressources externes')) {
+                    studentExternalContainer = studentExternalContainer || h.parentElement.nextElementSibling;
+                } else if (h.textContent.includes('Utilitaires')) {
+                    studentUtilitiesContainer = studentUtilitiesContainer || h.parentElement.nextElementSibling;
+                }
             }
         }
 
-        const teacherToolsContainer = document.querySelector('#view-teachers .searchable-grid');
+        const teacherToolsContainer = document.getElementById('grid-teachers-tools') ||
+            document.querySelector('#view-teachers .searchable-grid');
 
-        let teacherExternalContainer = null;
-        let teacherUtilitiesContainer = null;
-        const teacherHeaders = document.querySelectorAll('#view-teachers h2');
-        for (const h of teacherHeaders) {
-            if (h.textContent.includes('Ressources externes')) {
-                teacherExternalContainer = h.parentElement.nextElementSibling;
-            } else if (h.textContent.includes('Utilitaires')) {
-                teacherUtilitiesContainer = h.parentElement.nextElementSibling;
+        let teacherExternalContainer = document.getElementById('grid-teachers-resources');
+        let teacherUtilitiesContainer = document.getElementById('grid-teachers-utilities');
+
+        if (!teacherExternalContainer || !teacherUtilitiesContainer) {
+            const teacherHeaders = document.querySelectorAll('#view-teachers h2');
+            for (const h of teacherHeaders) {
+                if (h.textContent.includes('Ressources recommandées') || h.textContent.includes('Ressources externes')) {
+                    teacherExternalContainer = teacherExternalContainer || h.parentElement.nextElementSibling;
+                } else if (h.textContent.includes('Utilitaires')) {
+                    teacherUtilitiesContainer = teacherUtilitiesContainer || h.parentElement.nextElementSibling;
+                }
             }
         }
 
@@ -88,7 +114,11 @@ window.renderPortal = function(mode) {
         }
         if (studentExternalContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'students_external');
-            studentExternalContainer['innerHTML'] = apps.map(renderIndexCard).join('');
+            studentExternalContainer['innerHTML'] = apps.map(renderExternalCard).join('');
+        }
+        if (studentUtilitiesContainer) {
+            const apps = registry.filter(a => a.inIndex && a.category === 'students_utilities');
+            studentUtilitiesContainer['innerHTML'] = apps.map(renderExternalCard).join('');
         }
         if (teacherToolsContainer) {
             const apps = registry.filter(a => a.inIndex && a.category === 'teachers_tools');

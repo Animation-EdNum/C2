@@ -15,6 +15,8 @@
 - **Share Modal:** Dynamically generated via DOM elements. Do NOT hardcode it into individual HTML files.
 - **Automate UI Specifics:** Masked command buttons (`.program-strip.masked .program-cmd`) must strictly maintain a neutral gray appearance, superseding the 'colored commands' mode. Share options strictly specific to this application append an explicit asterisk badge. Grid line visibility is toggled by adding/removing `.no-grid-lines` on `.bot-grid` containers. Fixed grid constraints are in `MAT_GRID_CONSTRAINTS`. Tooltips defined by `data-tooltip` are scoped to `.grid-toolbar [data-tooltip]`.
 - **Automate Descriptions:** Mat descriptions should be concise, factual, and written in simple language easily understandable by an 8-year-old child.
+- **Portal Navigation & Search UI :** The search bar must remain hidden by default and reveal smoothly upon clicking the header magnifying glass button (`#search-toggle-btn`) or clicking a card tag. Space switching (Élèves ↔ Enseignants) is driven exclusively by the header role toggle button (`#role-toggle-btn`); avoid duplicate in-page navigation tabs.
+- **External Resources Display:** Student external resources and utilities must use compact cards (`.card-compact`), omitting descriptions, hashtags, and manual references to keep the interface focused and readable for students.
 
 ## 3. Developer & Execution Workflows
 - **Code:** Always use curly braces `{}` for control structures (if, else), even for single-line statements.

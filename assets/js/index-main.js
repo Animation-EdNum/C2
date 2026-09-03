@@ -7,12 +7,22 @@
 /* =========================================
    GESTION DES ONGLETS (TABS)
    ========================================= */
-function switchTab(event, tabId) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
+function updateRoleButton(tabId) {
+    const roleBtn = document.getElementById('role-toggle-btn');
+    if (!roleBtn) return;
+    if (tabId === 'teachers') {
+        roleBtn.setAttribute('title', "Passer à l'Espace Élèves");
+        roleBtn.setAttribute('aria-label', "Passer à l'Espace Élèves");
+        roleBtn.innerHTML = '<i data-fa="graduation-cap"></i>';
+    } else {
+        roleBtn.setAttribute('title', "Passer à l'Espace Enseignant·e·s");
+        roleBtn.setAttribute('aria-label', "Passer à l'Espace Enseignant·e·s");
+        roleBtn.innerHTML = '<i data-fa="chalkboard-user"></i>';
     }
+    window.fa?.createIcons?.();
+}
 
+function switchTab(event, tabId) {
     document.querySelectorAll('.view').forEach(v => {
         v.classList.remove('active');
         v.style.display = '';
@@ -23,6 +33,7 @@ function switchTab(event, tabId) {
         targetView.style.display = 'block';
     }
 
+    updateRoleButton(tabId);
     executeFilters();
 }
 
@@ -88,7 +99,8 @@ function executeFilters() {
                 card.style.display = 'none';
                 card.classList.add('filter-hidden');
             } else {
-                const textContent = card.innerText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                const rawText = card.innerText || card.textContent || "";
+                const textContent = rawText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
                 const level = card.getAttribute('data-level');
 
                 const matchesSearch = textContent.includes(query);
@@ -200,7 +212,7 @@ function matchDegree(dataLevel, filter, card) {
     if (card) {
         const badges = card.querySelectorAll('.badge');
         for (let i = 0; i < badges.length; i++) {
-            if (checkString(badges[i].innerText)) return true;
+            if (checkString(badges[i].innerText || badges[i].textContent || '')) return true;
         }
     }
 
@@ -212,13 +224,18 @@ window.switchTab = switchTab;
 window.filterApps = filterApps;
 window.searchApps = searchApps;
 window.clearSearch = clearSearch;
+window.initPortalIndex = initPortalIndex;
 
 function initPortalIndex() {
-    // Event listeners for tabs
-    const tabStudents = document.getElementById('tab-students');
-    const tabTeachers = document.getElementById('tab-teachers');
-    if (tabStudents) tabStudents.addEventListener('click', (e) => switchTab(e, 'students'));
-    if (tabTeachers) tabTeachers.addEventListener('click', (e) => switchTab(e, 'teachers'));
+    // Role toggle button in header
+    const roleToggleBtn = document.getElementById('role-toggle-btn');
+    if (roleToggleBtn) {
+        roleToggleBtn.addEventListener('click', () => {
+            const isCurrentlyTeacher = document.getElementById('view-teachers')?.classList.contains('active');
+            const targetTab = isCurrentlyTeacher ? 'students' : 'teachers';
+            switchTab(null, targetTab);
+        });
+    }
 
     // Event listeners for filters
     const filterAll = document.getElementById('filter-all');
@@ -233,17 +250,81 @@ function initPortalIndex() {
     if (filter78H) filter78H.addEventListener('click', () => filterApps('7-8H'));
     if (filter910CO) filter910CO.addEventListener('click', () => filterApps('9-10 CO'));
 
-    // Search listeners
-    const clearSearchBtn = document.getElementById('clearSearch');
+    // Search bar toggle & controls
+    const searchBar = document.querySelector('.search-bar');
     const searchInput = document.getElementById('searchInput');
-    if (clearSearchBtn) clearSearchBtn.addEventListener('click', clearSearch);
-    if (searchInput) searchInput.addEventListener('input', searchApps);
+    const searchToggleBtn = document.getElementById('search-toggle-btn');
+    const clearSearchBtn = document.getElementById('clearSearch');
+
+    function toggleSearch(forceOpen) {
+        if (!searchBar) return;
+        const isOpen = searchBar.classList.contains('active');
+        const shouldOpen = forceOpen !== undefined ? forceOpen : !isOpen;
+
+        if (shouldOpen) {
+            searchBar.classList.add('active');
+            searchToggleBtn?.classList.add('active');
+            if (typeof searchBar.scrollIntoView === 'function') {
+                searchBar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            setTimeout(() => {
+                searchInput?.focus();
+                if (typeof searchInput?.select === 'function') {
+                    searchInput.select();
+                }
+            }, 150);
+        } else {
+            searchBar.classList.remove('active');
+            searchToggleBtn?.classList.remove('active');
+            if (searchInput && searchInput.value.length > 0) {
+                searchInput.value = '';
+                searchApps();
+            }
+        }
+    }
+
+    if (searchToggleBtn) {
+        searchToggleBtn.addEventListener('click', () => toggleSearch());
+    }
+
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', clearSearch);
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', searchApps);
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                toggleSearch(false);
+            }
+        });
+    }
+
+    // Parallax smart sticky header
+    let lastScrollY = window.scrollY;
+    const header = document.querySelector('header');
+    if (header) {
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY <= 80) {
+                header.classList.remove('header-hidden');
+            } else if (currentScrollY > lastScrollY + 10) {
+                // Scrolling down -> hide header
+                header.classList.add('header-hidden');
+            } else if (currentScrollY < lastScrollY - 10) {
+                // Scrolling up -> show header with all buttons
+                header.classList.remove('header-hidden');
+            }
+            lastScrollY = currentScrollY;
+        }, { passive: true });
+    }
 
     // Tag click delegate
     document.addEventListener('click', (e) => {
         if (e.target && e.target.classList && e.target.classList.contains('tag')) {
             e.preventDefault();
             const tagText = e.target.textContent;
+            toggleSearch(true);
             if (searchInput) {
                 searchInput.value = tagText;
                 searchApps();
@@ -255,6 +336,7 @@ function initPortalIndex() {
     if (typeof window.renderPortal === 'function') {
         window.renderPortal('index');
     }
+    updateRoleButton('students');
     window.fa?.createIcons?.();
 }
 

@@ -69,4 +69,5 @@
 - **[2026-08-27]** [Branding] Global update of AGPL-3.0 legal attribution links in app footers and general codebase cleanup.
 - **[2026-08-28]** [Feature/Apps] Optimized mobile responsiveness of Password Generator on smartphones and complete overhaul of the security "Golden Rules", accompanied by regression test updates.
 - **[2026-08-28]** [UI/UX] Global mobile adaptability improvements and fixed a blocking bug on portal category filters.
-- **[2026-08-30]** [Docs/Assets] Overhauled documentation screenshots across all 16 applications with high-DPI framing and no footers, updated README with Password Generator pedagogical context (edu.vs.ch), and refreshed CONTRIBUTING guide.
+- **[2026-08-30]** [Docs/Assets] Overhauled documentation screenshots across all 16 applications with high-DPI framing and no footers, updated README with Password Generator pedagogical context (edu.vs.ch), and refreshed CONTRIBUTING guide.
+- **[2026-09-03]** [Portal/UI] Major portal overhaul: migrated action buttons to smart sticky header with parallax reveal, replaced redundant tabs with a header role toggle button (students ↔ teachers), converted search bar to on-demand toggle via magnifying glass, added student "Utilitaires" section (GeoGebra, AutoDraw, Swisstopo), introduced compact external cards, and deployed universal cache/app reset buttons across all 20 webapps.

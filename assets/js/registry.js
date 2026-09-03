@@ -616,6 +616,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
+    "isTeacher": true,
     "dataLevel": "3H-8H",
     "icon": "book-open",
     "iconStyle": null,
@@ -633,7 +634,7 @@ window.REGISTRY = [
         "grey": false
       }
     ],
-    "category": "students_external",
+    "category": "teachers_external",
     "inIndex": true,
     "inC1": false
   },
@@ -890,8 +891,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "isTeacher": true,
-    "dataLevel": "Outil",
+    "dataLevel": "3H-8H",
     "icon": "map",
     "iconStyle": null,
     "title": "Swisstopo",
@@ -904,11 +904,65 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "Cartographie",
+        "text": "3H-8H",
         "grey": false
       }
     ],
-    "category": "teachers_utilities",
+    "category": "students_utilities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-autodraw",
+    "href": "https://www.autodraw.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "3H-8H",
+    "icon": "pencil",
+    "iconStyle": null,
+    "title": "AutoDraw",
+    "desc": "Outil de dessin rapide assisté par intelligence artificielle pour transformer des esquisses.",
+    "tags": [
+      "#Dessin",
+      "#IA",
+      "#Création"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_utilities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-geogebra-students",
+    "href": "https://www.geogebra.org/classic#geometry",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "5H-8H",
+    "icon": "compass",
+    "iconStyle": null,
+    "title": "GeoGebra",
+    "desc": "Application de géométrie dynamique pour tracer des figures et explorer les mathématiques.",
+    "tags": [
+      "#Maths",
+      "#Géométrie",
+      "#Dessin"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "5H-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_utilities",
     "inIndex": true,
     "inC1": false
   },

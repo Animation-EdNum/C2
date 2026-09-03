@@ -6,11 +6,12 @@
 - **Goal:** Teach CS concepts (algorithms, binary, networks, logic) through interactive web applications complementing the *Décodages* teaching materials.
 
 ## 2. Application Structure
-- **Student Portals:** `index.html` (general use), `indexC1.html` (simplified for 4-7 year olds).
+- **Student Portals:** `index.html` (general use with smart sticky header, on-demand search toggle, role switcher), `indexC1.html` (simplified for 4-7 year olds).
 - **Stable Student Apps (`webapps/`):** Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
 - **Alpha Student Apps (`alpha/webapps/`):** Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`).
 - **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. Alpha: Sim Dyslexie (`alpha/webapps/teacher/`), Générateur QR (`alpha/webapps/teacher/`).
   - *Rule:* They use a distinct stylesheet (`assets/css/teacher.css`). Do NOT extract their shared styles into the global CSS cascade.
+- **Universal Reset Button:** All 20 webapps feature a `#reset-cache-btn` (inside options dropdown for student apps, in action-buttons for teacher tools), handled globally by `assets/js/theme.js`.
 - **TBI Projection Mode:** Interactive Whiteboard (Tableau Blanc Interactif) mode supported across apps (Codage binaire, Bit de Parité, Générateur de Mot de Passe, Tirage au Sort) with container overflow safeguards.
 
 ## 3. Technical Architecture & Constraints
@@ -33,6 +34,7 @@
   - Descriptions: Max 12 words.
   - Tags: Max 4 tags, end with educational domain (e.g., `#Maths`). Do NOT use `#Jeu`.
   - Icons: Duotone (`dt-`) with specific primary/secondary colors (Blue for students, Green for teachers).
+  - External Student Links & Utilities: Rendered as compact cards (`.card-compact`) omitting description, tags, and manual references.
 - **README & Tutorials:** README links to 14+ comprehensive pedagogical user guides in `meta/tuto/` aligned with PER / Décodages. Screenshots saved in `meta/screenshots/`.
 - **Images:** Always compress large images (e.g., resize to 1920x1080 / convert to WebP) before committing.
 
