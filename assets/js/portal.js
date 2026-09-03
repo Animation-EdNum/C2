@@ -4,9 +4,14 @@ function loadRegistry() {
     return window.REGISTRY || [];
 }
 
+const PROF_BADGES = new Set([
+    'Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Ressources',
+    'Cartographie', 'Création', 'Programmation', 'Application', 'Maths', 'Robotique'
+]);
+
 function renderBadges(badges) {
     if (!badges) return '';
-    return `<div class="badges-wrapper">${badges.map(b => `<span class="badge${b.grey ? ' grey' : ''}${b.text === 'Évaluation' || b.text === 'Gestion de classe' || b.text === 'Animation' || b.text === 'Outils libres' || b.text === 'Ressources' ? ' prof' : ''}">${b.text}</span>`).join('')}</div>`;
+    return `<div class="badges-wrapper">${badges.map(b => `<span class="badge${b.grey ? ' grey' : ''}${PROF_BADGES.has(b.text) ? ' prof' : ''}">${b.text}</span>`).join('')}</div>`;
 }
 
 function renderTags(tags) {
@@ -58,7 +63,7 @@ window.renderPortal = function(mode) {
         let studentExternalContainer = null;
         const studentHeaders = document.querySelectorAll('#view-students h2');
         for (const h of studentHeaders) {
-            if (h.textContent.includes('Ressources externes')) {
+            if (h.textContent.includes('Ressources recommandées') || h.textContent.includes('Ressources externes')) {
                 studentExternalContainer = h.parentElement.nextElementSibling;
                 break;
             }
@@ -67,11 +72,13 @@ window.renderPortal = function(mode) {
         const teacherToolsContainer = document.querySelector('#view-teachers .searchable-grid');
 
         let teacherExternalContainer = null;
+        let teacherUtilitiesContainer = null;
         const teacherHeaders = document.querySelectorAll('#view-teachers h2');
         for (const h of teacherHeaders) {
             if (h.textContent.includes('Ressources externes')) {
                 teacherExternalContainer = h.parentElement.nextElementSibling;
-                break;
+            } else if (h.textContent.includes('Utilitaires')) {
+                teacherUtilitiesContainer = h.parentElement.nextElementSibling;
             }
         }
 
@@ -91,15 +98,16 @@ window.renderPortal = function(mode) {
             const apps = registry.filter(a => a.inIndex && a.category === 'teachers_external');
             teacherExternalContainer['innerHTML'] = apps.map(renderIndexCard).join('');
         }
+        if (teacherUtilitiesContainer) {
+            const apps = registry.filter(a => a.inIndex && a.category === 'teachers_utilities');
+            teacherUtilitiesContainer['innerHTML'] = apps.map(renderIndexCard).join('');
+        }
 
         window.fa?.createIcons?.();
 
         // Trigger filters
         if (typeof window.executeFilters === 'function') {
             window.executeFilters();
-        }
-        if (typeof window.initRecentApps === 'function') {
-            window.initRecentApps();
         }
 
     } else if (mode === 'c1') {

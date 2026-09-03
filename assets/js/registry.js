@@ -218,7 +218,7 @@ window.REGISTRY = [
   {
     "id": "app-automate",
     "href": "webapps/simulateur_automate.html",
-    "dataLevel": "1-2H",
+    "dataLevel": "3-4H",
     "icon": "dt-robot-astromech",
     "title": "Simulateur d'automate",
     "desc": "Jeu pour guider un automate (de type Blue-Bot) et relever des défis.",
@@ -229,10 +229,6 @@ window.REGISTRY = [
     ],
     "ref": "DÉ>CODAGE 3-4 · Scénario 2 — Automates · Blue-Bot",
     "badges": [
-      {
-        "text": "1-2H",
-        "grey": true
-      },
       {
         "text": "3-4H",
         "grey": false
@@ -536,6 +532,10 @@ window.REGISTRY = [
       {
         "text": "7-8H",
         "grey": false
+      },
+      {
+        "text": "9-10 CO",
+        "grey": false
       }
     ],
     "category": "students_external",
@@ -543,28 +543,79 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "ext-thymiosuite",
-    "href": "https://www.thymio.org/download-thymio-suite-redirect/",
+    "id": "ext-qwantjunior",
+    "href": "https://www.qwantjunior.com/",
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5-6H",
-    "icon": "microchip",
+    "dataLevel": "4-8H",
+    "icon": "globe",
     "iconStyle": null,
-    "title": "Thymio Suite",
-    "desc": "Un logiciel pour programmer et interagir avec les robots éducatifs Thymio.",
+    "title": "Qwant Junior",
+    "desc": "Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.",
     "tags": [
-      "#Code",
-      "#Robotique"
+      "#Recherche",
+      "#Moteur",
+      "#Sécurité"
     ],
-    "ref": "DÉ&gt;CODAGE · Scénarios 3, 8 (5-6H) et Scénario 1 (7-8H)",
+    "ref": null,
     "badges": [
       {
-        "text": "5-6H",
+        "text": "4-8H",
         "grey": false
-      },
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-iletaitunehistoire",
+    "href": "https://www.iletaitunehistoire.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "3-8H",
+    "icon": "book-open",
+    "iconStyle": null,
+    "title": "Il était une histoire",
+    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
+    "tags": [
+      "#Lecture",
+      "#Histoires",
+      "#Français"
+    ],
+    "ref": null,
+    "badges": [
       {
-        "text": "7-8H",
+        "text": "3-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-iapedia",
+    "href": "https://ia-pedia.ch/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "5H jusqu'à 10CO",
+    "icon": "dt-brain-circuit",
+    "iconStyle": null,
+    "title": "IA-Pedia",
+    "desc": "Ressources et activités pour comprendre et apprivoiser l'intelligence artificielle à l'école.",
+    "tags": [
+      "#IA",
+      "#Éducation",
+      "#Technologie"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "5H jusqu'à 10CO",
         "grey": false
       }
     ],
@@ -603,134 +654,6 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "ext-autodraw",
-    "href": "https://www.autodraw.com/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "3-4H",
-    "icon": "brush",
-    "iconStyle": null,
-    "title": "AutoDraw",
-    "desc": "Un outil de dessin intelligent qui devine et améliore vos croquis.",
-    "tags": [
-      "#Création",
-      "#IA"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "3-4H",
-        "grey": false
-      },
-      {
-        "text": "5-6H",
-        "grey": true
-      },
-      {
-        "text": "7-8H",
-        "grey": true
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "ext-geogebra",
-    "href": "https://www.geogebra.org/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "5-6H",
-    "icon": "draw-circle",
-    "iconStyle": null,
-    "title": "GeoGebra",
-    "desc": "Des applications mathématiques interactives pour la géométrie, l'algèbre et le calcul.",
-    "tags": [
-      "#Maths",
-      "#Outil"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "5-6H",
-        "grey": false
-      },
-      {
-        "text": "7-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "ext-gomaths",
-    "href": "https://www.gomaths.ch/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "3-4H",
-    "icon": "calculator",
-    "iconStyle": null,
-    "title": "Gomaths",
-    "desc": "Un site d'entraînement ludique pour le calcul mental et les mathématiques.",
-    "tags": [
-      "#Maths",
-      "#Entraînement"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "3-4H",
-        "grey": false
-      },
-      {
-        "text": "5-6H",
-        "grey": false
-      },
-      {
-        "text": "7-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "ext-agilefingers",
-    "href": "https://agilefingers.com/fr/jeux",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "5-6H",
-    "icon": "keyboard",
-    "iconStyle": null,
-    "title": "AgileFingers",
-    "desc": "Une méthode ludique pour apprendre à taper rapidement au clavier avec précision.",
-    "tags": [
-      "#Clavier",
-      "#Entraînement"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "5-6H",
-        "grey": true
-      },
-      {
-        "text": "7-8H",
-        "grey": true
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "ext-monkeytype",
     "href": "https://monkeytype.com/",
     "target": "_blank",
@@ -757,6 +680,173 @@ window.REGISTRY = [
       }
     ],
     "category": "students_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-sharepointapednum",
+    "href": "https://myeduvs.sharepoint.com/sites/HEP-Animation-EdNum",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "books",
+    "iconStyle": null,
+    "title": "SharePoint AP EdNum",
+    "desc": "Ressources et documents de l'animation cantonale HEP-VS en éducation numérique.",
+    "tags": [
+      "#Ressources",
+      "#Documents",
+      "#Formation",
+      "#Transversal"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Animation",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-thymiosuite",
+    "href": "https://www.thymio.org/download-thymio-suite-redirect/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "robot",
+    "iconStyle": null,
+    "title": "Thymio Suite sur ordinateur",
+    "desc": "Un logiciel pour programmer et interagir avec les robots éducatifs Thymio.",
+    "tags": [
+      "#Code",
+      "#Robotique"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Robotique",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-geogebra",
+    "href": "https://www.geogebra.org/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "compass",
+    "iconStyle": null,
+    "title": "GeoGebra",
+    "desc": "Des applications mathématiques interactives pour la géométrie, l'algèbre et le calcul.",
+    "tags": [
+      "#Maths",
+      "#Outil"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Maths",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-scratchjr-desktop",
+    "href": "https://jfo8000.github.io/ScratchJr-Desktop/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "code",
+    "iconStyle": null,
+    "title": "Scratch Junior sur ordinateur",
+    "desc": "Version desktop libre et gratuite de ScratchJr pour Mac et Windows.",
+    "tags": [
+      "#Programmation",
+      "#Cycle1",
+      "#Desktop"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Programmation",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-scratchjr-tablet",
+    "href": "https://www.scratchjr.org/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "puzzle",
+    "iconStyle": null,
+    "title": "Scratch Junior sur tablette",
+    "desc": "Application d'initiation au code pour les jeunes enfants sur iPad et tablettes Android.",
+    "tags": [
+      "#Programmation",
+      "#Tablette",
+      "#Cycle1"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Application",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-anton",
+    "href": "https://anton.app/fr/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "shapes",
+    "iconStyle": null,
+    "title": "Anton",
+    "desc": "Plateforme d'apprentissage tout-en-un avec exercices interactifs pour le primaire.",
+    "tags": [
+      "#Exercices",
+      "#Primaire",
+      "#Multidisciplinaire"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Exercices",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
     "inIndex": true,
     "inC1": false
   },
@@ -815,31 +905,86 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "ext-sharepointapednum",
-    "href": "https://myeduvs.sharepoint.com/sites/HEP-Animation-EdNum",
+    "id": "ext-swisstopo",
+    "href": "https://map.geo.admin.ch/#/map?lang=fr&center=2604958.68,1118978.61&z=3.214&topic=ech&layers=ch.swisstopo.zeitreihen@year=1864,f;ch.bfs.gebaeude_wohnungs_register,f;ch.bav.haltestellen-oev,f;ch.swisstopo.swisstlm3d-wanderwege,f;ch.vbs.schiessanzeigen,f;ch.astra.wanderland-sperrungen_umleitungen,f&bgLayer=ch.swisstopo.pixelkarte-farbe",
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
     "isTeacher": true,
     "dataLevel": "Outil",
-    "icon": "books",
+    "icon": "map",
     "iconStyle": null,
-    "title": "SharePoint AP EdNum",
-    "desc": "Ressources et documents de l'animation cantonale HEP-VS en éducation numérique.",
+    "title": "Swisstopo",
+    "desc": "Cartes nationales, vues aériennes et données géographiques officielles de la Suisse.",
     "tags": [
-      "#Ressources",
-      "#Documents",
-      "#Formation",
-      "#Transversal"
+      "#Cartes",
+      "#Géographie",
+      "#Suisse"
     ],
     "ref": null,
     "badges": [
       {
-        "text": "Animation",
+        "text": "Cartographie",
         "grey": false
       }
     ],
-    "category": "teachers_external",
+    "category": "teachers_utilities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-classroomscreen",
+    "href": "https://classroomscreen.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "desktop",
+    "iconStyle": null,
+    "title": "Classroomscreen",
+    "desc": "Tableau de bord interactif pour la classe avec minuteur, tirage au sort et consignes visuelles.",
+    "tags": [
+      "#Gestion",
+      "#Classe",
+      "#Affichage"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Gestion de classe",
+        "grey": false
+      }
+    ],
+    "category": "teachers_utilities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-canva",
+    "href": "https://www.canva.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "palette",
+    "iconStyle": null,
+    "title": "Canva",
+    "desc": "Plateforme de création graphique intuitive pour réaliser affiches, présentations et documents pédagogiques.",
+    "tags": [
+      "#Création",
+      "#Design",
+      "#Documents"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Création",
+        "grey": false
+      }
+    ],
+    "category": "teachers_utilities",
     "inIndex": true,
     "inC1": false
   },

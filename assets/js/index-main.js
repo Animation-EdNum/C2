@@ -92,34 +92,7 @@ function executeFilters() {
                 const level = card.getAttribute('data-level');
 
                 const matchesSearch = textContent.includes(query);
-
-                let matchesLevel = false;
-                if (currentFilter === 'all') {
-                    matchesLevel = true;
-                } else if (currentFilter === '9-10 CO') {
-                    const coLevels = ['9CO', '10CO', '9-10 CO'];
-                    if (coLevels.includes(level)) {
-                        matchesLevel = true;
-                    } else {
-                        const badges = card.querySelectorAll('.badge');
-                        badges.forEach(badge => {
-                            if (coLevels.includes(badge.innerText.trim())) {
-                                matchesLevel = true;
-                            }
-                        });
-                    }
-                } else {
-                    if (level === currentFilter) {
-                        matchesLevel = true;
-                    } else {
-                        const badges = card.querySelectorAll('.badge');
-                        badges.forEach(badge => {
-                            if (badge.innerText === currentFilter) {
-                                matchesLevel = true;
-                            }
-                        });
-                    }
-                }
+                const matchesLevel = (currentFilter === 'all') || matchDegree(level, currentFilter, card);
                 const matchesFilter = isSearching ? true : matchesLevel;
 
                 if (matchesSearch && matchesFilter) {
@@ -132,6 +105,12 @@ function executeFilters() {
             }
         }
     });
+
+    // Handle filter bar visibility during alpha search
+    const filterBar = document.querySelector('.filter-bar');
+    if (filterBar) {
+        filterBar.style.display = (query === 'alpha') ? 'none' : '';
+    }
 
     // Hide/show section headers and empty grids
     document.querySelectorAll('.view').forEach(view => {
@@ -149,9 +128,6 @@ function executeFilters() {
             // Find preceding section header
             let prev = grid.previousElementSibling;
             while (prev && !prev.classList.contains('section-header')) {
-                if (prev.classList.contains('filter-bar')) {
-                    prev.style.display = (query === 'alpha') ? 'none' : '';
-                }
                 prev = prev.previousElementSibling;
             }
             if (prev && prev.classList.contains('section-header')) {
@@ -179,68 +155,49 @@ function executeFilters() {
     });
 }
 
-/* =========================================
-   GESTION DES APPLICATIONS RÉCENTES (Favoris)
-   ========================================= */
-const MAX_RECENTS = 3;
+/**
+ * Helper to match degree strings or badge text against the active degree filter
+ */
+function matchDegree(dataLevel, filter, card) {
+    if (filter === 'all') return true;
 
-function loadRecents() {
-    const recentsStr = localStorage.getItem('ednum_recent_apps');
-    if (!recentsStr) return;
+    function checkString(str) {
+        if (!str) return false;
+        const s = str.trim();
+        if (s === filter) return true;
 
-    let recentIds = [];
-    try { recentIds = JSON.parse(recentsStr); } catch (e) { }
-
-    if (recentIds.length === 0) return;
-
-    const recentsGrid = document.getElementById('recents-grid');
-    if (!recentsGrid) return;
-    recentsGrid.textContent = '';
-
-    let addedCount = 0;
-
-    recentIds.forEach(id => {
-        const originalCard = document.querySelector(`.card[data-id="${id}"]`);
-        if (originalCard && addedCount < MAX_RECENTS) {
-            const clone = originalCard.cloneNode(true);
-            clone.addEventListener('click', () => saveRecent(id));
-            recentsGrid.appendChild(clone);
-            addedCount++;
+        if (filter === '9-10 CO') {
+            const coLevels = ['9CO', '10CO', '9-10 CO', '9-10CO', 'Cycle 3'];
+            if (coLevels.some(c => s.includes(c))) return true;
+            if (s.includes('10CO') || s.includes('10 CO')) return true;
+            return false;
         }
-    });
 
-    if (addedCount > 0) {
-        const recentsSection = document.getElementById('recents-section');
-        if (recentsSection) recentsSection.style.display = 'block';
-    }
-}
-
-function saveRecent(id) {
-    let recentIds = [];
-    try { recentIds = JSON.parse(localStorage.getItem('ednum_recent_apps')) || []; } catch (e) { }
-
-    recentIds = recentIds.filter(existingId => existingId !== id);
-    recentIds.unshift(id);
-
-    if (recentIds.length > MAX_RECENTS) {
-        recentIds = recentIds.slice(0, MAX_RECENTS);
+        if (s === '4-8H') {
+            return ['3-4H', '5-6H', '7-8H'].includes(filter);
+        }
+        if (s === '3-8H') {
+            return ['3-4H', '5-6H', '7-8H'].includes(filter);
+        }
+        if (s.includes('5H') && (s.includes('10CO') || s.includes('10 CO'))) {
+            return ['5-6H', '7-8H', '9-10 CO'].includes(filter);
+        }
+        return false;
     }
 
-    localStorage.setItem('ednum_recent_apps', JSON.stringify(recentIds));
-}
+    if (checkString(dataLevel)) return true;
 
-function initRecentApps() {
-    document.querySelectorAll('.card[data-id]').forEach(card => {
-        card.addEventListener('click', () => {
-            const id = card.getAttribute('data-id');
-            saveRecent(id);
-        });
-    });
-    loadRecents();
+    if (card) {
+        const badges = card.querySelectorAll('.badge');
+        for (let i = 0; i < badges.length; i++) {
+            if (checkString(badges[i].innerText)) return true;
+        }
+    }
+
+    return false;
 }
 
 window.executeFilters = executeFilters;
-window.initRecentApps = initRecentApps;
 window.switchTab = switchTab;
 window.filterApps = filterApps;
 window.searchApps = searchApps;
@@ -255,14 +212,12 @@ function initPortalIndex() {
 
     // Event listeners for filters
     const filterAll = document.getElementById('filter-all');
-    const filter12H = document.getElementById('filter-1-2H');
     const filter34H = document.getElementById('filter-3-4H');
     const filter56H = document.getElementById('filter-5-6H');
     const filter78H = document.getElementById('filter-7-8H');
     const filter910CO = document.getElementById('filter-9-10CO');
 
     if (filterAll) filterAll.addEventListener('click', () => filterApps('all'));
-    if (filter12H) filter12H.addEventListener('click', () => filterApps('1-2H'));
     if (filter34H) filter34H.addEventListener('click', () => filterApps('3-4H'));
     if (filter56H) filter56H.addEventListener('click', () => filterApps('5-6H'));
     if (filter78H) filter78H.addEventListener('click', () => filterApps('7-8H'));
