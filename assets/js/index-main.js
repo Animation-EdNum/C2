@@ -92,7 +92,8 @@ function executeFilters() {
                 const level = card.getAttribute('data-level');
 
                 const matchesSearch = textContent.includes(query);
-                const matchesLevel = (currentFilter === 'all') || matchDegree(level, currentFilter, card);
+                const isTeacherCard = card.closest('#view-teachers') !== null;
+                const matchesLevel = (currentFilter === 'all' || isTeacherCard) || matchDegree(level, currentFilter, card);
                 const matchesFilter = isSearching ? true : matchesLevel;
 
                 if (matchesSearch && matchesFilter) {
@@ -163,25 +164,34 @@ function matchDegree(dataLevel, filter, card) {
 
     function checkString(str) {
         if (!str) return false;
-        const s = str.trim();
-        if (s === filter) return true;
+        const s = str.trim().toUpperCase();
+        const f = filter.trim().toUpperCase();
 
-        if (filter === '9-10 CO') {
-            const coLevels = ['9CO', '10CO', '9-10 CO', '9-10CO', 'Cycle 3'];
-            if (coLevels.some(c => s.includes(c))) return true;
-            if (s.includes('10CO') || s.includes('10 CO')) return true;
+        if (s === f) return true;
+
+        if (f === '9-10 CO' || f === '9-10CO') {
+            if (s.includes('10CO') || s.includes('10 CO') || s.includes('9CO') || s.includes('CYCLE 3')) return true;
             return false;
         }
 
-        if (s === '4-8H') {
-            return ['3-4H', '5-6H', '7-8H'].includes(filter);
+        // Support '... JUSQU'À ...' or '...-...' (e.g. "5H JUSQU'À 10CO", "7H JUSQU'À 10CO", "5H JUSQU'À 8H", "3H JUSQU'À 8H")
+        const rangeMatch = s.match(/(\d+)\s*H?\s*(?:JUSQU'À|-)\s*(\d+)\s*(CO|H)?/i);
+        if (rangeMatch) {
+            const startH = parseInt(rangeMatch[1], 10);
+            const endVal = parseInt(rangeMatch[2], 10);
+            const isEndCO = (rangeMatch[3] && rangeMatch[3].toUpperCase() === 'CO') || s.includes('CO');
+
+            if (f === '3-4H') {
+                return startH <= 4 && (isEndCO || endVal >= 3);
+            }
+            if (f === '5-6H') {
+                return startH <= 6 && (isEndCO || endVal >= 5);
+            }
+            if (f === '7-8H') {
+                return startH <= 8 && (isEndCO || endVal >= 7);
+            }
         }
-        if (s === '3-8H') {
-            return ['3-4H', '5-6H', '7-8H'].includes(filter);
-        }
-        if (s.includes('5H') && (s.includes('10CO') || s.includes('10 CO'))) {
-            return ['5-6H', '7-8H', '9-10 CO'].includes(filter);
-        }
+
         return false;
     }
 

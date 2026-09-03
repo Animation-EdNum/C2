@@ -272,7 +272,7 @@ window.REGISTRY = [
   {
     "id": "app-mot-de-passe",
     "href": "webapps/generateur_mot_de_passe.html",
-    "dataLevel": "5-6H",
+    "dataLevel": "5H-8H",
     "icon": "dt-key",
     "title": "Générateur de mot de passe",
     "desc": "Apprends à créer des mots de passe robustes et teste leur sécurité.",
@@ -284,11 +284,7 @@ window.REGISTRY = [
     "ref": "Environnement numérique de travail",
     "badges": [
       {
-        "text": "5-6H",
-        "grey": false
-      },
-      {
-        "text": "7-8H",
+        "text": "5H-8H",
         "grey": false
       }
     ],
@@ -483,42 +479,12 @@ window.REGISTRY = [
     "inC1": true
   },
   {
-    "id": "ext-ledicodesados",
-    "href": "https://fr.dicoado.org/dico/Dico:Accueil",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "7-8H",
-    "icon": "book",
-    "iconStyle": null,
-    "title": "Le Dico des Ados",
-    "desc": "Un dictionnaire libre et collaboratif pour chercher et enrichir des définitions.",
-    "tags": [
-      "#Recherche",
-      "#Français"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "7-8H",
-        "grey": false
-      },
-      {
-        "text": "5-6H",
-        "grey": true
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "ext-scratch",
     "href": "https://scratch.mit.edu/projects/editor/",
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "7-8H",
+    "dataLevel": "7H-10CO",
     "icon": "block-quote",
     "iconStyle": null,
     "title": "Scratch",
@@ -530,65 +496,7 @@ window.REGISTRY = [
     "ref": "DÉ&gt;CODAGE 7-8 · Scénario 2 et Scénario 7",
     "badges": [
       {
-        "text": "7-8H",
-        "grey": false
-      },
-      {
-        "text": "9-10 CO",
-        "grey": false
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "ext-qwantjunior",
-    "href": "https://www.qwantjunior.com/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "4-8H",
-    "icon": "globe",
-    "iconStyle": null,
-    "title": "Qwant Junior",
-    "desc": "Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.",
-    "tags": [
-      "#Recherche",
-      "#Moteur",
-      "#Sécurité"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "4-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "ext-iletaitunehistoire",
-    "href": "https://www.iletaitunehistoire.com/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "3-8H",
-    "icon": "book-open",
-    "iconStyle": null,
-    "title": "Il était une histoire",
-    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
-    "tags": [
-      "#Lecture",
-      "#Histoires",
-      "#Français"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "3-8H",
+        "text": "7H-10CO",
         "grey": false
       }
     ],
@@ -602,7 +510,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5H jusqu'à 10CO",
+    "dataLevel": "5H-10CO",
     "icon": "dt-brain-circuit",
     "iconStyle": null,
     "title": "IA-Pedia",
@@ -615,7 +523,33 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "5H jusqu'à 10CO",
+        "text": "5H-10CO",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-ledicodesados",
+    "href": "https://fr.dicoado.org/dico/Dico:Accueil",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "5H-8H",
+    "icon": "book",
+    "iconStyle": null,
+    "title": "Le Dico des Ados",
+    "desc": "Un dictionnaire libre et collaboratif pour chercher et enrichir des définitions.",
+    "tags": [
+      "#Recherche",
+      "#Français"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "5H-8H",
         "grey": false
       }
     ],
@@ -629,7 +563,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5-6H",
+    "dataLevel": "5H-8H",
     "icon": "globe",
     "iconStyle": null,
     "title": "Vikidia",
@@ -641,11 +575,61 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "5-6H",
+        "text": "5H-8H",
         "grey": false
-      },
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-qwantjunior",
+    "href": "https://www.qwantjunior.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "4H-8H",
+    "icon": "globe",
+    "iconStyle": null,
+    "title": "Qwant Junior",
+    "desc": "Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.",
+    "tags": [
+      "#Recherche",
+      "#Moteur",
+      "#Sécurité"
+    ],
+    "ref": null,
+    "badges": [
       {
-        "text": "7-8H",
+        "text": "4H-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-iletaitunehistoire",
+    "href": "https://www.iletaitunehistoire.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "3H-8H",
+    "icon": "book-open",
+    "iconStyle": null,
+    "title": "Il était une histoire",
+    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
+    "tags": [
+      "#Lecture",
+      "#Histoires",
+      "#Français"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-8H",
         "grey": false
       }
     ],
@@ -659,7 +643,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "7-8H",
+    "dataLevel": "5H-8H",
     "icon": "timer",
     "iconStyle": null,
     "title": "MonkeyType",
@@ -671,12 +655,8 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "7-8H",
+        "text": "5H-8H",
         "grey": false
-      },
-      {
-        "text": "5-6H",
-        "grey": true
       }
     ],
     "category": "students_external",
@@ -732,33 +712,6 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "Robotique",
-        "grey": false
-      }
-    ],
-    "category": "teachers_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "ext-geogebra",
-    "href": "https://www.geogebra.org/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "isTeacher": true,
-    "dataLevel": "Outil",
-    "icon": "compass",
-    "iconStyle": null,
-    "title": "GeoGebra",
-    "desc": "Des applications mathématiques interactives pour la géométrie, l'algèbre et le calcul.",
-    "tags": [
-      "#Maths",
-      "#Outil"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "Maths",
         "grey": false
       }
     ],
@@ -823,34 +776,6 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "ext-anton",
-    "href": "https://anton.app/fr/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "isTeacher": true,
-    "dataLevel": "Outil",
-    "icon": "shapes",
-    "iconStyle": null,
-    "title": "Anton",
-    "desc": "Plateforme d'apprentissage tout-en-un avec exercices interactifs pour le primaire.",
-    "tags": [
-      "#Exercices",
-      "#Primaire",
-      "#Multidisciplinaire"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "Exercices",
-        "grey": false
-      }
-    ],
-    "category": "teachers_external",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "ext-ladigitale",
     "href": "https://ladigitale.dev/",
     "target": "_blank",
@@ -892,6 +817,61 @@ window.REGISTRY = [
     "tags": [
       "#Création",
       "#Exercices"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Exercices",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-geogebra",
+    "href": "https://www.geogebra.org/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "compass",
+    "iconStyle": null,
+    "title": "GeoGebra",
+    "desc": "Des applications mathématiques interactives pour la géométrie, l'algèbre et le calcul.",
+    "tags": [
+      "#Maths",
+      "#Outil"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Maths",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "ext-anton",
+    "href": "https://anton.app/fr/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Outil",
+    "icon": "shapes",
+    "iconStyle": null,
+    "title": "Anton",
+    "desc": "Plateforme d'apprentissage tout-en-un avec exercices interactifs pour le primaire.",
+    "tags": [
+      "#Exercices",
+      "#Primaire",
+      "#Multidisciplinaire"
     ],
     "ref": null,
     "badges": [
