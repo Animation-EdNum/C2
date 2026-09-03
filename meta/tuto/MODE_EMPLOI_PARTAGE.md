@@ -9,9 +9,13 @@ Le module de partage de la **Suite EdNum** permet de préparer une activité ave
 1. Cliquez sur l'icône **Engrenage ⚙** (en haut à droite).
 2. Sélectionnez **« Partager l'activité »** (ou cliquez sur le bouton de partage dédié).
 
+![Menu des réglages avec option Partager](../screenshots/share_settings.png)
+
 L'URL générée contient automatiquement le mode et la difficulté en cours.
 
 ### Boutons d'exportation
+
+![Fenêtre de partage de l'activité](../screenshots/share_basic.png)
 
 | Bouton | Action |
 |---|---|
@@ -32,11 +36,15 @@ Trois profils en un clic pour configurer l'activité selon l'intention pédagogi
 | 🏋️ **Entraînement** | *« Je leur donne l'outil, ils s'entraînent à leur rythme. »* | Force le mode sélectionné + retire le lien d'accueil + laisse la difficulté libre. |
 | 🫶 **Inclusif** | *« J'ai un·e élève DYS, TSA ou non-latéralisé·e dans le groupe. »* | Contraste élevé + son coupé + commandes colorées + retire le lien d'accueil. |
 
+![Profils rapides et options configurées](../screenshots/share_checked.png)
+
 ---
 
 ## 3. Options avancées détaillées
 
 Cliquez sur **« Options Avancées »** dans la modale pour affiner la configuration :
+
+![Panneau des options avancées de partage](../screenshots/share_advanced.png)
 
 ### 🎨 Apparence & Confort
 - **Contraste élevé (`&highContrast=1`) :** Thème sombre à fort contraste (WCAG AA).
@@ -76,7 +84,10 @@ Cliquez sur **« Options Avancées »** dans la modale pour affiner la configura
 ## 5. Comment diffuser en classe
 
 1. Choisissez vos options ou un profil rapide dans la fenêtre de partage.
-2. Cliquez sur **« 💾 Télécharger le QR »** pour l'intégrer dans votre fiche de cours, ou affichez-le en grand au TBI.
+2. Cliquez sur **« 📱 QR »** pour afficher le QR Code, ou **« 💾 Télécharger le QR »** pour l'intégrer dans votre fiche de cours.
+
+![Génération et affichage du QR Code](../screenshots/share_qr.png)
+
 3. Les élèves scannent le QR Code avec leur tablette : l'activité s'ouvre configurée à l'identique, prête à l'emploi.
 
 ---
