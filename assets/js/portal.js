@@ -54,6 +54,7 @@ function renderExternalCard(app) {
                         <span>${app.title}</span>
                         <i data-fa="arrow-up-right-from-square" class="external-link-icon" style="margin-left: auto; width: 14px; height: 14px; opacity: 0.5;" aria-hidden="true"></i>
                     </div>
+                    ${app.desc ? `<div class="card-desc">${app.desc}</div>` : ''}
                 </a>`;
 }
 

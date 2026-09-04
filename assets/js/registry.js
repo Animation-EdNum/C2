@@ -513,12 +513,12 @@ window.REGISTRY = [
     "dataLevel": "5H-10CO",
     "icon": "dt-brain-circuit",
     "iconStyle": null,
-    "title": "IA-Pedia",
-    "desc": "Ressources et activités pour comprendre et apprivoiser l'intelligence artificielle à l'école.",
+    "title": "ia-pedia",
+    "desc": "Simplifie les articles de Wikipédia à ton niveau de lecture et répond à tes questions pour faciliter tes recherches.",
     "tags": [
-      "#IA",
-      "#Éducation",
-      "#Technologie"
+      "#Wikipédia",
+      "#Recherche",
+      "#IA"
     ],
     "ref": null,
     "badges": [
@@ -619,11 +619,12 @@ window.REGISTRY = [
     "dataLevel": "5H-8H",
     "icon": "timer",
     "iconStyle": null,
-    "title": "MonkeyType",
-    "desc": "Un test de frappe minimaliste pour mesurer et améliorer sa vitesse.",
+    "title": "Monkeytype",
+    "desc": "Teste et améliore ta vitesse et ta précision de frappe au clavier.",
     "tags": [
       "#Clavier",
-      "#Vitesse"
+      "#Vitesse",
+      "#Dactylographie"
     ],
     "ref": null,
     "badges": [
@@ -948,8 +949,8 @@ window.REGISTRY = [
     "dataLevel": "5H-8H",
     "icon": "compass",
     "iconStyle": null,
-    "title": "GeoGebra",
-    "desc": "Application de géométrie dynamique pour tracer des figures et explorer les mathématiques.",
+    "title": "GeoGebra Classique",
+    "desc": "Pour dessiner et tracer des figures géométriques.",
     "tags": [
       "#Maths",
       "#Géométrie",

@@ -11,21 +11,18 @@ function updateRoleButton(tabId) {
     const roleBtn = document.getElementById('role-toggle-btn');
     if (!roleBtn) return;
 
-    roleBtn.textContent = '';
-    const icon = document.createElement('i');
-
     if (tabId === 'teachers') {
-        roleBtn.setAttribute('title', "Passer à l'Espace Élèves");
-        roleBtn.setAttribute('aria-label', "Passer à l'Espace Élèves");
+        roleBtn.style.display = 'inline-flex';
+        roleBtn.setAttribute('title', "Retour à l'Espace Élèves");
+        roleBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
+        roleBtn.textContent = '';
+        const icon = document.createElement('i');
         icon.setAttribute('data-fa', 'graduation-cap');
+        roleBtn.appendChild(icon);
+        window.fa?.createIcons?.();
     } else {
-        roleBtn.setAttribute('title', "Passer à l'Espace Enseignant·e·s");
-        roleBtn.setAttribute('aria-label', "Passer à l'Espace Enseignant·e·s");
-        icon.setAttribute('data-fa', 'chalkboard-user');
+        roleBtn.style.display = 'none';
     }
-
-    roleBtn.appendChild(icon);
-    window.fa?.createIcons?.();
 }
 
 function switchTab(event, tabId) {
@@ -233,13 +230,26 @@ window.clearSearch = clearSearch;
 window.initPortalIndex = initPortalIndex;
 
 function initPortalIndex() {
-    // Role toggle button in header
+    // Return to students button in header (visible only in teachers view)
     const roleToggleBtn = document.getElementById('role-toggle-btn');
     if (roleToggleBtn) {
         roleToggleBtn.addEventListener('click', () => {
-            const isCurrentlyTeacher = document.getElementById('view-teachers')?.classList.contains('active');
-            const targetTab = isCurrentlyTeacher ? 'students' : 'teachers';
-            switchTab(null, targetTab);
+            switchTab(null, 'students');
+            if (window.location.hash === '#teachers') {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // Discreet teachers link in footer
+    const linkTeachers = document.getElementById('link-teachers');
+    if (linkTeachers) {
+        linkTeachers.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab(null, 'teachers');
+            window.location.hash = 'teachers';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
@@ -342,7 +352,21 @@ function initPortalIndex() {
     if (typeof window.renderPortal === 'function') {
         window.renderPortal('index');
     }
-    updateRoleButton('students');
+    // Initial view selection from hash or query
+    if (window.location.hash === '#teachers' || new URLSearchParams(window.location.search).has('teachers')) {
+        switchTab(null, 'teachers');
+    } else {
+        updateRoleButton('students');
+    }
+
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash === '#teachers') {
+            switchTab(null, 'teachers');
+        } else {
+            switchTab(null, 'students');
+        }
+    });
+
     window.fa?.createIcons?.();
 }
 
