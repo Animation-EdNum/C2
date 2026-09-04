@@ -89,7 +89,3 @@ Cliquez sur **« Options Avancées »** dans la modale pour affiner la configura
 ![Génération et affichage du QR Code](../screenshots/share_qr.png)
 
 3. Les élèves scannent le QR Code avec leur tablette : l'activité s'ouvre configurée à l'identique, prête à l'emploi.
-
----
-
-*Documentation de la Suite EdNum — AP EdNum (HEP-VS) sous licence libre AGPL-3.0.*

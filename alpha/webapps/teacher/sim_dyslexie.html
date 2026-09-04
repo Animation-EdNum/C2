@@ -23,9 +23,9 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lentille de dyslexie</title>
-    <meta property="og:title" content="Lentille de dyslexie">
-    <meta property="og:description" content="Simulateur de lecture pour sensibiliser aux troubles DYS.">
+    <title>Lentille de dyslexie &amp; Adaptateur DYS</title>
+    <meta property="og:title" content="Lentille de dyslexie &amp; Adaptateur DYS">
+    <meta property="og:description" content="Simulateur de lecture pour sensibiliser aux troubles DYS et boîte à outils pour adapter les textes des élèves.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../../assets/js/fa-subset.js"></script>
@@ -85,12 +85,16 @@
             min-height: 100vh;
             color: var(--text-main);
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             transition: background 0.3s;
         }
 
         .app-shell {
             max-width: 1100px;
-            margin: 0 auto;
+            width: 100%;
+            margin: auto;
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
@@ -100,12 +104,11 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            min-height: calc(100vh - 40px);
         }
 
         /* HEADER */
         header {
-            padding: 2rem;
+            padding: 1.75rem 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -140,7 +143,7 @@
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             font-weight: 800;
             color: var(--text-main);
             letter-spacing: -0.025em;
@@ -189,8 +192,13 @@
         }
 
         .btn-secondary {
-            background: var(--glass-bg);
+            background: rgba(15, 23, 42, 0.06);
             border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
             color: var(--text-main);
         }
 
@@ -231,13 +239,13 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.25rem;
             overflow-y: auto;
         }
 
         @media (min-width: 900px) {
             .config-panel {
-                width: 320px;
+                width: 330px;
                 flex-shrink: 0;
             }
         }
@@ -246,55 +254,89 @@
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-xl);
-            padding: 1.25rem;
+            padding: 1.15rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
         .panel-section-title {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--text-main);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.9rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        /* TABS */
+        /* TABS (Design System standardisé EdNum) */
         .tabs {
             display: flex;
-            background: rgba(0, 0, 0, 0.05);
-            padding: 0.25rem;
-            border-radius: var(--radius-lg);
-            margin-bottom: 1rem;
+            gap: 8px;
+            margin-bottom: 0;
+            flex-wrap: wrap;
+            background: transparent;
+            padding: 0;
         }
 
         .tab-btn {
-            flex: 1;
-            padding: 0.5rem;
-            text-align: center;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border);
+            background: var(--glass-bg);
             color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
-            border: none;
-            background: transparent;
-            transition: all 0.2s;
+            transition: all 0.2s var(--spring-easing, ease);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:active {
+            transform: scale(0.96);
         }
 
         .tab-btn.active {
-            background: var(--glass-bg);
-            color: var(--primary);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: var(--primary) !important;
+            color: #ffffff !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35) !important;
+            font-weight: 700;
+        }
+
+        body.dark .tab-btn {
+            background: var(--card-bg, #1e293b);
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        body.dark .tab-btn:hover {
+            border-color: var(--primary);
+            color: #f8fafc;
+        }
+
+        body.dark .tab-btn.active {
+            background: var(--primary) !important;
+            color: #ffffff !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 4px 16px rgba(13, 148, 136, 0.5) !important;
         }
 
         /* INPUTS & CONTROLS */
         .input-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.85rem;
         }
 
         .input-group:last-child {
@@ -307,7 +349,7 @@
             font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .input-group .value-badge {
@@ -328,11 +370,11 @@
         .mixing-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .mixing-btn {
-            padding: 0.5rem;
+            padding: 0.45rem;
             font-size: 0.75rem;
             font-weight: 700;
             border-radius: var(--radius-md);
@@ -352,40 +394,47 @@
 
         .checkbox-card {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.65rem 0.75rem;
             background: rgba(0, 0, 0, 0.02);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 0.5rem;
+            margin-top: 0.45rem;
+        }
+
+        body.dark .checkbox-card {
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .checkbox-card:hover {
-            background: rgba(0, 0, 0, 0.04);
+            background: rgba(13, 148, 136, 0.08);
+            border-color: var(--primary);
         }
 
         .checkbox-card input[type="checkbox"] {
             width: 1.1rem;
             height: 1.1rem;
+            margin-top: 2px;
             accent-color: var(--primary);
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .preset-list {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
             padding-right: 0.25rem;
         }
 
         .preset-btn {
             text-align: left;
-            padding: 0.75rem;
+            padding: 0.65rem;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
             background: var(--glass-bg);
@@ -405,14 +454,14 @@
         }
 
         .preset-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         .preset-preview {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-secondary);
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -435,9 +484,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.85rem;
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .results-title-group h2 {
@@ -455,7 +506,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 400px;
+            min-height: 440px;
             position: relative;
         }
 
@@ -468,6 +519,7 @@
         .edit-view textarea {
             flex: 1;
             width: 100%;
+            min-height: 250px;
             padding: 1.5rem;
             border-radius: var(--radius-xl);
             border: 1px solid var(--border);
@@ -494,6 +546,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            position: relative;
         }
 
         .dyslexic-text {
@@ -505,12 +558,72 @@
             color: var(--text-main);
             overflow-y: auto;
             white-space: pre-wrap;
-            transition: filter 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
+            border-radius: var(--radius-xl);
+        }
+
+        /* COMPENSATORY ACCOMMODATIONS */
+        .comp-zorzi {
+            letter-spacing: 0.25em !important;
+            word-spacing: 0.4em !important;
+            line-height: 2.2 !important;
+        }
+
+        .comp-font-dys {
+            font-family: 'OpenDyslexic', sans-serif !important;
+        }
+
+        .comp-pastel {
+            background-color: #FAF7EE !important;
+            color: #1e293b !important;
+            border: 1px solid #e2d9c2 !important;
+        }
+
+        body.dark .comp-pastel {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        .syl-even {
+            color: #1d4ed8 !important;
+            font-weight: 600;
+        }
+
+        .syl-odd {
+            color: #dc2626 !important;
+            font-weight: 600;
+        }
+
+        body.dark .syl-even {
+            color: #60a5fa !important;
+        }
+
+        body.dark .syl-odd {
+            color: #f87171 !important;
+        }
+
+        /* DYNAMIC READING RULER */
+        .reading-ruler-overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 54px;
+            pointer-events: none;
+            z-index: 25;
+            transform: translateY(-50%);
+            box-shadow: 0 -2000px 0 2000px rgba(15, 23, 42, 0.24), 0 2000px 0 2000px rgba(15, 23, 42, 0.24);
+            border-top: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background: rgba(13, 148, 136, 0.08);
+            display: none;
+            border-radius: 2px;
         }
 
         /* TEXT EFFECTS */
         .dyslexic-text span {
-            transition: all 0.3s;
+            transition: all 0.2s;
             display: inline-block;
         }
 
@@ -545,23 +658,152 @@
             opacity: 0.5;
         }
 
-        /* FOOTER */
-        footer {
-            text-align: center;
-            margin-top: 1rem;
-            padding: 10px;
-            color: rgba(255, 255, 255, 0.8);
+        /* ADAPTER VIEW */
+        .adapter-view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            gap: 1.25rem;
+        }
+
+        .profile-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .profile-btn {
+            padding: 0.55rem 0.95rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-main);
             font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .profile-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .profile-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+
+        .worksheet-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 380px;
+        }
+
+        .worksheet-card {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        body.dark .worksheet-card {
+            background: #0f172a;
+            color: #f8fafc;
+            border-color: #334155;
+        }
+
+        .worksheet-card.comp-pastel {
+            background: #FAF7EE !important;
+            color: #1e293b !important;
+        }
+
+        body.dark .worksheet-card.comp-pastel {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        .worksheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px dashed var(--border);
+            padding-bottom: 0.85rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .worksheet-header.comp-zorzi {
+            letter-spacing: 0.25em !important;
+            word-spacing: 0.4em !important;
+        }
+
+        .worksheet-header.comp-font-dys {
+            font-family: 'OpenDyslexic', sans-serif !important;
+        }
+
+        .worksheet-header span {
+            display: inline-flex;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .worksheet-text {
+            font-size: 1.35rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .worksheet-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* FOOTER INSIDE CARD */
+        footer {
+            margin-top: auto;
+            padding: 1.15rem 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
 
         footer a {
-            color: white;
+            color: var(--primary);
+            font-weight: 700;
             text-decoration: underline;
             text-underline-offset: 2px;
         }
 
         footer a:hover {
-            color: var(--primary-light);
+            color: var(--primary-hover);
         }
 
         /* INFO BANNER */
@@ -573,7 +815,7 @@
             display: flex;
             gap: 0.75rem;
             align-items: flex-start;
-            margin-top: 1rem;
+            margin-top: 0.75rem;
         }
 
         .info-banner i {
@@ -591,6 +833,92 @@
         body.dark .info-banner p {
             color: #fcd34d;
         }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                min-height: auto !important;
+            }
+
+            .no-print,
+            header,
+            .config-panel,
+            .tabs,
+            .results-header,
+            footer,
+            .btn,
+            .header-actions,
+            .profile-pills,
+            .worksheet-actions {
+                display: none !important;
+            }
+
+            .app-shell {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+            }
+
+            .results-panel,
+            .workspace-area,
+            .adapter-view {
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                display: block !important;
+            }
+
+            .sim-view,
+            .edit-view {
+                display: none !important;
+            }
+
+            .worksheet-card {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 1.5cm !important;
+                width: 100% !important;
+                background: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .worksheet-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                font-size: 11pt !important;
+                border-bottom: 2px solid #334155 !important;
+                padding-bottom: 10px !important;
+                margin-bottom: 25px !important;
+            }
+
+            .worksheet-text {
+                font-size: 16pt !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .syl-even {
+                color: #1d4ed8 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .syl-odd {
+                color: #dc2626 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
     </style>
 </head>
 
@@ -605,7 +933,7 @@
                 </a>
                 <div>
                     <h1>
-                        Lentille de dyslexie
+                        Lentille de dyslexie &amp; Adaptateur DYS
                         <span class="badge-alpha">Alpha</span>
                     </h1>
                 </div>
@@ -625,10 +953,62 @@
 
         <div class="app-main">
             <aside class="config-panel no-print">
-                <div class="panel-section">
+                <!-- AMÉNAGEMENTS COMPENSATOIRES -->
+                <div class="panel-section" id="sectionAccommodations">
+                    <div class="panel-section-title">
+                        <i data-fa="shield-check" style="width:14px;height:14px;color:var(--primary);"></i>
+                        Aménagements compensatoires
+                    </div>
+                    <p style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.4;">
+                        Activez ces leviers pour constater en direct l'atténuation de la gêne de lecture.
+                    </p>
+
+                    <label class="checkbox-card" for="compZorzi">
+                        <input type="checkbox" id="compZorzi">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Espacement Zorzi</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Lettres (+0.25em), mots (+0.4em) et interligne (2.2)</div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card" for="compFontDys">
+                        <input type="checkbox" id="compFontDys">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Police adaptée OpenDyslexic</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Base des lettres épaissie pour éviter les inversions</div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card" for="compPastel">
+                        <input type="checkbox" id="compPastel">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Fond ivoire / pastel</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Atténue l'éblouissement et le contraste violent</div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card" for="compRuler">
+                        <input type="checkbox" id="compRuler">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Règle de lecture dynamique</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Guide focal suivant le curseur / tactile</div>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card" for="compSyllables">
+                        <input type="checkbox" id="compSyllables">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Découpage syllabique bicolore</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Alternance bleu / rouge pour guider le décodage</div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- SIMULATEUR CONTROLS -->
+                <div class="panel-section" id="sectionSimControls">
                     <div class="panel-section-title">
                         <i data-fa="gear" style="width:14px;height:14px;"></i>
-                        Réglages
+                        Perturbations DYS
                     </div>
 
                     <div class="input-group">
@@ -647,7 +1027,7 @@
                         <input type="range" id="inputSpeed" min="0" max="10" step="1" value="5">
                     </div>
 
-                    <div class="input-group" style="margin-top: 1rem;">
+                    <div class="input-group" style="margin-top: 0.75rem;">
                         <label>Type de trouble</label>
                         <div class="mixing-grid">
                             <button class="mixing-btn active" data-style="all">Mixte</button>
@@ -657,19 +1037,17 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <div style="margin-top: 0.75rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
                         <label class="checkbox-card" for="inputFocusMode">
                             <input type="checkbox" id="inputFocusMode">
                             <div>
-                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Mode Focus
-                                </div>
-                                <div style="font-size: 0.7rem; color: var(--text-secondary);">Surligne le mot en cours
-                                </div>
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Mode Focus</div>
+                                <div style="font-size: 0.7rem; color: var(--text-secondary);">Surligne le mot en cours</div>
                             </div>
                         </label>
 
                         <div class="input-group" id="focusSpeedContainer"
-                            style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: rgba(0,0,0,0.03); border-radius: var(--radius-lg);">
+                            style="display: none; margin-top: 0.6rem; padding: 0.65rem; background: rgba(0,0,0,0.03); border-radius: var(--radius-lg);">
                             <label>
                                 <span>Vitesse de lecture</span>
                                 <span class="value-badge" id="valFocusSpeed">100 MPM</span>
@@ -679,6 +1057,7 @@
                     </div>
                 </div>
 
+                <!-- TEXTES D'EXEMPLE -->
                 <div class="panel-section">
                     <div class="panel-section-title">
                         <i data-fa="book-open" style="width:14px;height:14px;"></i>
@@ -690,7 +1069,7 @@
 
                     <div class="info-banner">
                         <i data-fa="circle-info" style="width:14px;height:14px;"></i>
-                        <p>La dyslexie est un trouble cognitif, non visuel. Ce simulateur ne montre pas ce qu'un élève voit, mais il recrée l'effort phénoménal, la perte de repères et la fatigue attentionnelle nécessaires pour décoder chaque mot.</p>
+                        <p>La dyslexie est un trouble cognitif, non visuel. Ce simulateur recrée l'effort cognitif phénoménal, la perte de repères et la surcharge attentionnelle nécessaires au décodage.</p>
                     </div>
                 </div>
             </aside>
@@ -699,52 +1078,105 @@
                 <div class="results-header no-print">
                     <div class="results-title-group">
                         <h2 id="viewportTitle">Visualisation en temps réel</h2>
-                        <p id="viewportSubtitle">Observez les effets de la dyslexie</p>
+                        <p id="viewportSubtitle">Observez les effets de la dyslexie et l'effet des aménagements</p>
                     </div>
                     <div class="tabs" style="margin-bottom: 0;">
-                        <button class="tab-btn active" data-tab="simulation">Simulateur</button>
-                        <button class="tab-btn" data-tab="edit">Éditer</button>
+                        <button class="tab-btn active" data-tab="simulation">
+                            <i data-fa="eye" style="width:14px;height:14px;"></i> Simulateur
+                        </button>
+                        <button class="tab-btn" data-tab="adapter">
+                            <i data-fa="book-open-reader" style="width:14px;height:14px;"></i> Adaptateur DYS
+                        </button>
+                        <button class="tab-btn" data-tab="edit">
+                            <i data-fa="pen" style="width:14px;height:14px;"></i> Éditer texte
+                        </button>
                     </div>
                 </div>
 
                 <div class="workspace-area">
-                    <div class="edit-view" id="viewEdit">
-                        <textarea id="textInput" placeholder="Collez ou tapez votre texte ici..."></textarea>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <button class="btn btn-primary" id="btnStartSim" style="padding: 1rem 2rem;">
-                                <i data-fa="eye" style="width:18px;height:18px;"></i> Lancer l'expérience
-                            </button>
-                        </div>
-                    </div>
-
+                    <!-- VIEW 1: SIMULATEUR -->
                     <div class="sim-view" id="viewSimulation">
+                        <div class="reading-ruler-overlay" id="readingRuler"></div>
                         <div class="empty-state" id="emptyState">
                             <i data-fa="volume-high"></i>
-                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte pour voir la
-                                simulation.</p>
+                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte pour voir la simulation.</p>
                             <button class="btn btn-secondary" id="btnEmptyEdit">Passer en mode édition</button>
                         </div>
                         <div class="dyslexic-text" id="dyslexicOutput"></div>
                     </div>
+
+                    <!-- VIEW 2: ADAPTATEUR DYS (FICHE ÉLÈVE) -->
+                    <div class="adapter-view" id="viewAdapter">
+                        <div class="no-print">
+                            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                Profils d'adaptation en 1 clic :
+                            </div>
+                            <div class="profile-pills">
+                                <button class="profile-btn" data-profile="visuo">
+                                    <i data-fa="layer-group"></i> Dyslexie visuo-spatiale
+                                </button>
+                                <button class="profile-btn" data-profile="debut">
+                                    <i data-fa="chalkboard-user"></i> Début de lecture
+                                </button>
+                                <button class="profile-btn" data-profile="confort">
+                                    <i data-fa="palette"></i> Confort visuel
+                                </button>
+                                <button class="profile-btn active" data-profile="custom">
+                                    <i data-fa="sliders"></i> Personnalisé
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="worksheet-wrapper">
+                            <div class="worksheet-card" id="worksheetCard">
+                                <div class="worksheet-header" id="worksheetHeader">
+                                    <span><strong>Prénom :</strong> ___________</span>
+                                    <span><strong>Date :</strong> _______</span>
+                                </div>
+                                <div class="worksheet-text" id="adapterWorksheetText">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="worksheet-actions no-print">
+                            <button class="btn btn-primary" id="btnPrintWorksheet" title="Imprimer la fiche A4 prête pour la classe">
+                                <i data-fa="print" style="width:16px;height:16px;"></i> Imprimer la fiche adaptée (A4)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VIEW 3: ÉDITEUR LIBRE -->
+                    <div class="edit-view" id="viewEdit">
+                        <textarea id="textInput" placeholder="Collez ou tapez votre consigne, exercice ou texte ici..."></textarea>
+                        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+                            <button class="btn btn-secondary" id="btnGoAdapter" style="padding: 0.85rem 1.5rem;">
+                                <i data-fa="book-open-reader" style="width:16px;height:16px;"></i> Adapter pour la classe
+                            </button>
+                            <button class="btn btn-primary" id="btnStartSim" style="padding: 0.85rem 1.5rem;">
+                                <i data-fa="eye" style="width:16px;height:16px;"></i> Lancer la simulation
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>
-    </div>
 
-    <footer class="no-print">
-        <p>
-            Webapp conçue par Vivian de l'<a
-                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
-            <br>
-            <span style="font-size: 0.9em; opacity: 0.85;">
-                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
-                    libre</a>
-                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
-                    rel="noopener noreferrer">AGPL-3.0</a>)
-            </span>
-        </p>
-    </footer>
+        <footer class="no-print">
+            <p>
+                Webapp conçue par Vivian de l'<a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                <br>
+                <span style="font-size: 0.9em; opacity: 0.85;">
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                        libre</a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                        rel="noopener noreferrer">AGPL-3.0</a>)
+                </span>
+            </p>
+        </footer>
+    </div>
 
     <script>
         // --- DATA ---
@@ -752,17 +1184,17 @@
             {
                 id: '1',
                 title: 'Problème de mathématiques',
-                content: 'Un paysan possède un champ rectangulaire de 120 mètres de long et de 80 mètres de large. Il souhaite l\'entourer d\'une clôture en fil de fer. Le fil de fer est vendu en rouleaux de 50 mètres. Chaque rouleau coûte 45 francs. Combien de rouleaux entiers le paysan doit-il acheter au minimum pour clôturer son champ ? Quel sera le prix total de ces rouleaux ?'
+                content: "Un paysan possède un champ rectangulaire de 120 mètres de long et de 80 mètres de large. Il souhaite l'entourer d'une clôture en fil de fer. Le fil de fer est vendu en rouleaux de 50 mètres. Chaque rouleau coûte 45 francs. Combien de rouleaux entiers le paysan doit-il acheter au minimum pour clôturer son champ ? Quel sera le prix total de ces rouleaux ?"
             },
             {
                 id: '2',
                 title: 'Texte narratif simple',
-                content: 'Le petit chat gris dort sur le canapé du salon. Soudain, un bruit le réveille. Il dresse les oreilles et ouvre de grands yeux ronds. C\'est seulement la porte d\'entrée qui claque.'
+                content: "Le petit chat gris dort sur le canapé du salon. Soudain, un bruit le réveille. Il dresse les oreilles et ouvre de grands yeux ronds. C'est seulement la porte d'entrée qui claque."
             },
             {
                 id: '3',
                 title: 'Consignes de sécurité',
-                content: 'En cas d\'alarme incendie, restez calmes. Laissez vos affaires sur vos pupitres. Mettez-vous en rang deux par deux devant la porte. Attendez le signal de votre enseignant avant de sortir.'
+                content: "En cas d'alarme incendie, restez calmes. Laissez vos affaires sur vos pupitres. Mettez-vous en rang deux par deux devant la porte. Attendez le signal de votre enseignant avant de sortir."
             }
         ];
 
@@ -784,17 +1216,137 @@
             return replacement.toLowerCase();
         };
 
+        // --- FRENCH SYLLABIFIER (Phonological & Orthographic Engine) ---
+        function getVocalicNuclei(word) {
+            // Mask silent 'u' in 'qu' and 'gu' before e,i,y so it is not treated as a separate vowel
+            const masked = word.replace(/qu/gi, m => m[0] + '#')
+                               .replace(/gu([eéèêëiîïy])/gi, (m, v) => m[0] + '#' + v);
+
+            // Compound vowels and diphthongs in French
+            const regex = /(eau|oeu|œu|oin|ien|ian|ieu|ion|ai|aî|ay|ei|eî|ey|au|ou|où|oû|eu|eû|oi|oî|oy|ui|[aàâäeéèêëiîïoôöuûüùyœæ])/gi;
+            const nuclei = [];
+            let match;
+            while ((match = regex.exec(masked)) !== null) {
+                if (nuclei.length > 0) {
+                    const last = nuclei[nuclei.length - 1];
+                    if (last.end === match.index) {
+                        const combined = (last.val + match[0]).toLowerCase();
+                        if (/^(eau|oeu|œu|oin|ien|ian|ieu|ion|ai|aî|ay|ei|eî|ey|au|ou|où|oû|eu|eû|oi|oî|oy|ui|ée|ie)$/.test(combined)) {
+                            last.end = match.index + match[0].length;
+                            last.val += match[0];
+                            last.isDiphthong = true;
+                            continue;
+                        }
+                    }
+                }
+                const val = word.slice(match.index, match.index + match[0].length);
+                const isDiphthong = val.length > 1;
+                nuclei.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    val: val,
+                    isDiphthong: isDiphthong
+                });
+            }
+
+            // Silent trailing e / es after vowel (e.g. incendie, distribue, joie, pluie)
+            if (nuclei.length >= 2) {
+                const last = nuclei[nuclei.length - 1];
+                const secondLast = nuclei[nuclei.length - 2];
+                if (last.start === secondLast.end && /^(e|es)$/i.test(last.val)) {
+                    secondLast.end = last.end;
+                    secondLast.val += last.val;
+                    nuclei.pop();
+                }
+            }
+
+            return nuclei;
+        }
+
+        function syllabifyWord(word) {
+            if (!word || word.length <= 2) return [word];
+
+            const nuclei = getVocalicNuclei(word);
+            if (nuclei.length <= 1) return [word];
+
+            const cuts = [];
+            for (let k = 0; k < nuclei.length - 1; k++) {
+                const n1 = nuclei[k];
+                const n2 = nuclei[k + 1];
+                const consonants = word.slice(n1.end, n2.start);
+                const cLen = consonants.length;
+
+                if (cLen === 0) {
+                    // Two consecutive vowel nuclei (hiatus)
+                    cuts.push(n1.end);
+                } else if (cLen === 1) {
+                    // 1 consonant: goes to second syllable: V-CV
+                    cuts.push(n1.end);
+                } else if (cLen === 2) {
+                    const pair = consonants.toLowerCase();
+                    const c1 = pair[0];
+                    const c2 = pair[1];
+
+                    const isDigraph = pair === 'ch' || pair === 'ph' || pair === 'gn' || pair === 'th' || pair === 'qu';
+                    const isLiquid = 'bcdfgptv'.includes(c1) && 'lr'.includes(c2);
+
+                    if (isDigraph || isLiquid) {
+                        cuts.push(n1.end);
+                    } else if (c1 === c2) {
+                        // Twin consonants (ss, ff, tt, mm, nn, ll, rr, pp...)
+                        if (pair === 'ss' && n1.isDiphthong) {
+                            cuts.push(n1.end); // e.g. Lai - ssez, poi - sson
+                        } else if (pair === 'ff' && n2.isDiphthong) {
+                            cuts.push(n1.end + 2); // e.g. aff - ai - res
+                        } else {
+                            cuts.push(n1.end + 1); // e.g. ter - rain, Met - tez, At - ten - dez
+                        }
+                    } else {
+                        // Two distinct consonants: split between them (e.g. res - tez, cal - mes)
+                        cuts.push(n1.end + 1);
+                    }
+                } else if (cLen >= 3) {
+                    const pair = consonants.slice(-2).toLowerCase();
+                    const isDigraph = pair === 'ch' || pair === 'ph' || pair === 'gn' || pair === 'th';
+                    const isLiquid = 'bcdfgptv'.includes(pair[0]) && 'lr'.includes(pair[1]);
+
+                    if (isDigraph || isLiquid) {
+                        cuts.push(n1.end + (cLen - 2));
+                    } else {
+                        cuts.push(n1.end + 1);
+                    }
+                }
+            }
+
+            const syllables = [];
+            let prev = 0;
+            cuts.forEach(cut => {
+                syllables.push(word.slice(prev, cut));
+                prev = cut;
+            });
+            syllables.push(word.slice(prev));
+            return syllables.filter(Boolean);
+        }
+
         // --- STATE ---
         const state = {
             text: PRESET_TEXTS[0].content,
             speed: 5,
             severity: 0.8,
-            activeTab: 'simulation',
+            activeTab: 'simulation', // 'simulation', 'adapter', 'edit'
             mixingStyle: 'all',
             focusMode: false,
             focusSpeedMs: 600,
             baseTokens: [],
-            focusedIndex: -1
+            focusedIndex: -1,
+            accommodations: {
+                zorzi: false,
+                fontDys: false,
+                pastel: false,
+                ruler: false,
+                syllables: false
+            },
+            activeProfile: 'custom'
         };
 
         let mutationInterval = null;
@@ -812,6 +1364,14 @@
             inputFocusSpeed: document.getElementById('inputFocusSpeed'),
             valFocusSpeed: document.getElementById('valFocusSpeed'),
 
+            // Accommodations
+            compZorzi: document.getElementById('compZorzi'),
+            compFontDys: document.getElementById('compFontDys'),
+            compPastel: document.getElementById('compPastel'),
+            compRuler: document.getElementById('compRuler'),
+            compSyllables: document.getElementById('compSyllables'),
+            readingRuler: document.getElementById('readingRuler'),
+
             presetList: document.getElementById('presetList'),
 
             tabBtns: document.querySelectorAll('.tab-btn[data-tab]'),
@@ -819,13 +1379,23 @@
             viewportSubtitle: document.getElementById('viewportSubtitle'),
             viewEdit: document.getElementById('viewEdit'),
             viewSimulation: document.getElementById('viewSimulation'),
+            viewAdapter: document.getElementById('viewAdapter'),
             textInput: document.getElementById('textInput'),
             btnStartSim: document.getElementById('btnStartSim'),
+            btnGoAdapter: document.getElementById('btnGoAdapter'),
             btnEmptyEdit: document.getElementById('btnEmptyEdit'),
             emptyState: document.getElementById('emptyState'),
             dyslexicOutput: document.getElementById('dyslexicOutput'),
 
-            btnShare: document.getElementById('shareBtn')
+            // Adapter view
+            profileBtns: document.querySelectorAll('.profile-btn[data-profile]'),
+            worksheetCard: document.getElementById('worksheetCard'),
+            worksheetHeader: document.getElementById('worksheetHeader'),
+            adapterWorksheetText: document.getElementById('adapterWorksheetText'),
+            btnPrintWorksheet: document.getElementById('btnPrintWorksheet'),
+
+            btnShare: document.getElementById('shareBtn'),
+            btnReset: document.getElementById('reset-cache-btn')
         };
 
         // --- LOGIC ---
@@ -905,10 +1475,23 @@
                     const preset = PRESET_TEXTS.find(p => p.id === id);
                     if (preset) {
                         updateText(preset.content);
-                        switchTab('simulation');
                     }
                 });
             });
+        }
+
+        function formatTokenText(tokenText, isWord) {
+            if (!isWord || !state.accommodations.syllables) {
+                return tokenText;
+            }
+            const syllables = syllabifyWord(tokenText);
+            return syllables.map((syl, idx) => `<span class="syl-${idx % 2 === 0 ? 'even' : 'odd'}">${syl}</span>`).join('');
+        }
+
+        function applyAccommodationClasses(el) {
+            el.classList.toggle('comp-zorzi', state.accommodations.zorzi);
+            el.classList.toggle('comp-font-dys', state.accommodations.fontDys);
+            el.classList.toggle('comp-pastel', state.accommodations.pastel);
         }
 
         function renderOutput() {
@@ -921,8 +1504,10 @@
             els.emptyState.style.display = 'none';
             els.dyslexicOutput.style.display = 'block';
 
+            applyAccommodationClasses(els.dyslexicOutput);
+
             if (els.dyslexicOutput.children.length !== state.baseTokens.length) {
-                els.dyslexicOutput.innerHTML = state.baseTokens.map(t => `<span id="tok-${t.id}">${t.original}</span>`).join('');
+                els.dyslexicOutput.innerHTML = state.baseTokens.map(t => `<span id="tok-${t.id}">${formatTokenText(t.original, t.isWord)}</span>`).join('');
             }
 
             state.baseTokens.forEach((t, i) => {
@@ -930,8 +1515,10 @@
                 if (!span) return;
 
                 const mutatedText = t.isWord ? mutateToken(t.original) : t.original;
-                if (span.textContent !== mutatedText) {
-                    span.textContent = mutatedText;
+                const formattedHtml = formatTokenText(mutatedText, t.isWord);
+
+                if (span.innerHTML !== formattedHtml) {
+                    span.innerHTML = formattedHtml;
                 }
 
                 const isFocused = state.focusMode && i === state.focusedIndex;
@@ -945,6 +1532,33 @@
                     span.className = '';
                 }
             });
+        }
+
+        function renderAdapter() {
+            if (state.text.trim() === '') {
+                els.adapterWorksheetText.textContent = "Aucun texte saisi. Passez par l'onglet 'Éditer texte' pour ajouter une consigne.";
+                return;
+            }
+
+            // Pastel background applies to the card container
+            els.worksheetCard.classList.toggle('comp-pastel', state.accommodations.pastel);
+            // Zorzi and OpenDyslexic font apply to both header and text!
+            if (els.worksheetHeader) {
+                els.worksheetHeader.classList.toggle('comp-zorzi', state.accommodations.zorzi);
+                els.worksheetHeader.classList.toggle('comp-font-dys', state.accommodations.fontDys);
+            }
+            els.adapterWorksheetText.classList.toggle('comp-zorzi', state.accommodations.zorzi);
+            els.adapterWorksheetText.classList.toggle('comp-font-dys', state.accommodations.fontDys);
+
+            const tokens = tokenize(state.text);
+            const renderedHtml = tokens.map(t => {
+                if (!t.isWord) return t.original;
+                if (!state.accommodations.syllables) return t.original;
+                const syllables = syllabifyWord(t.original);
+                return syllables.map((syl, idx) => `<span class="syl-${idx % 2 === 0 ? 'even' : 'odd'}">${syl}</span>`).join('');
+            }).join('');
+
+            els.adapterWorksheetText.innerHTML = renderedHtml;
         }
 
         function updateText(newText) {
@@ -963,6 +1577,8 @@
             renderPresets();
             if (state.activeTab === 'simulation') {
                 renderOutput();
+            } else if (state.activeTab === 'adapter') {
+                renderAdapter();
             }
         }
 
@@ -1001,27 +1617,136 @@
                 btn.classList.toggle('active', btn.dataset.tab === tab);
             });
 
+            const simControls = document.getElementById('sectionSimControls');
+
             if (tab === 'simulation') {
                 els.viewportTitle.textContent = 'Visualisation en temps réel';
-                els.viewportSubtitle.textContent = 'Observez les effets de la dyslexie';
+                els.viewportSubtitle.textContent = "Observez les effets de la dyslexie et l'effet des aménagements";
                 els.viewEdit.style.display = 'none';
+                els.viewAdapter.style.display = 'none';
                 els.viewSimulation.style.display = 'flex';
+                if (simControls) simControls.style.display = 'block';
 
                 updateText(els.textInput.value);
-
                 startMutationInterval();
                 startFocusInterval();
+            } else if (tab === 'adapter') {
+                els.viewportTitle.textContent = 'Adaptateur de texte pour fiches DYS';
+                els.viewportSubtitle.textContent = 'Générez des consignes ou lectures adaptées prêtes pour la classe';
+                els.viewEdit.style.display = 'none';
+                els.viewSimulation.style.display = 'none';
+                els.viewAdapter.style.display = 'flex';
+                if (simControls) simControls.style.display = 'none';
+
+                clearInterval(mutationInterval);
+                clearInterval(focusInterval);
+                renderAdapter();
             } else {
                 els.viewportTitle.textContent = 'Éditeur de texte libre';
-                els.viewportSubtitle.textContent = 'Modifiez le texte à simuler';
+                els.viewportSubtitle.textContent = 'Modifiez le texte à simuler ou à adapter';
                 els.viewEdit.style.display = 'flex';
                 els.viewSimulation.style.display = 'none';
+                els.viewAdapter.style.display = 'none';
+                if (simControls) simControls.style.display = 'none';
 
                 clearInterval(mutationInterval);
                 clearInterval(focusInterval);
             }
         }
 
+        // --- ACCOMMODATIONS STATE MANAGEMENT ---
+        function syncAccommodationInputs() {
+            els.compZorzi.checked = state.accommodations.zorzi;
+            els.compFontDys.checked = state.accommodations.fontDys;
+            els.compPastel.checked = state.accommodations.pastel;
+            els.compRuler.checked = state.accommodations.ruler;
+            els.compSyllables.checked = state.accommodations.syllables;
+
+            els.readingRuler.style.display = (state.accommodations.ruler && state.activeTab === 'simulation') ? 'block' : 'none';
+
+            // Refresh UI views
+            if (state.activeTab === 'simulation') {
+                // re-render DOM tokens to include or exclude syllable spans
+                els.dyslexicOutput.innerHTML = '';
+                renderOutput();
+            } else if (state.activeTab === 'adapter') {
+                renderAdapter();
+            }
+        }
+
+        function applyProfile(profileName) {
+            state.activeProfile = profileName;
+
+            els.profileBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.profile === profileName);
+            });
+
+            if (profileName === 'visuo') {
+                state.accommodations.zorzi = true;
+                state.accommodations.fontDys = true;
+                state.accommodations.pastel = true;
+                state.accommodations.ruler = true;
+                state.accommodations.syllables = false;
+            } else if (profileName === 'debut') {
+                state.accommodations.zorzi = true;
+                state.accommodations.fontDys = true;
+                state.accommodations.pastel = false;
+                state.accommodations.ruler = false;
+                state.accommodations.syllables = true;
+            } else if (profileName === 'confort') {
+                state.accommodations.zorzi = true;
+                state.accommodations.fontDys = false;
+                state.accommodations.pastel = true;
+                state.accommodations.ruler = false;
+                state.accommodations.syllables = false;
+            }
+
+            syncAccommodationInputs();
+        }
+
+        // Accommodations checkboxes event listeners
+        [
+            { el: els.compZorzi, key: 'zorzi' },
+            { el: els.compFontDys, key: 'fontDys' },
+            { el: els.compPastel, key: 'pastel' },
+            { el: els.compRuler, key: 'ruler' },
+            { el: els.compSyllables, key: 'syllables' }
+        ].forEach(({ el, key }) => {
+            el.addEventListener('change', (e) => {
+                state.accommodations[key] = e.target.checked;
+                state.activeProfile = 'custom';
+                els.profileBtns.forEach(b => b.classList.toggle('active', b.dataset.profile === 'custom'));
+                syncAccommodationInputs();
+            });
+        });
+
+        // Reading ruler tracking
+        function handleRulerMove(e) {
+            if (!state.accommodations.ruler || state.activeTab !== 'simulation') return;
+            const rect = els.viewSimulation.getBoundingClientRect();
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            let relY = clientY - rect.top;
+            relY = Math.max(30, Math.min(rect.height - 30, relY));
+            els.readingRuler.style.top = relY + 'px';
+            els.readingRuler.style.display = 'block';
+        }
+
+        els.viewSimulation.addEventListener('mousemove', handleRulerMove);
+        els.viewSimulation.addEventListener('touchmove', handleRulerMove, { passive: true });
+        els.viewSimulation.addEventListener('mouseleave', () => {
+            if (!state.accommodations.ruler) {
+                els.readingRuler.style.display = 'none';
+            }
+        });
+
+        // Profile buttons
+        els.profileBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                applyProfile(e.currentTarget.dataset.profile);
+            });
+        });
+
+        // Sliders & Mixing
         els.inputSeverity.addEventListener('input', (e) => {
             state.severity = parseFloat(e.target.value);
             els.valSeverity.textContent = Math.round(state.severity * 100) + '%';
@@ -1069,14 +1794,20 @@
         });
 
         els.tabBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
+            btn.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab));
         });
 
         els.btnStartSim.addEventListener('click', () => switchTab('simulation'));
+        els.btnGoAdapter.addEventListener('click', () => switchTab('adapter'));
         els.btnEmptyEdit.addEventListener('click', () => switchTab('edit'));
 
         els.textInput.addEventListener('input', (e) => {
             state.text = e.target.value;
+        });
+
+        // Actions: Print
+        els.btnPrintWorksheet.addEventListener('click', () => {
+            window.print();
         });
 
         els.btnShare.addEventListener('click', async () => {
@@ -1084,10 +1815,8 @@
                 await navigator.clipboard.writeText(window.location.href);
                 const originalHtml = els.btnShare.innerHTML;
                 els.btnShare.innerHTML = '<i data-fa="check"></i> <span class="hidden-mobile">Lien copié !</span>';
-                els.btnShare.classList.add('success');
                 setTimeout(() => {
                     els.btnShare.innerHTML = originalHtml;
-                    els.btnShare.classList.remove('success');
                     window.fa?.createIcons?.(els.btnShare);
                 }, 2000);
             } catch (err) {
@@ -1095,10 +1824,25 @@
             }
         });
 
+        els.btnReset.addEventListener('click', () => {
+            state.severity = 0.8;
+            state.speed = 5;
+            els.inputSeverity.value = 0.8;
+            els.valSeverity.textContent = '80%';
+            els.inputSpeed.value = 5;
+            els.valSpeed.textContent = '5';
+            state.accommodations = { zorzi: false, fontDys: false, pastel: false, ruler: false, syllables: false };
+            state.activeProfile = 'custom';
+            syncAccommodationInputs();
+            updateText(PRESET_TEXTS[0].content);
+            switchTab('simulation');
+        });
+
         function init() {
             window.fa?.createIcons?.(document.body);
             updateText(PRESET_TEXTS[0].content);
             els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
+            syncAccommodationInputs();
             switchTab('simulation');
         }
 

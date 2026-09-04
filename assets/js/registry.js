@@ -1,5 +1,29 @@
 window.REGISTRY = [
   {
+    "id": "app-tri-insertion",
+    "href": "alpha/webapps/tri_insertion.html",
+    "isAlpha": true,
+    "dataLevel": "10CO",
+    "icon": "cards",
+    "title": "Une chose après l'autre",
+    "desc": "Trie les cartes de Jass en suivant l'organigramme du tri par insertion.",
+    "tags": [
+      "#Algorithmique",
+      "#Tri",
+      "#Cartes"
+    ],
+    "ref": "Connected 4 · 1C | Une chose après l'autre",
+    "badges": [
+      {
+        "text": "10CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-machine-trier",
     "href": "alpha/webapps/machine_a_trier.html",
     "isAlpha": true,
@@ -667,6 +691,35 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "ext-usethenews",
+    "href": "https://usethenews.ch/fr/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "Ressource",
+    "icon": "globe",
+    "iconStyle": null,
+    "title": "UseTheNews",
+    "desc": "Dossiers, outils et activités pédagogiques pour développer l'esprit critique des élèves face à l'actualité et à l'IA.",
+    "tags": [
+      "#Médias",
+      "#EspritCritique",
+      "#Information",
+      "#Actualité"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "Ressources",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "ext-thymiosuite",
     "href": "https://www.thymio.org/download-thymio-suite-redirect/",
     "target": "_blank",
@@ -1050,8 +1103,7 @@ window.REGISTRY = [
   },
   {
     "id": "tool-qrcode",
-    "href": "alpha/webapps/teacher/qrcode.html",
-    "isAlpha": true,
+    "href": "webapps/teacher/qrcode.html",
     "isTeacher": true,
     "dataLevel": null,
     "icon": "qrcode",
@@ -1063,7 +1115,7 @@ window.REGISTRY = [
       "#Classe",
       "#Partage"
     ],
-    "ref": "Alpha",
+    "ref": null,
     "badges": [
       {
         "text": "Outil",

@@ -74,7 +74,3 @@ Trois niveaux sont disponibles sous les onglets :
 - **Glisser-déposer tactile :** Fonctionne sur tablettes, TBI et écrans tactiles.
 - **Mode sans glisser (`&noDrag=1`) :** Sélection par simple clic/tap successif pour les élèves ayant des difficultés de motricité fine.
 - **Thème sombre 🌙** et **Son on/off 🔊** via le menu engrenage ⚙.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

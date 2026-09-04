@@ -127,7 +127,3 @@ Le menu **Partager l'activité** génère un lien ou QR Code sur mesure :
 - Activer le Blindcoding (`&blindcode=1`).
 
 → [Guide complet de partage](MODE_EMPLOI_PARTAGE.md)
-
----
-
-*Conçu par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0. 100% hors-ligne.*

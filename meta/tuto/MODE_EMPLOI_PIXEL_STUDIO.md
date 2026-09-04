@@ -71,7 +71,3 @@ Alignement programme : Cycle 2, Décodages 5-6H · Scénario 4 — *Codage de do
 2. **Élève A** copie uniquement la chaîne de 0/1 sur une feuille.
 3. **Élève B** reçoit la feuille, ouvre le mode Décoder (ou colle le code dans l'éditeur) et reconstruit l'image sans avoir vu l'original.
 4. Comparaison : l'image est-elle identique ? → Illustration concrète des transmissions réseau.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

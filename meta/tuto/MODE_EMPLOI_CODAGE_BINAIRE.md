@@ -54,7 +54,3 @@ Alignement programme : Cycle 2, Décodages 7-8H · Activité 2 — *Codages en f
 | `1` à `8` | Basculer l'état du bit correspondant |
 | `Entrée` | Valider la réponse |
 | `Espace` | Passer au défi suivant |
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

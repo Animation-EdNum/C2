@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>Une chose après l'autre — Tri par insertion (10CO)</title>
+    <meta property="og:title" content="Une chose après l'autre — Tri par insertion">
+    <meta property="og:description" content="Trie les cartes de Jass en suivant pas à pas l'organigramme de programmation de Connected 4.">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+    <style>
+        body>header,
+        body>.app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --primary-light: #e0f2fe;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --accent-dark: #0369a1;
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #0369a1;
+
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            --amber-flow: #f59e0b;
+            --amber-light: #fef3c7;
+            --cyan-flow: #0284c7;
+            --cyan-light: #e0f2fe;
+            --node-decision: #f1f5f9;
+
+            --card-w: 92px;
+            --card-h: 138px;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark {
+            --bg-gradient-start: #020617;
+            --bg-gradient-end: #0f172a;
+            --glass-bg: rgba(15, 23, 42, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --node-decision: #1e293b;
+            --primary-light: rgba(2, 132, 199, 0.2);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1280px;
+            width: 100%;
+            margin: auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header.app-header {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-light);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .header-subtitle {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .badge-alpha {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-level {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(2, 132, 199, 0.15);
+            color: #0284c7;
+            border: 1px solid rgba(2, 132, 199, 0.3);
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-pill strong {
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        /* MAIN APP LAYOUT (SPLIT GRID) */
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            min-height: 580px;
+        }
+
+        @media (min-width: 960px) {
+            .app-grid {
+                grid-template-columns: 1fr 400px;
+            }
+        }
+
+        @media (min-width: 1140px) {
+            .app-grid {
+                grid-template-columns: 1fr 440px;
+            }
+        }
+
+        /* GAME TABLE (LEFT PANEL) */
+        .table-area {
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid var(--border);
+        }
+
+        /* INTERACTIVE CONVERSATION / PROMPT BOX */
+        .robot-prompt-box {
+            background: var(--glass-bg);
+            border: 2px solid var(--primary-light);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .robot-avatar {
+            width: 54px;
+            height: 54px;
+            flex-shrink: 0;
+            background: #e0f2fe;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #0284c7;
+        }
+
+        .robot-content {
+            flex: 1;
+        }
+
+        .robot-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .robot-instruction {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .action-buttons-group {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-decision {
+            padding: 0.55rem 1.15rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-yes {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-yes:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-no {
+            background: #475569;
+            color: white;
+            box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);
+        }
+
+        .btn-no:hover:not(:disabled) {
+            background: #334155;
+            transform: translateY(-1px);
+        }
+
+        .btn-decision:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .error-alert {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #b91c1c;
+            padding: 0.6rem 0.9rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.6rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        body.dark .error-alert {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        /* DECK (PIOCHE) & DRAW ZONE */
+        .table-center {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .deck-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .deck-stack {
+            width: var(--card-w);
+            height: var(--card-h);
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .deck-container:hover .deck-stack {
+            transform: translateY(-4px);
+        }
+
+        .deck-card-back {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-lg);
+            background: #b91c1c;
+            border: 3px solid #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .deck-card-back::before {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border: 2px dashed rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-md);
+        }
+
+        .swiss-cross-icon {
+            width: 28px;
+            height: 28px;
+            fill: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .deck-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        /* HAND CARDS (LA MAIN GAUCHE) */
+        .hand-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            min-height: 260px;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        .hand-cards-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            min-height: 200px;
+        }
+
+        /* GENERAL BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-lg);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #0284c7 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: #0369a1 !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        body.dark .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* JASS PLAYING CARDS STYLING */
+        .jass-card {
+            width: var(--card-w);
+            height: var(--card-h);
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.2);
+            border: 1px solid #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px;
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            margin-left: calc(-1 * var(--card-w) / 2);
+            user-select: none;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            transform-origin: bottom center;
+            --lift: 0px;
+            --scale: 1;
+            transform: translate(var(--tx, 0px), calc(var(--ty, 0px) + var(--lift, 0px))) rotate(var(--rot, 0deg)) scale(var(--scale, 1));
+        }
+
+        .jass-card.suit-red {
+            color: #dc2626;
+        }
+
+        .jass-card.suit-black {
+            color: #0f172a;
+        }
+
+        .card-corner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        .card-corner.top-left {
+            align-self: flex-start;
+        }
+
+        .card-corner.bottom-right {
+            align-self: flex-end;
+            transform: rotate(180deg);
+        }
+
+        .card-rank {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .card-suit-symbol {
+            font-size: 0.9rem;
+            margin-top: 1px;
+        }
+
+        .card-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .card-center-symbol {
+            font-size: 2.5rem;
+            opacity: 0.95;
+        }
+
+        .card-center-figure {
+            font-size: 1.85rem;
+            font-weight: 800;
+            border: 2px solid currentColor;
+            border-radius: var(--radius-md);
+            padding: 2px 10px;
+            opacity: 0.9;
+        }
+
+        /* HIGHLIGHT ROLES FOR COMPARING */
+        .jass-card.card-left {
+            border: 3px solid #0284c7;
+            box-shadow: 0 16px 32px rgba(2, 132, 199, 0.45);
+            z-index: 40 !important;
+            --lift: -28px;
+            --scale: 1.08;
+        }
+
+        .jass-card.card-new {
+            border: 3px solid #f59e0b;
+            box-shadow: 0 16px 32px rgba(245, 158, 11, 0.45);
+            z-index: 41 !important;
+            --lift: -28px;
+            --scale: 1.08;
+        }
+
+        .card-badge-role {
+            position: absolute;
+            top: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-left {
+            background: #0284c7;
+            color: white;
+        }
+
+        .role-new {
+            background: #f59e0b;
+            color: white;
+        }
+
+        /* FLOWCHART SIDEBAR (RIGHT PANEL) */
+        .flowchart-sidebar {
+            background: var(--glass-bg);
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            max-height: 800px;
+            position: relative;
+        }
+
+        .flowchart-header {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flowchart-canvas {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        /* FLOWCHART NODES */
+        .node-box {
+            width: 240px;
+            padding: 0.65rem 0.85rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.35;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .node-pill {
+            border-radius: var(--radius-pill);
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            color: #b45309;
+            width: 160px;
+        }
+
+        body.dark .node-pill {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            color: #fde68a;
+        }
+
+        .node-action {
+            background: #e0f2fe;
+            border: 2px solid #38bdf8;
+            color: #0369a1;
+        }
+
+        body.dark .node-action {
+            background: rgba(2, 132, 199, 0.2);
+            border-color: #38bdf8;
+            color: #bae6fd;
+        }
+
+        .node-decision {
+            background: var(--node-decision);
+            border: 2px solid #94a3b8;
+            color: var(--text-main);
+            width: 230px;
+            padding: 0.75rem 0.9rem;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            height: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+        }
+
+        .node-decision span {
+            max-width: 140px;
+            display: block;
+        }
+
+        /* CONNECTOR LINES & ARROWS */
+        .flow-arrow-down {
+            width: 2px;
+            height: 24px;
+            background: #94a3b8;
+            position: relative;
+            margin: 2px 0;
+            z-index: 5;
+        }
+
+        .flow-arrow-down::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #94a3b8;
+        }
+
+        .flow-branch-label {
+            position: absolute;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: var(--radius-pill);
+            background: #f59e0b;
+            color: white;
+            z-index: 15;
+        }
+
+        /* ACTIVE NODE HIGHLIGHT */
+        .node-active {
+            transform: scale(1.08) !important;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.6) !important;
+            border-color: #f59e0b !important;
+            background: #fffbeb !important;
+            color: #b45309 !important;
+            z-index: 30 !important;
+        }
+
+        body.dark .node-active {
+            background: #78350f !important;
+            color: #fef3c7 !important;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.8) !important;
+        }
+
+        /* VICTORY OVERLAY */
+        .victory-modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .victory-card {
+            background: var(--glass-bg);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            max-width: 540px;
+            width: 100%;
+            color: var(--text-main);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* CONFETTI CANVAS */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: auto;
+            padding: 1.15rem 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        footer a:hover {
+            color: var(--primary-hover);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-shell" id="main-content">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
+                    <i data-fa="cards"></i>
+                </a>
+                <div>
+                    <h1>
+                        Une chose après l'autre
+                        <span class="badge-alpha">Alpha</span>
+                        <span class="badge-level">10CO</span>
+                    </h1>
+                    <div class="header-subtitle">Tri par insertion — Connected 4 (Concours d'algorithmes 1C)</div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">Cartes :</span>
+                <div class="tabs" style="margin:0; padding:2px; display:inline-flex;">
+                    <button class="tab-btn" data-cards="5" style="padding:4px 10px; font-size:0.8rem;">5</button>
+                    <button class="tab-btn active" data-cards="8" style="padding:4px 10px; font-size:0.8rem;">8 (Livre)</button>
+                    <button class="tab-btn" data-cards="12" style="padding:4px 10px; font-size:0.8rem;">12</button>
+                </div>
+
+                <span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); margin-left:8px;">Mode :</span>
+                <div class="tabs" style="margin:0; padding:2px; display:inline-flex;">
+                    <button class="tab-btn active" id="btnModeStep" style="padding:4px 10px; font-size:0.8rem;">
+                        <i data-fa="hand-pointer" style="margin-right:4px;"></i> Manuel
+                    </button>
+                    <button class="tab-btn" id="btnModeAuto" style="padding:4px 10px; font-size:0.8rem;">
+                        <i data-fa="play" style="margin-right:4px;"></i> Démo auto
+                    </button>
+                </div>
+
+                <div class="speed-control-group" id="speedControlGroup" style="display:inline-flex; align-items:center; gap:6px; margin-left:8px;">
+                    <span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">Vitesse :</span>
+                    <div class="tabs" style="margin:0; padding:2px; display:inline-flex;">
+                        <button class="tab-btn speed-btn" data-speed="2200" style="padding:4px 9px; font-size:0.8rem;" title="Vitesse lente (2,2 s) — Idéal pour commenter pas à pas">Lente</button>
+                        <button class="tab-btn speed-btn active" data-speed="1100" style="padding:4px 9px; font-size:0.8rem;" title="Vitesse normale (1,1 s)">Normale</button>
+                        <button class="tab-btn speed-btn" data-speed="450" style="padding:4px 9px; font-size:0.8rem;" title="Vitesse rapide (0,45 s) — Déroulement accéléré">Rapide</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toolbar-group">
+                <div class="stat-pill" title="Nombre total de questions de comparaison posées">
+                    <span>Comparaisons :</span>
+                    <strong id="statComparisons">0</strong>
+                </div>
+                <div class="stat-pill" title="Nombre de permutations de cartes effectuées">
+                    <span>Permutations :</span>
+                    <strong id="statSwaps">0</strong>
+                </div>
+                <button class="btn btn-secondary" id="btnNewGame" style="padding:0.4rem 0.9rem; font-size:0.85rem;">
+                    <i data-fa="shuffle"></i> Nouvelle donne
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT (GRID: TABLE + FLOWCHART) -->
+        <div class="app-grid">
+            <!-- LEFT: GAME TABLE -->
+            <main class="table-area">
+                <!-- ROBOT CONVERSATION & INSTRUCTION PROMPT -->
+                <div class="robot-prompt-box">
+                    <div class="robot-avatar">
+                        <!-- Robot Mascot SVG -->
+                        <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+                            <rect x="8" y="14" width="20" height="16" rx="4" fill="#0284c7" />
+                            <circle cx="14" cy="20" r="3" fill="#ffffff" />
+                            <circle cx="22" cy="20" r="3" fill="#ffffff" />
+                            <circle cx="14" cy="20" r="1.5" fill="#0284c7" />
+                            <circle cx="22" cy="20" r="1.5" fill="#0284c7" />
+                            <rect x="13" y="25" width="10" height="2" rx="1" fill="#ffffff" />
+                            <rect x="11" y="4" width="14" height="8" rx="2" fill="#0f172a" />
+                            <rect x="7" y="11" width="22" height="3" rx="1" fill="#f59e0b" />
+                        </svg>
+                    </div>
+                    <div class="robot-content">
+                        <div class="robot-title" id="robotStepTitle">Étape 1 · Pioche</div>
+                        <div class="robot-instruction" id="robotInstruction">
+                            Clique sur la pioche pour tirer une carte avec ta main droite.
+                        </div>
+
+                        <!-- INTERACTIVE DECISION BUTTONS -->
+                        <div class="action-buttons-group" id="decisionGroup" style="display: none;">
+                            <button class="btn-decision btn-yes" id="btnAnswerYes">
+                                <i data-fa="check"></i> Oui, permuter
+                            </button>
+                            <button class="btn-decision btn-no" id="btnAnswerNo">
+                                <i data-fa="xmark"></i> Non, laisser ici
+                            </button>
+                        </div>
+
+                        <!-- ERROR EXPLANATION BANNER -->
+                        <div class="error-alert" id="errorBanner">
+                            <i data-fa="triangle-exclamation"></i>
+                            <span id="errorText">Explication de l'erreur...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLE CENTER: DECK & DRAW PILE -->
+                <div class="table-center">
+                    <div class="deck-container" id="deckContainer" title="Cliquer pour piocher une carte">
+                        <div class="deck-stack" id="deckStack">
+                            <div class="deck-card-back">
+                                <svg class="swiss-cross-icon" viewBox="0 0 100 100">
+                                    <rect x="38" y="15" width="24" height="70" rx="3" />
+                                    <rect x="15" y="38" width="70" height="24" rx="3" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="deck-label" id="deckCountLabel">8 cartes restantes</div>
+                    </div>
+
+                    <div style="font-size:0.85rem; font-weight:600; color:var(--text-secondary); text-align:right;">
+                        <span id="orderIndicator">Ordre croissant : 6 &lt; 7 &lt; 8 &lt; 9 &lt; 10 &lt; V &lt; D &lt; R &lt; A</span>
+                    </div>
+                </div>
+
+                <!-- BOTTOM: FANNED HAND OF CARDS (LA MAIN GAUCHE) -->
+                <div class="hand-container">
+                    <div class="hand-cards-row" id="handCardsRow">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- VICTORY MODAL OVERLAY -->
+                <div class="victory-modal" id="victoryModal">
+                    <div class="victory-card">
+                        <div style="font-size: 3rem;">🎉</div>
+                        <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">Tri terminé avec succès !</h2>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">
+                            Toutes les cartes sont parfaitement rangées dans l'ordre croissant selon l'algorithme de tri par insertion.
+                        </p>
+                        <div style="background: rgba(0,0,0,0.03); border-radius: var(--radius-xl); padding: 1rem 1.5rem; width: 100%; display: flex; justify-content: space-around; margin: 0.5rem 0;">
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">COMPARAISONS</div>
+                                <div style="font-size:1.5rem; font-weight:800; color:var(--primary);" id="modalComparisons">14</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">PERMUTATIONS</div>
+                                <div style="font-size:1.5rem; font-weight:800; color:#f59e0b;" id="modalSwaps">7</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">MOYENNE LIVRE</div>
+                                <div style="font-size:1.5rem; font-weight:800; color:#10b981;" id="modalAverage">~14</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
+                            « En calculant la moyenne des comparaisons obtenues par les élèves de la classe, on approche la complexité en moyenne de l'algorithme. » (Connected 4, p. 12)
+                        </p>
+                        <button class="btn btn-primary" id="btnReplay" style="padding: 0.75rem 2rem; font-weight: 700; font-size: 1rem;">
+                            <i data-fa="arrows-rotate"></i> Rejouer une partie
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- RIGHT: ALGORITHM FLOWCHART (ORGANIGRAMME OFFICIEL CONNECTED 4) -->
+            <aside class="flowchart-sidebar">
+                <div class="flowchart-header">
+                    <i data-fa="network-wired" style="color:var(--primary);"></i>
+                    Schéma de l'algorithme (Connected 4 p. 13)
+                </div>
+
+                <div class="flowchart-canvas" id="flowchartCanvas">
+                    <!-- NODE 1: DÉBUT -->
+                    <div class="node-box node-pill" id="node-START">
+                        Début
+                    </div>
+
+                    <div class="flow-arrow-down"></div>
+
+                    <!-- NODE 2: LA PIOCHE EST-ELLE VIDE ? -->
+                    <div class="node-box node-decision" id="node-CHECK_DECK">
+                        <span>La pioche est-elle vide ?</span>
+                    </div>
+
+                    <div style="position:relative; width:100%; display:flex; justify-content:center;">
+                        <div class="flow-arrow-down"></div>
+                        <span class="flow-branch-label" style="top:2px; left:calc(50% + 10px); background:#475569;">non</span>
+                    </div>
+
+                    <!-- NODE 3: PRENDRE CARTE -->
+                    <div class="node-box node-action" id="node-TAKE_CARD">
+                        Avec ta main droite,<br>prends une carte dans la pioche.
+                    </div>
+
+                    <div class="flow-arrow-down"></div>
+
+                    <!-- NODE 4: PLACER CARTE À DROITE -->
+                    <div class="node-box node-action" id="node-PLACE_CARD">
+                        Place la nouvelle carte à droite<br>dans ta main gauche.
+                    </div>
+
+                    <div class="flow-arrow-down"></div>
+
+                    <!-- NODE 5: Y A-T-IL UNE AUTRE CARTE À GAUCHE ? -->
+                    <div class="node-box node-decision" id="node-CHECK_LEFT">
+                        <span>Y a-t-il une autre carte à gauche de la nouvelle carte ?</span>
+                    </div>
+
+                    <div style="position:relative; width:100%; display:flex; justify-content:center;">
+                        <div class="flow-arrow-down"></div>
+                        <span class="flow-branch-label" style="top:2px; left:calc(50% + 10px);">oui</span>
+                    </div>
+
+                    <!-- NODE 6: CETTE CARTE A-T-ELLE UNE VALEUR PLUS HAUTE ? -->
+                    <div class="node-box node-decision" id="node-COMPARE">
+                        <span>Cette carte a-t-elle une valeur plus haute que la nouvelle carte ?</span>
+                    </div>
+
+                    <div style="position:relative; width:100%; display:flex; justify-content:center;">
+                        <div class="flow-arrow-down"></div>
+                        <span class="flow-branch-label" style="top:2px; left:calc(50% + 10px);">oui</span>
+                    </div>
+
+                    <!-- NODE 7: PERMUTER -->
+                    <div class="node-box node-action" id="node-SWAP">
+                        Permute la position<br>de ces deux cartes.
+                    </div>
+
+                    <div class="flow-arrow-down"></div>
+
+                    <!-- NODE 8: FIN -->
+                    <div class="node-box node-pill" id="node-END">
+                        Fin : tri terminé
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>
+                Webapp conçue pour le Cycle 3 (10CO) par Vivian de l'<a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                <br>
+                <span style="font-size: 0.9em; opacity: 0.85;">
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    — D'après <em>Connected 4</em>, Éditions LEP / CIIP.
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script>
+        // --- DATA & DEFINITIONS ---
+        const SUITS = [
+            { id: 'hearts', symbol: '♥', name: 'Cœur', color: 'red' },
+            { id: 'diamonds', symbol: '♦', name: 'Carreau', color: 'red' },
+            { id: 'spades', symbol: '♠', name: 'Pique', color: 'black' },
+            { id: 'clubs', symbol: '♣', name: 'Trèfle', color: 'black' }
+        ];
+
+        const RANKS = [
+            { rank: '6', value: 6, label: '6', isFigure: false },
+            { rank: '7', value: 7, label: '7', isFigure: false },
+            { rank: '8', value: 8, label: '8', isFigure: false },
+            { rank: '9', value: 9, label: '9', isFigure: false },
+            { rank: '10', value: 10, label: '10', isFigure: false },
+            { rank: 'V', value: 11, label: 'Valet', isFigure: true },
+            { rank: 'D', value: 12, label: 'Dame', isFigure: true },
+            { rank: 'R', value: 13, label: 'Roi', isFigure: true },
+            { rank: 'A', value: 14, label: 'As', isFigure: true }
+        ];
+
+        // --- GAME STATE ---
+        const state = {
+            cardCount: 8,
+            mode: 'manual', // 'manual' | 'auto'
+            deck: [],
+            hand: [],
+            comparisons: 0,
+            swaps: 0,
+            gameState: 'CHECK_DECK', // 'CHECK_DECK', 'TAKE_CARD', 'PLACE_CARD', 'CHECK_LEFT', 'COMPARE', 'SWAP', 'END'
+            compareIndex: -1,
+            isAnimating: false,
+            autoSpeedMs: 1100,
+            autoTimer: null
+        };
+
+        // --- DOM REFS ---
+        const els = {
+            statComparisons: document.getElementById('statComparisons'),
+            statSwaps: document.getElementById('statSwaps'),
+            deckCountLabel: document.getElementById('deckCountLabel'),
+            deckContainer: document.getElementById('deckContainer'),
+            handCardsRow: document.getElementById('handCardsRow'),
+            robotStepTitle: document.getElementById('robotStepTitle'),
+            robotInstruction: document.getElementById('robotInstruction'),
+            decisionGroup: document.getElementById('decisionGroup'),
+            btnAnswerYes: document.getElementById('btnAnswerYes'),
+            btnAnswerNo: document.getElementById('btnAnswerNo'),
+            errorBanner: document.getElementById('errorBanner'),
+            errorText: document.getElementById('errorText'),
+            btnNewGame: document.getElementById('btnNewGame'),
+            btnModeStep: document.getElementById('btnModeStep'),
+            btnModeAuto: document.getElementById('btnModeAuto'),
+            speedControlGroup: document.getElementById('speedControlGroup'),
+            speedBtns: document.querySelectorAll('.speed-btn'),
+            victoryModal: document.getElementById('victoryModal'),
+            modalComparisons: document.getElementById('modalComparisons'),
+            modalSwaps: document.getElementById('modalSwaps'),
+            modalAverage: document.getElementById('modalAverage'),
+            btnReplay: document.getElementById('btnReplay'),
+            cardCountBtns: document.querySelectorAll('[data-cards]')
+        };
+
+        // --- UTILS ---
+        let currentSleepResolve = null;
+
+        function cancellableSleep(ms) {
+            return new Promise(resolve => {
+                const timer = setTimeout(() => {
+                    currentSleepResolve = null;
+                    resolve();
+                }, ms);
+                currentSleepResolve = () => {
+                    clearTimeout(timer);
+                    currentSleepResolve = null;
+                    resolve();
+                };
+            });
+        }
+
+        function wakeSleep() {
+            if (currentSleepResolve) {
+                currentSleepResolve();
+            }
+        }
+
+        function generateFullDeck() {
+            const fullDeck = [];
+            for (const suit of SUITS) {
+                for (const rank of RANKS) {
+                    fullDeck.push({
+                        id: `${rank.rank}-${suit.id}`,
+                        rank: rank.rank,
+                        value: rank.value,
+                        label: rank.label,
+                        isFigure: rank.isFigure,
+                        suit: suit.id,
+                        symbol: suit.symbol,
+                        color: suit.color
+                    });
+                }
+            }
+            // Fisher-Yates shuffle
+            for (let i = fullDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [fullDeck[i], fullDeck[j]] = [fullDeck[j], fullDeck[i]];
+            }
+            return fullDeck.slice(0, state.cardCount);
+        }
+
+        // --- FLOWCHART HIGHLIGHT ---
+        function highlightNode(nodeId) {
+            document.querySelectorAll('.node-box').forEach(el => el.classList.remove('node-active'));
+            const target = document.getElementById(`node-${nodeId}`);
+            if (target) {
+                target.classList.add('node-active');
+                target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // --- RENDER CARDS ---
+        function createCardElement(card, idx, total) {
+            const cardEl = document.createElement('div');
+            cardEl.className = `jass-card suit-${card.color}`;
+            cardEl.id = `card-${card.id}`;
+
+            // Angle and position calculations for natural hand fan
+            const cardSpacing = total <= 3 ? 120 : total <= 5 ? 96 : total <= 8 ? 80 : 64;
+            const spreadAngle = Math.min(36, total * 4);
+            const stepAngle = total > 1 ? spreadAngle / (total - 1) : 0;
+            const offsetIdx = idx - (total - 1) / 2;
+            const rotate = offsetIdx * stepAngle;
+            const x = offsetIdx * cardSpacing;
+            const y = Math.abs(offsetIdx) * 2.5;
+
+            cardEl.style.setProperty('--tx', `${x}px`);
+            cardEl.style.setProperty('--ty', `${y}px`);
+            cardEl.style.setProperty('--rot', `${rotate}deg`);
+            cardEl.style.zIndex = 10 + idx;
+
+            // Highlight comparing cards
+            const isLeft = state.gameState === 'COMPARE' && idx === state.compareIndex - 1;
+            const isNew = state.gameState === 'COMPARE' && idx === state.compareIndex;
+
+            if (isLeft) {
+                cardEl.classList.add('card-left');
+                const badge = document.createElement('div');
+                badge.className = 'card-badge-role role-left';
+                badge.textContent = 'Gauche';
+                cardEl.appendChild(badge);
+            } else if (isNew) {
+                cardEl.classList.add('card-new');
+                const badge = document.createElement('div');
+                badge.className = 'card-badge-role role-new';
+                badge.textContent = 'Nouvelle';
+                cardEl.appendChild(badge);
+            }
+
+            // Top-left corner
+            const topLeft = document.createElement('div');
+            topLeft.className = 'card-corner top-left';
+            topLeft.innerHTML = `<span class="card-rank">${card.rank}</span><span class="card-suit-symbol">${card.symbol}</span>`;
+            cardEl.appendChild(topLeft);
+
+            // Center
+            const center = document.createElement('div');
+            center.className = 'card-center';
+            if (card.isFigure) {
+                center.innerHTML = `<div class="card-center-figure">${card.rank}</div>`;
+            } else {
+                center.innerHTML = `<div class="card-center-symbol">${card.symbol}</div>`;
+            }
+            cardEl.appendChild(center);
+
+            // Bottom-right corner
+            const botRight = document.createElement('div');
+            botRight.className = 'card-corner bottom-right';
+            botRight.innerHTML = `<span class="card-rank">${card.rank}</span><span class="card-suit-symbol">${card.symbol}</span>`;
+            cardEl.appendChild(botRight);
+
+            return cardEl;
+        }
+
+        function renderHand() {
+            els.handCardsRow.innerHTML = '';
+            const total = state.hand.length;
+            state.hand.forEach((card, idx) => {
+                const cardEl = createCardElement(card, idx, total);
+                els.handCardsRow.appendChild(cardEl);
+            });
+        }
+
+        function updateStatsUI() {
+            els.statComparisons.textContent = state.comparisons;
+            els.statSwaps.textContent = state.swaps;
+            els.deckCountLabel.textContent = `${state.deck.length} carte${state.deck.length > 1 ? 's' : ''} restante${state.deck.length > 1 ? 's' : ''}`;
+            els.deckContainer.style.opacity = (state.deck.length === 0 || state.isAnimating || state.gameState !== 'CHECK_DECK') ? '0.45' : '1';
+        }
+
+        function hideError() {
+            els.errorBanner.style.display = 'none';
+        }
+
+        function showError(msg) {
+            els.errorText.textContent = msg;
+            els.errorBanner.style.display = 'flex';
+            if (typeof playSound === 'function') playSound('error');
+        }
+
+        // --- GAME ENGINE ---
+        function initGame() {
+            clearTimeout(state.autoTimer);
+            state.autoTimer = null;
+            wakeSleep();
+            state.deck = generateFullDeck();
+            state.hand = [];
+            state.comparisons = 0;
+            state.swaps = 0;
+            state.compareIndex = -1;
+            state.isAnimating = false;
+            hideError();
+            els.victoryModal.style.display = 'none';
+            updateStatsUI();
+            renderHand();
+            enterCheckDeck();
+        }
+
+        // Step 1: CHECK DECK
+        async function enterCheckDeck() {
+            state.gameState = 'CHECK_DECK';
+            highlightNode('CHECK_DECK');
+            updateStatsUI();
+            renderHand();
+
+            if (state.deck.length === 0) {
+                // Done!
+                enterEnd();
+                return;
+            }
+
+            els.robotStepTitle.textContent = "Étape 1 · Pioche";
+            els.robotInstruction.textContent = "La pioche n'est pas vide. Prends une carte dans la pioche avec ta main droite.";
+            els.decisionGroup.style.display = 'none';
+            hideError();
+
+            if (state.mode === 'auto') {
+                await cancellableSleep(state.autoSpeedMs);
+                if (state.mode !== 'auto' || state.gameState !== 'CHECK_DECK') return;
+                drawCard();
+            }
+        }
+
+        // Step 2: TAKE & PLACE CARD
+        async function drawCard() {
+            if (state.deck.length === 0 || state.isAnimating) return;
+            state.isAnimating = true;
+            hideError();
+
+            // TAKE CARD
+            highlightNode('TAKE_CARD');
+            els.robotStepTitle.textContent = "Étape 2 · Pioche";
+            els.robotInstruction.textContent = "Avec ta main droite, prends une carte dans la pioche...";
+            if (typeof playSound === 'function') playSound('click');
+
+            const card = state.deck.pop();
+            updateStatsUI();
+            await cancellableSleep(state.mode === 'auto' ? state.autoSpeedMs * 0.6 : 500);
+            if (state.mode !== 'auto' && state.gameState !== 'CHECK_DECK') {
+                state.isAnimating = false;
+                return;
+            }
+
+            // PLACE CARD
+            highlightNode('PLACE_CARD');
+            els.robotStepTitle.textContent = "Étape 3 · Placement";
+            els.robotInstruction.textContent = `Place la nouvelle carte (${card.rank} ${card.symbol}) tout à droite dans ta main gauche.`;
+            state.hand.push(card);
+            renderHand();
+            if (typeof playSound === 'function') playSound('tick');
+            await cancellableSleep(state.mode === 'auto' ? state.autoSpeedMs * 0.7 : 600);
+
+            state.compareIndex = state.hand.length - 1;
+            state.isAnimating = false;
+
+            enterCheckLeft();
+        }
+
+        // Step 3: CHECK LEFT
+        async function enterCheckLeft() {
+            state.gameState = 'CHECK_LEFT';
+            highlightNode('CHECK_LEFT');
+            els.decisionGroup.style.display = 'none';
+            hideError();
+
+            const hasCardLeft = state.compareIndex > 0;
+            els.robotStepTitle.textContent = "Étape 4 · Examen à gauche";
+
+            if (hasCardLeft) {
+                els.robotInstruction.textContent = "Oui ! Il y a une autre carte à gauche de la nouvelle carte.";
+                await cancellableSleep(state.mode === 'auto' ? state.autoSpeedMs * 0.6 : 600);
+                if (state.mode !== 'auto' && state.gameState !== 'CHECK_LEFT') return;
+                enterCompare();
+            } else {
+                els.robotInstruction.textContent = "Non, la carte est tout à gauche. On boucle vers la pioche.";
+                await cancellableSleep(state.mode === 'auto' ? state.autoSpeedMs * 0.6 : 600);
+                if (state.mode !== 'auto' && state.gameState !== 'CHECK_LEFT') return;
+                enterCheckDeck();
+            }
+        }
+
+        // Step 4: COMPARE
+        function enterCompare() {
+            state.gameState = 'COMPARE';
+            highlightNode('COMPARE');
+            renderHand();
+
+            const leftCard = state.hand[state.compareIndex - 1];
+            const newCard = state.hand[state.compareIndex];
+
+            els.robotStepTitle.textContent = "Étape 5 · Comparaison";
+            els.robotInstruction.innerHTML = `La carte de gauche (<strong style="color:#0284c7;">${leftCard.rank} ${leftCard.symbol}</strong>, val. ${leftCard.value}) a-t-elle une valeur plus haute que la nouvelle carte (<strong style="color:#f59e0b;">${newCard.rank} ${newCard.symbol}</strong>, val. ${newCard.value}) ?`;
+
+            if (state.mode === 'manual') {
+                els.decisionGroup.style.display = 'flex';
+                els.btnAnswerYes.disabled = false;
+                els.btnAnswerNo.disabled = false;
+            } else {
+                els.decisionGroup.style.display = 'none';
+                clearTimeout(state.autoTimer);
+                state.autoTimer = setTimeout(() => {
+                    if (state.mode !== 'auto' || state.gameState !== 'COMPARE') return;
+                    const leftIsHigher = leftCard.value > newCard.value;
+                    handleAnswer(leftIsHigher);
+                }, state.autoSpeedMs);
+            }
+        }
+
+        // Handle decision from student
+        async function handleAnswer(userSaysYes) {
+            if (state.isAnimating || state.gameState !== 'COMPARE') return;
+
+            const leftCard = state.hand[state.compareIndex - 1];
+            const newCard = state.hand[state.compareIndex];
+            const leftIsHigher = leftCard.value > newCard.value;
+
+            // Correct answer
+            if (userSaysYes === leftIsHigher) {
+                hideError();
+                state.comparisons++;
+                updateStatsUI();
+
+                if (userSaysYes) {
+                    // SWAP
+                    state.isAnimating = true;
+                    highlightNode('SWAP');
+                    els.robotStepTitle.textContent = "Étape 6 · Permutation";
+                    els.robotInstruction.textContent = `Correct ! ${leftCard.rank} > ${newCard.rank}. On permute la position de ces deux cartes.`;
+                    els.decisionGroup.style.display = 'none';
+
+                    if (typeof playSound === 'function') playSound('ding');
+                    state.swaps++;
+                    updateStatsUI();
+
+                    // Perform array swap
+                    [state.hand[state.compareIndex - 1], state.hand[state.compareIndex]] = [state.hand[state.compareIndex], state.hand[state.compareIndex - 1]];
+                    state.compareIndex--;
+                    renderHand();
+
+                    await cancellableSleep(state.mode === 'auto' ? state.autoSpeedMs * 0.8 : 800);
+                    state.isAnimating = false;
+
+                    // Loop back to Check Left
+                    enterCheckLeft();
+                } else {
+                    // NO SWAP - Card stays here
+                    state.isAnimating = true;
+                    els.robotStepTitle.textContent = "Étape 5 · Bien rangé";
+                    els.robotInstruction.textContent = `Correct ! ${leftCard.rank} ≤ ${newCard.rank}. La carte est à sa place. On retourne à la pioche.`;
+                    els.decisionGroup.style.display = 'none';
+                    if (typeof playSound === 'function') playSound('tick');
+
+                    await cancellableSleep(state.mode === 'auto' ? state.autoSpeedMs * 0.7 : 700);
+                    state.isAnimating = false;
+
+                    // Loop back to Check Deck
+                    enterCheckDeck();
+                }
+            } else {
+                // Incorrect answer feedback
+                if (userSaysYes) {
+                    showError(`Faux ! Le ${leftCard.label} (valeur ${leftCard.value}) est plus petit ou égal au ${newCard.label} (valeur ${newCard.value}). On ne doit pas permuter.`);
+                } else {
+                    showError(`Faux ! Le ${leftCard.label} (valeur ${leftCard.value}) est strictement plus grand que le ${newCard.label} (valeur ${newCard.value}). Il faut permuter !`);
+                }
+            }
+        }
+
+        // Step 5: END
+        function enterEnd() {
+            state.gameState = 'END';
+            highlightNode('END');
+            els.decisionGroup.style.display = 'none';
+            els.robotStepTitle.textContent = "Fin · Tri terminé !";
+            els.robotInstruction.textContent = `Bravo ! Les ${state.cardCount} cartes sont triées en ${state.comparisons} comparaisons et ${state.swaps} permutations.`;
+
+            els.modalComparisons.textContent = state.comparisons;
+            els.modalSwaps.textContent = state.swaps;
+            els.modalAverage.textContent = state.cardCount === 8 ? '~14' : state.cardCount === 5 ? '~6' : '~33';
+
+            if (typeof playSound === 'function') playSound('win');
+            launchConfetti();
+            els.victoryModal.style.display = 'flex';
+        }
+
+        // --- CONFETTI EFFECT ---
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#f59e0b', '#0284c7', '#10b981', '#ef4444', '#8b5cf6'];
+            for (let i = 0; i < 80; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    w: Math.random() * 10 + 6,
+                    h: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rot: Math.random() * 360,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: Math.random() * 3 + 3,
+                    vRot: (Math.random() - 0.5) * 10
+                });
+            }
+
+            let start = Date.now();
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rot += p.vRot;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+
+                if (Date.now() - start < 3500) {
+                    requestAnimationFrame(draw);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+
+        // --- EVENT LISTENERS ---
+        els.deckContainer.addEventListener('click', () => {
+            if (state.gameState === 'CHECK_DECK' && !state.isAnimating) {
+                drawCard();
+            }
+        });
+
+        els.btnAnswerYes.addEventListener('click', () => handleAnswer(true));
+        els.btnAnswerNo.addEventListener('click', () => handleAnswer(false));
+
+        els.btnNewGame.addEventListener('click', initGame);
+        els.btnReplay.addEventListener('click', initGame);
+
+        els.cardCountBtns.forEach(btn => {
+            btn.addEventListener('click', e => {
+                els.cardCountBtns.forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                state.cardCount = parseInt(e.currentTarget.dataset.cards, 10);
+                initGame();
+            });
+        });
+
+        els.btnModeStep.addEventListener('click', () => {
+            state.mode = 'manual';
+            clearTimeout(state.autoTimer);
+            state.autoTimer = null;
+            wakeSleep();
+            els.btnModeStep.classList.add('active');
+            els.btnModeAuto.classList.remove('active');
+            if (state.gameState === 'COMPARE') {
+                els.decisionGroup.style.display = 'flex';
+                els.btnAnswerYes.disabled = false;
+                els.btnAnswerNo.disabled = false;
+            }
+        });
+
+        els.btnModeAuto.addEventListener('click', () => {
+            state.mode = 'auto';
+            els.btnModeAuto.classList.add('active');
+            els.btnModeStep.classList.remove('active');
+            els.decisionGroup.style.display = 'none';
+            clearTimeout(state.autoTimer);
+            state.autoTimer = null;
+            if (state.gameState === 'CHECK_DECK' && !state.isAnimating) {
+                drawCard();
+            } else if (state.gameState === 'COMPARE' && !state.isAnimating) {
+                const leftCard = state.hand[state.compareIndex - 1];
+                const newCard = state.hand[state.compareIndex];
+                state.autoTimer = setTimeout(() => {
+                    if (state.mode !== 'auto' || state.gameState !== 'COMPARE') return;
+                    handleAnswer(leftCard.value > newCard.value);
+                }, state.autoSpeedMs);
+            }
+        });
+
+        els.speedBtns.forEach(btn => {
+            btn.addEventListener('click', e => {
+                els.speedBtns.forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                state.autoSpeedMs = parseInt(e.currentTarget.dataset.speed, 10);
+                if (state.mode === 'auto' && state.gameState === 'COMPARE' && !state.isAnimating) {
+                    clearTimeout(state.autoTimer);
+                    const leftCard = state.hand[state.compareIndex - 1];
+                    const newCard = state.hand[state.compareIndex];
+                    state.autoTimer = setTimeout(() => {
+                        if (state.mode !== 'auto' || state.gameState !== 'COMPARE') return;
+                        handleAnswer(leftCard.value > newCard.value);
+                    }, Math.min(state.autoSpeedMs, 500));
+                }
+            });
+        });
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.fa && typeof window.fa.createIcons === 'function') {
+                window.fa.createIcons(document.body);
+            }
+            initGame();
+        });
+    </script>
+</body>
+
+</html>

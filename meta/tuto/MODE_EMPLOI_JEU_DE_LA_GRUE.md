@@ -76,7 +76,3 @@ Si la grue tente une action interdite (heurter un cube par le côté, sortir du 
 2. **Démonstration TBI (5 min) :** Résolution guidée d'un défi en verbalisant la stratégie.
 3. **Atelier binômes (25 min) :** Un *Programmeur* conçoit l'algorithme, un *Vérificateur* relit mentalement avant d'exécuter.
 4. **Mise en commun (5 min) :** Partage des stratégies de stockage temporaire pour le niveau Difficile.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

@@ -42,7 +42,3 @@ Les réseaux vont de **4 entrées** (introduction) à **6 ou 8 entrées** (rése
 3. Tout le monde avance d'un pas ensemble.
 4. Quand deux élèves se croisent sur un comparateur, ils comparent leurs cartons : le plus petit monte sur la ligne du haut, le plus grand sur celle du bas.
 5. À l'arrivée, les 6 élèves sont naturellement alignés dans l'ordre croissant !
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

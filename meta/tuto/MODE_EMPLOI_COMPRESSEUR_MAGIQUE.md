@@ -64,7 +64,3 @@ En mode Dessin libre, l'application compare en temps réel :
 1. **Phase 1 :** Demandez aux élèves de dessiner un damier (1 pixel noir, 1 pixel blanc alterné). Observez le code RLE : `1N 1X 1N 1X...` (la taille augmente au lieu de diminuer !).
 2. **Phase 2 :** Demandez-leur de dessiner un drapeau à bandes ou un cœur simple. Observez le gain : le fichier est réduit de 60 à 80%.
 3. **Bilan :** Discuter de l'utilité du format GIF/PNG pour les schémas et logos, comparé au format JPEG pour les photographies.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

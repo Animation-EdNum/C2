@@ -54,7 +54,3 @@ L'application permet d'introduire des méthodes simples d'attaque cryptographiqu
 2. **Étape 2 :** Chaque élève rédige une courte consigne ou devinette, la chiffre avec la roue et la transmet à son voisin.
 3. **Étape 3 :** Le destinataire applique le déchiffrement pour lire le message et y répondre.
 4. **Variante experte :** Transmettre un message chiffré **sans donner la clé** : le camarade doit trouver la clé par déduction !
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

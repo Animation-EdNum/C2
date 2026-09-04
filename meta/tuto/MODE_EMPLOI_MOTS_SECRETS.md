@@ -74,7 +74,3 @@ Entrez une suite de 0 et de 1 reçue → l'application traduit les octets en let
 2. **Agent A** choisit un mot dans le mode *(Dé)code un mot*, note le code binaire sur une feuille et transmet le message.
 3. **Agent B** décompose chaque octet en puissances de 2 de tête ($16+4+1 = 21 \rightarrow$ U), reconstitue le mot et vérifie dans l'application.
 4. Les rôles sont inversés.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

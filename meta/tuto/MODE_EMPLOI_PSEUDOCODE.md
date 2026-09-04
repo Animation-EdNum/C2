@@ -57,7 +57,3 @@ L'écran est divisé en deux panneaux synchronisés :
 ## 4. Niveaux
 
 Chaque chapitre propose 3 paliers (**🟢 Facile**, **🟡 Moyen**, **🔴 Difficile**) pour une assimilation progressive.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

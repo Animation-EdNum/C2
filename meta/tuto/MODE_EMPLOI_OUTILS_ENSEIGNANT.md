@@ -12,6 +12,7 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 |---|---|---|
 | 📊 **Générateur de Barèmes** | Table de conversion points → notes (échelle suisse 1 à 6), seuil du 4.0 ajustable, export PDF | [Ouvrir le guide](MODE_EMPLOI_BAREME.md) |
 | 🎲 **Tirage au Sort** | Désignation aléatoire équitable, gestion des absents, tirage sans remise | [Ouvrir le guide](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
+| 📱 **Créateur de QR Codes** | Générateur rapide de QR codes (liens, textes, Wi-Fi, planches imprimables, TBI) | [Ouvrir le guide](MODE_EMPLOI_QRCODE.md) |
 | 👓 **Lentille de Dyslexie** | Simulateur immersif DYS et aménagements compensatoires en direct | [Ouvrir le guide](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
 
 ---
@@ -40,6 +41,18 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 
 ---
 
+### 📱 Créateur de QR Codes
+
+*Partagez facilement des liens, des textes ou le Wi-Fi de la classe sans taper d'URL.*
+
+- Modes URL, texte libre, connexion Wi-Fi instantanée ou génération de planches multiples (batch).
+- Personnalisation : palette de couleurs, taille de rendu, niveau de correction d'erreurs (ECC).
+- Export flexible : copie directe de l'image PNG dans le presse-papier, téléchargement HD, ou impression A4 avec traits de découpe.
+- Mode projection TBI : affichage plein écran adapté au tableau blanc interactif.
+- 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_QRCODE.md)
+
+---
+
 ### 👓 Lentille de Dyslexie
 
 *Vivez l'expérience de lecture d'un élève dyslexique — et découvrez comment l'aider.*
@@ -54,7 +67,3 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 ## 🔒 Confidentialité
 
 Les noms de vos élèves et vos résultats d'évaluations ne quittent **jamais** votre appareil. Tout s'exécute dans le navigateur, même sans connexion Internet.
-
----
-
-*Applications conçues par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

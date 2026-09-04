@@ -72,7 +72,3 @@ Avant l'écran, réalisez ce tour classique avec des cartes bicolores (noir / bl
 3. Retournez-vous. Un élève retourne **une seule carte**.
 4. Retournez-vous, balayez la grille du regard et désignez instantanément la carte modifiée.
 5. Les élèves découvrent ensuite le secret mathématique en s'exerçant sur l'application.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

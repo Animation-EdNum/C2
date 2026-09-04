@@ -64,7 +64,3 @@ Alignement programme : Cycle 2, Décodages 7-8H · Activité 8 — *Les réseaux
 3. Donnez un « paquet » (ballon ou enveloppe) à l'élève **A**.
 4. Chaque routeur ne connaît que le coût de ses liaisons directes. Les élèves communiquent pour trouver collectivement le meilleur chemin.
 5. Vérification sur l'application.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

@@ -110,6 +110,9 @@ Un petit utilitaire sans publicité permettant de générer instantanément un b
 ![Tirage au Sort](meta/screenshots/tirage.png)
 Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
 
+#### Créateur de QR codes (`webapps/teacher/qrcode.html`)
+Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables, projection TBI, téléchargement HD et copie presse-papier). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_QRCODE.md).
+
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
 - 🏗️ **Jeu de la grue** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_JEU_DE_LA_GRUE.md)
 - 💻 **Pseudo-code** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
@@ -119,8 +122,8 @@ Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automat
 - 🔀 **Réseau de tri** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
 - 🔒 **Coffre-fort numérique** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
 - 🧠 **Dresseur de neurones & Détective IA** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
-- 📱 **Générateur QR Codes** (`alpha/webapps/teacher/qrcode.html`)
 - 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
+- 🃏 **Une chose après l'autre (Tri par insertion)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_TRI_INSERTION.md)
 
 ---
 

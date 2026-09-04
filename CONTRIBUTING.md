@@ -62,11 +62,12 @@ C2/
 │   ├── machine_a_chiffrer.html
 │   ├── machine_a_trier.html
 │   ├── reseau_de_tri.html
-│   └── teacher/            # Outils enseignants alpha (qrcode, sim_dyslexie)
+│   └── teacher/            # Outils enseignants alpha (sim_dyslexie)
 │
 ├── webapps/teacher/        # Outils enseignant·e·s stables
 │   ├── bareme.html
-│   └── tirage.html
+│   ├── tirage.html
+│   └── qrcode.html
 │
 ├── assets/css/             # Système de design modulaire & styles par app
 │   ├── tokens.css          # Variables CSS de design (couleurs, rayons, ombres)

@@ -56,7 +56,3 @@ Sous la zone de saisie, chaque élève apparaît sous forme d'étiquette cliquab
 | 🔊 Son on / off | Coupez les effets sonores en période de concentration. |
 | `Espace` ou `Entrée` | Lancer le tirage. |
 | `Échap` | Réinitialiser la vue. |
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

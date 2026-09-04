@@ -42,7 +42,3 @@ Un champ de saisie **100% local** (aucune donnée transmise) permet de tester de
 - **Jauge de solidité :** Très faible → Faible → Moyen → Robuste → Incassable.
 - **Checklist interactive :** Longueur ≥ 8, majuscules, chiffres, symboles.
 - **Conseils :** Méthode de la phrase de passe mémorisable.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

@@ -32,7 +32,3 @@ L'élève se met dans la peau d'un **détective numérique** qui analyse les dé
 - Comment corriger les données ou les paramètres pour améliorer ses prédictions ?
 
 Ce mode développe l'esprit critique face aux systèmes automatisés.
-
----
-
-*Applications conçues par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

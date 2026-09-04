@@ -66,7 +66,3 @@ Au-dessus du tableau, un champ de saisie permet de taper directement un score (e
 Cliquez sur **« 🖨️ Imprimer le barème »** :
 - La feuille de style d'impression masque automatiquement les éléments d'interface (menus, boutons, fond sombre).
 - Le barème est compacté en colonnes claires et aérées, prêtes pour l'impression A4 ou l'enregistrement en PDF.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*

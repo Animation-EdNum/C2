@@ -41,7 +41,23 @@ Des interrupteurs permettent d'activer chaque outil de compensation et d'en cons
 
 ---
 
-## 3. Scénario d'atelier (15-20 min)
+## 3. L'Adaptateur de texte pour fiches DYS (Nouvel outil classe)
+
+L'onglet **« Adaptateur DYS »** transforme l'application en une véritable boîte à outils de préparation pédagogique :
+
+1. **Collez votre consigne ou texte :** Rendez-vous sur l'onglet *Éditer texte* ou choisissez un texte d'exemple.
+2. **Choisissez un profil d'adaptation en 1 clic :**
+   - **⚡ Dyslexie visuo-spatiale :** Active l'espacement Zorzi (+0.25em lettres, +0.4em mots, interligne 2.2), la police adaptée et le fond ivoire apaisant.
+   - **📖 Début de lecture :** Combine le découpage syllabique bicolore alterné (bleu / rouge), l'espacement Zorzi et la police adaptée.
+   - **👁️ Confort visuel :** Aère le texte avec un interligne généreux et un fond doux anti-fatigue.
+   - **🛠️ Personnalisé :** Cochez ou décochez librement chaque aménagement dans le panneau latéral.
+3. **Prévisualisez la fiche élève A4 :** L'aperçu affiche un en-tête d'évaluation (`Prénom :`, `Date :`) et le texte fidèlement transformé avec les aménagements actifs.
+4. **Imprimez directement la fiche :**
+   - **Bouton « Imprimer la fiche adaptée (A4) » :** Génère une impression directe et propre (styles d'impression optimisés, masquage des menus et barres d'outils, maintien du découpage syllabique et des espacements).
+
+---
+
+## 4. Scénario d'atelier (15-20 min)
 
 Ce déroulé fonctionne en réunion de parents, formation enseignante ou séance de sensibilisation en classe :
 
@@ -56,7 +72,3 @@ Activez la règle de lecture, la police OpenDyslexic et l'espacement aéré. Fai
 
 **Conclusion :**
 La dyslexie n'est pas un manque d'intelligence. C'est un mode de traitement neurovisuel différent qui nécessite des supports adaptés — et ces adaptations sont simples à mettre en place.
-
----
-
-*Application conçue par Vivian Epiney (AP EdNum, HEP-VS) sous licence libre AGPL-3.0.*
