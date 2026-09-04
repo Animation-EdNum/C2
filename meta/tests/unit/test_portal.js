@@ -271,3 +271,166 @@ test('renderBadges', async (t) => {
         assert.strictEqual(badges[2].className.trim(), 'badge prof', 'Third badge class correct');
     });
 });
+
+test('PWA Installation & Guidance', async (t) => {
+
+    await t.test('isPWAStandalone returns false by default and true when standalone', () => {
+        const window = setupDOM();
+        assert.strictEqual(window.isPWAStandalone(), false, 'Should be false in normal browser context');
+
+        window.navigator.standalone = true;
+        assert.strictEqual(window.isPWAStandalone(), true, 'Should be true when window.navigator.standalone is true');
+
+        delete window.navigator.standalone;
+        window.matchMedia = (query) => ({
+            matches: query.includes('standalone')
+        });
+        assert.strictEqual(window.isPWAStandalone(), true, 'Should be true when matchMedia standalone is true');
+    });
+
+    await t.test('detectClientPlatform detects iOS, Mac Safari, and Desktop', () => {
+        const window = setupDOM();
+
+        // Test iPhone UserAgent
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1',
+            configurable: true
+        });
+        assert.strictEqual(window.detectClientPlatform(), 'ios', 'Should detect iOS for iPhone');
+
+        // Test iPad (MacIntel + touch)
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)',
+            configurable: true
+        });
+        Object.defineProperty(window.navigator, 'platform', {
+            value: 'MacIntel',
+            configurable: true
+        });
+        Object.defineProperty(window.navigator, 'maxTouchPoints', {
+            value: 5,
+            configurable: true
+        });
+        assert.strictEqual(window.detectClientPlatform(), 'ios', 'Should detect iOS for iPad with touch points');
+
+        // Test macOS Safari (MacIntel + 0 touch + Safari UA)
+        Object.defineProperty(window.navigator, 'maxTouchPoints', {
+            value: 0,
+            configurable: true
+        });
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+            configurable: true
+        });
+        assert.strictEqual(window.detectClientPlatform(), 'mac', 'Should detect mac for Mac Safari');
+
+        // Test Desktop Chrome on Windows
+        Object.defineProperty(window.navigator, 'platform', {
+            value: 'Win32',
+            configurable: true
+        });
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            configurable: true
+        });
+        assert.strictEqual(window.detectClientPlatform(), 'desktop', 'Should detect desktop for Chrome Windows');
+    });
+
+    await t.test('showPWAInstallInstructions creates and manages modal in DOM', () => {
+        const window = setupDOM();
+
+        assert.strictEqual(window.document.getElementById('pwa-install-modal-overlay'), null, 'Modal should not exist initially');
+
+        window.showPWAInstallInstructions('ios');
+        const modal = window.document.getElementById('pwa-install-modal-overlay');
+        assert.ok(modal, 'Modal should be injected into DOM');
+        assert.ok(modal.classList.contains('active'), 'Modal should be active');
+
+        const iosTab = modal.querySelector('#pwa-tab-ios');
+        const macTab = modal.querySelector('#pwa-tab-mac');
+        const iosPanel = modal.querySelector('#pwa-panel-ios');
+        const macPanel = modal.querySelector('#pwa-panel-mac');
+
+        assert.ok(iosTab.classList.contains('active'), 'iOS tab should be active');
+        assert.ok(iosPanel.classList.contains('active'), 'iOS panel should be active');
+        assert.strictEqual(macTab.classList.contains('active'), false, 'Mac tab should not be active');
+
+        // Switch to Mac tab
+        macTab.click();
+        assert.ok(macTab.classList.contains('active'), 'Mac tab should be active after click');
+        assert.ok(macPanel.classList.contains('active'), 'Mac panel should be active after click');
+        assert.strictEqual(iosTab.classList.contains('active'), false, 'iOS tab should be inactive');
+
+        // Close via close button
+        const closeBtn = modal.querySelector('#pwa-modal-close');
+        closeBtn.click();
+        assert.strictEqual(modal.classList.contains('active'), false, 'Modal should be closed');
+
+        // Reopen and close via Escape
+        window.showPWAInstallInstructions('mac');
+        assert.ok(modal.classList.contains('active'), 'Modal should be active again');
+        const escEvent = new window.KeyboardEvent('keydown', { key: 'Escape' });
+        window.document.dispatchEvent(escEvent);
+        assert.strictEqual(modal.classList.contains('active'), false, 'Modal should close on Escape key');
+    });
+
+    await t.test('initPWAInstall shows button immediately on iOS and opens modal on click', () => {
+        const window = setupDOM();
+
+        // Setup DOM with installBtn
+        const btn = window.document.createElement('button');
+        btn.id = 'installBtn';
+        btn.style.display = 'none';
+        window.document.body.appendChild(btn);
+
+        // Configure iOS user agent
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1',
+            configurable: true
+        });
+
+        window.initPWAInstall();
+
+        assert.strictEqual(btn.style.display, 'flex', 'Button should be displayed on iOS');
+
+        // Click on button opens instructions modal
+        btn.click();
+        const modal = window.document.getElementById('pwa-install-modal-overlay');
+        assert.ok(modal, 'Instructions modal should be created and opened');
+        assert.ok(modal.classList.contains('active'), 'Instructions modal should be active');
+    });
+
+    await t.test('initPWAInstall supports standard Chromium beforeinstallprompt', () => {
+        const window = setupDOM();
+
+        const btn = window.document.createElement('button');
+        btn.id = 'installBtn';
+        btn.style.display = 'none';
+        window.document.body.appendChild(btn);
+
+        // Configure Desktop Chrome
+        Object.defineProperty(window.navigator, 'platform', { value: 'Win32', configurable: true });
+        Object.defineProperty(window.navigator, 'userAgent', {
+            value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
+            configurable: true
+        });
+
+        window.initPWAInstall();
+        assert.strictEqual(btn.style.display, 'none', 'Button should stay hidden before prompt on Chrome desktop');
+
+        // Dispatch simulated beforeinstallprompt event
+        let promptCalled = false;
+        const mockPromptEvent = new window.Event('beforeinstallprompt');
+        mockPromptEvent.preventDefault = () => {};
+        mockPromptEvent.prompt = () => { promptCalled = true; };
+        mockPromptEvent.userChoice = Promise.resolve({ outcome: 'accepted' });
+
+        window.dispatchEvent(mockPromptEvent);
+        assert.strictEqual(btn.style.display, 'flex', 'Button should be displayed after beforeinstallprompt');
+
+        // Clicking button triggers prompt()
+        btn.click();
+        assert.strictEqual(promptCalled, true, 'Native prompt() should be called on Chromium');
+    });
+});
+
