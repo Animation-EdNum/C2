@@ -191,7 +191,8 @@ function showPWAInstallInstructions(preferredTab) {
         modalOverlay.setAttribute('aria-modal', 'true');
         modalOverlay.setAttribute('aria-labelledby', 'pwa-modal-title');
 
-        modalOverlay.innerHTML = `
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(`
             <div class="ui-modal-content pwa-install-modal">
                 <button class="ui-btn-close" id="pwa-modal-close" aria-label="Fermer la fenêtre">&times;</button>
                 <div class="pwa-modal-header">
@@ -307,7 +308,11 @@ function showPWAInstallInstructions(preferredTab) {
                     <button class="btn btn-primary" id="pwa-modal-ok-btn">J'ai compris</button>
                 </div>
             </div>
-        `;
+        `, 'text/html');
+
+        while (doc.body.firstChild) {
+            modalOverlay.appendChild(doc.body.firstChild);
+        }
 
         document.body.appendChild(modalOverlay);
 
