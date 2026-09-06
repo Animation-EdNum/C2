@@ -10,6 +10,7 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 
 | Outil | En bref | Guide |
 |---|---|---|
+| ⏱️ **Time-Timer** | Minuteur visuel circulaire 0-60 min, décompte sans stress, usage 1-clic et mode TBI | [Ouvrir le guide](MODE_EMPLOI_TIME_TIMER.md) |
 | 📊 **Générateur de Barèmes** | Table de conversion points → notes (échelle suisse 1 à 6), seuil du 4.0 ajustable, export PDF | [Ouvrir le guide](MODE_EMPLOI_BAREME.md) |
 | 🎲 **Tirage au Sort** | Désignation aléatoire équitable, gestion des absents, tirage sans remise | [Ouvrir le guide](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
 | 📱 **Créateur de QR Codes** | Générateur rapide de QR codes (liens, textes, Wi-Fi, planches imprimables, TBI) | [Ouvrir le guide](MODE_EMPLOI_QRCODE.md) |

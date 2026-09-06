@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time-Timer · Compte à rebours visuel pour la classe</title>
+    <meta property="og:title" content="Time-Timer · Compte à rebours visuel pour la classe">
+    <meta property="og:description" content="Minuteur visuel circulaire interactif de 0 à 60 minutes pour gérer le temps en classe en 1 clic.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <link rel="stylesheet" href="../../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../../assets/css/base.css">
+    <link rel="stylesheet" href="../../../assets/css/components.css">
+    <link rel="stylesheet" href="../../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <style>
+        .action-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        body > header, body > .app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: rgba(13, 148, 136, 0.15);
+            --bg-gradient-start: #0f766e;
+            --bg-gradient-end: #064e4b;
+            
+            --glass-bg: rgba(255, 255, 255, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-color: rgba(0, 0, 0, 0.12);
+
+            /* Timer specific variables */
+            --timer-disk-color: #ef4444;
+            --timer-disk-glow: rgba(239, 68, 68, 0.25);
+            --clock-face-bg: #ffffff;
+            --clock-face-border: #cbd5e1;
+            --clock-tick: #64748b;
+            --clock-tick-major: #0f172a;
+            --clock-num: #1e293b;
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #064e4b;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --primary-light: rgba(13, 148, 136, 0.3);
+            --shadow-color: rgba(0, 0, 0, 0.45);
+
+            --clock-face-bg: #1e293b;
+            --clock-face-border: #475569;
+            --clock-tick: #64748b;
+            --clock-tick-major: #cbd5e1;
+            --clock-num: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 960px;
+            width: 100%;
+            margin: auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s var(--spring-easing, ease);
+        }
+
+        .header-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .alpha-badge {
+            background: #fef08a;
+            color: #854d0e;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid #facc15;
+        }
+
+        body.dark .alpha-badge {
+            background: rgba(234, 179, 8, 0.2);
+            color: #fef08a;
+            border-color: rgba(234, 179, 8, 0.4);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            padding: 1.5rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        /* ACTIVITY TITLE */
+        .activity-title-container {
+            width: 100%;
+            max-width: 560px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            padding: 0 1rem;
+        }
+
+        .activity-title-input {
+            width: 100%;
+            text-align: center;
+            font-family: inherit;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            outline: none;
+            padding: 4px 12px 6px;
+            letter-spacing: -0.02em;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .activity-title-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1.05rem;
+            opacity: 0.55;
+            transition: opacity 0.2s ease, color 0.2s ease;
+        }
+
+        .activity-title-input:hover {
+            border-bottom-color: rgba(13, 148, 136, 0.35);
+        }
+
+        .activity-title-input:hover::placeholder {
+            opacity: 0.85;
+            color: var(--primary);
+        }
+
+        .activity-title-input:focus {
+            cursor: text;
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .activity-title-input:focus {
+            background: rgba(30, 41, 59, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* DIAL CONTAINER */
+        .timer-stage {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .clock-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            cursor: pointer;
+            filter: drop-shadow(0 15px 25px var(--shadow-color));
+        }
+
+        /* DIGITAL TIME DISPLAY */
+        .digital-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -0.5rem;
+        }
+
+        .digital-time {
+            font-family: 'Outfit', monospace;
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--text-main);
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .digital-status {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .digital-status.running {
+            color: var(--primary);
+        }
+
+        .digital-status.ended {
+            color: var(--error);
+            animation: pulseText 1s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            from { opacity: 0.6; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1.02); }
+        }
+
+        /* 1-CLICK PRESETS */
+        .presets-section {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .presets-label {
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        .presets-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .preset-chip {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s var(--spring-easing, ease);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 54px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark .preset-chip {
+            background: rgba(30, 41, 59, 0.7);
+        }
+
+        .preset-chip:hover {
+            transform: translateY(-2px);
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .preset-chip.popular {
+            font-weight: 800;
+            border-color: rgba(13, 148, 136, 0.4);
+        }
+
+        .preset-chip.active {
+            background: var(--primary);
+            color: #ffffff !important;
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+        }
+
+        /* MAIN CONTROLS */
+        .controls-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 0.25rem;
+            width: 100%;
+            max-width: 580px;
+        }
+
+        .btn-play {
+            padding: 14px 32px;
+            font-size: 1.15rem;
+            min-width: 170px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 6px 18px rgba(13, 148, 136, 0.25);
+        }
+
+        .btn-play.paused {
+            background: var(--primary);
+        }
+
+        .btn-play.running {
+            background: #d97706; /* Amber warning */
+            color: white;
+            box-shadow: 0 6px 18px rgba(217, 119, 6, 0.25);
+        }
+
+        .btn-play.running:hover {
+            background: #b45309;
+        }
+
+        .btn-delta {
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark .btn-delta {
+            background: rgba(30, 41, 59, 0.7);
+        }
+
+        .btn-delta:hover:not(:disabled) {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-delta:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* OPTIONS DRAWER */
+        .options-panel {
+            width: 100%;
+            max-width: 680px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .options-panel {
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .options-panel.hidden {
+            display: none;
+        }
+
+        .options-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .option-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .color-swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .color-swatch.active {
+            border-color: var(--text-main);
+            transform: scale(1.12);
+            box-shadow: 0 0 0 2px var(--glass-bg), 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-select, .custom-checkbox-row {
+            padding: 8px 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .custom-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            border: none;
+            padding: 4px 0;
+            background: transparent;
+        }
+
+        .custom-checkbox-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* CELEBRATION MODAL */
+        .celebration-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .celebration-overlay.hidden {
+            display: none;
+        }
+
+        .celebration-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem 2rem;
+            max-width: 460px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            animation: scaleUp 0.4s var(--spring-easing) forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .celebration-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            animation: bellShake 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes bellShake {
+            0% { transform: rotate(-10deg); }
+            100% { transform: rotate(10deg); }
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 1.25rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        footer a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        /* ========== PROJECTION / TBI MODE ========== */
+        body.projection {
+            padding: 5px;
+            background: var(--bg-gradient-end);
+        }
+
+        body.projection .app-shell {
+            max-width: 100vw;
+            min-height: calc(100vh - 10px);
+            border-radius: 0;
+            border: none;
+            justify-content: space-between;
+        }
+
+        body.projection footer,
+        body.projection .options-panel,
+        body.projection #optionsToggleBtn,
+        body.projection .alpha-badge {
+            display: none !important;
+        }
+
+        body.projection main {
+            padding: 1rem;
+            gap: 1.5rem;
+            justify-content: center;
+            flex: 1;
+        }
+
+        body.projection .timer-stage {
+            max-width: min(65vh, 650px);
+        }
+
+        body.projection .digital-time {
+            font-size: 5rem;
+        }
+
+        body.projection .activity-title-container {
+            max-width: 800px;
+        }
+
+        body.projection .activity-title-input {
+            font-size: 2.2rem;
+            font-weight: 800;
+            padding: 4px 12px;
+        }
+
+        body.projection .activity-title-input:not(:focus):placeholder-shown {
+            opacity: 0;
+        }
+
+        body.projection .preset-chip {
+            padding: 12px 22px;
+            font-size: 1.15rem;
+        }
+
+        body.projection .btn-play {
+            font-size: 1.4rem;
+            padding: 18px 44px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            header { padding: 1rem; }
+            main { padding: 1rem; }
+            .timer-stage { max-width: 320px; }
+            .digital-time { font-size: 2.6rem; }
+            .btn-play { width: 100%; }
+            .preset-chip { padding: 6px 12px; font-size: 0.85rem; min-width: 46px; }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    
+    <!-- Action buttons (Top-Right) -->
+    <div class="action-buttons no-print">
+        <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+            <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
+            <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
+        </button>
+        <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
+            <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
+            <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
+        </button>
+        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode Projection TBI (Plein écran)" aria-label="Mode TBI">
+            <i data-fa="chalkboard-user" style="width:20px;height:20px;"></i>
+        </button>
+        <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+            <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
+        </button>
+    </div>
+
+    <div class="app-shell" id="main-content">
+        <!-- HEADER -->
+        <header>
+            <div class="header-title-wrapper">
+                <a href="../../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="timer" style="width:22px;height:22px;"></i>
+                </a>
+                <div class="header-title-group">
+                    <h1>Time-Timer</h1>
+                    <span class="alpha-badge">Alpha</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="optionsToggleBtn" title="Personnaliser le Time-Timer">
+                    <i data-fa="sliders" style="width:16px;height:16px;"></i>
+                    <span>Options</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN -->
+        <main>
+            <!-- ACTIVITY TITLE -->
+            <div class="activity-title-container">
+                <input type="text" id="activityTitleInput" class="activity-title-input" placeholder="Titre de l'activité…" maxlength="60" aria-label="Titre de l'activité" autocomplete="off" spellcheck="false">
+            </div>
+
+            <!-- INTERACTIVE SVG CLOCK -->
+            <div class="timer-stage" id="timerStage" role="region" aria-label="Cadran circulaire Time-Timer">
+                <svg id="clockSvg" class="clock-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Glow filter for active disk -->
+                        <filter id="diskGlow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--timer-disk-color)" flood-opacity="0.35"/>
+                        </filter>
+                    </defs>
+
+                    <!-- Base Clock Outer Ring -->
+                    <circle cx="250" cy="250" r="235" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="6"/>
+                    <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2"/>
+
+                    <!-- Colored Timer Disk/Arc -->
+                    <path id="timerDisk" d="" fill="var(--timer-disk-color)" filter="url(#diskGlow)"></path>
+
+                    <!-- Optional Inner cutout for Doughnut/Ring style -->
+                    <circle id="donutHole" cx="250" cy="250" r="95" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="2" style="display:none;"></circle>
+
+                    <!-- Tick Marks Group (Generated via JS) -->
+                    <g id="tickMarksGroup"></g>
+
+                    <!-- Dial Numbers (0, 5, 10, ... 55, 60) -->
+                    <g id="dialNumbersGroup"></g>
+
+                    <!-- Center Pivot Pin -->
+                    <circle cx="250" cy="250" r="14" fill="#0f172a" stroke="#ffffff" stroke-width="3"/>
+                    <circle cx="250" cy="250" r="5" fill="#ffffff"/>
+
+                    <!-- Drag Handle Knob at Trailing Edge -->
+                    <circle id="dragHandle" cx="250" cy="40" r="13" fill="#ffffff" stroke="var(--text-main)" stroke-width="3" style="cursor: grab; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)); display:none;"/>
+                </svg>
+            </div>
+
+            <!-- DIGITAL READOUT (OPTIONAL/CONFIGURABLE) -->
+            <div class="digital-display" id="digitalDisplay">
+                <div class="digital-time" id="digitalTimeDisplay">10:00</div>
+                <div class="digital-status" id="digitalStatus">Prêt</div>
+            </div>
+
+            <!-- 1-CLICK PRESETS -->
+            <div class="presets-section">
+                <span class="presets-label">Préréglages rapides (1 clic)</span>
+                <div class="presets-grid" id="presetsGrid">
+                    <button class="preset-chip" data-min="1">1 min</button>
+                    <button class="preset-chip" data-min="2">2 min</button>
+                    <button class="preset-chip" data-min="3">3 min</button>
+                    <button class="preset-chip popular" data-min="5">5 min</button>
+                    <button class="preset-chip popular active" data-min="10">10 min</button>
+                    <button class="preset-chip popular" data-min="15">15 min</button>
+                    <button class="preset-chip popular" data-min="20">20 min</button>
+                    <button class="preset-chip popular" data-min="30">30 min</button>
+                    <button class="preset-chip" data-min="45">45 min</button>
+                    <button class="preset-chip" data-min="60">60 min</button>
+                </div>
+            </div>
+
+            <!-- CONTROLS BAR -->
+            <div class="controls-bar">
+                <button class="btn-delta" id="btnSub1" title="Retirer 1 minute (-1 min)" aria-label="Retirer 1 minute">
+                    -1 min
+                </button>
+                <button class="btn btn-primary btn-play paused" id="mainPlayBtn" title="Démarrer ou mettre en pause (Espace)">
+                    <i data-fa="play" id="playBtnIcon" style="width:20px;height:20px;"></i>
+                    <span id="playBtnText">Démarrer</span>
+                </button>
+                <button class="btn-delta" id="btnAdd1" title="Ajouter 1 minute (+1 min)" aria-label="Ajouter 1 minute">
+                    +1 min
+                </button>
+                <button class="btn-delta" id="btnAdd5" title="Ajouter 5 minutes (+5 min)" aria-label="Ajouter 5 minutes">
+                    +5 min
+                </button>
+                <button class="btn btn-secondary" id="btnReset" title="Réinitialiser le minuteur (R)" aria-label="Réinitialiser">
+                    <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
+                </button>
+            </div>
+
+            <!-- RETRACTABLE OPTIONS PANEL -->
+            <div class="options-panel hidden" id="optionsPanel">
+                <div class="options-title">
+                    <i data-fa="sliders" style="width:18px;height:18px;"></i>
+                    <span>Personnalisation du Time-Timer</span>
+                </div>
+
+                <div class="options-grid">
+                    <!-- Option: Color Palette -->
+                    <div class="option-group">
+                        <label class="option-label">Couleur du disque</label>
+                        <div class="color-palette" id="colorPalette">
+                            <button class="color-swatch active" style="background:#ef4444;" data-color="#ef4444" title="Rouge Time-Timer classique"></button>
+                            <button class="color-swatch" style="background:#0ea5e9;" data-color="#0ea5e9" title="Bleu ciel"></button>
+                            <button class="color-swatch" style="background:#10b981;" data-color="#10b981" title="Vert menthe"></button>
+                            <button class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b" title="Ambre chaud"></button>
+                            <button class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6" title="Violet doux"></button>
+                            <button class="color-swatch" style="background:#ec4899;" data-color="#ec4899" title="Rose bonbon"></button>
+                        </div>
+                    </div>
+
+                    <!-- Option: Disk Style -->
+                    <div class="option-group">
+                        <label for="diskStyleSelect" class="option-label">Style visuel du cadran</label>
+                        <select id="diskStyleSelect" class="custom-select">
+                            <option value="solid" selected>Disque plein (authentique Time-Timer)</option>
+                            <option value="ring">Anneau moderne (donut)</option>
+                        </select>
+                    </div>
+
+                    <!-- Option: Rotation Direction -->
+                    <div class="option-group">
+                        <label for="directionSelect" class="option-label">Sens du décompte</label>
+                        <select id="directionSelect" class="custom-select">
+                            <option value="counter-clockwise" selected>Time-Timer classique (anti-horaire vers 0)</option>
+                            <option value="clockwise">Sens des aiguilles d'une montre (horaire)</option>
+                        </select>
+                    </div>
+
+                    <!-- Option: End Sound -->
+                    <div class="option-group">
+                        <label for="soundSelect" class="option-label">Sonnerie de fin</label>
+                        <div style="display:flex; gap:8px;">
+                            <select id="soundSelect" class="custom-select" style="flex:1;">
+                                <option value="zen" selected>Carillon zen doux</option>
+                                <option value="bell">Cloche d'école cristalline</option>
+                                <option value="dingdong">Ding-dong harmonieux</option>
+                                <option value="beeps">Petits bips discrets</option>
+                                <option value="mute">Silencieux (aucun son)</option>
+                            </select>
+                            <button class="btn btn-secondary" id="testSoundBtn" title="Écouter le son choisi" style="padding: 6px 12px; font-size:0.85rem;">
+                                Tester
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Option: Activity Title -->
+                    <div class="option-group" style="grid-column: 1 / -1;">
+                        <label for="optionsActivityInput" class="option-label">Titre ou consigne d'activité</label>
+                        <input type="text" id="optionsActivityInput" class="custom-select" placeholder="Ex: 📖 Lecture autonome, ✍️ Travail individuel…" maxlength="60">
+                    </div>
+
+                    <!-- Option: Checkboxes -->
+                    <div class="option-group" style="justify-content: center; gap: 8px;">
+                        <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkAutoStart" checked>
+                            <span>Démarrer immédiatement au clic d'un préréglage</span>
+                        </label>
+                        <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkShowDigits" checked>
+                            <span>Afficher le temps numérique</span>
+                        </label>
+                        <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkWarning1m" checked>
+                            <span>Signal sonore discret à 1 minute de la fin</span>
+                        </label>
+                        <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkTicking">
+                            <span>Tic-tac sonore chaque seconde</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="no-print">
+            <p>
+                Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                <br>
+                <span style="font-size: 0.9em; opacity: 0.85;">
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    · <a href="../../../index.html#teachers">Espace Enseignant·e·s</a>
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- CELEBRATION OVERLAY -->
+    <div class="celebration-overlay hidden" id="celebrationOverlay" role="dialog" aria-modal="true" aria-label="Temps écoulé">
+        <div class="celebration-card">
+            <div class="celebration-icon-circle">
+                <i data-fa="flag-checkered" style="width:40px;height:40px;"></i>
+            </div>
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem;">Temps écoulé !</h2>
+                <p id="celebrationMessage" style="color: var(--text-secondary); font-size: 1.05rem;">L'activité est maintenant terminée.</p>
+            </div>
+            <div style="display:flex; gap:10px; width:100%;">
+                <button class="btn btn-secondary" id="celebrationPlus1Btn" style="flex:1;">
+                    + 1 minute
+                </button>
+                <button class="btn btn-primary" id="celebrationCloseBtn" style="flex:1;">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../assets/js/theme.js"></script>
+    <script>
+        /* SPDX-License-Identifier: AGPL-3.0-only
+         * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+         * Time-Timer Web Application for Primary & Secondary School Teachers
+         */
+
+        (function () {
+            'use strict';
+
+            // DOM Elements
+            const timerDisk = document.getElementById('timerDisk');
+            const donutHole = document.getElementById('donutHole');
+            const dragHandle = document.getElementById('dragHandle');
+            const tickMarksGroup = document.getElementById('tickMarksGroup');
+            const dialNumbersGroup = document.getElementById('dialNumbersGroup');
+            const clockSvg = document.getElementById('clockSvg');
+            const digitalTimeDisplay = document.getElementById('digitalTimeDisplay');
+            const digitalDisplay = document.getElementById('digitalDisplay');
+            const digitalStatus = document.getElementById('digitalStatus');
+            const mainPlayBtn = document.getElementById('mainPlayBtn');
+            const playBtnIcon = document.getElementById('playBtnIcon');
+            const playBtnText = document.getElementById('playBtnText');
+            const btnReset = document.getElementById('btnReset');
+            const btnAdd1 = document.getElementById('btnAdd1');
+            const btnSub1 = document.getElementById('btnSub1');
+            const btnAdd5 = document.getElementById('btnAdd5');
+            const presetsGrid = document.getElementById('presetsGrid');
+            const optionsToggleBtn = document.getElementById('optionsToggleBtn');
+            const optionsPanel = document.getElementById('optionsPanel');
+            const activityTitleInput = document.getElementById('activityTitleInput');
+            const optionsActivityInput = document.getElementById('optionsActivityInput');
+            const colorPalette = document.getElementById('colorPalette');
+            const diskStyleSelect = document.getElementById('diskStyleSelect');
+            const directionSelect = document.getElementById('directionSelect');
+            const soundSelect = document.getElementById('soundSelect');
+            const testSoundBtn = document.getElementById('testSoundBtn');
+            const checkAutoStart = document.getElementById('checkAutoStart');
+            const checkShowDigits = document.getElementById('checkShowDigits');
+            const checkWarning1m = document.getElementById('checkWarning1m');
+            const checkTicking = document.getElementById('checkTicking');
+            const celebrationOverlay = document.getElementById('celebrationOverlay');
+            const celebrationCloseBtn = document.getElementById('celebrationCloseBtn');
+            const celebrationPlus1Btn = document.getElementById('celebrationPlus1Btn');
+            const celebrationMessage = document.getElementById('celebrationMessage');
+            const projBtn = document.getElementById('projection-toggle-btn');
+            const audioToggleBtn = document.getElementById('audio-toggle-btn');
+            const iconVolOn = document.getElementById('icon-vol-on');
+            const iconVolOff = document.getElementById('icon-vol-off');
+
+            // Timer State
+            const CX = 250;
+            const CY = 250;
+            const RADIUS = 210;
+
+            let totalSeconds = 600;      // Current set duration in seconds (default 10 min)
+            let remainingSeconds = 600;  // Remaining seconds
+            let timerId = null;          // setInterval ID
+            let isRunning = false;
+            let warning1mFired = false;
+            let isDragging = false;
+            let lastTickSecond = -1;
+
+            // Audio State (Web Audio API)
+            let audioCtx = null;
+            let isMuted = localStorage.getItem('c2_audio_muted') === 'true';
+
+            function updateAudioIcon() {
+                if (iconVolOn && iconVolOff) {
+                    iconVolOn.style.display = isMuted ? 'none' : 'block';
+                    iconVolOff.style.display = isMuted ? 'block' : 'none';
+                }
+            }
+            updateAudioIcon();
+
+            if (audioToggleBtn) {
+                audioToggleBtn.addEventListener('click', () => {
+                    isMuted = !isMuted;
+                    localStorage.setItem('c2_audio_muted', isMuted);
+                    updateAudioIcon();
+                });
+            }
+
+            function getAudioContext() {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                return audioCtx;
+            }
+
+            // Synthesized sounds
+            function playZenChime() {
+                if (isMuted) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    // Harmonious pentatonic chime (F4, A4, C5, E5, A5)
+                    const notes = [349.23, 440.00, 523.25, 659.25, 880.00];
+                    notes.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                        
+                        gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
+                        gain.gain.linearRampToValueAtTime(0.18, now + idx * 0.12 + 0.04);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 2.5);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(now + idx * 0.12);
+                        osc.stop(now + idx * 0.12 + 2.6);
+                    });
+                } catch (e) { console.error(e); }
+            }
+
+            function playSchoolBell() {
+                if (isMuted) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    // Bell with slight frequency beating (784Hz + 788Hz)
+                    [784, 788, 1568].forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = i === 2 ? 'sine' : 'triangle';
+                        osc.frequency.setValueAtTime(freq, now);
+
+                        gain.gain.setValueAtTime(0.16, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(now);
+                        osc.stop(now + 1.9);
+                    });
+                } catch (e) { console.error(e); }
+            }
+
+            function playDingDong() {
+                if (isMuted) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    // Ding (E5) then Dong (C5)
+                    [[659.25, 0], [523.25, 0.4]].forEach(([freq, delay]) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + delay);
+
+                        gain.gain.setValueAtTime(0.001, now + delay);
+                        gain.gain.linearRampToValueAtTime(0.2, now + delay + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 1.2);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(now + delay);
+                        osc.stop(now + delay + 1.3);
+                    });
+                } catch (e) { console.error(e); }
+            }
+
+            function playBeeps() {
+                if (isMuted) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    [0, 0.18, 0.36].forEach(delay => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(880, now + delay);
+
+                        gain.gain.setValueAtTime(0.08, now + delay);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.1);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(now + delay);
+                        osc.stop(now + delay + 0.12);
+                    });
+                } catch (e) { console.error(e); }
+            }
+
+            function playWarningSound() {
+                if (isMuted) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    // Soft double chime (A4, C5)
+                    [440, 523.25].forEach((freq, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.15);
+
+                        gain.gain.setValueAtTime(0.001, now + i * 0.15);
+                        gain.gain.linearRampToValueAtTime(0.12, now + i * 0.15 + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.6);
+
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+
+                        osc.start(now + i * 0.15);
+                        osc.stop(now + i * 0.15 + 0.7);
+                    });
+                } catch (e) { console.error(e); }
+            }
+
+            function playTickSound() {
+                if (isMuted) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(1200, now);
+                    gain.gain.setValueAtTime(0.015, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.02);
+                } catch (e) { }
+            }
+
+            function playEndSound() {
+                const soundType = soundSelect.value;
+                if (soundType === 'zen') playZenChime();
+                else if (soundType === 'bell') playSchoolBell();
+                else if (soundType === 'dingdong') playDingDong();
+                else if (soundType === 'beeps') playBeeps();
+            }
+
+            if (testSoundBtn) {
+                testSoundBtn.addEventListener('click', () => {
+                    playEndSound();
+                });
+            }
+
+            // User Preferences Persistence
+            const STORAGE_KEY = 'time_timer_settings_v1';
+            let settings = {
+                color: '#ef4444',
+                style: 'solid',
+                direction: 'counter-clockwise',
+                sound: 'zen',
+                autoStart: true,
+                showDigits: true,
+                warning1m: true,
+                ticking: false,
+                lastMinutes: 10,
+                activityTitle: ''
+            };
+
+            function loadSettings() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        settings = Object.assign(settings, JSON.parse(raw));
+                    }
+                } catch (e) { }
+
+                // Apply to UI
+                document.documentElement.style.setProperty('--timer-disk-color', settings.color);
+                document.querySelectorAll('.color-swatch').forEach(sw => {
+                    sw.classList.toggle('active', sw.dataset.color === settings.color);
+                });
+                diskStyleSelect.value = settings.style;
+                directionSelect.value = settings.direction;
+                soundSelect.value = settings.sound;
+                checkAutoStart.checked = settings.autoStart;
+                checkShowDigits.checked = settings.showDigits;
+                checkWarning1m.checked = settings.warning1m;
+                checkTicking.checked = settings.ticking;
+                updateActivityUI();
+
+                donutHole.style.display = settings.style === 'ring' ? 'block' : 'none';
+                digitalDisplay.style.display = settings.showDigits ? 'flex' : 'none';
+            }
+
+            function saveSettings() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+                } catch (e) { }
+            }
+
+            // Build Clock Dial (Ticks & Numbers)
+            function buildClockDial() {
+                tickMarksGroup.innerHTML = '';
+                dialNumbersGroup.innerHTML = '';
+
+                const isCounterClockwise = settings.direction === 'counter-clockwise';
+
+                // 60 tick marks
+                for (let i = 0; i < 60; i++) {
+                    const angleDeg = i * 6; // 360 / 60 = 6 deg
+                    const angleRad = (angleDeg - 90) * Math.PI / 180;
+                    const isMajor = (i % 5 === 0);
+
+                    const tickLength = isMajor ? 14 : 7;
+                    const strokeWidth = isMajor ? 3 : 1.5;
+                    const strokeColor = isMajor ? 'var(--clock-tick-major)' : 'var(--clock-tick)';
+
+                    const r1 = RADIUS + 16;
+                    const r2 = r1 - tickLength;
+
+                    const x1 = CX + r1 * Math.cos(angleRad);
+                    const y1 = CY + r1 * Math.sin(angleRad);
+                    const x2 = CX + r2 * Math.cos(angleRad);
+                    const y2 = CY + r2 * Math.sin(angleRad);
+
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1.toFixed(2));
+                    line.setAttribute('y1', y1.toFixed(2));
+                    line.setAttribute('x2', x2.toFixed(2));
+                    line.setAttribute('y2', y2.toFixed(2));
+                    line.setAttribute('stroke', strokeColor);
+                    line.setAttribute('stroke-width', strokeWidth);
+                    line.setAttribute('stroke-linecap', 'round');
+                    tickMarksGroup.appendChild(line);
+                }
+
+                // 12 numbers: 0, 5, 10, ... 55
+                for (let i = 0; i < 12; i++) {
+                    const minuteVal = i * 5;
+                    // In counter-clockwise (Time-Timer): 0 at top, 5 at 11h, 10 at 10h, 15 at 9h, etc.
+                    // In clockwise: 0 at top, 5 at 1h, 10 at 2h, etc.
+                    const stepIndex = isCounterClockwise ? (12 - i) % 12 : i;
+                    const angleDeg = stepIndex * 30; // 360 / 12 = 30 deg
+                    const angleRad = (angleDeg - 90) * Math.PI / 180;
+
+                    const textR = RADIUS - 18;
+                    const tx = CX + textR * Math.cos(angleRad);
+                    const ty = CY + textR * Math.sin(angleRad) + 6; // slightly adjusted baseline
+
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', tx.toFixed(2));
+                    text.setAttribute('y', ty.toFixed(2));
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('font-family', "'Outfit', sans-serif");
+                    text.setAttribute('font-size', '18');
+                    text.setAttribute('font-weight', minuteVal % 15 === 0 ? '800' : '700');
+                    text.setAttribute('fill', 'var(--clock-num)');
+                    text.textContent = (minuteVal === 0) ? '0' : minuteVal.toString();
+                    dialNumbersGroup.appendChild(text);
+                }
+            }
+
+            // Draw Disk (Colored wedge)
+            function renderDisk() {
+                const fraction = Math.max(0, Math.min(1, remainingSeconds / 3600));
+                const angleDeg = fraction * 360;
+
+                if (fraction <= 0) {
+                    timerDisk.setAttribute('d', '');
+                    dragHandle.style.display = 'none';
+                    return;
+                }
+
+                if (fraction >= 0.9999) {
+                    // Full circle: SVG arc doesn't render well when start == end, draw 2 half arcs
+                    const d = `
+                        M ${CX} ${CY - RADIUS}
+                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY + RADIUS}
+                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY - RADIUS}
+                        Z
+                    `;
+                    timerDisk.setAttribute('d', d);
+                    dragHandle.style.display = 'none';
+                    return;
+                }
+
+                const isCounterClockwise = settings.direction === 'counter-clockwise';
+                const angleRad = (angleDeg * Math.PI) / 180;
+
+                // 12 o'clock coordinate
+                const topX = CX;
+                const topY = CY - RADIUS;
+
+                // End of arc coordinate
+                let endX, endY;
+                let sweepFlag;
+
+                if (isCounterClockwise) {
+                    // Counter-clockwise from 12 o'clock
+                    endX = CX - RADIUS * Math.sin(angleRad);
+                    endY = CY - RADIUS * Math.cos(angleRad);
+                    sweepFlag = 0; // Sweep counter-clockwise
+                } else {
+                    // Clockwise from 12 o'clock
+                    endX = CX + RADIUS * Math.sin(angleRad);
+                    endY = CY - RADIUS * Math.cos(angleRad);
+                    sweepFlag = 1; // Sweep clockwise
+                }
+
+                const largeArcFlag = angleDeg > 180 ? 1 : 0;
+
+                const pathData = `
+                    M ${CX} ${CY}
+                    L ${topX} ${topY}
+                    A ${RADIUS} ${RADIUS} 0 ${largeArcFlag} ${sweepFlag} ${endX.toFixed(2)} ${endY.toFixed(2)}
+                    Z
+                `;
+                timerDisk.setAttribute('d', pathData);
+
+                // Update drag knob position
+                dragHandle.setAttribute('cx', endX.toFixed(2));
+                dragHandle.setAttribute('cy', endY.toFixed(2));
+                dragHandle.style.display = 'block';
+            }
+
+            // Update digital & button UI
+            function updateUI() {
+                const mins = Math.floor(remainingSeconds / 60);
+                const secs = remainingSeconds % 60;
+                digitalTimeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                if (isRunning) {
+                    mainPlayBtn.classList.remove('paused');
+                    mainPlayBtn.classList.add('running');
+                    playBtnText.textContent = 'Pause';
+                    playBtnIcon.setAttribute('data-fa', 'pause');
+                    digitalStatus.textContent = 'En cours';
+                    digitalStatus.className = 'digital-status running';
+                } else {
+                    mainPlayBtn.classList.add('paused');
+                    mainPlayBtn.classList.remove('running');
+                    playBtnText.textContent = remainingSeconds === 0 ? 'Relancer' : 'Démarrer';
+                    playBtnIcon.setAttribute('data-fa', 'play');
+                    digitalStatus.textContent = remainingSeconds === 0 ? 'Terminé' : 'En pause';
+                    digitalStatus.className = remainingSeconds === 0 ? 'digital-status ended' : 'digital-status';
+                }
+
+                // Delta buttons disable states
+                btnSub1.disabled = (remainingSeconds < 60 && !isRunning);
+                btnAdd1.disabled = (remainingSeconds >= 3540);
+                btnAdd5.disabled = (remainingSeconds >= 3300);
+
+                // Highlight active preset if matches
+                const currentMinutes = Math.round(remainingSeconds / 60);
+                document.querySelectorAll('.preset-chip').forEach(chip => {
+                    const chipMin = parseInt(chip.dataset.min, 10);
+                    chip.classList.toggle('active', remainingSeconds > 0 && remainingSeconds % 60 === 0 && chipMin === currentMinutes);
+                });
+
+                window.fa?.createIcons?.();
+                renderDisk();
+            }
+
+            // Timer Tick Loop
+            function tick() {
+                if (remainingSeconds > 0) {
+                    remainingSeconds--;
+
+                    // Ticking sound
+                    if (settings.ticking) {
+                        playTickSound();
+                    }
+
+                    // 1 minute warning
+                    if (settings.warning1m && remainingSeconds === 60 && !warning1mFired) {
+                        warning1mFired = true;
+                        playWarningSound();
+                    }
+
+                    updateUI();
+                } else {
+                    // Time is up!
+                    stopTimer();
+                    updateUI();
+                    playEndSound();
+                    showCelebration();
+                }
+            }
+
+            function startTimer() {
+                if (remainingSeconds <= 0) {
+                    remainingSeconds = totalSeconds || 600;
+                }
+                if (!isRunning) {
+                    isRunning = true;
+                    warning1mFired = (remainingSeconds <= 60);
+                    timerId = setInterval(tick, 1000);
+                    updateUI();
+                }
+            }
+
+            function stopTimer() {
+                if (isRunning) {
+                    isRunning = false;
+                    clearInterval(timerId);
+                    timerId = null;
+                    updateUI();
+                }
+            }
+
+            function toggleTimer() {
+                if (isRunning) {
+                    stopTimer();
+                } else {
+                    startTimer();
+                }
+            }
+
+            function setTimeMinutes(mins, autoStart = false) {
+                mins = Math.max(1, Math.min(60, mins));
+                totalSeconds = mins * 60;
+                remainingSeconds = totalSeconds;
+                warning1mFired = false;
+                settings.lastMinutes = mins;
+                saveSettings();
+
+                if (autoStart) {
+                    startTimer();
+                } else {
+                    stopTimer();
+                    updateUI();
+                }
+            }
+
+            function adjustSeconds(deltaSec) {
+                remainingSeconds = Math.max(0, Math.min(3600, remainingSeconds + deltaSec));
+                totalSeconds = Math.max(totalSeconds, remainingSeconds);
+                updateUI();
+            }
+
+            function resetTimer() {
+                stopTimer();
+                remainingSeconds = totalSeconds;
+                warning1mFired = false;
+                updateUI();
+            }
+
+            // Activity Title Management
+            function updateActivityUI() {
+                const title = settings.activityTitle || '';
+                activityTitleInput.value = title;
+                if (optionsActivityInput) optionsActivityInput.value = title;
+            }
+
+            // Celebration Modal
+            function showCelebration() {
+                const title = (settings.activityTitle || '').trim();
+                celebrationMessage.textContent = title
+                    ? `L'activité « ${title} » est terminée !`
+                    : 'Le compte à rebours est terminé.';
+                celebrationOverlay.classList.remove('hidden');
+                window.fa?.createIcons?.();
+            }
+
+            function hideCelebration() {
+                celebrationOverlay.classList.add('hidden');
+            }
+
+            celebrationCloseBtn.addEventListener('click', hideCelebration);
+            celebrationPlus1Btn.addEventListener('click', () => {
+                hideCelebration();
+                adjustSeconds(60);
+                startTimer();
+            });
+
+            // Interactive Drag/Click on Clock SVG
+            function getMinutesFromEvent(e) {
+                const rect = clockSvg.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                if (clientX === undefined || clientY === undefined) return null;
+
+                const svgX = ((clientX - rect.left) / rect.width) * 500;
+                const svgY = ((clientY - rect.top) / rect.height) * 500;
+
+                const dx = svgX - CX;
+                const dy = svgY - CY;
+
+                const isCounterClockwise = settings.direction === 'counter-clockwise';
+
+                // Angle from 12 o'clock (0 rad = 12h, positive clockwise)
+                let angleRad = Math.atan2(dx, -dy);
+                if (angleRad < 0) angleRad += 2 * Math.PI;
+
+                let angleDeg = (angleRad * 180) / Math.PI;
+                if (isCounterClockwise) {
+                    angleDeg = (360 - angleDeg) % 360;
+                }
+
+                // 6 deg per minute
+                let mins = angleDeg / 6;
+                // Round to nearest minute
+                mins = Math.round(mins);
+                if (mins === 0 && angleDeg > 180) mins = 60;
+                return Math.max(1, Math.min(60, mins));
+            }
+
+            function handlePointerStart(e) {
+                isDragging = true;
+                const m = getMinutesFromEvent(e);
+                if (m !== null) {
+                    setTimeMinutes(m, false);
+                }
+            }
+
+            function handlePointerMove(e) {
+                if (!isDragging) return;
+                const m = getMinutesFromEvent(e);
+                if (m !== null && m !== Math.round(remainingSeconds / 60)) {
+                    setTimeMinutes(m, false);
+                    playTickSound();
+                }
+            }
+
+            function handlePointerEnd() {
+                if (isDragging) {
+                    isDragging = false;
+                    if (settings.autoStart) {
+                        startTimer();
+                    }
+                }
+            }
+
+            clockSvg.addEventListener('mousedown', handlePointerStart);
+            window.addEventListener('mousemove', handlePointerMove);
+            window.addEventListener('mouseup', handlePointerEnd);
+
+            clockSvg.addEventListener('touchstart', handlePointerStart, { passive: false });
+            window.addEventListener('touchmove', handlePointerMove, { passive: false });
+            window.addEventListener('touchend', handlePointerEnd);
+
+            // Controls Event Listeners
+            mainPlayBtn.addEventListener('click', toggleTimer);
+            btnReset.addEventListener('click', resetTimer);
+            btnAdd1.addEventListener('click', () => adjustSeconds(60));
+            btnSub1.addEventListener('click', () => adjustSeconds(-60));
+            btnAdd5.addEventListener('click', () => adjustSeconds(300));
+
+            // Presets Clicks (1 CLIC EXPERIENCE)
+            presetsGrid.addEventListener('click', (e) => {
+                const btn = e.target.closest('.preset-chip');
+                if (!btn) return;
+                const mins = parseInt(btn.dataset.min, 10);
+                if (!isNaN(mins)) {
+                    setTimeMinutes(mins, settings.autoStart);
+                }
+            });
+
+            // Keyboard Shortcuts
+            window.addEventListener('keydown', (e) => {
+                // Do not intercept when typing in any input or textarea
+                if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    toggleTimer();
+                } else if (e.key === 'r' || e.key === 'R') {
+                    resetTimer();
+                } else if (e.key === '+' || e.key === 'ArrowUp') {
+                    adjustSeconds(60);
+                } else if (e.key === '-' || e.key === 'ArrowDown') {
+                    adjustSeconds(-60);
+                } else if (e.key === 't' || e.key === 'T' || e.key === 'f' || e.key === 'F') {
+                    if (projBtn) projBtn.click();
+                } else if (e.key === 'Escape') {
+                    if (!celebrationOverlay.classList.contains('hidden')) {
+                        hideCelebration();
+                    } else if (document.body.classList.contains('projection')) {
+                        document.body.classList.remove('projection');
+                    }
+                }
+            });
+
+            // Mode TBI / Projection
+            if (projBtn) {
+                projBtn.addEventListener('click', () => {
+                    document.body.classList.toggle('projection');
+                });
+            }
+
+            // Options Drawer Toggle
+            optionsToggleBtn.addEventListener('click', () => {
+                optionsPanel.classList.toggle('hidden');
+            });
+
+            // Options Form Inputs
+            colorPalette.addEventListener('click', (e) => {
+                const swatch = e.target.closest('.color-swatch');
+                if (!swatch) return;
+                const color = swatch.dataset.color;
+                settings.color = color;
+                document.documentElement.style.setProperty('--timer-disk-color', color);
+                document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw === swatch));
+                saveSettings();
+                renderDisk();
+            });
+
+            diskStyleSelect.addEventListener('change', () => {
+                settings.style = diskStyleSelect.value;
+                donutHole.style.display = settings.style === 'ring' ? 'block' : 'none';
+                saveSettings();
+            });
+
+            directionSelect.addEventListener('change', () => {
+                settings.direction = directionSelect.value;
+                saveSettings();
+                buildClockDial();
+                renderDisk();
+            });
+
+            soundSelect.addEventListener('change', () => {
+                settings.sound = soundSelect.value;
+                saveSettings();
+            });
+
+            checkAutoStart.addEventListener('change', () => {
+                settings.autoStart = checkAutoStart.checked;
+                saveSettings();
+            });
+
+            checkShowDigits.addEventListener('change', () => {
+                settings.showDigits = checkShowDigits.checked;
+                digitalDisplay.style.display = settings.showDigits ? 'flex' : 'none';
+                saveSettings();
+            });
+
+            checkWarning1m.addEventListener('change', () => {
+                settings.warning1m = checkWarning1m.checked;
+                saveSettings();
+            });
+
+            checkTicking.addEventListener('change', () => {
+                settings.ticking = checkTicking.checked;
+                saveSettings();
+            });
+
+            // Activity Title Direct Input Listeners
+            activityTitleInput.addEventListener('input', () => {
+                settings.activityTitle = activityTitleInput.value;
+                saveSettings();
+                if (optionsActivityInput && optionsActivityInput.value !== activityTitleInput.value) {
+                    optionsActivityInput.value = activityTitleInput.value;
+                }
+            });
+
+            activityTitleInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === 'Escape') {
+                    activityTitleInput.blur();
+                }
+            });
+
+            activityTitleInput.addEventListener('blur', () => {
+                settings.activityTitle = activityTitleInput.value.trim();
+                activityTitleInput.value = settings.activityTitle;
+                saveSettings();
+                if (optionsActivityInput) optionsActivityInput.value = settings.activityTitle;
+            });
+
+            if (optionsActivityInput) {
+                optionsActivityInput.addEventListener('input', () => {
+                    settings.activityTitle = optionsActivityInput.value;
+                    activityTitleInput.value = settings.activityTitle;
+                    saveSettings();
+                });
+            }
+
+            // Initialize App
+            loadSettings();
+            buildClockDial();
+            setTimeMinutes(settings.lastMinutes || 10, false);
+            updateUI();
+        })();
+    </script>
+</body>
+
+</html>

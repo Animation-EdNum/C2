@@ -1125,5 +1125,31 @@ window.REGISTRY = [
     "category": "teachers_tools",
     "inIndex": true,
     "inC1": false
+  },
+  {
+    "id": "tool-time-timer",
+    "href": "alpha/webapps/teacher/time_timer.html",
+    "isAlpha": true,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "timer",
+    "title": "Time-Timer",
+    "desc": "Compte à rebours circulaire visuel pour gérer le temps en classe.",
+    "tags": [
+      "#Outil",
+      "#Gestion",
+      "#Classe",
+      "#Temps"
+    ],
+    "ref": "Alpha",
+    "badges": [
+      {
+        "text": "Gestion de classe",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
   }
 ];

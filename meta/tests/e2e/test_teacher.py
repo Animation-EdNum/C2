@@ -8,3 +8,8 @@ def test_bareme_has_correct_title(page: Page):
 def test_tirage_has_correct_title(page: Page):
     page.goto("http://localhost:8000/webapps/teacher/tirage.html")
     expect(page).to_have_title(re.compile("Tirage au Sort"))
+
+def test_time_timer_has_correct_title(page: Page):
+    page.goto("http://localhost:8000/alpha/webapps/teacher/time_timer.html")
+    expect(page).to_have_title(re.compile("Time-Timer"))
+
