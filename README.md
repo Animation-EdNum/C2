@@ -113,6 +113,9 @@ Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automat
 #### Créateur de QR codes (`webapps/teacher/qrcode.html`)
 Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables, projection TBI, téléchargement HD et copie presse-papier). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_QRCODE.md).
 
+#### Minuteur visuel (Time-Timer) (`webapps/teacher/time_timer.html`)
+Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, réglage fluide au glisser-déposer, raccourcis d'activités prédéfinis, carillons sonores (Web Audio API sans ressource externe) et modes plein écran / projection TBI pour structurer le temps en classe.
+
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
 - 🏗️ **Jeu de la grue** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_JEU_DE_LA_GRUE.md)
 - 💻 **Pseudo-code** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
@@ -124,6 +127,8 @@ Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, f
 - 🧠 **Dresseur de neurones & Détective IA** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
 - 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
 - 🃏 **Une chose après l'autre (Tri par insertion)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_TRI_INSERTION.md)
+- ⌨️ **Dactylo (Clavier suisse romand QWERTZ)** : Apprentissage et entraînement à la frappe au clavier avec 10 niveaux progressifs, statistiques MPM et précision en direct.
+
 
 ---
 

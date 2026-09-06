@@ -37,7 +37,7 @@ window.REGISTRY = [
       "#Bureautique",
       "#Frappe"
     ],
-    "ref": "Éducation numérique · Clavier suisse romand",
+    "ref": "EN 23 · Usages — Saisie d'un texte",
     "badges": [
       {
         "text": "5-8H",
@@ -334,7 +334,7 @@ window.REGISTRY = [
       "#Protection",
       "#Mot de passe"
     ],
-    "ref": "Environnement numérique de travail",
+    "ref": "EN 23 · Usages — Processus d'identification personnelle",
     "badges": [
       {
         "text": "5H-8H",
@@ -567,7 +567,7 @@ window.REGISTRY = [
     "icon": "dt-brain-circuit",
     "iconStyle": null,
     "title": "ia-pedia",
-    "desc": "Simplifie les articles de Wikipédia à ton niveau de lecture et répond à tes questions pour faciliter tes recherches.",
+    "desc": "Simplifie les articles de Wikipédia à ton niveau et répond à tes questions.",
     "tags": [
       "#Wikipédia",
       "#Recherche",
@@ -590,7 +590,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5H-8H",
+    "dataLevel": "5H-10CO",
     "icon": "book",
     "iconStyle": null,
     "title": "Le Dico des Ados",
@@ -602,7 +602,7 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "5H-8H",
+        "text": "5H-10CO",
         "grey": false
       }
     ],
@@ -974,7 +974,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "3H-8H",
+    "dataLevel": "3H-10CO",
     "icon": "map",
     "iconStyle": null,
     "title": "Swisstopo",
@@ -987,7 +987,7 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "3H-8H",
+        "text": "3H-10CO",
         "grey": false
       }
     ],
@@ -1028,7 +1028,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5H-8H",
+    "dataLevel": "7H-10CO",
     "icon": "compass",
     "iconStyle": null,
     "title": "GeoGebra Classique",
@@ -1041,7 +1041,7 @@ window.REGISTRY = [
     "ref": null,
     "badges": [
       {
-        "text": "5H-8H",
+        "text": "7H-10CO",
         "grey": false
       }
     ],
@@ -1157,8 +1157,7 @@ window.REGISTRY = [
   },
   {
     "id": "tool-time-timer",
-    "href": "alpha/webapps/teacher/time_timer.html",
-    "isAlpha": true,
+    "href": "webapps/teacher/time_timer.html",
     "isTeacher": true,
     "dataLevel": null,
     "icon": "timer",
@@ -1170,7 +1169,7 @@ window.REGISTRY = [
       "#Classe",
       "#Temps"
     ],
-    "ref": "Alpha",
+    "ref": null,
     "badges": [
       {
         "text": "Gestion de classe",

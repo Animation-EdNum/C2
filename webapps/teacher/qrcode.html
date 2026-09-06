@@ -256,7 +256,6 @@
 
         .toggle-content {
             transition: all 0.3s ease;
-            overflow: hidden;
             max-height: 1200px;
             opacity: 1;
             display: flex;
@@ -270,6 +269,7 @@
             margin: 0;
             pointer-events: none;
             gap: 0;
+            overflow: hidden;
         }
 
         /* TABS */
@@ -375,46 +375,69 @@
         /* Color presets */
         .color-palette {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+            padding: 6px 4px;
         }
 
         .color-chip {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            min-height: 34px;
             border-radius: var(--radius-full);
             border: 2px solid transparent;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             position: relative;
+            padding: 0;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
 
         .color-chip:hover {
-            transform: scale(1.15);
+            transform: scale(1.12);
         }
 
         .color-chip.active {
             border-color: white;
             box-shadow: 0 0 0 2px var(--primary);
-            transform: scale(1.1);
+            transform: scale(1.08);
         }
 
         .custom-color-wrapper {
             position: relative;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .custom-color-input {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            min-height: 34px;
             border-radius: var(--radius-full);
             border: 2px solid var(--border);
             padding: 0;
             cursor: pointer;
             background: transparent;
             overflow: hidden;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .custom-color-input:hover {
+            transform: scale(1.12);
+        }
+
+        .custom-color-input.active {
+            border-color: white;
+            box-shadow: 0 0 0 2px var(--primary);
+            transform: scale(1.08);
         }
 
         .custom-color-input::-webkit-color-swatch-wrapper { padding: 0; }
@@ -750,7 +773,7 @@
     <div class="app-shell" id="main-content">
         <header class="no-print">
             <div class="header-title-wrapper">
-                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../../index.html#teachers" class="header-icon" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
                     <i data-fa="qrcode"></i>
                 </a>
                 <div>
@@ -968,6 +991,7 @@
                 <span style="font-size: 0.9em; opacity: 0.85;">
                     <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
                     (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    · <a href="../../index.html#teachers">Espace Enseignant·e·s</a>
                 </span>
             </p>
         </footer>
@@ -1086,6 +1110,7 @@
         document.querySelectorAll('.color-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+                customColorInput.classList.remove('active');
                 chip.classList.add('active');
                 state.color = chip.dataset.color;
                 customColorInput.value = state.color;
@@ -1096,6 +1121,7 @@
 
         customColorInput.addEventListener('input', (e) => {
             document.querySelectorAll('.color-chip').forEach(c => c.classList.remove('active'));
+            customColorInput.classList.add('active');
             state.color = e.target.value;
             updateQR();
             saveState();
@@ -1514,17 +1540,57 @@
         });
 
         // Reset
-        document.getElementById('resetBtn')?.addEventListener('click', () => {
-            inputUrl.value = '';
-            inputText.value = '';
-            inputWifiSsid.value = '';
-            inputWifiPass.value = '';
-            inputBatch.value = '';
-            inputTitle.value = '';
+        function resetAll() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+
+            state = {
+                type: 'url',
+                url: 'https://ednum.org',
+                text: 'Bravo ! Tu as trouvé l\'indice.',
+                wifiSsid: 'WiFi_Classe',
+                wifiPass: '',
+                wifiType: 'WPA',
+                batchText: 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu',
+                title: 'Portail Éducation Numérique',
+                showSubtext: true,
+                color: '#000000',
+                ecc: 'M',
+                size: 600
+            };
+
+            inputUrl.value = state.url;
+            inputText.value = state.text;
+            inputWifiSsid.value = state.wifiSsid;
+            inputWifiPass.value = state.wifiPass;
+            selectWifiType.value = state.wifiType;
+            inputBatch.value = state.batchText;
+            inputTitle.value = state.title;
+            checkShowSubtext.checked = state.showSubtext;
+            selectEcc.value = state.ecc;
+            selectRenderSize.value = String(state.size);
+            customColorInput.value = state.color;
+
+            document.querySelectorAll('.color-swatch').forEach(sw => {
+                sw.classList.toggle('active', sw.dataset.color === '#000000');
+            });
+            customColorInput.classList.remove('active');
+
+            tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.type === 'url'));
+            viewUrl.classList.remove('hidden');
+            viewText.classList.add('hidden');
+            viewWifi.classList.add('hidden');
+            viewBatch.classList.add('hidden');
+
             updateQR();
-            showToast('Champs réinitialisés', 'info');
-            saveState();
-        });
+            if (typeof showToast === 'function') {
+                showToast('Application réinitialisée', 'info');
+            }
+        }
+
+        window.__onResetApp = resetAll;
+        document.getElementById('resetBtn')?.addEventListener('click', resetAll);
 
         // Action buttons bindings
         document.getElementById('copyImgBtn')?.addEventListener('click', copyQRImage);

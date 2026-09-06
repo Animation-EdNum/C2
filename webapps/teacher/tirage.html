@@ -65,6 +65,7 @@
         }
 
         body.dark {
+            color-scheme: dark;
             --bg-gradient-start: #0f172a;
             --bg-gradient-end: #064e4b;
             --glass-bg: rgba(15, 23, 42, 0.8);
@@ -223,6 +224,18 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-light);
             background: white;
+        }
+
+        body.dark input:focus,
+        body.dark textarea:focus {
+            background: #0f172a;
+            color: var(--text-main);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
         }
 
         /* DRAW VIEW */
@@ -494,7 +507,7 @@
                 <button class="back-btn hidden" id="backToSetupBtn" title="Retour à la configuration">
                     <i data-fa="arrow-left" style="width:20px;height:20px;"></i>
                 </button>
-                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../../index.html#teachers" class="header-icon" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
                     <i data-fa="dice"></i>
                 </a>
                 <div>
@@ -601,6 +614,7 @@
                 <span style="font-size: 0.9em; opacity: 0.85;">
                     <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
                     (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    · <a href="../../index.html#teachers">Espace Enseignant·e·s</a>
                 </span>
             </p>
         </footer>
@@ -864,6 +878,31 @@
                 if (typeof playSound === 'function') playSound('click');
             });
         }
+
+        window.__onResetApp = function() {
+            try {
+                localStorage.removeItem(STATE_KEY);
+            } catch (e) {}
+            state = {
+                mode: 'number',
+                allParticipants: [],
+                availableParticipants: [],
+                drawnParticipants: [],
+                absentParticipants: [],
+                drawHistory: []
+            };
+            totalInput.value = '';
+            namesInput.value = '';
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'number'));
+            document.getElementById('mode-number-view').classList.remove('hidden');
+            document.getElementById('mode-names-view').classList.add('hidden');
+            setView('setup');
+            drawnNumber.textContent = '?';
+            updateUI();
+            if (typeof showToast === 'function') {
+                showToast("Tirage réinitialisé", "info");
+            }
+        };
 
         loadState();
     </script>

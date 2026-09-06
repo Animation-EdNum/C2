@@ -18,7 +18,7 @@
 <html lang="fr">
 
 <head>
-    <link rel="root" href="../../../">
+    <link rel="root" href="../../">
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
@@ -27,13 +27,13 @@
     <meta property="og:title" content="Minuteur visuel · Compte à rebours pour la classe">
     <meta property="og:description" content="Minuteur visuel circulaire interactif de 0 à 60 minutes pour gérer le temps en classe en 1 clic.">
     <meta property="og:type" content="website">
-    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
-    <script src="../../../assets/js/fa-subset.js"></script>
-    <link rel="stylesheet" href="../../../assets/css/tokens.css">
-    <link rel="stylesheet" href="../../../assets/css/base.css">
-    <link rel="stylesheet" href="../../../assets/css/components.css">
-    <link rel="stylesheet" href="../../../assets/css/utilities.css">
-    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../assets/js/fa-subset.js"></script>
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../assets/css/teacher.css">
     <style>
         .action-buttons {
             position: absolute;
@@ -505,30 +505,75 @@
 
         .color-palette {
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            align-items: center;
             flex-wrap: wrap;
             margin-top: 4px;
+            padding: 4px 2px;
         }
 
         .color-swatch {
             width: 32px;
             height: 32px;
+            min-width: 32px;
+            min-height: 32px;
             border-radius: 50%;
             border: 2px solid transparent;
             cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
 
         .color-swatch:hover {
-            transform: scale(1.15);
+            transform: scale(1.12);
         }
 
         .color-swatch.active {
             border-color: var(--text-main);
-            transform: scale(1.12);
+            transform: scale(1.08);
             box-shadow: 0 0 0 2px var(--glass-bg), 0 3px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .custom-color-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .custom-color-input {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            min-height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            padding: 0;
+            cursor: pointer;
+            background: transparent;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-color-input:hover {
+            transform: scale(1.12);
+        }
+
+        .custom-color-input.active {
+            border-color: var(--text-main);
+            transform: scale(1.08);
+            box-shadow: 0 0 0 2px var(--glass-bg), 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-color-input::-webkit-color-swatch-wrapper { padding: 0; }
+        .custom-color-input::-webkit-color-swatch { border: none; border-radius: 50%; }
 
         .custom-select, .custom-checkbox-row {
             padding: 8px 12px;
@@ -539,6 +584,16 @@
             font-family: inherit;
             font-size: 1rem;
             outline: none;
+        }
+
+        .custom-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        body.dark .custom-select:focus {
+            background: #0f172a;
+            color: var(--text-main);
         }
 
         .custom-checkbox-row {
@@ -757,12 +812,11 @@
         <!-- HEADER -->
         <header>
             <div class="header-title-wrapper">
-                <a href="../../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../../index.html#teachers" class="header-icon" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
                     <i data-fa="timer" style="width:22px;height:22px;"></i>
                 </a>
                 <div class="header-title-group">
                     <h1>Minuteur visuel</h1>
-                    <span class="alpha-badge">Alpha</span>
                 </div>
             </div>
             <div class="header-actions">
@@ -844,7 +898,8 @@
                     -1 min
                 </button>
                 <button class="btn btn-primary btn-play paused" id="mainPlayBtn" title="Démarrer ou mettre en pause (Espace)">
-                    <i data-fa="play" id="playBtnIcon" style="width:20px;height:20px;"></i>
+                    <i data-fa="play" id="iconPlay" style="width:20px;height:20px;"></i>
+                    <i data-fa="pause" id="iconPause" style="display:none; width:20px;height:20px;"></i>
                     <span id="playBtnText">Démarrer</span>
                 </button>
                 <button class="btn-delta" id="btnAdd1" title="Ajouter 1 minute (+1 min)" aria-label="Ajouter 1 minute">
@@ -876,6 +931,9 @@
                             <button class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b" title="Ambre chaud"></button>
                             <button class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6" title="Violet doux"></button>
                             <button class="color-swatch" style="background:#ec4899;" data-color="#ec4899" title="Rose bonbon"></button>
+                            <div class="custom-color-wrapper" title="Couleur personnalisée">
+                                <input type="color" id="customColorInput" class="custom-color-input" value="#ef4444">
+                            </div>
                         </div>
                     </div>
 
@@ -946,12 +1004,12 @@
         <!-- FOOTER -->
         <footer class="no-print">
             <p>
-                Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
                     <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
                     (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
-                    · <a href="../../../index.html#teachers">Espace Enseignant·e·s</a>
+                    · <a href="../../index.html#teachers">Espace Enseignant·e·s</a>
                 </span>
             </p>
         </footer>
@@ -978,7 +1036,8 @@
         </div>
     </div>
 
-    <script src="../../../assets/js/theme.js"></script>
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
     <script>
         /* SPDX-License-Identifier: AGPL-3.0-only
          * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
@@ -1011,6 +1070,7 @@
             const activityTitleInput = document.getElementById('activityTitleInput');
             const optionsActivityInput = document.getElementById('optionsActivityInput');
             const colorPalette = document.getElementById('colorPalette');
+            const customColorInput = document.getElementById('customColorInput');
             const diskStyleSelect = document.getElementById('diskStyleSelect');
             const directionSelect = document.getElementById('directionSelect');
             const soundSelect = document.getElementById('soundSelect');
@@ -1261,9 +1321,16 @@
 
                 // Apply to UI
                 document.documentElement.style.setProperty('--timer-disk-color', settings.color);
+                let matchedSwatch = false;
                 document.querySelectorAll('.color-swatch').forEach(sw => {
-                    sw.classList.toggle('active', sw.dataset.color === settings.color);
+                    const isMatch = (sw.dataset.color || '').toLowerCase() === (settings.color || '').toLowerCase();
+                    sw.classList.toggle('active', isMatch);
+                    if (isMatch) matchedSwatch = true;
                 });
+                if (customColorInput) {
+                    customColorInput.value = (settings.color && settings.color.startsWith('#')) ? settings.color : '#ef4444';
+                    customColorInput.classList.toggle('active', !matchedSwatch);
+                }
                 diskStyleSelect.value = settings.style;
                 directionSelect.value = settings.direction;
                 soundSelect.value = settings.sound;
@@ -1414,18 +1481,23 @@
                 const secs = remainingSeconds % 60;
                 digitalTimeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
+                const iconPlay = document.getElementById('iconPlay');
+                const iconPause = document.getElementById('iconPause');
+
                 if (isRunning) {
                     mainPlayBtn.classList.remove('paused');
                     mainPlayBtn.classList.add('running');
                     playBtnText.textContent = 'Pause';
-                    playBtnIcon.setAttribute('data-fa', 'pause');
+                    if (iconPlay) iconPlay.style.display = 'none';
+                    if (iconPause) iconPause.style.display = 'inline-block';
                     digitalStatus.textContent = 'En cours';
                     digitalStatus.className = 'digital-status running';
                 } else {
                     mainPlayBtn.classList.add('paused');
                     mainPlayBtn.classList.remove('running');
-                    playBtnText.textContent = remainingSeconds === 0 ? 'Relancer' : 'Démarrer';
-                    playBtnIcon.setAttribute('data-fa', 'play');
+                    playBtnText.textContent = (remainingSeconds === 0) ? 'Relancer' : (remainingSeconds < totalSeconds ? 'Reprendre' : 'Démarrer');
+                    if (iconPlay) iconPlay.style.display = 'inline-block';
+                    if (iconPause) iconPause.style.display = 'none';
                     digitalStatus.textContent = remainingSeconds === 0 ? 'Terminé' : 'En pause';
                     digitalStatus.className = remainingSeconds === 0 ? 'digital-status ended' : 'digital-status';
                 }
@@ -1687,9 +1759,25 @@
                 settings.color = color;
                 document.documentElement.style.setProperty('--timer-disk-color', color);
                 document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw === swatch));
+                if (customColorInput) {
+                    customColorInput.classList.remove('active');
+                    customColorInput.value = color;
+                }
                 saveSettings();
                 renderDisk();
             });
+
+            if (customColorInput) {
+                customColorInput.addEventListener('input', (e) => {
+                    const color = e.target.value;
+                    settings.color = color;
+                    document.documentElement.style.setProperty('--timer-disk-color', color);
+                    document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
+                    customColorInput.classList.add('active');
+                    saveSettings();
+                    renderDisk();
+                });
+            }
 
             diskStyleSelect.addEventListener('change', () => {
                 settings.style = diskStyleSelect.value;
@@ -1759,6 +1847,42 @@
                     saveSettings();
                 });
             }
+
+            // Application Reset Handler (Global & Action button)
+            window.__onResetApp = function () {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+                isRunning = false;
+                hideCelebration();
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                } catch (e) { }
+
+                settings = {
+                    color: '#ef4444',
+                    style: 'solid',
+                    direction: 'counter-clockwise',
+                    sound: 'zen',
+                    autoStart: true,
+                    showDigits: false,
+                    warning1m: true,
+                    ticking: false,
+                    lastMinutes: 10,
+                    activityTitle: ''
+                };
+
+                activityTitleInput.value = '';
+                if (optionsActivityInput) optionsActivityInput.value = '';
+                loadSettings();
+                buildClockDial();
+                setTimeMinutes(10, false);
+                updateUI();
+                if (typeof showToast === 'function') {
+                    showToast("Minuteur réinitialisé", "info");
+                }
+            };
 
             // Initialize App
             loadSettings();

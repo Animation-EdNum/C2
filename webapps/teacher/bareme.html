@@ -521,7 +521,7 @@
     <div class="app-shell" id="pdf-container">
         <header class="no-print">
             <div class="header-title-wrapper">
-                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../../index.html#teachers" class="header-icon" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
                     <i data-fa="chart-simple"></i>
                 </a>
                 <div>
@@ -637,6 +637,7 @@
                 <span style="font-size: 0.9em; opacity: 0.85;">
                     <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
                     (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    · <a href="../../index.html#teachers">Espace Enseignant·e·s</a>
                 </span>
             </p>
         </footer>
@@ -1079,6 +1080,22 @@
         document.getElementById('increment').addEventListener('change', updateAll);
         document.getElementById('rounding').addEventListener('change', updateAll);
         document.getElementById('showMistakes').addEventListener('change', updateAll);
+
+        window.__onResetApp = function() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+            document.getElementById('totalPoints').value = '20';
+            document.getElementById('titleInput').value = '';
+            document.getElementById('pointsFor4').value = '';
+            document.getElementById('increment').value = '0.5';
+            document.getElementById('rounding').value = '0.1';
+            document.getElementById('showMistakes').checked = false;
+            updateAll();
+            if (typeof showToast === 'function') {
+                showToast("Barème réinitialisé", "info");
+            }
+        };
 
         loadPreferences();
         updateAll();

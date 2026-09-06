@@ -16,7 +16,11 @@
 - **Automate UI Specifics:** Masked command buttons (`.program-strip.masked .program-cmd`) must strictly maintain a neutral gray appearance, superseding the 'colored commands' mode. Share options strictly specific to this application append an explicit asterisk badge. Grid line visibility is toggled by adding/removing `.no-grid-lines` on `.bot-grid` containers. Fixed grid constraints are in `MAT_GRID_CONSTRAINTS`. Tooltips defined by `data-tooltip` are scoped to `.grid-toolbar [data-tooltip]`.
 - **Automate Descriptions:** Mat descriptions should be concise, factual, and written in simple language easily understandable by an 8-year-old child.
 - **Portal Navigation & Search UI :** The search bar must remain hidden by default and reveal smoothly upon clicking the header magnifying glass button (`#search-toggle-btn`) or clicking a card tag. To avoid confusion with Mode TBI (`chalkboard-user`), there is no toggle button in the header. Access to "Espace Enseignant·e·s" is provided via a discreet footer link (`#link-teachers`), and returning to "Espace Élèves" is done via a single `graduation-cap` button in the header when in teacher view.
+- **Teacher Webapps Navigation :** When clicking the header logo/icon inside any teacher tool (`webapps/teacher/`), the user must be redirected to `index.html#teachers` (the teacher space on the portal) and not to the general student portal.
 - **External Resources Display:** Student external resources and utilities must use compact cards (`.card-compact`), omitting descriptions, hashtags, and manual references to keep the interface focused and readable for students.
+- **Dark Mode Input Legibility :** In dark mode, all form inputs and textareas must remain dark upon focus with crisp, high-contrast text. Never allow inputs to revert to white backgrounds with white text.
+- **State Reset in Teacher Tools :** The reset application button must not only clear storage but immediately re-initialize the active app state and UI (via `window.__onResetApp`).
+
 
 ## 3. Developer & Execution Workflows
 - **Code:** Always use curly braces `{}` for control structures (if, else), even for single-line statements.

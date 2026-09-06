@@ -7,12 +7,13 @@
 
 ## 2. Application Structure
 - **Student Portals:** `index.html` (general use with smart sticky header, on-demand search toggle, role switcher), `indexC1.html` (simplified for 4-7 year olds).
-- **Stable Student Apps (`webapps/`):** Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
-- **Alpha Student Apps (`alpha/webapps/`):** Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`).
-- **Teacher Tools (`webapps/teacher/`):** Générateur de Barème, Tirage au Sort. Alpha: Sim Dyslexie (`alpha/webapps/teacher/`), Générateur QR (`alpha/webapps/teacher/`).
-  - *Rule:* They use a distinct stylesheet (`assets/css/teacher.css`). Do NOT extract their shared styles into the global CSS cascade.
-- **Universal Reset Button:** All 20 webapps feature a `#reset-cache-btn` (inside options dropdown for student apps, in action-buttons for teacher tools), handled globally by `assets/js/theme.js`.
-- **TBI Projection Mode:** Interactive Whiteboard (Tableau Blanc Interactif) mode supported across apps (Codage binaire, Bit de Parité, Générateur de Mot de Passe, Tirage au Sort) with container overflow safeguards.
+- **Stable Student Apps (`webapps/`):** 7 applications: Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
+- **Alpha Student Apps (`alpha/webapps/`):** 11 applications: Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Dactylo (`dactylo`), Une chose après l'autre (`tri_insertion`).
+- **Teacher Tools (`webapps/teacher/`):** 4 production tools: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`). Alpha: Lentille DYS / Sim Dyslexie (`alpha/webapps/teacher/sim_dyslexie.html`).
+  - *Stylesheet Rule:* They use a distinct stylesheet (`assets/css/teacher.css`). Do NOT extract their shared styles into the global CSS cascade.
+  - *Navigation Rule:* The top-left header icon link (`.header-icon`) inside teacher tools returns to `index.html#teachers` (the teacher section of the portal) rather than the student landing view.
+- **Universal Reset Button & Lifecycle:** All 26 webapps feature a `#reset-cache-btn` (inside options dropdown for student apps, in action-buttons for teacher tools), handled globally by `assets/js/theme.js`. Applications can implement `window.__onResetApp = function() { ... }` to reset state seamlessly.
+- **TBI Projection Mode:** Interactive Whiteboard (Tableau Blanc Interactif) mode supported across apps (Codage binaire, Bit de Parité, Générateur de Mot de Passe, Tirage au Sort, Minuteur visuel, Créateur QR) with container overflow safeguards.
 
 ## 3. Technical Architecture & Constraints
 - **Offline-First (Critical):** Installable PWA. Zero internet dependency.

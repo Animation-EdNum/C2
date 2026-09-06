@@ -150,7 +150,13 @@
 
         const resetCacheBtn = document.getElementById('reset-cache-btn');
         if (resetCacheBtn) {
-            resetCacheBtn.addEventListener('click', async () => {
+            resetCacheBtn.addEventListener('click', async (e) => {
+                if (typeof window.__onResetApp === 'function') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.__onResetApp();
+                    return;
+                }
                 if (confirm("Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")) {
                     // Clear localStorage and sessionStorage
                     localStorage.clear();
