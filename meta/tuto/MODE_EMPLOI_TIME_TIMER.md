@@ -1,6 +1,6 @@
-# ⏱️ Mode d'emploi : Time-Timer
+# ⏱️ Mode d'emploi : Minuteur visuel
 
-Le **Time-Timer** est un minuteur visuel circulaire interactif (jusqu'à 60 minutes) spécialement conçu pour la gestion du temps en classe. Son disque coloré s'amenuise au fil des secondes pour offrir aux élèves une perception visuelle et intuitive du temps restant, sans stress lié au défilement des chiffres.
+Le **Minuteur visuel** est un compte à rebours circulaire interactif (jusqu'à 60 minutes) spécialement conçu pour la gestion du temps en classe. Son disque coloré s'amenuise au fil des secondes pour offrir aux élèves une perception visuelle et intuitive du temps restant, sans stress lié au défilement des chiffres.
 
 100% hors-ligne · Zéro publicité · Zéro collecte de données · Accessible en 1 clic.
 
@@ -38,8 +38,8 @@ Ouvrez le panneau **Options** pour adapter l'affichage à vos préférences :
 | Option | Choix possibles | Utilité en classe |
 |---|---|---|
 | **Couleur du disque** | Rouge vif, Bleu ciel, Vert menthe, Ambre, Violet, Rose | Varier les activités ou attribuer un code couleur par atelier. |
-| **Style du cadran** | Disque plein ou Anneau moderne | Le disque plein reproduit fidèlement le Time-Timer traditionnel. |
-| **Sens du décompte** | Anti-horaire (authentique) ou Sens des aiguilles | Le sens anti-horaire est la norme pédagogique Time-Timer (le disque diminue vers midi). |
+| **Style du cadran** | Disque plein ou Anneau moderne | Le disque plein reproduit le style circulaire classique. |
+| **Sens du décompte** | Anti-horaire (authentique) ou Sens des aiguilles | Le sens anti-horaire est la norme pédagogique recommandée (le disque diminue vers midi). |
 | **Temps numérique** | Affiché ou Masqué | Masquez les chiffres pour les plus jeunes ou pour éviter toute fixation sur les secondes. |
 | **Sonnerie de fin** | Carillon zen, Cloche d'école, Ding-dong, Bips, Muet | Sons doux et mélodieux synthétisés par le navigateur, agréables pour l'ambiance de classe. |
 | **Avertissement à 1 min** | Activé / Désactivé | Deux notes douces préviennent les élèves de finaliser leur travail. |

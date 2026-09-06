@@ -1133,8 +1133,8 @@ window.REGISTRY = [
     "isTeacher": true,
     "dataLevel": null,
     "icon": "timer",
-    "title": "Time-Timer",
-    "desc": "Compte à rebours circulaire visuel pour gérer le temps en classe.",
+    "title": "Minuteur visuel",
+    "desc": "Compte à rebours visuel (Time Timer®) pour gérer le temps en classe.",
     "tags": [
       "#Outil",
       "#Gestion",

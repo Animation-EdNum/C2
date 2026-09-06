@@ -11,5 +11,5 @@ def test_tirage_has_correct_title(page: Page):
 
 def test_time_timer_has_correct_title(page: Page):
     page.goto("http://localhost:8000/alpha/webapps/teacher/time_timer.html")
-    expect(page).to_have_title(re.compile("Time-Timer"))
+    expect(page).to_have_title(re.compile("Minuteur visuel"))
 

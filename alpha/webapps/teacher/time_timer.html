@@ -23,8 +23,8 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time-Timer · Compte à rebours visuel pour la classe</title>
-    <meta property="og:title" content="Time-Timer · Compte à rebours visuel pour la classe">
+    <title>Minuteur visuel · Compte à rebours pour la classe</title>
+    <meta property="og:title" content="Minuteur visuel · Compte à rebours pour la classe">
     <meta property="og:description" content="Minuteur visuel circulaire interactif de 0 à 60 minutes pour gérer le temps en classe en 1 clic.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
@@ -550,6 +550,13 @@
             border: none;
             padding: 4px 0;
             background: transparent;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .custom-checkbox-row {
+                white-space: normal;
+            }
         }
 
         .custom-checkbox-row input[type="checkbox"] {
@@ -557,6 +564,7 @@
             height: 18px;
             accent-color: var(--primary);
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         /* CELEBRATION MODAL */
@@ -753,12 +761,12 @@
                     <i data-fa="timer" style="width:22px;height:22px;"></i>
                 </a>
                 <div class="header-title-group">
-                    <h1>Time-Timer</h1>
+                    <h1>Minuteur visuel</h1>
                     <span class="alpha-badge">Alpha</span>
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn btn-secondary" id="optionsToggleBtn" title="Personnaliser le Time-Timer">
+                <button class="btn btn-secondary" id="optionsToggleBtn" title="Personnaliser le minuteur">
                     <i data-fa="sliders" style="width:16px;height:16px;"></i>
                     <span>Options</span>
                 </button>
@@ -773,7 +781,7 @@
             </div>
 
             <!-- INTERACTIVE SVG CLOCK -->
-            <div class="timer-stage" id="timerStage" role="region" aria-label="Cadran circulaire Time-Timer">
+            <div class="timer-stage" id="timerStage" role="region" aria-label="Cadran circulaire du minuteur visuel">
                 <svg id="clockSvg" class="clock-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <!-- Glow filter for active disk -->
@@ -854,7 +862,7 @@
             <div class="options-panel hidden" id="optionsPanel">
                 <div class="options-title">
                     <i data-fa="sliders" style="width:18px;height:18px;"></i>
-                    <span>Personnalisation du Time-Timer</span>
+                    <span>Personnalisation du minuteur visuel</span>
                 </div>
 
                 <div class="options-grid">
@@ -862,7 +870,7 @@
                     <div class="option-group">
                         <label class="option-label">Couleur du disque</label>
                         <div class="color-palette" id="colorPalette">
-                            <button class="color-swatch active" style="background:#ef4444;" data-color="#ef4444" title="Rouge Time-Timer classique"></button>
+                            <button class="color-swatch active" style="background:#ef4444;" data-color="#ef4444" title="Rouge classique"></button>
                             <button class="color-swatch" style="background:#0ea5e9;" data-color="#0ea5e9" title="Bleu ciel"></button>
                             <button class="color-swatch" style="background:#10b981;" data-color="#10b981" title="Vert menthe"></button>
                             <button class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b" title="Ambre chaud"></button>
@@ -875,7 +883,7 @@
                     <div class="option-group">
                         <label for="diskStyleSelect" class="option-label">Style visuel du cadran</label>
                         <select id="diskStyleSelect" class="custom-select">
-                            <option value="solid" selected>Disque plein (authentique Time-Timer)</option>
+                            <option value="solid" selected>Disque plein (classique)</option>
                             <option value="ring">Anneau moderne (donut)</option>
                         </select>
                     </div>
@@ -884,7 +892,7 @@
                     <div class="option-group">
                         <label for="directionSelect" class="option-label">Sens du décompte</label>
                         <select id="directionSelect" class="custom-select">
-                            <option value="counter-clockwise" selected>Time-Timer classique (anti-horaire vers 0)</option>
+                            <option value="counter-clockwise" selected>Sens anti-horaire classique (vers 0)</option>
                             <option value="clockwise">Sens des aiguilles d'une montre (horaire)</option>
                         </select>
                     </div>
@@ -913,13 +921,13 @@
                     </div>
 
                     <!-- Option: Checkboxes -->
-                    <div class="option-group" style="justify-content: center; gap: 8px;">
+                    <div class="option-group" style="justify-content: center; gap: 8px; grid-column: 1 / -1;">
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkAutoStart" checked>
                             <span>Démarrer immédiatement au clic d'un préréglage</span>
                         </label>
                         <label class="custom-checkbox-row">
-                            <input type="checkbox" id="checkShowDigits" checked>
+                            <input type="checkbox" id="checkShowDigits">
                             <span>Afficher le temps numérique</span>
                         </label>
                         <label class="custom-checkbox-row">
@@ -974,7 +982,7 @@
     <script>
         /* SPDX-License-Identifier: AGPL-3.0-only
          * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
-         * Time-Timer Web Application for Primary & Secondary School Teachers
+         * Minuteur visuel Web Application for Primary & Secondary School Teachers
          */
 
         (function () {
@@ -1038,9 +1046,13 @@
             let isMuted = localStorage.getItem('c2_audio_muted') === 'true';
 
             function updateAudioIcon() {
-                if (iconVolOn && iconVolOff) {
-                    iconVolOn.style.display = isMuted ? 'none' : 'block';
-                    iconVolOff.style.display = isMuted ? 'block' : 'none';
+                const volOn = document.getElementById('icon-vol-on');
+                const volOff = document.getElementById('icon-vol-off');
+                if (volOn) volOn.style.display = isMuted ? 'none' : 'block';
+                if (volOff) volOff.style.display = isMuted ? 'block' : 'none';
+                if (audioToggleBtn) {
+                    audioToggleBtn.title = isMuted ? 'Activer le son' : 'Couper le son';
+                    audioToggleBtn.setAttribute('aria-label', isMuted ? 'Activer le son' : 'Couper le son');
                 }
             }
             updateAudioIcon();
@@ -1048,7 +1060,7 @@
             if (audioToggleBtn) {
                 audioToggleBtn.addEventListener('click', () => {
                     isMuted = !isMuted;
-                    localStorage.setItem('c2_audio_muted', isMuted);
+                    localStorage.setItem('c2_audio_muted', isMuted ? 'true' : 'false');
                     updateAudioIcon();
                 });
             }
@@ -1215,6 +1227,11 @@
 
             if (testSoundBtn) {
                 testSoundBtn.addEventListener('click', () => {
+                    if (isMuted) {
+                        isMuted = false;
+                        localStorage.setItem('c2_audio_muted', 'false');
+                        updateAudioIcon();
+                    }
                     playEndSound();
                 });
             }
@@ -1227,7 +1244,7 @@
                 direction: 'counter-clockwise',
                 sound: 'zen',
                 autoStart: true,
-                showDigits: true,
+                showDigits: false,
                 warning1m: true,
                 ticking: false,
                 lastMinutes: 10,
@@ -1305,7 +1322,7 @@
                 // 12 numbers: 0, 5, 10, ... 55
                 for (let i = 0; i < 12; i++) {
                     const minuteVal = i * 5;
-                    // In counter-clockwise (Time-Timer): 0 at top, 5 at 11h, 10 at 10h, 15 at 9h, etc.
+                    // In counter-clockwise: 0 at top, 5 at 11h, 10 at 10h, 15 at 9h, etc.
                     // In clockwise: 0 at top, 5 at 1h, 10 at 2h, etc.
                     const stepIndex = isCounterClockwise ? (12 - i) % 12 : i;
                     const angleDeg = stepIndex * 30; // 360 / 12 = 30 deg
@@ -1426,6 +1443,7 @@
                 });
 
                 window.fa?.createIcons?.();
+                updateAudioIcon();
                 renderDisk();
             }
 
