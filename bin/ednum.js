@@ -79,9 +79,11 @@ const server = http.createServer((req, res) => {
 
   // Rate limiting check
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  const isLoopback = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || ip === 'localhost';
+  const maxRequests = isLoopback ? 5000 : RATE_LIMIT_MAX_REQUESTS;
   const currentCount = ipRequestCounts.get(ip) || 0;
 
-  if (currentCount >= RATE_LIMIT_MAX_REQUESTS) {
+  if (currentCount >= maxRequests) {
     res.writeHead(429, {
       'Content-Type': 'text/plain',
       'Retry-After': Math.ceil(RATE_LIMIT_WINDOW_MS / 1000)
