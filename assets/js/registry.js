@@ -24,6 +24,35 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-dactylo",
+    "href": "alpha/webapps/dactylo.html",
+    "isAlpha": true,
+    "dataLevel": "5-8H, 9-10CO",
+    "icon": "keyboard",
+    "title": "Dactylo",
+    "desc": "Entraîne-toi à la frappe rapide et précise sur le clavier QWERTZ suisse romand.",
+    "tags": [
+      "#Clavier",
+      "#Dactylographie",
+      "#Bureautique",
+      "#Frappe"
+    ],
+    "ref": "Éducation numérique · Clavier suisse romand",
+    "badges": [
+      {
+        "text": "5-8H",
+        "grey": false
+      },
+      {
+        "text": "9-11CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-machine-trier",
     "href": "alpha/webapps/machine_a_trier.html",
     "isAlpha": true,

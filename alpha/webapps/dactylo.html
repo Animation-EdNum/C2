@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>Dactylo · Clavier Suisse Romand (Cycle 2 &amp; 3)</title>
+    <meta property="og:title" content="Dactylo · Clavier Suisse Romand">
+    <meta property="og:description" content="Entraîne-toi à la frappe rapide et précise au clavier avec la disposition QWERTZ suisse romande.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+    <style>
+        body > header,
+        body > .app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: rgba(79, 70, 229, 0.12);
+            --accent: #06b6d4;
+            --bg-gradient-start: #1e1b4b;
+            --bg-gradient-end: #312e81;
+
+            --card-bg: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            --key-bg: #ffffff;
+            --key-text: #1e293b;
+            --key-border: #cbd5e1;
+            --key-special-bg: #e2e8f0;
+            --key-special-text: #475569;
+            --key-plate-bg: #f1f5f9;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e1b4b;
+            --card-bg: #1e293b;
+            --primary-light: rgba(99, 102, 241, 0.25);
+            --glass-bg: rgba(15, 23, 42, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #94a3b8;
+            --border: #334155;
+
+            --key-bg: #1e293b;
+            --key-text: #f8fafc;
+            --key-border: #475569;
+            --key-special-bg: #0f172a;
+            --key-special-text: #94a3b8;
+            --key-plate-bg: rgba(0, 0, 0, 0.35);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 1.25rem 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1080px;
+            width: 100%;
+            margin: auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header.app-header {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-light);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .badge-alpha {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-level {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .custom-select {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--card-bg, #ffffff);
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .custom-select:focus {
+            border-color: var(--primary);
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--card-bg, rgba(255, 255, 255, 0.8));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-pill);
+            font-size: 0.85rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        .stat-label {
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-family: var(--font-mono, ui-monospace, monospace);
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
+
+        .stat-value.highlight {
+            color: var(--primary);
+        }
+
+        .stat-unit {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), #818cf8);
+            transition: width 0.2s ease-out;
+        }
+
+        /* TYPING CARD */
+        .typing-area {
+            padding: 2rem 1.75rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .level-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .level-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .record-badge-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .text-display-box {
+            background: var(--card-bg, #ffffff);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 2rem 2.25rem;
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            outline: none;
+            cursor: text;
+        }
+
+        .text-display-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .text-display-content {
+            font-family: var(--font-mono, "SF Mono", Menlo, Consolas, Monaco, monospace);
+            font-size: 1.75rem;
+            line-height: 2.1;
+            letter-spacing: 0.15em;
+            text-align: center;
+            word-break: break-word;
+            user-select: none;
+        }
+
+        .char-correct {
+            color: #10b981;
+        }
+
+        .char-future {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .char-current {
+            color: var(--primary);
+            font-weight: 800;
+            position: relative;
+            background: var(--primary-light);
+            border-radius: var(--radius-xs);
+            padding: 2px 4px;
+            box-shadow: 0 0 0 1px var(--primary);
+            animation: cursorPulse 1.2s infinite ease-in-out;
+        }
+
+        .char-current.space {
+            color: var(--primary);
+            opacity: 0.85;
+        }
+
+        .char-error {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.18);
+            border-radius: var(--radius-xs);
+            padding: 2px 4px;
+            box-shadow: 0 0 0 1px #ef4444;
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes cursorPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+            40%, 60% { transform: translate3d(3px, 0, 0); }
+        }
+
+        /* ERROR FEEDBACK BANNER */
+        .error-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: var(--radius-lg);
+            color: #dc2626;
+            font-size: 0.9rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        body.dark .error-banner {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .error-banner strong {
+            font-family: var(--font-mono, monospace);
+            padding: 2px 6px;
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: var(--radius-xs);
+        }
+
+        /* KEYBOARD CONTAINER */
+        .keyboard-section {
+            padding: 0 1.75rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .keyboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 960px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        .keyboard-wrapper {
+            background: var(--key-plate-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 12px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 960px;
+            user-select: none;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .key {
+            height: 48px;
+            background: var(--key-bg);
+            color: var(--key-text);
+            border: 1px solid var(--key-border);
+            border-bottom: 3px solid var(--key-border);
+            border-radius: var(--radius-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            touch-action: manipulation;
+            box-sizing: border-box;
+            flex: 1;
+            min-width: 0;
+            line-height: 1.1;
+        }
+
+        .key:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+
+        .key.special {
+            background: var(--key-special-bg);
+            color: var(--key-special-text);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .key-shift-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1;
+            margin-bottom: 1px;
+        }
+
+        .key.target {
+            background: var(--primary) !important;
+            color: white !important;
+            border-color: var(--primary-hover) !important;
+            border-bottom-color: #312e81 !important;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.45);
+            transform: translateY(-2px) scale(1.02);
+            z-index: 2;
+        }
+
+        .key.target .key-shift-label {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .key.target-shift {
+            background: #818cf8 !important;
+            color: white !important;
+            border-color: #6366f1 !important;
+            border-bottom-color: #4338ca !important;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+            transform: translateY(-1px);
+            z-index: 1;
+        }
+
+        .key.wrong {
+            background: #ef4444 !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+            border-bottom-color: #b91c1c !important;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45);
+            transform: translateY(-2px) scale(1.02);
+            z-index: 2;
+        }
+
+        .key.wrong .key-shift-label {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* RESULTS SCREEN */
+        .results-card {
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2rem;
+            animation: fadeIn 0.4s var(--spring-easing) forwards;
+        }
+
+        .results-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.5rem 0 0.25rem;
+            color: var(--text-main);
+        }
+
+        .results-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .record-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
+            border-radius: var(--radius-pill);
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+            animation: bounceIn 0.6s var(--spring-easing) forwards;
+        }
+
+        .results-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            width: 100%;
+            max-width: 580px;
+        }
+
+        .result-stat-box {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .result-stat-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        .result-stat-val {
+            font-family: var(--font-mono, ui-monospace, monospace);
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .result-stat-val.accuracy {
+            color: #10b981;
+        }
+
+        .result-stat-val.wpm {
+            color: var(--primary);
+        }
+
+        .result-stat-val.errors {
+            color: var(--text-secondary);
+        }
+
+        .result-stat-unit {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .error-analysis {
+            width: 100%;
+            max-width: 580px;
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+        }
+
+        .error-analysis-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .error-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .error-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+        }
+
+        .error-tag-char {
+            font-family: var(--font-mono, monospace);
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .error-tag-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            padding: 1px 6px;
+            border-radius: var(--radius-pill);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* CONFETTI CANVAS */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* FOOTER */
+        footer.no-print {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        footer.no-print a {
+            color: var(--text-secondary);
+            text-decoration: underline;
+        }
+
+        footer.no-print a:hover {
+            color: var(--primary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.6); }
+            50% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem 0.5rem 1.5rem;
+            }
+            .app-shell {
+                border-radius: var(--radius-xl);
+            }
+            header.app-header {
+                padding: 1rem;
+            }
+            .toolbar {
+                padding: 0.75rem 1rem;
+            }
+            .typing-area {
+                padding: 1.25rem 1rem 1rem;
+            }
+            .text-display-content {
+                font-size: 1.35rem;
+                letter-spacing: 0.1em;
+            }
+            .keyboard-section {
+                padding: 0 0.5rem 1rem;
+            }
+            .keyboard-wrapper {
+                padding: 6px;
+                gap: 4px;
+            }
+            .keyboard-row {
+                gap: 3px;
+            }
+            .key {
+                height: 40px;
+                font-size: 0.82rem;
+            }
+            .key-shift-label {
+                font-size: 0.55rem;
+            }
+            .results-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-shell" id="main-content">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-icon" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="keyboard"></i>
+                </a>
+                <div>
+                    <h1>
+                        Dactylo
+                        <span class="badge-alpha">Alpha</span>
+                        <span class="badge-level">Cycle 2 &amp; 3</span>
+                    </h1>
+                    <div class="header-subtitle">Entraînement à la frappe — Clavier QWERTZ Suisse Romand</div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText">Réinitialiser scores</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TOOLBAR & PROGRESS -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <label for="levelSelect" style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Niveau :</label>
+                <select id="levelSelect" class="custom-select" aria-label="Sélectionner le niveau"></select>
+                <button class="btn btn-secondary" id="btnRestartLevel" title="Recommencer le niveau" style="padding:6px 12px; font-size:0.85rem;">
+                    <i data-fa="arrows-rotate"></i> Recommencer
+                </button>
+            </div>
+
+            <div class="toolbar-group">
+                <div class="stat-pill" title="Précision de frappe">
+                    <span class="stat-label">Précision :</span>
+                    <span class="stat-value" id="statAccuracy">100%</span>
+                </div>
+                <div class="stat-pill" title="Vitesse de frappe en Mots Par Minute (MPM)">
+                    <span class="stat-label">Vitesse :</span>
+                    <span class="stat-value highlight" id="statWpm">0</span>
+                    <span class="stat-unit">MPM</span>
+                </div>
+                <div class="stat-pill" title="Nombre d'erreurs commises">
+                    <span class="stat-label">Erreurs :</span>
+                    <span class="stat-value" id="statErrors">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-bar-container" aria-hidden="true">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+
+        <!-- MAIN GAME VIEW -->
+        <main id="gameView">
+            <div class="typing-area">
+                <div class="level-banner">
+                    <span class="level-desc" id="levelDesc"></span>
+                    <span class="record-badge-small" id="levelRecord" style="display:none;"></span>
+                </div>
+
+                <div class="text-display-box" id="textDisplayBox" tabindex="0" role="textbox" aria-label="Zone d'exercice de frappe">
+                    <div class="text-display-content" id="textDisplay"></div>
+                </div>
+
+                <div class="error-banner" id="errorBanner" style="display:none;" role="alert">
+                    <i data-fa="circle-xmark"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+
+            <!-- VISUAL KEYBOARD -->
+            <div class="keyboard-section">
+                <div class="keyboard-header">
+                    <span>Disposition QWERTZ · Suisse Romand</span>
+                    <span>Clavier physique ou tactile</span>
+                </div>
+                <div class="keyboard-wrapper" id="visualKeyboard" role="region" aria-label="Clavier visuel interactif">
+                    <!-- Dynamic keys rendered by JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- RESULTS VIEW -->
+        <section class="results-card" id="resultsView" style="display:none;">
+            <div class="results-header">
+                <div class="record-badge" id="recordBadge" style="display:none;">
+                    <i data-fa="trophy-star"></i> Nouveau Record !
+                </div>
+                <h2>Bien joué !</h2>
+                <p class="results-subtitle" id="resultsSubtitle">Tu as terminé ce niveau avec succès.</p>
+            </div>
+
+            <div class="results-stats-grid">
+                <div class="result-stat-box">
+                    <div class="result-stat-label">Précision</div>
+                    <div class="result-stat-val accuracy" id="resultAccuracy">100%</div>
+                </div>
+                <div class="result-stat-box">
+                    <div class="result-stat-label">Vitesse</div>
+                    <div class="result-stat-val wpm" id="resultWpm">0</div>
+                    <div class="result-stat-unit">MPM</div>
+                </div>
+                <div class="result-stat-box">
+                    <div class="result-stat-label">Erreurs</div>
+                    <div class="result-stat-val errors" id="resultErrors">0</div>
+                </div>
+            </div>
+
+            <div class="error-analysis" id="errorAnalysis" style="display:none;">
+                <div class="error-analysis-title">Touches à travailler :</div>
+                <div class="error-tags" id="errorTags"></div>
+            </div>
+
+            <div class="results-actions">
+                <button class="btn btn-secondary" id="btnRetry">
+                    <i data-fa="rotate-left"></i> Réessayer
+                </button>
+                <button class="btn btn-primary" id="btnNextLevel">
+                    Niveau suivant <i data-fa="arrow-right"></i>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="no-print">
+        <p>
+            Webapp conçue pour le Cycle 2 &amp; 3 par Vivian de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+            </span>
+        </p>
+    </footer>
+
+    <script src="../../assets/js/theme.js"></script>
+    <script>
+        /* SPDX-License-Identifier: AGPL-3.0-only
+         * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+         * Dactylo Web Application — QWERTZ Suisse Romand
+         */
+
+        (function () {
+            'use strict';
+
+            // --- NIVEAUX PEDAGOGIQUES ---
+            const LEVELS = [
+                {
+                    id: 1,
+                    name: "1. Mots très simples",
+                    description: "Trouve ton rythme sur les petits mots fréquents de deux à trois lettres.",
+                    text: "le la les de du un une il elle on a y en ce se sa son"
+                },
+                {
+                    id: 2,
+                    name: "2. Mots courants",
+                    description: "On allonge un peu les mots. Garde les yeux sur l'écran plutôt que sur tes mains !",
+                    text: "qui que quoi dont pour dans sur sous vers avec sans oui non bien tout"
+                },
+                {
+                    id: 3,
+                    name: "3. Accents romands (é, è, à)",
+                    description: "Apprivoise les touches é, è et à propres à notre disposition de clavier.",
+                    text: "été vélo déjà mère père frère forêt fête règle café vérité élève"
+                },
+                {
+                    id: 4,
+                    name: "4. Premières phrases simples",
+                    description: "Enchaîne les mots avec fluidité. Utilise le pouce pour la barre d'espace.",
+                    text: "le chat boit du lait. tu aimes la musique. il fait très beau aujourd'hui."
+                },
+                {
+                    id: 5,
+                    name: "5. Majuscules et ponctuation",
+                    description: "Maintiens la touche Shift (Majuscule) d'une main pendant que l'autre frappe la lettre.",
+                    text: "La Terre tourne autour du Soleil. Les étoiles brillent dans la nuit noire."
+                },
+                {
+                    id: 6,
+                    name: "6. Le monde numérique",
+                    description: "Vocabulaire de l'éducation numérique : entraîne-toi sur des termes technologiques.",
+                    text: "ordinateur écran clavier souris robot pixel données réseau code internet boucle"
+                },
+                {
+                    id: 7,
+                    name: "7. Mots longs et endurance",
+                    description: "Développe ta précision sur des mots plus longs demandant de la régularité.",
+                    text: "dactylographie apprentissage magnifique développement concentration extraordinaire scientifique"
+                },
+                {
+                    id: 8,
+                    name: "8. Chiffres et symboles (Shift)",
+                    description: "Un peu de gymnastique avec la rangée du haut pour combiner chiffres et symboles.",
+                    text: "Dans 10 jours, nous aurons 24 défis et 100% de réussite ! Prix : 15 CHF."
+                },
+                {
+                    id: 9,
+                    name: "9. Paragraphe fluide",
+                    description: "Mets tout en pratique dans un texte continu. Ne t'arrête pas en cas d'erreur, poursuis ton élan !",
+                    text: "La dactylographie permet de libérer son attention. Plus les doigts mémorisent l'emplacement des touches, plus la pensée peut se concentrer sur les idées, la créativité et la rédaction."
+                },
+                {
+                    id: 10,
+                    name: "10. Le grand défi",
+                    description: "Un défi complet mêlant lettres, accents, ponctuation et chiffres. Respire et fais confiance à tes doigts !",
+                    text: "Le Cervin culmine à 4478 mètres d'altitude entre la Suisse et l'Italie. Sa silhouette pyramidale fascine les alpinistes depuis plus de 150 ans. Avec de la pratique quotidienne, tes doigts voleront bientôt sur le clavier sans hésiter !"
+                }
+            ];
+
+            // --- CLAVIER QWERTZ SUISSE ROMAND ---
+            const KEYBOARD_ROWS = [
+                [
+                    { id: 'Backquote', label: '§', shift: '°' },
+                    { id: 'Digit1', label: '1', shift: '+' },
+                    { id: 'Digit2', label: '2', shift: '"' },
+                    { id: 'Digit3', label: '3', shift: '*' },
+                    { id: 'Digit4', label: '4', shift: 'ç' },
+                    { id: 'Digit5', label: '5', shift: '%' },
+                    { id: 'Digit6', label: '6', shift: '&' },
+                    { id: 'Digit7', label: '7', shift: '/' },
+                    { id: 'Digit8', label: '8', shift: '(' },
+                    { id: 'Digit9', label: '9', shift: ')' },
+                    { id: 'Digit0', label: '0', shift: '=' },
+                    { id: 'Minus', label: '\'', shift: '?' },
+                    { id: 'Equal', label: '^', shift: '`' },
+                    { id: 'Backspace', label: '←', char: 'Backspace', special: true, flex: 1.6 }
+                ],
+                [
+                    { id: 'Tab', label: 'Tab', char: 'Tab', special: true, flex: 1.3 },
+                    { id: 'KeyQ', label: 'q', shift: 'Q' },
+                    { id: 'KeyW', label: 'w', shift: 'W' },
+                    { id: 'KeyE', label: 'e', shift: 'E' },
+                    { id: 'KeyR', label: 'r', shift: 'R' },
+                    { id: 'KeyT', label: 't', shift: 'T' },
+                    { id: 'KeyZ', label: 'z', shift: 'Z' },
+                    { id: 'KeyU', label: 'u', shift: 'U' },
+                    { id: 'KeyI', label: 'i', shift: 'I' },
+                    { id: 'KeyO', label: 'o', shift: 'O' },
+                    { id: 'KeyP', label: 'p', shift: 'P' },
+                    { id: 'BracketLeft', label: 'è', shift: 'ü' },
+                    { id: 'BracketRight', label: '¨', shift: '!' },
+                    { id: 'Enter', label: 'Entrée', char: 'Enter', special: true, flex: 1.6 }
+                ],
+                [
+                    { id: 'CapsLock', label: 'Verr Maj', char: 'CapsLock', special: true, flex: 1.5 },
+                    { id: 'KeyA', label: 'a', shift: 'A' },
+                    { id: 'KeyS', label: 's', shift: 'S' },
+                    { id: 'KeyD', label: 'd', shift: 'D' },
+                    { id: 'KeyF', label: 'f', shift: 'F' },
+                    { id: 'KeyG', label: 'g', shift: 'G' },
+                    { id: 'KeyH', label: 'h', shift: 'H' },
+                    { id: 'KeyJ', label: 'j', shift: 'J' },
+                    { id: 'KeyK', label: 'k', shift: 'K' },
+                    { id: 'KeyL', label: 'l', shift: 'L' },
+                    { id: 'Semicolon', label: 'é', shift: 'ö' },
+                    { id: 'Quote', label: 'à', shift: 'ä' },
+                    { id: 'Backslash', label: '$', shift: '£', flex: 1.4 }
+                ],
+                [
+                    { id: 'ShiftLeft', label: 'Maj ⇧', char: 'Shift', special: true, flex: 1.8 },
+                    { id: 'IntlBackslash', label: '<', shift: '>' },
+                    { id: 'KeyY', label: 'y', shift: 'Y' },
+                    { id: 'KeyX', label: 'x', shift: 'X' },
+                    { id: 'KeyC', label: 'c', shift: 'C' },
+                    { id: 'KeyV', label: 'v', shift: 'V' },
+                    { id: 'KeyB', label: 'b', shift: 'B' },
+                    { id: 'KeyN', label: 'n', shift: 'N' },
+                    { id: 'KeyM', label: 'm', shift: 'M' },
+                    { id: 'Comma', label: ',', shift: ';' },
+                    { id: 'Period', label: '.', shift: ':' },
+                    { id: 'Slash', label: '-', shift: '_' },
+                    { id: 'ShiftRight', label: 'Maj ⇧', char: 'Shift', special: true, flex: 2.2 }
+                ],
+                [
+                    { id: 'ControlLeft', label: 'Ctrl', special: true, flex: 1.2 },
+                    { id: 'AltLeft', label: 'Alt', special: true, flex: 1.2 },
+                    { id: 'Space', label: 'Espace', char: ' ', flex: 6 },
+                    { id: 'AltRight', label: 'AltGr', special: true, flex: 1.2 },
+                    { id: 'ControlRight', label: 'Ctrl', special: true, flex: 1.2 }
+                ]
+            ];
+
+            // --- ÉLÉMENTS DU DOM ---
+            const levelSelect = document.getElementById('levelSelect');
+            const btnRestartLevel = document.getElementById('btnRestartLevel');
+            const statAccuracy = document.getElementById('statAccuracy');
+            const statWpm = document.getElementById('statWpm');
+            const statErrors = document.getElementById('statErrors');
+            const progressBar = document.getElementById('progressBar');
+            const levelDesc = document.getElementById('levelDesc');
+            const levelRecord = document.getElementById('levelRecord');
+            const textDisplayBox = document.getElementById('textDisplayBox');
+            const textDisplay = document.getElementById('textDisplay');
+            const errorBanner = document.getElementById('errorBanner');
+            const errorMessage = document.getElementById('errorMessage');
+            const visualKeyboard = document.getElementById('visualKeyboard');
+            const gameView = document.getElementById('gameView');
+            const resultsView = document.getElementById('resultsView');
+            const recordBadge = document.getElementById('recordBadge');
+            const resultsSubtitle = document.getElementById('resultsSubtitle');
+            const resultAccuracy = document.getElementById('resultAccuracy');
+            const resultWpm = document.getElementById('resultWpm');
+            const resultErrors = document.getElementById('resultErrors');
+            const errorAnalysis = document.getElementById('errorAnalysis');
+            const errorTags = document.getElementById('errorTags');
+            const btnRetry = document.getElementById('btnRetry');
+            const btnNextLevel = document.getElementById('btnNextLevel');
+
+            // --- ÉTAT DU JEU ---
+            let currentLevelIdx = 0;
+            let currentIndex = 0;
+            let errors = 0;
+            let errorDetails = {};
+            let startTime = null;
+            let endTime = null;
+            let flashError = false;
+            let wrongChar = null;
+            let errorTimeout = null;
+            let isFinished = false;
+
+            const STORAGE_KEY = 'dactylo-scores';
+            let scores = {};
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) scores = JSON.parse(saved);
+            } catch (e) {
+                scores = {};
+            }
+
+            // --- INITIALISATION DES NIVEAUX ---
+            function initLevelSelect() {
+                levelSelect.innerHTML = '';
+                LEVELS.forEach((lvl, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    const best = scores[lvl.id];
+                    opt.textContent = lvl.name + (best ? ` (${best.wpm} MPM)` : '');
+                    levelSelect.appendChild(opt);
+                });
+                levelSelect.value = currentLevelIdx;
+            }
+
+            // --- GÉNÉRATION DU CLAVIER VISUEL ---
+            const keyElementMap = {}; // id -> element
+
+            function buildKeyboard() {
+                visualKeyboard.innerHTML = '';
+                KEYBOARD_ROWS.forEach(row => {
+                    const rowEl = document.createElement('div');
+                    rowEl.className = 'keyboard-row';
+                    row.forEach(key => {
+                        const keyEl = document.createElement('div');
+                        keyEl.className = 'key' + (key.special ? ' special' : '');
+                        keyEl.style.flex = key.flex || 1;
+                        keyEl.dataset.keyId = key.id;
+
+                        if (key.shift) {
+                            const shiftSpan = document.createElement('span');
+                            shiftSpan.className = 'key-shift-label';
+                            shiftSpan.textContent = key.shift;
+                            keyEl.appendChild(shiftSpan);
+                        }
+
+                        const labelSpan = document.createElement('span');
+                        labelSpan.textContent = key.label === '' ? ' ' : key.label;
+                        keyEl.appendChild(labelSpan);
+
+                        // Clic tactile / souris
+                        keyEl.addEventListener('click', () => {
+                            if (isFinished) return;
+                            handleKeyInput(key.char !== undefined ? key.char : key.label);
+                        });
+
+                        keyElementMap[key.id] = keyEl;
+                        rowEl.appendChild(keyEl);
+                    });
+                    visualKeyboard.appendChild(rowEl);
+                });
+            }
+
+            // --- GESTION DU NIVEAU ACTIF ---
+            function loadLevel(idx) {
+                currentLevelIdx = Math.max(0, Math.min(LEVELS.length - 1, idx));
+                levelSelect.value = currentLevelIdx;
+                currentIndex = 0;
+                errors = 0;
+                errorDetails = {};
+                startTime = null;
+                endTime = null;
+                flashError = false;
+                wrongChar = null;
+                isFinished = false;
+
+                if (errorTimeout) clearTimeout(errorTimeout);
+
+                const currentLevel = LEVELS[currentLevelIdx];
+                levelDesc.textContent = currentLevel.description;
+
+                const best = scores[currentLevel.id];
+                if (best) {
+                    levelRecord.innerHTML = `<i data-fa="trophy-star"></i> Record : ${best.wpm} MPM (${best.accuracy}%)`;
+                    levelRecord.style.display = 'inline-flex';
+                } else {
+                    levelRecord.style.display = 'none';
+                }
+
+                errorBanner.style.display = 'none';
+                gameView.style.display = 'block';
+                resultsView.style.display = 'none';
+
+                renderText();
+                updateStats();
+                updateKeyboardHighlight();
+                window.fa?.createIcons?.();
+                textDisplayBox.focus();
+            }
+
+            // --- RENDU DU TEXTE D'EXERCICE ---
+            function renderText() {
+                const text = LEVELS[currentLevelIdx].text;
+                textDisplay.innerHTML = '';
+
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const span = document.createElement('span');
+                    span.id = 'char-' + i;
+
+                    if (i < currentIndex) {
+                        span.className = 'char-correct';
+                        span.textContent = char;
+                    } else if (i === currentIndex) {
+                        if (flashError) {
+                            span.className = 'char-error';
+                        } else {
+                            span.className = 'char-current' + (char === ' ' ? ' space' : '');
+                        }
+                        span.textContent = (char === ' ') ? '␣' : char;
+                    } else {
+                        span.className = 'char-future';
+                        span.textContent = char;
+                    }
+
+                    textDisplay.appendChild(span);
+                }
+            }
+
+            // --- MISE EN SURBRILLANCE DU CLAVIER ---
+            function updateKeyboardHighlight() {
+                // Nettoyer les surbrillances existantes
+                Object.values(keyElementMap).forEach(el => {
+                    el.classList.remove('target', 'target-shift', 'wrong');
+                });
+
+                if (isFinished) return;
+
+                const text = LEVELS[currentLevelIdx].text;
+                const expected = text[currentIndex];
+                if (!expected) return;
+
+                // Trouver la touche cible
+                let targetKeyDef = null;
+                let needsShift = false;
+
+                for (const row of KEYBOARD_ROWS) {
+                    for (const key of row) {
+                        if (expected === ' ' && key.id === 'Space') {
+                            targetKeyDef = key;
+                            break;
+                        }
+                        if (key.label === expected) {
+                            targetKeyDef = key;
+                            needsShift = false;
+                            break;
+                        }
+                        if (key.shift === expected) {
+                            targetKeyDef = key;
+                            needsShift = true;
+                            break;
+                        }
+                    }
+                    if (targetKeyDef) break;
+                }
+
+                if (targetKeyDef && keyElementMap[targetKeyDef.id]) {
+                    keyElementMap[targetKeyDef.id].classList.add('target');
+                }
+
+                if (needsShift) {
+                    if (keyElementMap['ShiftLeft']) keyElementMap['ShiftLeft'].classList.add('target-shift');
+                    if (keyElementMap['ShiftRight']) keyElementMap['ShiftRight'].classList.add('target-shift');
+                }
+
+                // Afficher la fausse touche en rouge si erreur
+                if (flashError && wrongChar) {
+                    for (const row of KEYBOARD_ROWS) {
+                        for (const key of row) {
+                            if (wrongChar === ' ' && key.id === 'Space') {
+                                keyElementMap[key.id]?.classList.add('wrong');
+                                break;
+                            }
+                            if (key.label === wrongChar || key.shift === wrongChar) {
+                                keyElementMap[key.id]?.classList.add('wrong');
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // --- CALCUL DES STATISTIQUES ---
+            function calculateWpm() {
+                if (!startTime) return 0;
+                const finish = endTime || Date.now();
+                const minutes = (finish - startTime) / 60000;
+                if (minutes <= 0.001) return 0;
+                // Formule standard internationale : 5 caractères = 1 mot
+                return Math.round((currentIndex / 5) / minutes);
+            }
+
+            function calculateAccuracy() {
+                if (currentIndex === 0) return 100;
+                const correct = Math.max(0, currentIndex - errors);
+                return Math.max(0, Math.round((correct / (correct + errors)) * 100));
+            }
+
+            function updateStats() {
+                const text = LEVELS[currentLevelIdx].text;
+                const progressPct = Math.min(100, Math.round((currentIndex / text.length) * 100));
+                progressBar.style.width = progressPct + '%';
+
+                statAccuracy.textContent = calculateAccuracy() + '%';
+                statWpm.textContent = calculateWpm();
+                statErrors.textContent = errors;
+            }
+
+            // --- GESTION DE LA FRAPPE ---
+            function handleKeyInput(char) {
+                if (isFinished) return;
+                const text = LEVELS[currentLevelIdx].text;
+                const expected = text[currentIndex];
+
+                if (!startTime) startTime = Date.now();
+
+                if (char === expected) {
+                    // Correct
+                    currentIndex++;
+                    flashError = false;
+                    wrongChar = null;
+                    errorBanner.style.display = 'none';
+
+                    if (typeof playSound === 'function') playSound('click');
+
+                    if (currentIndex >= text.length) {
+                        endTime = Date.now();
+                        finishLevel();
+                        return;
+                    }
+                } else if (char && char.length === 1) {
+                    // Erreur
+                    errors++;
+                    errorDetails[expected] = (errorDetails[expected] || 0) + 1;
+                    flashError = true;
+                    wrongChar = char;
+
+                    if (typeof playSound === 'function') playSound('error');
+
+                    const displayWrong = (char === ' ') ? 'Espace' : char;
+                    const displayExpected = (expected === ' ') ? 'Espace' : expected;
+                    errorMessage.innerHTML = `Tu as tapé <strong>${displayWrong}</strong> au lieu de <strong>${displayExpected}</strong>.`;
+                    errorBanner.style.display = 'flex';
+                    window.fa?.createIcons?.();
+
+                    if (errorTimeout) clearTimeout(errorTimeout);
+                    errorTimeout = setTimeout(() => {
+                        flashError = false;
+                        wrongChar = null;
+                        updateKeyboardHighlight();
+                        renderText();
+                    }, 2500);
+                }
+
+                renderText();
+                updateStats();
+                updateKeyboardHighlight();
+            }
+
+            // --- ÉCOUTEUR CLAVIER PHYSIQUE ---
+            window.addEventListener('keydown', (e) => {
+                if (isFinished) {
+                    if (e.key === 'Enter') {
+                        if (currentLevelIdx < LEVELS.length - 1) {
+                            loadLevel(currentLevelIdx + 1);
+                        } else {
+                            loadLevel(currentLevelIdx);
+                        }
+                    } else if (e.key === 'Escape') {
+                        loadLevel(currentLevelIdx);
+                    }
+                    return;
+                }
+
+                // Touches système ignorées
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                if (['Shift', 'Alt', 'Control', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(e.key)) {
+                    if (e.key === 'Escape') loadLevel(currentLevelIdx);
+                    return;
+                }
+
+                // Empêcher le défilement sur Espace
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+
+                handleKeyInput(e.key);
+            });
+
+            // --- FIN DE NIVEAU & BILAN ---
+            function finishLevel() {
+                isFinished = true;
+                const text = LEVELS[currentLevelIdx].text;
+                const minutes = Math.max(0.01, (endTime - startTime) / 60000);
+                const finalWpm = Math.round((text.length / 5) / minutes);
+                const finalAcc = Math.max(0, Math.round(((text.length - errors) / text.length) * 100));
+
+                const lvlId = LEVELS[currentLevelIdx].id;
+                const existing = scores[lvlId];
+                const isBetter = !existing || finalWpm > existing.wpm || (finalWpm === existing.wpm && finalAcc > existing.accuracy);
+
+                if (isBetter) {
+                    scores[lvlId] = { wpm: finalWpm, accuracy: finalAcc, date: Date.now() };
+                    try {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+                    } catch (e) { }
+                    initLevelSelect();
+                    recordBadge.style.display = 'inline-flex';
+                } else {
+                    recordBadge.style.display = 'none';
+                }
+
+                resultAccuracy.textContent = finalAcc + '%';
+                resultWpm.textContent = finalWpm;
+                resultErrors.textContent = errors;
+
+                if (!isBetter && existing) {
+                    resultsSubtitle.textContent = `Niveau réussi ! Record actuel : ${existing.wpm} MPM (${existing.accuracy}%).`;
+                } else {
+                    resultsSubtitle.textContent = `Félicitations ! Tu as complété ce niveau avec succès.`;
+                }
+
+                // Analyse des touches à travailler
+                const sortedErrors = Object.entries(errorDetails).sort((a, b) => b[1] - a[1]);
+                if (sortedErrors.length > 0) {
+                    errorTags.innerHTML = '';
+                    sortedErrors.forEach(([ch, count]) => {
+                        const tag = document.createElement('div');
+                        tag.className = 'error-tag';
+                        const displayCh = ch === ' ' ? 'Espace' : ch;
+                        tag.innerHTML = `<span class="error-tag-char">${displayCh}</span><span class="error-tag-count">${count}×</span>`;
+                        errorTags.appendChild(tag);
+                    });
+                    errorAnalysis.style.display = 'block';
+                } else {
+                    errorAnalysis.style.display = 'none';
+                }
+
+                // Bouton suivant désactivé au niveau 10
+                if (currentLevelIdx >= LEVELS.length - 1) {
+                    btnNextLevel.style.display = 'none';
+                } else {
+                    btnNextLevel.style.display = 'inline-flex';
+                }
+
+                gameView.style.display = 'none';
+                resultsView.style.display = 'flex';
+
+                if (typeof playSound === 'function') playSound('win');
+                launchConfetti();
+                window.fa?.createIcons?.();
+            }
+
+            // --- EFFET DE CONFETTIS ---
+            function launchConfetti() {
+                const canvas = document.getElementById('confetti-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                const pieces = [];
+                const colors = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+                for (let i = 0; i < 90; i++) {
+                    pieces.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * -canvas.height,
+                        w: Math.random() * 10 + 6,
+                        h: Math.random() * 8 + 4,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        rot: Math.random() * 360,
+                        vx: (Math.random() - 0.5) * 4,
+                        vy: Math.random() * 3 + 3,
+                        vRot: (Math.random() - 0.5) * 10
+                    });
+                }
+
+                let start = Date.now();
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    pieces.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.rot += p.vRot;
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rot * Math.PI / 180);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        ctx.restore();
+                    });
+
+                    if (Date.now() - start < 3500) {
+                        requestAnimationFrame(draw);
+                    } else {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+
+            // --- ÉCOUTEURS D'ÉVÉNEMENTS UI ---
+            levelSelect.addEventListener('change', (e) => {
+                loadLevel(parseInt(e.target.value, 10));
+            });
+
+            btnRestartLevel.addEventListener('click', () => {
+                loadLevel(currentLevelIdx);
+            });
+
+            btnRetry.addEventListener('click', () => {
+                loadLevel(currentLevelIdx);
+            });
+
+            btnNextLevel.addEventListener('click', () => {
+                if (currentLevelIdx < LEVELS.length - 1) {
+                    loadLevel(currentLevelIdx + 1);
+                }
+            });
+
+            // Focus automatique sur le conteneur de frappe
+            textDisplayBox.addEventListener('click', () => {
+                textDisplayBox.focus();
+            });
+
+            // Réinitialisation des scores via le menu d'options
+            const resetCacheBtn = document.getElementById('reset-cache-btn');
+            if (resetCacheBtn) {
+                resetCacheBtn.addEventListener('click', () => {
+                    if (confirm("Réinitialiser tous les records de dactylographie ?")) {
+                        scores = {};
+                        localStorage.removeItem(STORAGE_KEY);
+                        initLevelSelect();
+                        loadLevel(currentLevelIdx);
+                    }
+                });
+            }
+
+            // --- DÉMARRAGE ---
+            buildKeyboard();
+            initLevelSelect();
+            loadLevel(0);
+            window.fa?.createIcons?.();
+        })();
+    </script>
+</body>
+
+</html>
