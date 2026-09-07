@@ -293,29 +293,6 @@
             transition: transform 0.25s ease;
         }
 
-        .center-pivot.pulsing {
-            animation: pivotPulse2s 2s ease-in-out infinite;
-        }
-
-        .center-pivot.pulsing #centerPivotGlow {
-            animation: pivotGlow2s 2s ease-in-out infinite;
-        }
-
-        @keyframes pivotPulse2s {
-            0% { transform: scale(1); }
-            15% { transform: scale(1.08); }
-            28% { transform: scale(0.98); }
-            40% { transform: scale(1.04); }
-            52% { transform: scale(1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes pivotGlow2s {
-            0% { opacity: 0; transform: scale(0.9); }
-            15% { opacity: 0.35; transform: scale(1.14); }
-            40% { opacity: 0.1; transform: scale(1.04); }
-            52%, 100% { opacity: 0; transform: scale(0.9); }
-        }
 
         /* COMPACT STATUS PILL (Visible when digits are hidden) */
         .timer-status-pill {
@@ -1125,10 +1102,6 @@
                             <span>Afficher le temps numérique</span>
                         </label>
                         <label class="custom-checkbox-row">
-                            <input type="checkbox" id="checkPulsePivot" checked>
-                            <span>Battement discret du pivot en marche (toutes les 2 s)</span>
-                        </label>
-                        <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkStartSound" checked>
                             <span>Son discret au démarrage</span>
                         </label>
@@ -1225,7 +1198,6 @@
             const testSoundBtn = document.getElementById('testSoundBtn');
             const checkAutoStart = document.getElementById('checkAutoStart');
             const checkShowDigits = document.getElementById('checkShowDigits');
-            const checkPulsePivot = document.getElementById('checkPulsePivot');
             const checkStartSound = document.getElementById('checkStartSound');
             const checkWarning1m = document.getElementById('checkWarning1m');
             const checkTicking = document.getElementById('checkTicking');
@@ -1479,7 +1451,6 @@
                 sound: 'zen',
                 autoStart: true,
                 showDigits: false,
-                pulsePivot: true,
                 startSound: true,
                 warning1m: true,
                 ticking: false,
@@ -1512,7 +1483,6 @@
                 soundSelect.value = settings.sound;
                 checkAutoStart.checked = settings.autoStart;
                 checkShowDigits.checked = settings.showDigits;
-                checkPulsePivot.checked = settings.pulsePivot !== false;
                 checkStartSound.checked = settings.startSound !== false;
                 checkWarning1m.checked = settings.warning1m;
                 checkTicking.checked = settings.ticking;
@@ -1682,12 +1652,6 @@
                     if (iconPause) iconPause.style.display = 'none';
                     digitalStatus.textContent = remainingSeconds === 0 ? 'Terminé' : 'En pause';
                     digitalStatus.className = remainingSeconds === 0 ? 'digital-status ended' : 'digital-status';
-                }
-
-                // Center pivot pulse animation (every 2s while running)
-                if (centerPivot) {
-                    const shouldPulse = isRunning && (settings.pulsePivot !== false);
-                    centerPivot.classList.toggle('pulsing', shouldPulse);
                 }
 
                 // Compact status pill (visible when digital readout is hidden)
@@ -2072,12 +2036,6 @@
                 saveSettings();
             });
 
-            checkPulsePivot.addEventListener('change', () => {
-                settings.pulsePivot = checkPulsePivot.checked;
-                saveSettings();
-                updateUI();
-            });
-
             checkStartSound.addEventListener('change', () => {
                 settings.startSound = checkStartSound.checked;
                 saveSettings();
@@ -2146,7 +2104,6 @@
                     sound: 'zen',
                     autoStart: true,
                     showDigits: false,
-                    pulsePivot: true,
                     startSound: true,
                     warning1m: true,
                     ticking: false,
