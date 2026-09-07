@@ -40,38 +40,60 @@ test('generateur_mot_de_passe.js - generatePedagogicalPassword', async (t) => {
     });
 
     await t.test('Capitalizes first letter if all lowercase', () => {
-        const res = window.generatePedagogicalPassword('chat', '123', 'google', '!', ['word', 'number', 'service'], 12);
-        assert.strictEqual(res.parts.word, 'Chat');
-        assert.strictEqual(res.password, 'Chat123!goog');
+        const res = window.generatePedagogicalPassword('lapin', '123', 'google', '!', ['word', 'number', 'service'], 12);
+        assert.strictEqual(res.parts.word, 'Lapin');
+        assert.strictEqual(res.password, 'Lapin123!goo');
     });
 
     await t.test('Capitalizes first letter if all uppercase', () => {
-        const res = window.generatePedagogicalPassword('CHAT', '123', 'google', '!', ['word', 'number', 'service'], 12);
-        assert.strictEqual(res.parts.word, 'Chat');
-        assert.strictEqual(res.password, 'Chat123!goog');
+        const res = window.generatePedagogicalPassword('LAPIN', '123', 'google', '!', ['word', 'number', 'service'], 12);
+        assert.strictEqual(res.parts.word, 'Lapin');
+        assert.strictEqual(res.password, 'Lapin123!goo');
     });
 
     await t.test('Leaves case unchanged if mixed case', () => {
-        const res = window.generatePedagogicalPassword('cHAt', '123', 'google', '!', ['word', 'number', 'service'], 12);
-        assert.strictEqual(res.parts.word, 'cHAt');
-        assert.strictEqual(res.password, 'cHAt123!goog');
+        const res = window.generatePedagogicalPassword('laPin', '123', 'google', '!', ['word', 'number', 'service'], 12);
+        assert.strictEqual(res.parts.word, 'laPin');
+        assert.strictEqual(res.password, 'laPin123!goo');
     });
 
     await t.test('Repeats word to meet minLength', () => {
-        const res = window.generatePedagogicalPassword('chat', '123', 'google', '!', ['word', 'number', 'service'], 16);
-        assert.strictEqual(res.parts.word, 'ChatChat');
-        assert.strictEqual(res.password, 'ChatChat123!goog');
+        const res = window.generatePedagogicalPassword('lapin', '123', 'google', '!', ['word', 'number', 'service'], 16);
+        assert.strictEqual(res.parts.word, 'LapinLapin');
+        assert.strictEqual(res.password, 'LapinLapin123!goo');
     });
 
     await t.test('Handles missing service correctly', () => {
-        const res = window.generatePedagogicalPassword('chat', '123', '', '!', ['word', 'number', 'service'], 12);
+        const res = window.generatePedagogicalPassword('lapin', '123', '', '!', ['word', 'number', 'service'], 12);
         assert.strictEqual(res.parts.service, '!');
-        assert.strictEqual(res.parts.word, 'ChatChat');
-        assert.strictEqual(res.password, 'ChatChat123!');
+        assert.strictEqual(res.parts.word, 'LapinLapin');
+        assert.strictEqual(res.password, 'LapinLapin123!');
     });
 
-    await t.test('Respects element order', () => {
-        const res = window.generatePedagogicalPassword('chat', '123', 'google', '!', ['service', 'word', 'number'], 12);
-        assert.strictEqual(res.password, '!googChat123');
+    await t.test('Respects element order with bound character/site', () => {
+        const res = window.generatePedagogicalPassword('lapin', '123', 'google', '!', ['service', 'word', 'number'], 12);
+        assert.strictEqual(res.parts.service, '!goo');
+        assert.strictEqual(res.password, '!gooLapin123');
+    });
+
+    await t.test('Binds character to 3-letter site edu.vs.ch (!edu)', () => {
+        const res = window.generatePedagogicalPassword('saPin', '2026', 'edu.vs.ch', '!', ['word', 'number', 'service'], 12);
+        assert.strictEqual(res.parts.word, 'saPin');
+        assert.strictEqual(res.parts.number, '2026');
+        assert.strictEqual(res.parts.service, '!edu');
+        assert.strictEqual(res.password, 'saPin2026!edu');
+    });
+
+    await t.test('Binds character alone when site is empty (!), repeats base word for minLength 12', () => {
+        const res = window.generatePedagogicalPassword('saPin', '2026', '', '!', ['word', 'number', 'service'], 12);
+        assert.strictEqual(res.parts.word, 'saPinsaPin');
+        assert.strictEqual(res.parts.service, '!');
+        assert.strictEqual(res.password, 'saPinsaPin2026!');
+    });
+
+    await t.test('Supports instagram as site (uses 3 letters ins, bound to character: !ins)', () => {
+        const res = window.generatePedagogicalPassword('saPin', '2026', 'instagram', '!', ['word', 'number', 'service'], 12);
+        assert.strictEqual(res.parts.service, '!ins');
+        assert.strictEqual(res.password, 'saPin2026!ins');
     });
 });

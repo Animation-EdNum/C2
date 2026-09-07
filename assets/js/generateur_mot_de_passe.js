@@ -40,11 +40,9 @@
     const elMinLengthSlider = document.getElementById('generator-min-length');
     const elMinLengthVal = document.getElementById('min-length-val');
     const elElementsOrderContainer = document.getElementById('elements-order-container');
-    const elGenerateBtn = document.getElementById('generate-pw-btn');
 
     // Created password output elements (Mode 1)
     const elCreatedPwInput = document.getElementById('created-password-input');
-    const elCreatedPwCopy = document.getElementById('created-password-copy');
     const elCreatedPwToggle = document.getElementById('created-password-toggle');
     const elCreatedColoredPreview = document.getElementById('created-colored-preview');
     const elCreatedStrengthBar = document.getElementById('created-strength-bar');
@@ -266,7 +264,7 @@
     function generatePedagogicalPassword(word, number, service, specChar, order, minLength) {
         if (!word || word.length < 4) return { password: "", parts: null };
 
-        const serviceAbbr = service ? service.substring(0, 4).toLowerCase() : "";
+        const serviceAbbr = service ? service.substring(0, 3).toLowerCase() : "";
         const serviceBlock = specChar + serviceAbbr;
         const otherLength = number.length + serviceBlock.length;
         const k = Math.max(1, Math.ceil((minLength - otherLength) / word.length));
@@ -285,10 +283,11 @@
         const parts = {
             word: modifiedWord,
             number: number,
-            service: serviceBlock
+            service: serviceBlock,
+            special: specChar
         };
 
-        let pw = order.map(key => parts[key]).join('');
+        let pw = order.map(key => parts[key] || '').join('');
         return { password: pw, parts: parts };
     }
 
@@ -310,7 +309,7 @@
 
         for (const key of order) {
             const text = parts[key];
-            if (text) {
+            if (text && blockConfig[key]) {
                 const span = document.createElement('span');
                 span.className = `pw-block ${blockConfig[key].className}`;
                 span.textContent = text;
@@ -610,7 +609,7 @@
 
         const specChar = elSpecCharInput ? elSpecCharInput.value : "";
         const serviceVal = elServiceInput ? elServiceInput.value.trim() : "";
-        const serviceAbbr = serviceVal ? serviceVal.substring(0, 4).toLowerCase() : "";
+        const serviceAbbr = serviceVal ? serviceVal.substring(0, 3).toLowerCase() : "";
         const servicePreviewText = specChar + serviceAbbr;
 
         let serviceText = "";
@@ -625,6 +624,7 @@
 
         for (let i = 0; i < elementsOrder.length; i++) {
             const key = elementsOrder[i];
+            if (!labels[key]) continue;
             const item = document.createElement('div');
             item.className = 'order-item';
             item.setAttribute('tabindex', '0');
@@ -794,40 +794,19 @@
         });
     }
 
-    // ==========================================
-    // EVENT LISTENERS
-    // ==========================================
-    if (elGenerateBtn) {
-        elGenerateBtn.addEventListener('click', () => {
-            const baseWord = elBaseWordInput.value.trim();
-            const numberVal = elNumberInput.value.trim();
-            const serviceVal = elServiceInput.value.trim();
-            const specChar = elSpecCharInput.value;
-            const minLength = parseInt(elMinLengthSlider.value, 10);
-
-            if (baseWord.length < 4) {
-                if (typeof showToast === 'function') showToast('Le mot de base doit contenir au moins 4 caractères.', 'error');
-                return;
+    // Intercept manual copy on generated password to encourage typing by hand
+    if (elCreatedPwInput) {
+        elCreatedPwInput.addEventListener('copy', (e) => {
+            e.preventDefault();
+            if (typeof showToast === 'function') {
+                showToast('Recopie le mot de passe à la main ! ✍️', 'info');
             }
-            if (!numberVal || !/^\d{1,4}$/.test(numberVal)) {
-                if (typeof showToast === 'function') showToast('Veuillez donner un nombre entre 1 et 4 chiffres.', 'error');
-                return;
-            }
-
-            const res = generatePedagogicalPassword(baseWord, numberVal, serviceVal, specChar, elementsOrder, minLength);
-            lastGeneratedParts = res.parts;
-            if (elCreatedPwInput) elCreatedPwInput.value = res.password;
-
-            if (elCreatedPwInput && elCreatedPwInput.type === 'password') {
-                if (elCreatedPwToggle) elCreatedPwToggle.click();
-            }
-
-            updateCreatedPasswordUI(res.password, res.parts);
-            if (typeof showToast === 'function') showToast('Mot de passe généré !', 'success');
+        });
+        elCreatedPwInput.addEventListener('cut', (e) => {
+            e.preventDefault();
         });
     }
 
-    setupCopyButton(elCreatedPwCopy, elCreatedPwInput);
     setupToggleVisibility(elCreatedPwToggle, elCreatedPwInput);
 
     setupCopyButton(elPasswordCopy, elPasswordInput);
