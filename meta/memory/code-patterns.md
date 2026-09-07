@@ -1,77 +1,88 @@
-# Code Patterns & UI/UX Consistency
+# Code Patterns & Project Idioms
 
-## 1. Global App Structure (HTML)
-- **Standalone Pages:** Use inline CSS resets (`* { margin: 0; ... }`) in `<style>` blocks.
-- **Teacher Webapps Layout:** Use a consistent structural layout: an `.app-shell` holding a `<header>` and a `<main>`. Inside the main area, use an `.app-main` container split into a left `.config-panel` (an `<aside>` for settings) and a right `.results-panel`.
-- **Copyright Header:** All source files (`.html`, `.css`, `.js`) MUST include the standard AGPL-3.0 copyright header attributing 'Animation-EdNum (HEP-VS)' at the top of the file.
+This document records code conventions, reusable hooks, and established project idioms.
+
+## 1. HTML & Page Skeleton
+- **AGPL-3.0 License Header:** Every source file (`.html`, `.css`, `.js`) must start with the standardized AGPL-3.0 comment header attributing "Animation-EdNum (HEP-VS)".
 - **Semantic Structure:**
-  - `<a href="#main-content" class="skip-link">`: Mandatory first body element.
-  - `<header class="app-header">`: Contains title, back icon, action buttons (inline SVGs from `fa-subset.js`).
-  - `<main id="main-content">`: Main content wrapper, center with `margin: 0 auto;`.
-  - `<footer class="no-print">`: Mandatory legal text.
-  - `<canvas id="confetti-canvas">`: Mandatory for celebrations.
+  ```html
+  <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+  <header class="app-header">
+      <div class="header-left">
+          <a href="../index.html" class="header-icon" aria-label="Retour au portail"><i data-fa="arrow-left"></i></a>
+          <h1>Nom de l'application</h1>
+      </div>
+      <div class="action-buttons">...</div>
+  </header>
+  <main id="main-content">...</main>
+  <footer class="no-print">...</footer>
+  <canvas id="confetti-canvas"></canvas>
+  ```
+- **Teacher Tools Header Return:** In all teacher webapps (`webapps/teacher/*` and `alpha/webapps/teacher/*`), the header back icon must explicitly link back to the teacher portal section:
+  ```html
+  <a href="../../index.html#teachers" class="header-icon" aria-label="Retour à l'espace enseignant·e·s"><i data-fa="arrow-left"></i></a>
+  ```
+- **Flat Legal Footer:** Attribution footers must sit outside `.app-shell` as a flat, transparent block (`margin-top: 1.5rem; text-align: center; opacity: 0.85;`). Never trap footers inside nested cards.
 
-## 2. CSS & Design System (Glassmorphism)
-- **Centralization:** NO local styles in stable HTML files. CSS variables (`--text-main`) reside in `assets/css/tokens.css` and `base.css`. Components (`.btn`) are in `components.css`. See §6 FCP Optimization for cascade order.
-- **"No Tailwind" Rule Clarification:** Importing the Tailwind CSS framework, build tools, or utility classes into HTML is strictly prohibited to maintain zero-dependency, 100% Vanilla CSS portability. However, using harmonious color palettes and gradients inspired by Tailwind (transposed into pure Vanilla CSS custom properties in `tokens.css` and `base.css`) is recommended and standardized for visual consistency across all webapps.
-- **Glassmorphism:** Use `var(--glass-bg)` with `backdrop-filter: blur(12px) saturate(180%)`. Border is `--glass-border`.
-- **Border Radii:** `--radius-sm` (6px), `--radius-md` (8px), `--radius-lg` (12px), `--radius-2xl` (20px).
-- **Tooltips:** NEVER use native `title` attributes on buttons. Use `data-tooltip="..."` for CSS-animated tooltips.
-- **Dark Mode:** Applied via `data-theme="dark"` on `<html>`. Ensure high contrast on hover states.
-- **SVG Styling:** Always add `px` to SVG units in CSS (e.g., `r: 14px;`). Apply `overflow: visible` to prevent `.fa-icon` cropping. Scale SVGs via `width/height`, NOT `font-size`. Add `transform-box: fill-box; transform-origin: center;` for proper CSS scaling.
-- **CSS Specificity vs `!important`:** Override styles by naturally increasing selector specificity (e.g., prefixing selectors with `html body ` or body/html hooks) rather than deleting `!important` flags or using them excessively.
-- **Animations:** Use CSS `transform` on `.target-inner` wrappers, not the parent overlay. Use `requestAnimationFrame` for continuous JS animations, not `setInterval`.
-- **DOM & UI:** Always provide explicit fallback colors (e.g., `var(--card-bg, #ffffff)`) for CSS variables. Use `overflow: visible` to prevent absolute overlays from clipping.
-- **Automate Grid Layers:** To ensure grid lines render above image mats applied via `.bot-grid::before`, the intermediate `.grid-row` container must have `position: relative` and `z-index: 1`, and `.bot-cell` borders must have increased opacity.
+## 2. CSS & Design System Idioms
+- **Cascade Loading Order:** Link stylesheets in parallel in this exact order:
+  `tokens.css` → `base.css` → `components.css` → `utilities.css` → `assets/css/<app_name>.css`.
+- **Glassmorphism:** Standard card container styles:
+  ```css
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg, 12px);
+  ```
+- **Dark Mode & Form Input Focus:** Declare `color-scheme: dark;` on `body.dark` so browser native controls render darkly. Form inputs (`input`, `textarea`, `select`) must keep dark surfaces on focus:
+  ```css
+  body.dark input:focus,
+  body.dark textarea:focus,
+  body.dark select:focus {
+      background: #0f172a !important;
+      color: var(--text-main, #f8fafc) !important;
+  }
+  ```
+- **Mobile Input Auto-Zoom Prevention:** Form controls on mobile must have `font-size: 16px` (or `1rem`) to prevent iOS Safari from auto-zooming on focus. Minimum touch target size is 44×44px.
+- **Custom Tooltips:** Never use native `title` on interactive buttons. Use `data-tooltip="Texte"` with CSS-animated tooltips.
+- **TBI Projection Mode:** Classroom whiteboard mode toggles `.tbi-projection` on the root container, hiding configuration panels and enforcing container overflow safeguards (`overflow: hidden` / `overflow-y: auto`) to prevent viewport clipping.
+- **Compact Cards for External Links:** Render external links in portals using `.card.card-compact` inside `.grid.grid-compact`, displaying title, badges, and external icon arrow without descriptions or tags.
 
-## 3. Navigation & UI Components
-- **Primary Navigation:** Exclusively use top tabs (`.tabs` > `.tab-btn`). NEVER use bottom tab bars (`.nav-bar` is deprecated).
-- **Cards:** `.exercise-card` must use a `.card-footer` with a `.score-bar` and an icon-only stats button (`.icon-action-btn`).
-- **Modals/Drawers:** Styled as side-panels. Must support swipe-to-close and Escape key.
-- **TBI Projection Mode:** Classroom interactive whiteboard mode triggered via `.tbi-mode` button. Maximizes UI scaling, removes non-essential panels, applies `.tbi-projection` container classes with explicit `overflow: hidden` / `overflow: auto` safeguards to prevent projection viewport clipping.
-- **Icons (FontAwesome 7 Pro):** `data-fa="<name>"` (solid), `data-fa="dt-<name>"` (duotone). Run `generate_fa_subset.js` after adding. Do not manually modify the generated data inside `assets/js/fa-subset.js`. Fix icon appearance issues via standard CSS overrides. Ensure custom icons use the exact same `viewBox` width and height dimensions as the original icon.
-- **Accessibility:** Minimum 44x44px touch targets. Maintain `:focus-visible` rings. Add `tabindex="0"`.
-- **Specific Instructions:** Place 'short instruction' texts directly inside the `.exercise-card` using inline styles instead of `.chal-instruction` classes.
+## 3. JavaScript & State Idioms
+- **XSS Prevention & Safe DOM Injection:** Never assign directly to `.innerHTML`. Use:
+  - `element.textContent = '...'` for text.
+  - `element.replaceChildren()` or `element.textContent = ''` to clear nodes.
+  - `document.createElement()` and `element.appendChild()` for DOM trees.
+  - `new DOMParser().parseFromString(htmlString, 'text/html')` for static multi-node templates, appending via `while (doc.body.firstChild) { target.appendChild(doc.body.firstChild); }`.
+- **Universal App Reset Lifecycle (`window.__onResetApp`):** When an app maintains in-memory state, define:
+  ```javascript
+  window.__onResetApp = function() {
+      // Clear in-memory state, form fields, and re-render UI
+  };
+  ```
+  The central `#reset-cache-btn` in `theme.js` invokes this hook automatically upon user confirmation.
+- **ScoreManager Usage (`scores.js`):**
+  - Record success: `ScoreManager.addSuccess(modeKey, levelNumber, mistakesCount);`
+  - Record mistake: `ScoreManager.addMistake(modeKey, levelNumber);`
+  - Always register mode names in `MODE_LABELS` in `scores.js` matching UI tab names.
+- **Confetti & Celebrations (`confetti.js`):**
+  - Trigger celebration: `window.handleStreakCelebration(currentStreak, isExtreme, score);`
+- **Audio Sound Feedback (`audio.js`):**
+  - Play sound: `window.playSound('click' | 'success' | 'error' | 'win');`
+  - Never redeclare `isMuted` or `playSound` locally in individual webapps.
+- **Dynamic FontAwesome Icons:**
+  - After inserting `<i data-fa="name"></i>` into the DOM, invoke `window.fa?.createIcons?.(parentElement);`.
+- **Event Binding:** Never use inline `onclick="..."` attributes in HTML. Always bind via `addEventListener` or event delegation using `e.target.closest()`.
 
-## 4. JS & State Management
-- **ScoreManager (`scores.js`):** Centralizes all adaptive difficulty and scores via `localStorage`. Call `ScoreManager.addSuccess(mode, level, mistakesMade)` or `addMistake(mode, level)`. Pass `null` for `level` if difficulty logic is disabled. Both `addSuccess` and `addMistake` increment `totalAttempts` so that attempts accurately equal `totalSuccess + mistakes` (with auto-healing on `loadStats()`). Every mode string must have a clear human-readable translation in `MODE_LABELS` matching the UI tabs. Card footers for interactive exercise tabs include a `.score-bar` (Victoires and Série 🔥) linked to live score counters.
-- **Confetti (`confetti.js`):** Use `window.handleStreakCelebration(currentStreak, isExtreme, score)` instead of raw `launchConfetti()`.
-- **Toasts (`toast.js`):** `showToast(msg, type)`. Types: `success`, `error`, `warn`, `info`.
-- **DOM Queries:** Pre-cache DOM elements. Do NOT use `Array.from(document.querySelectorAll).find()` inside loops. Use `DocumentFragment` for batch inserts.
-- **XSS Prevention (Critical):** Always sanitize untrusted dynamic strings with `ScoreManager._escapeHtml()` before insertion. Prefer native browser DOM APIs (`document.createElement`, `textContent`) over `innerHTML`. Use `container.textContent = ''` instead of `container.innerHTML = ''` when clearing DOM nodes.
-- **No Inline Events (Critical):** Do NOT use inline event attributes (e.g. `onclick="..."`, `onchange="..."`) in HTML code. Always bind events programmatically via `.addEventListener('click', ...)` on elements identified with unique `id` attributes or structural selectors.
-- **Audio (`audio.js`):** Use `playSound(id)`. Apps must start muted (`isMuted = true`). Do not locally redeclare variables like `isMuted` or functions like `playSound` to avoid collisions with the centralized `audio.js`.
-- **URL Parameters (`url-params.js`):** Global UI configs via URL search params.
-- **Service Worker Manifest Line Endings (`generate-sw-manifest.js`):** The automated SW manifest generator must normalize line endings (CRLF/LF) across all hashed files before computing checksums. This guarantees deterministic cache hashes across Windows, macOS, and Linux build environments.
-- **JS Performance Patterns:** Extract regular expression literals used in loops into module-level constants. Use `getElementsByClassName` with a `while` loop over the live `HTMLCollection` instead of `querySelectorAll` for rapid element removal. Use `Array.prototype.map().join('')` or push to an array and `.join('')` instead of `+=` for string concatenation in loops. For animation loops, replace `Array.splice()` with an O(1) swap-and-pop pattern when element order doesn't matter. Avoid nested `querySelector` calls within iterations; use a single, flat `document.querySelectorAll()` call. Implement memoization caches when applying regex replacements to large strings inside render loops.
-- **Theme Callbacks:** Define `window.__onThemeChange(theme)` to execute page-specific logic when the global dark/light theme changes.
-- **Clipboard API:** Deprecate `document.execCommand('copy')`. Use `navigator.clipboard.writeText()` or `ClipboardItem` APIs, relying on Promise-based `.catch()` blocks for errors instead of legacy hidden textarea hacks.
-
-## 5. App-Specific Quirks
-- **Password Generator (`generateur_mot_de_passe.html`):** Tabbed interface (Générateur, Tester, Conseils). Interactive slider & character options update entropy calculation real-time. Drag-and-drop elements for password construction. TBI mode supported.
-- **Drawing Apps:** Call `e.preventDefault()` on `touchstart/move`.
-- **Simulateur Automate:**
-  - Robot orientation is an integer `0-3` (Up, Right, Down, Left).
-  - Validation: Shape `closed: true` and final position == initial position.
-  - Skin config: `MAT_CONFIG` and `SKIN_CONFIG`. Use `createSVG(tag)`.
-  - Clear `<filter>` tags from SVG strings before generating thumbnails to fix lag.
-  - Visual Overlays: When attaching visual overlays to the rotating `.robot-body`, use a wrapper element to apply counter-rotation (`transform: rotate(-${deg}deg)`) and apply translation to the inner element to ensure positioning relative to global screen axes.
-- **Jeu de la Grue:** 1D blind queue. Reset `initialCupsState` on failure.
-- **Routage Réseau:** Extreme mode breaks nodes dynamically (`brokenNodes`). Undo last node instead of resetting path.
-- **Back Navigation**: To implement 'back' navigation in static offline HTML pages, use `<a href="javascript:history.back()">`.
-
-## 6. Structure & Styling Specifics
-- **FCP Optimization**: To optimize First Contentful Paint (FCP), HTML files must include direct, parallel `<link>` tags for `tokens.css`, `base.css`, `components.css`, and `utilities.css` (in that specific cascade order). Do not bundle CSS into a single file.
-- **Per-App CSS**: Stable webapps include a dedicated `assets/css/<app_name>.css` file (e.g., `automate.css`, `binaire_codage.css`, `routage_reseau.css`). Alpha apps may still use inline `<style>` blocks.
-- **Duplicate SVG IDs**: In webapps with multiple tabs or hidden containers, when dynamically injecting identical SVG strings containing `<filter>` or `<linearGradient>`, append a unique suffix to all `id="..."`, `url(#...)`, and `href="#..."` strings to prevent invisibility bugs in Chromium/WebKit.
-- **Event Delegation:** For dynamically generated elements (like `.program-cmd` in `#sim-program`), handle click events using event delegation on their static parent containers combined with `e.target.closest()`.
-- **FontAwesome Dynamic Injection:** When dynamically injecting new FontAwesome `<i data-fa="...">` tags into the DOM via JavaScript, use optional chaining `window.fa?.createIcons?.(parentElement)` to trigger conversion.
-- **Webapp Reset Button Integration:** Every webapp must include `<button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application"><i data-fa="arrows-rotate"></i><span id="resetCacheText">Réinitialiser</span></button>` in its `.settings-dropdown-content` (or `<button class="icon-action-btn" id="reset-cache-btn"...>` in `.action-buttons` for teacher tools). The click handler, confirmation modal, and cache-clearing logic are handled centrally by `theme.js`.
-- **Smart Sticky Header Pattern:** When designing scroll-responsive sticky navigation headers, use `position: sticky; top: 0; z-index: 1000; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)`. Toggle class `.header-hidden` (`transform: translateY(-100%)`) on scroll down (`currentScrollY > lastScrollY + 10` when `scrollY > 80`), and remove it on scroll up (`currentScrollY < lastScrollY - 10` or `scrollY <= 80`).
-- **Compact Cards for External Links:** When rendering external links in portal views without detailed descriptions, use the `.card.card-compact` pattern inside a `.grid.grid-compact` container. Display only header icons, title, degree badges, and an external link arrow (`arrow-up-right-from-square`), omitting description, tags, and manual references.
-- **Dark Mode Form Inputs & Focus Styling:** In dark mode, all form inputs (`input`, `textarea`, `select`) must maintain dark background surfaces (`#0f172a` or `rgba(15, 23, 42, 0.8)`) with high-contrast text (`var(--text-main, #f8fafc)`). Never declare `input:focus { background: white; }` without a scoped `body.dark input:focus { background: #0f172a; color: var(--text-main); }`. Declare `color-scheme: dark;` inside `body.dark` across global CSS sheets so native form controls render darkly.
-- **Teacher Webapp Header Navigation Pattern:** In all teacher webapps (`webapps/teacher/*` and `alpha/webapps/teacher/*`), the header home icon `<a class="header-icon">` must point to `../../index.html#teachers` (or `../../../index.html#teachers`) and feature an explicit `aria-label="Retour à l'espace enseignant·e·s"`.
-- **Application In-Page Reset Lifecycle (`window.__onResetApp`) :** When a webapp stores structured data or maintains interactive UI state, define a global handler `window.__onResetApp = function() { ... }` that clears state and refreshes the DOM. `theme.js` automatically calls this hook when the user confirms the reset dialog.
-- **Mobile Input Auto-Zoom Prevention:** All form input elements on mobile devices (`input[type="text"]`, `input[type="number"]`, etc.) must have `font-size: 16px` (or `1rem` base `16px`) to prevent mobile Safari from automatically zooming into the page on focus.
-- **Flat Accessible Footers Pattern:** Position legal attribution footers outside the main card (`.app-shell`) as a flat, transparent element with `text-align: center; margin-top: 1.5rem; opacity: 0.85;`. Do not enclose footers inside nested card panels or colored pills.
-
+## 4. Testing & Playwright Idioms
+- **IIFE Encapsulation in `page.evaluate()`:** Always wrap Playwright evaluated snippets in IIFEs to prevent polluting the global window scope across test steps:
+  ```python
+  await page.evaluate("(() => { document.querySelector('#action-btn')?.click(); })()")
+  ```
+- **Direct `localStorage` State Injection:** For tests with complex animations or modal chains (e.g. Simulateur Automate), inject the target state directly into `localStorage` after `page.goto()` and reload to bypass UI flakiness:
+  ```python
+  await page.evaluate("(() => { localStorage.setItem('at_active_skin', 'pedago'); })()")
+  ```
+- **Direct DOM Assertions over Canvas Mocks:** Assert the presence, attributes, and lifecycle of DOM nodes (e.g. `#confetti-canvas`, toast elements, score badges) rather than monkey-patching canvas contexts.
+- **JSDOM Unit Tests (`meta/tests/unit/`):** Run via `npm run test:unit`. Instantiate JSDOM with `runScripts: "dangerously"`, eval the target script, and execute timer callbacks synchronously when testing staggered sequences.

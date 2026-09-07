@@ -1,91 +1,35 @@
 # Architectural Decisions & Technical Choices
 
-## 1. Architecture & Tech Stack
-- **3-Layer Memory (2026-04-22):** Persists state and optimizes AI tokens via constitutional context.
-- **Strict Vanilla Stack (2026-04-15):** Exclusively HTML/CSS/JS. No React, No Tailwind. Ensures zero-build portability.
-- **Local Data:** Static data loaded synchronously via `<script>` objects, NEVER via `fetch()`, to bypass CORS on `file://`.
-- **NPM Package (2026-05-12):** `@ednum/suite-ednum` served via a zero-dependency static server (`bin/ednum.js`). Excludes `meta/` and dev files.
+This document records the architectural choices, library selections, and the rationale behind them.
 
-## 2. PWA & Offline Storage
-- **Service Worker (2026-04-30):** Single registration in `theme.js`. "Stale-While-Revalidate" strategy. Wrapper `event.waitUntil()` keeps worker alive. Auto-generated via `node meta/scripts/generate-sw-manifest.js`. A local Git pre-commit hook automatically runs this script and stages the updated `sw.js` before every commit.
-- **LocalStorage (2026-04-18):** Sole persistence mechanism for settings, scores, and states.
+## 1. Architecture & Portability
+- **Strict Vanilla Stack (HTML/JS/CSS):** Zero build tools, zero frameworks (No React, Vue, or Tailwind). Guarantees decades-long longevity, instant page loading, and frictionless offline execution.
+- **Synchronous Script Data Loading over `fetch()`:** Static application registries (`registry.js`) and subsets are loaded synchronously via `<script>` tags rather than asynchronous `fetch()` to eliminate CORS blocking when opened directly from the filesystem (`file://`).
+- **Zero-CDN Local Asset Centralization:** All fonts, icons, styles, and audio reside strictly in `/assets/`. Third-party CDNs are forbidden to ensure 100% offline availability in isolated school environments.
 
-## 3. Assets & Design
-- **Local Hosting (2026-04-12):** NO CDN. Fonts and scripts hosted locally.
-- **Glassmorphism (2026-04-10):** Semi-transparent UI. Colors managed via CSS variables in `tokens.css` and `base.css`.
-- **CSS Cascade (2026-05-21):** Decomposed `shared.css` into `tokens.css` (design tokens) → `base.css` (reset, typography, glassmorphism) → `components.css` (buttons, cards, modals, tabs) → `utilities.css` (utility classes). Loaded via parallel `<link>` tags for FCP optimization.
-- **FontAwesome 7 Pro (2026-04-30):** Generated via script `meta/scripts/generate_fa_subset.js` accessing a private repo. Do NOT cache icon DOM nodes before modification.
-- **Top-Tabs Navigation (2026-05-01):** Standardized on top `.tabs`. Deprecated `.nav-bar` bottom tabs to prevent OS gesture conflicts.
-- **Image Optimization:** Large mats optimized to 256-color PNGs via Python Pillow.
-- **App Renaming:** The historical 'bluebot' simulator has been renamed to 'automate' across the codebase.
-- **Static Assets Scope:** Experimental or alpha-stage webapps are located in `alpha/webapps/`.
+## 2. PWA & Offline Strategy
+- **Stale-While-Revalidate Service Worker (`sw.js`):** Assets load instantaneously from the local cache while the worker checks for updates in the background. Immediate updates notify the user via a lightweight toast (`skipWaiting`).
+- **Deterministic Cache Manifest Hashing:** `meta/scripts/generate-sw-manifest.js` normalizes line endings (CRLF/LF) across all hashed files before generating checksums, preventing cross-platform Git cache mismatches.
+- **LocalStorage for Synchronous Persistence:** Chosen over IndexedDB for zero-latency synchronous reading during page boot, simplicity, and low cognitive overhead.
 
-## 4. Gamification & Pedagogy
-- **Metaphors:** Emphasize physical/immersive mechanics (cracking a safe) over generic buttons.
-- **Adaptive Difficulty & Score Tracking (2026-04-25, updated 2026-08-12):** Centralized in `ScoreManager`. Triggered via `c2_change_difficulty`. Apps tracking stats define translations in `MODE_LABELS` (`assets/js/scores.js`) matching exact UI tab names (e.g. "Chasse au trésor (simulateur)", "Encodage", "Décodage"). Total attempts increment on both success and mistake with self-healing migration on load.
-- **State-Level Constraints (2026-04-24):** Enforce game rules in state generation, not UI.
-- **Binary Display (2026-04-25):** Always show inactive "0" weights (e.g., `128 + 0 + 32 + 0`).
-- **URL Overrides:** Used to enforce pedagogical constraints (e.g., `hideDict`, `lockTopology`, `unlockAllSkins`). Configured in `assets/js/url-params.js`. Prefix Share Modal checkboxes with `opt-`.
+## 3. Design System & CSS Architecture
+- **4-Layer CSS Cascade for First Contentful Paint (FCP):** Rather than bundling or minifying CSS into a single monolithic file, stylesheets are split into `tokens.css` → `base.css` → `components.css` → `utilities.css` and loaded in parallel. Application-specific stylesheets (`assets/css/<app>.css`) load last to provide clean, isolated overrides.
+- **Glassmorphism Design Language:** Semi-transparent surfaces with backdrop-filter blur and subtle borders provide a modern, tactile feel without heavy graphics or frameworks.
+- **Custom FontAwesome 7 Pro Subset:** Instead of loading multi-megabyte icon libraries, an automated generator (`meta/scripts/generate_fa_subset.js`) compiles an exact subset into `assets/js/fa-subset.js`.
 
-## 5. Webapp Specific Mechanics
-- **Automate Simulator:** 5 modes. 'Chasse au trésor' (simulator mode), 'Dessin', 'Décodage', and 'Pilotage' modes track success and mistakes in `ScoreManager`. Grid configs in `MAT_CONFIG` (`automate-skins.js`). State sync required when loops halt.
-- **Pixel Studio:** `#grid-editor` row/cell uses `flex: 1` to fix grid size. 'Éditeur' mode requires 6 completed challenges to unlock. Integrated color mode (4 colors, 2 bits per pixel) with N/B toggle (2026-05-25), using a selective palette brush instead of color cycling to improve drag-painting ergonomics. Shared URL formats encode color mode and compact 2-bit strings. Editor unlocks at 6 total successes (N/B or Colors).
-- **Codage Binaire:** Calculator overlay is a full-page modal to manage cognitive load on mobile.
-- **Bit de Parité:** Uses a 1D DOM structure factoring in the extra parity row/column.
-- **Routage Réseau:** Topologies are procedurally generated by difficulty.
-- **Automate Simulator Details:** Trail redrawing in explore mode replays `exploreState.history` starting from `exploreState.absoluteStartRow`, `absoluteStartCol`, and `absoluteStartDir`. The robot's randomized starting position must never fall on the outer edges of the grid (unless grid size is <= 2x2).
-- **Coffre-fort & Générateur de Mot de Passe:** Password generator extracted into standalone webapp `generateur_mot_de_passe.html` featuring a tabbed interface (create, test, tips), drag-and-drop mechanics, TBI projection mode, entropy-based crack time estimation, and common pattern detection.
-- **TBI Projection Mode (2026-08-25):** Full-screen classroom projection mode for Interactive Whiteboards (Tableau Blanc Interactif) added to student and teacher tools, with explicit container overflow safeguards to prevent UI clipping during scaling.
-- **Compresseur Magique:** RLE compression percentage must accurately reflect negative compression (loss of space). Do not clamp to 0%; update UI text to indicate the loss but keep CSS dimensions clamped.
-- **Binaire Studio:** Avoid trailing newlines when parsing/generating pixel strings to prevent inflation of grid sizes.
-- **Réseau de tri:** Procedural network sorting, nodes swap interaction, and an onboarding hint shown once via localStorage.
-- **Machine à trier:** Sorting items into bins, where victories and streaks count only on full bin completion, while errors are tracked instantly.
-- **Dresseur de neurones:** ML training simulation focusing on algorithmic bias and linear regressions.
-- **Détective IA:** Multi-mode guided, free, and challenge decision tree structures.
-- **Machine à chiffrer:** Pure offline Caesar and Vigenère encryption/decryption mechanics.
-- **Sim Dyslexie & Générateur QR:** Teacher alpha apps for dyslexia reading simulation and offline QR code generation.
-- **UI Nudges:** Ephemeral onboarding nudges follow a 3-second delay, disappear on interaction/5 seconds, persist state in `localStorage`, and opt-out via `?noNudges=1`.
+## 4. Navigation & Layout Decisions
+- **Top-Tabs over Bottom Navigation:** Primary navigation strictly uses top tabs (`.tabs`). Bottom tab bars were deprecated to avoid conflicts with system navigation gestures on iOS and Android tablets.
+- **Smart Sticky Header & Parallax Reveal:** The portal header uses sticky positioning with a directional scroll listener: it tucks away on downward scroll (`.header-hidden`) to maximize reading area and reveals immediately on any upward scroll.
+- **Dedicated Teacher Space (`#teachers`):** Rather than an ambiguous mode toggle button in the header (which collided with the Mode TBI icon), teacher tools are accessed via a clear footer link. In teacher view, a distinct `graduation-cap` role button appears in the header to return to the student space.
+- **Teacher Tools Header Return:** Inside all teacher apps (`webapps/teacher/*`), the header home icon navigates back to `index.html#teachers` rather than the student landing page.
 
-## 6. Security & Exports
-- **XSS Prevention:** Zero tolerance for unescaped HTML injection. Sanitize dynamic rendering via `ScoreManager._escapeHtml` or DOM text nodes (`textContent`). Resolved VICE alert #75 by replacing `.innerHTML = ''` with `.textContent = ''` in portal recent grid rendering.
-- **Dependency Audit:** Resolved VICE alert #74 by updating vulnerable transitive dependencies (`undici`).
-- **Image Export:** SVG strings with `<foreignObject>` drawn to canvas and downloaded via `data:image/svg+xml;charset=utf-8,` to avoid tainted canvas.
-- **Clipboard API:** Writes `text/plain` and `text/html` for structured Word/Excel pasting.
-- **Server Security:** The local static file server (`bin/ednum.js`) must prevent Path Traversal by decoding URLs and verifying absolute paths against a trailing-slash terminated root directory. Prevent CSRF by rejecting non-GET/HEAD methods and validating the `Origin` header. All HTTP responses must include the Strict-Transport-Security (HSTS) header globally.
-- **CSP Constraints:** Due to offline-first architecture, Content-Security-Policy (CSP) must include `'unsafe-inline'` for `script-src` and `style-src`.
-- **Command Execution:** Prefer `execFile` or `spawn` over `exec` or `execSync` with concatenated strings to prevent command injection.
+## 5. Gamification & State Management
+- **Decoupled Score Management (`scores.js`):** Adaptive difficulty and statistics are centralized in `ScoreManager`. Total attempts are calculated as `totalSuccess + mistakes` with self-healing migration to keep metrics consistent across app restarts.
+- **Action-Oriented Button Paradigm:** Toggle buttons display the glyph and tooltip representing the *target action* resulting from a click, rather than the current system state.
+- **Universal Application Reset Lifecycle (`window.__onResetApp`):** Standardized `#reset-cache-btn` in `theme.js` clears storage/caches and triggers `window.__onResetApp()` if defined, allowing complex apps to cleanly reset their in-memory models without a full browser reload.
 
-## 7. Testing & Maintenance
-- **Testing Structure (2026-05-14, updated 2026-08-27):**
-  - **Unit Tests:** 80 Node.js unit tests in `meta/tests/unit/` (`npm run test:unit`). Requires `jsdom`.
-  - **E2E Tests:** Playwright suite in `meta/tests/e2e/`. Replaced fragile canvas prototype patching with direct DOM assertions; execute JS evaluate functions as IIFEs to prevent global scope leakage.
-  - **CI Integration & Clean Node Environment:** GitHub Actions `e2e-tests.yml` includes an explicit `npm ci` step in `smoke-test` to ensure `jsdom` is reliably present for unit tests, eliminating runtime missing module errors.
-  - **CI Memory Sync Workflow:** Automated synchronization workflow ensures memory files (`meta/memory/`) between the coding agent and the GitHub repository stay seamlessly updated upon push, maintaining persistent, living project context.
-- **Clean Code:** No `console.log` in production. No work-in-progress files committed. Use surgical edits via `replace_file_content` or `write_to_file`.
+## 6. Security & Vulnerability Remediation (VICE / CodeQL)
+- **Safe DOM Construction over `innerHTML` Assignments:** To prevent DOM XSS vulnerabilities and resolve static analysis security alerts (Google VICE / CodeQL), direct assignments to `.innerHTML` are banned. Code must use `textContent`, native DOM methods (`createElement`, `replaceChildren`), or inert `DOMParser.parseFromString(..., 'text/html')`.
 
-## 8. Specific Architectural Rules
-- **Data Loading**: To maintain the 'zero installation' offline requirement, static data must be formatted as JavaScript (e.g., `window.REGISTRY` in `assets/js/registry.js`) and loaded synchronously via `<script>` tags, not `fetch()`.
-- **Registry Configuration**: To register a new web application, manually add its configuration object to `window.REGISTRY` in `assets/js/registry.js`. Alpha apps need `"isAlpha": true` and text fields matching search terms.
-- **URL Parameters**: Specific URL parameters control pedagogical logic: `hideDict` in binaire_message, `lockTopology` in routage_reseau, `strictMode` in bit_de_parite, `hideGrid` in simulateur_automate, etc. `noNudges` is implicitly appended when `lockDiff` or `only` are active. When `lockMat=1`, `lockSpeed=1`, or `hideGrid=1` are active, their corresponding UI toolbar buttons must be explicitly hidden via logic in `url-params.js`.
-- **Offline Assets**: The application must remain 100% usable offline. Do not use external CDNs; all dependencies must be hosted locally.
-- **Service Worker Updates**: When adding, modifying, moving, or deleting static files, regenerate the service worker manifest by running `node meta/scripts/generate-sw-manifest.js` (or `npm run build:sw`). In addition to local Git pre-commit hooks, GitHub Actions workflow `.github/workflows/sw-sync.yml` automatically updates and commits `sw.js` on push to `main`.
-- **FontAwesome Subset**: To add or change FontAwesome icons, regenerate the custom subset by running `FA_SUBSET_DIR=/path/to/fontawesome-subset node meta/scripts/generate_fa_subset.js` (requires PAT). If no PAT is available, check available icons in `assets/js/fa-subset.js`.
-- **Routage Réseau Generation**: Network topologies are procedurally generated using `generateProceduralNetwork(difficulty, rng)`. Edge weight labels (`.weight-circle`, `.weight-text`) are positioned dynamically along edges using an iterative repulsion algorithm.
-- **Bit de Parité Grid**: The grid elements are represented by the `.cell` class. The total cell count for an N x N grid is (N+1) x (N+1).
-- **GitHub Actions:** Use exact 40-character commit SHAs instead of mutable version tags (e.g., `@v3`).
-- **Keyboard Targets:** Prioritize compatibility with Swiss keyboard layouts (avoid characters like '#' or '¨') for keyboard-dependent features or passwords.
-- **Automate Grid Accessibility:** Hidden by default to avoid tablet/mobile clutter. Automatically triggers and reveals the keyboard edit mode toolbar buttons upon `Tab` keydown. Uses `.grid-row:focus-within` styling to raise the active row and cell above subsequent rows, preventing clipping of custom outlines.
-- **Automate Overlays Layering:** Keeps the robot overlay and target overlays stacked above all cells and outlines by assigning them `z-index: 100 !important` and `z-index: 90 !important` respectively.
-- **Custom Grid Sharing:** Renders custom shared grids on page load. A robust active tab fallback is included in `url-params.js` to ensure the correct state (exploration or simulation) is serialized. Grid rebuilding and robot/target rendering are executed inside the URL load callback.
-- **Smart Sticky Header & Parallax Reveal:** Header contains all global action buttons, positioned `sticky; top: 0`. It smoothly hides upon scrolling down (`.header-hidden` translateY(-100%)) and reveals instantly upon scrolling up, providing quick access to search, role toggle, theme, reset, and PWA install without cluttering the screen.
-- **Teacher / Student Navigation (No Toggle):** To eliminate confusion with the Mode TBI icon (`chalkboard-user`), the portal does NOT use a toggle button in the header. Instead, a discreet "Espace Enseignant·e·s" link in the footer opens the teacher view (`#teachers`). In teacher view, a `#role-toggle-btn` with `graduation-cap` appears in the header to easily return to the student space.
-- **On-Demand Search Bar:** The search bar is hidden by default (`display: none;`) to keep the landing view clean. Clicking the magnifying glass `#search-toggle-btn` (or clicking a card hashtag) animates the search bar into view and focuses the input. Pressing Escape or toggling closes and resets.
-- **Compact External & Utility Cards:** External student links and utilities use a streamlined `.card-compact` style without descriptions, tags, or manual references to reduce visual clutter while retaining degree badges and external link cues.
-- **Universal Application Reset:** Standardized `#reset-cache-btn` across all 20 webapps. Wired centrally in `theme.js` to clear `localStorage`, `sessionStorage`, cookies, and unregister Service Worker caches.
-- **Teacher Tools Header Return Navigation:** In all teacher webapps (`webapps/teacher/*`), clicking the top-left logo/header icon navigates directly back to `index.html#teachers` (the teacher space on the portal) rather than the students portal landing view.
-- **Application Reset Hook Lifecycle (`window.__onResetApp`):** In addition to clearing caches and storage, `theme.js` invokes `window.__onResetApp()` if defined by the active webapp. This provides an official lifecycle hook for applications (such as teacher tools and complex simulations) to cleanly reset their in-memory models, clear forms, and restore default views without requiring a full browser reload.
-- **Form Controls & Dark Mode Color Scheme:** Text inputs, textareas, and selects must never turn pure white on focus in dark mode (`input:focus { background: white; }` is strictly prohibited without a `body.dark` override). In addition, `color-scheme: dark;` must be declared on `body.dark` in `base.css` and `teacher.css` to force the browser engine to render native controls (spinners, scrollbars, dropdowns) in dark mode.
-- **Minuteur visuel (Time-Timer) Architecture & Promotion:** Pure SVG circular countdown dial with 60-minute sweep, interactive drag-to-set, custom disk color picker with instant visual feedback, synthesized Web Audio chimes, fullscreen/TBI modes, and persistence in `localStorage`. Promoted from alpha to official production tool in `webapps/teacher/time_timer.html`.
-- **Dactylo Touch Typing Architecture:** Complete Swiss Romand QWERTZ layout mapping physical keyboard events, shift key pairing visualization, international standard WPM calculation (5 chars = 1 word), local high-score record tracking, and error key frequency analysis with custom feedback.
-
-
+## 7. Packaging & Distribution
+- **Standalone Static Server CLI (`bin/ednum.js`):** Distributed as `@ednum/suite-ednum`. Implements directory traversal protection (verifying canonical paths against trailing-slash root) and HSTS headers while remaining 100% dependency-free.

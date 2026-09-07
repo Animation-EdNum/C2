@@ -10,7 +10,7 @@
 - **Languages:** HTML5, Vanilla JavaScript (ES6+), Vanilla CSS.
 - **Testing:**
   - **Unit Tests:** Node.js native test runner (`npm run test:unit`) covering core utility modules (`audio.js`, `confetti.js`, `portal.js`, `scores.js`, `theme.js`, `toast.js`, `automate-engine.js`, etc.).
-  - **Automated E2E:** Playwright / Pytest (`python -m pytest meta/tests/e2e/`). *Note: Use `localStorage` manipulation instead of UI clicking for Simulateur Automate to avoid flakiness (see `meta/memory/automate-playwright-tips.md`).*
+  - **Automated E2E:** Playwright / Pytest (`python -m pytest meta/tests/e2e/`). *Note: Use `localStorage` manipulation instead of UI clicking for Simulateur Automate to avoid flakiness (see `meta/memory/code-patterns.md`).*
   - **Accessibility:** Manual browser verification (WCAG AA compliance) and high-contrast projection modes.
 - **Style Guidelines:** Clean, documented code, consistent glassmorphism design tokens, zero external CDN dependencies.
 

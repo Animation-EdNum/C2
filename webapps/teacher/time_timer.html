@@ -285,6 +285,103 @@
             filter: drop-shadow(0 15px 25px var(--shadow-color));
         }
 
+        /* CENTER PIVOT PULSE (Discreet Heartbeat every 2s) */
+        .center-pivot {
+            transform-box: fill-box;
+            transform-origin: 250px 250px;
+            pointer-events: none;
+            transition: transform 0.25s ease;
+        }
+
+        .center-pivot.pulsing {
+            animation: pivotPulse2s 2s ease-in-out infinite;
+        }
+
+        .center-pivot.pulsing #centerPivotGlow {
+            animation: pivotGlow2s 2s ease-in-out infinite;
+        }
+
+        @keyframes pivotPulse2s {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.08); }
+            28% { transform: scale(0.98); }
+            40% { transform: scale(1.04); }
+            52% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pivotGlow2s {
+            0% { opacity: 0; transform: scale(0.9); }
+            15% { opacity: 0.35; transform: scale(1.14); }
+            40% { opacity: 0.1; transform: scale(1.04); }
+            52%, 100% { opacity: 0; transform: scale(0.9); }
+        }
+
+        /* COMPACT STATUS PILL (Visible when digits are hidden) */
+        .timer-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            margin-top: -0.25rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+
+        body.dark .timer-status-pill {
+            background: rgba(30, 41, 59, 0.65);
+        }
+
+        .timer-status-pill.running {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .timer-status-pill.paused {
+            color: #d97706;
+            border-color: rgba(217, 119, 6, 0.35);
+            background: rgba(217, 119, 6, 0.1);
+        }
+
+        .timer-status-pill.ended {
+            color: var(--error);
+            border-color: rgba(239, 68, 68, 0.35);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .status-indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: background 0.2s;
+        }
+
+        .timer-status-pill.running .status-indicator-dot {
+            background: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            animation: statusDotPulse 1.6s infinite ease-in-out;
+        }
+
+        @keyframes statusDotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.6; }
+        }
+
+        body.projection .timer-status-pill {
+            font-size: 1.15rem;
+            padding: 8px 22px;
+        }
+
         /* DIGITAL TIME DISPLAY */
         .digital-display {
             display: flex;
@@ -391,6 +488,36 @@
             color: #ffffff !important;
             border-color: var(--primary);
             box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+        }
+
+        .preset-chip.active.running {
+            animation: activeChipGlow 2s ease-in-out infinite;
+        }
+
+        .preset-chip.active.running::before {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ffffff;
+            margin-right: 6px;
+            box-shadow: 0 0 6px #ffffff;
+            animation: chipDotBlink 1.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes chipDotBlink {
+            from { opacity: 0.4; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1.25); }
+        }
+
+        @keyframes activeChipGlow {
+            0%, 100% {
+                box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+            }
+            50% {
+                box-shadow: 0 0 0 4px var(--primary-light), 0 6px 20px rgba(13, 148, 136, 0.55);
+            }
         }
 
         /* MAIN CONTROLS */
@@ -860,13 +987,22 @@
                     <!-- Dial Numbers (0, 5, 10, ... 55, 60) -->
                     <g id="dialNumbersGroup"></g>
 
-                    <!-- Center Pivot Pin -->
-                    <circle cx="250" cy="250" r="14" fill="#0f172a" stroke="#ffffff" stroke-width="3"/>
-                    <circle cx="250" cy="250" r="5" fill="#ffffff"/>
+                    <!-- Center Pivot Pin (Heartbeat Pulse) -->
+                    <g id="centerPivot" class="center-pivot">
+                        <circle id="centerPivotGlow" cx="250" cy="250" r="22" fill="var(--timer-disk-color)" opacity="0"/>
+                        <circle cx="250" cy="250" r="14" fill="#0f172a" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="250" cy="250" r="5" fill="#ffffff"/>
+                    </g>
 
                     <!-- Drag Handle Knob at Trailing Edge -->
                     <circle id="dragHandle" cx="250" cy="40" r="13" fill="#ffffff" stroke="var(--text-main)" stroke-width="3" style="cursor: grab; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)); display:none;"/>
                 </svg>
+            </div>
+
+            <!-- COMPACT STATUS PILL (Visible when digital readout is hidden) -->
+            <div class="timer-status-pill" id="timerStatusPill">
+                <span class="status-indicator-dot" id="statusDot"></span>
+                <span class="status-text" id="statusText">Prêt</span>
             </div>
 
             <!-- DIGITAL READOUT (OPTIONAL/CONFIGURABLE) -->
@@ -989,6 +1125,14 @@
                             <span>Afficher le temps numérique</span>
                         </label>
                         <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkPulsePivot" checked>
+                            <span>Battement discret du pivot en marche (toutes les 2 s)</span>
+                        </label>
+                        <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkStartSound" checked>
+                            <span>Son discret au démarrage</span>
+                        </label>
+                        <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkWarning1m" checked>
                             <span>Signal sonore discret à 1 minute de la fin</span>
                         </label>
@@ -1054,6 +1198,10 @@
             const tickMarksGroup = document.getElementById('tickMarksGroup');
             const dialNumbersGroup = document.getElementById('dialNumbersGroup');
             const clockSvg = document.getElementById('clockSvg');
+            const centerPivot = document.getElementById('centerPivot');
+            const timerStatusPill = document.getElementById('timerStatusPill');
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
             const digitalTimeDisplay = document.getElementById('digitalTimeDisplay');
             const digitalDisplay = document.getElementById('digitalDisplay');
             const digitalStatus = document.getElementById('digitalStatus');
@@ -1077,6 +1225,8 @@
             const testSoundBtn = document.getElementById('testSoundBtn');
             const checkAutoStart = document.getElementById('checkAutoStart');
             const checkShowDigits = document.getElementById('checkShowDigits');
+            const checkPulsePivot = document.getElementById('checkPulsePivot');
+            const checkStartSound = document.getElementById('checkStartSound');
             const checkWarning1m = document.getElementById('checkWarning1m');
             const checkTicking = document.getElementById('checkTicking');
             const celebrationOverlay = document.getElementById('celebrationOverlay');
@@ -1277,6 +1427,30 @@
                 } catch (e) { }
             }
 
+            function playStartSound() {
+                if (isMuted || settings.startSound === false) return;
+                try {
+                    const ctx = getAudioContext();
+                    const now = ctx.currentTime;
+                    // Gentle rising chime (C5 523Hz -> G5 784Hz)
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.08);
+
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } catch (e) { }
+            }
+
             function playEndSound() {
                 const soundType = soundSelect.value;
                 if (soundType === 'zen') playZenChime();
@@ -1305,6 +1479,8 @@
                 sound: 'zen',
                 autoStart: true,
                 showDigits: false,
+                pulsePivot: true,
+                startSound: true,
                 warning1m: true,
                 ticking: false,
                 lastMinutes: 10,
@@ -1336,12 +1512,17 @@
                 soundSelect.value = settings.sound;
                 checkAutoStart.checked = settings.autoStart;
                 checkShowDigits.checked = settings.showDigits;
+                checkPulsePivot.checked = settings.pulsePivot !== false;
+                checkStartSound.checked = settings.startSound !== false;
                 checkWarning1m.checked = settings.warning1m;
                 checkTicking.checked = settings.ticking;
                 updateActivityUI();
 
                 donutHole.style.display = settings.style === 'ring' ? 'block' : 'none';
                 digitalDisplay.style.display = settings.showDigits ? 'flex' : 'none';
+                if (timerStatusPill) {
+                    timerStatusPill.style.display = settings.showDigits ? 'none' : 'inline-flex';
+                }
             }
 
             function saveSettings() {
@@ -1413,8 +1594,9 @@
             }
 
             // Draw Disk (Colored wedge)
-            function renderDisk() {
-                const fraction = Math.max(0, Math.min(1, remainingSeconds / 3600));
+            function renderDisk(overrideSecs) {
+                const secs = (overrideSecs !== undefined) ? overrideSecs : remainingSeconds;
+                const fraction = Math.max(0, Math.min(1, secs / 3600));
                 const angleDeg = fraction * 360;
 
                 if (fraction <= 0) {
@@ -1475,7 +1657,7 @@
                 dragHandle.style.display = 'block';
             }
 
-            // Update digital & button UI
+            // Update digital, status pill & button UI
             function updateUI() {
                 const mins = Math.floor(remainingSeconds / 60);
                 const secs = remainingSeconds % 60;
@@ -1502,6 +1684,33 @@
                     digitalStatus.className = remainingSeconds === 0 ? 'digital-status ended' : 'digital-status';
                 }
 
+                // Center pivot pulse animation (every 2s while running)
+                if (centerPivot) {
+                    const shouldPulse = isRunning && (settings.pulsePivot !== false);
+                    centerPivot.classList.toggle('pulsing', shouldPulse);
+                }
+
+                // Compact status pill (visible when digital readout is hidden)
+                if (timerStatusPill && statusText) {
+                    if (settings.showDigits) {
+                        timerStatusPill.style.display = 'none';
+                    } else {
+                        timerStatusPill.style.display = 'inline-flex';
+                        if (remainingSeconds === 0) {
+                            timerStatusPill.className = 'timer-status-pill ended';
+                            statusText.textContent = 'Temps écoulé !';
+                        } else if (isRunning) {
+                            timerStatusPill.className = 'timer-status-pill running';
+                            const m = Math.ceil(remainingSeconds / 60);
+                            statusText.textContent = `En cours (${m} min)`;
+                        } else {
+                            const hasStarted = remainingSeconds < totalSeconds;
+                            timerStatusPill.className = hasStarted ? 'timer-status-pill paused' : 'timer-status-pill';
+                            statusText.textContent = hasStarted ? 'En pause' : 'Prêt';
+                        }
+                    }
+                }
+
                 // Delta buttons disable states
                 btnSub1.disabled = (remainingSeconds < 60 && !isRunning);
                 btnAdd1.disabled = (remainingSeconds >= 3540);
@@ -1511,7 +1720,9 @@
                 const currentMinutes = Math.round(remainingSeconds / 60);
                 document.querySelectorAll('.preset-chip').forEach(chip => {
                     const chipMin = parseInt(chip.dataset.min, 10);
-                    chip.classList.toggle('active', remainingSeconds > 0 && remainingSeconds % 60 === 0 && chipMin === currentMinutes);
+                    const isMatch = (remainingSeconds > 0 && remainingSeconds % 60 === 0 && chipMin === currentMinutes);
+                    chip.classList.toggle('active', isMatch);
+                    chip.classList.toggle('running', isMatch && isRunning);
                 });
 
                 window.fa?.createIcons?.();
@@ -1545,19 +1756,26 @@
                 }
             }
 
-            function startTimer() {
+            function startTimer(playSound = true) {
                 if (remainingSeconds <= 0) {
                     remainingSeconds = totalSeconds || 600;
                 }
                 if (!isRunning) {
                     isRunning = true;
                     warning1mFired = (remainingSeconds <= 60);
+                    if (playSound) {
+                        playStartSound();
+                    }
                     timerId = setInterval(tick, 1000);
                     updateUI();
                 }
             }
 
             function stopTimer() {
+                if (diskAnimRaf) {
+                    cancelAnimationFrame(diskAnimRaf);
+                    diskAnimRaf = null;
+                }
                 if (isRunning) {
                     isRunning = false;
                     clearInterval(timerId);
@@ -1574,19 +1792,62 @@
                 }
             }
 
-            function setTimeMinutes(mins, autoStart = false) {
+            let diskAnimRaf = null;
+
+            function animateDiskSweep(fromSecs, toSecs, durationMs = 360, onComplete) {
+                if (diskAnimRaf) {
+                    cancelAnimationFrame(diskAnimRaf);
+                    diskAnimRaf = null;
+                }
+                const startTime = performance.now();
+                function step(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(1, elapsed / durationMs);
+                    // easeOutQuart
+                    const ease = 1 - Math.pow(1 - progress, 4);
+                    const currentSecs = fromSecs + (toSecs - fromSecs) * ease;
+                    renderDisk(currentSecs);
+                    if (progress < 1) {
+                        diskAnimRaf = requestAnimationFrame(step);
+                    } else {
+                        diskAnimRaf = null;
+                        renderDisk(toSecs);
+                        if (onComplete) onComplete();
+                    }
+                }
+                diskAnimRaf = requestAnimationFrame(step);
+            }
+
+            function setTimeMinutes(mins, autoStart = false, shouldAnimate = false) {
                 mins = Math.max(1, Math.min(60, mins));
+                const prevSeconds = remainingSeconds;
                 totalSeconds = mins * 60;
                 remainingSeconds = totalSeconds;
                 warning1mFired = false;
                 settings.lastMinutes = mins;
                 saveSettings();
 
-                if (autoStart) {
-                    startTimer();
-                } else {
-                    stopTimer();
+                if (shouldAnimate && typeof requestAnimationFrame === 'function') {
+                    const fromSecs = (isRunning || prevSeconds === 0) ? 0 : Math.min(prevSeconds, totalSeconds);
+                    if (autoStart) {
+                        playStartSound();
+                    }
                     updateUI();
+                    animateDiskSweep(fromSecs, totalSeconds, 360, () => {
+                        if (autoStart) {
+                            startTimer(false);
+                        } else {
+                            stopTimer();
+                            updateUI();
+                        }
+                    });
+                } else {
+                    if (autoStart) {
+                        startTimer();
+                    } else {
+                        stopTimer();
+                        updateUI();
+                    }
                 }
             }
 
@@ -1710,7 +1971,7 @@
                 if (!btn) return;
                 const mins = parseInt(btn.dataset.min, 10);
                 if (!isNaN(mins)) {
-                    setTimeMinutes(mins, settings.autoStart);
+                    setTimeMinutes(mins, settings.autoStart, true);
                 }
             });
 
@@ -1805,6 +2066,20 @@
             checkShowDigits.addEventListener('change', () => {
                 settings.showDigits = checkShowDigits.checked;
                 digitalDisplay.style.display = settings.showDigits ? 'flex' : 'none';
+                if (timerStatusPill) {
+                    timerStatusPill.style.display = settings.showDigits ? 'none' : 'inline-flex';
+                }
+                saveSettings();
+            });
+
+            checkPulsePivot.addEventListener('change', () => {
+                settings.pulsePivot = checkPulsePivot.checked;
+                saveSettings();
+                updateUI();
+            });
+
+            checkStartSound.addEventListener('change', () => {
+                settings.startSound = checkStartSound.checked;
                 saveSettings();
             });
 
@@ -1850,6 +2125,10 @@
 
             // Application Reset Handler (Global & Action button)
             window.__onResetApp = function () {
+                if (diskAnimRaf) {
+                    cancelAnimationFrame(diskAnimRaf);
+                    diskAnimRaf = null;
+                }
                 if (timerId) {
                     clearInterval(timerId);
                     timerId = null;
@@ -1867,6 +2146,8 @@
                     sound: 'zen',
                     autoStart: true,
                     showDigits: false,
+                    pulsePivot: true,
+                    startSound: true,
                     warning1m: true,
                     ticking: false,
                     lastMinutes: 10,

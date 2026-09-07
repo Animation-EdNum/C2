@@ -2,50 +2,29 @@
 
 ## 1. Mission & Scope
 - **Project:** Suite EdNum (Animation-EdNum, HEP-VS).
-- **Target Audience:** Primary school students in Switzerland (PER cycles 1-8H).
-- **Goal:** Teach CS concepts (algorithms, binary, networks, logic) through interactive web applications complementing the *Décodages* teaching materials.
+- **Target Audience:** Primary & lower secondary school students in Switzerland (PER cycles 1-8H & Cycle 3 up to 10CO) and their teachers.
+- **Goal:** Teach CS concepts (algorithms, binary, networks, cryptography, logic) through interactive, distraction-free web applications complementing the *Décodages* and *Connected* teaching materials.
 
-## 2. Application Structure
-- **Student Portals:** `index.html` (general use with smart sticky header, on-demand search toggle, role switcher), `indexC1.html` (simplified for 4-7 year olds).
-- **Stable Student Apps (`webapps/`):** 7 applications: Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
-- **Alpha Student Apps (`alpha/webapps/`):** 11 applications: Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Dactylo (`dactylo`), Une chose après l'autre (`tri_insertion`).
-- **Teacher Tools (`webapps/teacher/`):** 4 production tools: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`). Alpha: Lentille DYS / Sim Dyslexie (`alpha/webapps/teacher/sim_dyslexie.html`).
-  - *Stylesheet Rule:* They use a distinct stylesheet (`assets/css/teacher.css`). Do NOT extract their shared styles into the global CSS cascade.
-  - *Navigation Rule:* The top-left header icon link (`.header-icon`) inside teacher tools returns to `index.html#teachers` (the teacher section of the portal) rather than the student landing view.
-- **Universal Reset Button & Lifecycle:** All 26 webapps feature a `#reset-cache-btn` (inside options dropdown for student apps, in action-buttons for teacher tools), handled globally by `assets/js/theme.js`. Applications can implement `window.__onResetApp = function() { ... }` to reset state seamlessly.
-- **TBI Projection Mode:** Interactive Whiteboard (Tableau Blanc Interactif) mode supported across apps (Codage binaire, Bit de Parité, Générateur de Mot de Passe, Tirage au Sort, Minuteur visuel, Créateur QR) with container overflow safeguards.
+## 2. Application Portfolio (26 Webapps)
+- **Portals:**
+  - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
+  - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
+- **Production Student Apps (`webapps/` - 7 apps):**
+  - Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
+- **Alpha Student Apps (`alpha/webapps/` - 11 apps):**
+  - Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Dactylo (`dactylo`), Une chose après l'autre (`tri_insertion`).
+- **Teacher Tools (`webapps/teacher/` - 4 production, 1 alpha):**
+  - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`).
+  - Alpha: Lentille DYS / Sim Dyslexie (`alpha/webapps/teacher/sim_dyslexie.html`).
 
-## 3. Technical Architecture & Constraints
-- **Offline-First (Critical):** Installable PWA. Zero internet dependency.
-- **Service Worker:** `sw.js` caches `webapps/`, `webapps/teacher/`, `assets/css/`, `assets/js/`, and `assets/fonts/`.
-  - *Rule:* Run `node meta/scripts/generate-sw-manifest.js` (or `npm run build:sw`) after adding/modifying files. CI workflow `sw-sync.yml` automatically updates and commits `sw.js` on push to `main`.
-- **Vanilla Stack:** Pure HTML, JS, CSS. No frameworks (React, Vue, Tailwind) allowed.
-- **Asset Centralization:** ALL static assets (JS, CSS, fonts, images) are strictly in `/assets/`. Mat images optimized as WebP (`assets/img/mats/`).
-- **Global Interactions:** Portal interactions (theme, cache reset) are centralized in `assets/js/theme.js` and portal logic in `assets/js/index-main.js`.
+## 3. Core Architectural Constraints
+- **100% Offline-First (PWA):** Zero external CDN dependencies. All assets (fonts, icons, audio, scripts) are locally hosted under `assets/`.
+- **Vanilla Stack:** Pure HTML5, JavaScript (ES6+), and CSS. No UI frameworks (React, Vue, Tailwind) allowed.
+- **Service Worker (`sw.js`):** Caches the application for complete offline usage. Automatically generated via `meta/scripts/generate-sw-manifest.js` (or `npm run build:sw`) and verified via `npm run check:sw`.
+- **Persistence:** Synchronous client-side `localStorage` exclusively.
+- **Attribution & Licensing:** AGPL-3.0. Every app features the standardized attribution footer linking to AP EdNum, HEP-VS and `merci.html`.
 
-## 4. Repository Rules
-- **Main Branch:** `main` (not `master`).
-- **Alpha Apps (`alpha/webapps/`):** Experimental apps (e.g., `jeu_de_la_grue.html`). Must remain hidden and undocumented in README unless explicitly promoted.
-- **Removed Folders:** `standalone/` is permanently removed. Do not recreate.
-- **Security:** Never hardcode sensitive tokens (e.g., GitHub PATs) anywhere. Use safe DOM text node insertion (`textContent`) to prevent DOM XSS vulnerabilities.
-
-## 5. Documentation & Presentation
-- **Aesthetics:** Modern "Glassmorphism", "Outfit" typography, micro-animations, WCAG AA compliance.
-- **Application Cards (`index.html`):**
-  - Descriptions: Max 12 words.
-  - Tags: Max 4 tags, end with educational domain (e.g., `#Maths`). Do NOT use `#Jeu`.
-  - Icons: Duotone (`dt-`) with specific primary/secondary colors (Blue for students, Green for teachers).
-  - External Student Links & Utilities: Rendered as compact cards (`.card-compact`) omitting description, tags, and manual references.
-- **README & Tutorials:** README links to 14+ comprehensive pedagogical user guides in `meta/tuto/` aligned with PER / Décodages. Screenshots saved in `meta/screenshots/`.
-- **Images:** Always compress large images (e.g., resize to 1920x1080 / convert to WebP) before committing.
-
-## 6. Attribution & Licensing
-- **License:** AGPL-3.0.
-- **Attribution Footer (Critical):** The footer serves as 'Appropriate Legal Notices' for AGPL-3.0 compliance. ALL HTML files must include the copyright "Animation-EdNum (HEP-VS)", a link to the source code, the license, and the footer content:
-  - Text: "Webapp conçue par Vivian de l'[AP EdNum, HEP-VS](https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/) avec <i data-fa=\"heart\"></i> et quelques neurones artificiels" (link strictly on "AP EdNum, HEP-VS"). The `<i data-fa=\"heart\"></i>` (red, solid FA heart with hover scale effect) must link to `merci.html`.
-  - Source Link: "Code 100% libre (AGPL-3.0)".
-- **Support Contact:** vivian.epiney@hepvs.ch.
-
-## 7. Additional Constraints
-- **Alpha Paths**: Alpha versions of teacher-specific web applications in `alpha/webapps/teacher/` must use the relative path `../../../` to correctly reference global resources in the root `assets/` directory.
-- **Tutorials**: Pedagogical documentation (e.g., user guides for apps) is stored in `meta/tuto/`.
+## 4. Current Status & Active Focus
+- **Standardized Universal Reset:** All applications support a standardized `#reset-cache-btn` with `window.__onResetApp` hook to cleanly reset app state in-place.
+- **TBI Projection Mode:** Classroom whiteboard projection modes available across binary, math, and teacher tools with explicit overflow protections.
+- **Security & A11y:** Full dark mode compliance (`color-scheme: dark;` on `body.dark`), 100% WCAG AA contrast, and hardened DOM injection (zero direct `innerHTML` assignments to satisfy VICE/CodeQL).
