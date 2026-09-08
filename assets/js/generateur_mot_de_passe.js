@@ -395,12 +395,16 @@
 
         renderColoredPreviewInto(elCreatedColoredPreview, parts, elementsOrder);
 
-        const isSecure = len >= 12 && typesCount >= 3 && patterns.length === 0;
-        if (isSecure && !passwordUnlockedMode1) {
+        const isVeryStrong = score >= 100 && patterns.length === 0;
+        if (isVeryStrong && !passwordUnlockedMode1) {
             passwordUnlockedMode1 = true;
-            if (typeof playSound === 'function') playSound('success');
-            if (typeof launchConfetti === 'function') launchConfetti();
-        } else if (!isSecure && passwordUnlockedMode1) {
+            if (typeof playSound === 'function') {
+                playSound('success');
+            }
+            if (typeof launchConfetti === 'function') {
+                launchConfetti();
+            }
+        } else if (!isVeryStrong && passwordUnlockedMode1) {
             passwordUnlockedMode1 = false;
         }
     }
@@ -479,7 +483,7 @@
                 score += Math.min(20, Math.floor((pw.length / 12) * 20));
             }
 
-            score += Math.min(60, typesCount * 20);
+            score += Math.min(60, typesCount * 15);
 
             if (patterns.length > 0) {
                 score = Math.max(5, score - (patterns.length * 15));
@@ -558,12 +562,17 @@
         // Colored preview rendering
         renderColoredPreviewInto(elColoredPreview, parts, elementsOrder);
 
-        // Handle success audio & confetti for Mode 2
-        if (isSecure && !passwordUnlockedMode2) {
+        // Handle success audio & confetti for Mode 2 (only when robustness is très forte)
+        const isVeryStrong = score >= 100 && patterns.length === 0;
+        if (isVeryStrong && !passwordUnlockedMode2) {
             passwordUnlockedMode2 = true;
-            if (typeof playSound === 'function') playSound('success');
-            if (typeof launchConfetti === 'function') launchConfetti();
-        } else if (!isSecure && passwordUnlockedMode2) {
+            if (typeof playSound === 'function') {
+                playSound('success');
+            }
+            if (typeof launchConfetti === 'function') {
+                launchConfetti();
+            }
+        } else if (!isVeryStrong && passwordUnlockedMode2) {
             passwordUnlockedMode2 = false;
         }
     }
@@ -811,6 +820,35 @@
 
     setupCopyButton(elPasswordCopy, elPasswordInput);
     setupToggleVisibility(elPasswordToggle, elPasswordInput);
+
+    // Strict input restrictions for block 2 (numbers only) and special character block
+    if (elNumberInput) {
+        elNumberInput.addEventListener('beforeinput', (e) => {
+            if (e.data && /\D/.test(e.data)) {
+                e.preventDefault();
+            }
+        });
+        elNumberInput.addEventListener('input', () => {
+            const cleaned = elNumberInput.value.replace(/\D/g, '').slice(0, 4);
+            if (elNumberInput.value !== cleaned) {
+                elNumberInput.value = cleaned;
+            }
+        });
+    }
+
+    if (elSpecCharInput) {
+        elSpecCharInput.addEventListener('beforeinput', (e) => {
+            if (e.data && /[\p{L}\p{N}\s]/u.test(e.data)) {
+                e.preventDefault();
+            }
+        });
+        elSpecCharInput.addEventListener('input', () => {
+            const cleaned = elSpecCharInput.value.replace(/[\p{L}\p{N}\s]/gu, '').slice(0, 1);
+            if (elSpecCharInput.value !== cleaned) {
+                elSpecCharInput.value = cleaned;
+            }
+        });
+    }
 
     // Generator inputs live reactions
     [elBaseWordInput, elNumberInput, elServiceInput, elSpecCharInput].forEach(input => {

@@ -175,6 +175,27 @@ test('loadRegistry', async (t) => {
         const result = await window.loadRegistry();
         assert.strictEqual(result, mockRegistry, 'Should return the exact same registry reference');
     });
+
+    await t.test('registry.js contains expected badge configurations for app-automate and app-mot-de-passe', () => {
+        const registryContent = fs.readFileSync('assets/js/registry.js', 'utf-8');
+        const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { runScripts: "dangerously" });
+        dom.window.eval(registryContent);
+        const registry = dom.window.REGISTRY;
+        const appAutomate = registry.find(a => a.id === 'app-automate');
+        const appMotDePasse = registry.find(a => a.id === 'app-mot-de-passe');
+
+        assert.ok(appAutomate, 'app-automate should exist in registry');
+        assert.deepEqual(appAutomate.badges, [
+            { text: '3-4H', grey: false },
+            { text: '5-8H', grey: true }
+        ]);
+
+        assert.ok(appMotDePasse, 'app-mot-de-passe should exist in registry');
+        assert.strictEqual(appMotDePasse.dataLevel, '5H-10CO');
+        assert.deepEqual(appMotDePasse.badges, [
+            { text: '5H-10CO', grey: false }
+        ]);
+    });
 });
 
 test('renderBadges', async (t) => {

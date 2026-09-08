@@ -287,11 +287,7 @@ window.REGISTRY = [
         "grey": false
       },
       {
-        "text": "5-6H",
-        "grey": true
-      },
-      {
-        "text": "7-8H",
+        "text": "5-8H",
         "grey": true
       }
     ],
@@ -325,7 +321,7 @@ window.REGISTRY = [
   {
     "id": "app-mot-de-passe",
     "href": "webapps/generateur_mot_de_passe.html",
-    "dataLevel": "5H-8H",
+    "dataLevel": "5H-10CO",
     "icon": "dt-key",
     "title": "Générateur de mot de passe",
     "desc": "Apprends à créer des mots de passe robustes et teste leur sécurité.",
@@ -337,7 +333,7 @@ window.REGISTRY = [
     "ref": "EN 23 · Usages — Processus d'identification personnelle",
     "badges": [
       {
-        "text": "5H-8H",
+        "text": "5H-10CO",
         "grey": false
       }
     ],

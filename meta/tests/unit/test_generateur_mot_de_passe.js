@@ -96,4 +96,40 @@ test('generateur_mot_de_passe.js - generatePedagogicalPassword', async (t) => {
         assert.strictEqual(res.parts.service, '!ins');
         assert.strictEqual(res.password, 'saPin2026!ins');
     });
+
+    await t.test('Sanitizes block 2 to only allow numbers', () => {
+        const numInput = window.document.getElementById('generator-number');
+        numInput.value = '20ab26xyz';
+        numInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(numInput.value, '2026');
+    });
+
+    await t.test('Sanitizes special char block to only allow special characters', () => {
+        const specInput = window.document.getElementById('generator-special-char');
+        specInput.value = 'a';
+        specInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(specInput.value, '');
+
+        specInput.value = '9';
+        specInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(specInput.value, '');
+
+        specInput.value = ' ';
+        specInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(specInput.value, '');
+
+        specInput.value = '!';
+        specInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(specInput.value, '!');
+
+        specInput.value = 'abc@123';
+        specInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(specInput.value, '@');
+    });
+
+    await t.test('HTML badge indicates 5H-10CO', () => {
+        const badge = window.document.querySelector('.badge-level');
+        assert.strictEqual(badge.textContent.trim(), '5H-10CO');
+    });
 });
+
