@@ -23,7 +23,7 @@ L'application propose trois onglets complémentaires :
 |---|---|---|
 | 🪄 **Créer un mot de passe** | S'approprier une méthode de construction mémorisable et personnalisée. | Remplit 4 blocs simples et génère un mot de passe unique par service. |
 | 🧪 **Tester un mot de passe** | Auditer la robustesse d'un mot de passe et identifier ses failles. | Tape un mot de passe libre et observe la jauge de sécurité et les avertissements. |
-| 🛡️ **Bonnes pratiques** | Synthétiser les règles fondamentales de sécurité numérique. | Découvre et mémorise les 4 règles d'or de protection des comptes. |
+| 🛡️ **Bonnes pratiques** | Synthétiser les règles fondamentales de sécurité numérique. | Découvre et mémorise les règles d'or de protection des comptes. |
 
 ---
 
@@ -82,14 +82,14 @@ Le temps estimé pour casser le mot de passe s'appuie sur une puissance de calcu
 
 ---
 
-## 4. Mode 3 : 🛡️ Les 4 règles d'or de la cybersécurité
+## 4. Mode 3 : 🛡️ Les règles d'or de la cybersécurité
 
 Cet onglet résume les règles de vie numérique à adopter au quotidien :
 
-1. **🔑 Un compte = un mot de passe unique :** Si un site de jeu est piraté, les pirates ne pourront pas accéder à la boîte e-mail ni au compte scolaire.
-2. **🤫 Garde-le 100% secret :** Ne jamais donner son mot de passe à un copain ou sur un chat en ligne. En cas d'oubli, l'enseignant ou un adulte de confiance peut le réinitialiser sans avoir besoin de le connaître.
-3. **🧱 Utilise la méthode des blocs :** Un mot mémorisable + un nombre + un symbole + le nom du site = sécurité maximale sans effort de mémoire.
-4. **📓 Comment s'en souvenir sans danger ? :** Ne pas coller de post-it sur l'écran. Noter la formule (ou les indices des blocs) dans un carnet secret à la maison, ou utiliser un gestionnaire de mots de passe de confiance.
+- **🔑 Un compte = un mot de passe unique :** Si un site de jeu est piraté, les pirates ne pourront pas accéder à la boîte e-mail ni au compte scolaire.
+- **🤫 Garde-le 100% secret :** Ne jamais donner son mot de passe à un copain ou sur un chat en ligne. En cas d'oubli, l'enseignant ou un adulte de confiance peut le réinitialiser sans avoir besoin de le connaître.
+- **🧱 Utilise la méthode des blocs :** Un mot mémorisable + un nombre + un symbole + le nom du site = sécurité maximale sans effort de mémoire.
+- **✉️ Comment s'en souvenir sans danger ? :** Ne pas coller de post-it sur l'écran. En cas de trou de mémoire, glisser son mot de passe dans une enveloppe fermée et la confier à un adulte de confiance (parents ou enseignant). Elle ne sera ouverte qu'en cas d'urgence !
 
 ---
 
@@ -106,7 +106,7 @@ Cet onglet résume les règles de vie numérique à adopter au quotidien :
 - Ils observent la jauge passer au vert (« Des millions d'années »).
 
 ### Étape 3 : Institutionnalisation et carnet secret (15 min)
-- Lecture des **4 règles d'or**.
+- Lecture des **règles d'or**.
 - Les élèves notent sur une fiche papier personnelle uniquement leur **méthode / formule** (pas le mot de passe complet en clair), qu'ils conservent dans leur classeur ou à la maison.
 
 ---
