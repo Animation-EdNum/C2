@@ -512,14 +512,16 @@
             cursor: not-allowed;
         }
 
-        #testSoundBtn.btn-playing {
+        #testSoundBtn.btn-playing,
+        #testWarningSoundBtn.btn-playing {
             background: #fee2e2;
             color: #dc2626;
             border-color: #ef4444;
             gap: 6px;
         }
 
-        body.dark #testSoundBtn.btn-playing {
+        body.dark #testSoundBtn.btn-playing,
+        body.dark #testWarningSoundBtn.btn-playing {
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
             border-color: #ef4444;
@@ -1106,9 +1108,13 @@
                         <div class="custom-checkbox-row warning-sound-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                             <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                                 <input type="checkbox" id="checkWarningSound" checked>
-                                <span>Signal sonore discret avant la fin</span>
+                                <span>Signal sonore avant la fin</span>
                             </label>
-                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                <select id="warningToneSelect" class="custom-select" style="padding: 3px 8px; font-size: 0.85rem; width: auto;" aria-label="Type de signal sonore avant la fin">
+                                    <option value="discrete" selected>Discret</option>
+                                    <option value="loud">Bien audible</option>
+                                </select>
                                 <span style="font-size: 0.85rem; color: var(--text-secondary);">à</span>
                                 <select id="warningTimeSelect" class="custom-select" style="padding: 3px 8px; font-size: 0.85rem; width: auto;" aria-label="Délai du signal sonore avant la fin">
                                     <option value="30">30 secondes</option>
@@ -1117,6 +1123,9 @@
                                     <option value="180">3 minutes</option>
                                     <option value="300">5 minutes</option>
                                 </select>
+                                <button type="button" class="btn btn-secondary" id="testWarningSoundBtn" title="Écouter le signal sonore choisi" style="padding: 4px 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; min-width: 30px;" aria-label="Tester le signal sonore">
+                                    <i data-fa="play" style="width:11px;height:11px;"></i>
+                                </button>
                             </div>
                         </div>
                         <label class="custom-checkbox-row">
@@ -1207,7 +1216,9 @@
             const checkShowDigits = document.getElementById('checkShowDigits');
             const checkStartSound = document.getElementById('checkStartSound');
             const checkWarningSound = document.getElementById('checkWarningSound');
+            const warningToneSelect = document.getElementById('warningToneSelect');
             const warningTimeSelect = document.getElementById('warningTimeSelect');
+            const testWarningSoundBtn = document.getElementById('testWarningSoundBtn');
             const checkTicking = document.getElementById('checkTicking');
             const customAudioFileInput = document.getElementById('customAudioFileInput');
             const removeCustomSoundBtn = document.getElementById('removeCustomSoundBtn');
@@ -1383,6 +1394,8 @@
             let isTestSoundPlaying = false;
             let activeTestWebAudioNodes = [];
             let activeTestTimeout = null;
+            let isTestWarningSoundPlaying = false;
+            let activeTestWarningTimeout = null;
 
             function stopAllTestSounds() {
                 if (customAudioEl) {
@@ -1404,8 +1417,30 @@
                     clearTimeout(activeTestTimeout);
                     activeTestTimeout = null;
                 }
+                if (activeTestWarningTimeout) {
+                    clearTimeout(activeTestWarningTimeout);
+                    activeTestWarningTimeout = null;
+                }
                 isTestSoundPlaying = false;
                 updateTestSoundBtnUI(false);
+                isTestWarningSoundPlaying = false;
+                updateTestWarningSoundBtnUI(false);
+            }
+
+            function updateTestWarningSoundBtnUI(playing) {
+                if (!testWarningSoundBtn) {
+                    return;
+                }
+                if (playing) {
+                    testWarningSoundBtn.innerHTML = '<i data-fa="square" style="width:11px;height:11px;"></i>';
+                    testWarningSoundBtn.title = 'Arrêter la lecture du signal';
+                    testWarningSoundBtn.classList.add('btn-playing');
+                } else {
+                    testWarningSoundBtn.innerHTML = '<i data-fa="play" style="width:11px;height:11px;"></i>';
+                    testWarningSoundBtn.title = 'Écouter le signal sonore choisi';
+                    testWarningSoundBtn.classList.remove('btn-playing');
+                }
+                window.fa?.createIcons?.();
             }
 
             function updateTestSoundBtnUI(playing) {
@@ -1557,29 +1592,84 @@
                 } catch (e) { console.error(e); }
             }
 
-            function playWarningSound() {
-                if (isMuted) return;
+            function playWarningSound(isTest = false) {
+                if (isMuted && !isTest) {
+                    return;
+                }
                 try {
                     const ctx = getAudioContext();
                     const now = ctx.currentTime;
-                    // Soft double chime (A4, C5)
-                    [440, 523.25].forEach((freq, i) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, now + i * 0.15);
+                    const tone = settings.warningSoundType || 'discrete';
 
-                        gain.gain.setValueAtTime(0.001, now + i * 0.15);
-                        gain.gain.linearRampToValueAtTime(0.12, now + i * 0.15 + 0.02);
-                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.6);
+                    if (tone === 'loud') {
+                        // Much less discreet: bright, resonant 3-tone ascending alert chime (D5, G5, C6)
+                        const notes = [
+                            { freq: 587.33, delay: 0, gain: 0.26, dur: 0.7 },      // D5
+                            { freq: 783.99, delay: 0.18, gain: 0.30, dur: 0.8 },   // G5
+                            { freq: 1046.50, delay: 0.36, gain: 0.36, dur: 1.4 }  // C6 (bright, carrying)
+                        ];
 
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
+                        notes.forEach(({ freq, delay, gain: maxGain, dur }) => {
+                            [1, 2].forEach(mult => {
+                                const osc = ctx.createOscillator();
+                                const gain = ctx.createGain();
+                                osc.type = mult === 1 ? 'triangle' : 'sine';
+                                osc.frequency.setValueAtTime(freq * mult, now + delay);
 
-                        osc.start(now + i * 0.15);
-                        osc.stop(now + i * 0.15 + 0.7);
-                    });
-                } catch (e) { console.error(e); }
+                                const g = mult === 1 ? maxGain : maxGain * 0.3;
+                                gain.gain.setValueAtTime(0.001, now + delay);
+                                gain.gain.linearRampToValueAtTime(g, now + delay + 0.015);
+                                gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
+
+                                osc.connect(gain);
+                                gain.connect(ctx.destination);
+
+                                osc.start(now + delay);
+                                osc.stop(now + delay + dur + 0.1);
+
+                                if (isTest) {
+                                    activeTestWebAudioNodes.push(osc);
+                                }
+                            });
+                        });
+
+                        if (isTest) {
+                            activeTestWarningTimeout = setTimeout(() => {
+                                stopAllTestSounds();
+                            }, 1800);
+                        }
+                    } else {
+                        // Discrete version (default): soft double chime (A4, C5)
+                        [440, 523.25].forEach((freq, i) => {
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(freq, now + i * 0.15);
+
+                            gain.gain.setValueAtTime(0.001, now + i * 0.15);
+                            gain.gain.linearRampToValueAtTime(0.12, now + i * 0.15 + 0.02);
+                            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.6);
+
+                            osc.connect(gain);
+                            gain.connect(ctx.destination);
+
+                            osc.start(now + i * 0.15);
+                            osc.stop(now + i * 0.15 + 0.7);
+
+                            if (isTest) {
+                                activeTestWebAudioNodes.push(osc);
+                            }
+                        });
+
+                        if (isTest) {
+                            activeTestWarningTimeout = setTimeout(() => {
+                                stopAllTestSounds();
+                            }, 1000);
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
             }
 
             function playTickSound() {
@@ -1745,6 +1835,7 @@
                 showDigits: false,
                 startSound: true,
                 warningSoundEnabled: true,
+                warningSoundType: 'discrete',
                 warningSeconds: 60,
                 ticking: false,
                 lastMinutes: 10,
@@ -1761,6 +1852,9 @@
                         }
                         if (parsed.warningSeconds === undefined) {
                             parsed.warningSeconds = 60;
+                        }
+                        if (parsed.warningSoundType === undefined) {
+                            parsed.warningSoundType = 'discrete';
                         }
                         settings = Object.assign(settings, parsed);
                     }
@@ -1784,10 +1878,19 @@
                 checkAutoStart.checked = settings.autoStart;
                 checkShowDigits.checked = settings.showDigits;
                 checkStartSound.checked = settings.startSound !== false;
-                if (checkWarningSound) checkWarningSound.checked = settings.warningSoundEnabled !== false;
+                if (checkWarningSound) {
+                    checkWarningSound.checked = settings.warningSoundEnabled !== false;
+                }
+                if (warningToneSelect) {
+                    warningToneSelect.value = settings.warningSoundType || 'discrete';
+                    warningToneSelect.disabled = !checkWarningSound.checked;
+                }
                 if (warningTimeSelect) {
                     warningTimeSelect.value = String(settings.warningSeconds || 60);
                     warningTimeSelect.disabled = !checkWarningSound.checked;
+                }
+                if (testWarningSoundBtn) {
+                    testWarningSoundBtn.disabled = !checkWarningSound.checked;
                 }
                 checkTicking.checked = settings.ticking;
                 updateActivityUI();
@@ -2344,8 +2447,32 @@
             if (checkWarningSound) {
                 checkWarningSound.addEventListener('change', () => {
                     settings.warningSoundEnabled = checkWarningSound.checked;
-                    if (warningTimeSelect) warningTimeSelect.disabled = !checkWarningSound.checked;
+                    if (warningToneSelect) {
+                        warningToneSelect.disabled = !checkWarningSound.checked;
+                    }
+                    if (warningTimeSelect) {
+                        warningTimeSelect.disabled = !checkWarningSound.checked;
+                    }
+                    if (testWarningSoundBtn) {
+                        testWarningSoundBtn.disabled = !checkWarningSound.checked;
+                    }
                     saveSettings();
+                });
+            }
+
+            if (warningToneSelect) {
+                warningToneSelect.addEventListener('change', () => {
+                    settings.warningSoundType = warningToneSelect.value;
+                    saveSettings();
+                    if (isMuted) {
+                        isMuted = false;
+                        localStorage.setItem('c2_audio_muted', 'false');
+                        updateAudioIcon();
+                    }
+                    stopAllTestSounds();
+                    isTestWarningSoundPlaying = true;
+                    updateTestWarningSoundBtnUI(true);
+                    playWarningSound(true);
                 });
             }
 
@@ -2353,6 +2480,24 @@
                 warningTimeSelect.addEventListener('change', () => {
                     settings.warningSeconds = parseInt(warningTimeSelect.value, 10) || 60;
                     saveSettings();
+                });
+            }
+
+            if (testWarningSoundBtn) {
+                testWarningSoundBtn.addEventListener('click', () => {
+                    if (isTestWarningSoundPlaying) {
+                        stopAllTestSounds();
+                    } else {
+                        if (isMuted) {
+                            isMuted = false;
+                            localStorage.setItem('c2_audio_muted', 'false');
+                            updateAudioIcon();
+                        }
+                        stopAllTestSounds();
+                        isTestWarningSoundPlaying = true;
+                        updateTestWarningSoundBtnUI(true);
+                        playWarningSound(true);
+                    }
                 });
             }
 
@@ -2499,6 +2644,7 @@
                     showDigits: false,
                     startSound: true,
                     warningSoundEnabled: true,
+                    warningSoundType: 'discrete',
                     warningSeconds: 60,
                     ticking: false,
                     lastMinutes: 10,
