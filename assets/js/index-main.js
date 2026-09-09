@@ -9,19 +9,35 @@
    ========================================= */
 function updateRoleButton(tabId) {
     const roleBtn = document.getElementById('role-toggle-btn');
-    if (!roleBtn) return;
+    const ghostBtn = document.getElementById('header-teachers-link');
 
     if (tabId === 'teachers') {
-        roleBtn.style.display = 'inline-flex';
-        roleBtn.setAttribute('title', "Retour à l'Espace Élèves");
-        roleBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
-        roleBtn.textContent = '';
-        const icon = document.createElement('i');
-        icon.setAttribute('data-fa', 'graduation-cap');
-        roleBtn.appendChild(icon);
-        window.fa?.createIcons?.();
+        if (roleBtn) {
+            roleBtn.style.display = 'inline-flex';
+            roleBtn.setAttribute('title', "Retour à l'Espace Élèves");
+            roleBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
+            roleBtn.textContent = '';
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', 'graduation-cap');
+            roleBtn.appendChild(icon);
+            window.fa?.createIcons?.();
+        }
+        if (ghostBtn) {
+            ghostBtn.textContent = 'Espace Élèves';
+            ghostBtn.setAttribute('title', "Retour à l'Espace Élèves");
+            ghostBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
+            ghostBtn.setAttribute('href', '#students');
+        }
     } else {
-        roleBtn.style.display = 'none';
+        if (roleBtn) {
+            roleBtn.style.display = 'none';
+        }
+        if (ghostBtn) {
+            ghostBtn.textContent = 'Espace Enseignant·e·s';
+            ghostBtn.setAttribute('title', "Accéder à l'Espace Enseignant·e·s");
+            ghostBtn.setAttribute('aria-label', "Accéder à l'Espace Enseignant·e·s");
+            ghostBtn.setAttribute('href', '#teachers');
+        }
     }
 }
 
@@ -228,6 +244,7 @@ window.filterApps = filterApps;
 window.searchApps = searchApps;
 window.clearSearch = clearSearch;
 window.initPortalIndex = initPortalIndex;
+window.updateRoleButton = updateRoleButton;
 
 function initPortalIndex() {
     // Return to students button in header (visible only in teachers view)
@@ -237,6 +254,25 @@ function initPortalIndex() {
             switchTab(null, 'students');
             if (window.location.hash === '#teachers') {
                 history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // Ghost teachers link in header
+    const headerTeachersLink = document.getElementById('header-teachers-link');
+    if (headerTeachersLink) {
+        headerTeachersLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isTeachers = document.getElementById('view-teachers')?.classList.contains('active');
+            if (isTeachers) {
+                switchTab(null, 'students');
+                if (window.location.hash === '#teachers') {
+                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                }
+            } else {
+                switchTab(null, 'teachers');
+                window.location.hash = 'teachers';
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });

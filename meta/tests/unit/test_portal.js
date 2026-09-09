@@ -5,6 +5,7 @@ const fs = require('fs');
 
 // Load portal.js source code
 const portalSrc = fs.readFileSync('assets/js/portal.js', 'utf-8');
+const indexMainSrc = fs.readFileSync('assets/js/index-main.js', 'utf-8');
 
 function setupDOM() {
     const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { runScripts: "dangerously" });
@@ -452,6 +453,38 @@ test('PWA Installation & Guidance', async (t) => {
         // Clicking button triggers prompt()
         btn.click();
         assert.strictEqual(promptCalled, true, 'Native prompt() should be called on Chromium');
+    });
+});
+
+test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
+    await t.test('sets ghost button to Espace Enseignants on students view', () => {
+        const dom = new JSDOM(`<!DOCTYPE html><html><body>
+            <a href="#teachers" id="header-teachers-link"></a>
+            <button id="role-toggle-btn" style="display: none;"></button>
+        </body></html>`, { runScripts: "dangerously" });
+        const window = dom.window;
+        window.eval(indexMainSrc);
+
+        window.updateRoleButton('students');
+        const ghostBtn = window.document.getElementById('header-teachers-link');
+        assert.strictEqual(ghostBtn.textContent, 'Espace Enseignants');
+        assert.strictEqual(ghostBtn.getAttribute('href'), '#teachers');
+        assert.strictEqual(ghostBtn.getAttribute('title'), "Accéder à l'Espace Enseignants");
+    });
+
+    await t.test('sets ghost button to Espace Élèves on teachers view', () => {
+        const dom = new JSDOM(`<!DOCTYPE html><html><body>
+            <a href="#teachers" id="header-teachers-link"></a>
+            <button id="role-toggle-btn" style="display: none;"></button>
+        </body></html>`, { runScripts: "dangerously" });
+        const window = dom.window;
+        window.eval(indexMainSrc);
+
+        window.updateRoleButton('teachers');
+        const ghostBtn = window.document.getElementById('header-teachers-link');
+        assert.strictEqual(ghostBtn.textContent, 'Espace Élèves');
+        assert.strictEqual(ghostBtn.getAttribute('href'), '#students');
+        assert.strictEqual(ghostBtn.getAttribute('title'), "Retour à l'Espace Élèves");
     });
 });
 
