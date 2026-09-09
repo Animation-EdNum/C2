@@ -92,8 +92,8 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs... ?** (Demi-cycle 7-8H)
 - **Valeur pédagogique :** Initie à l'intégrité de la donnée via des métadonnées (le bit de parité) et développe le repérage spatial via des coordonnées sur une grille.
 
-#### 7. Générateur de mot de passe (`webapps/generateur_mot_de_passe.html`)
-![Générateur de mot de passe](meta/screenshots/generateur_mot_de_passe.png)
+#### 7. Générateur de mots de passe (`webapps/generateur_mot_de_passe.html`)
+![Générateur de mots de passe](meta/screenshots/generateur_mot_de_passe.png)
 - **À quoi sert l'outil :** Création et audit interactif de mots de passe robustes (briques de construction, mot de passe magique, détection de motifs, estimation du temps de craquage et 4 règles d'or de cybersécurité). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_GENERATEUR_MOT_DE_PASSE.md).
 - **Contexte & Utilisation :** Outil pratique pour aider les élèves (dès 5-6H) à concevoir et mémoriser un mot de passe sécurisé pour se connecter à leur environnement numérique de travail ([edu.vs.ch](https://edu.vs.ch)).
 - **Valeur pédagogique :** Sensibilise à la cyberhygiène, à l'importance de la longueur et de la complexité face aux attaques par force brute ou dictionnaires.

@@ -323,7 +323,7 @@ window.REGISTRY = [
     "href": "webapps/generateur_mot_de_passe.html",
     "dataLevel": "5H-10CO",
     "icon": "dt-key",
-    "title": "Générateur de mot de passe",
+    "title": "Générateur de mots de passe",
     "desc": "Apprends à créer des mots de passe robustes et teste leur sécurité.",
     "tags": [
       "#Sécurité",

@@ -443,7 +443,7 @@ test('PWA Installation & Guidance', async (t) => {
         // Dispatch simulated beforeinstallprompt event
         let promptCalled = false;
         const mockPromptEvent = new window.Event('beforeinstallprompt');
-        mockPromptEvent.preventDefault = () => {};
+        mockPromptEvent.preventDefault = () => { };
         mockPromptEvent.prompt = () => { promptCalled = true; };
         mockPromptEvent.userChoice = Promise.resolve({ outcome: 'accepted' });
 
@@ -467,9 +467,9 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
 
         window.updateRoleButton('students');
         const ghostBtn = window.document.getElementById('header-teachers-link');
-        assert.strictEqual(ghostBtn.textContent, 'Espace Enseignants');
+        assert.ok(ghostBtn.textContent.startsWith('Espace Enseignant·e·s'), 'Text should start with Espace Enseignant·e·s');
         assert.strictEqual(ghostBtn.getAttribute('href'), '#teachers');
-        assert.strictEqual(ghostBtn.getAttribute('title'), "Accéder à l'Espace Enseignants");
+        assert.ok(ghostBtn.getAttribute('title').startsWith("Accéder à l'Espace Enseignant·e·s"), 'Title should start with Accéder à l\'Espace Enseignant·e·s');
     });
 
     await t.test('sets ghost button to Espace Élèves on teachers view', () => {

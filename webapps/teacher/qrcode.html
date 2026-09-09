@@ -500,6 +500,12 @@
             margin-bottom: 0.75rem;
             word-break: break-word;
             line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
         .qr-canvas-wrapper {
@@ -638,6 +644,10 @@
         /* PRINT STYLES */
         .print-only { display: none; }
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 1cm;
+            }
             body {
                 touch-action: manipulation;
                 background: white !important;
@@ -645,7 +655,12 @@
                 font-family: 'Outfit', sans-serif;
                 color: black !important;
             }
-            .no-print { display: none !important; }
+            .app-header,
+            .app-main,
+            footer,
+            .no-print {
+                display: none !important;
+            }
             .app-shell {
                 border: none;
                 box-shadow: none;
@@ -655,47 +670,52 @@
                 display: block;
                 border-radius: 0;
                 min-height: auto;
+                padding: 0;
+                margin: 0;
             }
             .print-only { display: block !important; }
             .results-panel { padding: 0; min-height: auto; }
 
-            /* Single Print Layout */
+            /* Single Print Layout (Agrandie 1.2x, 1 seule page, sans distraction) */
             .print-single-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                padding: 3rem 1rem;
-                min-height: 80vh;
+                padding: 1.5rem 1rem;
+                height: 100%;
+                max-height: 265mm;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                box-sizing: border-box;
             }
 
             .print-single-title {
-                font-size: 28pt;
+                font-size: 34pt;
                 font-weight: 800;
-                margin-bottom: 2rem;
+                margin-bottom: 2.2rem;
                 color: black;
+                line-height: 1.2;
+                max-width: 90%;
+                word-break: break-word;
             }
 
             .print-single-qr canvas {
-                width: 320px !important;
-                height: 320px !important;
+                width: 384px !important;
+                height: 384px !important;
             }
 
             .print-single-url {
-                font-size: 14pt;
-                margin-top: 2rem;
+                font-size: 17pt;
+                margin-top: 2.2rem;
                 font-family: 'JetBrains Mono', monospace;
-                padding: 8px 16px;
+                padding: 10px 20px;
                 border: 2px dashed #666;
                 border-radius: 8px;
                 color: black;
-            }
-
-            .print-single-meta {
-                margin-top: 3rem;
-                font-size: 10pt;
-                color: #555;
+                word-break: break-all;
+                max-width: 90%;
             }
 
             /* Batch Print Grid */
@@ -787,18 +807,6 @@
                     <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
                     <span>Effacer</span>
                 </button>
-                <button class="btn btn-secondary" id="copyImgHeaderBtn" title="Copier l'image du QR code">
-                    <i data-fa="copy" style="width:16px;height:16px;"></i>
-                    <span>Copier</span>
-                </button>
-                <button class="btn btn-secondary" id="downloadImgHeaderBtn" title="Télécharger le QR code en HD">
-                    <i data-fa="download" style="width:16px;height:16px;"></i>
-                    <span>Télécharger</span>
-                </button>
-                <button class="btn btn-primary" id="printHeaderBtn" title="Imprimer le QR code ou la planche">
-                    <i data-fa="print" style="width:16px;height:16px;"></i>
-                    <span>Imprimer</span>
-                </button>
             </div>
         </header>
 
@@ -889,8 +897,12 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="inputTitle">Titre au-dessus du QR code</label>
-                        <input type="text" id="inputTitle" placeholder="Ex: Activité Numérique 5H" value="Portail Éducation Numérique">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <label for="inputTitle">Titre au-dessus du QR code</label>
+                            <span id="titleCounter" style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">0/60</span>
+                        </div>
+                        <input type="text" id="inputTitle" maxlength="60" placeholder="Ex: Activité Numérique 5H" value="Portail Éducation Numérique">
+                        <span class="input-help">Titre court (max. 60 caractères / 2 lignes).</span>
                     </div>
 
                     <label class="checkbox-card" for="showSubtext">
@@ -1176,10 +1188,12 @@
             if (state.type === 'url') {
                 return inputUrl.value.trim() || 'https://ednum.org';
             } else if (state.type === 'text') {
-                const val = inputText.value.trim();
+                const val = (inputText.value.trim() || 'Exemple de texte').replace(/\s+/g, ' ');
                 return val.length > 60 ? val.substring(0, 57) + '...' : val;
             } else if (state.type === 'wifi') {
-                return `Réseau Wi-Fi : ${inputWifiSsid.value.trim() || 'WiFi_Classe'}`;
+                const ssid = inputWifiSsid.value.trim() || 'WiFi_Classe';
+                const pass = inputWifiPass.value;
+                return pass ? `Wi-Fi : ${ssid} | Clé : ${pass}` : `Wi-Fi : ${ssid} (Réseau ouvert)`;
             }
             return '';
         }
@@ -1189,6 +1203,11 @@
             state.showSubtext = checkShowSubtext.checked;
             state.ecc = selectEcc.value;
             state.size = parseInt(selectRenderSize.value, 10) || 600;
+
+            const titleCountEl = document.getElementById('titleCounter');
+            if (titleCountEl) {
+                titleCountEl.textContent = `${(inputTitle.value || '').length}/60`;
+            }
 
             if (state.type !== 'batch') {
                 const value = getQRValue();
@@ -1307,13 +1326,159 @@
             saveState();
         });
 
+        // Wrap text cleanly into maxLines (default 2), respecting maxWidth
+        function wrapTextToLines(ctx, text, maxWidth, maxLines = 2) {
+            if (!text) return [];
+            const words = text.trim().split(/\s+/);
+            const lines = [];
+            let currentLine = '';
+
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                const testLine = currentLine ? currentLine + ' ' + word : word;
+                if (ctx.measureText(testLine).width <= maxWidth) {
+                    currentLine = testLine;
+                } else {
+                    if (currentLine) {
+                        lines.push(currentLine);
+                        if (lines.length >= maxLines) break;
+                        currentLine = word;
+                    } else {
+                        // Word exceeds maxWidth alone, split chars
+                        let part = '';
+                        for (const char of word) {
+                            if (ctx.measureText(part + char).width <= maxWidth) {
+                                part += char;
+                            } else {
+                                lines.push(part);
+                                part = char;
+                                if (lines.length >= maxLines) break;
+                            }
+                        }
+                        currentLine = part;
+                        if (lines.length >= maxLines) break;
+                    }
+                }
+            }
+            if (currentLine && lines.length < maxLines) {
+                while (currentLine.length > 0 && ctx.measureText(currentLine).width > maxWidth) {
+                    currentLine = currentLine.slice(0, -1);
+                }
+                lines.push(currentLine);
+            }
+            return lines.slice(0, maxLines);
+        }
+
+        // Create composite sheet of all QR codes in batch mode
+        function createBatchExportCanvas() {
+            const lines = inputBatch.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length === 0) {
+                throw new Error('Veuillez entrer au moins un élément dans la liste');
+            }
+
+            const items = lines.map((line, index) => {
+                let title = `Atelier ${index + 1}`;
+                let value = line;
+                if (line.includes('|')) {
+                    const parts = line.split('|');
+                    title = parts[0].trim();
+                    value = parts.slice(1).join('|').trim();
+                }
+                if (!/^https?:\/\//i.test(value) && value.includes('.')) {
+                    value = 'https://' + value;
+                }
+                return { title, value };
+            });
+
+            const cols = items.length === 1 ? 1 : 2;
+            const rows = Math.ceil(items.length / cols);
+            const cardWidth = 380;
+            const cardHeight = 430;
+            const padding = 30;
+            const gap = 20;
+
+            const composite = document.createElement('canvas');
+            composite.width = (cols * cardWidth) + ((cols - 1) * gap) + (padding * 2);
+            composite.height = (rows * cardHeight) + ((rows - 1) * gap) + (padding * 2);
+
+            const ctx = composite.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, composite.width, composite.height);
+
+            items.forEach((item, index) => {
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+                const x = padding + col * (cardWidth + gap);
+                const y = padding + row * (cardHeight + gap);
+
+                // Card background & rounded border
+                ctx.save();
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 2;
+                ctx.fillStyle = '#f8fafc';
+                const r = 16;
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + cardWidth - r, y);
+                ctx.quadraticCurveTo(x + cardWidth, y, x + cardWidth, y + r);
+                ctx.lineTo(x + cardWidth, y + cardHeight - r);
+                ctx.quadraticCurveTo(x + cardWidth, y + cardHeight, x + cardWidth - r, y + cardHeight);
+                ctx.lineTo(x + r, y + cardHeight);
+                ctx.quadraticCurveTo(x, y + cardHeight, x, y + cardHeight - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // Title
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 20px Outfit, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const titleText = item.title.length > 28 ? item.title.substring(0, 25) + '...' : item.title;
+                ctx.fillText(titleText, x + cardWidth / 2, y + 22);
+
+                // QR Code
+                const itemCanvas = document.createElement('canvas');
+                new QRious({
+                    element: itemCanvas,
+                    size: 260,
+                    value: item.value,
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: 12
+                });
+                ctx.drawImage(itemCanvas, x + (cardWidth - 260) / 2, y + 60);
+
+                // Subtext
+                if (state.showSubtext) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '13px JetBrains Mono, monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const sub = item.value.length > 36 ? item.value.substring(0, 33) + '...' : item.value;
+                    ctx.fillText(sub, x + cardWidth / 2, y + 365);
+                }
+            });
+
+            return composite;
+        }
+
         // ==========================================
         // EXPORT : COPIER L'IMAGE DANS LE PRESSE-PAPIER
         // ==========================================
         async function copyQRImage() {
             try {
-                // Generate a clean high-res canvas with title and subtext included if desired
-                const exportCanvas = createExportCanvas();
+                let exportCanvas;
+                if (state.type === 'batch') {
+                    exportCanvas = createBatchExportCanvas();
+                } else {
+                    exportCanvas = createExportCanvas();
+                }
+
                 exportCanvas.toBlob(async (blob) => {
                     if (!blob) {
                         return showToast('Erreur lors de la génération de l\'image', 'error');
@@ -1321,17 +1486,20 @@
                     try {
                         const item = new ClipboardItem({ 'image/png': blob });
                         await navigator.clipboard.write([item]);
-                        showToast('Image du QR code copiée !', 'success');
+                        showToast(state.type === 'batch' ? 'Planche de QR codes copiée !' : 'Image du QR code copiée !', 'success');
                     } catch (err) {
                         console.error('Clipboard copy failed:', err);
-                        // Fallback: Copy URL/Text
-                        navigator.clipboard.writeText(getQRValue());
-                        showToast('Texte/Lien copié dans le presse-papier !', 'info');
+                        if (state.type !== 'batch') {
+                            navigator.clipboard.writeText(getQRValue());
+                            showToast('Texte/Lien copié dans le presse-papier !', 'info');
+                        } else {
+                            showToast('Impossible de copier l\'image directement', 'error');
+                        }
                     }
                 }, 'image/png');
             } catch (e) {
                 console.error(e);
-                showToast('Impossible de copier l\'image directement', 'error');
+                showToast(e.message || 'Impossible de copier l\'image', 'error');
             }
         }
 
@@ -1340,20 +1508,40 @@
         // ==========================================
         function downloadQRImage() {
             try {
-                const exportCanvas = createExportCanvas();
+                let exportCanvas;
+                let fileName;
+
+                if (state.type === 'batch') {
+                    exportCanvas = createBatchExportCanvas();
+                    fileName = 'planche_qrcodes.png';
+                } else {
+                    exportCanvas = createExportCanvas();
+                    let rawTitle = state.title;
+                    if (!rawTitle || !rawTitle.trim()) {
+                        if (state.type === 'wifi') {
+                            rawTitle = 'wifi_' + (inputWifiSsid.value.trim() || 'classe');
+                        } else if (state.type === 'text') {
+                            rawTitle = 'qrcode_texte';
+                        } else {
+                            rawTitle = 'qrcode';
+                        }
+                    }
+                    const cleanTitle = rawTitle.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9_-]/gi, '_');
+                    fileName = `${cleanTitle}.png`;
+                }
+
                 const link = document.createElement('a');
-                const cleanTitle = (state.title || 'qrcode').toLowerCase().replace(/[^a-z0-9_-]/gi, '_');
-                link.download = `${cleanTitle}.png`;
+                link.download = fileName;
                 link.href = exportCanvas.toDataURL('image/png');
                 link.click();
-                showToast('Téléchargement du QR code lancé', 'success');
+                showToast(state.type === 'batch' ? 'Téléchargement de la planche lancé' : 'Téléchargement du QR code lancé', 'success');
             } catch (e) {
                 console.error('Download error:', e);
-                showToast('Erreur lors du téléchargement', 'error');
+                showToast(e.message || 'Erreur lors du téléchargement', 'error');
             }
         }
 
-        // Create clean standalone canvas for export
+        // Create clean standalone canvas for export (Single Mode)
         function createExportCanvas() {
             const size = state.size || 600;
             const tempCanvas = document.createElement('canvas');
@@ -1368,23 +1556,35 @@
                 padding: Math.round(size * 0.05)
             });
 
-            // If user wants title on export
-            const hasTitle = Boolean(state.title && state.title.trim().length > 0);
-            const hasSubtext = Boolean(state.showSubtext && getSubtextDisplay());
+            // Check title and subtext
+            const hasRawTitle = Boolean(state.title && state.title.trim().length > 0);
+            const subtext = getSubtextDisplay();
+            const hasSubtext = Boolean(state.showSubtext && subtext);
 
-            if (!hasTitle && !hasSubtext) {
+            if (!hasRawTitle && !hasSubtext) {
                 return tempCanvas;
             }
 
-            // Composite canvas with title/subtext
+            // Measurement canvas for accurate text wrapping
+            const margin = Math.round(size * 0.08);
+            const maxWidth = size;
+            const titleFontSize = Math.round(size * 0.055);
+            const titleLineHeight = Math.round(titleFontSize * 1.3);
+
+            const measureCanvas = document.createElement('canvas');
+            const measureCtx = measureCanvas.getContext('2d');
+            measureCtx.font = `bold ${titleFontSize}px Outfit, sans-serif`;
+
+            const titleLines = hasRawTitle ? wrapTextToLines(measureCtx, state.title, maxWidth, 2) : [];
+            const hasTitle = titleLines.length > 0;
+            const titleBlockHeight = hasTitle ? (titleLines.length * titleLineHeight) + Math.round(size * 0.04) : 0;
+            const subtextHeight = hasSubtext ? Math.round(size * 0.1) : 0;
+
             const composite = document.createElement('canvas');
             const ctx = composite.getContext('2d');
-            const titleHeight = hasTitle ? Math.round(size * 0.12) : 0;
-            const subtextHeight = hasSubtext ? Math.round(size * 0.1) : 0;
-            const margin = Math.round(size * 0.06);
 
             composite.width = size + (margin * 2);
-            composite.height = size + titleHeight + subtextHeight + (margin * 2);
+            composite.height = size + titleBlockHeight + subtextHeight + (margin * 2);
 
             // Background white
             ctx.fillStyle = '#ffffff';
@@ -1392,14 +1592,17 @@
 
             let currentY = margin;
 
-            // Draw title
+            // Draw multi-line title
             if (hasTitle) {
                 ctx.fillStyle = '#0f172a';
-                ctx.font = `bold ${Math.round(size * 0.065)}px Outfit, sans-serif`;
+                ctx.font = `bold ${titleFontSize}px Outfit, sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
-                ctx.fillText(state.title, composite.width / 2, currentY);
-                currentY += titleHeight;
+
+                titleLines.forEach((line, idx) => {
+                    ctx.fillText(line, composite.width / 2, currentY + (idx * titleLineHeight));
+                });
+                currentY += titleBlockHeight;
             }
 
             // Draw QR Code
@@ -1412,8 +1615,7 @@
                 ctx.font = `${Math.round(size * 0.038)}px JetBrains Mono, monospace`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                const sub = getSubtextDisplay();
-                const displaySub = sub.length > 50 ? sub.substring(0, 47) + '...' : sub;
+                const displaySub = subtext.length > 55 ? subtext.substring(0, 52) + '...' : subtext;
                 ctx.fillText(displaySub, composite.width / 2, currentY + (subtextHeight / 2));
             }
 
@@ -1427,7 +1629,7 @@
             printContainer.replaceChildren();
 
             if (state.type !== 'batch') {
-                // Single A4 Sheet layout
+                // Single A4 Sheet layout (agrandie 1.2x, sans distraction)
                 const singleWrap = document.createElement('div');
                 singleWrap.className = 'print-single-container';
 
@@ -1443,7 +1645,7 @@
                 const printCanvas = document.createElement('canvas');
                 new QRious({
                     element: printCanvas,
-                    size: 450,
+                    size: 540,
                     value: getQRValue(),
                     level: state.ecc,
                     foreground: state.color,
@@ -1459,11 +1661,6 @@
                     urlP.textContent = getSubtextDisplay();
                     singleWrap.appendChild(urlP);
                 }
-
-                const meta = document.createElement('div');
-                meta.className = 'print-single-meta';
-                meta.textContent = 'Document pédagogique généré avec Suite EdNum';
-                singleWrap.appendChild(meta);
 
                 printContainer.appendChild(singleWrap);
             } else {
@@ -1592,25 +1789,27 @@
         window.__onResetApp = resetAll;
         document.getElementById('resetBtn')?.addEventListener('click', resetAll);
 
-        // Action buttons bindings
+        // Action buttons bindings (uniquement sous le QR code)
         document.getElementById('copyImgBtn')?.addEventListener('click', copyQRImage);
-        document.getElementById('copyImgHeaderBtn')?.addEventListener('click', copyQRImage);
         document.getElementById('downloadImgBtn')?.addEventListener('click', downloadQRImage);
-        document.getElementById('downloadImgHeaderBtn')?.addEventListener('click', downloadQRImage);
         document.getElementById('printActionBtn')?.addEventListener('click', handlePrint);
-        document.getElementById('printHeaderBtn')?.addEventListener('click', handlePrint);
 
         // ==========================================
         // PERSISTANCE D'ÉTAT
         // ==========================================
         function saveState() {
             try {
+                state.type = state.type || 'url';
                 state.url = inputUrl.value;
                 state.text = inputText.value;
                 state.wifiSsid = inputWifiSsid.value;
                 state.wifiPass = inputWifiPass.value;
                 state.wifiType = selectWifiType.value;
                 state.batchText = inputBatch.value;
+                state.title = inputTitle.value;
+                state.showSubtext = checkShowSubtext.checked;
+                state.ecc = selectEcc.value;
+                state.size = parseInt(selectRenderSize.value, 10) || 600;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             } catch (e) {
                 console.error('Save state error:', e);
@@ -1623,33 +1822,33 @@
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     Object.assign(state, parsed);
-                    
-                    inputUrl.value = state.url || '';
-                    inputText.value = state.text || '';
-                    inputWifiSsid.value = state.wifiSsid || '';
-                    inputWifiPass.value = state.wifiPass || '';
-                    selectWifiType.value = state.wifiType || 'WPA';
-                    inputBatch.value = state.batchText || '';
-                    inputTitle.value = state.title !== undefined ? state.title : 'Portail Éducation Numérique';
-                    checkShowSubtext.checked = state.showSubtext !== undefined ? state.showSubtext : true;
-                    selectEcc.value = state.ecc || 'M';
-                    selectRenderSize.value = state.size || '600';
-                    customColorInput.value = state.color || '#000000';
-
-                    document.querySelectorAll('.tab-btn').forEach(btn => {
-                        btn.classList.toggle('active', btn.dataset.type === state.type);
-                    });
-                    viewUrl.classList.toggle('hidden', state.type !== 'url');
-                    viewText.classList.toggle('hidden', state.type !== 'text');
-                    viewWifi.classList.toggle('hidden', state.type !== 'wifi');
-                    viewBatch.classList.toggle('hidden', state.type !== 'batch');
-                    singlePreviewContainer.classList.toggle('hidden', state.type === 'batch');
-                    batchPreviewContainer.classList.toggle('hidden', state.type !== 'batch');
-
-                    document.querySelectorAll('.color-chip').forEach(chip => {
-                        chip.classList.toggle('active', chip.dataset.color === state.color);
-                    });
                 }
+                
+                inputUrl.value = state.url !== undefined ? state.url : 'https://ednum.org';
+                inputText.value = state.text !== undefined ? state.text : 'Bravo ! Tu as trouvé l\'indice.';
+                inputWifiSsid.value = state.wifiSsid !== undefined ? state.wifiSsid : 'WiFi_Classe';
+                inputWifiPass.value = state.wifiPass !== undefined ? state.wifiPass : '';
+                selectWifiType.value = state.wifiType || 'WPA';
+                inputBatch.value = state.batchText !== undefined ? state.batchText : 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu';
+                inputTitle.value = state.title !== undefined ? state.title : 'Portail Éducation Numérique';
+                checkShowSubtext.checked = state.showSubtext !== undefined ? state.showSubtext : true;
+                selectEcc.value = state.ecc || 'M';
+                selectRenderSize.value = String(state.size || 600);
+                customColorInput.value = state.color || '#000000';
+
+                tabBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.type === state.type);
+                });
+                viewUrl.classList.toggle('hidden', state.type !== 'url');
+                viewText.classList.toggle('hidden', state.type !== 'text');
+                viewWifi.classList.toggle('hidden', state.type !== 'wifi');
+                viewBatch.classList.toggle('hidden', state.type !== 'batch');
+                singlePreviewContainer.classList.toggle('hidden', state.type === 'batch');
+                batchPreviewContainer.classList.toggle('hidden', state.type !== 'batch');
+
+                document.querySelectorAll('.color-chip').forEach(chip => {
+                    chip.classList.toggle('active', chip.dataset.color === state.color);
+                });
             } catch (e) {
                 console.error('Load state error:', e);
             }

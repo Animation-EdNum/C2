@@ -1,6 +1,6 @@
-# 🔑 Mode d'emploi : Générateur & Testeur de mot de passe
+# 🔑 Mode d'emploi : Générateur & Testeur de mots de passe
 
-**Générateur de mot de passe** est une application interactive de cyberhygiène conçue pour le Cycle 2 (5H-8H) et le Cycle 3 (9CO-11CO). Elle permet aux élèves de comprendre ce qui fait la force d'un mot de passe, de s'approprier une méthode mnémotechnique robuste (« la méthode des blocs ») et de tester en temps réel la résistance de leurs clés d'accès face aux attaques informatiques.
+**Générateur de mots de passe** est une application interactive de cyberhygiène conçue pour le Cycle 2 (5H-8H) et le Cycle 3 (9CO-11CO). Elle permet aux élèves de comprendre ce qui fait la force d'un mot de passe, de s'approprier une méthode mnémotechnique robuste (« la méthode des blocs ») et de tester en temps réel la résistance de leurs clés d'accès face aux attaques informatiques.
 
 Alignement programme : Cycle 2 et Cycle 3 · Environnement numérique de travail (*edu.vs.ch*), Éducation numérique (Sécurité, Vie privée, Usages).
 
