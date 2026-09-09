@@ -408,7 +408,7 @@ function initShareModal() {
                                     <span class="share-toggle-slider"></span>
                                 </label>
                             </div>
-                            <div class="share-option">
+                            <div class="share-option" id="lbl-noAudio">
                                 <div class="share-option-text">
                                     <label class="share-option-label" for="opt-noAudio">Pas de son</label>
                                     <div class="share-option-desc">Désactive le son.</div>
@@ -657,6 +657,10 @@ function initShareModal() {
         const lblBlindcode = document.getElementById('lbl-blindcode');
         if (lblNoCmdToggle) lblNoCmdToggle.style.display = 'none';
         if (lblBlindcode) lblBlindcode.style.display = 'none';
+    }
+    if (!document.getElementById('audio-toggle-btn')) {
+        const lblNoAudio = document.getElementById('lbl-noAudio');
+        if (lblNoAudio) lblNoAudio.style.display = 'none';
     }
 
 

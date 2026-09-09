@@ -88,3 +88,32 @@ test('resetAllCheckboxes logic', async (t) => {
         }, "Should not throw if there are no checkboxes");
     });
 });
+
+test('context-aware share options - audio', async (t) => {
+    await t.test('hides lbl-noAudio when audio-toggle-btn is not present', () => {
+        const window = setupDOM(`
+            <div class="settings-dropdown-content"></div>
+        `);
+        const event = window.document.createEvent('Event');
+        event.initEvent('DOMContentLoaded', true, true);
+        window.document.dispatchEvent(event);
+
+        const lblNoAudio = window.document.getElementById('lbl-noAudio');
+        assert.ok(lblNoAudio, 'lbl-noAudio should be present in modal HTML');
+        assert.strictEqual(lblNoAudio.style.display, 'none');
+    });
+
+    await t.test('keeps lbl-noAudio visible when audio-toggle-btn is present', () => {
+        const window = setupDOM(`
+            <button id="audio-toggle-btn"></button>
+            <div class="settings-dropdown-content"></div>
+        `);
+        const event = window.document.createEvent('Event');
+        event.initEvent('DOMContentLoaded', true, true);
+        window.document.dispatchEvent(event);
+
+        const lblNoAudio = window.document.getElementById('lbl-noAudio');
+        assert.ok(lblNoAudio, 'lbl-noAudio should be present in modal HTML');
+        assert.notStrictEqual(lblNoAudio.style.display, 'none');
+    });
+});
