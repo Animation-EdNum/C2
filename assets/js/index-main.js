@@ -10,6 +10,21 @@
 function updateRoleButton(tabId) {
     const roleBtn = document.getElementById('role-toggle-btn');
     const ghostBtn = document.getElementById('header-teachers-link');
+    const studentsBtn = document.getElementById('header-students-link');
+
+    if (studentsBtn && ghostBtn) {
+        if (tabId === 'teachers') {
+            studentsBtn.classList.remove('active');
+            studentsBtn.removeAttribute('aria-current');
+            ghostBtn.classList.add('active');
+            ghostBtn.setAttribute('aria-current', 'page');
+        } else {
+            studentsBtn.classList.add('active');
+            studentsBtn.setAttribute('aria-current', 'page');
+            ghostBtn.classList.remove('active');
+            ghostBtn.removeAttribute('aria-current');
+        }
+    }
 
     if (tabId === 'teachers') {
         if (roleBtn) {
@@ -22,7 +37,7 @@ function updateRoleButton(tabId) {
             roleBtn.appendChild(icon);
             window.fa?.createIcons?.();
         }
-        if (ghostBtn) {
+        if (ghostBtn && !studentsBtn) {
             ghostBtn.textContent = 'Espace Élèves';
             ghostBtn.setAttribute('title', "Retour à l'Espace Élèves");
             ghostBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
@@ -32,7 +47,7 @@ function updateRoleButton(tabId) {
         if (roleBtn) {
             roleBtn.style.display = 'none';
         }
-        if (ghostBtn) {
+        if (ghostBtn && !studentsBtn) {
             ghostBtn.textContent = 'Espace Enseignant·e·s';
             ghostBtn.setAttribute('title', "Accéder à l'Espace Enseignant·e·s");
             ghostBtn.setAttribute('aria-label', "Accéder à l'Espace Enseignant·e·s");
@@ -62,10 +77,15 @@ function switchTab(event, tabId) {
 let currentFilter = 'all';
 
 function filterApps(level) {
-    currentFilter = level;
+    if (currentFilter === level) {
+        currentFilter = 'all';
+    } else {
+        currentFilter = level;
+    }
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
-        if ((level === 'all' && btn.innerText === 'Toutes') || btn.innerText === level) {
+        const text = (btn.innerText || btn.textContent || '').trim();
+        if (currentFilter !== 'all' && text === currentFilter) {
             btn.classList.add('active');
         }
     });
@@ -90,7 +110,10 @@ function searchApps() {
 
 function clearSearch() {
     const searchInput = document.getElementById('searchInput');
-    if (searchInput) searchInput.value = '';
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
     searchApps();
 }
 
@@ -247,7 +270,7 @@ window.initPortalIndex = initPortalIndex;
 window.updateRoleButton = updateRoleButton;
 
 function initPortalIndex() {
-    // Return to students button in header (visible only in teachers view)
+    // Return to students button in header (visible only in teachers view if present)
     const roleToggleBtn = document.getElementById('role-toggle-btn');
     if (roleToggleBtn) {
         roleToggleBtn.addEventListener('click', () => {
@@ -259,20 +282,37 @@ function initPortalIndex() {
         });
     }
 
-    // Ghost teachers link in header
+    // Space navigation links under header subtitle
+    const headerStudentsLink = document.getElementById('header-students-link');
+    if (headerStudentsLink) {
+        headerStudentsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchTab(null, 'students');
+            if (window.location.hash === '#teachers') {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
     const headerTeachersLink = document.getElementById('header-teachers-link');
     if (headerTeachersLink) {
         headerTeachersLink.addEventListener('click', (e) => {
             e.preventDefault();
-            const isTeachers = document.getElementById('view-teachers')?.classList.contains('active');
-            if (isTeachers) {
-                switchTab(null, 'students');
-                if (window.location.hash === '#teachers') {
-                    history.replaceState(null, '', window.location.pathname + window.location.search);
-                }
-            } else {
+            if (headerStudentsLink) {
                 switchTab(null, 'teachers');
                 window.location.hash = 'teachers';
+            } else {
+                const isTeachers = document.getElementById('view-teachers')?.classList.contains('active');
+                if (isTeachers) {
+                    switchTab(null, 'students');
+                    if (window.location.hash === '#teachers') {
+                        history.replaceState(null, '', window.location.pathname + window.location.search);
+                    }
+                } else {
+                    switchTab(null, 'teachers');
+                    window.location.hash = 'teachers';
+                }
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
@@ -303,30 +343,27 @@ function initPortalIndex() {
     if (filter910CO) filter910CO.addEventListener('click', () => filterApps('9-10 CO'));
 
     // Search bar toggle & controls
-    const searchBar = document.querySelector('.search-bar');
+    const searchWrapper = document.getElementById('header-search-wrapper') || document.querySelector('.search-bar');
     const searchInput = document.getElementById('searchInput');
     const searchToggleBtn = document.getElementById('search-toggle-btn');
     const clearSearchBtn = document.getElementById('clearSearch');
 
     function toggleSearch(forceOpen) {
-        if (!searchBar) return;
-        const isOpen = searchBar.classList.contains('active');
+        if (!searchWrapper && !searchInput) return;
+        const isOpen = searchWrapper ? searchWrapper.classList.contains('active') : false;
         const shouldOpen = forceOpen !== undefined ? forceOpen : !isOpen;
 
         if (shouldOpen) {
-            searchBar.classList.add('active');
+            searchWrapper?.classList.add('active');
             searchToggleBtn?.classList.add('active');
-            if (typeof searchBar.scrollIntoView === 'function') {
-                searchBar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
             setTimeout(() => {
                 searchInput?.focus();
                 if (typeof searchInput?.select === 'function') {
                     searchInput.select();
                 }
-            }, 150);
+            }, 100);
         } else {
-            searchBar.classList.remove('active');
+            searchWrapper?.classList.remove('active');
             searchToggleBtn?.classList.remove('active');
             if (searchInput && searchInput.value.length > 0) {
                 searchInput.value = '';
@@ -336,11 +373,17 @@ function initPortalIndex() {
     }
 
     if (searchToggleBtn) {
-        searchToggleBtn.addEventListener('click', () => toggleSearch());
+        searchToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSearch();
+        });
     }
 
     if (clearSearchBtn) {
-        clearSearchBtn.addEventListener('click', clearSearch);
+        clearSearchBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearSearch();
+        });
     }
 
     if (searchInput) {
@@ -352,13 +395,24 @@ function initPortalIndex() {
         });
     }
 
+    // Dismiss search if clicking outside and empty
+    document.addEventListener('click', (e) => {
+        if (!searchWrapper || !searchWrapper.classList.contains('active')) return;
+        if (!searchWrapper.contains(e.target)) {
+            if (searchInput && searchInput.value.trim() === '') {
+                toggleSearch(false);
+            }
+        }
+    });
+
     // Parallax smart sticky header
     let lastScrollY = window.scrollY;
     const header = document.querySelector('header');
     if (header) {
         window.addEventListener('scroll', () => {
             const currentScrollY = window.scrollY;
-            if (currentScrollY <= 80) {
+            const isSearchOpen = searchWrapper?.classList.contains('active');
+            if (currentScrollY <= 80 || isSearchOpen) {
                 header.classList.remove('header-hidden');
             } else if (currentScrollY > lastScrollY + 10) {
                 // Scrolling down -> hide header

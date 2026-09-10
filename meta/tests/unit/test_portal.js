@@ -472,7 +472,7 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
         assert.ok(ghostBtn.getAttribute('title').startsWith("Accéder à l'Espace Enseignant·e·s"), 'Title should start with Accéder à l\'Espace Enseignant·e·s');
     });
 
-    await t.test('sets ghost button to Espace Élèves on teachers view', () => {
+    await t.test('sets ghost button to Espace Élèves on teachers view when single button', () => {
         const dom = new JSDOM(`<!DOCTYPE html><html><body>
             <a href="#teachers" id="header-teachers-link"></a>
             <button id="role-toggle-btn" style="display: none;"></button>
@@ -486,5 +486,60 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
         assert.strictEqual(ghostBtn.getAttribute('href'), '#students');
         assert.strictEqual(ghostBtn.getAttribute('title'), "Retour à l'Espace Élèves");
     });
+
+    await t.test('handles dual space links (students and teachers) properly', () => {
+        const dom = new JSDOM(`<!DOCTYPE html><html><body>
+            <a href="#students" id="header-students-link" class="ghost-space-link active">Espace élèves</a>
+            <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link">Espace Enseignant·e·s</a>
+        </body></html>`, { runScripts: "dangerously" });
+        const window = dom.window;
+        window.eval(indexMainSrc);
+
+        // Switch to teachers
+        window.updateRoleButton('teachers');
+        const studentsBtn = window.document.getElementById('header-students-link');
+        const teachersBtn = window.document.getElementById('header-teachers-link');
+        assert.strictEqual(studentsBtn.classList.contains('active'), false);
+        assert.strictEqual(teachersBtn.classList.contains('active'), true);
+        assert.strictEqual(teachersBtn.getAttribute('aria-current'), 'page');
+
+        // Switch back to students
+        window.updateRoleButton('students');
+        assert.strictEqual(studentsBtn.classList.contains('active'), true);
+        assert.strictEqual(teachersBtn.classList.contains('active'), false);
+        assert.strictEqual(studentsBtn.getAttribute('aria-current'), 'page');
+    });
+});
+
+test('index-main.js - filterApps toggle behavior without Toutes', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><body>
+        <div class="filter-bar">
+            <a href="indexC1.html" class="filter-btn" id="filter-c1">Cycle 1</a>
+            <button class="filter-btn" id="filter-5-6H">5-6H</button>
+            <button class="filter-btn" id="filter-7-8H">7-8H</button>
+        </div>
+        <div id="view-students">
+            <div class="searchable-grid">
+                <div class="card" data-level="5-6H">App 1</div>
+                <div class="card" data-level="7-8H">App 2</div>
+            </div>
+        </div>
+        <input id="searchInput" value="">
+    </body></html>`, { runScripts: "dangerously" });
+    const window = dom.window;
+    window.eval(indexMainSrc);
+
+    const btn56 = window.document.getElementById('filter-5-6H');
+    const btn78 = window.document.getElementById('filter-7-8H');
+
+    // Click 5-6H -> active
+    window.filterApps('5-6H');
+    assert.strictEqual(btn56.classList.contains('active'), true);
+    assert.strictEqual(btn78.classList.contains('active'), false);
+
+    // Click 5-6H again -> toggle off (all apps visible, no filter active)
+    window.filterApps('5-6H');
+    assert.strictEqual(btn56.classList.contains('active'), false);
+    assert.strictEqual(btn78.classList.contains('active'), false);
 });
 

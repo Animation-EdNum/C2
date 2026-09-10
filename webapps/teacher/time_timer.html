@@ -360,6 +360,11 @@
             height: 12px;
         }
 
+        /* Masquage des pulse dots selon option enseignant */
+        body.hide-pulse-dots #timerStatusDots {
+            display: none !important;
+        }
+
         /* DIGITAL TIME DISPLAY */
         .digital-display {
             display: flex;
@@ -972,16 +977,12 @@
             <div class="presets-section">
                 <span class="presets-label">Préréglages rapides (1 clic)</span>
                 <div class="presets-grid" id="presetsGrid">
-                    <button class="preset-chip" data-min="1">1 min</button>
-                    <button class="preset-chip" data-min="2">2 min</button>
-                    <button class="preset-chip" data-min="3">3 min</button>
                     <button class="preset-chip popular" data-min="5">5 min</button>
                     <button class="preset-chip popular" data-min="10">10 min</button>
                     <button class="preset-chip popular" data-min="15">15 min</button>
                     <button class="preset-chip popular" data-min="20">20 min</button>
                     <button class="preset-chip popular" data-min="30">30 min</button>
-                    <button class="preset-chip" data-min="45">45 min</button>
-                    <button class="preset-chip" data-min="60">60 min</button>
+                    <button class="preset-chip popular" data-min="45">45 min</button>
                 </div>
             </div>
 
@@ -1100,6 +1101,10 @@
                             <span>Afficher le temps numérique</span>
                         </label>
                         <label class="custom-checkbox-row">
+                            <input type="checkbox" id="checkShowPulseDots" checked>
+                            <span>Afficher les points d'activité (pulse dots)</span>
+                        </label>
+                        <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkStartSound" checked>
                             <span>Son discret au démarrage</span>
                         </label>
@@ -1212,6 +1217,7 @@
             const testSoundBtn = document.getElementById('testSoundBtn');
             const checkAutoStart = document.getElementById('checkAutoStart');
             const checkShowDigits = document.getElementById('checkShowDigits');
+            const checkShowPulseDots = document.getElementById('checkShowPulseDots');
             const checkStartSound = document.getElementById('checkStartSound');
             const checkWarningSound = document.getElementById('checkWarningSound');
             const warningToneSelect = document.getElementById('warningToneSelect');
@@ -1831,6 +1837,7 @@
                 sound: 'zen',
                 autoStart: true,
                 showDigits: false,
+                showPulseDots: true,
                 startSound: true,
                 warningSoundEnabled: true,
                 warningSoundType: 'discrete',
@@ -1854,6 +1861,9 @@
                         if (parsed.warningSoundType === undefined) {
                             parsed.warningSoundType = 'discrete';
                         }
+                        if (parsed.showPulseDots === undefined) {
+                            parsed.showPulseDots = true;
+                        }
                         settings = Object.assign(settings, parsed);
                     }
                 } catch (e) { }
@@ -1875,6 +1885,10 @@
                 soundSelect.value = settings.sound;
                 checkAutoStart.checked = settings.autoStart;
                 checkShowDigits.checked = settings.showDigits;
+                if (checkShowPulseDots) {
+                    checkShowPulseDots.checked = settings.showPulseDots !== false;
+                }
+                document.body.classList.toggle('hide-pulse-dots', settings.showPulseDots === false);
                 checkStartSound.checked = settings.startSound !== false;
                 if (checkWarningSound) {
                     checkWarningSound.checked = settings.warningSoundEnabled !== false;
@@ -2437,6 +2451,14 @@
                 saveSettings();
             });
 
+            if (checkShowPulseDots) {
+                checkShowPulseDots.addEventListener('change', () => {
+                    settings.showPulseDots = checkShowPulseDots.checked;
+                    document.body.classList.toggle('hide-pulse-dots', !settings.showPulseDots);
+                    saveSettings();
+                });
+            }
+
             checkStartSound.addEventListener('change', () => {
                 settings.startSound = checkStartSound.checked;
                 saveSettings();
@@ -2640,6 +2662,7 @@
                     sound: 'zen',
                     autoStart: true,
                     showDigits: false,
+                    showPulseDots: true,
                     startSound: true,
                     warningSoundEnabled: true,
                     warningSoundType: 'discrete',
