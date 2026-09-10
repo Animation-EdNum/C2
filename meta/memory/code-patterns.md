@@ -8,9 +8,12 @@ This document records code conventions, reusable hooks, and established project 
   ```html
   <a href="#main-content" class="skip-link">Aller au contenu principal</a>
   <header class="app-header">
-      <div class="header-left">
-          <a href="../index.html" class="header-icon" aria-label="Retour au portail"><i data-fa="arrow-left"></i></a>
-          <h1>Nom de l'application</h1>
+      <div class="header-title-wrapper">
+          <a href="../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil"><i data-fa="arrow-left"></i></a>
+          <div class="header-icon" aria-hidden="true"><i data-fa="nom-icone"></i></div>
+          <div>
+              <h1>Nom de l'application <span class="badge-level">7-8H</span></h1>
+          </div>
       </div>
       <div class="action-buttons">...</div>
   </header>
@@ -18,9 +21,10 @@ This document records code conventions, reusable hooks, and established project 
   <footer class="no-print">...</footer>
   <canvas id="confetti-canvas"></canvas>
   ```
-- **Teacher Tools Header Return:** In all teacher webapps (`webapps/teacher/*` and `alpha/webapps/teacher/*`), the header back icon must explicitly link back to the teacher portal section:
+- **Teacher Tools Header Return:** In all teacher webapps (`webapps/teacher/*` and `alpha/webapps/teacher/*`), the header back button must explicitly link back to the teacher portal section:
   ```html
-  <a href="../../index.html#teachers" class="header-icon" aria-label="Retour à l'espace enseignant·e·s"><i data-fa="arrow-left"></i></a>
+  <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s"><i data-fa="arrow-left"></i></a>
+  <div class="header-icon" aria-hidden="true"><i data-fa="nom-icone"></i></div>
   ```
 - **Flat Legal Footer:** Attribution footers must sit outside `.app-shell` as a flat, transparent block (`margin-top: 1.5rem; text-align: center; opacity: 0.85;`). Never trap footers inside nested cards.
 
