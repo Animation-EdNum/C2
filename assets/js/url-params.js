@@ -137,13 +137,8 @@ function applyUrlParameters() {
     }
 
     if (urlParams.get('noHome') === '1') {
-        const homeBtn = document.querySelector('a[href*="index.html"]');
-        if (homeBtn) {
-            homeBtn.removeAttribute('href');
-            homeBtn.removeAttribute('title');
-            homeBtn.removeAttribute('aria-label');
-            homeBtn.classList.add('unlinked');
-        }
+        const homeBtns = document.querySelectorAll('a[href*="index.html"], a[href*="indexC1.html"], .header-back-btn');
+        homeBtns.forEach(homeBtn => homeBtn.remove());
     }
 
     if (urlParams.get('noSettings') === '1') {

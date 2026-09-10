@@ -457,7 +457,7 @@ test('PWA Installation & Guidance', async (t) => {
 });
 
 test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
-    await t.test('sets ghost button to Espace Enseignants on students view', () => {
+    await t.test('sets ghost button to Espace enseignant·e·s on students view', () => {
         const dom = new JSDOM(`<!DOCTYPE html><html><body>
             <a href="#teachers" id="header-teachers-link"></a>
             <button id="role-toggle-btn" style="display: none;"></button>
@@ -467,12 +467,13 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
 
         window.updateRoleButton('students');
         const ghostBtn = window.document.getElementById('header-teachers-link');
-        assert.ok(ghostBtn.textContent.startsWith('Espace Enseignant·e·s'), 'Text should start with Espace Enseignant·e·s');
+        assert.strictEqual(ghostBtn.textContent, 'Espace enseignant·e·s');
         assert.strictEqual(ghostBtn.getAttribute('href'), '#teachers');
-        assert.ok(ghostBtn.getAttribute('title').startsWith("Accéder à l'Espace Enseignant·e·s"), 'Title should start with Accéder à l\'Espace Enseignant·e·s');
+        assert.strictEqual(ghostBtn.getAttribute('title'), "Accéder à l'espace enseignant·e·s");
+        assert.strictEqual(ghostBtn.classList.contains('active'), false);
     });
 
-    await t.test('sets ghost button to Espace Élèves on teachers view when single button', () => {
+    await t.test('keeps ghost button to Espace enseignant·e·s on teachers view and marks active', () => {
         const dom = new JSDOM(`<!DOCTYPE html><html><body>
             <a href="#teachers" id="header-teachers-link"></a>
             <button id="role-toggle-btn" style="display: none;"></button>
@@ -482,15 +483,16 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
 
         window.updateRoleButton('teachers');
         const ghostBtn = window.document.getElementById('header-teachers-link');
-        assert.strictEqual(ghostBtn.textContent, 'Espace Élèves');
-        assert.strictEqual(ghostBtn.getAttribute('href'), '#students');
-        assert.strictEqual(ghostBtn.getAttribute('title'), "Retour à l'Espace Élèves");
+        assert.strictEqual(ghostBtn.textContent, 'Espace enseignant·e·s');
+        assert.strictEqual(ghostBtn.getAttribute('href'), '#teachers');
+        assert.strictEqual(ghostBtn.classList.contains('active'), true);
+        assert.strictEqual(ghostBtn.getAttribute('aria-current'), 'page');
     });
 
     await t.test('handles dual space links (students and teachers) properly', () => {
         const dom = new JSDOM(`<!DOCTYPE html><html><body>
             <a href="#students" id="header-students-link" class="ghost-space-link active">Espace élèves</a>
-            <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link">Espace Enseignant·e·s</a>
+            <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link">Espace enseignant·e·s</a>
         </body></html>`, { runScripts: "dangerously" });
         const window = dom.window;
         window.eval(indexMainSrc);
@@ -502,12 +504,14 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
         assert.strictEqual(studentsBtn.classList.contains('active'), false);
         assert.strictEqual(teachersBtn.classList.contains('active'), true);
         assert.strictEqual(teachersBtn.getAttribute('aria-current'), 'page');
+        assert.strictEqual(teachersBtn.textContent, 'Espace enseignant·e·s');
 
         // Switch back to students
         window.updateRoleButton('students');
         assert.strictEqual(studentsBtn.classList.contains('active'), true);
         assert.strictEqual(teachersBtn.classList.contains('active'), false);
         assert.strictEqual(studentsBtn.getAttribute('aria-current'), 'page');
+        assert.strictEqual(teachersBtn.textContent, 'Espace enseignant·e·s');
     });
 });
 
@@ -541,5 +545,41 @@ test('index-main.js - filterApps toggle behavior without Toutes', () => {
     window.filterApps('5-6H');
     assert.strictEqual(btn56.classList.contains('active'), false);
     assert.strictEqual(btn78.classList.contains('active'), false);
+});
+
+test('index-main.js - header logo click switches space', async (t) => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><body>
+        <a href="#teachers" id="header-logo-link" class="header-logo-link"><svg class="header-logo"></svg></a>
+        <a href="#students" id="header-students-link" class="ghost-space-link active">Espace élèves</a>
+        <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link">Espace enseignant·e·s</a>
+        <div id="view-students" class="view active"></div>
+        <div id="view-teachers" class="view"></div>
+    </body></html>`, { runScripts: "dangerously", url: "http://localhost/" });
+    const window = dom.window;
+    window.eval(indexMainSrc);
+
+    window.initPortalIndex();
+
+    const logo = window.document.getElementById('header-logo-link');
+    const viewStudents = window.document.getElementById('view-students');
+    const viewTeachers = window.document.getElementById('view-teachers');
+    const studentsBtn = window.document.getElementById('header-students-link');
+    const teachersBtn = window.document.getElementById('header-teachers-link');
+
+    // Currently on students: click on logo should send to teachers
+    logo.click();
+    assert.strictEqual(viewTeachers.classList.contains('active'), true, 'Teachers view should be active');
+    assert.strictEqual(viewStudents.classList.contains('active'), false, 'Students view should not be active');
+    assert.strictEqual(teachersBtn.classList.contains('active'), true, 'Teachers link should be active');
+    assert.strictEqual(studentsBtn.classList.contains('active'), false, 'Students link should not be active');
+    assert.strictEqual(teachersBtn.textContent, 'Espace enseignant·e·s');
+
+    // Currently on teachers: click on logo should send back to students
+    logo.click();
+    assert.strictEqual(viewStudents.classList.contains('active'), true, 'Students view should be active');
+    assert.strictEqual(viewTeachers.classList.contains('active'), false, 'Teachers view should not be active');
+    assert.strictEqual(studentsBtn.classList.contains('active'), true, 'Students link should be active');
+    assert.strictEqual(teachersBtn.classList.contains('active'), false, 'Teachers link should not be active');
+    assert.strictEqual(teachersBtn.textContent, 'Espace enseignant·e·s');
 });
 

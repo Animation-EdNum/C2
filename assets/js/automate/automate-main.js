@@ -129,3 +129,86 @@
             }
 
         });
+
+        window.__onResetApp = function() {
+            // 1. Arrêter les exécutions en cours
+            if (typeof simState !== 'undefined') {
+                simState.running = false;
+                simState.paused = false;
+                simState.stopped = true;
+                simState.stepIndex = -1;
+                simState.failed = false;
+                simState.program = [];
+                simState.robotRow = simState.startRow = 5;
+                simState.robotCol = simState.startCol = 0;
+                simState.robotDir = simState.startDir = 0;
+                simState.obstacles = [];
+                simState.targetRow = null;
+                simState.targetCol = null;
+                if (typeof renderProgram === 'function') renderProgram();
+            }
+            if (typeof exploreState !== 'undefined') {
+                exploreState.running = false;
+                exploreState.robotRow = exploreState.startRow = exploreState.absoluteStartRow = 5;
+                exploreState.robotCol = exploreState.startCol = exploreState.absoluteStartCol = 0;
+                exploreState.robotDir = exploreState.startDir = exploreState.absoluteStartDir = 0;
+                exploreState.obstacles = [];
+                exploreState.targetRow = null;
+                exploreState.targetCol = null;
+                exploreState.history = [];
+                exploreState.stepsThisRun = 0;
+            }
+            if (typeof chalState !== 'undefined') {
+                chalState.locked = false;
+                chalState.isAnimating = false;
+                if (typeof newChallenge === 'function') newChallenge();
+            }
+            if (typeof readState !== 'undefined') {
+                readState.locked = false;
+                readState.isAnimating = false;
+                if (typeof newReadChallenge === 'function') newReadChallenge();
+            }
+            if (typeof drawState !== 'undefined') {
+                drawState.running = false;
+                if (typeof newDrawChallenge === 'function') newDrawChallenge();
+            }
+
+            // 2. Réinitialiser les clés localStorage liées à l'automate
+            const atKeys = [
+                'at_active_skin', 'at_active_mat', 'at_unlocked_skins',
+                'at_total_steps', 'at_custom_mat_image', 'at_memory_mode',
+                'at_spell_mode', 'at_collect_mode', 'at_mat_opacity',
+                'at_colored_cmds', 'at_seen_skin_bubble', 'automate_explore_seen_hint'
+            ];
+            atKeys.forEach(k => {
+                try { localStorage.removeItem(k); } catch (e) {}
+            });
+
+            // 3. Réinitialiser les skins et tapis
+            if (typeof selectSkin === 'function') selectSkin('default');
+            if (typeof selectMat === 'function') selectMat('none');
+            document.body.classList.remove('colored-cmds');
+            const coloredCmdsBtn = document.getElementById('colored-cmds-toggle-btn');
+            if (coloredCmdsBtn) coloredCmdsBtn.style.color = '';
+
+            // 4. Reconstruire les grilles et vider les tracés
+            if (typeof rebuildAllGrids === 'function') rebuildAllGrids();
+
+            // 5. Fermer les panneaux et le menu déroulant
+            const dropdownContent = document.querySelector('.settings-dropdown-content.show');
+            if (dropdownContent) dropdownContent.classList.remove('show');
+            document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
+            if (typeof closeMatsModal === 'function') closeMatsModal();
+            if (typeof closeSkinsModal === 'function') closeSkinsModal();
+
+            // 6. Réinitialiser les scores si l'API Scores existe
+            if (typeof Scores !== 'undefined' && typeof Scores.resetAll === 'function') {
+                Scores.resetAll();
+            }
+
+            // 7. Retours sonore et visuel
+            if (typeof playSound === 'function') playSound('click');
+            if (typeof showToast === 'function') {
+                showToast("Simulateur réinitialisé", "info");
+            }
+        };

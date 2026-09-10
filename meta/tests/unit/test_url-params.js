@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const urlParamsSrc = fs.readFileSync('assets/js/url-params.js', 'utf-8');
 
-function setupDOM(initialHtml = '') {
+function setupDOM(initialHtml = '', url = "http://localhost/") {
     const defaultHtml = `<!DOCTYPE html>
     <html>
     <body>
@@ -13,7 +13,7 @@ function setupDOM(initialHtml = '') {
     </body>
     </html>`;
 
-    const dom = new JSDOM(defaultHtml, { runScripts: "dangerously", url: "http://localhost/" });
+    const dom = new JSDOM(defaultHtml, { runScripts: "dangerously", url });
     const window = dom.window;
 
     window.eval(urlParamsSrc);
@@ -115,5 +115,40 @@ test('context-aware share options - audio', async (t) => {
         const lblNoAudio = window.document.getElementById('lbl-noAudio');
         assert.ok(lblNoAudio, 'lbl-noAudio should be present in modal HTML');
         assert.notStrictEqual(lblNoAudio.style.display, 'none');
+    });
+});
+
+test('url-params noHome=1 removes home buttons from DOM', async (t) => {
+    await t.test('completely removes all home buttons when noHome=1', () => {
+        const window = setupDOM(`
+            <header class="app-header">
+                <a href="../index.html" class="header-back-btn">Retour</a>
+                <a href="../../indexC1.html" class="other-btn">Retour C1</a>
+            </header>
+            <div class="settings-dropdown-content"></div>
+        `, 'http://localhost/?noHome=1');
+
+        const event = window.document.createEvent('Event');
+        event.initEvent('DOMContentLoaded', true, true);
+        window.document.dispatchEvent(event);
+
+        assert.strictEqual(window.document.querySelector('.header-back-btn'), null, 'header-back-btn should be removed from DOM');
+        assert.strictEqual(window.document.querySelector('a[href*="index.html"]'), null, 'index.html link should be removed from DOM');
+        assert.strictEqual(window.document.querySelector('a[href*="indexC1.html"]'), null, 'indexC1.html link should be removed from DOM');
+    });
+
+    await t.test('keeps home button when noHome is absent', () => {
+        const window = setupDOM(`
+            <header class="app-header">
+                <a href="../index.html" class="header-back-btn">Retour</a>
+            </header>
+            <div class="settings-dropdown-content"></div>
+        `, 'http://localhost/');
+
+        const event = window.document.createEvent('Event');
+        event.initEvent('DOMContentLoaded', true, true);
+        window.document.dispatchEvent(event);
+
+        assert.notStrictEqual(window.document.querySelector('.header-back-btn'), null, 'header-back-btn should remain in DOM');
     });
 });

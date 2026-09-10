@@ -136,7 +136,8 @@
         if (optionsBtn && optionsContent) {
             optionsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                optionsContent.classList.toggle('show');
+                const isOpen = optionsContent.classList.toggle('show');
+                optionsBtn.closest('.app-header')?.classList.toggle('dropdown-open', isOpen);
             });
         }
 
@@ -145,12 +146,17 @@
             const content = document.querySelector('.settings-dropdown-content.show');
             if (content && !event.target.closest('.settings-dropdown')) {
                 content.classList.remove('show');
+                document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
             }
         });
 
         const resetCacheBtn = document.getElementById('reset-cache-btn');
         if (resetCacheBtn) {
             resetCacheBtn.addEventListener('click', async (e) => {
+                const content = document.querySelector('.settings-dropdown-content.show');
+                if (content) content.classList.remove('show');
+                document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
+
                 if (typeof window.__onResetApp === 'function') {
                     e.preventDefault();
                     e.stopPropagation();
@@ -159,13 +165,17 @@
                 }
                 if (confirm("Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")) {
                     // Clear localStorage and sessionStorage
-                    localStorage.clear();
-                    sessionStorage.clear();
+                    try {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    } catch (err) {}
 
                     // Clear cookies
-                    document.cookie.split(";").forEach(function (c) {
-                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                    });
+                    try {
+                        document.cookie.split(";").forEach(function (c) {
+                            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                        });
+                    } catch (err) {}
 
                     // Clear caches
                     if ('caches' in window) {
@@ -189,10 +199,8 @@
                         }
                     }
 
-                    // Reload after a short delay
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 100);
+                    // Reload
+                    window.location.reload();
                 }
             });
         }
@@ -253,17 +261,14 @@ if ('serviceWorker' in navigator) {
                         } else if (typeof showToast === 'function') {
                             // User may be mid-interaction — show non-blocking toast
                             const content = document.createElement('div');
-                            content.style.display = 'flex';
-                            content.style.flexDirection = 'column';
-                            content.style.gap = '10px';
+                            content.className = 'c2-toast-update-content';
 
                             const text = document.createElement('span');
                             text.textContent = 'Une mise à jour de la Suite EdNum est disponible.';
 
                             const btn = document.createElement('button');
-                            btn.className = 'btn btn-primary btn-small';
-                            btn.textContent = 'Mettre à jour maintenant';
-                            btn.style.width = 'fit-content';
+                            btn.className = 'c2-toast-btn';
+                            btn.innerHTML = '<i data-fa="arrows-rotate"></i> <span>Mettre à jour maintenant</span>';
                             btn.addEventListener('click', () => {
                                 newWorker.postMessage('skipWaiting');
                             });

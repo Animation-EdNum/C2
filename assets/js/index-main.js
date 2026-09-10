@@ -11,47 +11,57 @@ function updateRoleButton(tabId) {
     const roleBtn = document.getElementById('role-toggle-btn');
     const ghostBtn = document.getElementById('header-teachers-link');
     const studentsBtn = document.getElementById('header-students-link');
+    const headerLogoLink = document.getElementById('header-logo-link') || document.querySelector('.header-logo');
 
-    if (studentsBtn && ghostBtn) {
+    if (studentsBtn) {
         if (tabId === 'teachers') {
             studentsBtn.classList.remove('active');
             studentsBtn.removeAttribute('aria-current');
-            ghostBtn.classList.add('active');
-            ghostBtn.setAttribute('aria-current', 'page');
         } else {
             studentsBtn.classList.add('active');
             studentsBtn.setAttribute('aria-current', 'page');
+        }
+    }
+
+    if (ghostBtn) {
+        ghostBtn.textContent = 'Espace enseignant·e·s';
+        ghostBtn.setAttribute('title', "Accéder à l'espace enseignant·e·s");
+        ghostBtn.setAttribute('aria-label', "Accéder à l'espace enseignant·e·s");
+        ghostBtn.setAttribute('href', '#teachers');
+
+        if (tabId === 'teachers') {
+            ghostBtn.classList.add('active');
+            ghostBtn.setAttribute('aria-current', 'page');
+        } else {
             ghostBtn.classList.remove('active');
             ghostBtn.removeAttribute('aria-current');
+        }
+    }
+
+    if (headerLogoLink) {
+        if (tabId === 'students') {
+            headerLogoLink.setAttribute('title', "Accéder à l'espace enseignant·e·s");
+            headerLogoLink.setAttribute('aria-label', "EdNum.org - Accéder à l'espace enseignant·e·s");
+        } else {
+            headerLogoLink.setAttribute('title', "Retour à l'espace élèves");
+            headerLogoLink.setAttribute('aria-label', "EdNum.org - Retour à l'espace élèves");
         }
     }
 
     if (tabId === 'teachers') {
         if (roleBtn) {
             roleBtn.style.display = 'inline-flex';
-            roleBtn.setAttribute('title', "Retour à l'Espace Élèves");
-            roleBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
+            roleBtn.setAttribute('title', "Retour à l'espace élèves");
+            roleBtn.setAttribute('aria-label', "Retour à l'espace élèves");
             roleBtn.textContent = '';
             const icon = document.createElement('i');
             icon.setAttribute('data-fa', 'graduation-cap');
             roleBtn.appendChild(icon);
             window.fa?.createIcons?.();
         }
-        if (ghostBtn && !studentsBtn) {
-            ghostBtn.textContent = 'Espace Élèves';
-            ghostBtn.setAttribute('title', "Retour à l'Espace Élèves");
-            ghostBtn.setAttribute('aria-label', "Retour à l'Espace Élèves");
-            ghostBtn.setAttribute('href', '#students');
-        }
     } else {
         if (roleBtn) {
             roleBtn.style.display = 'none';
-        }
-        if (ghostBtn && !studentsBtn) {
-            ghostBtn.textContent = 'Espace Enseignant·e·s';
-            ghostBtn.setAttribute('title', "Accéder à l'Espace Enseignant·e·s");
-            ghostBtn.setAttribute('aria-label', "Accéder à l'Espace Enseignant·e·s");
-            ghostBtn.setAttribute('href', '#teachers');
         }
     }
 }
@@ -270,7 +280,26 @@ window.initPortalIndex = initPortalIndex;
 window.updateRoleButton = updateRoleButton;
 
 function initPortalIndex() {
-    // Return to students button in header (visible only in teachers view if present)
+    // Header logo click: always goes to students, unless already in students, then goes to teachers
+    const headerLogoLink = document.getElementById('header-logo-link') || document.querySelector('.header-logo');
+    if (headerLogoLink) {
+        headerLogoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isStudents = document.getElementById('view-students')?.classList.contains('active');
+            if (isStudents) {
+                switchTab(null, 'teachers');
+                window.location.hash = 'teachers';
+            } else {
+                switchTab(null, 'students');
+                if (window.location.hash === '#teachers') {
+                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                }
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // Role toggle button (graduation cap)
     const roleToggleBtn = document.getElementById('role-toggle-btn');
     if (roleToggleBtn) {
         roleToggleBtn.addEventListener('click', () => {
@@ -299,21 +328,8 @@ function initPortalIndex() {
     if (headerTeachersLink) {
         headerTeachersLink.addEventListener('click', (e) => {
             e.preventDefault();
-            if (headerStudentsLink) {
-                switchTab(null, 'teachers');
-                window.location.hash = 'teachers';
-            } else {
-                const isTeachers = document.getElementById('view-teachers')?.classList.contains('active');
-                if (isTeachers) {
-                    switchTab(null, 'students');
-                    if (window.location.hash === '#teachers') {
-                        history.replaceState(null, '', window.location.pathname + window.location.search);
-                    }
-                } else {
-                    switchTab(null, 'teachers');
-                    window.location.hash = 'teachers';
-                }
-            }
+            switchTab(null, 'teachers');
+            window.location.hash = 'teachers';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
@@ -446,7 +462,7 @@ function initPortalIndex() {
     if (window.location.hash === '#teachers' || new URLSearchParams(window.location.search).has('teachers')) {
         switchTab(null, 'teachers');
     } else {
-        updateRoleButton('students');
+        switchTab(null, 'students');
     }
 
     window.addEventListener('hashchange', () => {
