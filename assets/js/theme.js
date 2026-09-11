@@ -219,7 +219,11 @@
    Independent concern; lives here because theme.js is loaded
    on every page of the suite.
    ============================================================ */
-if ('serviceWorker' in navigator) {
+// Skip Service Worker registration for known crawlers and bots
+// to avoid pre-caching ~2 MB of assets on every crawl pass.
+const isCrawler = /bot|spider|crawl|bingbot|googlebot|yandexbot|baiduspider|duckduckbot|headlesschrome|chrome-lighthouse|adsbot|mediapartners/i.test(navigator.userAgent);
+
+if ('serviceWorker' in navigator && !isCrawler) {
     window.addEventListener('load', () => {
         // Find the relative path to the root from the current page.
         // Assuming all pages are either at root, or 1 level deep (e.g., webapps/),

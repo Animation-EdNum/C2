@@ -1153,8 +1153,8 @@
 
         // Test Link button
         document.getElementById('testLinkBtn')?.addEventListener('click', () => {
-            let url = inputUrl.value.trim();
-            if (!url) return showToast('Veuillez saisir une adresse web', 'warn');
+            let url = inputUrl ? inputUrl.value.trim() : '';
+            if (!url || url === 'null' || url === 'undefined') return showToast('Veuillez saisir une adresse web', 'warn');
             if (!/^https?:\/\//i.test(url)) {
                 url = 'https://' + url;
             }
@@ -1165,21 +1165,25 @@
         // GÉNÉRATION ET MISE À JOUR DU QR CODE
         // ==========================================
         function getQRValue() {
+            let val = '';
             if (state.type === 'url') {
-                let url = inputUrl.value.trim();
+                let url = inputUrl ? inputUrl.value.trim() : '';
                 if (url && !/^https?:\/\//i.test(url) && !url.startsWith('mailto:') && !url.startsWith('tel:')) {
                     url = 'https://' + url;
                 }
-                return url || 'https://ednum.org';
+                val = url || 'https://ednum.org';
             } else if (state.type === 'text') {
-                return inputText.value.trim() || 'Exemple de texte';
+                val = (inputText ? inputText.value.trim() : '') || 'Exemple de texte';
             } else if (state.type === 'wifi') {
-                const ssid = inputWifiSsid.value.trim() || 'WiFi_Classe';
-                const pass = inputWifiPass.value;
-                const type = selectWifiType.value;
-                return `WIFI:S:${ssid};T:${type};P:${pass};;`;
+                const ssid = (inputWifiSsid ? inputWifiSsid.value.trim() : '') || 'WiFi_Classe';
+                const pass = inputWifiPass ? inputWifiPass.value : '';
+                const type = selectWifiType ? selectWifiType.value : 'WPA';
+                val = `WIFI:S:${ssid};T:${type};P:${pass};;`;
             }
-            return '';
+            if (!val || val === 'null' || val === 'undefined') {
+                val = 'https://ednum.org';
+            }
+            return val;
         }
 
         function getSubtextDisplay() {
@@ -1208,7 +1212,7 @@
             }
 
             if (state.type !== 'batch') {
-                const value = getQRValue();
+                const value = getQRValue() || 'https://ednum.org';
                 displayTitle.textContent = state.title || '';
                 displayTitle.classList.toggle('hidden', !state.title);
 
@@ -1822,14 +1826,14 @@
                     Object.assign(state, parsed);
                 }
                 
-                inputUrl.value = state.url !== undefined ? state.url : 'https://ednum.org';
-                inputText.value = state.text !== undefined ? state.text : 'Bravo ! Tu as trouvé l\'indice.';
-                inputWifiSsid.value = state.wifiSsid !== undefined ? state.wifiSsid : 'WiFi_Classe';
-                inputWifiPass.value = state.wifiPass !== undefined ? state.wifiPass : '';
+                inputUrl.value = (state.url !== undefined && state.url !== null && state.url !== 'null') ? state.url : 'https://ednum.org';
+                inputText.value = (state.text !== undefined && state.text !== null && state.text !== 'null') ? state.text : 'Bravo ! Tu as trouvé l\'indice.';
+                inputWifiSsid.value = (state.wifiSsid !== undefined && state.wifiSsid !== null && state.wifiSsid !== 'null') ? state.wifiSsid : 'WiFi_Classe';
+                inputWifiPass.value = (state.wifiPass !== undefined && state.wifiPass !== null) ? state.wifiPass : '';
                 selectWifiType.value = state.wifiType || 'WPA';
-                inputBatch.value = state.batchText !== undefined ? state.batchText : 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu';
-                inputTitle.value = state.title !== undefined ? state.title : 'Portail Éducation Numérique';
-                checkShowSubtext.checked = state.showSubtext !== undefined ? state.showSubtext : true;
+                inputBatch.value = (state.batchText !== undefined && state.batchText !== null) ? state.batchText : 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu';
+                inputTitle.value = (state.title !== undefined && state.title !== null && state.title !== 'null') ? state.title : 'Portail Éducation Numérique';
+                checkShowSubtext.checked = state.showSubtext !== undefined && state.showSubtext !== null ? state.showSubtext : true;
                 selectEcc.value = state.ecc || 'M';
                 selectRenderSize.value = String(state.size || 600);
                 customColorInput.value = state.color || '#000000';
