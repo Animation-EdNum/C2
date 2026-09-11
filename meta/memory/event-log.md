@@ -81,4 +81,8 @@
 - **[2026-09-06]** [Registry/Curriculum] Updated degree badges and curricula references in `registry.js`: adjusted GeoGebra Classique to 7H-10CO, Swisstopo to 3H-10CO, Le Dico des Ados to 5H-10CO, streamlined ia-pedia description, and updated official curriculum refs for Dactylo (`EN 23 · Usages — Saisie d'un texte`) and Password Generator (`EN 23 · Usages — Processus d'identification personnelle`).
 - **[2026-09-06]** [Security/VICE] Resolved GitHub Code Scanning alert #94 (High severity DOM XSS in `portal.js` line 194): eliminated direct `.innerHTML` assignment by parsing modal template via safe `DOMParser` and appending DOM nodes. Updated Service Worker cache manifest and verified 100% unit tests passing (111 tests).
 - **[2026-09-07]** [Memory/Refactor] Streamlined and consolidated all 5 canonical agent memory files (`project-context.md`, `decisions.md`, `code-patterns.md`, `user-preferences.md`, `event-log.md`). Pruned duplicate rules, sharpened domain boundaries, integrated testing idioms into code patterns, and eliminated rogue files.
+- **[2026-09-08]** [Apps/Polish] Minuteur visuel & Générateur de mot de passe: added customizable audio/tones and visual status to timer; streamlined block mode and updated security golden rules for passwords.
+- **[2026-09-10]** [UI/Navigation] Sober UI overhaul: standardized dedicated `[←]` back button across all 26 webapps, removed redundant subtitles for distraction-free layouts, refreshed portal header (expanding search, teacher ghost button), and improved QR export sheets.
+- **[2026-09-11]** [PWA/Bugfix] Bypassed Service Worker registration for web crawlers in `theme.js` to save bandwidth, hardened `qrcode.html` against null URLs, and updated SW cache manifest (`ednum-16781fbb`).
+
 

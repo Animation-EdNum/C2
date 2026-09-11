@@ -9,6 +9,7 @@ This document records the architectural choices, library selections, and the rat
 
 ## 2. PWA & Offline Strategy
 - **Stale-While-Revalidate Service Worker (`sw.js`):** Assets load instantaneously from the local cache while the worker checks for updates in the background. Immediate updates notify the user via a lightweight toast (`skipWaiting`).
+- **Crawler SW Registration Bypass:** Search engine crawlers and headless bots (`Googlebot`, `bingbot`, `HeadlessChrome`, etc.) are detected via regex in `theme.js` and bypassed from Service Worker registration. This saves significant bandwidth by preventing the pre-caching of ~2 MB of assets per crawl.
 - **Deterministic Cache Manifest Hashing:** `meta/scripts/generate-sw-manifest.js` normalizes line endings (CRLF/LF) across all hashed files before generating checksums, preventing cross-platform Git cache mismatches.
 - **LocalStorage for Synchronous Persistence:** Chosen over IndexedDB for zero-latency synchronous reading during page boot, simplicity, and low cognitive overhead.
 
@@ -19,8 +20,10 @@ This document records the architectural choices, library selections, and the rat
 
 ## 4. Navigation & Layout Decisions
 - **Top-Tabs over Bottom Navigation:** Primary navigation strictly uses top tabs (`.tabs`). Bottom tab bars were deprecated to avoid conflicts with system navigation gestures on iOS and Android tablets.
-- **Smart Sticky Header & Parallax Reveal:** The portal header uses sticky positioning with a directional scroll listener: it tucks away on downward scroll (`.header-hidden`) to maximize reading area and reveals immediately on any upward scroll.
-- **Dedicated Teacher Space (`#teachers`):** Rather than an ambiguous mode toggle button in the header (which collided with the Mode TBI icon), teacher tools are accessed via a clear footer link. In teacher view, a distinct `graduation-cap` role button appears in the header to return to the student space.
+- **Dedicated Header Back Button (`.header-back-btn`):** Every webapp includes a standardized `[←]` back button in the header (`<a class="header-back-btn">`) providing an unmistakable, one-click return to the portal or teacher space.
+- **Sober Headers (Subtitle Deprecation):** Descriptive subtitle tags (`<p class="subtitle">` or secondary header paragraphs) were deprecated and removed across all webapps to keep pupil attention strictly focused on the pedagogical activity.
+- **Smart Sticky Header & Parallax Reveal:** The portal header uses sticky positioning with a directional scroll listener: it tucks away on downward scroll (`.header-hidden`) to maximize reading area and reveals immediately on any upward scroll. Includes an on-demand expanding search input to save space on mobile.
+- **Dedicated Teacher Space (`#teachers`):** Accessible via a footer link and a subtle ghost button in the portal header. In teacher view, a distinct `graduation-cap` role button appears in the header to return to the student space.
 - **Teacher Tools Header Return:** Inside all teacher apps (`webapps/teacher/*`), the header home icon navigates back to `index.html#teachers` rather than the student landing page.
 
 ## 5. Gamification & State Management

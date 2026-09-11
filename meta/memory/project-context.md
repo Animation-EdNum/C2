@@ -25,6 +25,7 @@
 - **Attribution & Licensing:** AGPL-3.0. Every app features the standardized attribution footer linking to AP EdNum, HEP-VS and `merci.html`.
 
 ## 4. Current Status & Active Focus
+- **Active Focus:** Post-promotion polish — visual sobriety, streamlined header navigation, and bandwidth optimization.
 - **Standardized Universal Reset:** All applications support a standardized `#reset-cache-btn` with `window.__onResetApp` hook to cleanly reset app state in-place.
 - **TBI Projection Mode:** Classroom whiteboard projection modes available across binary, math, and teacher tools with explicit overflow protections.
 - **Security & A11y:** Full dark mode compliance (`color-scheme: dark;` on `body.dark`), 100% WCAG AA contrast, and hardened DOM injection (zero direct `innerHTML` assignments to satisfy VICE/CodeQL).
