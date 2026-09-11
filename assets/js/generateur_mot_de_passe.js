@@ -746,10 +746,16 @@
     function setProjectionMode(active) {
         if (active) {
             document.body.classList.add('projection');
-            if (elProjectionText) elProjectionText.textContent = 'Mode normal';
+            if (elProjectionText) elProjectionText.textContent = 'Quitter mode TNI/TBI';
         } else {
             document.body.classList.remove('projection');
-            if (elProjectionText) elProjectionText.textContent = 'Mode TBI';
+            if (elProjectionText) elProjectionText.textContent = 'Mode TNI/TBI';
+        }
+        const iconExpand = document.getElementById('icon-proj-expand');
+        const iconCompress = document.getElementById('icon-proj-compress');
+        if (iconExpand && iconCompress) {
+            iconExpand.style.display = active ? 'none' : 'inline-block';
+            iconCompress.style.display = active ? 'inline-block' : 'none';
         }
     }
 
@@ -762,6 +768,12 @@
     if (elProjectionBtn) {
         elProjectionBtn.addEventListener('click', toggleProjectionMode);
     }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+            setProjectionMode(false);
+        }
+    });
 
     // Helper for clipboard copying
     function setupCopyButton(btnEl, inputEl) {

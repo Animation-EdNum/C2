@@ -488,8 +488,9 @@
             <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
             <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
         </button>
-        <button class="icon-action-btn" id="projection-toggle-btn" title="Activer/Désactiver le mode TBI" aria-label="Mode TBI">
-            <i data-fa="chalkboard-user" style="width:20px;height:20px;"></i>
+        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+            <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+            <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
         </button>
             <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
             <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
@@ -859,13 +860,23 @@
             }
         });
 
-        // Mode TBI / Projection
+        // Mode TNI/TBI / Projection
         const elProjBtn = document.getElementById('projection-toggle-btn');
         function setProjectionMode(active) {
             if (active) {
                 document.body.classList.add('projection');
             } else {
                 document.body.classList.remove('projection');
+            }
+            const iconExpand = document.getElementById('icon-proj-expand');
+            const iconCompress = document.getElementById('icon-proj-compress');
+            if (iconExpand && iconCompress) {
+                iconExpand.style.display = active ? 'none' : 'inline-block';
+                iconCompress.style.display = active ? 'inline-block' : 'none';
+            }
+            if (elProjBtn) {
+                elProjBtn.setAttribute('title', active ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+                elProjBtn.setAttribute('aria-label', active ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
             }
         }
 
@@ -876,6 +887,12 @@
                 if (typeof playSound === 'function') playSound('click');
             });
         }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                setProjectionMode(false);
+            }
+        });
 
         window.__onResetApp = function() {
             try {
@@ -911,7 +928,8 @@
 
     <!-- FontAwesome dynamic subsets declaration -->
     <div style="display:none;">
-        <i data-fa="chalkboard-user"></i>
+        <i data-fa="expand"></i>
+        <i data-fa="compress"></i>
     </div>
 </body>
 

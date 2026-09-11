@@ -777,8 +777,9 @@
             <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
             <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
         </button>
-        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode Projection TBI (Plein écran)" aria-label="Mode TBI">
-            <i data-fa="chalkboard-user" style="width:20px;height:20px;"></i>
+        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+            <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+            <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
         </button>
             <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
             <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
@@ -1009,7 +1010,8 @@
 
     <!-- Hidden icons for FA subset compiler/bundler -->
     <div style="display:none;">
-        <i data-fa="chalkboard-user"></i>
+        <i data-fa="expand"></i>
+        <i data-fa="compress"></i>
         <i data-fa="qrcode"></i>
         <i data-fa="sun-bright"></i>
         <i data-fa="moon"></i>
@@ -1718,23 +1720,42 @@
         }
 
         // ==========================================
-        // PROJECTION TBI / PLEIN ÉCRAN
+        // PROJECTION TNI/TBI
         // ==========================================
         const projBtn = document.getElementById('projection-toggle-btn');
-        function toggleProjectionMode() {
-            const isProj = document.body.classList.toggle('projection');
-            if (isProj) {
-                showToast('Mode TBI activé (Échap pour quitter)', 'info');
+        function setProjectionMode(active) {
+            if (active) {
+                document.body.classList.add('projection');
+                showToast('Mode TNI/TBI activé (Échap pour quitter)', 'info');
+            } else {
+                document.body.classList.remove('projection');
+            }
+            updateProjBtnUI(active);
+        }
+
+        function updateProjBtnUI(isProj) {
+            const iconExpand = document.getElementById('icon-proj-expand');
+            const iconCompress = document.getElementById('icon-proj-compress');
+            if (iconExpand && iconCompress) {
+                iconExpand.style.display = isProj ? 'none' : 'inline-block';
+                iconCompress.style.display = isProj ? 'inline-block' : 'none';
+            }
+            if (projBtn) {
+                projBtn.setAttribute('title', isProj ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+                projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
             }
         }
 
         if (projBtn) {
-            projBtn.addEventListener('click', toggleProjectionMode);
+            projBtn.addEventListener('click', () => {
+                const isProj = document.body.classList.contains('projection');
+                setProjectionMode(!isProj);
+            });
         }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && document.body.classList.contains('projection')) {
-                document.body.classList.remove('projection');
+                setProjectionMode(false);
             }
         });
 

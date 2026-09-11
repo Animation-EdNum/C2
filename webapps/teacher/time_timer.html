@@ -886,8 +886,9 @@
             <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
             <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
         </button>
-        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode Projection TBI (Plein écran)" aria-label="Mode TBI">
-            <i data-fa="chalkboard-user" style="width:20px;height:20px;"></i>
+        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+            <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+            <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
         </button>
         <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
             <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
@@ -1051,7 +1052,9 @@
 
                     <!-- Option: End Sound -->
                     <div class="option-group" style="grid-column: 1 / -1;">
-                        <label for="soundSelect" class="option-label">Sonnerie de fin</label>
+                        <label for="soundSelect" class="option-label">
+                            <i data-fa="bell" style="width:16px;height:16px;margin-right:4px;"></i> Sonnerie de fin
+                        </label>
                         <div style="display:flex; gap:10px; align-items: center; width: 100%;">
                             <select id="soundSelect" class="custom-select" style="flex:1; min-width: 0;">
                                 <option value="zen" selected>Carillon zen doux</option>
@@ -1061,7 +1064,8 @@
                                 <option value="custom" id="customSoundOption">Sonnerie personnalisée (fichier)</option>
                                 <option value="mute">Silencieux (aucun son)</option>
                             </select>
-                            <button class="btn btn-secondary" id="testSoundBtn" title="Écouter le son choisi" style="padding: 6px 14px; font-size:0.85rem; min-width: 86px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;">
+                            <button class="btn btn-secondary" id="testSoundBtn" title="Écouter le son choisi" style="padding: 6px 14px; font-size:0.85rem; min-width: 86px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                <i data-fa="bell" style="width:14px;height:14px;"></i>
                                 <span>Tester</span>
                             </button>
                         </div>
@@ -1158,7 +1162,7 @@
     <div class="celebration-overlay hidden" id="celebrationOverlay" role="dialog" aria-modal="true" aria-label="Temps écoulé">
         <div class="celebration-card">
             <div class="celebration-icon-circle">
-                <i data-fa="flag-checkered" style="width:40px;height:40px;"></i>
+                <i data-fa="bell" id="celebrationBellIcon" style="width:40px;height:40px;"></i>
             </div>
             <div>
                 <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem;">Temps écoulé !</h2>
@@ -2255,6 +2259,10 @@
                 celebrationMessage.textContent = title
                     ? `L'activité « ${title} » est terminée !`
                     : 'Le compte à rebours est terminé.';
+                const bellIcon = document.getElementById('celebrationBellIcon');
+                if (bellIcon) {
+                    bellIcon.setAttribute('data-fa', isMuted || settings.sound === 'mute' ? 'bell-slash' : 'bell');
+                }
                 celebrationOverlay.classList.remove('hidden');
                 window.fa?.createIcons?.();
             }
@@ -2373,15 +2381,38 @@
                     if (!celebrationOverlay.classList.contains('hidden')) {
                         hideCelebration();
                     } else if (document.body.classList.contains('projection')) {
-                        document.body.classList.remove('projection');
+                        setProjectionMode(false);
                     }
                 }
             });
 
-            // Mode TBI / Projection
+            // Mode TNI/TBI / Projection
+            function setProjectionMode(active) {
+                if (active) {
+                    document.body.classList.add('projection');
+                } else {
+                    document.body.classList.remove('projection');
+                }
+                updateProjectionUI(active);
+            }
+
+            function updateProjectionUI(isProj) {
+                const iconExpand = document.getElementById('icon-proj-expand');
+                const iconCompress = document.getElementById('icon-proj-compress');
+                if (iconExpand && iconCompress) {
+                    iconExpand.style.display = isProj ? 'none' : 'inline-block';
+                    iconCompress.style.display = isProj ? 'inline-block' : 'none';
+                }
+                if (projBtn) {
+                    projBtn.setAttribute('title', isProj ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+                    projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
+                }
+            }
+
             if (projBtn) {
                 projBtn.addEventListener('click', () => {
-                    document.body.classList.toggle('projection');
+                    const isProj = document.body.classList.contains('projection');
+                    setProjectionMode(!isProj);
                 });
             }
 

@@ -25,7 +25,7 @@ const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512
   <circle cx="410" cy="432" r="8" fill="#da5c55" />
 
   <g filter="url(#shadow)">
-    <polygon points="256,135 232,211 151,211 216,258 191,334 256,287" fill="#ffffff" />
+    <polygon points="257,135 232,211 151,211 216,258 191,334 257,287" fill="#ffffff" />
     <polygon points="256,135 280,211 361,211 296,258 321,334 256,287" fill="#e2e6eb" />
   </g>
 </svg>`;
@@ -67,7 +67,7 @@ const appIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512
 
     <!-- Star in the center -->
     <g filter="url(#star-shadow-app)">
-      <polygon points="256,135 232,211 151,211 216,258 191,334 256,287" fill="#ffffff" />
+      <polygon points="257,135 232,211 151,211 216,258 191,334 257,287" fill="#ffffff" />
       <polygon points="256,135 280,211 361,211 296,258 321,334 256,287" fill="#e2e6eb" />
     </g>
   </g>

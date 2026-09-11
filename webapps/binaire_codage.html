@@ -81,9 +81,10 @@
                         </button>
                         <div class="dropdown-divider"></div>
                         <button class="menu-item-btn" id="projection-toggle-btn"
-                            aria-label="Activer/Désactiver le mode TBI">
-                            <i data-fa="chalkboard-user"></i>
-                            <span id="projectionToggleText">Mode TBI</span>
+                            aria-label="Activer/Désactiver le mode TNI/TBI">
+                            <i data-fa="expand" id="icon-proj-expand"></i>
+                            <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
+                            <span id="projectionToggleText">Mode TNI/TBI</span>
                         </button>
                     
                         <div class="dropdown-divider"></div>
@@ -836,17 +837,27 @@
             }
         });
 
-        // Mode TBI / Projection
+        // Mode TNI/TBI / Projection
         const elProjBtn = document.getElementById('projection-toggle-btn');
         const elProjText = document.getElementById('projectionToggleText');
 
         function setProjectionMode(active) {
             if (active) {
                 document.body.classList.add('projection');
-                if (elProjText) elProjText.textContent = 'Mode normal';
+                if (elProjText) elProjText.textContent = 'Quitter mode TNI/TBI';
             } else {
                 document.body.classList.remove('projection');
-                if (elProjText) elProjText.textContent = 'Mode TBI';
+                if (elProjText) elProjText.textContent = 'Mode TNI/TBI';
+            }
+            const iconExpand = document.getElementById('icon-proj-expand');
+            const iconCompress = document.getElementById('icon-proj-compress');
+            if (iconExpand && iconCompress) {
+                iconExpand.style.display = active ? 'none' : 'inline-block';
+                iconCompress.style.display = active ? 'inline-block' : 'none';
+            }
+            if (elProjBtn) {
+                elProjBtn.setAttribute('title', active ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+                elProjBtn.setAttribute('aria-label', active ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
             }
         }
 
@@ -857,12 +868,19 @@
                 if (typeof playSound === 'function') playSound('click');
             });
         }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                setProjectionMode(false);
+            }
+        });
     </script>
     <script src="../assets/js/url-params.js"></script>
 
     <!-- FontAwesome dynamic subsets declaration -->
     <div style="display:none;">
-        <i data-fa="chalkboard-user"></i>
+        <i data-fa="expand"></i>
+        <i data-fa="compress"></i>
     </div>
 </body>
 
