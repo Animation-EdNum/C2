@@ -84,5 +84,6 @@
 - **[2026-09-08]** [Apps/Polish] Minuteur visuel & Générateur de mot de passe: added customizable audio/tones and visual status to timer; streamlined block mode and updated security golden rules for passwords.
 - **[2026-09-10]** [UI/Navigation] Sober UI overhaul: standardized dedicated `[←]` back button across all 26 webapps, removed redundant subtitles for distraction-free layouts, refreshed portal header (expanding search, teacher ghost button), and improved QR export sheets.
 - **[2026-09-11]** [PWA/Bugfix] Bypassed Service Worker registration for web crawlers in `theme.js` to save bandwidth, hardened `qrcode.html` against null URLs, and updated SW cache manifest (`ednum-16781fbb`).
+- **[2026-09-13]** [Portal/Badges] Harmonized teacher tool badges: extended `PROF_BADGES` in `portal.js` with `Outil`, `Outils`, and `Exercices` to guarantee consistent `.badge.prof` styling across all teacher cards, updated unit tests (`test_portal.js`), and regenerated Service Worker manifest (`ednum-4b6f9eba`).
 
 

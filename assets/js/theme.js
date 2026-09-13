@@ -272,7 +272,16 @@ if ('serviceWorker' in navigator && !isCrawler) {
 
                             const btn = document.createElement('button');
                             btn.className = 'c2-toast-btn';
-                            btn.innerHTML = '<i data-fa="arrows-rotate"></i> <span>Mettre à jour maintenant</span>';
+
+                            const icon = document.createElement('i');
+                            icon.setAttribute('data-fa', 'arrows-rotate');
+
+                            const label = document.createElement('span');
+                            label.textContent = 'Mettre à jour maintenant';
+
+                            btn.appendChild(icon);
+                            btn.appendChild(document.createTextNode(' '));
+                            btn.appendChild(label);
                             btn.addEventListener('click', () => {
                                 newWorker.postMessage('skipWaiting');
                             });

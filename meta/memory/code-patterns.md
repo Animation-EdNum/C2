@@ -55,6 +55,7 @@ This document records code conventions, reusable hooks, and established project 
 - **Custom Tooltips:** Never use native `title` on interactive buttons. Use `data-tooltip="Texte"` with CSS-animated tooltips.
 - **TBI Projection Mode:** Classroom whiteboard mode toggles `.tbi-projection` on the root container, hiding configuration panels and enforcing container overflow safeguards (`overflow: hidden` / `overflow-y: auto`) to prevent viewport clipping.
 - **Compact Cards for External Links:** Render external links in portals using `.card.card-compact` inside `.grid.grid-compact`, displaying title, badges, and external icon arrow without descriptions or tags.
+- **Portal Badge Classification (`PROF_BADGES` in `portal.js`):** Thematic, discipline, and pedagogical tool badges (*Évaluation*, *Gestion de classe*, *Animation*, *Outil*, *Exercices*, etc.) must be registered in `PROF_BADGES` to receive `.badge.prof` (high-contrast off-white pill with slate text). School grade levels (e.g. *3-4H*, *7-8H*) default to `.badge` (rose/red pill).
 
 ## 3. JavaScript & State Idioms
 - **XSS Prevention & Safe DOM Injection:** Never assign directly to `.innerHTML`. Use:
