@@ -1,0 +1,161 @@
+name: Publish NPM Package
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/workflows/security.yml'
+      - '.github/workflows/e2e-tests.yml'
+      - 'meta/tests/**'
+      - 'meta/audits/**'
+      - 'meta/memory/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type before publishing (none / patch / minor / major)'
+        required: false
+        default: 'none'
+        type: choice
+        options:
+          - none
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: 'Dry-run mode (validate packaging without publishing to npm)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: npm-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: "Publish to npm"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@ednum'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Service Worker Manifest
+        run: npm run check:sw
+
+      - name: Run Unit Tests
+        run: npm run test:unit
+
+      - name: Handle manual version bump (if requested)
+        id: version-bump
+        if: github.event_name == 'workflow_dispatch' && inputs.bump != 'none'
+        run: |
+          BUMP_TYPE="${{ inputs.bump }}"
+          echo "Bumping version ($BUMP_TYPE)..."
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          npm version "$BUMP_TYPE" --no-git-tag-version
+          node meta/scripts/generate-sw-manifest.js
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git add package.json package-lock.json sw.js
+          git commit -m "chore(release): bump version to v${NEW_VERSION} [skip ci]"
+          git push origin main
+          echo "Successfully bumped version to v${NEW_VERSION}"
+
+      - name: Check version status on npm
+        id: check-version
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+
+          echo "Checking if $PACKAGE_NAME@$PACKAGE_VERSION is already published on npm..."
+          if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version > /dev/null 2>&1; then
+            echo "Version $PACKAGE_VERSION is already published on npm."
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version $PACKAGE_VERSION is NOT yet published on npm."
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "pkg_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "pkg_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to npm
+        if: steps.check-version.outputs.should_publish == 'true' || inputs.dry_run == true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          PKG_NAME="${{ steps.check-version.outputs.pkg_name }}"
+          PKG_VER="${{ steps.check-version.outputs.pkg_version }}"
+
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "Dry-run mode active. Validating npm package packaging..."
+            npm publish --dry-run --access public
+            echo "Dry-run packaging completed successfully."
+          else
+            echo "Publishing $PKG_NAME@$PKG_VER to npm..."
+            if ! npm publish --access public --provenance; then
+              echo "Publish with provenance failed or unsupported with current token; falling back to standard publish..."
+              npm publish --access public
+            fi
+            echo "Package $PKG_NAME@$PKG_VER published successfully!"
+          fi
+
+      - name: Tag git release
+        if: steps.check-version.outputs.should_publish == 'true' && inputs.dry_run != true
+        run: |
+          TAG_NAME="v${{ steps.check-version.outputs.pkg_version }}"
+          if ! git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Creating and pushing git tag $TAG_NAME..."
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+            git push origin "$TAG_NAME"
+          else
+            echo "Git tag $TAG_NAME already exists, skipping tag creation."
+          fi
+
+      - name: Generate Workflow Summary
+        if: always()
+        run: |
+          PKG_NAME="${{ steps.check-version.outputs.pkg_name }}"
+          PKG_VER="${{ steps.check-version.outputs.pkg_version }}"
+          SHOULD_PUB="${{ steps.check-version.outputs.should_publish }}"
+          DRY_RUN="${{ inputs.dry_run }}"
+
+          echo "## 📦 NPM Publication Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: \`$PKG_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: \`v$PKG_VER\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "- **Status**: 🔍 **Dry Run Successful** (Package verified, not pushed to registry)" >> $GITHUB_STEP_SUMMARY
+          elif [ "$SHOULD_PUB" = "true" ]; then
+            echo "- **Status**: 🚀 **Published to npm**" >> $GITHUB_STEP_SUMMARY
+            echo "- **Registry URL**: [https://www.npmjs.com/package/$PKG_NAME](https://www.npmjs.com/package/$PKG_NAME)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Status**: ⏭️ **Skipped** (Version \`$PKG_VER\` is already published on npm. Bump \`version\` in \`package.json\` or trigger manual dispatch with a bump to release a new version)" >> $GITHUB_STEP_SUMMARY
+          fi

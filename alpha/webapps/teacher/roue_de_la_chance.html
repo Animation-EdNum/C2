@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roue de la chance · Suite EdNum</title>
+    <meta property="og:title" content="Roue de la chance · Suite EdNum">
+    <meta property="og:description"
+        content="Roue aléatoire interactive pour tirer au sort les responsabilités, privilèges, questions et défis de classe.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <link rel="stylesheet" href="../../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../../assets/css/base.css">
+    <link rel="stylesheet" href="../../../assets/css/components.css">
+    <link rel="stylesheet" href="../../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <style>
+        .header-right-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-shrink: 0;
+        }
+
+        .icon-action-btn {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            min-height: 38px;
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 640px) {
+            .header-divider {
+                display: none;
+            }
+            .header-actions .btn span {
+                display: none;
+            }
+            .header-actions .btn {
+                padding: 6px 10px;
+            }
+            h1 {
+                font-size: 1.1rem;
+            }
+        }
+
+        body>header,
+        body>.app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: rgba(13, 148, 136, 0.15);
+            --bg-gradient-start: #0f766e;
+            --bg-gradient-end: #064e4b;
+
+            --glass-bg: rgba(255, 255, 255, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-color: rgba(0, 0, 0, 0.12);
+        }
+
+        body.dark {
+            color-scheme: dark;
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #064e4b;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --primary-light: rgba(13, 148, 136, 0.3);
+            --shadow-color: rgba(0, 0, 0, 0.45);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1060px;
+            width: 100%;
+            margin: auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 0.75rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .header-icon {
+            background: var(--primary);
+            color: white;
+            padding: 8px 10px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            cursor: default;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .badge-alpha {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 7px;
+            background: rgba(13, 148, 136, 0.15);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header-actions .btn {
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* MAIN CONTENT */
+        .app-main {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 1.5rem;
+        }
+
+        /* PLAY VIEW */
+        .wheel-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .wheel-stage {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.25), 0 0 0 8px rgba(255, 255, 255, 0.85);
+            transition: box-shadow 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        body.dark #wheelCanvas {
+            box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6), 0 0 0 8px rgba(30, 41, 59, 0.9);
+        }
+
+        /* TICKER / POINTER */
+        .wheel-ticker {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 38px;
+            height: 48px;
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            transform-origin: 50% 12px;
+            transition: transform 0.08s ease-out;
+        }
+
+        /* CENTER SPIN HUB */
+        .wheel-center-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: 4px solid var(--primary);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            user-select: none;
+            transition: transform 0.15s var(--spring-easing), box-shadow 0.15s;
+        }
+
+        body.dark .wheel-center-hub {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-color: #14b8a6;
+        }
+
+        .wheel-center-hub:hover {
+            transform: translate(-50%, -50%) scale(1.08);
+            box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
+        }
+
+        .wheel-center-hub:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        .wheel-center-hub svg {
+            color: var(--primary);
+            width: 26px;
+            height: 26px;
+        }
+
+        .wheel-center-hub span {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        /* CONTROLS & STATUS BAR */
+        .wheel-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            width: 100%;
+            max-width: 680px;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+        }
+
+        body.dark .wheel-controls {
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .toggle-option {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .spin-main-btn {
+            padding: 1rem 2.2rem;
+            font-size: 1.15rem;
+            font-weight: 800;
+            border-radius: var(--radius-xl);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 8px 20px -4px rgba(13, 148, 136, 0.4);
+        }
+
+        .spin-main-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* DRAWS HISTORY */
+        .history-section {
+            width: 100%;
+            max-width: 680px;
+            margin-top: 0.5rem;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .history-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 38px;
+        }
+
+        .history-chip {
+            background: var(--primary-light);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: popIn 0.3s var(--spring-easing) forwards;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* SETUP VIEW */
+        .setup-card {
+            max-width: 640px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .presets-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        body.dark .preset-btn {
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        textarea.choices-input {
+            width: 100%;
+            height: 220px;
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        body.dark textarea.choices-input {
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        textarea.choices-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* WINNER CELEBRATION MODAL */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s var(--spring-easing);
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .winner-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 540px;
+            width: 100%;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transform: scale(0.85) translateY(20px);
+            transition: transform 0.35s var(--spring-easing);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .modal-backdrop.active .winner-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .winner-icon-badge {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25);
+        }
+
+        .winner-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .winner-name {
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 1.15;
+            word-break: break-word;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .winner-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        /* PROJECTION / FULLSCREEN MODE */
+        body.projection {
+            padding: 0;
+            background: var(--bg-gradient-start);
+        }
+
+        body.projection .app-shell {
+            max-width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            border: none;
+        }
+
+        body.projection .wheel-stage {
+            max-width: min(72vh, 620px);
+        }
+
+        body.projection header {
+            padding: 0.75rem 1.5rem;
+        }
+
+        body.projection footer {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 1rem;
+            }
+
+            .app-main {
+                padding: 1rem;
+            }
+
+            .wheel-stage {
+                max-width: 320px;
+            }
+
+            .winner-name {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <header>
+            <div class="header-title-wrapper">
+                <a href="../../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
+                    aria-label="Retour à l'espace enseignant·e·s">
+                    <i data-fa="arrow-left"></i>
+                </a>
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="bullseye" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                    <h1>
+                        Roue de la chance
+                        <span class="badge-alpha">Alpha</span>
+                    </h1>
+                </div>
+            </div>
+            <div class="header-right-group">
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="editWheelBtn" title="Modifier les éléments de la roue">
+                        <i data-fa="gear" style="width:16px;height:16px;"></i>
+                        <span>Modifier</span>
+                    </button>
+                    <button class="btn btn-secondary" id="resetWheelBtn" title="Réinitialiser tous les choix d'origine">
+                        <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
+                        <span>Réinitialiser</span>
+                    </button>
+                </div>
+                <div class="header-divider" id="headerDivider"></div>
+                <div class="action-buttons no-print">
+                    <button class="icon-action-btn" id="shareBtn" title="Partager par lien web" aria-label="Partager par lien web">
+                        <i data-fa="share-nodes" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+                        <i data-fa="sun-bright" id="icon-sun" style="display: none; width:20px;height:20px;"></i>
+                        <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
+                        <i data-fa="volume-high" id="icon-vol-on" style="display: none; width:20px;height:20px;"></i>
+                        <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI (Plein écran)" aria-label="Mode TNI/TBI">
+                        <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+                        <i data-fa="compress" id="icon-proj-compress" style="display: none; width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+                        <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- VIEW 1: PLAY VIEW -->
+            <div class="wheel-layout" id="playView">
+                <div class="wheel-stage">
+                    <!-- Triangle Ticker -->
+                    <svg class="wheel-ticker" id="wheelTicker" viewBox="0 0 38 48">
+                        <polygon points="19,48 4,10 34,10" fill="#f59e0b" stroke="#b45309" stroke-width="2" />
+                        <circle cx="19" cy="10" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5" />
+                    </svg>
+
+                    <!-- Main Canvas -->
+                    <canvas id="wheelCanvas" width="500" height="500"></canvas>
+
+                    <!-- Center Click Hub -->
+                    <div class="wheel-center-hub" id="centerSpinBtn" title="Tourner la roue (ou appuyez sur Espace)">
+                        <i data-fa="arrows-rotate"></i>
+                        <span>Tourner</span>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button class="btn btn-primary spin-main-btn" id="spinBtn">
+                    <i data-fa="play" style="width:20px;height:20px;"></i>
+                    <span>Lancer la roue !</span>
+                    <span style="font-size: 0.8rem; opacity: 0.85; font-weight: 500;">(ou Espace)</span>
+                </button>
+
+                <!-- Options & Live Status -->
+                <div class="wheel-controls">
+                    <label class="toggle-option" title="Retirer automatiquement le quartier tiré de la roue">
+                        <input type="checkbox" id="autoRemoveToggle">
+                        <span>Retirer automatiquement l'élément tiré</span>
+                    </label>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: var(--primary);" id="remainingCountBadge">
+                        8 choix disponibles
+                    </div>
+                </div>
+
+                <!-- History of draws -->
+                <div class="history-section" id="historySection">
+                    <div class="history-header">
+                        <span>Derniers tirages</span>
+                        <span id="historyCountBadge" style="font-size: 0.8rem; font-weight: 600;">0 tiré</span>
+                    </div>
+                    <div class="history-chips" id="historyChips">
+                        <span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                            Aucun élément tiré pour le moment.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: SETUP / EDIT VIEW -->
+            <div class="setup-card hidden" id="setupView">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">
+                        Personnaliser la roue
+                    </h2>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">
+                        Saisissez un élément par ligne ou choisissez un modèle prêt à l'emploi.
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div>
+                    <span
+                        style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem;">
+                        Modèles prêts à l'emploi :
+                    </span>
+                    <div class="presets-bar">
+                        <button type="button" class="preset-btn" data-preset="metiers">
+                            <i data-fa="broom"></i> Métiers de classe
+                        </button>
+                        <button type="button" class="preset-btn" data-preset="privileges">
+                            <i data-fa="gift"></i> Privilèges
+                        </button>
+                        <button type="button" class="preset-btn" data-preset="questions_ednum">
+                            <i data-fa="brain-circuit"></i> Questions Éducation numérique
+                        </button>
+                        <button type="button" class="preset-btn" data-preset="numbers_10">
+                            <i data-fa="dice"></i> 1 à 10
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Textarea for choices -->
+                <div>
+                    <label for="choicesInput"
+                        style="display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem;">
+                        Liste des éléments :
+                    </label>
+                    <textarea id="choicesInput" class="choices-input"
+                        placeholder="Exemple :&#10;Chef·fe de rang&#10;Distribution du matériel&#10;Tableau & date..."></textarea>
+                </div>
+
+                <!-- Setup Action Buttons -->
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="saveAndStartBtn" style="flex: 1; padding: 1rem;">
+                        <i data-fa="check" style="width:18px;height:18px;"></i>
+                        Enregistrer et lancer la roue
+                    </button>
+                    <button class="btn btn-secondary" id="cancelSetupBtn" style="padding: 1rem 1.5rem;">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- WINNER CELEBRATION MODAL -->
+        <div class="modal-backdrop" id="winnerModal" role="dialog" aria-modal="true" aria-labelledby="winnerName">
+            <div class="winner-card">
+                <div class="winner-icon-badge">
+                    <i data-fa="trophy-star" style="width:32px;height:32px;font-size:32px;"></i>
+                </div>
+                <div class="winner-label">Tirage au sort</div>
+                <div class="winner-name" id="winnerName">—</div>
+                <div class="winner-actions">
+                    <button class="btn btn-primary" id="modalSpinAgainBtn" style="padding: 0.85rem 1.6rem;">
+                        <i data-fa="rotate-right"></i> Relancer la roue
+                    </button>
+                    <button class="btn btn-secondary" id="modalRemoveBtn" style="padding: 0.85rem 1.4rem;">
+                        <i data-fa="trash-can"></i> Retirer ce choix
+                    </button>
+                    <button class="btn btn-secondary" id="modalCloseBtn" style="padding: 0.85rem 1.2rem;">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STANDARDIZED FOOTER -->
+        <footer class="no-print">
+            <p>
+                Webapp conçue par Vivian Epiney de l'<a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                <br>
+                <span style="font-size: 0.9em; opacity: 0.85;">
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    · <a href="../../../mentions-legales.html">Mentions légales</a>
+                    · <a href="../../../confidentialite.html">Confidentialité</a>
+                    · <a href="../../../cgu.html">CGU</a>
+                    · <a href="../../../merci.html">Remerciements</a>
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Hidden icons for FA subset parser -->
+    <div style="display:none;" aria-hidden="true">
+        <i data-fa="arrows-rotate"></i>
+        <i data-fa="bullseye"></i>
+        <i data-fa="trophy-star"></i>
+        <i data-fa="trash-can"></i>
+        <i data-fa="rotate-right"></i>
+        <i data-fa="rotate-left"></i>
+        <i data-fa="broom"></i>
+        <i data-fa="gift"></i>
+        <i data-fa="brain-circuit"></i>
+        <i data-fa="sun-bright"></i>
+        <i data-fa="dice"></i>
+        <i data-fa="share-nodes"></i>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="../../../assets/js/toast.js"></script>
+    <script src="../../../assets/js/theme.js"></script>
+    <script src="../../../assets/js/audio.js"></script>
+    <script src="../../../assets/js/confetti.js"></script>
+    <script src="../../../assets/js/url-params.js"></script>
+
+    <script>
+        /* SPDX-License-Identifier: AGPL-3.0-only
+         * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+         * Roue de la chance — Webapp interactive pour la classe
+         */
+
+        const STORAGE_KEY = 'ednum_roue_chance_state';
+
+        // Predefined Educational Presets
+        const PRESETS = {
+            metiers: [
+                "Chef·fe de rang",
+                "Distribution du matériel",
+                "Tableau & date",
+                "Arrosage des plantes",
+                "Facteur·trice",
+                "Rangement bibliothèque",
+                "Énergie & fenêtres",
+                "Responsable silence"
+            ],
+            privileges: [
+                "Choisir sa place pour la journée",
+                "Premier ou première au rang",
+                "Responsable musique d'ambiance",
+                "Choisir le jeu de fin de journée",
+                "5 minutes de temps libre bonus",
+                "Écrire au stylo de son choix",
+                "Assistant·e de l'enseignant·e"
+            ],
+            questions_ednum: [
+                "Qu'est-ce qu'une donnée personnelle ?",
+                "Que signifie le cadenas dans le navigateur ?",
+                "Pourquoi un mot de passe doit être long ?",
+                "Qu'est-ce qu'un algorithme ?",
+                "C'est quoi un pixel ?",
+                "À quoi sert le code binaire ?"
+            ],
+            numbers_10: [
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
+            ]
+        };
+
+        // Harmonious & Contrasting Sector Palette
+        const PALETTE = [
+            { bg: '#0d9488', text: '#ffffff' }, // Teal
+            { bg: '#3b82f6', text: '#ffffff' }, // Blue
+            { bg: '#f59e0b', text: '#1e293b' }, // Amber
+            { bg: '#8b5cf6', text: '#ffffff' }, // Purple
+            { bg: '#ec4899', text: '#ffffff' }, // Pink
+            { bg: '#10b981', text: '#ffffff' }, // Emerald
+            { bg: '#f97316', text: '#ffffff' }, // Orange
+            { bg: '#6366f1', text: '#ffffff' }, // Indigo
+            { bg: '#14b8a6', text: '#ffffff' }, // Cyan
+            { bg: '#ef4444', text: '#ffffff' }, // Red
+            { bg: '#84cc16', text: '#1e293b' }, // Lime
+            { bg: '#0284c7', text: '#ffffff' }  // Sky
+        ];
+
+        // Application State
+        let state = {
+            originalItems: [...PRESETS.metiers],
+            activeItems: [...PRESETS.metiers],
+            history: [],
+            autoRemove: false
+        };
+
+        // Wheel Physics & Animation Variables
+        let isSpinning = false;
+        let currentAngle = 0; // Current rotation angle in radians
+        let spinVelocity = 0;
+        let startAngle = 0;
+        let targetAngle = 0;
+        let spinStartTime = 0;
+        let spinDuration = 4500; // ~4.5 seconds of realistic suspense
+        let lastTickSegment = -1;
+        let lastWinnerItem = null;
+
+        // DOM References
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const wheelTicker = document.getElementById('wheelTicker');
+        const spinBtn = document.getElementById('spinBtn');
+        const centerSpinBtn = document.getElementById('centerSpinBtn');
+        const editWheelBtn = document.getElementById('editWheelBtn');
+        const resetWheelBtn = document.getElementById('resetWheelBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const autoRemoveToggle = document.getElementById('autoRemoveToggle');
+        const remainingCountBadge = document.getElementById('remainingCountBadge');
+        const historyChips = document.getElementById('historyChips');
+        const historyCountBadge = document.getElementById('historyCountBadge');
+
+        const playView = document.getElementById('playView');
+        const setupView = document.getElementById('setupView');
+        const choicesInput = document.getElementById('choicesInput');
+        const saveAndStartBtn = document.getElementById('saveAndStartBtn');
+        const cancelSetupBtn = document.getElementById('cancelSetupBtn');
+
+        const winnerModal = document.getElementById('winnerModal');
+        const winnerName = document.getElementById('winnerName');
+        const modalSpinAgainBtn = document.getElementById('modalSpinAgainBtn');
+        const modalRemoveBtn = document.getElementById('modalRemoveBtn');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+        // ==========================================
+        // URL SHARING (#items=...)
+        // ==========================================
+        function decodeItemsFromUrl() {
+            let raw = null;
+            if (window.location.hash) {
+                const hashParams = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash);
+                raw = hashParams.get('items') || hashParams.get('names') || hashParams.get('list');
+            }
+            if (!raw && window.location.search) {
+                const searchParams = new URLSearchParams(window.location.search);
+                raw = searchParams.get('items') || searchParams.get('names') || searchParams.get('list');
+            }
+            if (!raw) return null;
+
+            try {
+                const decoded = decodeURIComponent(raw);
+                const parsed = JSON.parse(decoded);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed.map(x => String(x).trim()).filter(Boolean);
+                }
+            } catch (e) {
+                try {
+                    const decoded = decodeURIComponent(raw);
+                    const list = decoded.split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
+                    if (list.length > 0) return list;
+                } catch (e2) {}
+            }
+            return null;
+        }
+
+        function copyShareLink() {
+            const list = state.originalItems.length > 0 ? state.originalItems : state.activeItems;
+            if (!list || list.length < 2) {
+                if (typeof showToast === 'function') showToast('Veuillez ajouter au moins 2 choix dans la roue', 'error');
+                return;
+            }
+
+            const url = new URL(window.location.href);
+            url.search = '';
+            url.hash = `items=${encodeURIComponent(JSON.stringify(list))}`;
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                if (typeof showToast === 'function') showToast('Lien direct de la roue copié dans le presse-papier !', 'success');
+            }).catch(() => {
+                prompt('Copiez ce lien pour partager cette roue :', url.toString());
+            });
+        }
+
+        // ==========================================
+        // STORAGE & STATE
+        // ==========================================
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {}
+        }
+
+        function loadState() {
+            // Priority 1: URL items
+            const urlItems = decodeItemsFromUrl();
+            if (urlItems && urlItems.length >= 2) {
+                state.originalItems = [...urlItems];
+                state.activeItems = [...urlItems];
+                state.history = [];
+                saveState();
+                updateUI();
+                renderWheel();
+                setTimeout(() => {
+                    if (typeof showToast === 'function') showToast('Roue chargée depuis le lien partagé !', 'success');
+                }, 100);
+                return;
+            }
+
+            // Priority 2: LocalStorage
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && Array.isArray(parsed.activeItems) && parsed.activeItems.length > 0) {
+                        state = Object.assign(state, parsed);
+                    }
+                }
+            } catch (e) {}
+
+            autoRemoveToggle.checked = !!state.autoRemove;
+            updateUI();
+            renderWheel();
+        }
+
+        // ==========================================
+        // CANVAS RENDERING
+        // ==========================================
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const size = canvas.parentElement.clientWidth;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            ctx.scale(dpr, dpr);
+            renderWheel();
+        }
+
+        function renderWheel() {
+            const size = canvas.parentElement.clientWidth;
+            const radius = size / 2;
+            const items = state.activeItems;
+            const count = items.length;
+
+            ctx.clearRect(0, 0, size, size);
+
+            if (count === 0) {
+                // Empty Wheel Placeholder
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.beginPath();
+                ctx.arc(0, 0, radius - 4, 0, 2 * Math.PI);
+                ctx.fillStyle = document.body.classList.contains('dark') ? '#1e293b' : '#f1f5f9';
+                ctx.fill();
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                ctx.fillStyle = '#64748b';
+                ctx.font = 'bold 16px Outfit, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Tous les choix ont été tirés !', 0, -10);
+                ctx.font = '14px Outfit, sans-serif';
+                ctx.fillText('Cliquez sur Réinitialiser', 0, 15);
+                ctx.restore();
+                return;
+            }
+
+            const step = (2 * Math.PI) / count;
+
+            ctx.save();
+            ctx.translate(radius, radius);
+            ctx.rotate(currentAngle);
+
+            for (let i = 0; i < count; i++) {
+                const start = i * step;
+                const end = start + step;
+                const color = PALETTE[i % PALETTE.length];
+
+                // Draw Slice
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius - 4, start, end);
+                ctx.closePath();
+                ctx.fillStyle = color.bg;
+                ctx.fill();
+
+                // Slice Divider
+                ctx.strokeStyle = document.body.classList.contains('dark') ? 'rgba(15, 23, 42, 0.4)' : 'rgba(255, 255, 255, 0.6)';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // Draw Text
+                ctx.save();
+                ctx.rotate(start + step / 2);
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = color.text;
+
+                // Dynamic font size calculation based on count and string length
+                const itemText = items[i];
+                const maxLen = itemText.length;
+                let fontSize = 16;
+                if (count > 20 || maxLen > 24) fontSize = 11;
+                else if (count > 12 || maxLen > 18) fontSize = 13;
+                else if (count > 6) fontSize = 15;
+                else fontSize = 17;
+
+                ctx.font = `700 ${fontSize}px 'Outfit', sans-serif`;
+
+                // Truncate if ultra long
+                let displayText = itemText;
+                if (displayText.length > 32) {
+                    displayText = displayText.substring(0, 30) + '...';
+                }
+
+                // Shadow for crisp legibility
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 3;
+                ctx.fillText(displayText, radius - 24, 0);
+                ctx.restore();
+            }
+
+            // Outer decorative rim
+            ctx.beginPath();
+            ctx.arc(0, 0, radius - 4, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // ==========================================
+        // ANIMATION & PHYSICS
+        // ==========================================
+        function spinWheel() {
+            if (isSpinning || state.activeItems.length < 1) return;
+
+            if (state.activeItems.length === 1) {
+                // If only 1 left, directly celebrate
+                onWheelWinner(state.activeItems[0]);
+                return;
+            }
+
+            isSpinning = true;
+            spinBtn.disabled = true;
+            centerSpinBtn.style.pointerEvents = 'none';
+
+            // Pick random target slice
+            const count = state.activeItems.length;
+            const targetSliceIndex = Math.floor(Math.random() * count);
+
+            // Calculate target angle
+            // Pointer is at Top (12 o'clock, which is -Math.PI / 2 or 3*Math.PI / 2)
+            const sliceAngle = (2 * Math.PI) / count;
+            // Angle to land target slice right under the top pointer
+            const randomOffsetWithinSlice = (Math.random() * 0.7 + 0.15) * sliceAngle;
+            const fullSpins = (Math.floor(Math.random() * 3) + 4) * 2 * Math.PI; // 4 to 6 full turns
+            
+            // Pointer at angle -PI/2. A slice 'i' centered at (i + 0.5) * sliceAngle.
+            // When rotated by currentAngle, slice position is at (angle + sliceCenter).
+            // We want (finalAngle + targetSliceIndex * sliceAngle + randomOffset) % 2PI == 3*PI/2
+            const desiredTopAngle = (3 * Math.PI / 2);
+            const remainder = (desiredTopAngle - (targetSliceIndex * sliceAngle + randomOffsetWithinSlice)) % (2 * Math.PI);
+            const normalizedRemainder = remainder < 0 ? remainder + 2 * Math.PI : remainder;
+            
+            startAngle = currentAngle % (2 * Math.PI);
+            targetAngle = startAngle + fullSpins + normalizedRemainder;
+            spinStartTime = performance.now();
+            spinDuration = 4200 + Math.random() * 600;
+
+            lastTickSegment = -1;
+            requestAnimationFrame(updateSpin);
+        }
+
+        // Quintic Easing Out
+        function easeOutQuint(t) {
+            return 1 - Math.pow(1 - t, 5);
+        }
+
+        function updateSpin(now) {
+            const elapsed = now - spinStartTime;
+            const progress = Math.min(elapsed / spinDuration, 1);
+            const eased = easeOutQuint(progress);
+
+            currentAngle = startAngle + (targetAngle - startAngle) * eased;
+            renderWheel();
+
+            // Ticker check (pointer at top 12 o'clock)
+            const count = state.activeItems.length;
+            if (count > 0) {
+                const sliceAngle = (2 * Math.PI) / count;
+                const pointerAngle = (3 * Math.PI / 2 - currentAngle) % (2 * Math.PI);
+                const normalizedPointer = pointerAngle < 0 ? pointerAngle + 2 * Math.PI : pointerAngle;
+                const currentSegment = Math.floor(normalizedPointer / sliceAngle);
+
+                if (currentSegment !== lastTickSegment) {
+                    lastTickSegment = currentSegment;
+                    // Trigger ticker physical bounce
+                    wheelTicker.style.transform = 'translateX(-50%) rotate(-18deg)';
+                    setTimeout(() => {
+                        wheelTicker.style.transform = 'translateX(-50%) rotate(0deg)';
+                    }, 60);
+
+                    if (typeof playSound === 'function') {
+                        playSound('tick');
+                    }
+                }
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(updateSpin);
+            } else {
+                // Spin completed!
+                isSpinning = false;
+                spinBtn.disabled = false;
+                centerSpinBtn.style.pointerEvents = 'auto';
+
+                // Determine exact winner
+                const sliceAngle = (2 * Math.PI) / count;
+                const pointerAngle = (3 * Math.PI / 2 - currentAngle) % (2 * Math.PI);
+                const normalizedPointer = pointerAngle < 0 ? pointerAngle + 2 * Math.PI : pointerAngle;
+                const winningIndex = Math.floor(normalizedPointer / sliceAngle) % count;
+                const winner = state.activeItems[winningIndex];
+
+                onWheelWinner(winner);
+            }
+        }
+
+        function onWheelWinner(winner) {
+            lastWinnerItem = winner;
+            winnerName.textContent = winner;
+
+            // Add to history
+            state.history.unshift(winner);
+            if (state.history.length > 30) state.history.pop();
+
+            // Sound & Confetti
+            if (typeof playSound === 'function') {
+                playSound('win');
+            }
+            if (typeof window.confetti === 'function') {
+                window.confetti({
+                    particleCount: 75,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+
+            // Auto-remove option logic
+            if (state.autoRemove) {
+                state.activeItems = state.activeItems.filter(item => item !== winner);
+                modalRemoveBtn.style.display = 'none';
+            } else {
+                modalRemoveBtn.style.display = 'inline-flex';
+            }
+
+            saveState();
+            updateUI();
+            renderWheel();
+
+            // Open winner celebration modal
+            setTimeout(() => {
+                winnerModal.classList.add('active');
+            }, 300);
+        }
+
+        // ==========================================
+        // UI UPDATES & VIEWS
+        // ==========================================
+        function updateUI() {
+            // Remaining count
+            const remaining = state.activeItems.length;
+            remainingCountBadge.textContent = `${remaining} choix disponible${remaining > 1 ? 's' : ''}`;
+            spinBtn.disabled = remaining === 0;
+
+            // History Chips
+            historyCountBadge.textContent = `${state.history.length} tiré${state.history.length > 1 ? 's' : ''}`;
+            if (state.history.length === 0) {
+                historyChips.innerHTML = `<span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Aucun élément tiré pour le moment.</span>`;
+            } else {
+                historyChips.innerHTML = state.history.slice(0, 10).map((item, idx) => `
+                    <div class="history-chip">
+                        <span style="opacity: 0.6; font-size: 0.75rem;">#${state.history.length - idx}</span>
+                        <span>${item}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function setView(view) {
+            const headerDivider = document.getElementById('headerDivider');
+            if (view === 'setup') {
+                choicesInput.value = state.originalItems.join('\n');
+                playView.classList.add('hidden');
+                setupView.classList.remove('hidden');
+                editWheelBtn.classList.add('hidden');
+                resetWheelBtn.classList.add('hidden');
+                if (headerDivider) headerDivider.classList.add('hidden');
+            } else {
+                setupView.classList.add('hidden');
+                playView.classList.remove('hidden');
+                editWheelBtn.classList.remove('hidden');
+                resetWheelBtn.classList.remove('hidden');
+                if (headerDivider) headerDivider.classList.remove('hidden');
+                resizeCanvas();
+            }
+        }
+
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+        window.addEventListener('resize', resizeCanvas);
+
+        spinBtn.addEventListener('click', spinWheel);
+        centerSpinBtn.addEventListener('click', spinWheel);
+
+        // Keyboard Shortcut: Space or Enter to spin
+        document.addEventListener('keydown', (e) => {
+            if ((e.code === 'Space' || e.key === 'Enter') && !isSpinning && setupView.classList.contains('hidden')) {
+                if (document.activeElement && (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT')) {
+                    return;
+                }
+                if (winnerModal.classList.contains('active')) {
+                    winnerModal.classList.remove('active');
+                    spinWheel();
+                    e.preventDefault();
+                    return;
+                }
+                e.preventDefault();
+                spinWheel();
+            }
+            if (e.key === 'Escape') {
+                if (winnerModal.classList.contains('active')) {
+                    winnerModal.classList.remove('active');
+                }
+            }
+        });
+
+        // Toggle Auto-Remove
+        autoRemoveToggle.addEventListener('change', (e) => {
+            state.autoRemove = e.target.checked;
+            saveState();
+        });
+
+        // Edit View Toggles
+        editWheelBtn.addEventListener('click', () => setView('setup'));
+        cancelSetupBtn.addEventListener('click', () => setView('play'));
+
+        // Save Custom Choices
+        saveAndStartBtn.addEventListener('click', () => {
+            const raw = choicesInput.value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            if (raw.length < 2) {
+                if (typeof showToast === 'function') showToast('Veuillez entrer au moins 2 éléments', 'error');
+                return;
+            }
+            state.originalItems = [...raw];
+            state.activeItems = [...raw];
+            state.history = [];
+            saveState();
+            setView('play');
+            updateUI();
+            renderWheel();
+            if (typeof showToast === 'function') showToast('Roue mise à jour avec succès !', 'success');
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const presetKey = btn.dataset.preset;
+                if (PRESETS[presetKey]) {
+                    choicesInput.value = PRESETS[presetKey].join('\n');
+                    if (typeof playSound === 'function') playSound('click');
+                }
+            });
+        });
+
+        // Reset Wheel to original full items
+        function resetWheel() {
+            isSpinning = false;
+            if (winnerModal) winnerModal.classList.remove('active');
+            if (state.originalItems && state.originalItems.length >= 2) {
+                state.activeItems = [...state.originalItems];
+            } else if (state.activeItems && state.activeItems.length >= 2) {
+                state.originalItems = [...state.activeItems];
+            } else {
+                state.originalItems = [...PRESETS.metiers];
+                state.activeItems = [...PRESETS.metiers];
+            }
+            state.history = [];
+            currentAngle = 0;
+            saveState();
+            updateUI();
+            renderWheel();
+            if (typeof playSound === 'function') playSound('click');
+            if (typeof showToast === 'function') showToast('Roue réinitialisée avec tous les choix', 'success');
+        }
+
+        resetWheelBtn.addEventListener('click', resetWheel);
+
+        // Share Button
+        shareBtn.addEventListener('click', copyShareLink);
+
+        // Modal Controls
+        modalCloseBtn.addEventListener('click', () => {
+            winnerModal.classList.remove('active');
+        });
+
+        modalSpinAgainBtn.addEventListener('click', () => {
+            winnerModal.classList.remove('active');
+            setTimeout(spinWheel, 200);
+        });
+
+        modalRemoveBtn.addEventListener('click', () => {
+            if (lastWinnerItem) {
+                state.activeItems = state.activeItems.filter(item => item !== lastWinnerItem);
+                saveState();
+                updateUI();
+                renderWheel();
+                winnerModal.classList.remove('active');
+                if (typeof showToast === 'function') {
+                    showToast(`"${lastWinnerItem}" retiré de la roue`, 'info');
+                }
+            }
+        });
+
+        // Projection / Fullscreen mode
+        const elProjBtn = document.getElementById('projection-toggle-btn');
+        function setProjectionMode(active) {
+            document.body.classList.toggle('projection', active);
+            const iconExpand = document.getElementById('icon-proj-expand');
+            const iconCompress = document.getElementById('icon-proj-compress');
+            if (iconExpand && iconCompress) {
+                iconExpand.style.display = active ? 'none' : 'inline-block';
+                iconCompress.style.display = active ? 'inline-block' : 'none';
+            }
+            if (elProjBtn) {
+                elProjBtn.setAttribute('title', active ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+            }
+            setTimeout(resizeCanvas, 50);
+        }
+
+        if (elProjBtn) {
+            elProjBtn.addEventListener('click', () => {
+                const isProj = document.body.classList.contains('projection');
+                setProjectionMode(!isProj);
+                if (typeof playSound === 'function') playSound('click');
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                setProjectionMode(false);
+            }
+        });
+
+        // Global Reset App Hook (for theme/system clear cache)
+        window.__onResetApp = function () {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+            isSpinning = false;
+            if (winnerModal) winnerModal.classList.remove('active');
+            state = {
+                originalItems: [...PRESETS.metiers],
+                activeItems: [...PRESETS.metiers],
+                history: [],
+                autoRemove: false
+            };
+            currentAngle = 0;
+            autoRemoveToggle.checked = false;
+            setView('play');
+            updateUI();
+            renderWheel();
+            if (typeof playSound === 'function') playSound('click');
+            if (typeof showToast === 'function') showToast('Roue réinitialisée', 'info');
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            window.fa?.createIcons?.();
+            loadState();
+            resizeCanvas();
+        });
+    </script>
+</body>
+
+</html>

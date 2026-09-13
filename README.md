@@ -182,5 +182,12 @@ Our entire development process (architecture decisions, logs) is archived in the
 For any pedagogical or technical questions, you can contact me:
 📧 **vivian.epiney [at] hepvs.ch**
 
-## ⚖️ License
-This project is free and open-source. 100% of the code is distributed under the **[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html)** license. Share, modify, but keep it free!
+## ⚖️ Licences & Mentions Légales
+Ce projet s'inscrit pleinement dans la philosophie des biens communs numériques éducatifs et du logiciel libre :
+*   **Code source :** 100% du code source est distribué sous licence **[AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html)** (GNU Affero General Public License v3). Partagez, modifiez, mais gardez le code libre !
+*   **Contenus didactiques & pédagogiques :** Les documentations, modes d'emploi, tutoriels et défis pédagogiques sont mis à disposition sous licence **[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr)** (Creative Commons Attribution – Partage dans les Mêmes Conditions 4.0 International).
+*   **Icônes :** Les icônes vectorielles proviennent de la suite **Font Awesome Pro** (Fonticons, Inc.), utilisées sous licence commerciale d'utilisation pour le projet.
+*   **Pages d'information légale :**
+    *   [Mentions légales](mentions-legales.html)
+    *   [Politique de confidentialité & Données élèves](confidentialite.html)
+    *   [Conditions générales d'utilisation (CGU)](cgu.html)

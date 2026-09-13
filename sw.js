@@ -1,12 +1,15 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-0002c5ed';
+const CACHE_NAME = 'ednum-37714a2f';
 const ASSETS = [
     './',
     './index.html',
     './indexC1.html',
     './manifest.json',
     './merci.html',
+    './mentions-legales.html',
+    './confidentialite.html',
+    './cgu.html',
     './alpha/webapps/apprendre_pseudocode.html',
     './alpha/webapps/coffre_fort.html',
     './alpha/webapps/compresseur_magique.html',
@@ -17,6 +20,7 @@ const ASSETS = [
     './alpha/webapps/machine_a_chiffrer.html',
     './alpha/webapps/machine_a_trier.html',
     './alpha/webapps/reseau_de_tri.html',
+    './alpha/webapps/teacher/roue_de_la_chance.html',
     './alpha/webapps/teacher/sim_dyslexie.html',
     './alpha/webapps/tri_insertion.html',
     './assets/apple-touch-icon.png',

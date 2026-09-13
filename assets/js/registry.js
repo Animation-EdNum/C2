@@ -1127,6 +1127,32 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "tool-roue-chance",
+    "href": "alpha/webapps/teacher/roue_de_la_chance.html",
+    "isAlpha": true,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "bullseye",
+    "title": "Roue de la chance",
+    "desc": "Roue aléatoire pour tirer au sort les responsabilités, privilèges, questions et défis de la classe.",
+    "tags": [
+      "#Outil",
+      "#Classe",
+      "#Animation",
+      "#Tirage"
+    ],
+    "ref": "Alpha",
+    "badges": [
+      {
+        "text": "Gestion de classe",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "tool-qrcode",
     "href": "webapps/teacher/qrcode.html",
     "isTeacher": true,

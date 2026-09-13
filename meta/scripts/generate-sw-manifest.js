@@ -10,7 +10,10 @@ const ROOT_FILES = [
     './index.html',
     './indexC1.html',
     './manifest.json',
-    './merci.html'
+    './merci.html',
+    './mentions-legales.html',
+    './confidentialite.html',
+    './cgu.html'
 ];
 
 function getFiles(dir, files = []) {

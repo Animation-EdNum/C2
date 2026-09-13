@@ -27,6 +27,9 @@ This document records code conventions, reusable hooks, and established project 
   <div class="header-icon" aria-hidden="true"><i data-fa="nom-icone"></i></div>
   ```
 - **Flat Legal Footer:** Attribution footers must sit outside `.app-shell` as a flat, transparent block (`margin-top: 1.5rem; text-align: center; opacity: 0.85;`). Never trap footers inside nested cards.
+  - **Webapps attribution:** Must feature the full name `Vivian Epiney de l'AP EdNum, HEP-VS` and include links to the 3 regulatory pages (`mentions-legales.html`, `confidentialite.html`, `cgu.html`) with appropriate relative paths (`../`, `../../`, `../../../`).
+  - **Portals attribution:** Features `Portail conçu par l'AP EdNum, HEP-VS` with links to the 3 regulatory pages.
+  - **Licensing:** Code is licensed under AGPL-3.0; pedagogical and didactic contents under CC BY-SA 4.0; vector icons under Font Awesome Pro.
 
 ## 2. CSS & Design System Idioms
 - **Cascade Loading Order:** Link stylesheets in parallel in this exact order:

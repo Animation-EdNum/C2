@@ -23,8 +23,8 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tirage au Sort</title>
-    <meta property="og:title" content="Tirage au Sort">
+    <title>Tirage au sort</title>
+    <meta property="og:title" content="Tirage au sort">
     <meta property="og:description" content="Outil efficace et visuel pour désigner un élève au hasard.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
@@ -35,10 +35,53 @@
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <link rel="stylesheet" href="../../assets/css/teacher.css">
     <style>
+        .header-right-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
         .action-buttons {
-            position: absolute;
-            top: 15px;
-            right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-shrink: 0;
+        }
+
+        .icon-action-btn {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            min-height: 38px;
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 640px) {
+            .header-divider {
+                display: none;
+            }
+            .header-actions .btn span {
+                display: none;
+            }
+            .header-actions .btn {
+                padding: 6px 10px;
+            }
+            h1 {
+                font-size: 1.1rem;
+            }
         }
 
         body > header, body > .app-shell {
@@ -94,7 +137,7 @@
         }
 
         .app-shell {
-            max-width: 900px;
+            max-width: 1060px;
             width: 100%;
             margin: auto;
             background: var(--glass-bg);
@@ -110,25 +153,27 @@
 
         /* HEADER */
         header {
-            padding: 1.25rem 1.75rem;
+            padding: 0.85rem 1.25rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            flex-wrap: nowrap;
+            gap: 0.75rem;
         }
 
         .header-title-wrapper {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
+            flex-shrink: 0;
+            min-width: 0;
         }
 
         .header-icon {
             background: var(--primary);
             color: white;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
@@ -136,17 +181,27 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             text-decoration: none;
             cursor: default;
+            flex-shrink: 0;
         }
 
         h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 800;
             letter-spacing: -0.025em;
+            white-space: nowrap;
         }
 
         .header-actions {
             display: flex;
+            align-items: center;
             gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .header-actions .btn {
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            white-space: nowrap;
         }
 
         /* MAIN CONTENT */
@@ -479,23 +534,6 @@
 
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-    <div class="action-buttons no-print">
-        <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
-            <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
-            <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
-        </button>
-        <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
-            <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
-            <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
-        </button>
-        <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
-            <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
-            <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
-        </button>
-            <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
-            <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
-        </button>
-    </div>
 
     <div class="app-shell" id="main-content">
         <header>
@@ -503,21 +541,45 @@
                 <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
                     <i data-fa="arrow-left"></i>
                 </a>
-                <button class="header-back-btn hidden" id="backToSetupBtn" title="Retour à la configuration" aria-label="Retour à la configuration">
-                    <i data-fa="arrow-left" style="width:20px;height:20px;"></i>
-                </button>
                 <div class="header-icon" aria-hidden="true">
                     <i data-fa="dice"></i>
                 </div>
                 <div>
-                    <h1>Tirage au Sort</h1>
+                    <h1>Tirage au sort</h1>
                 </div>
             </div>
-            <div class="header-actions">
-                <button class="btn btn-secondary hidden" id="resetDrawBtn" title="Réinitialiser le tirage">
-                    <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
-                    <span>Réinitialiser le tirage</span>
-                </button>
+            <div class="header-right-group">
+                <div class="header-actions">
+                    <button class="btn btn-secondary hidden" id="backToSetupBtn" title="Modifier les participants">
+                        <i data-fa="gear" style="width:16px;height:16px;"></i>
+                        <span>Modifier</span>
+                    </button>
+                    <button class="btn btn-secondary hidden" id="resetDrawBtn" title="Réinitialiser le tirage">
+                        <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
+                        <span>Réinitialiser</span>
+                    </button>
+                </div>
+                <div class="header-divider hidden" id="headerDivider"></div>
+                <div class="action-buttons no-print">
+                    <button class="icon-action-btn" id="shareBtn" title="Partager par lien web" aria-label="Partager par lien web">
+                        <i data-fa="share-nodes" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+                        <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
+                        <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
+                        <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
+                        <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+                        <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+                        <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+                        <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -608,12 +670,15 @@
 
         <footer class="no-print">
             <p>
-                Webapp conçue par Vivian de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                Webapp conçue par Vivian Epiney de l'<a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
                     <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
                     (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
-                    · <a href="../../index.html#teachers">Espace Enseignant·e·s</a>
+                    · <a href="../../mentions-legales.html">Mentions légales</a>
+                    · <a href="../../confidentialite.html">Confidentialité</a>
+                    · <a href="../../cgu.html">CGU</a>
+                    · <a href="../../merci.html">Remerciements</a>
                 </span>
             </p>
         </footer>
@@ -667,22 +732,97 @@
         });
 
         function setView(view) {
+            const headerDivider = document.getElementById('headerDivider');
             if (view === 'setup') {
                 setupView.classList.remove('hidden');
                 drawView.classList.add('hidden');
                 backToSetupBtn.classList.add('hidden');
                 resetDrawBtn.classList.add('hidden');
+                if (headerDivider) headerDivider.classList.add('hidden');
             } else {
                 setupView.classList.add('hidden');
                 drawView.classList.remove('hidden');
                 backToSetupBtn.classList.remove('hidden');
                 resetDrawBtn.classList.remove('hidden');
+                if (headerDivider) headerDivider.classList.remove('hidden');
             }
         }
 
         function saveState() { localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
 
+        function decodeItemsFromUrl() {
+            let raw = null;
+            if (window.location.hash) {
+                const hashParams = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash);
+                raw = hashParams.get('items') || hashParams.get('names') || hashParams.get('list');
+            }
+            if (!raw && window.location.search) {
+                const searchParams = new URLSearchParams(window.location.search);
+                raw = searchParams.get('items') || searchParams.get('names') || searchParams.get('list');
+            }
+            if (!raw) return null;
+
+            try {
+                const decoded = decodeURIComponent(raw);
+                const parsed = JSON.parse(decoded);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed.map(x => String(x).trim()).filter(Boolean);
+                }
+            } catch (e) {
+                try {
+                    const decoded = decodeURIComponent(raw);
+                    const list = decoded.split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
+                    if (list.length > 0) return list;
+                } catch (e2) {}
+            }
+            return null;
+        }
+
+        function copyShareLink() {
+            let list = [];
+            if (state.mode === 'number') {
+                const max = parseInt(totalInput.value) || state.allParticipants.length;
+                if (!max || max < 1) {
+                    if (typeof showToast === 'function') showToast('Veuillez d\'abord configurer la liste', 'error');
+                    return;
+                }
+                list = Array.from({ length: max }, (_, i) => String(i + 1));
+            } else {
+                list = namesInput.value.split(/[\n,]+/).map(n => n.trim()).filter(Boolean);
+                if (list.length === 0 && state.allParticipants.length > 0) {
+                    list = [...state.allParticipants];
+                }
+                if (list.length < 2) {
+                    if (typeof showToast === 'function') showToast('Entrez au moins 2 participants à partager', 'error');
+                    return;
+                }
+            }
+
+            const url = new URL(window.location.href);
+            url.search = '';
+            url.hash = `items=${encodeURIComponent(JSON.stringify(list))}`;
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                if (typeof showToast === 'function') showToast('Lien de partage copié dans le presse-papier !', 'success');
+            }).catch(() => {
+                prompt('Copiez ce lien de partage :', url.toString());
+            });
+        }
+
         function loadState() {
+            const urlItems = decodeItemsFromUrl();
+            if (urlItems && urlItems.length >= 2) {
+                state.mode = 'names';
+                namesInput.value = urlItems.join('\n');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'names'));
+                document.getElementById('mode-number-view').classList.add('hidden');
+                document.getElementById('mode-names-view').classList.remove('hidden');
+                initializeDraw();
+                setTimeout(() => {
+                    if (typeof showToast === 'function') showToast('Liste chargée depuis le lien partagé !', 'success');
+                }, 100);
+                return;
+            }
+
             const saved = localStorage.getItem(STATE_KEY);
             if (saved) {
                 state = JSON.parse(saved);
@@ -762,13 +902,19 @@
         }
 
         function softReset() {
-            state.availableParticipants = [...state.allParticipants].filter(p => !state.absentParticipants.includes(p));
+            isDrawing = false;
+            drawBtn.disabled = false;
+            state.absentParticipants = [];
             state.drawnParticipants = [];
             state.drawHistory = [];
+            state.availableParticipants = [...state.allParticipants];
+            drawnNumber.className = 'result-number';
             drawnNumber.textContent = '?';
+            finishedMsg.classList.add('hidden');
             saveState();
             updateUI();
-            showToast('Tirage réinitialisé', 'info');
+            if (typeof playSound === 'function') playSound('click');
+            if (typeof showToast === 'function') showToast('Tirage réinitialisé', 'success');
         }
 
         // ==========================================
@@ -847,6 +993,8 @@
         drawBtn.addEventListener('click', triggerRoulette);
         resetDrawBtn.addEventListener('click', softReset);
         backToSetupBtn.addEventListener('click', () => setView('setup'));
+        const shareBtn = document.getElementById('shareBtn');
+        if (shareBtn) shareBtn.addEventListener('click', copyShareLink);
         
         document.getElementById('copyBtn').addEventListener('click', () => {
             if (state.drawHistory.length === 0) return;
@@ -898,6 +1046,8 @@
             try {
                 localStorage.removeItem(STATE_KEY);
             } catch (e) {}
+            isDrawing = false;
+            drawBtn.disabled = false;
             state = {
                 mode: 'number',
                 allParticipants: [],
@@ -912,8 +1062,11 @@
             document.getElementById('mode-number-view').classList.remove('hidden');
             document.getElementById('mode-names-view').classList.add('hidden');
             setView('setup');
+            drawnNumber.className = 'result-number';
             drawnNumber.textContent = '?';
+            finishedMsg.classList.add('hidden');
             updateUI();
+            if (typeof playSound === 'function') playSound('click');
             if (typeof showToast === 'function') {
                 showToast("Tirage réinitialisé", "info");
             }
@@ -927,9 +1080,15 @@
     <script src="../../assets/js/url-params.js"></script>
 
     <!-- FontAwesome dynamic subsets declaration -->
-    <div style="display:none;">
+    <div style="display:none;" aria-hidden="true">
         <i data-fa="expand"></i>
         <i data-fa="compress"></i>
+        <i data-fa="share-nodes"></i>
+        <i data-fa="arrows-rotate"></i>
+        <i data-fa="volume-high"></i>
+        <i data-fa="volume-xmark"></i>
+        <i data-fa="sun-bright"></i>
+        <i data-fa="moon"></i>
     </div>
 </body>
 
