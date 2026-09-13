@@ -5,8 +5,9 @@ function loadRegistry() {
 }
 
 const PROF_BADGES = new Set([
-    'Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Ressources',
-    'Cartographie', 'Création', 'Programmation', 'Application', 'Maths', 'Robotique'
+    'Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Outil', 'Outils',
+    'Ressources', 'Cartographie', 'Création', 'Programmation', 'Application',
+    'Maths', 'Robotique', 'Exercices'
 ]);
 
 function renderBadges(badges) {

@@ -238,7 +238,7 @@ test('renderBadges', async (t) => {
 
     await t.test('renders prof badge for specific texts', () => {
         const window = setupDOM();
-        const profTexts = ['Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Ressources'];
+        const profTexts = ['Évaluation', 'Gestion de classe', 'Animation', 'Outils libres', 'Outil', 'Ressources', 'Exercices'];
 
         for (const text of profTexts) {
             const html = window.renderBadges([{ text }]);
