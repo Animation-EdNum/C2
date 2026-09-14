@@ -491,8 +491,8 @@ test('index-main.js - updateRoleButton and ghost teacher link', async (t) => {
 
     await t.test('handles dual space links (students and teachers) properly', () => {
         const dom = new JSDOM(`<!DOCTYPE html><html><body>
-            <a href="#students" id="header-students-link" class="ghost-space-link active">Espace élèves</a>
-            <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link">Espace enseignant·e·s</a>
+            <a href="#students" id="header-students-link" class="ghost-space-link active"><span class="hide-mobile">Espace </span>élèves</a>
+            <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link"><span class="hide-mobile">Espace </span>enseignant·e·s</a>
         </body></html>`, { runScripts: "dangerously" });
         const window = dom.window;
         window.eval(indexMainSrc);
@@ -550,8 +550,8 @@ test('index-main.js - filterApps toggle behavior without Toutes', () => {
 test('index-main.js - header logo click switches space', async (t) => {
     const dom = new JSDOM(`<!DOCTYPE html><html><body>
         <a href="#teachers" id="header-logo-link" class="header-logo-link"><svg class="header-logo"></svg></a>
-        <a href="#students" id="header-students-link" class="ghost-space-link active">Espace élèves</a>
-        <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link">Espace enseignant·e·s</a>
+        <a href="#students" id="header-students-link" class="ghost-space-link active"><span class="hide-mobile">Espace </span>élèves</a>
+        <a href="#teachers" id="header-teachers-link" class="ghost-teacher-link"><span class="hide-mobile">Espace </span>enseignant·e·s</a>
         <div id="view-students" class="view active"></div>
         <div id="view-teachers" class="view"></div>
     </body></html>`, { runScripts: "dangerously", url: "http://localhost/" });
