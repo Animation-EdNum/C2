@@ -24,7 +24,10 @@ function updateRoleButton(tabId) {
     }
 
     if (ghostBtn) {
-        ghostBtn.textContent = 'Espace enseignant·e·s';
+        const span = document.createElement('span');
+        span.className = 'hide-mobile';
+        span.textContent = 'Espace ';
+        ghostBtn.replaceChildren(span, 'enseignant·e·s');
         ghostBtn.setAttribute('title', "Accéder à l'espace enseignant·e·s");
         ghostBtn.setAttribute('aria-label', "Accéder à l'espace enseignant·e·s");
         ghostBtn.setAttribute('href', '#teachers');
