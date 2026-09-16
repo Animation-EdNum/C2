@@ -1155,8 +1155,7 @@ window.REGISTRY = [
   },
   {
     "id": "tool-roue-chance",
-    "href": "alpha/webapps/teacher/roue_de_la_chance.html",
-    "isAlpha": true,
+    "href": "webapps/teacher/roue_de_la_chance.html",
     "isTeacher": true,
     "dataLevel": null,
     "icon": "bullseye",
@@ -1168,7 +1167,7 @@ window.REGISTRY = [
       "#Animation",
       "#Tirage"
     ],
-    "ref": "Alpha",
+    "ref": null,
     "badges": [
       {
         "text": "Gestion de classe",

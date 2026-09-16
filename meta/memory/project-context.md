@@ -13,9 +13,9 @@
   - Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
 - **Alpha Student Apps (`alpha/webapps/` - 11 apps):**
   - Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Dactylo (`dactylo`), Une chose après l'autre (`tri_insertion`).
-- **Teacher Tools (`webapps/teacher/` - 4 production, 2 alpha):**
-  - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`).
-  - Alpha: Lentille DYS / Sim Dyslexie (`alpha/webapps/teacher/sim_dyslexie.html`), Roue de la chance (`alpha/webapps/teacher/roue_de_la_chance.html`).
+- **Teacher Tools (`webapps/teacher/` - 5 production, 2 alpha):**
+  - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`), Roue de la chance (`roue_de_la_chance.html`).
+  - Alpha: Lentille DYS / Sim Dyslexie (`alpha/webapps/teacher/sim_dyslexie.html`), Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`).
 
 ## 3. Core Architectural Constraints
 - **100% Offline-First (PWA):** Zero external CDN dependencies. All assets (fonts, icons, audio, scripts) are locally hosted under `assets/`.
