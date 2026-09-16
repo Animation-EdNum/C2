@@ -1127,6 +1127,33 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "tool-anonymiseur",
+    "href": "alpha/webapps/teacher/anonymiseur.html",
+    "isAlpha": true,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "user-shield",
+    "title": "Anonymiseur",
+    "desc": "Anonymise et pseudonymise vos textes et listes d'élèves 100% localement avant de les partager ou d'utiliser une IA.",
+    "tags": [
+      "#Outil",
+      "#Protection",
+      "#Données",
+      "#IA",
+      "#Anonymisation"
+    ],
+    "ref": "Alpha",
+    "badges": [
+      {
+        "text": "Protection des données",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "tool-roue-chance",
     "href": "alpha/webapps/teacher/roue_de_la_chance.html",
     "isAlpha": true,

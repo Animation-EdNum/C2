@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymiseur de texte · Suite EdNum</title>
+    <meta property="og:title" content="Anonymiseur de texte · Suite EdNum">
+    <meta property="og:description"
+        content="Anonymisez et pseudonymisez instantanément vos textes scolaires et évaluations 100% localement avant de les partager ou d'utiliser une IA.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <script src="../../../assets/js/vendor/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="../../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../../assets/css/base.css">
+    <link rel="stylesheet" href="../../../assets/css/components.css">
+    <link rel="stylesheet" href="../../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+    <style>
+        .header-right-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-shrink: 0;
+        }
+
+        .icon-action-btn {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            min-height: 38px;
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        :root {
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: rgba(13, 148, 136, 0.15);
+            --bg-gradient-start: #0f766e;
+            --bg-gradient-end: #064e4b;
+            --glass-bg: rgba(255, 255, 255, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --chip-bg: rgba(13, 148, 136, 0.15);
+            --chip-color: #0f766e;
+            --chip-border: rgba(13, 148, 136, 0.3);
+        }
+
+        body.dark {
+            color-scheme: dark;
+            --primary: #14b8a6;
+            --primary-hover: #2dd4bf;
+            --primary-light: rgba(45, 212, 191, 0.18);
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #042f2e;
+            --glass-bg: rgba(15, 23, 42, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --chip-bg: rgba(45, 212, 191, 0.18);
+            --chip-color: #2dd4bf;
+            --chip-border: rgba(45, 212, 191, 0.35);
+        }
+
+        /* Mode TNI/TBI (Projection) toggle icons */
+        #icon-proj-compress {
+            display: none !important;
+        }
+        body.projection #icon-proj-expand {
+            display: none !important;
+        }
+        body.projection #icon-proj-compress {
+            display: inline-block !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1180px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            padding: 1.1rem 1.6rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        body.dark header {
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            border-radius: var(--radius-xl, 14px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+            text-decoration: none;
+            cursor: default;
+        }
+
+        body.dark .header-icon {
+            background: #0d9488 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.45) !important;
+        }
+
+        body.dark .stat-pill {
+            background: rgba(45, 212, 191, 0.15);
+            color: #2dd4bf;
+        }
+
+        body.dark .filter-toggle-btn.open {
+            background: rgba(45, 212, 191, 0.18);
+            color: #2dd4bf;
+            border-color: #2dd4bf;
+        }
+
+        body.dark .filter-card:hover {
+            border-color: #2dd4bf;
+        }
+
+        body.dark .btn-small:hover {
+            color: #2dd4bf;
+            border-color: #2dd4bf;
+        }
+
+        body.dark .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f8fafc;
+            border: 1px solid var(--border);
+        }
+
+        body.dark .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        body.dark .icon-action-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f8fafc;
+            border: 1px solid var(--border);
+        }
+
+        body.dark .icon-action-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #2dd4bf;
+        }
+
+        body.dark .drawer-section-title {
+            color: #cbd5e1;
+        }
+
+        body.dark .anonym-chip.chip-ignored {
+            background: rgba(148, 163, 184, 0.12);
+            color: #94a3b8;
+            border-color: #475569;
+        }
+
+        body.dark .anonym-chip.chip-ignored:hover {
+            background: rgba(45, 212, 191, 0.2);
+            color: #2dd4bf;
+            border-color: #2dd4bf;
+        }
+
+        body.dark #resetIgnoredBtn {
+            background: rgba(255, 255, 255, 0.06);
+            color: #cbd5e1 !important;
+            border-color: var(--border);
+        }
+
+        body.dark #resetIgnoredBtn:hover {
+            color: #f8fafc !important;
+            border-color: #94a3b8;
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-alpha {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        body.dark .badge-alpha {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        /* BANNER PRIVACY */
+        .privacy-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.6rem;
+            background: rgba(13, 148, 136, 0.08);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        body.dark .privacy-banner {
+            background: rgba(45, 212, 191, 0.08);
+            color: #2dd4bf;
+        }
+
+        .privacy-banner i,
+        .privacy-banner svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* RETRACTABLE ACCORDION: POURQUOI ANONYMISER ? */
+        .why-anonymize-accordion {
+            margin: 0 1.6rem;
+            margin-top: 0.75rem;
+            border-radius: var(--radius-lg, 12px);
+            background: var(--bg-card, #ffffff);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.04));
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        body.dark .why-anonymize-accordion {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .why-anonymize-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1.1rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            color: var(--text-main);
+            text-align: left;
+            transition: background 0.2s ease;
+        }
+
+        .why-anonymize-trigger:hover {
+            background: rgba(13, 148, 136, 0.05);
+        }
+
+        body.dark .why-anonymize-trigger:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .why-anonymize-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .why-anonymize-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-main);
+        }
+
+        .why-anonymize-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(13, 148, 136, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(13, 148, 136, 0.25);
+        }
+
+        body.dark .why-anonymize-badge {
+            background: rgba(45, 212, 191, 0.15);
+            color: #2dd4bf;
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+
+        .why-anonymize-chevron {
+            color: var(--text-muted);
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .why-anonymize-trigger[aria-expanded="true"] .why-anonymize-chevron {
+            transform: rotate(180deg);
+        }
+
+        .why-anonymize-content {
+            border-top: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            background: rgba(248, 250, 252, 0.5);
+            animation: fadeInWhy 0.2s ease;
+        }
+
+        body.dark .why-anonymize-content {
+            background: rgba(15, 23, 42, 0.4);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        @keyframes fadeInWhy {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .why-anonymize-body {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 860px) {
+            .why-anonymize-body {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .why-anonymize-accordion {
+                margin: 0.5rem 1rem 0;
+            }
+        }
+
+        .why-card {
+            background: rgba(254, 243, 199, 0.35);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-md, 8px);
+            padding: 0.9rem 1rem;
+            font-size: 0.83rem;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        body.dark .why-card {
+            background: rgba(120, 53, 15, 0.15);
+            border-color: rgba(245, 158, 11, 0.25);
+            color: #fde68a;
+        }
+
+        .why-card p {
+            margin: 0.4rem 0 0 0;
+            color: var(--text-secondary);
+        }
+
+        body.dark .why-card p {
+            color: #cbd5e1;
+        }
+
+        .why-card-title, .rules-card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-main);
+        }
+
+        body.dark .why-card-title {
+            color: #fef08a;
+        }
+
+        .rules-card {
+            background: var(--glass-bg, rgba(255, 255, 255, 0.6));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md, 8px);
+            padding: 0.9rem 1rem;
+        }
+
+        body.dark .rules-card {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .rules-list {
+            list-style: none;
+            padding: 0;
+            margin: 0.6rem 0 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .rules-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: var(--text-secondary);
+        }
+
+        body.dark .rules-list li {
+            color: #cbd5e1;
+        }
+
+        .rules-list strong {
+            color: var(--text-main);
+        }
+
+        body.dark .rules-list strong {
+            color: #f1f5f9;
+        }
+
+        .rule-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.72rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 1.25rem 1.6rem;
+            gap: 1.25rem;
+        }
+
+        /* TOOLBAR MODES & FILTER TOGGLE */
+        .top-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .modes-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 4px;
+            border-radius: var(--radius-lg, 12px);
+            border: 1px solid var(--border);
+        }
+
+        body.dark .modes-group {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .mode-btn {
+            padding: 8px 14px;
+            border-radius: var(--radius-md, 8px);
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+        }
+
+        .filter-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: var(--radius-lg, 12px);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-toggle-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-toggle-btn.open {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .filter-badge-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: var(--radius-pill);
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        /* FILTERS & ROSTER DRAWER */
+        .drawer-panel {
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl, 14px);
+            padding: 1.25rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            animation: fadeInCascade 0.3s ease;
+        }
+
+        body.dark .drawer-panel {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .drawer-section-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .filter-card {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 8px 12px;
+            border-radius: var(--radius-lg, 10px);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .filter-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .filter-card input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .filter-card-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .roster-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .roster-box textarea {
+            width: 100%;
+            height: 70px;
+            padding: 10px 14px;
+            border-radius: var(--radius-lg, 10px);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .roster-box textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .roster-box textarea.dragover {
+            border-color: var(--primary);
+            background: rgba(13, 148, 136, 0.08);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* WORKSPACE DUAL PANELS */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            flex: 1;
+            min-height: 480px;
+        }
+
+        @media (max-width: 860px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl, 14px);
+            overflow: hidden;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .editor-header {
+            padding: 0.75rem 1.2rem;
+            background: rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        body.dark .editor-header {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .editor-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .editor-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-small {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: var(--radius-md, 8px);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-small:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-small.btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-small.btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .editor-body {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 360px;
+        }
+
+        .text-input-area {
+            flex: 1;
+            width: 100%;
+            padding: 1.2rem;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .text-input-area::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .output-view-area {
+            flex: 1;
+            width: 100%;
+            padding: 1.2rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .output-placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            opacity: 0.8;
+            user-select: none;
+        }
+
+        .editor-footer {
+            padding: 0.5rem 1.2rem;
+            background: rgba(0, 0, 0, 0.02);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        body.dark .editor-footer {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* ANONYM CHIPS IN OUTPUT */
+        .anonym-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            margin: 0 2px;
+            border-radius: var(--radius-sm, 6px);
+            background: var(--chip-bg);
+            color: var(--chip-color);
+            border: 1px solid var(--chip-border);
+            font-weight: 700;
+            font-size: 0.85em;
+            line-height: 1.2;
+            vertical-align: baseline;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .anonym-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            filter: brightness(1.08);
+        }
+
+        .anonym-chip .chip-dismiss-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            font-size: 11px;
+            line-height: 1;
+            opacity: 0.65;
+            margin-left: 2px;
+            transition: all 0.15s ease;
+        }
+
+        .anonym-chip:hover .chip-dismiss-icon {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark .anonym-chip:hover .chip-dismiss-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .anonym-chip.chip-ignored {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--text-muted);
+            border: 1px dashed var(--border);
+            text-decoration: line-through;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        .anonym-chip.chip-ignored:hover {
+            opacity: 1;
+            text-decoration: none;
+            background: rgba(13, 148, 136, 0.15);
+            color: var(--primary);
+            border-color: var(--primary);
+            border-style: solid;
+        }
+
+        .anonym-chip.chip-student,
+        .anonym-chip.chip-name {
+            background: rgba(14, 165, 233, 0.15);
+            color: #0284c7;
+            border-color: rgba(14, 165, 233, 0.35);
+        }
+
+        body.dark .anonym-chip.chip-student,
+        body.dark .anonym-chip.chip-name {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .anonym-chip.chip-person {
+            background: rgba(99, 102, 241, 0.15);
+            color: #4f46e5;
+            border-color: rgba(99, 102, 241, 0.35);
+        }
+
+        body.dark .anonym-chip.chip-person {
+            background: rgba(129, 140, 248, 0.2);
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.4);
+        }
+
+        .anonym-chip.chip-email {
+            background: rgba(168, 85, 247, 0.15);
+            color: #9333ea;
+            border-color: rgba(168, 85, 247, 0.35);
+        }
+
+        body.dark .anonym-chip.chip-email {
+            background: rgba(192, 132, 252, 0.2);
+            color: #c084fc;
+            border-color: rgba(192, 132, 252, 0.4);
+        }
+
+        .anonym-chip.chip-phone {
+            background: rgba(234, 88, 12, 0.15);
+            color: #ea580c;
+            border-color: rgba(234, 88, 12, 0.35);
+        }
+
+        body.dark .anonym-chip.chip-phone {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+            border-color: rgba(251, 146, 60, 0.4);
+        }
+
+        .anonym-chip.chip-avs {
+            background: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        body.dark .anonym-chip.chip-avs {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.4);
+        }
+
+        .anonym-chip.chip-caviardage {
+            background: #000000;
+            color: #000000;
+            user-select: none;
+            border-color: #000000;
+            letter-spacing: 0.1em;
+        }
+
+        body.dark .anonym-chip.chip-caviardage {
+            background: #020617;
+            color: #020617;
+            border-color: #334155;
+        }
+
+        /* STATS PILLS */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: var(--radius-pill);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        /* PROJECTION MODE (TBI) */
+        body.projection .app-shell {
+            max-width: 100%;
+            border-radius: 0;
+            border: none;
+            min-height: 100vh;
+        }
+
+        body.projection .workspace-grid {
+            min-height: 65vh;
+        }
+
+        body.projection .text-input-area,
+        body.projection .output-view-area {
+            font-size: 1.15rem;
+        }
+
+        /* TOAST CONTAINER */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            padding: 10px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 0.88rem;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInToast 0.25s ease;
+        }
+
+        @keyframes fadeInToast {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+    <div class="app-shell" id="main-content">
+        <!-- HEADER -->
+        <header>
+            <div class="header-title-wrapper">
+                <a href="../../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
+                    aria-label="Retour à l'espace enseignant·e·s">
+                    <i data-fa="arrow-left" style="width:16px;height:16px;"></i>
+                </a>
+                <div class="header-icon" title="Protection des données scolaires">
+                    <i data-fa="user-shield" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                    <h1>
+                        Anonymiseur
+                        <span class="badge-alpha">Alpha</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="header-right-group">
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="sampleBtn" title="Charger un texte d'exemple pour tester">
+                        <i data-fa="sparkles" style="width:15px;height:15px;"></i>
+                        <span>Exemple</span>
+                    </button>
+                    <button class="btn btn-secondary" id="clearAllBtn" title="Effacer les textes">
+                        <i data-fa="trash" style="width:15px;height:15px;"></i>
+                        <span>Effacer</span>
+                    </button>
+                </div>
+                <div class="header-divider"></div>
+                <div class="action-buttons no-print">
+                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème"
+                        title="Changer de thème">
+                        <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
+                        <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/Plein écran"
+                        aria-label="Mode TNI/Plein écran">
+                        <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+                        <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
+                    </button>
+                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application"
+                        title="Réinitialiser l'application">
+                        <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- PRIVACY ASSURANCE -->
+        <div class="privacy-banner">
+            <i data-fa="circle-check"></i>
+            <span>100% Local &amp; Confidentiel : le traitement s'exécute exclusivement dans votre navigateur. Aucune donnée ne transite par un serveur.</span>
+        </div>
+
+        <!-- ACCORDION: POURQUOI ANONYMISER ? -->
+        <div class="why-anonymize-accordion" id="whyAnonymizeAccordion">
+            <button type="button" class="why-anonymize-trigger" id="whyAnonymizeTrigger" aria-expanded="false" aria-controls="whyAnonymizeContent">
+                <div class="why-anonymize-header-left">
+                    <i data-fa="circle-question" style="width:16px;height:16px;color:var(--primary);"></i>
+                    <span class="why-anonymize-title">Pourquoi anonymiser ?</span>
+                    <span class="why-anonymize-badge">3 règles d'or pour l'IA</span>
+                </div>
+                <i data-fa="chevron-down" class="why-anonymize-chevron" id="whyAnonymizeChevron" style="width:14px;height:14px;"></i>
+            </button>
+            <div class="why-anonymize-content" id="whyAnonymizeContent" hidden>
+                <div class="why-anonymize-body">
+                    <div class="why-card">
+                        <div class="why-card-title">
+                            <i data-fa="triangle-exclamation" style="color:#f59e0b;width:15px;height:15px;"></i>
+                            <span>Pourquoi c'est crucial</span>
+                        </div>
+                        <p>Les plateformes d'IA publiques (ChatGPT, Claude, Gemini, etc.) peuvent <strong>réutiliser les prompts pour l'entraînement</strong> de leurs modèles ou faire l'objet de <strong>fuites de données</strong>. Les informations scolaires et personnelles ne doivent jamais y transiter en clair.</p>
+                    </div>
+                    <div class="rules-card">
+                        <div class="rules-card-title">
+                            <i data-fa="shield-halved" style="color:var(--primary);width:15px;height:15px;"></i>
+                            <span>Les 3 règles d'or de l'enseignant pour l'IA</span>
+                        </div>
+                        <ul class="rules-list">
+                            <li>
+                                <span class="rule-num">1</span>
+                                <div>
+                                    <strong>Jamais de données identifiantes :</strong>
+                                    <span> aucun nom, prénom, date de naissance, adresse ou numéro officiel (AVS).</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="rule-num">2</span>
+                                <div>
+                                    <strong>Principe de minimisation :</strong>
+                                    <span> ne partager que le strict nécessaire au traitement pédagogique (faits pertinents, sans détails personnels superflus).</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="rule-num">3</span>
+                                <div>
+                                    <strong>Vérification humaine :</strong>
+                                    <span> toujours relire le texte avant envoi et contrôler les réponses générées par l'IA avec esprit critique.</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN -->
+        <main>
+            <!-- TOP CONTROLS: MODES & FILTER TOGGLE -->
+            <div class="top-toolbar">
+                <div class="modes-group" role="group" aria-label="Mode de remplacement">
+                    <button class="mode-btn active" data-mode="labels" title="Remplace par [Prénom 1], [Nom 1], [Email]...">
+                        <i data-fa="pen-to-square" style="width:14px;height:14px;"></i>
+                        <span>Étiquettes</span>
+                    </button>
+                    <button class="mode-btn" data-mode="pseudo" title="Remplace par des pseudonymes réalistes cohérents pour une IA">
+                        <i data-fa="user" style="width:14px;height:14px;"></i>
+                        <span>Pseudonymes</span>
+                    </button>
+                    <button class="mode-btn" data-mode="redact" title="Remplace par un caviardage noir textuel">
+                        <i data-fa="square" style="width:14px;height:14px;"></i>
+                        <span>Caviardage</span>
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="filter-toggle-btn" id="toggleDrawerBtn" title="Afficher ou masquer les filtres et la liste d'élèves">
+                        <i data-fa="sliders" style="width:15px;height:15px;"></i>
+                        <span>Filtres &amp; Liste de classe</span>
+                        <span class="filter-badge-count" id="activeFiltersBadge">8</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- DRAWER: FILTERS & CLASS ROSTER -->
+            <div class="drawer-panel" id="drawerPanel" style="display: none;">
+                <!-- SECTION 1: ROSTER -->
+                <div class="roster-box">
+                    <div class="drawer-section-title">
+                        <span><i data-fa="children" style="width:14px;height:14px;margin-right:6px;"></i>Liste des élèves de votre classe (Recommandé)</span>
+                        <span style="font-size:0.75rem; text-transform:none; font-weight:normal;">Séparés par virgules ou retours à la ligne</span>
+                    </div>
+                    <textarea id="rosterInput" placeholder="Ex: Lucas Dupont, Emma, Noah, Mia, Thomas, Sophie Martin, Léa..."></textarea>
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; color:var(--text-muted); flex-wrap:wrap; gap:8px;">
+                        <span>Ces noms seront systématiquement anonymisés en [Élève 1, 2...].</span>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <input type="file" id="rosterFileInput" accept=".csv,.txt,.tsv,.xls,.xlsx" style="display:none;">
+                            <button class="btn-small" id="importRosterBtn" title="Importer une liste d'élèves (fichier ENT XLS, XLSX, CSV ou texte)">
+                                <i data-fa="arrow-up-from-square" style="width:12px;height:12px;"></i> Importer (XLS/CSV)
+                            </button>
+                            <button class="btn-small" id="saveRosterBtn" title="Mémoriser cette liste pour cette session">
+                                <i data-fa="check" style="width:12px;height:12px;"></i> Mémoriser
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: CHECKBOXES -->
+                <div>
+                    <div class="drawer-section-title">
+                        <span><i data-fa="sliders" style="width:14px;height:14px;margin-right:6px;"></i>Données à anonymiser automatiquement</span>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-small" id="checkAllFiltersBtn">Tout cocher</button>
+                            <button class="btn-small" id="uncheckAllFiltersBtn">Tout décocher</button>
+                        </div>
+                    </div>
+                    <div class="filters-grid" id="filtersGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKSPACE DUAL PANELS -->
+            <div class="workspace-grid">
+                <!-- PANEL GAUCHE : ENTRÉE -->
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <i data-fa="pen" style="width:14px;height:14px;color:var(--primary);"></i>
+                            Texte original
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-small" id="pasteBtn" title="Coller depuis le presse-papiers">
+                                <i data-fa="clipboard" style="width:13px;height:13px;"></i>
+                                Coller
+                            </button>
+                            <button class="btn-small" id="clearInputBtn" title="Vider le texte">
+                                <i data-fa="trash" style="width:13px;height:13px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="editor-body">
+                        <textarea class="text-input-area" id="inputText"
+                            placeholder="Collez ou saisissez ici le texte contenant des données d'élèves (évaluations, observations, correspondances)..."
+                            spellcheck="false"></textarea>
+                    </div>
+
+                    <div class="editor-footer">
+                        <span id="inputCharCount">0 caractère · 0 mot</span>
+                        <span style="font-size: 0.75rem;">Traitement local en direct</span>
+                    </div>
+                </div>
+
+                <!-- PANEL DROIT : SORTIE -->
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <div class="editor-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;">
+                                <i data-fa="shield-check" style="width:16px;height:16px;color:var(--primary);"></i>
+                                Résultat anonymisé
+                            </span>
+                            <button class="btn-small" id="resetIgnoredBtn" style="display:none;padding:2px 8px;font-size:0.75rem;color:var(--text-muted);font-weight:600;" title="Rétablir toutes les détections ignorées">
+                                <i data-fa="rotate-left" style="width:11px;height:11px;"></i>
+                                <span id="resetIgnoredLabel">0 exclusion</span>
+                            </button>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="btn-small btn-primary" id="copyBtn" title="Copier le texte anonymisé (Ctrl+Shift+C)">
+                                <i data-fa="clipboard" style="width:13px;height:13px;"></i>
+                                <span id="copyBtnLabel">Copier</span>
+                            </button>
+                            <button class="btn-small" id="copyAiBtn" title="Copier avec consigne pédagogique prête pour l'IA (Ctrl+Shift+I)">
+                                <i data-fa="sparkles" style="width:13px;height:13px;color:#f59e0b;"></i>
+                                <span id="copyAiBtnLabel">Copier pour IA</span>
+                            </button>
+                            <button class="btn-small" id="downloadBtn" title="Télécharger en fichier texte (.txt)">
+                                <i data-fa="arrow-down-to-square" style="width:13px;height:13px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="editor-body">
+                        <div class="output-view-area" id="outputArea">
+                            <span class="output-placeholder">Le texte anonymisé apparaîtra ici en temps réel...</span>
+                        </div>
+                    </div>
+
+                    <div class="editor-footer">
+                        <div class="stats-bar" id="statsBar">
+                            <span>0 donnée masquée</span>
+                        </div>
+                        <span id="outputCharCount">0 caractère</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- FOOTER PLAT -->
+    <footer class="no-print">
+        <p>
+            Webapp conçue par Vivian de l'<strong><a href="https://ednum.ch" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a></strong> avec <i data-fa="heart"
+                style="width:14px;height:14px;"></i> et quelques neurones artificiels
+        </p>
+    </footer>
+
+    <!-- THEME MANAGER SCRIPT -->
+    <script src="../../../assets/js/theme.js"></script>
+
+    <!-- ANONYMISER ENGINE & APP SCRIPT -->
+    <script>
+        (function () {
+            'use strict';
+
+            // ============================================================
+            // 1. MOTIFS DE DÉTECTION & PATTERNS SUISSES / FRANCOPHONES
+            // ============================================================
+            const PATTERNS_CONFIG = [
+                {
+                    id: 'roster',
+                    name: 'Élèves de ma classe',
+                    icon: 'children',
+                    enabled: true,
+                    description: 'Noms des élèves de la classe ([Élève 1, 2...])'
+                },
+                {
+                    id: 'common_names',
+                    name: 'Prénoms fréquents & Civilités',
+                    icon: 'user',
+                    enabled: true,
+                    description: 'Prénoms fréquents et civilités ([Personne 1, 2...])'
+                },
+                {
+                    id: 'emails',
+                    name: 'Adresses email',
+                    icon: 'message',
+                    enabled: true,
+                    description: 'Emails tous domaines, y compris edu.vs.ch'
+                },
+                {
+                    id: 'phones',
+                    name: 'Numéros de téléphone',
+                    icon: 'radio',
+                    enabled: true,
+                    description: 'Formats suisses (07x, 02x, +41) et français'
+                },
+                {
+                    id: 'dates_birth',
+                    name: 'Dates de naissance & Âges',
+                    icon: 'calendar-check',
+                    enabled: true,
+                    description: 'Dates de naissance complètes et mentions d\'âge'
+                },
+                {
+                    id: 'avs',
+                    name: 'Numéros AVS suisses',
+                    icon: 'id-card',
+                    enabled: true,
+                    description: 'Format suisse 756.xxxx.xxxx.xx'
+                },
+                {
+                    id: 'addresses',
+                    name: 'Adresses & NPA suisses',
+                    icon: 'sign-post',
+                    enabled: true,
+                    description: 'Rues, numéros, codes postaux à 4 chiffres et villes'
+                },
+                {
+                    id: 'school_class',
+                    name: 'Classes & Établissements',
+                    icon: 'chalkboard-user',
+                    enabled: true,
+                    description: 'Degrés HarmoS (1H-11CO), Cycles et Centres scolaires'
+                },
+                {
+                    id: 'iban',
+                    name: 'IBAN & Comptes',
+                    icon: 'coins',
+                    enabled: true,
+                    description: 'Coordonnées bancaires suisses et internationales'
+                }
+            ];
+
+            // Liste de prénoms suisses / romands les plus répandus
+            const COMMON_SWISS_NAMES = [
+                // Garçons
+                'Lucas', 'Noah', 'Liam', 'Gabriel', 'Louis', 'Arthur', 'Jules', 'Léo', 'Leo', 'Adam',
+                'Maël', 'Mael', 'Hugo', 'Raphaël', 'Raphael', 'Paul', 'Nathan', 'Sacha', 'Samuel', 'Thomas',
+                'Maxime', 'Antoine', 'Alexandre', 'Julien', 'Simon', 'Théo', 'Theo', 'Ethan', 'Nolan', 'Victor',
+                'Robin', 'Clément', 'Clement', 'Baptiste', 'Valentin', 'Yanis', 'Enzo', 'Mathys', 'Alexis', 'Axel',
+                'Romain', 'Florian', 'Quentin', 'Benjamin', 'Damien', 'David', 'Adrien', 'Nicolas', 'Kevin', 'Sébastien',
+                'Sebastien', 'Cédric', 'Cedric', 'Loïc', 'Loic', 'Noé', 'Noe', 'Eliott', 'Timéo', 'Timeo', 'Matteo',
+                'Mathieu', 'Guillaume', 'Bastien', 'Loris', 'Evan', 'Arnaud', 'Maxence', 'Thibault',
+                // Filles
+                'Emma', 'Mia', 'Sofia', 'Sophia', 'Olivia', 'Alice', 'Chloé', 'Chloe', 'Léa', 'Lea',
+                'Jade', 'Louise', 'Lina', 'Mila', 'Ambre', 'Rose', 'Anna', 'Elena', 'Camille', 'Julia',
+                'Léna', 'Lena', 'Manon', 'Sarah', 'Zoé', 'Zoe', 'Charlotte', 'Inès', 'Ines', 'Lucie',
+                'Victoria', 'Juliette', 'Eva', 'Mathilde', 'Clara', 'Laura', 'Pauline', 'Noémie', 'Noemie',
+                'Romane', 'Agathe', 'Jeanne', 'Lisa', 'Alix', 'Margot', 'Apolline', 'Alicia', 'Maya', 'Capucine',
+                'Éléonore', 'Eleonore', 'Roxane', 'Héloïse', 'Heloise', 'Justine', 'Océane', 'Oceane', 'Emilie',
+                'Émilie', 'Aurélie', 'Aurelie', 'Céline', 'Celine', 'Marion', 'Elise', 'Élise', 'Audrey', 'Morgane', 'Marie', 'Sophie'
+            ];
+
+            // Pseudonymes de remplacement réalistes
+            const PSEUDO_FIRST_NAMES = [
+                'Alexandre', 'Camille', 'Gabriel', 'Éléonore', 'Julien', 'Clara', 'Maxime', 'Sophie',
+                'Valentin', 'Inès', 'Nicolas', 'Juliette', 'Antoine', 'Charlotte', 'Robin', 'Alice',
+                'Arthur', 'Mathilde', 'Bastien', 'Noémie', 'Clément', 'Romane', 'Adrien', 'Justine'
+            ];
+            const PSEUDO_LAST_NAMES = [
+                'Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand',
+                'Leroy', 'Moreau', 'Simon', 'Laurent', 'Lefebvre', 'Michel', 'Garcia', 'David'
+            ];
+
+            // ============================================================
+            // 2. ÉTAT DE L'APPLICATION
+            // ============================================================
+            let state = {
+                mode: 'labels', // 'labels' | 'pseudo' | 'redact'
+                patterns: JSON.parse(JSON.stringify(PATTERNS_CONFIG)),
+                roster: [],
+                ignoredTerms: new Set(),
+                pseudoMap: new Map(),
+                studentMap: new Map(),
+                personMap: new Map(),
+                emailMap: new Map(),
+                phoneMap: new Map(),
+                tagCounter: new Map()
+            };
+
+            // Restore preferences from localStorage
+            try {
+                const savedMode = localStorage.getItem('anonymiser_mode');
+                if (savedMode && ['labels', 'pseudo', 'redact'].includes(savedMode)) {
+                    state.mode = savedMode;
+                }
+            } catch (e) { }
+
+            try {
+                const savedDisabled = localStorage.getItem('anonymiser_disabled_patterns');
+                if (savedDisabled) {
+                    const disabledIds = JSON.parse(savedDisabled);
+                    if (Array.isArray(disabledIds)) {
+                        state.patterns.forEach(p => {
+                            if (disabledIds.includes(p.id)) p.enabled = false;
+                        });
+                    }
+                }
+            } catch (e) { }
+
+            // Restore roster from session / local storage
+            try {
+                const savedRoster = localStorage.getItem('anonymiser_roster');
+                if (savedRoster) {
+                    state.roster = savedRoster.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+                }
+            } catch (e) { }
+
+            // ============================================================
+            // 3. MOTEUR D'ANONYMISATION
+            // ============================================================
+
+            function getPatternEnabled(id) {
+                const p = state.patterns.find(item => item.id === id);
+                return p ? p.enabled : true;
+            }
+
+            const ROSTER_PARTICLES = new Set(['de', 'du', 'des', "d'", 'le', 'la', 'les', 'van', 'von', 'der', 'den', 'di', 'da', 'do', 'dos', 'das', 'et']);
+
+            function buildRosterEntries(rosterList) {
+                const entries = [];
+
+                const studentParsed = (rosterList || []).map((raw, idx) => {
+                    const trimmed = (raw || '').trim();
+                    if (!trimmed || trimmed.length < 2) return null;
+                    const parts = trimmed.split(/\s+/).filter(p => p.length >= 2);
+                    return { raw: trimmed, idx, parts, key: 'student_' + idx };
+                }).filter(Boolean);
+
+                // Map each individual word part to the set of student keys that contain it
+                const partStudentMap = new Map();
+                for (const st of studentParsed) {
+                    for (const p of st.parts) {
+                        const pLower = p.toLowerCase();
+                        if (ROSTER_PARTICLES.has(pLower) || p.length < 2) continue;
+                        if (!partStudentMap.has(pLower)) partStudentMap.set(pLower, new Set());
+                        partStudentMap.get(pLower).add(st.key);
+                    }
+                }
+
+                for (const st of studentParsed) {
+                    // 1. Full name as written
+                    entries.push({ pattern: st.raw, key: st.key });
+
+                    // 2. Combinations & inversions for multi-part names
+                    if (st.parts.length === 2) {
+                        // Inverted: e.g. "Dupont Lucas" <-> "Lucas Dupont"
+                        entries.push({ pattern: st.parts[1] + ' ' + st.parts[0], key: st.key });
+                    } else if (st.parts.length > 2) {
+                        // Sub-combinations with first/last names (typical Swiss ENT format NOM Prénom1 Prénom2)
+                        const lastName = st.parts[0];
+                        for (let i = 1; i < st.parts.length; i++) {
+                            const fn = st.parts[i];
+                            if (!ROSTER_PARTICLES.has(fn.toLowerCase())) {
+                                entries.push({ pattern: fn + ' ' + lastName, key: st.key });
+                                entries.push({ pattern: lastName + ' ' + fn, key: st.key });
+                            }
+                        }
+                        // All given names together: e.g. "Sophie Leny"
+                        const firstNamesOnly = st.parts.slice(1).filter(p => !ROSTER_PARTICLES.has(p.toLowerCase())).join(' ');
+                        if (firstNamesOnly.length >= 2) {
+                            entries.push({ pattern: firstNamesOnly, key: st.key });
+                            entries.push({ pattern: firstNamesOnly + ' ' + lastName, key: st.key });
+                            entries.push({ pattern: lastName + ' ' + firstNamesOnly, key: st.key });
+                        }
+                    }
+
+                    // 3. Standalone individual word parts (first name, middle names, last name)
+                    for (const p of st.parts) {
+                        const pLower = p.toLowerCase();
+                        if (ROSTER_PARTICLES.has(pLower) || p.length < 2) continue;
+                        const owners = partStudentMap.get(pLower);
+                        if (owners && owners.size === 1) {
+                            // Uniquely identifies this student in this class
+                            entries.push({ pattern: p, key: st.key });
+                        } else {
+                            // Shared between multiple students in class (e.g. siblings or shared first name)
+                            entries.push({ pattern: p, key: 'student_ambiguous_' + pLower });
+                        }
+                    }
+                }
+
+                // Deduplicate entries by pattern + key
+                const uniqueEntries = [];
+                const seen = new Set();
+                for (const e of entries) {
+                    const k = e.pattern.toLowerCase() + '::' + e.key;
+                    if (!seen.has(k)) {
+                        seen.add(k);
+                        uniqueEntries.push(e);
+                    }
+                }
+
+                // Sort descending by pattern length so longer matches take precedence
+                uniqueEntries.sort((a, b) => b.pattern.length - a.pattern.length);
+                return uniqueEntries;
+            }
+
+            function getOrAssignPseudo(originalText, type, canonicalKey) {
+                const key = canonicalKey || (type + ':' + (originalText || '').toLowerCase().trim());
+                if (state.pseudoMap.has(key)) {
+                    return state.pseudoMap.get(key);
+                }
+                if (type === 'name' || type === 'roster') {
+                    const idx = state.pseudoMap.size % PSEUDO_FIRST_NAMES.length;
+                    const pseudo = PSEUDO_FIRST_NAMES[idx];
+                    state.pseudoMap.set(key, pseudo);
+                    return pseudo;
+                }
+                if (type === 'email') {
+                    const pseudo = 'contact' + (state.pseudoMap.size + 1) + '@exemple.ch';
+                    state.pseudoMap.set(key, pseudo);
+                    return pseudo;
+                }
+                if (type === 'phone') {
+                    const pseudo = '079 000 00 0' + (state.pseudoMap.size % 10);
+                    state.pseudoMap.set(key, pseudo);
+                    return pseudo;
+                }
+                return '[Anonyme]';
+            }
+
+            function getTagReplacement(type, original, canonicalKey) {
+                if (type === 'roster') {
+                    const key = canonicalKey || ('roster:' + (original || '').toLowerCase().trim());
+                    if (!state.studentMap.has(key)) {
+                        state.studentMap.set(key, state.studentMap.size + 1);
+                    }
+                    return '[Élève ' + state.studentMap.get(key) + ']';
+                }
+                if (type === 'name') {
+                    const key = canonicalKey || ('name:' + (original || '').toLowerCase().trim());
+                    if (!state.personMap.has(key)) {
+                        state.personMap.set(key, state.personMap.size + 1);
+                    }
+                    return '[Personne ' + state.personMap.get(key) + ']';
+                }
+                if (type === 'email') {
+                    const key = canonicalKey || ('email:' + (original || '').toLowerCase().trim());
+                    if (!state.emailMap.has(key)) {
+                        state.emailMap.set(key, state.emailMap.size + 1);
+                    }
+                    return '[Email ' + state.emailMap.get(key) + ']';
+                }
+                if (type === 'phone') {
+                    const key = canonicalKey || ('phone:' + (original || '').replace(/\D/g, ''));
+                    if (!state.phoneMap.has(key)) {
+                        state.phoneMap.set(key, state.phoneMap.size + 1);
+                    }
+                    return '[Téléphone ' + state.phoneMap.get(key) + ']';
+                }
+                switch (type) {
+                    case 'avs': return '[Numéro AVS]';
+                    case 'dob': return '[Date de naissance]';
+                    case 'age': return '[Âge]';
+                    case 'address': return '[Adresse]';
+                    case 'city': return '[Localité]';
+                    case 'school_class': return '[Classe]';
+                    case 'iban': return '[IBAN]';
+                    default:
+                        const count = (state.tagCounter.get(type) || 0) + 1;
+                        state.tagCounter.set(type, count);
+                        return '[Anonymisé ' + count + ']';
+                }
+            }
+
+            function formatReplacement(original, type, canonicalKey) {
+                if (state.mode === 'redact') {
+                    return '████████';
+                }
+                if (state.mode === 'pseudo') {
+                    return getOrAssignPseudo(original, type, canonicalKey);
+                }
+                // Mode 'labels'
+                return getTagReplacement(type, original, canonicalKey);
+            }
+
+            function runAnonymization(rawText) {
+                if (!rawText) return { cleanText: '', htmlOutput: '', stats: {}, totalCount: 0 };
+
+                // Reset per-run counters & mappings
+                state.tagCounter.clear();
+                state.studentMap.clear();
+                state.personMap.clear();
+                state.emailMap.clear();
+                state.phoneMap.clear();
+                const stats = {};
+                function addStat(type) {
+                    stats[type] = (stats[type] || 0) + 1;
+                }
+
+                // We'll collect all replacements as interval ranges: [start, end, original, type, canonicalKey]
+                let replacements = [];
+
+                // Helper to add interval if not overlapping with existing ones
+                function addInterval(start, end, original, type, canonicalKey) {
+                    if (start >= end) return;
+                    for (let i = 0; i < replacements.length; i++) {
+                        const r = replacements[i];
+                        if (start < r.end && end > r.start) {
+                            return; // overlapping, ignore
+                        }
+                    }
+                    replacements.push({ start, end, original, type, canonicalKey });
+                }
+
+                // 1. Emails
+                if (getPatternEnabled('emails')) {
+                    const emailRe = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
+                    let m;
+                    while ((m = emailRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'email', 'email:' + m[0].toLowerCase());
+                    }
+                }
+
+                // 2. Numéro AVS suisse
+                if (getPatternEnabled('avs')) {
+                    const avsRe = /\b756[.\s]?\d{4}[.\s]?\d{4}[.\s]?\d{2}\b/g;
+                    let m;
+                    while ((m = avsRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'avs', 'avs');
+                    }
+                }
+
+                // 3. IBAN
+                if (getPatternEnabled('iban')) {
+                    const ibanRe = /\b[A-Z]{2}\d{2}(?:[\s-]?[A-Z0-9]{4}){3,6}(?:[\s-]?[A-Z0-9]{1,4})?\b/g;
+                    let m;
+                    while ((m = ibanRe.exec(rawText)) !== null) {
+                        if (m[0].replace(/[\s-]/g, '').length >= 15) {
+                            addInterval(m.index, m.index + m[0].length, m[0], 'iban', 'iban');
+                        }
+                    }
+                }
+
+                // 4. Téléphones (suisses et internationaux)
+                if (getPatternEnabled('phones')) {
+                    const phoneRe = /(?:(?:\+41|0041)\s*(?:\(0\)\s*)?[1-9]\d(?:\s*[\d.-]\s*|\s*){6,8}|0[1-9]\d(?:[\s.-]*\d{2,3}){3,4})\b/g;
+                    let m;
+                    while ((m = phoneRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'phone', 'phone:' + m[0].replace(/\D/g, ''));
+                    }
+                }
+
+                // 5. Dates de naissance & Âges
+                if (getPatternEnabled('dates_birth')) {
+                    // Dates numériques : 14.05.2013, 14/05/2013, 14-05-2013
+                    const dateRe = /\b(?:\d{1,2}[./-]\d{1,2}[./-](?:19|20)\d{2})\b/g;
+                    let m;
+                    while ((m = dateRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'dob');
+                    }
+                    // Dates textuelles avec mention né(e) le ou dates du mois
+                    const textualDateRe = /(?:né(?:e)?\s+le\s+)?\b\d{1,2}\s+(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s+(?:19|20)\d{2}\b/gi;
+                    while ((m = textualDateRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'dob');
+                    }
+                    // Âges : "âgé de 11 ans", "11 ans"
+                    const ageRe = /\b(?:âgé(?:e)?\s+de\s+)?\d{1,2}\s*ans\b/gi;
+                    while ((m = ageRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'age', 'age');
+                    }
+                }
+
+                // 6. Civilités (adultes, enseignants, parents, directeurs -> Personne X)
+                if (getPatternEnabled('common_names')) {
+                    const titleRe = /\b(?:M\.|Mme|Monsieur|Madame|Dr|Docteur|Professeur|Maître)\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+)?\b/g;
+                    let m;
+                    while ((m = titleRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'name', 'person:' + m[0].toLowerCase().trim());
+                    }
+                }
+
+                // 7. Roster Élèves de la classe (UNIQUEMENT les noms de la liste de classe)
+                if (getPatternEnabled('roster') && state.roster.length > 0) {
+                    const rosterEntries = buildRosterEntries(state.roster);
+                    for (const entry of rosterEntries) {
+                        if (!entry.pattern || entry.pattern.length < 2) continue;
+                        const escaped = entry.pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const re = new RegExp('\\b' + escaped + '\\b', 'gi');
+                        let m;
+                        while ((m = re.exec(rawText)) !== null) {
+                            addInterval(m.index, m.index + m[0].length, m[0], 'roster', entry.key);
+                        }
+                    }
+                }
+
+                // 8. Classes & Établissements
+                if (getPatternEnabled('school_class')) {
+                    const classRe = /\b(?:1[01]CO|[1-8]H(?:-[A-Z0-9]+)?|Cycle\s+[123]|CO\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+|Centre\s+scolaire\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+|École\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+)\b/g;
+                    let m;
+                    while ((m = classRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'school_class', 'school_class');
+                    }
+                }
+
+                // 9. Adresses & NPA suisses
+                if (getPatternEnabled('addresses')) {
+                    // NPA suisse + Ville : ex. "1950 Sion", "CH-1000 Lausanne"
+                    const npaRe = /\b(?:CH-)?(?:1[0-9]{3}|2[0-9]{3}|3[0-9]{3}|4[0-9]{3}|5[0-9]{3}|6[0-9]{3}|7[0-9]{3}|8[0-9]{3}|9[0-9]{3})\s+([A-ZÀ-Ÿ][a-zà-ÿ-]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+)*)\b/g;
+                    let m;
+                    while ((m = npaRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'city', 'city');
+                    }
+                    // Noms de rues + numéros
+                    const streetRe = /\b(?:Rue|Avenue|Av\.|Chemin|Ch\.|Route|Rte|Place|Boulevard|Bd|Impasse|Allée)\s+(?:de\s+la\s+|du\s+|des\s+|d')?[A-ZÀ-Ÿ][a-zà-ÿ-]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+)*(?:\s+\d+[a-zA-Z]?)?\b/gi;
+                    while ((m = streetRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'address', 'address');
+                    }
+                }
+
+                // 10. Autres prénoms & personnes (tous les autres noms deviennent Personne 1, Personne 2...)
+                if (getPatternEnabled('common_names')) {
+                    const eleveRe = /\b(?:l'élève|l'enfant|l'étudiant|l'étudiante|l'adolescent|l'adolescente)\s+([A-ZÀ-Ÿ][a-zà-ÿ-]+)\b/gi;
+                    let m;
+                    while ((m = eleveRe.exec(rawText)) !== null) {
+                        const nameStart = m.index + m[0].lastIndexOf(m[1]);
+                        addInterval(nameStart, nameStart + m[1].length, m[1], 'name', 'person:' + m[1].toLowerCase().trim());
+                    }
+                    for (const fn of COMMON_SWISS_NAMES) {
+                        const fnRe = new RegExp('\\b' + fn + '\\b', 'gi');
+                        while ((m = fnRe.exec(rawText)) !== null) {
+                            addInterval(m.index, m.index + m[0].length, m[0], 'name', 'person:' + m[0].toLowerCase().trim());
+                        }
+                    }
+                }
+
+                // Sort replacements by start index
+                replacements.sort((a, b) => a.start - b.start);
+
+                // Build plain output and HTML output
+                let cleanText = '';
+                let htmlOutput = '';
+                let lastIdx = 0;
+
+                for (const item of replacements) {
+                    const before = rawText.substring(lastIdx, item.start);
+                    cleanText += before;
+                    htmlOutput += escapeHtml(before);
+
+                    const termKey = (item.original || '').toLowerCase().trim();
+                    const isIgnored = state.ignoredTerms && state.ignoredTerms.has(termKey);
+                    item.isIgnored = isIgnored;
+
+                    if (isIgnored) {
+                        item.replacementText = item.original;
+                        cleanText += item.original;
+                        htmlOutput += '<mark class="anonym-chip chip-ignored" data-term="' + escapeHtml(termKey) + '" role="button" tabindex="0" title="Détection ignorée pour « ' + escapeHtml(item.original) + ' » (Cliquer pour ré-anonymiser)">' + escapeHtml(item.original) + ' <i data-fa="rotate-left" style="width:10px;height:10px;margin-left:3px;opacity:0.7;"></i></mark>';
+                    } else {
+                        const repText = formatReplacement(item.original, item.type, item.canonicalKey);
+                        item.replacementText = repText;
+                        cleanText += repText;
+
+                        addStat(item.type);
+
+                        // Styling class based on type
+                        let chipClass = 'anonym-chip';
+                        if (state.mode === 'redact') chipClass += ' chip-caviardage';
+                        else if (item.type === 'roster') chipClass += ' chip-student chip-name';
+                        else if (item.type === 'name') chipClass += ' chip-person chip-name';
+                        else if (item.type === 'email') chipClass += ' chip-email';
+                        else if (item.type === 'phone') chipClass += ' chip-phone';
+                        else if (item.type === 'avs') chipClass += ' chip-avs';
+
+                        htmlOutput += '<mark class="' + chipClass + '" data-term="' + escapeHtml(termKey) + '" role="button" tabindex="0" title="Original : ' + escapeHtml(item.original) + '&#10;💡 Cliquer pour ignorer cette détection">' + escapeHtml(repText) + '<span class="chip-dismiss-icon" title="Ignorer">×</span></mark>';
+                    }
+
+                    lastIdx = item.end;
+                }
+
+                const remainder = rawText.substring(lastIdx);
+                cleanText += remainder;
+                htmlOutput += escapeHtml(remainder);
+
+                return { cleanText, htmlOutput, stats, totalCount: replacements.length, replacements };
+            }
+
+            function escapeHtml(str) {
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            // --- PARSEUR INTELLIGENT DE LISTE D'ÉLÈVES & IMPORT ENT (XLSX, XLS, CSV, TXT) ---
+            function getXLSX() {
+                return (typeof XLSX !== 'undefined' ? XLSX : null) ||
+                    (typeof window !== 'undefined' && window.XLSX ? window.XLSX : null) ||
+                    (typeof globalThis !== 'undefined' && globalThis.XLSX ? globalThis.XLSX : null) ||
+                    (typeof require === 'function' ? (function () {
+                        try { return require('../../../assets/js/vendor/xlsx.full.min.js'); }
+                        catch (e) { try { return require('./assets/js/vendor/xlsx.full.min.js'); } catch (e2) { return null; } }
+                    })() : null);
+            }
+
+            function formatCapitalize(str) {
+                if (!str) return '';
+                const trimmed = str.trim();
+                if (trimmed.length > 2 && trimmed === trimmed.toUpperCase()) {
+                    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+                }
+                return trimmed;
+            }
+
+            function formatTitleCase(str) {
+                if (!str) return '';
+                return str.split(/\s+/).map(w => formatCapitalize(w)).join(' ');
+            }
+
+            function extractNamesFromTableRows(rows) {
+                if (!rows || !rows.length) return [];
+
+                const HEADER_NAME_FULL_REGEX = /^(?:nom\s*(?:et|\/|&)?\s*pr[eé]nom|pr[eé]nom\s*(?:et|\/|&)?\s*nom|nom\s+complet|identit[eé]|élève|eleve|student|pupil)$/i;
+                const HEADER_LAST_NAME_REGEX = /^(?:nom|nom\s+de\s+famille|last\s*name|surname)$/i;
+                const HEADER_FIRST_NAME_REGEX = /^(?:pr[eé]nom|first\s*name|given\s*name|call\s*name)$/i;
+                const HEADER_ID_REGEX = /^(?:identifiant\s+ism|identifiant|id|matricule)$/i;
+
+                let headerRowIdx = -1;
+                let colFullName = -1;
+                let colLastName = -1;
+                let colFirstName = -1;
+                let colId = -1;
+
+                // Scan the first 30 rows to locate the header row
+                for (let r = 0; r < Math.min(rows.length, 30); r++) {
+                    const row = rows[r];
+                    if (!row || !row.length) continue;
+
+                    let foundFullName = -1;
+                    let foundLastName = -1;
+                    let foundFirstName = -1;
+                    let foundId = -1;
+
+                    for (let c = 0; c < row.length; c++) {
+                        const val = String(row[c] || '').trim();
+                        if (HEADER_NAME_FULL_REGEX.test(val)) foundFullName = c;
+                        else if (HEADER_LAST_NAME_REGEX.test(val)) foundLastName = c;
+                        else if (HEADER_FIRST_NAME_REGEX.test(val)) foundFirstName = c;
+                        else if (HEADER_ID_REGEX.test(val)) foundId = c;
+                    }
+
+                    if (foundFullName !== -1 || (foundLastName !== -1 && foundFirstName !== -1)) {
+                        headerRowIdx = r;
+                        colFullName = foundFullName;
+                        colLastName = foundLastName;
+                        colFirstName = foundFirstName;
+                        colId = foundId;
+                        break;
+                    }
+                }
+
+                const names = [];
+                const seen = new Set();
+
+                if (headerRowIdx !== -1) {
+                    for (let r = headerRowIdx + 1; r < rows.length; r++) {
+                        const row = rows[r];
+                        if (!row || !row.length) continue;
+
+                        let extracted = '';
+                        if (colFullName !== -1) {
+                            extracted = formatTitleCase(String(row[colFullName] || '').trim());
+                        } else if (colLastName !== -1 && colFirstName !== -1) {
+                            const ln = formatCapitalize(String(row[colLastName] || '').trim());
+                            const fn = formatCapitalize(String(row[colFirstName] || '').trim());
+                            if (fn && ln) extracted = `${fn} ${ln}`;
+                            else extracted = fn || ln;
+                        }
+
+                        extracted = extracted.replace(/^["']|["']$/g, '').replace(/^[0-9\.\-\_\s]+/, '').trim();
+                        // Ignore non-student rows like summaries, footers, etc.
+                        if (extracted && extracted.length >= 2 && !/^(?:total|effectif|garçons|filles|moyenne|classe|école|degre|degré|mur\s+fd)/i.test(extracted)) {
+                            const key = extracted.toLowerCase();
+                            if (!seen.has(key)) {
+                                seen.add(key);
+                                names.push(extracted);
+                            }
+                        }
+                    }
+                }
+
+                return names;
+            }
+
+            function parseRosterContent(input) {
+                if (!input) return [];
+
+                // 1. Array of rows (e.g. from SheetJS sheet_to_json)
+                if (Array.isArray(input)) {
+                    if (input.length > 0 && Array.isArray(input[0])) {
+                        const res = extractNamesFromTableRows(input);
+                        if (res.length > 0) return res;
+                    }
+                    return input.map(s => String(s || '').trim()).filter(Boolean);
+                }
+
+                // 2. Binary ArrayBuffer, Uint8Array, Buffer, etc. (XLSX, XLS, ODS, etc.)
+                const isBinary = input instanceof ArrayBuffer ||
+                    (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView && ArrayBuffer.isView(input)) ||
+                    (typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(input)) ||
+                    (input && typeof input === 'object' && input.byteLength !== undefined && (input.buffer !== undefined || input.BYTES_PER_ELEMENT !== undefined));
+
+                const xlsxLib = getXLSX();
+
+                if (isBinary) {
+                    if (xlsxLib) {
+                        try {
+                            const isNodeBuf = typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(input);
+                            const readType = isNodeBuf ? 'buffer' : 'array';
+                            const readData = (input instanceof ArrayBuffer) ? new Uint8Array(input) : input;
+                            const wb = xlsxLib.read(readData, { type: readType });
+                            const firstSheet = wb.Sheets[wb.SheetNames[0]];
+                            const rows = xlsxLib.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                            const res = extractNamesFromTableRows(rows);
+                            if (res.length > 0) return res;
+                        } catch (err) {
+                            console.warn('XLSX parse error:', err);
+                        }
+                    }
+                    // Fallback to text decoding
+                    if (typeof TextDecoder !== 'undefined') {
+                        try {
+                            input = new TextDecoder('utf-8').decode(input);
+                        } catch (e) {
+                            input = String(input);
+                        }
+                    } else {
+                        input = String(input);
+                    }
+                }
+
+                if (typeof input !== 'string') return [];
+
+                // 3. HTML table in string (typical for some legacy ENT exports named .xls)
+                if (/<table[\s>]/i.test(input)) {
+                    if (xlsxLib) {
+                        try {
+                            const wb = xlsxLib.read(input, { type: 'string' });
+                            const firstSheet = wb.Sheets[wb.SheetNames[0]];
+                            const rows = xlsxLib.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                            const res = extractNamesFromTableRows(rows);
+                            if (res.length > 0) return res;
+                        } catch (e) { }
+                    }
+                }
+
+                // 4. CSV / TSV with lines
+                const lines = input.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+                if (!lines.length) return [];
+
+                const tableRows = lines.map(line => {
+                    let delimiter = ';';
+                    const semiCount = (line.match(/;/g) || []).length;
+                    const commaCount = (line.match(/,/g) || []).length;
+                    const tabCount = (line.match(/\t/g) || []).length;
+                    if (tabCount > semiCount && tabCount > commaCount) delimiter = '\t';
+                    else if (commaCount > semiCount) delimiter = ',';
+
+                    return line.split(delimiter).map(c => c.replace(/^["']|["']$/g, '').trim());
+                });
+
+                const structuredNames = extractNamesFromTableRows(tableRows);
+                if (structuredNames.length > 0) return structuredNames;
+
+                // 5. Fallback line-by-line / column-by-column
+                const cleanNames = [];
+                const seen = new Set();
+                const HEADER_REGEX = /\b(nom|prenom|prénom|name|student|pupil|eleve|élève|classe|degré|degre|degree|grade|matricule|naissance|birth|date|sexe|gender|genre)\b/i;
+
+                for (const row of tableRows) {
+                    for (const col of row) {
+                        const cleaned = col.replace(/^[0-9\.\-\_\s]+/, '').trim();
+                        if (cleaned.length >= 2 && !HEADER_REGEX.test(cleaned)) {
+                            const key = cleaned.toLowerCase();
+                            if (!seen.has(key)) {
+                                seen.add(key);
+                                cleanNames.push(cleaned);
+                            }
+                        }
+                    }
+                }
+                return cleanNames;
+            }
+
+            // ============================================================
+            // 4. INTERACTION UI & ÉVÉNEMENTS
+            // ============================================================
+            const inputTextEl = document.getElementById('inputText');
+            const outputAreaEl = document.getElementById('outputArea');
+            const inputCharCountEl = document.getElementById('inputCharCount');
+            const outputCharCountEl = document.getElementById('outputCharCount');
+            const statsBarEl = document.getElementById('statsBar');
+            const copyBtn = document.getElementById('copyBtn');
+            const copyBtnLabel = document.getElementById('copyBtnLabel');
+            const copyAiBtn = document.getElementById('copyAiBtn');
+            const copyAiBtnLabel = document.getElementById('copyAiBtnLabel');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const sampleBtn = document.getElementById('sampleBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            const clearInputBtn = document.getElementById('clearInputBtn');
+            const pasteBtn = document.getElementById('pasteBtn');
+            const toggleDrawerBtn = document.getElementById('toggleDrawerBtn');
+            const drawerPanel = document.getElementById('drawerPanel');
+            const rosterInput = document.getElementById('rosterInput');
+            const saveRosterBtn = document.getElementById('saveRosterBtn');
+            const importRosterBtn = document.getElementById('importRosterBtn');
+            const rosterFileInput = document.getElementById('rosterFileInput');
+            const filtersGrid = document.getElementById('filtersGrid');
+            const activeFiltersBadge = document.getElementById('activeFiltersBadge');
+            const checkAllFiltersBtn = document.getElementById('checkAllFiltersBtn');
+            const uncheckAllFiltersBtn = document.getElementById('uncheckAllFiltersBtn');
+            const modeBtns = document.querySelectorAll('.mode-btn');
+
+            let currentCleanOutput = '';
+
+            const resetIgnoredBtn = document.getElementById('resetIgnoredBtn');
+            const resetIgnoredLabel = document.getElementById('resetIgnoredLabel');
+
+            function updateUI() {
+                const raw = inputTextEl.value;
+                const charLen = raw.length;
+                const words = raw.trim() ? raw.trim().split(/\s+/).length : 0;
+                inputCharCountEl.textContent = charLen + ' caractère' + (charLen > 1 ? 's' : '') + ' · ' + words + ' mot' + (words > 1 ? 's' : '');
+
+                if (!raw) {
+                    currentCleanOutput = '';
+                    outputAreaEl.innerHTML = '<span class="output-placeholder">Le texte anonymisé apparaîtra ici en temps réel...</span>';
+                    outputCharCountEl.textContent = '0 caractère';
+                    statsBarEl.innerHTML = '<span>0 donnée masquée</span>';
+                    if (resetIgnoredBtn) resetIgnoredBtn.style.display = 'none';
+                    return;
+                }
+
+                const result = runAnonymization(raw);
+                currentCleanOutput = result.cleanText;
+                outputAreaEl.innerHTML = result.htmlOutput;
+
+                const outLen = result.cleanText.length;
+                outputCharCountEl.textContent = outLen + ' caractère' + (outLen > 1 ? 's' : '');
+
+                // Render stats
+                renderStats(result.stats, result.totalCount);
+
+                // Update reset ignored button
+                if (resetIgnoredBtn && resetIgnoredLabel) {
+                    const count = state.ignoredTerms ? state.ignoredTerms.size : 0;
+                    if (count > 0) {
+                        resetIgnoredBtn.style.display = 'inline-flex';
+                        resetIgnoredLabel.textContent = count + ' exclusion' + (count > 1 ? 's' : '');
+                    } else {
+                        resetIgnoredBtn.style.display = 'none';
+                    }
+                }
+
+                if (window.fa?.createIcons) {
+                    window.fa.createIcons();
+                }
+            }
+
+            function renderStats(stats, total) {
+                if (!total) {
+                    statsBarEl.innerHTML = '<span>0 donnée masquée</span>';
+                    return;
+                }
+                let html = '<span style="font-weight:700;color:var(--primary);">' + total + ' donnée' + (total > 1 ? 's' : '') + ' masquée' + (total > 1 ? 's' : '') + ' :</span>';
+                const labelMap = {
+                    roster: 'élèves (classe)',
+                    name: 'personnes',
+                    email: 'emails',
+                    phone: 'tél.',
+                    dob: 'naissances',
+                    age: 'âges',
+                    avs: 'AVS',
+                    address: 'adresses',
+                    city: 'villes',
+                    school_class: 'classes/écoles',
+                    iban: 'IBAN'
+                };
+                for (const [key, count] of Object.entries(stats)) {
+                    const label = labelMap[key] || key;
+                    html += '<span class="stat-pill">' + count + ' ' + label + '</span>';
+                }
+                statsBarEl.innerHTML = html;
+            }
+
+            function savePatternPreferences() {
+                try {
+                    const disabled = state.patterns.filter(p => !p.enabled).map(p => p.id);
+                    localStorage.setItem('anonymiser_disabled_patterns', JSON.stringify(disabled));
+                } catch (e) { }
+            }
+
+            function renderFilters() {
+                filtersGrid.innerHTML = '';
+                let activeCount = 0;
+                for (const p of state.patterns) {
+                    if (p.enabled) activeCount++;
+                    const card = document.createElement('label');
+                    card.className = 'filter-card';
+                    card.innerHTML = `
+                        <input type="checkbox" ${p.enabled ? 'checked' : ''} data-id="${p.id}">
+                        <span class="filter-card-text">${escapeHtml(p.name)}</span>
+                    `;
+                    card.querySelector('input').addEventListener('change', (e) => {
+                        p.enabled = e.target.checked;
+                        savePatternPreferences();
+                        updateActiveCountBadge();
+                        updateUI();
+                    });
+                    filtersGrid.appendChild(card);
+                }
+                activeFiltersBadge.textContent = activeCount;
+            }
+
+            function updateActiveCountBadge() {
+                const count = state.patterns.filter(p => p.enabled).length;
+                activeFiltersBadge.textContent = count;
+            }
+
+            // --- MODE SWITCHING & PERSISTENCE ---
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modeBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.mode = btn.dataset.mode;
+                    // Reset pseudo map when changing mode to refresh
+                    state.pseudoMap.clear();
+                    try {
+                        localStorage.setItem('anonymiser_mode', state.mode);
+                    } catch (e) { }
+                    updateUI();
+                });
+            });
+
+            // Restore active mode button initially
+            modeBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === state.mode);
+            });
+
+            // --- FILTER DRAWER TOGGLE ---
+            toggleDrawerBtn.addEventListener('click', () => {
+                const isHidden = drawerPanel.style.display === 'none';
+                drawerPanel.style.display = isHidden ? 'flex' : 'none';
+                toggleDrawerBtn.classList.toggle('open', isHidden);
+                if (window.fa?.createIcons) window.fa.createIcons();
+            });
+
+            checkAllFiltersBtn.addEventListener('click', () => {
+                state.patterns.forEach(p => p.enabled = true);
+                savePatternPreferences();
+                renderFilters();
+                updateUI();
+            });
+
+            uncheckAllFiltersBtn.addEventListener('click', () => {
+                state.patterns.forEach(p => p.enabled = false);
+                savePatternPreferences();
+                renderFilters();
+                updateUI();
+            });
+
+            // --- ROSTER MANAGEMENT ---
+            if (state.roster.length > 0) {
+                rosterInput.value = state.roster.join(', ');
+            }
+
+            rosterInput.addEventListener('input', () => {
+                state.roster = rosterInput.value.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+                updateUI();
+            });
+
+            saveRosterBtn.addEventListener('click', () => {
+                state.roster = rosterInput.value.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+                try {
+                    localStorage.setItem('anonymiser_roster', state.roster.join(', '));
+                    showNotificationToast('Liste de classe mémorisée avec succès !', 'check');
+                } catch (e) { }
+                updateUI();
+            });
+
+            // Processing helper for uploaded roster files (XLSX, XLS, CSV, TXT)
+            function processUploadedRosterFile(file) {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const buffer = event.target.result;
+                    let imported = [];
+                    try {
+                        imported = parseRosterContent(buffer);
+                    } catch (err) {
+                        console.error('Erreur lors du traitement du fichier classe:', err);
+                    }
+
+                    if (imported && imported.length > 0) {
+                        state.roster = imported;
+                        rosterInput.value = imported.join(', ');
+                        try {
+                            localStorage.setItem('anonymiser_roster', state.roster.join(', '));
+                        } catch (e) { }
+                        updateUI();
+                        showNotificationToast(`${imported.length} élève(s) importé(s) depuis « ${file.name} » !`, 'check');
+                    } else {
+                        showNotificationToast('Aucun nom d\'élève détecté dans ce fichier.', 'circle-exclamation');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            if (importRosterBtn && rosterFileInput) {
+                importRosterBtn.addEventListener('click', () => {
+                    rosterFileInput.click();
+                });
+
+                rosterFileInput.addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) {
+                        processUploadedRosterFile(file);
+                    }
+                    rosterFileInput.value = '';
+                });
+            }
+
+            // Drag and drop onto roster textarea
+            rosterInput.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                rosterInput.classList.add('dragover');
+            });
+            rosterInput.addEventListener('dragleave', () => {
+                rosterInput.classList.remove('dragover');
+            });
+            rosterInput.addEventListener('drop', (e) => {
+                e.preventDefault();
+                rosterInput.classList.remove('dragover');
+                const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (file) {
+                    processUploadedRosterFile(file);
+                }
+            });
+
+            // Standard prompt prefix for educational AI confidentiality
+            const AI_PROMPT_PREFIX = `[Instruction de confidentialité scolaire : Ce document a été anonymisé conformément aux directives de protection des données (LPD/LIPAD). Les mentions [Élève X] désignent des élèves sous pseudonyme, et [Personne X] d'autres personnes ou intervenants. Merci de conserver rigoureusement ces balises dans votre réponse sans chercher à reconstituer les identités réelles.]\n\n---\n\n`;
+
+            // --- COPIER / COLLER / EFFACER ---
+            copyBtn.addEventListener('click', async () => {
+                if (!currentCleanOutput) {
+                    showNotificationToast('Aucun texte à copier.', 'circle-info');
+                    return;
+                }
+                try {
+                    await navigator.clipboard.writeText(currentCleanOutput);
+                    copyBtnLabel.textContent = 'Copié !';
+                    copyBtn.classList.add('btn-primary');
+                    showNotificationToast('Texte anonymisé copié dans le presse-papiers !', 'check');
+                    setTimeout(() => {
+                        copyBtnLabel.textContent = 'Copier';
+                    }, 2000);
+                } catch (err) {
+                    // Fallback
+                    const ta = document.createElement('textarea');
+                    ta.value = currentCleanOutput;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    copyBtnLabel.textContent = 'Copié !';
+                    showNotificationToast('Texte anonymisé copié dans le presse-papiers !', 'check');
+                    setTimeout(() => { copyBtnLabel.textContent = 'Copier'; }, 2000);
+                }
+            });
+
+            if (copyAiBtn) {
+                copyAiBtn.addEventListener('click', async () => {
+                    if (!currentCleanOutput) {
+                        showNotificationToast('Aucun texte à copier.', 'circle-info');
+                        return;
+                    }
+                    const textToCopy = AI_PROMPT_PREFIX + currentCleanOutput;
+                    const oldLabel = copyAiBtnLabel ? copyAiBtnLabel.textContent : 'Copier pour IA';
+                    try {
+                        await navigator.clipboard.writeText(textToCopy);
+                        if (copyAiBtnLabel) copyAiBtnLabel.textContent = 'Copié pour IA !';
+                        copyAiBtn.classList.add('btn-primary');
+                        showNotificationToast('Texte + consigne de confidentialité copiés pour l\'IA !', 'sparkles');
+                        setTimeout(() => {
+                            if (copyAiBtnLabel) copyAiBtnLabel.textContent = oldLabel;
+                            copyAiBtn.classList.remove('btn-primary');
+                        }, 2000);
+                    } catch (err) {
+                        const ta = document.createElement('textarea');
+                        ta.value = textToCopy;
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                        if (copyAiBtnLabel) copyAiBtnLabel.textContent = 'Copié pour IA !';
+                        showNotificationToast('Texte + consigne de confidentialité copiés pour l\'IA !', 'sparkles');
+                        setTimeout(() => {
+                            if (copyAiBtnLabel) copyAiBtnLabel.textContent = oldLabel;
+                        }, 2000);
+                    }
+                });
+            }
+
+            // --- MODE RÉVISION INTERACTIVE : CLIC SUR CHIP POUR IGNORER / RESTAURER ---
+            outputAreaEl.addEventListener('click', (e) => {
+                const chip = e.target.closest('.anonym-chip');
+                if (!chip) return;
+                const term = chip.getAttribute('data-term');
+                if (!term) return;
+                const termKey = term.toLowerCase().trim();
+                if (state.ignoredTerms.has(termKey)) {
+                    state.ignoredTerms.delete(termKey);
+                    showNotificationToast(`« ${term} » ré-anonymisé`, 'shield-check');
+                } else {
+                    state.ignoredTerms.add(termKey);
+                    showNotificationToast(`« ${term} » exclu de l'anonymisation`, 'eye');
+                }
+                updateUI();
+            });
+
+            outputAreaEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    const chip = e.target.closest('.anonym-chip');
+                    if (chip) {
+                        e.preventDefault();
+                        chip.click();
+                    }
+                }
+            });
+
+            if (resetIgnoredBtn) {
+                resetIgnoredBtn.addEventListener('click', () => {
+                    const count = state.ignoredTerms.size;
+                    state.ignoredTerms.clear();
+                    updateUI();
+                    showNotificationToast(`${count} exclusion(s) réinitialisée(s)`, 'rotate-left');
+                });
+            }
+
+            // --- RACCOURCIS CLAVIER ---
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+Shift+C / Cmd+Shift+C : Copier résultat standard
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+                    e.preventDefault();
+                    copyBtn.click();
+                }
+                // Ctrl+Shift+I / Cmd+Shift+I : Copier pour IA
+                else if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+                    e.preventDefault();
+                    if (copyAiBtn) copyAiBtn.click();
+                }
+                // Échap : Fermer le tiroir de filtres s'il est ouvert
+                else if (e.key === 'Escape') {
+                    if (drawerPanel && drawerPanel.style.display !== 'none') {
+                        drawerPanel.style.display = 'none';
+                        if (toggleDrawerBtn) toggleDrawerBtn.classList.remove('open');
+                    }
+                }
+            });
+
+            pasteBtn.addEventListener('click', async () => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    if (text) {
+                        inputTextEl.value = text;
+                        updateUI();
+                        showNotificationToast('Texte collé avec succès.', 'clipboard');
+                    }
+                } catch (e) {
+                    inputTextEl.focus();
+                    showNotificationToast('Appuyez sur Ctrl+V (ou Cmd+V) pour coller.', 'circle-info');
+                }
+            });
+
+            downloadBtn.addEventListener('click', () => {
+                if (!currentCleanOutput) {
+                    showNotificationToast('Aucun texte à télécharger.', 'circle-info');
+                    return;
+                }
+                const dateStr = new Date().toISOString().slice(0, 10);
+                const fileName = `texte_anonymise_${dateStr}.txt`;
+                const blob = new Blob([currentCleanOutput], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.setAttribute('download', fileName);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showNotificationToast(`Fichier « ${fileName} » téléchargé.`, 'arrow-down-to-square');
+            });
+
+            clearInputBtn.addEventListener('click', () => {
+                inputTextEl.value = '';
+                updateUI();
+                inputTextEl.focus();
+            });
+
+            clearAllBtn.addEventListener('click', () => {
+                inputTextEl.value = '';
+                updateUI();
+                inputTextEl.focus();
+            });
+
+            // --- BOUTON EXEMPLE RÉALISTE SUISSE ROMAND ---
+            sampleBtn.addEventListener('click', () => {
+                const sampleText = `Bilan de période - 7H (Cycle 2)
+Élève : Lucas Dupont, né le 14.05.2013 (11 ans).
+Établissement : Centre scolaire de Sion, classe 7H-B.
+Contact parents : Mme Sophie Dupont, tél : 079 456 78 90, email : sophie.dupont@edu.vs.ch.
+Adresse : Rue des Châteaux 14, 1950 Sion.
+No AVS : 756.8492.1203.44
+
+Lucas montre de très bons progrès en mathématiques et en sciences. En revanche, il rencontre des difficultés d'attention lors des travaux de groupe avec Emma et Noah. Une rencontre est prévue le 24 octobre avec M. Martin, psychologue scolaire.`;
+
+                inputTextEl.value = sampleText;
+                // Add sample names to roster if empty
+                if (!rosterInput.value) {
+                    rosterInput.value = 'Lucas Dupont, Emma, Noah';
+                    state.roster = ['Lucas Dupont', 'Emma', 'Noah'];
+                }
+                updateUI();
+                showNotificationToast('Exemple chargé avec succès !', 'sparkles');
+            });
+
+            // Real-time input listener
+            inputTextEl.addEventListener('input', updateUI);
+
+            // Toast helper
+            function showNotificationToast(msg, iconName) {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<i data-fa="${iconName || 'circle-info'}" style="width:16px;height:16px;"></i><span>${escapeHtml(msg)}</span>`;
+                container.appendChild(toast);
+                if (window.fa?.createIcons) window.fa.createIcons();
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(10px)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2600);
+            }
+
+            // --- PROJECTION / TNI MODE ---
+            const projToggleBtn = document.getElementById('projection-toggle-btn');
+            function setProjectionMode(active) {
+                const isProj = document.body.classList.toggle('projection', active);
+                if (projToggleBtn) {
+                    projToggleBtn.setAttribute('title', isProj ? 'Quitter le mode TNI (Échap)' : 'Mode TNI/Plein écran');
+                    projToggleBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI' : 'Mode TNI/Plein écran');
+                }
+                const iconExpand = document.getElementById('icon-proj-expand');
+                const iconCompress = document.getElementById('icon-proj-compress');
+                if (iconExpand && iconCompress) {
+                    iconExpand.style.display = isProj ? 'none' : 'inline-block';
+                    iconCompress.style.display = isProj ? 'inline-block' : 'none';
+                }
+                if (isProj && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen?.().catch(() => { });
+                } else if (!isProj && document.fullscreenElement) {
+                    document.exitFullscreen?.().catch(() => { });
+                }
+            }
+
+            if (projToggleBtn) {
+                projToggleBtn.addEventListener('click', () => {
+                    const isProj = document.body.classList.contains('projection');
+                    setProjectionMode(!isProj);
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                    setProjectionMode(false);
+                }
+            });
+
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement && document.body.classList.contains('projection')) {
+                    setProjectionMode(false);
+                }
+            });
+
+            // --- ACCORDION "POURQUOI ANONYMISER ?" ---
+            const whyAnonymizeTrigger = document.getElementById('whyAnonymizeTrigger');
+            const whyAnonymizeContent = document.getElementById('whyAnonymizeContent');
+            if (whyAnonymizeTrigger && whyAnonymizeContent) {
+                whyAnonymizeTrigger.addEventListener('click', () => {
+                    const isExpanded = whyAnonymizeTrigger.getAttribute('aria-expanded') === 'true';
+                    const nextExpanded = !isExpanded;
+                    whyAnonymizeTrigger.setAttribute('aria-expanded', String(nextExpanded));
+                    whyAnonymizeContent.hidden = !nextExpanded;
+                    if (window.fa && window.fa.createIcons) {
+                        window.fa.createIcons();
+                    }
+                });
+            }
+
+            // Hook reset app
+            window.__onResetApp = function () {
+                inputTextEl.value = '';
+                rosterInput.value = '';
+                state.roster = [];
+                state.ignoredTerms.clear();
+                state.pseudoMap.clear();
+                state.studentMap.clear();
+                state.personMap.clear();
+                state.emailMap.clear();
+                state.phoneMap.clear();
+                try {
+                    localStorage.removeItem('anonymiser_roster');
+                    localStorage.removeItem('anonymiser_mode');
+                    localStorage.removeItem('anonymiser_disabled_patterns');
+                } catch (e) { }
+                updateUI();
+            };
+
+            // Init
+            renderFilters();
+            updateUI();
+
+            // Render FontAwesome icons initially
+            if (window.fa?.createIcons) {
+                window.fa.createIcons();
+            }
+
+            // Export engine on window for easy inspection & JSDOM tests
+            window.AnonymizerEngine = {
+                runAnonymization,
+                formatReplacement,
+                extractNamesFromTableRows,
+                parseRosterContent,
+                state,
+                COMMON_SWISS_NAMES,
+                AI_PROMPT_PREFIX
+            };
+
+            // Export engine for unit tests (Node.js)
+            if (typeof module !== 'undefined' && module.exports) {
+                module.exports = {
+                    runAnonymization,
+                    formatReplacement,
+                    extractNamesFromTableRows,
+                    parseRosterContent,
+                    state,
+                    COMMON_SWISS_NAMES,
+                    AI_PROMPT_PREFIX
+                };
+            }
+        })();
+    </script>
+</body>
+
+</html>

@@ -29,6 +29,7 @@
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../assets/js/fa-subset.js"></script>
+    <script src="../../assets/js/vendor/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
@@ -324,6 +325,11 @@
         body.dark textarea:focus {
             background: #0f172a;
             color: var(--text-main);
+        }
+
+        #namesList.dragover {
+            border-color: var(--primary) !important;
+            background: var(--primary-light) !important;
         }
 
         input::placeholder,
@@ -649,8 +655,19 @@
                         </div>
 
                         <div id="mode-names-view" class="input-group hidden">
-                            <label for="namesList">Liste des noms</label>
-                            <textarea id="namesList" placeholder="Marie, Jean, Paul... ou un par ligne"></textarea>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem; flex-wrap:wrap; gap:6px;">
+                                <label for="namesList" style="margin-bottom:0;">Liste des noms</label>
+                                <div style="display:flex; gap:6px; align-items:center;">
+                                    <input type="file" id="namesFileInput" accept=".csv,.txt,.tsv,.xls,.xlsx" style="display:none;">
+                                    <button type="button" class="btn-small" id="importNamesBtn" title="Importer une liste d'élèves (fichier ENT XLS, XLSX, CSV ou texte)">
+                                        <i data-fa="arrow-up-from-square" style="width:12px;height:12px;"></i> Importer (XLS/CSV)
+                                    </button>
+                                    <button type="button" class="btn-small" id="exportNamesBtn" title="Télécharger la liste actuelle au format .txt">
+                                        <i data-fa="download" style="width:12px;height:12px;"></i> Exporter (.txt)
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea id="namesList" placeholder="Marie, Jean, Paul... ou un par ligne (glissez-déposez aussi votre fichier ENT ici)"></textarea>
                         </div>
 
                         <button class="btn btn-primary" id="initBtn" style="padding: 1.25rem;">
@@ -763,6 +780,9 @@
         const namesInput = document.getElementById('namesList');
         const totalInput = document.getElementById('totalParticipants');
         const finishedMsg = document.getElementById('finishedMsg');
+        const importNamesBtn = document.getElementById('importNamesBtn');
+        const exportNamesBtn = document.getElementById('exportNamesBtn');
+        const namesFileInput = document.getElementById('namesFileInput');
 
         // Tabs Toggle
         document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -832,7 +852,12 @@
                 }
                 list = Array.from({ length: max }, (_, i) => String(i + 1));
             } else {
-                list = namesInput.value.split(/[\n,]+/).map(n => n.trim()).filter(Boolean);
+                const raw = namesInput.value.trim();
+                if (raw.includes('\n')) {
+                    list = raw.split(/\r?\n/).map(n => n.trim()).filter(Boolean);
+                } else {
+                    list = raw.split(/[,;]+/).map(n => n.trim()).filter(Boolean);
+                }
                 if (list.length === 0 && state.allParticipants.length > 0) {
                     list = [...state.allParticipants];
                 }
@@ -891,7 +916,12 @@
                 if (!max || max < 1) return showToast('Entrez un nombre valide', 'error');
                 list = Array.from({ length: max }, (_, i) => String(i + 1));
             } else {
-                list = namesInput.value.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+                const raw = namesInput.value.trim();
+                if (raw.includes('\n')) {
+                    list = raw.split(/\r?\n/).map(n => n.trim()).filter(Boolean);
+                } else {
+                    list = raw.split(/[,;]+/).map(n => n.trim()).filter(Boolean);
+                }
                 if (list.length < 2) return showToast('Entrez au moins 2 noms', 'error');
             }
 
@@ -1033,6 +1063,318 @@
             updateUI();
         }
 
+        // ==========================================
+        // IMPORT & EXPORT DE LISTE DE CLASSE (XLS, XLSX, CSV, TXT)
+        // ==========================================
+        function getXLSX() {
+            if (typeof window !== 'undefined' && window.XLSX) return window.XLSX;
+            if (typeof globalThis !== 'undefined' && globalThis.XLSX) return globalThis.XLSX;
+            if (typeof XLSX !== 'undefined') return XLSX;
+            return null;
+        }
+
+        function formatCapitalize(str) {
+            if (!str) return '';
+            const trimmed = str.trim();
+            if (trimmed.length > 2 && trimmed === trimmed.toUpperCase()) {
+                return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+            }
+            return trimmed;
+        }
+
+        function formatTitleCase(str) {
+            if (!str) return '';
+            return str.split(/\s+/).map(w => formatCapitalize(w)).join(' ');
+        }
+
+        function extractNamesFromTableRows(rows) {
+            if (!rows || !rows.length) return [];
+
+            const HEADER_NAME_FULL_REGEX = /^(?:nom\s*(?:et|\/|&)?\s*pr[eé]nom|pr[eé]nom\s*(?:et|\/|&)?\s*nom|nom\s+complet|identit[eé]|élève|eleve|student|pupil)$/i;
+            const HEADER_LAST_NAME_REGEX = /^(?:nom|nom\s+de\s+famille|last\s*name|surname)$/i;
+            const HEADER_FIRST_NAME_REGEX = /^(?:pr[eé]nom|first\s*name|given\s*name|call\s*name)$/i;
+            const HEADER_ID_REGEX = /^(?:identifiant\s+ism|identifiant|id|matricule)$/i;
+
+            let headerRowIdx = -1;
+            let colFullName = -1;
+            let colLastName = -1;
+            let colFirstName = -1;
+            let colId = -1;
+
+            // Scan the first 30 rows to locate the header row
+            for (let r = 0; r < Math.min(rows.length, 30); r++) {
+                const row = rows[r];
+                if (!row || !row.length) continue;
+
+                let foundFullName = -1;
+                let foundLastName = -1;
+                let foundFirstName = -1;
+                let foundId = -1;
+
+                for (let c = 0; c < row.length; c++) {
+                    const val = String(row[c] || '').trim();
+                    if (HEADER_NAME_FULL_REGEX.test(val)) foundFullName = c;
+                    else if (HEADER_LAST_NAME_REGEX.test(val)) foundLastName = c;
+                    else if (HEADER_FIRST_NAME_REGEX.test(val)) foundFirstName = c;
+                    else if (HEADER_ID_REGEX.test(val)) foundId = c;
+                }
+
+                if (foundFullName !== -1 || (foundLastName !== -1 && foundFirstName !== -1)) {
+                    headerRowIdx = r;
+                    colFullName = foundFullName;
+                    colLastName = foundLastName;
+                    colFirstName = foundFirstName;
+                    colId = foundId;
+                    break;
+                }
+            }
+
+            const names = [];
+            const seen = new Set();
+
+            if (headerRowIdx !== -1) {
+                for (let r = headerRowIdx + 1; r < rows.length; r++) {
+                    const row = rows[r];
+                    if (!row || !row.length) continue;
+
+                    let extracted = '';
+                    if (colFullName !== -1) {
+                        extracted = formatTitleCase(String(row[colFullName] || '').trim());
+                    } else if (colLastName !== -1 && colFirstName !== -1) {
+                        const ln = formatCapitalize(String(row[colLastName] || '').trim());
+                        const fn = formatCapitalize(String(row[colFirstName] || '').trim());
+                        if (fn && ln) extracted = `${fn} ${ln}`;
+                        else extracted = fn || ln;
+                    }
+
+                    extracted = extracted.replace(/^["']|["']$/g, '').replace(/^[0-9\.\-\_\s]+/, '').trim();
+                    // Ignore non-student rows like summaries, footers, etc.
+                    if (extracted && extracted.length >= 2 && !/^(?:total|effectif|garçons|filles|moyenne|classe|école|degre|degré|mur\s+fd)/i.test(extracted)) {
+                        const key = extracted.toLowerCase();
+                        if (!seen.has(key)) {
+                            seen.add(key);
+                            names.push(extracted);
+                        }
+                    }
+                }
+            }
+
+            return names;
+        }
+
+        function parseRosterContent(input) {
+            if (!input) return [];
+
+            // 1. Array of rows (e.g. from SheetJS sheet_to_json)
+            if (Array.isArray(input)) {
+                if (input.length > 0 && Array.isArray(input[0])) {
+                    const res = extractNamesFromTableRows(input);
+                    if (res.length > 0) return res;
+                }
+                return input.map(s => String(s || '').trim()).filter(Boolean);
+            }
+
+            // 2. Binary ArrayBuffer, Uint8Array, Buffer, etc. (XLSX, XLS, ODS, etc.)
+            const isBinary = input instanceof ArrayBuffer ||
+                (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView && ArrayBuffer.isView(input)) ||
+                (typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(input)) ||
+                (input && typeof input === 'object' && input.byteLength !== undefined && (input.buffer !== undefined || input.BYTES_PER_ELEMENT !== undefined));
+
+            const xlsxLib = getXLSX();
+
+            if (isBinary) {
+                if (xlsxLib) {
+                    try {
+                        const isNodeBuf = typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(input);
+                        const readType = isNodeBuf ? 'buffer' : 'array';
+                        const readData = (input instanceof ArrayBuffer) ? new Uint8Array(input) : input;
+                        const wb = xlsxLib.read(readData, { type: readType });
+                        const firstSheet = wb.Sheets[wb.SheetNames[0]];
+                        const rows = xlsxLib.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                        const res = extractNamesFromTableRows(rows);
+                        if (res.length > 0) return res;
+                    } catch (err) {
+                        console.warn('XLSX parse error:', err);
+                    }
+                }
+                // Fallback to text decoding
+                if (typeof TextDecoder !== 'undefined') {
+                    try {
+                        input = new TextDecoder('utf-8').decode(input);
+                    } catch (e) {
+                        input = String(input);
+                    }
+                } else {
+                    input = String(input);
+                }
+            }
+
+            if (typeof input !== 'string') return [];
+
+            // 3. HTML table in string (typical for some legacy ENT exports named .xls)
+            if (/<table[\s>]/i.test(input)) {
+                if (xlsxLib) {
+                    try {
+                        const wb = xlsxLib.read(input, { type: 'string' });
+                        const firstSheet = wb.Sheets[wb.SheetNames[0]];
+                        const rows = xlsxLib.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                        const res = extractNamesFromTableRows(rows);
+                        if (res.length > 0) return res;
+                    } catch (e) { }
+                }
+            }
+
+            // 4. CSV / TSV with lines
+            const lines = input.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            if (!lines.length) return [];
+
+            const tableRows = lines.map(line => {
+                let delimiter = ';';
+                const semiCount = (line.match(/;/g) || []).length;
+                const commaCount = (line.match(/,/g) || []).length;
+                const tabCount = (line.match(/\t/g) || []).length;
+                if (tabCount > semiCount && tabCount > commaCount) delimiter = '\t';
+                else if (commaCount > semiCount) delimiter = ',';
+
+                return line.split(delimiter).map(c => c.replace(/^["']|["']$/g, '').trim());
+            });
+
+            const structuredNames = extractNamesFromTableRows(tableRows);
+            if (structuredNames.length > 0) return structuredNames;
+
+            // 5. Fallback line-by-line / column-by-column
+            const cleanNames = [];
+            const seen = new Set();
+            const HEADER_REGEX = /\b(nom|prenom|prénom|name|student|pupil|eleve|élève|classe|degré|degre|degree|grade|matricule|naissance|birth|date|sexe|gender|genre)\b/i;
+
+            for (const row of tableRows) {
+                for (const col of row) {
+                    const cleaned = col.replace(/^[0-9\.\-\_\s]+/, '').trim();
+                    if (cleaned.length >= 2 && !HEADER_REGEX.test(cleaned)) {
+                        const key = cleaned.toLowerCase();
+                        if (!seen.has(key)) {
+                            seen.add(key);
+                            cleanNames.push(cleaned);
+                        }
+                    }
+                }
+            }
+            return cleanNames;
+        }
+
+        function processUploadedNamesFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const buffer = event.target.result;
+                let imported = [];
+                try {
+                    imported = parseRosterContent(buffer);
+                } catch (err) {
+                    console.error('Erreur lors du traitement du fichier classe:', err);
+                }
+
+                if (imported && imported.length > 0) {
+                    namesInput.value = imported.join('\n');
+                    state.allParticipants = [...imported];
+                    saveState();
+                    if (typeof showToast === 'function') {
+                        showToast(`${imported.length} participant(s) importé(s) !`, 'success');
+                    }
+                } else {
+                    if (typeof showToast === 'function') {
+                        showToast('Aucun nom d\'élève détecté dans ce fichier.', 'error');
+                    }
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportNamesList() {
+            let names = [];
+            const raw = namesInput.value.trim();
+            if (raw) {
+                if (raw.includes('\n')) {
+                    names = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+                } else {
+                    names = raw.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+                }
+            } else if (state.mode === 'names' && state.allParticipants.length > 0) {
+                names = [...state.allParticipants];
+            }
+
+            if (!names.length) {
+                if (typeof showToast === 'function') showToast('Aucun nom à exporter', 'error');
+                return;
+            }
+
+            const textContent = names.join('\n') + '\n';
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10);
+            a.href = url;
+            a.download = `liste_participants_${dateStr}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            if (typeof showToast === 'function') {
+                showToast('Liste exportée (.txt)', 'success');
+            }
+        }
+
+        if (importNamesBtn && namesFileInput) {
+            importNamesBtn.addEventListener('click', () => {
+                namesFileInput.click();
+            });
+
+            namesFileInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (file) {
+                    processUploadedNamesFile(file);
+                }
+                namesFileInput.value = '';
+            });
+        }
+
+        if (exportNamesBtn) {
+            exportNamesBtn.addEventListener('click', exportNamesList);
+        }
+
+        if (namesInput) {
+            namesInput.addEventListener('input', () => {
+                if (state.mode === 'names') {
+                    const raw = namesInput.value.trim();
+                    let list = [];
+                    if (raw.includes('\n')) {
+                        list = raw.split(/\r?\n/).map(n => n.trim()).filter(Boolean);
+                    } else {
+                        list = raw.split(/[,;]+/).map(n => n.trim()).filter(Boolean);
+                    }
+                    state.allParticipants = list;
+                    saveState();
+                }
+            });
+
+            namesInput.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                namesInput.classList.add('dragover');
+            });
+            namesInput.addEventListener('dragleave', () => {
+                namesInput.classList.remove('dragover');
+            });
+            namesInput.addEventListener('drop', (e) => {
+                e.preventDefault();
+                namesInput.classList.remove('dragover');
+                const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (file) {
+                    processUploadedNamesFile(file);
+                }
+            });
+        }
+
         initBtn.addEventListener('click', initializeDraw);
         drawBtn.addEventListener('click', triggerRoulette);
         resetDrawBtn.addEventListener('click', softReset);
@@ -1116,6 +1458,16 @@
             }
         };
 
+        window.TirageEngine = {
+            state,
+            parseRosterContent,
+            extractNamesFromTableRows,
+            processUploadedNamesFile,
+            exportNamesList,
+            initializeDraw,
+            triggerRoulette
+        };
+
         loadState();
     </script>
     <script src="../../assets/js/toast.js"></script>
@@ -1133,6 +1485,8 @@
         <i data-fa="volume-xmark"></i>
         <i data-fa="sun-bright"></i>
         <i data-fa="moon"></i>
+        <i data-fa="arrow-up-from-square"></i>
+        <i data-fa="download"></i>
     </div>
 </body>
 
