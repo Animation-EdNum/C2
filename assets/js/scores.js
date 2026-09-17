@@ -53,6 +53,23 @@ const ScoreManager = {
         'grid7': 'Extrême (7×7)'
     },
 
+    SUPPORTED_DIFF_IDS: {
+        'easy': ['diff-easy', 'read-diff-easy'],
+        'medium': ['diff-medium', 'read-diff-medium'],
+        'hard': ['diff-hard', 'read-diff-hard'],
+        'extreme': ['diff-extreme', 'read-diff-extreme'],
+        '4': ['diff-easy'],
+        '6': ['diff-medium'],
+        '8': ['diff-hard'],
+        '10': ['diff-extreme'],
+        'grid4': ['diff-easy'],
+        'grid5': ['diff-medium'],
+        'grid6': ['diff-hard'],
+        'grid7': ['diff-extreme']
+    },
+
+    _supportedDiffCache: {},
+
     // Internal sentinel used when difficulty is null/undefined (mode has no levels)
     _NO_DIFF: '_nodiff_',
 
@@ -184,26 +201,22 @@ const ScoreManager = {
     },
 
     isDifficultySupported(nextDiff) {
-        if (document.querySelector(`[data-diff="${nextDiff}"]`)) return true;
-        const idMap = {
-            'easy': ['diff-easy', 'read-diff-easy'],
-            'medium': ['diff-medium', 'read-diff-medium'],
-            'hard': ['diff-hard', 'read-diff-hard'],
-            'extreme': ['diff-extreme', 'read-diff-extreme'],
-            '4': ['diff-easy'],
-            '6': ['diff-medium'],
-            '8': ['diff-hard'],
-            '10': ['diff-extreme'],
-            'grid4': ['diff-easy'],
-            'grid5': ['diff-medium'],
-            'grid6': ['diff-hard'],
-            'grid7': ['diff-extreme']
-        };
-        if (idMap[nextDiff]) {
-            for (const id of idMap[nextDiff]) {
-                if (document.getElementById(id)) return true;
+        if (this._supportedDiffCache[nextDiff] !== undefined) {
+            return this._supportedDiffCache[nextDiff];
+        }
+        if (document.querySelector(`[data-diff="${nextDiff}"]`)) {
+            this._supportedDiffCache[nextDiff] = true;
+            return true;
+        }
+        if (this.SUPPORTED_DIFF_IDS[nextDiff]) {
+            for (const id of this.SUPPORTED_DIFF_IDS[nextDiff]) {
+                if (document.getElementById(id)) {
+                    this._supportedDiffCache[nextDiff] = true;
+                    return true;
+                }
             }
         }
+        this._supportedDiffCache[nextDiff] = false;
         return false;
     },
 
