@@ -44,13 +44,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@a17c2f2187f5d47501a3557e4e03504825d19488 # v4.2.0
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
@@ -60,8 +60,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify Service Worker Manifest
-        run: npm run check:sw
+      - name: Read package metadata
+        id: pkg-info
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "pkg_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "pkg_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build and synchronize Service Worker Manifest
+        run: npm run build:sw
 
       - name: Run Unit Tests
         run: npm run test:unit
@@ -140,10 +148,11 @@ jobs:
       - name: Generate Workflow Summary
         if: always()
         run: |
-          PKG_NAME="${{ steps.check-version.outputs.pkg_name }}"
-          PKG_VER="${{ steps.check-version.outputs.pkg_version }}"
+          PKG_NAME="${{ steps.check-version.outputs.pkg_name || steps.pkg-info.outputs.pkg_name || 'unknown' }}"
+          PKG_VER="${{ steps.check-version.outputs.pkg_version || steps.pkg-info.outputs.pkg_version || 'unknown' }}"
           SHOULD_PUB="${{ steps.check-version.outputs.should_publish }}"
           DRY_RUN="${{ inputs.dry_run }}"
+          JOB_STATUS="${{ job.status }}"
 
           echo "## 📦 NPM Publication Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -151,7 +160,9 @@ jobs:
           echo "- **Version**: \`v$PKG_VER\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger**: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
 
-          if [ "$DRY_RUN" = "true" ]; then
+          if [ "$JOB_STATUS" != "success" ]; then
+            echo "- **Status**: ❌ **Workflow Failed** (One or more build/test steps failed. See step annotations and logs for details.)" >> $GITHUB_STEP_SUMMARY
+          elif [ "$DRY_RUN" = "true" ]; then
             echo "- **Status**: 🔍 **Dry Run Successful** (Package verified, not pushed to registry)" >> $GITHUB_STEP_SUMMARY
           elif [ "$SHOULD_PUB" = "true" ]; then
             echo "- **Status**: 🚀 **Published to npm**" >> $GITHUB_STEP_SUMMARY
