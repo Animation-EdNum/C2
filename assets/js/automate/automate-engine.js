@@ -1682,8 +1682,13 @@ let simState = {
 
             TrailManager.captureInitialState('draw-grid', currR, currC, currD);
 
+            // Build a Map of all draw-grid cells to avoid slow querySelectors in the hot loop
+            const drawGridCells = new Map();
+            document.querySelectorAll('#draw-grid .bot-cell').forEach(cell => {
+                drawGridCells.set(`${cell.dataset.row},${cell.dataset.col}`, cell);
+            });
             // Mark start cell as visited immediately
-            const startCell = document.querySelector(`#draw-grid .bot-cell[data-row="${currR}"][data-col="${currC}"]`);
+            const startCell = drawGridCells.get(`${currR},${currC}`);
             if (startCell) startCell.classList.add('visited-draw');
 
             for (const cmd of drawState.program) {
@@ -1712,7 +1717,7 @@ let simState = {
                     await sleep(350);
                     TrailManager.addSegment('draw-grid', currR, currC);
 
-                    const cell = document.querySelector(`#draw-grid .bot-cell[data-row="${currR}"][data-col="${currC}"]`);
+                    const cell = drawGridCells.get(`${currR},${currC}`);
                     if (cell) cell.classList.add('visited-draw');
                     visited.add(`${currR},${currC}`);
                 }
