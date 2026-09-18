@@ -15,6 +15,7 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 | 🎲 **Tirage au Sort** | Désignation aléatoire équitable, gestion des absents, tirage sans remise | [Ouvrir le guide](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
 | 📱 **Créateur de QR Codes** | Générateur rapide de QR codes (liens, textes, Wi-Fi, planches imprimables, TBI) | [Ouvrir le guide](MODE_EMPLOI_QRCODE.md) |
 | 👓 **Lentille de Dyslexie** | Simulateur immersif DYS et aménagements compensatoires en direct | [Ouvrir le guide](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
+| 🛡️ **Anonymiseur de texte** | Anonymisation, pseudonymisation et protection des données élèves pour l'IA | [Ouvrir le guide](MODE_EMPLOI_ANONYMISEUR.md) |
 
 ---
 
@@ -62,6 +63,18 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 - Outils de compensation activables en direct : police OpenDyslexic, règle de lecture, coloration syllabique, fond pastel.
 - Scénario d'atelier clé en main pour réunions de parents ou formations enseignantes (15-20 min).
 - 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
+
+---
+
+### 🛡️ Anonymiseur de texte
+
+*Protégez les données personnelles de vos élèves avant d'utiliser une IA.*
+
+- 3 modes de traitement : étiquettes numérotées (`[Élève 1]`), pseudonymes cohérents ou caviardage textuel.
+- 9 filtres de détection automatique (prénoms fréquents, emails, téléphones, dates, AVS suisse, adresses, etc.).
+- Importation rapide de liste de classe (fichiers ENT XLS, XLSX, CSV) avec reconnaissance des noms et prénoms.
+- Action « Copier pour IA » (Ctrl+Shift+I) intégrant un prompt pédagogique contextualisé.
+- 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_ANONYMISEUR.md)
 
 ---
 

@@ -108,7 +108,10 @@ Un petit utilitaire sans publicité permettant de générer instantanément un b
 
 #### Tirage au Sort (`webapps/teacher/tirage.html`)
 ![Tirage au Sort](meta/screenshots/tirage.png)
-Outil visuel pour désigner un·e élève au hasard. Gère la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
+Outil visuel pour désigner un·e élève au hasard. Gère l'importation de listes de classe (XLS/XLSX, CSV, ENT) et l'exportation, la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
+
+#### Roue de la chance (`webapps/teacher/roue_de_la_chance.html`)
+Roue interactive personnalisable pour le tirage au sort en classe, l'attribution des rôles, les privilèges ou les questions d'éducation numérique. Gestion des listes personnelles (`localStorage`), présélections intégrées, générateur 1 à N et mode plein écran adapté aux TBI/TNI.
 
 #### Créateur de QR codes (`webapps/teacher/qrcode.html`)
 Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables, projection TBI, téléchargement HD et copie presse-papier). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_QRCODE.md).
@@ -126,6 +129,7 @@ Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, régla
 - 🔒 **Coffre-fort numérique** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
 - 🧠 **Dresseur de neurones & Détective IA** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
 - 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
+- 🛡️ **Anonymiseur de textes** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_ANONYMISEUR.md)
 - 🃏 **Une chose après l'autre (Tri par insertion)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_TRI_INSERTION.md)
 - ⌨️ **Dactylo (Clavier suisse romand QWERTZ)** : Apprentissage et entraînement à la frappe au clavier avec 10 niveaux progressifs, statistiques MPM et précision en direct.
 

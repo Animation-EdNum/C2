@@ -6,6 +6,7 @@ This document records the architectural choices, library selections, and the rat
 - **Strict Vanilla Stack (HTML/JS/CSS):** Zero build tools, zero frameworks (No React, Vue, or Tailwind). Guarantees decades-long longevity, instant page loading, and frictionless offline execution.
 - **Synchronous Script Data Loading over `fetch()`:** Static application registries (`registry.js`) and subsets are loaded synchronously via `<script>` tags rather than asynchronous `fetch()` to eliminate CORS blocking when opened directly from the filesystem (`file://`).
 - **Zero-CDN Local Asset Centralization:** All fonts, icons, styles, and audio reside strictly in `/assets/`. Third-party CDNs are forbidden to ensure 100% offline availability in isolated school environments.
+- **Vendored Offline Parsing Libraries (`assets/js/vendor/`):** When complex document parsing is required client-side (e.g. SheetJS for Swiss ENT class roster spreadsheets in Tirage au sort), dependencies are vendored locally in `assets/js/vendor/` to retain 100% offline-first autonomy without third-party network requests.
 
 ## 2. PWA & Offline Strategy
 - **Stale-While-Revalidate Service Worker (`sw.js`):** Assets load instantaneously from the local cache while the worker checks for updates in the background. Immediate updates notify the user via a lightweight toast (`skipWaiting`).
@@ -25,14 +26,16 @@ This document records the architectural choices, library selections, and the rat
 - **Smart Sticky Header & Parallax Reveal:** The portal header uses sticky positioning with a directional scroll listener: it tucks away on downward scroll (`.header-hidden`) to maximize reading area and reveals immediately on any upward scroll. Includes an on-demand expanding search input to save space on mobile.
 - **Dedicated Teacher Space (`#teachers`):** Accessible via a footer link and a subtle ghost button in the portal header. In teacher view, a distinct `graduation-cap` role button appears in the header to return to the student space.
 - **Teacher Tools Header Return:** Inside all teacher apps (`webapps/teacher/*`), the header home icon navigates back to `index.html#teachers` rather than the student landing page.
+- **Mobile Header Optimization:** On narrow viewports (≤ 640px), header grade badges (`.badge-level`) are hidden and navigation links are shortened (e.g. "Élèves", "Enseignant·e·s") with two-line layout support to keep action headers compact and avoid clipping.
 
 ## 5. Gamification & State Management
 - **Decoupled Score Management (`scores.js`):** Adaptive difficulty and statistics are centralized in `ScoreManager`. Total attempts are calculated as `totalSuccess + mistakes` with self-healing migration to keep metrics consistent across app restarts.
 - **Action-Oriented Button Paradigm:** Toggle buttons display the glyph and tooltip representing the *target action* resulting from a click, rather than the current system state.
 - **Universal Application Reset Lifecycle (`window.__onResetApp`):** Standardized `#reset-cache-btn` in `theme.js` clears storage/caches and triggers `window.__onResetApp()` if defined, allowing complex apps to cleanly reset their in-memory models without a full browser reload.
+- **Hot-Loop DOM Query Avoidance:** In tight animation, drawing, or validation loops (e.g. Automate grid drawing, score difficulty validation), DOM lookups are pre-cached in `Map` instances or memoized to avoid layout thrashing and maintain 60 FPS on low-power classroom devices.
 
 ## 6. Security & Vulnerability Remediation (VICE / CodeQL)
-- **Safe DOM Construction over `innerHTML` Assignments:** To prevent DOM XSS vulnerabilities and resolve static analysis security alerts (Google VICE / CodeQL), direct assignments to `.innerHTML` are banned. Code must use `textContent`, native DOM methods (`createElement`, `replaceChildren`), or inert `DOMParser.parseFromString(..., 'text/html')`.
+- **Safe DOM Construction over `innerHTML` Assignments:** To prevent DOM XSS vulnerabilities and resolve static analysis security alerts (Google VICE / CodeQL), direct assignments to `.innerHTML` are banned across the entire codebase (including PWA update toasts and modal dialogs). Code must use `textContent`, native DOM methods (`createElement`, `replaceChildren`), or inert `DOMParser.parseFromString(..., 'text/html')`.
 
 ## 7. Packaging & Distribution
 - **Standalone Static Server CLI (`bin/ednum.js`):** Distributed as `@ednum/suite-ednum`. Implements directory traversal protection (verifying canonical paths against trailing-slash root) and HSTS headers while remaining 100% dependency-free.

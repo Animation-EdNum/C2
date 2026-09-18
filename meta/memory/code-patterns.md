@@ -56,6 +56,7 @@ This document records code conventions, reusable hooks, and established project 
 - **TBI Projection Mode:** Classroom whiteboard mode toggles `.tbi-projection` on the root container, hiding configuration panels and enforcing container overflow safeguards (`overflow: hidden` / `overflow-y: auto`) to prevent viewport clipping.
 - **Compact Cards for External Links:** Render external links in portals using `.card.card-compact` inside `.grid.grid-compact`, displaying title, badges, and external icon arrow without descriptions or tags.
 - **Portal Badge Classification (`PROF_BADGES` in `portal.js`):** Thematic, discipline, and pedagogical tool badges (*Évaluation*, *Gestion de classe*, *Animation*, *Outil*, *Exercices*, etc.) must be registered in `PROF_BADGES` to receive `.badge.prof` (high-contrast off-white pill with slate text). School grade levels (e.g. *3-4H*, *7-8H*) default to `.badge` (rose/red pill).
+- **Mobile Header Responsiveness:** Enforce two-line layout and hide `.badge-level` on mobile screens (`@media (max-width: 640px) { .badge-level { display: none; } }`) to prevent header overflow and ensure touch actions stay accessible.
 
 ## 3. JavaScript & State Idioms
 - **XSS Prevention & Safe DOM Injection:** Never assign directly to `.innerHTML`. Use:
@@ -81,6 +82,7 @@ This document records code conventions, reusable hooks, and established project 
   - Never redeclare `isMuted` or `playSound` locally in individual webapps.
 - **Dynamic FontAwesome Icons:**
   - After inserting `<i data-fa="name"></i>` into the DOM, invoke `window.fa?.createIcons?.(parentElement);`.
+- **Hot-Loop DOM Query Pre-Caching:** In performance-critical loops (e.g. grid drawing or recurrent difficulty validation), avoid repeated `document.querySelector` or `getElementById` calls. Pre-cache target elements into a `Map` or local dictionary before the loop executes.
 - **Event Binding:** Never use inline `onclick="..."` attributes in HTML. Always bind via `addEventListener` or event delegation using `e.target.closest()`.
 
 ## 4. Testing & Playwright Idioms
