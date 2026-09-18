@@ -2,7 +2,7 @@
 
 Portail des utilitaires pratiques pour les enseignant·e·s de la **Suite EdNum** : barème de notes, tirage au sort équitable, et simulateur de troubles d'apprentissage.
 
-Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscription, sans collecte de données personnelles (conformité LPD / RGPD), et sont distribués sous licence libre **AGPL-3.0**.
+Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscription, sans collecte de données personnelles sur serveur (stockage exclusivement local sous responsabilité pédagogique de l'enseignant·e, conformité LIPDA / LPD / RGPD), et sont distribués sous licence libre **AGPL-3.0**.
 
 ---
 

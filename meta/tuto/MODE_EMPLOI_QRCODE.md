@@ -2,7 +2,7 @@
 
 Le **Créateur de QR codes** est un utilitaire pensé pour la classe permettant de générer instantanément des QR codes fiables, sans publicité, sans redirection vers des serveurs tiers et utilisables immédiatement sur tablette, TBI ou support papier.
 
-100% hors-ligne · Aucune collecte de données · Sauvegarde locale automatique (`localStorage`) · Conforme LPD / RGPD.
+100% hors-ligne · Aucune collecte de données sur serveur · Sauvegarde locale automatique (`localStorage`) · Conforme LIPDA / LPD / RGPD.
 
 ---
 

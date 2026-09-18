@@ -87,5 +87,4 @@
 - **[2026-09-13]** [Portal/Badges] Harmonized teacher tool badges: extended `PROF_BADGES` in `portal.js` with `Outil`, `Outils`, and `Exercices` to guarantee consistent `.badge.prof` styling across all teacher cards, updated unit tests (`test_portal.js`), and regenerated Service Worker manifest (`ednum-4b6f9eba`).
 - **[2026-09-16]** [Teacher/Production] Promoted Roue de la chance to production (`webapps/teacher/roue_de_la_chance.html`) with presets, personal list persistence, and standardized AGPL-3.0 attribution footers.
 - **[2026-09-17]** [Teacher/Tools] Enhanced classroom workflows: integrated offline class roster import (Swiss ENT XLS/XLSX/CSV) into Tirage au sort, and added Anonymiseur tool with complete tutorial (`MODE_EMPLOI_ANONYMISEUR.md`).
-
-
+- **[2026-09-18]** [Legal/Compliance] Updated regulatory documentation (`confidentialite.html`, `mentions-legales.html`, `cgu.html`): clarified local data storage under LIPDA/LPD, formalized HEP-VS / school / teacher governance roles, added dedicated data subject rights section, designated Valais Data Protection Officer with incident reporting protocol, and integrated LHand / eCH-0059 digital accessibility compliance.
