@@ -22,9 +22,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
-    <title>Dactylo · Clavier Suisse Romand (Cycle 2 &amp; 3)</title>
-    <meta property="og:title" content="Dactylo · Clavier Suisse Romand">
-    <meta property="og:description" content="Entraîne-toi à la frappe rapide et précise au clavier avec la disposition QWERTZ suisse romande.">
+    <title>Tape-Texte · Clavier Suisse Romand (Cycle 2 &amp; 3)</title>
+    <meta property="og:title" content="Tape-Texte · Clavier Suisse Romand">
+    <meta property="og:description" content="Entraîne-toi à la saisie de texte au clavier avec la disposition QWERTZ suisse romande.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,6 +33,9 @@
     <link rel="stylesheet" href="../../assets/css/components.css">
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/vendor/html2canvas.min.js"></script>
+    <script src="../../assets/js/modal-export.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
     <style>
         body > header,
@@ -701,6 +704,22 @@
             z-index: 999;
         }
 
+        /* CARD FOOTER */
+        .card-footer {
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.25rem 0 1.5rem;
+            border-top: 1px solid var(--border);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 1024px) {
+            .card-footer {
+                padding: 1.25rem 1.75rem 1.5rem;
+            }
+        }
+
         /* FOOTER */
         footer.no-print {
             text-align: center;
@@ -771,6 +790,237 @@
                 grid-template-columns: 1fr;
                 gap: 0.75rem;
             }
+            .card-footer {
+                padding: 1rem 1rem 1.25rem;
+            }
+        }
+
+        /* DACTYLO SCORE MODAL */
+        .dactylo-modal-content {
+            max-width: 600px;
+            width: 92%;
+            padding: 1.5rem;
+            border-radius: var(--radius-xl, 16px);
+        }
+
+        .dactylo-modal-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .dactylo-modal-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0.35rem 0 0.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .dactylo-modal-header .modal-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .dactylo-modal-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-summary-box {
+            background: var(--key-plate-bg, rgba(0, 0, 0, 0.03));
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: var(--radius-md, 8px);
+            padding: 0.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        body.dark .modal-summary-box {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: #334155;
+        }
+
+        .modal-summary-box .summary-box-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+        }
+
+        .modal-summary-box .summary-box-value {
+            font-family: var(--font-mono, monospace);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .modal-summary-box .summary-box-value.highlight {
+            color: var(--primary);
+        }
+
+        .modal-summary-box .summary-box-value.accuracy {
+            color: #10b981;
+        }
+
+        .dactylo-scores-table-wrapper {
+            max-height: 240px;
+            overflow-y: auto;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: var(--radius-md, 8px);
+            margin-bottom: 1rem;
+            background: var(--card-bg, #ffffff);
+        }
+
+        body.dark .dactylo-scores-table-wrapper {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .dactylo-stat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            text-align: left;
+        }
+
+        .dactylo-stat-table th {
+            position: sticky;
+            top: 0;
+            background: var(--key-plate-bg, #f8fafc);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border, #e2e8f0);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            z-index: 1;
+        }
+
+        body.dark .dactylo-stat-table th {
+            background: #0f172a;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        .dactylo-stat-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid var(--border, #f1f5f9);
+            color: var(--text-main);
+        }
+
+        body.dark .dactylo-stat-table td {
+            border-color: #334155;
+        }
+
+        .dactylo-stat-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dactylo-stat-table tr.completed-row {
+            background: rgba(16, 185, 129, 0.04);
+        }
+
+        body.dark .dactylo-stat-table tr.completed-row {
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .level-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill, 9999px);
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .level-status-pill.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        body.dark .level-status-pill.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .level-status-pill.pending {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--text-muted);
+        }
+
+        .dactylo-modal-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border, #e2e8f0);
+        }
+
+        body.dark .dactylo-modal-actions {
+            border-top-color: #334155;
+        }
+
+        .dactylo-modal-actions .btn {
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md, 8px);
+        }
+
+        .btn-subtle {
+            background: transparent;
+            border: 1px solid var(--border, #cbd5e1);
+            color: var(--text-muted, #64748b);
+            font-weight: 500;
+        }
+
+        .btn-subtle:hover {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        .modal-export-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border, #cbd5e1);
+            font-size: 0.7rem;
+            color: var(--text-muted, #64748b);
+        }
+
+        @media (max-width: 600px) {
+            .dactylo-modal-content {
+                padding: 1.25rem;
+            }
+            .dactylo-modal-summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .dactylo-modal-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            .dactylo-modal-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -791,19 +1041,24 @@
                 </div>
                 <div>
                     <h1>
-                        Dactylo
+                        Tape-Texte
                         <span class="badge-alpha">Alpha</span>
                         <span class="badge-level">Cycle 2 &amp; 3</span>
                     </h1>
                 </div>
             </div>
 
-            <div class="header-actions">
+            <div class="action-buttons">
                 <div class="settings-dropdown">
                     <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
                         <i data-fa="gear"></i>
                     </button>
                     <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="menuOpenScoresBtn" aria-label="Voir mes statistiques" data-action="show-stats">
+                            <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                            <span>Statistiques détaillées</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
                         <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
                             <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
                             <i data-fa="volume-xmark" id="icon-vol-off"></i>
@@ -884,6 +1139,23 @@
                     <!-- Dynamic keys rendered by JS -->
                 </div>
             </div>
+
+            <!-- CARD FOOTER (Standard Unifié) -->
+            <div class="card-footer">
+                <button class="icon-action-btn" id="btnOpenDactyloScores" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats">
+                    <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                </button>
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Niveaux réussis</div>
+                        <div class="score-value" id="footerCompletedLevels">0 / 10</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Record max 🔥</div>
+                        <div class="score-value" id="footerBestWpm">0 MPM</div>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!-- RESULTS VIEW -->
@@ -921,11 +1193,91 @@
                 <button class="btn btn-secondary" id="btnRetry">
                     <i data-fa="rotate-left"></i> Réessayer
                 </button>
+                <button class="btn btn-secondary" id="btnResultsViewScoreModal">
+                    <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i> Statistiques détaillées
+                </button>
                 <button class="btn btn-primary" id="btnNextLevel">
                     Niveau suivant <i data-fa="arrow-right"></i>
                 </button>
             </div>
         </section>
+    </div>
+
+    <!-- DACTYLO SCORE MODAL -->
+    <div id="dactylo-score-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="dactylo-score-modal-title">
+        <div class="ui-modal-content dactylo-modal-content" id="dactylo-modal-content">
+            <button class="ui-btn-close" id="btn-close-dactylo-modal" aria-label="Fermer" data-html2canvas-ignore="true">✖</button>
+
+            <div class="dactylo-modal-header">
+                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:6px;">
+                    <span class="badge-alpha">Alpha</span>
+                    <span class="badge-level">Cycle 2 &amp; 3 · HEP-VS</span>
+                </div>
+                <h2 id="dactylo-score-modal-title">
+                    <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i> Statistiques détaillées
+                </h2>
+                <p class="modal-subtitle">Tape-Texte · Clavier QWERTZ Suisse Romand</p>
+            </div>
+
+            <!-- Student Info Bar -->
+            <div class="modal-student-bar">
+                <label for="dactyloStudentName"><strong>Élève :</strong></label>
+                <input type="text" id="dactyloStudentName" class="modal-student-input" placeholder="Prénom et Nom de l'élève" autocomplete="name">
+                <span class="modal-date-badge" id="dactyloModalDate"></span>
+            </div>
+
+            <!-- Summary Cards Grid -->
+            <div class="dactylo-modal-summary-grid">
+                <div class="modal-summary-box">
+                    <span class="summary-box-label">Niveaux réussis</span>
+                    <span class="summary-box-value highlight" id="modalCompletedLevels">0 / 10</span>
+                </div>
+                <div class="modal-summary-box">
+                    <span class="summary-box-label">Vitesse moyenne</span>
+                    <span class="summary-box-value" id="modalAvgWpm">0 MPM</span>
+                </div>
+                <div class="modal-summary-box">
+                    <span class="summary-box-label">Précision moyenne</span>
+                    <span class="summary-box-value accuracy" id="modalAvgAcc">100%</span>
+                </div>
+            </div>
+
+            <!-- Levels Progress Table -->
+            <div class="dactylo-scores-table-wrapper">
+                <table class="dactylo-stat-table">
+                    <thead>
+                        <tr>
+                            <th>Niveau</th>
+                            <th>Record Vitesse</th>
+                            <th>Précision</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dactyloScoresTableBody">
+                        <!-- Populated dynamically by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Actions (ignored by html2canvas export) -->
+            <div class="dactylo-modal-actions" data-html2canvas-ignore="true">
+                <button type="button" class="btn btn-subtle" id="btnResetDactyloScores">
+                    <i data-fa="arrows-rotate"></i> Réinitialiser
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnCopyDactyloModal">
+                    <i data-fa="copy"></i> Copier l'image
+                </button>
+                <button type="button" class="btn btn-primary" id="btnExportDactyloModal">
+                    <i data-fa="image"></i> Exporter en image (PNG)
+                </button>
+            </div>
+
+            <!-- Official Export Footer -->
+            <div class="modal-export-footer">
+                <span>Suite EdNum · Animation-EdNum (HEP-VS)</span>
+                <span id="modalExportTimestamp"></span>
+            </div>
+        </div>
     </div>
 
     <!-- FOOTER -->
@@ -998,7 +1350,7 @@
                     id: 7,
                     name: "7. Mots longs et endurance",
                     description: "Développe ta précision sur des mots plus longs demandant de la régularité.",
-                    text: "dactylographie apprentissage magnifique développement concentration extraordinaire scientifique"
+                    text: "communication apprentissage magnifique développement concentration extraordinaire scientifique"
                 },
                 {
                     id: 8,
@@ -1010,13 +1362,13 @@
                     id: 9,
                     name: "9. Paragraphe fluide",
                     description: "Mets tout en pratique dans un texte continu. Ne t'arrête pas en cas d'erreur, poursuis ton élan !",
-                    text: "La dactylographie permet de libérer son attention. Plus les doigts mémorisent l'emplacement des touches, plus la pensée peut se concentrer sur les idées, la créativité et la rédaction."
+                    text: "La saisie au clavier permet de libérer son attention. Plus les mains mémorisent l'emplacement des touches, plus la pensée peut se concentrer sur les idées, la créativité et la rédaction."
                 },
                 {
                     id: 10,
                     name: "10. Le grand défi",
-                    description: "Un défi complet mêlant lettres, accents, ponctuation et chiffres. Respire et fais confiance à tes doigts !",
-                    text: "Le Cervin culmine à 4478 mètres d'altitude entre la Suisse et l'Italie. Sa silhouette pyramidale fascine les alpinistes depuis plus de 150 ans. Avec de la pratique quotidienne, tes doigts voleront bientôt sur le clavier sans hésiter !"
+                    description: "Un défi complet mêlant lettres, accents, ponctuation et chiffres. Respire et fais confiance à tes mains !",
+                    text: "Le Cervin culmine à 4478 mètres d'altitude entre la Suisse et l'Italie. Sa silhouette pyramidale fascine les alpinistes depuis plus de 150 ans. Avec de la pratique quotidienne, tes mains voleront bientôt sur le clavier sans hésiter !"
                 }
             ];
 
@@ -1119,6 +1471,26 @@
             const btnRetry = document.getElementById('btnRetry');
             const btnNextLevel = document.getElementById('btnNextLevel');
 
+            // --- ÉLÉMENTS DE LA MODALE DE BILAN & EXPORT ---
+            const dactyloScoreModal = document.getElementById('dactylo-score-modal');
+            const dactyloModalContent = document.getElementById('dactylo-modal-content');
+            const btnCloseDactyloModal = document.getElementById('btn-close-dactylo-modal');
+            const btnOpenDactyloScores = document.getElementById('btnOpenDactyloScores');
+            const menuOpenScoresBtn = document.getElementById('menuOpenScoresBtn');
+            const btnResultsViewScoreModal = document.getElementById('btnResultsViewScoreModal');
+            const btnExportDactyloModal = document.getElementById('btnExportDactyloModal');
+            const btnCopyDactyloModal = document.getElementById('btnCopyDactyloModal');
+            const btnResetDactyloScores = document.getElementById('btnResetDactyloScores');
+            const dactyloStudentName = document.getElementById('dactyloStudentName');
+            const dactyloModalDate = document.getElementById('dactyloModalDate');
+            const modalCompletedLevels = document.getElementById('modalCompletedLevels');
+            const modalAvgWpm = document.getElementById('modalAvgWpm');
+            const modalAvgAcc = document.getElementById('modalAvgAcc');
+            const dactyloScoresTableBody = document.getElementById('dactyloScoresTableBody');
+            const modalExportTimestamp = document.getElementById('modalExportTimestamp');
+            const footerCompletedLevels = document.getElementById('footerCompletedLevels');
+            const footerBestWpm = document.getElementById('footerBestWpm');
+
             // --- ÉTAT DU JEU ---
             let currentLevelIdx = 0;
             let currentIndex = 0;
@@ -1131,13 +1503,35 @@
             let errorTimeout = null;
             let isFinished = false;
 
-            const STORAGE_KEY = 'dactylo-scores';
+            const STORAGE_KEY = 'tapetexte-scores';
+            const LEGACY_STORAGE_KEY = 'dactylo-scores';
             let scores = {};
             try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) scores = JSON.parse(saved);
+                const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+                if (saved) {
+                    scores = JSON.parse(saved);
+                }
             } catch (e) {
                 scores = {};
+            }
+
+            function updateFooterScoreBar() {
+                let completed = 0;
+                let maxWpm = 0;
+                Object.values(scores).forEach(s => {
+                    if (s) {
+                        completed++;
+                        if (s.wpm > maxWpm) {
+                            maxWpm = s.wpm;
+                        }
+                    }
+                });
+                if (footerCompletedLevels) {
+                    footerCompletedLevels.textContent = `${completed} / ${LEVELS.length}`;
+                }
+                if (footerBestWpm) {
+                    footerBestWpm.textContent = `${maxWpm} MPM`;
+                }
             }
 
             // --- INITIALISATION DES NIVEAUX ---
@@ -1151,6 +1545,7 @@
                     levelSelect.appendChild(opt);
                 });
                 levelSelect.value = currentLevelIdx;
+                updateFooterScoreBar();
             }
 
             // --- GÉNÉRATION DU CLAVIER VISUEL ---
@@ -1399,6 +1794,13 @@
 
             // --- ÉCOUTEUR CLAVIER PHYSIQUE ---
             window.addEventListener('keydown', (e) => {
+                if (dactyloScoreModal && (dactyloScoreModal.classList.contains('active') || dactyloScoreModal.classList.contains('visible'))) {
+                    if (e.key === 'Escape') {
+                        closeDactyloScoreModal();
+                    }
+                    return;
+                }
+
                 if (isFinished) {
                     if (e.key === 'Enter') {
                         if (currentLevelIdx < LEVELS.length - 1) {
@@ -1415,7 +1817,9 @@
                 // Touches système ignorées
                 if (e.ctrlKey || e.metaKey || e.altKey) return;
                 if (['Shift', 'Alt', 'Control', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(e.key)) {
-                    if (e.key === 'Escape') loadLevel(currentLevelIdx);
+                    if (e.key === 'Escape') {
+                        loadLevel(currentLevelIdx);
+                    }
                     return;
                 }
 
@@ -1567,11 +1971,237 @@
             const resetCacheBtn = document.getElementById('reset-cache-btn');
             if (resetCacheBtn) {
                 resetCacheBtn.addEventListener('click', () => {
-                    if (confirm("Réinitialiser tous les records de dactylographie ?")) {
+                    if (confirm("Réinitialiser tous les records de Tape-Texte ?")) {
                         scores = {};
                         localStorage.removeItem(STORAGE_KEY);
+                        localStorage.removeItem(LEGACY_STORAGE_KEY);
                         initLevelSelect();
                         loadLevel(currentLevelIdx);
+                    }
+                });
+            }
+
+            // --- GESTION DE LA MODALE DE BILAN & EXPORT ---
+            function renderDactyloScoreModal() {
+                if (!dactyloScoreModal) {
+                    return;
+                }
+
+                const now = new Date();
+                const dateFormatted = now.toLocaleDateString('fr-CH', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                const timeFormatted = now.toLocaleTimeString('fr-CH', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                if (dactyloModalDate) {
+                    dactyloModalDate.textContent = dateFormatted;
+                }
+                if (modalExportTimestamp) {
+                    modalExportTimestamp.textContent = `${dateFormatted} à ${timeFormatted}`;
+                }
+
+                if (dactyloStudentName) {
+                    const savedName = (window.ModalExporter && typeof window.ModalExporter.getStudentName === 'function')
+                        ? window.ModalExporter.getStudentName()
+                        : (localStorage.getItem('c2_student_name') || '');
+                    dactyloStudentName.value = savedName;
+                }
+
+                let completedCount = 0;
+                let totalWpm = 0;
+                let totalAcc = 0;
+
+                if (dactyloScoresTableBody) {
+                    dactyloScoresTableBody.innerHTML = '';
+
+                    LEVELS.forEach((lvl, idx) => {
+                        const tr = document.createElement('tr');
+                        const best = scores[lvl.id];
+
+                        if (best) {
+                            completedCount++;
+                            totalWpm += best.wpm;
+                            totalAcc += best.accuracy;
+                            tr.className = 'completed-row';
+
+                            const tdLvl = document.createElement('td');
+                            tdLvl.className = 'level-name-col';
+                            tdLvl.innerHTML = `<strong>Niveau ${idx + 1}</strong> <span class="level-sub">${lvl.name}</span>`;
+
+                            const tdWpm = document.createElement('td');
+                            tdWpm.className = 'score-num-col';
+                            tdWpm.textContent = `${best.wpm} MPM`;
+
+                            const tdAcc = document.createElement('td');
+                            tdAcc.className = 'score-num-col';
+                            tdAcc.textContent = `${best.accuracy}%`;
+
+                            const tdStatus = document.createElement('td');
+                            tdStatus.className = 'score-status-col';
+                            tdStatus.innerHTML = `<span class="level-status-pill success"><i data-fa="circle-check"></i> Validé</span>`;
+
+                            tr.appendChild(tdLvl);
+                            tr.appendChild(tdWpm);
+                            tr.appendChild(tdAcc);
+                            tr.appendChild(tdStatus);
+                        } else {
+                            const tdLvl = document.createElement('td');
+                            tdLvl.className = 'level-name-col';
+                            tdLvl.innerHTML = `<strong>Niveau ${idx + 1}</strong> <span class="level-sub">${lvl.name}</span>`;
+
+                            const tdWpm = document.createElement('td');
+                            tdWpm.className = 'score-num-col';
+                            tdWpm.textContent = '—';
+
+                            const tdAcc = document.createElement('td');
+                            tdAcc.className = 'score-num-col';
+                            tdAcc.textContent = '—';
+
+                            const tdStatus = document.createElement('td');
+                            tdStatus.className = 'score-status-col';
+                            tdStatus.innerHTML = `<span class="level-status-pill pending">Non complété</span>`;
+
+                            tr.appendChild(tdLvl);
+                            tr.appendChild(tdWpm);
+                            tr.appendChild(tdAcc);
+                            tr.appendChild(tdStatus);
+                        }
+
+                        dactyloScoresTableBody.appendChild(tr);
+                    });
+                }
+
+                if (modalCompletedLevels) {
+                    modalCompletedLevels.textContent = `${completedCount} / ${LEVELS.length}`;
+                }
+                if (modalAvgWpm) {
+                    const avgWpm = completedCount > 0 ? Math.round(totalWpm / completedCount) : 0;
+                    modalAvgWpm.textContent = `${avgWpm} MPM`;
+                }
+                if (modalAvgAcc) {
+                    const avgAcc = completedCount > 0 ? Math.round(totalAcc / completedCount) : 0;
+                    modalAvgAcc.textContent = `${avgAcc}%`;
+                }
+
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+            }
+
+            function openDactyloScoreModal() {
+                renderDactyloScoreModal();
+                if (dactyloScoreModal) {
+                    dactyloScoreModal.classList.add('active');
+                    dactyloScoreModal.classList.add('visible');
+                    dactyloScoreModal.setAttribute('aria-hidden', 'false');
+                }
+            }
+
+            function closeDactyloScoreModal() {
+                if (dactyloScoreModal) {
+                    dactyloScoreModal.classList.remove('active');
+                    dactyloScoreModal.classList.remove('visible');
+                    dactyloScoreModal.setAttribute('aria-hidden', 'true');
+                }
+            }
+
+            // Écouteur global pour tout élément déclencheur de statistiques
+            document.addEventListener('click', (e) => {
+                const statsTrigger = e.target.closest('[data-action="show-stats"]');
+                if (statsTrigger) {
+                    e.preventDefault();
+                    const dropdownContent = document.querySelector('.settings-dropdown-content');
+                    if (dropdownContent) {
+                        dropdownContent.classList.remove('show');
+                    }
+                    document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
+                    openDactyloScoreModal();
+                }
+            });
+
+            // Boutons d'ouverture spécifiques de la modale
+            if (btnOpenDactyloScores) {
+                btnOpenDactyloScores.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openDactyloScoreModal();
+                });
+            }
+            if (menuOpenScoresBtn) {
+                menuOpenScoresBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const dropdownContent = document.querySelector('.settings-dropdown-content');
+                    if (dropdownContent) {
+                        dropdownContent.classList.remove('show');
+                    }
+                    document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
+                    openDactyloScoreModal();
+                });
+            }
+            if (btnResultsViewScoreModal) {
+                btnResultsViewScoreModal.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openDactyloScoreModal();
+                });
+            }
+
+            // Fermeture de la modale
+            if (btnCloseDactyloModal) {
+                btnCloseDactyloModal.addEventListener('click', closeDactyloScoreModal);
+            }
+            if (dactyloScoreModal) {
+                dactyloScoreModal.addEventListener('click', (e) => {
+                    if (e.target === dactyloScoreModal) {
+                        closeDactyloScoreModal();
+                    }
+                });
+            }
+
+            // Sauvegarde en direct du prénom/nom de l'élève
+            if (dactyloStudentName) {
+                dactyloStudentName.addEventListener('input', (e) => {
+                    if (window.ModalExporter && typeof window.ModalExporter.saveStudentName === 'function') {
+                        window.ModalExporter.saveStudentName(e.target.value);
+                    }
+                });
+            }
+
+            // Export image PNG
+            if (btnExportDactyloModal) {
+                btnExportDactyloModal.addEventListener('click', async () => {
+                    if (window.ModalExporter && typeof window.ModalExporter.exportModal === 'function') {
+                        await window.ModalExporter.exportModal(dactyloModalContent, {
+                            appName: 'Alpha Tape-Texte'
+                        });
+                    }
+                });
+            }
+
+            // Copie d'image dans le presse-papiers
+            if (btnCopyDactyloModal) {
+                btnCopyDactyloModal.addEventListener('click', async () => {
+                    if (window.ModalExporter && typeof window.ModalExporter.copyModal === 'function') {
+                        await window.ModalExporter.copyModal(dactyloModalContent, {
+                            appName: 'Alpha Tape-Texte'
+                        });
+                    }
+                });
+            }
+
+            // Réinitialisation des scores depuis la modale
+            if (btnResetDactyloScores) {
+                btnResetDactyloScores.addEventListener('click', () => {
+                    if (confirm("Réinitialiser tous les records de Tape-Texte ?")) {
+                        scores = {};
+                        localStorage.removeItem(STORAGE_KEY);
+                        localStorage.removeItem(LEGACY_STORAGE_KEY);
+                        initLevelSelect();
+                        loadLevel(currentLevelIdx);
+                        renderDactyloScoreModal();
                     }
                 });
             }

@@ -212,6 +212,21 @@
     } else {
         initHeaderEvents();
     }
+
+    // Chargement universel de l'utilitaire d'export d'image de modales pour toute la suite
+    if (typeof document !== 'undefined' && !document.querySelector('script[src*="modal-export.js"]')) {
+        const rootLink = document.querySelector('link[rel="root"]');
+        let rootPath = rootLink ? rootLink.getAttribute('href') : './';
+        if (!rootPath.endsWith('/')) {
+            rootPath += '/';
+        }
+        const modalExportScript = document.createElement('script');
+        modalExportScript.src = rootPath + 'assets/js/modal-export.js';
+        modalExportScript.defer = true;
+        if (document.head) {
+            document.head.appendChild(modalExportScript);
+        }
+    }
 })();
 
 /* ============================================================

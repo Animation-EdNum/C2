@@ -278,15 +278,26 @@ const ScoreManager = {
     },
 
     injectModalHtml() {
-        if (document.getElementById('score-details-modal')) return;
+        if (document.getElementById('score-details-modal')) {
+            return;
+        }
 
         const modalHtml = `
             <div id="score-details-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
                 <div class="ui-modal-content" id="score-modal-content">
                     <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
-                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="Fermer">✖</button>
+                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="Fermer" data-html2canvas-ignore="true">✖</button>
+                    <div class="modal-student-bar">
+                        <label for="score-student-name"><strong>Élève :</strong></label>
+                        <input type="text" id="score-student-name" class="modal-student-input" placeholder="Prénom et Nom de l'élève" autocomplete="name">
+                    </div>
                     <div id="score-modal-body"></div>
-                    <button class="btn-reset-scores" id="btn-reset-scores-action">Réinitialiser les scores</button>
+                    <div class="score-modal-actions" data-html2canvas-ignore="true">
+                        <button type="button" class="btn-export-scores" id="btn-export-scores-action">
+                            <i data-fa="image"></i> Exporter en image (PNG)
+                        </button>
+                        <button type="button" class="btn-reset-scores" id="btn-reset-scores-action">Réinitialiser les scores</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -300,6 +311,31 @@ const ScoreManager = {
         const resetBtn = document.getElementById('btn-reset-scores-action');
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.resetScores());
+        }
+
+        const exportBtn = document.getElementById('btn-export-scores-action');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                if (window.ModalExporter && typeof window.ModalExporter.exportModal === 'function') {
+                    window.ModalExporter.exportModal(document.getElementById('score-modal-content'), { appName: this.appId });
+                }
+            });
+        }
+
+        const studentInput = document.getElementById('score-student-name');
+        if (studentInput) {
+            try {
+                studentInput.value = localStorage.getItem('c2_student_name') || '';
+            } catch (e) {}
+            studentInput.addEventListener('input', (e) => {
+                try {
+                    localStorage.setItem('c2_student_name', e.target.value.trim());
+                } catch (err) {}
+            });
+        }
+
+        if (window.ModalExporter && typeof window.ModalExporter.decorateModal === 'function') {
+            window.ModalExporter.decorateModal(document.getElementById('score-modal-content'));
         }
 
         this.addSwipeToClose();
@@ -343,15 +379,28 @@ const ScoreManager = {
 
     showModal() {
         const modal = document.getElementById('score-details-modal');
-        if (!modal) return;
+        if (!modal) {
+            return;
+        }
+        const studentInput = document.getElementById('score-student-name');
+        if (studentInput) {
+            try {
+                studentInput.value = localStorage.getItem('c2_student_name') || '';
+            } catch (e) {}
+        }
         this.renderModalContent();
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
+        if (typeof window.fa?.createIcons === 'function') {
+            window.fa.createIcons();
+        }
     },
 
     closeModal() {
         const modal = document.getElementById('score-details-modal');
-        if (!modal) return;
+        if (!modal) {
+            return;
+        }
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
     },

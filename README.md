@@ -131,7 +131,7 @@ Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, régla
 - 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
 - 🛡️ **Anonymiseur de textes** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_ANONYMISEUR.md)
 - 🃏 **Une chose après l'autre (Tri par insertion)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_TRI_INSERTION.md)
-- ⌨️ **Dactylo (Clavier suisse romand QWERTZ)** : Apprentissage et entraînement à la frappe au clavier avec 10 niveaux progressifs, statistiques MPM et précision en direct.
+- ⌨️ **Tape-Texte (Clavier suisse romand QWERTZ)** : Entraînement à la saisie de texte au clavier avec 10 niveaux progressifs, statistiques MPM et précision en direct.
 
 
 ---

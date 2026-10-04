@@ -29,12 +29,12 @@ window.REGISTRY = [
     "isAlpha": true,
     "dataLevel": "5-8H, 9-10CO",
     "icon": "keyboard",
-    "title": "Dactylo",
-    "desc": "Entraîne-toi à la frappe rapide et précise sur le clavier QWERTZ suisse romand.",
+    "title": "Tape-Texte",
+    "desc": "Entraîne-toi à la saisie de texte rapide et précise sur le clavier QWERTZ suisse romand.",
     "tags": [
       "#Clavier",
       "#Dactylographie",
-      "#Bureautique",
+      "#Touche",
       "#Frappe"
     ],
     "ref": "EN 23 · Usages — Saisie d'un texte",

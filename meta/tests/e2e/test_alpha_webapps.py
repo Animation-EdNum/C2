@@ -27,7 +27,7 @@ def test_compresseur_magique_has_correct_title(page: Page):
 
 def test_dactylo_features(page: Page):
     page.goto("http://localhost:8000/alpha/webapps/dactylo.html")
-    expect(page).to_have_title(re.compile("Dactylo"))
+    expect(page).to_have_title(re.compile("Tape-Texte"))
     
     # Check level select and keyboard
     level_select = page.locator("#levelSelect")
