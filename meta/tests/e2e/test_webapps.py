@@ -24,3 +24,19 @@ def test_routage_reseau_has_correct_title(page: Page):
 def test_simulateur_automate_has_correct_title(page: Page):
     page.goto("http://localhost:8000/webapps/simulateur_automate.html")
     expect(page).to_have_title(re.compile("Simulateur d'automate"))
+
+def test_webapps_card_width_on_wide_screen(page: Page):
+    """Ensure cards occupy a wide portion of a wide desktop screen."""
+    page.set_viewport_size({"width": 1920, "height": 1080})
+    for app in [
+        "webapps/routage_reseau.html",
+        "webapps/binaire_codage.html",
+        "webapps/bit_de_parite.html",
+        "webapps/simulateur_automate.html"
+    ]:
+        page.goto(f"http://localhost:8000/{app}")
+        card = page.locator(".container, .app-shell").first
+        box = card.bounding_box()
+        assert box is not None
+        assert box["width"] >= 1000, f"{app} card is too narrow: {box['width']}px"
+

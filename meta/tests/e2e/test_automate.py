@@ -39,7 +39,7 @@ def test_automate_explore_tab_active_by_default(page: Page):
 def test_automate_has_header_with_home_link(page: Page):
     """Header should contain a link back to the portal."""
     page.goto(BASE_URL)
-    link = page.locator("a.header-icon")
+    link = page.locator("a.header-back-btn, a.header-icon").first
     expect(link).to_have_attribute("href", "../index.html")
 
 
