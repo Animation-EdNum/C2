@@ -198,7 +198,15 @@
         }
 
         .btn-secondary:hover {
-            background: var(--border);
+            background: rgba(13, 148, 136, 0.12) !important;
+            border-color: var(--primary) !important;
+            color: var(--primary) !important;
+        }
+
+        body.dark .btn-secondary:hover {
+            background: rgba(13, 148, 136, 0.25) !important;
+            border-color: var(--primary) !important;
+            color: #5eead4 !important;
         }
 
         .btn-primary {
@@ -948,6 +956,38 @@
             box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
         }
 
+        .profile-btn-add {
+            border-style: dashed;
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .profile-btn-add:hover {
+            background: var(--primary-light);
+            border-style: solid;
+        }
+
+        .profile-btn-del {
+            margin-left: 5px;
+            opacity: 0.6;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: inherit;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .profile-btn-del:hover {
+            opacity: 1;
+            color: #ef4444;
+            transform: scale(1.2);
+        }
+
         .worksheet-wrapper {
             flex: 1;
             display: flex;
@@ -967,6 +1007,7 @@
             display: flex;
             flex-direction: column;
             transition: all 0.3s;
+            position: relative;
         }
 
         body.dark .worksheet-card {
@@ -1023,10 +1064,61 @@
             font-family: Verdana, Geneva, Tahoma, sans-serif !important;
         }
 
-        .worksheet-header span {
+        .worksheet-field {
             display: inline-flex;
-            gap: 6px;
+            align-items: baseline;
+            gap: 8px;
             white-space: nowrap;
+        }
+
+        .worksheet-line {
+            display: inline-block;
+            width: 140px;
+            border-bottom: 2px solid currentColor;
+            letter-spacing: normal !important;
+            word-spacing: normal !important;
+            vertical-align: baseline;
+        }
+
+        .worksheet-line.line-date {
+            width: 90px;
+        }
+
+        .worksheet-edit-hint {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: rgba(13, 148, 136, 0.05);
+            border: 1px dashed rgba(13, 148, 136, 0.25);
+            border-radius: var(--radius-md);
+            padding: 5px 10px;
+        }
+
+        .worksheet-editor {
+            width: 100%;
+            min-height: 260px;
+            font-size: 1.35rem;
+            line-height: 1.8;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-main);
+            font-family: inherit;
+            resize: vertical;
+            display: none;
+            outline: none;
+            box-shadow: 0 0 0 3px var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark .worksheet-editor {
+            background: rgba(15, 23, 42, 0.85);
+            color: #f8fafc;
         }
 
         .worksheet-text {
@@ -1035,6 +1127,36 @@
             white-space: pre-wrap;
             word-break: break-word;
             flex: 1;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            padding: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .worksheet-text:hover {
+            background: rgba(13, 148, 136, 0.04);
+            box-shadow: inset 0 0 0 1px rgba(13, 148, 136, 0.35);
+        }
+
+        .sim-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .sim-intensity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 0.4rem 0.85rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         .worksheet-actions {
@@ -1129,6 +1251,261 @@
 
         body.dark .info-banner p {
             color: #fcd34d;
+        }
+
+        /* MODAL STYLES (OPAQUE & ACCESSIBLE) */
+        .custom-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1.25rem;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .custom-modal-dialog {
+            background: #ffffff !important;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.dark .custom-modal-dialog {
+            background: #1e293b !important;
+            border-color: #334155;
+            color: #f8fafc;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .custom-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.15rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: #ffffff;
+        }
+
+        body.dark .custom-modal-header {
+            background: #1e293b;
+            border-bottom-color: #334155;
+        }
+
+        .custom-modal-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .custom-modal-title-group h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        body.dark .custom-modal-title-group h3 {
+            color: #f8fafc;
+        }
+
+        .custom-modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
+        }
+
+        .custom-modal-close:hover {
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        body.dark .custom-modal-close:hover {
+            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-modal-body {
+            padding: 1.25rem 1.5rem;
+            background: #ffffff;
+        }
+
+        body.dark .custom-modal-body {
+            background: #1e293b;
+        }
+
+        .custom-modal-body input[type="text"] {
+            width: 100%;
+            padding: 0.75rem 0.95rem;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--border);
+            background: #f8fafc;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: inherit;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .custom-modal-body input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        body.dark .custom-modal-body input[type="text"] {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        body.dark .custom-modal-body input[type="text"]:focus {
+            background: #0f172a;
+            border-color: var(--primary);
+        }
+
+        .profile-summary-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        body.dark .profile-summary-box {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        .profile-summary-item {
+            font-size: 0.85rem;
+            color: var(--text-main);
+        }
+
+        body.dark .profile-summary-item {
+            color: #f8fafc;
+        }
+
+        .profile-summary-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 9px;
+            border-radius: var(--radius-pill);
+            font-size: 0.76rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .profile-summary-chip.chip-zorzi {
+            background: rgba(13, 148, 136, 0.15);
+            color: #0f766e;
+            border: 1px solid rgba(13, 148, 136, 0.35);
+        }
+
+        .profile-summary-chip.chip-pastel {
+            background: #FAF7EE;
+            color: #78350f;
+            border: 1px solid #d97706;
+        }
+
+        .profile-summary-chip.chip-graphemes {
+            background: rgba(234, 88, 12, 0.15);
+            color: #c2410c;
+            border: 1px solid rgba(234, 88, 12, 0.35);
+        }
+
+        .profile-summary-chip.chip-silent {
+            background: rgba(100, 116, 139, 0.15);
+            color: #334155;
+            border: 1px solid rgba(100, 116, 139, 0.35);
+        }
+
+        .profile-summary-chip.chip-syllables {
+            background: rgba(29, 78, 216, 0.15);
+            color: #1d4ed8;
+            border: 1px solid rgba(29, 78, 216, 0.35);
+        }
+
+        body.dark .profile-summary-chip.chip-zorzi {
+            background: rgba(13, 148, 136, 0.25);
+            color: #5eead4;
+            border-color: rgba(94, 234, 212, 0.4);
+        }
+
+        body.dark .profile-summary-chip.chip-pastel {
+            background: #1e293b;
+            color: #fde68a;
+            border-color: #b45309;
+        }
+
+        body.dark .profile-summary-chip.chip-graphemes {
+            background: rgba(234, 88, 12, 0.25);
+            color: #fdba74;
+            border-color: rgba(251, 146, 60, 0.4);
+        }
+
+        body.dark .profile-summary-chip.chip-silent {
+            background: rgba(100, 116, 139, 0.25);
+            color: #cbd5e1;
+            border-color: rgba(148, 163, 184, 0.4);
+        }
+
+        body.dark .profile-summary-chip.chip-syllables {
+            background: rgba(29, 78, 216, 0.25);
+            color: #93c5fd;
+            border-color: rgba(96, 165, 250, 0.4);
+        }
+
+        .custom-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        body.dark .custom-modal-footer {
+            background: #0f172a;
+            border-top-color: #334155;
         }
 
         @media (max-width: 640px) {
@@ -1240,6 +1617,10 @@
                 border-bottom: 2px solid #334155 !important;
                 padding-bottom: 10px !important;
                 margin-bottom: 25px !important;
+            }
+
+            .worksheet-line {
+                border-bottom: 2px solid #334155 !important;
             }
 
             .worksheet-text {
@@ -1487,60 +1868,6 @@
                     </label>
                 </div>
 
-                <!-- SIMULATEUR CONTROLS -->
-                <div class="panel-section" id="sectionSimControls" style="display: none;">
-                    <div class="panel-section-title">
-                        <i data-fa="gear" style="width:14px;height:14px;"></i>
-                        Obstacles artificiels de lecture
-                    </div>
-
-                    <div class="input-group">
-                        <label>
-                            <span><i data-fa="sliders" style="margin-right:4px;"></i> Intensité</span>
-                            <span class="value-badge" id="valSeverity">80%</span>
-                        </label>
-                        <input type="range" id="inputSeverity" min="0" max="1" step="0.05" value="0.8">
-                    </div>
-
-                    <div class="input-group">
-                        <label>
-                            <span><i data-fa="timer" style="margin-right:4px;"></i> Instabilité</span>
-                            <span class="value-badge" id="valSpeed">5</span>
-                        </label>
-                        <input type="range" id="inputSpeed" min="0" max="10" step="1" value="5">
-                    </div>
-
-                    <div class="input-group" style="margin-top: 0.75rem;">
-                        <label>Type de perturbation simulée</label>
-                        <div class="mixing-grid">
-                            <button class="mixing-btn active" data-style="all">Mixte</button>
-                            <button class="mixing-btn" data-style="offset">Décalages</button>
-                            <button class="mixing-btn" data-style="scramble">Mélange</button>
-                            <button class="mixing-btn" data-style="invert">Inversions</button>
-                        </div>
-                    </div>
-
-                    <div class="info-banner" style="margin-top: 1rem;">
-                        <i data-fa="circle-info" style="width:14px;height:14px;"></i>
-                        <p>La dyslexie est un trouble cognitif, pas visuel. Ce simulateur recrée l'effort cognitif, la
-                            perte de repères et la surcharge attentionnelle nécessaires au décodage. Ce n'est pas une
-                            reproduction fidèle de ce que voit une personne dyslexique !</p>
-                    </div>
-                </div>
-
-                <!-- TEXTES D'EXEMPLE (VISIBLE SOUS ÉDITER TEXTE UNIQUEMENT) -->
-                <div class="panel-section" id="sectionPresets" style="display: none;">
-                    <div class="panel-section-title">
-                        <i data-fa="book-open" style="width:14px;height:14px;"></i>
-                        Textes d'exemple
-                    </div>
-                    <p style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.4;">
-                        Sélectionnez un modèle ci-dessous pour charger son contenu dans l'éditeur.
-                    </p>
-                    <div class="preset-list" id="presetList">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
             </aside>
 
             <main class="results-panel">
@@ -1553,9 +1880,6 @@
                         <button class="tab-btn active" data-tab="adapter">
                             <i data-fa="book-open-reader" style="width:14px;height:14px;"></i> Adaptateur DYS
                         </button>
-                        <button class="tab-btn" data-tab="edit">
-                            <i data-fa="pen" style="width:14px;height:14px;"></i> Éditer texte
-                        </button>
                         <button class="tab-btn" data-tab="simulation">
                             <i data-fa="eye" style="width:14px;height:14px;"></i> Simulateur
                         </button>
@@ -1565,11 +1889,27 @@
                 <div class="workspace-area">
                     <!-- VIEW 1: SIMULATEUR -->
                     <div class="sim-view" id="viewSimulation" style="display: none;">
+                        <div class="info-banner" style="margin-bottom: 0.85rem;">
+                            <i data-fa="circle-info" style="width:16px;height:16px;flex-shrink:0;"></i>
+                            <p>La dyslexie est un trouble cognitif, pas visuel. Ce simulateur recrée l'effort cognitif, la
+                                perte de repères et la surcharge attentionnelle nécessaires au décodage. Ce n'est pas une
+                                reproduction fidèle de ce que voit une personne dyslexique !</p>
+                        </div>
+
+                        <div class="sim-toolbar no-print">
+                            <div class="sim-intensity-badge">
+                                <label for="inputSeverity" style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+                                    <i data-fa="sliders" style="color:var(--primary);"></i> Intensité :
+                                    <span class="value-badge" id="valSeverity">80%</span>
+                                </label>
+                                <input type="range" id="inputSeverity" min="0" max="1" step="0.05" value="0.8" style="width:130px; cursor:pointer;">
+                            </div>
+                        </div>
+
                         <div class="empty-state" id="emptyState">
                             <i data-fa="volume-high"></i>
-                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte pour voir la
-                                simulation.</p>
-                            <button class="btn btn-secondary" id="btnEmptyEdit">Passer en mode édition</button>
+                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte dans l'adaptateur pour voir la simulation.</p>
+                            <button class="btn btn-secondary" id="btnEmptyGoAdapter">Passer à l'adaptateur</button>
                         </div>
                         <div class="dyslexic-text" id="dyslexicOutput"></div>
                     </div>
@@ -1581,7 +1921,7 @@
                                 style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">
                                 Profils d'adaptation en 1 clic :
                             </div>
-                            <div class="profile-pills">
+                            <div class="profile-pills" id="profilePillsContainer">
                                 <button class="profile-btn" data-profile="visuo"
                                     title="Profil ciblant l'empan visuo-attentionnel (travaux de S. Valdois)">
                                     <i data-fa="layer-group"></i> Dyslexie visuo-attentionnelle
@@ -1590,8 +1930,12 @@
                                     title="Profil pour apprenti lecteur (coloration des graphèmes CERAS, espacement Zorzi, police Century Gothic et sons muets grisés)">
                                     <i data-fa="chalkboard-user"></i> Début de lecture
                                 </button>
+                                <span id="customProfilesSlot" style="display:contents;"></span>
                                 <button class="profile-btn active" data-profile="custom">
                                     <i data-fa="sliders"></i> Personnalisé
+                                </button>
+                                <button class="profile-btn profile-btn-add" id="btnSaveProfile" title="Enregistrer la configuration actuelle comme profil nommé">
+                                    <i data-fa="floppy-disk"></i> Enregistrer profil
                                 </button>
                             </div>
                             <div class="info-banner" style="margin-top: 0.75rem; margin-bottom: 0.25rem;">
@@ -1603,8 +1947,8 @@
                         <div class="worksheet-wrapper">
                             <div class="worksheet-card" id="worksheetCard">
                                 <div class="worksheet-header" id="worksheetHeader">
-                                    <span><strong>Prénom :</strong> ___________</span>
-                                    <span><strong>Date :</strong> _______</span>
+                                    <span class="worksheet-field"><strong>Prénom :</strong> <span class="worksheet-line"></span></span>
+                                    <span class="worksheet-field"><strong>Date :</strong> <span class="worksheet-line line-date"></span></span>
                                 </div>
                                 <div class="ceras-worksheet-legend" id="cerasWorksheetLegend" style="display: none;">
                                     <div class="ceras-legend-title">
@@ -1624,7 +1968,15 @@
                                         <span class="ceras-chip chip-un">1 (un)</span>
                                     </div>
                                 </div>
-                                <div class="worksheet-text" id="adapterWorksheetText">
+
+                                <div class="worksheet-edit-hint no-print">
+                                    <span id="worksheetEditStatus"><i data-fa="pen" style="margin-right:4px;"></i> Cliquez sur le texte pour l'éditer</span>
+                                    <button class="btn btn-secondary btn-small" id="btnToggleEdit" type="button" style="padding: 2px 8px; font-size: 0.75rem;">
+                                        <i data-fa="pen"></i> <span id="btnToggleEditLabel">Modifier le texte</span>
+                                    </button>
+                                </div>
+                                <textarea id="worksheetEditor" class="worksheet-editor" placeholder="Collez ou écrivez votre consigne ici..."></textarea>
+                                <div class="worksheet-text" id="adapterWorksheetText" title="Cliquez pour éditer le texte">
                                     <!-- Populated by JS -->
                                 </div>
                             </div>
@@ -1636,23 +1988,13 @@
                                 <i data-fa="volume-high" style="width:16px;height:16px;"></i> <span
                                     class="tts-btn-label">Lecture audio</span>
                             </button>
+                            <button class="btn btn-secondary" id="btnExportWord"
+                                title="Télécharger la fiche adaptée au format Word (.docx)">
+                                <i data-fa="download" style="width:16px;height:16px;"></i> <span>Exporter en Word</span>
+                            </button>
                             <button class="btn btn-primary" id="btnPrintWorksheet"
                                 title="Imprimer la fiche A4 prête pour la classe">
-                                <i data-fa="print" style="width:16px;height:16px;"></i> Imprimer la fiche adaptée (A4)
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- VIEW 3: ÉDITEUR LIBRE -->
-                    <div class="edit-view" id="viewEdit">
-                        <textarea id="textInput"
-                            placeholder="Collez ou tapez votre consigne, exercice ou texte ici..."></textarea>
-                        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
-                            <button class="btn btn-secondary" id="btnGoAdapter" style="padding: 0.85rem 1.5rem;">
-                                <i data-fa="book-open-reader" style="width:16px;height:16px;"></i> Adapter pour un élève
-                            </button>
-                            <button class="btn btn-primary" id="btnStartSim" style="padding: 0.85rem 1.5rem;">
-                                <i data-fa="eye" style="width:16px;height:16px;"></i> Lancer la simulation
+                                <i data-fa="print" style="width:16px;height:16px;"></i> <span>Imprimer la fiche adaptée (A4)</span>
                             </button>
                         </div>
                     </div>
@@ -1682,25 +2024,47 @@
         </footer>
     </div>
 
+    <!-- MODAL ENREGISTRER PROFIL -->
+    <div id="modalSaveProfile" class="custom-modal-backdrop no-print" style="display: none;">
+        <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalProfileTitle">
+            <div class="custom-modal-header">
+                <div class="custom-modal-title-group">
+                    <i data-fa="user" style="color:var(--primary); width:20px; height:20px;"></i>
+                    <h3 id="modalProfileTitle">Enregistrer un profil d'aménagement</h3>
+                </div>
+                <button type="button" class="custom-modal-close" id="btnModalCloseProfile" aria-label="Fermer" title="Fermer la boîte de dialogue">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <label for="inputProfileName" style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                    Nom de l'élève ou du profil :
+                </label>
+                <input type="text" id="inputProfileName" placeholder="Ex: Élève Théo, Groupe 2..." autocomplete="off">
+                
+                <div class="profile-summary-box">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+                        Configuration enregistrée dans ce profil :
+                    </div>
+                    <div class="profile-summary-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;"><i data-fa="font" style="margin-right:4px; color:var(--primary);"></i> Police d'écriture :</span>
+                        <span id="modalSummaryFont" class="value-badge" style="font-weight: 700; background: rgba(13, 148, 136, 0.1); color: var(--primary); border: 1px solid rgba(13, 148, 136, 0.25); padding: 3px 8px; border-radius: var(--radius-md);">Outfit</span>
+                    </div>
+                    <div class="profile-summary-item">
+                        <span style="font-weight: 600; display: block; margin-bottom: 4px;"><i data-fa="sliders" style="margin-right:4px; color:var(--primary);"></i> Aménagements actifs :</span>
+                        <div id="modalSummaryAccommodations" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnModalCancelProfile">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btnModalConfirmProfile">
+                    <i data-fa="check"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- DATA ---
-        const PRESET_TEXTS = [
-            {
-                id: '1',
-                title: 'Problème de mathématiques',
-                content: "Un paysan possède un champ rectangulaire de 120 mètres de long et de 80 mètres de large. Il souhaite l'entourer d'une clôture en fil de fer. Le fil de fer est vendu en rouleaux de 50 mètres. Chaque rouleau coûte 45 francs. Combien de rouleaux entiers le paysan doit-il acheter au minimum pour clôturer son champ ? Quel sera le prix total de ces rouleaux ?"
-            },
-            {
-                id: '2',
-                title: 'Texte narratif simple',
-                content: "Le petit chat gris dort sur le canapé du salon. Soudain, un bruit le réveille. Il dresse les oreilles et ouvre de grands yeux ronds. C'est seulement la porte d'entrée qui claque."
-            },
-            {
-                id: '3',
-                title: 'Consignes de sécurité',
-                content: "En cas d'alarme incendie, restez calmes. Laissez vos affaires sur vos pupitres. Mettez-vous en rang deux par deux devant la porte. Attendez le signal de votre enseignant avant de sortir."
-            }
-        ];
+        const DEFAULT_TEXT = "Clique-moi pour éditer le texte ! Cet outil permet d'adapter les textes facilement. Un espacement plus grand, des couleurs pour les sons et une police d'écriture spéciale peuvent faciliter la lecture quand décoder les mots demande beaucoup d'effort.";
 
         const CONFUSE_CHARS = {
             'b': 'd', 'd': 'b',
@@ -1832,15 +2196,19 @@
             return syllables.filter(Boolean);
         }
 
-        // --- STATE ---
+        // --- CONSTANTS & STATE ---
+        const STORAGE_KEY_PROFILES = 'c2_dys_saved_profiles';
+
         const state = {
-            text: PRESET_TEXTS[0].content,
+            text: DEFAULT_TEXT,
+            isInitialPlaceholder: true, // Seul le texte d'exemple initial est effacé au premier clic
+            isEditingText: false,
             speed: 5,
             severity: 0.8,
-            activeTab: 'adapter', // 'adapter' by default!
-            mixingStyle: 'all',
+            activeTab: 'adapter', // 'adapter' ou 'simulation'
+            mixingStyle: 'all',   // Mode mixte fixé par défaut
             baseTokens: [],
-            font: 'outfit', // 'outfit', 'century-gothic', 'opendyslexic', 'verdana'
+            font: 'outfit',       // 'outfit', 'century-gothic', 'opendyslexic', 'verdana'
             accommodations: {
                 zorzi: false,
                 pastel: false,
@@ -1848,7 +2216,8 @@
                 silentLetters: false,
                 syllables: false
             },
-            activeProfile: 'custom'
+            activeProfile: 'custom',
+            customProfiles: []
         };
 
         let mutationInterval = null;
@@ -1857,9 +2226,6 @@
         const els = {
             inputSeverity: document.getElementById('inputSeverity'),
             valSeverity: document.getElementById('valSeverity'),
-            inputSpeed: document.getElementById('inputSpeed'),
-            valSpeed: document.getElementById('valSpeed'),
-            mixingBtns: document.querySelectorAll('.mixing-btn'),
 
             // Accommodations
             compZorzi: document.getElementById('compZorzi'),
@@ -1871,35 +2237,240 @@
             cerasMiniLegend: document.getElementById('cerasMiniLegend'),
             cerasWorksheetLegend: document.getElementById('cerasWorksheetLegend'),
             sectionAccommodations: document.getElementById('sectionAccommodations'),
-            sectionSimControls: document.getElementById('sectionSimControls'),
-            sectionPresets: document.getElementById('sectionPresets'),
-
-            presetList: document.getElementById('presetList'),
 
             tabBtns: document.querySelectorAll('.tab-btn[data-tab]'),
             viewportTitle: document.getElementById('viewportTitle'),
             viewportSubtitle: document.getElementById('viewportSubtitle'),
-            viewEdit: document.getElementById('viewEdit'),
             viewSimulation: document.getElementById('viewSimulation'),
             viewAdapter: document.getElementById('viewAdapter'),
-            textInput: document.getElementById('textInput'),
-            btnStartSim: document.getElementById('btnStartSim'),
-            btnGoAdapter: document.getElementById('btnGoAdapter'),
-            btnEmptyEdit: document.getElementById('btnEmptyEdit'),
+            btnEmptyGoAdapter: document.getElementById('btnEmptyGoAdapter'),
             emptyState: document.getElementById('emptyState'),
             dyslexicOutput: document.getElementById('dyslexicOutput'),
 
-            // Adapter view
+            // Adapter view & Profiles
+            profilePillsContainer: document.getElementById('profilePillsContainer'),
+            customProfilesSlot: document.getElementById('customProfilesSlot'),
+            btnSaveProfile: document.getElementById('btnSaveProfile'),
             profileBtns: document.querySelectorAll('.profile-btn[data-profile]'),
             worksheetCard: document.getElementById('worksheetCard'),
             worksheetHeader: document.getElementById('worksheetHeader'),
+            worksheetEditStatus: document.getElementById('worksheetEditStatus'),
+            btnToggleEdit: document.getElementById('btnToggleEdit'),
+            btnToggleEditLabel: document.getElementById('btnToggleEditLabel'),
+            worksheetEditor: document.getElementById('worksheetEditor'),
             adapterWorksheetText: document.getElementById('adapterWorksheetText'),
             btnPrintWorksheet: document.getElementById('btnPrintWorksheet'),
+            btnExportWord: document.getElementById('btnExportWord'),
             btnTtsAdapter: document.getElementById('btnTtsAdapter'),
 
             btnShare: document.getElementById('shareBtn'),
-            btnReset: document.getElementById('reset-cache-btn')
+            btnReset: document.getElementById('reset-cache-btn'),
+
+            // Modal save profile
+            modalSaveProfile: document.getElementById('modalSaveProfile'),
+            btnModalCloseProfile: document.getElementById('btnModalCloseProfile'),
+            btnModalCancelProfile: document.getElementById('btnModalCancelProfile'),
+            btnModalConfirmProfile: document.getElementById('btnModalConfirmProfile'),
+            inputProfileName: document.getElementById('inputProfileName'),
+            modalSummaryFont: document.getElementById('modalSummaryFont'),
+            modalSummaryAccommodations: document.getElementById('modalSummaryAccommodations')
         };
+
+        const FONT_LABELS = {
+            'outfit': 'Outfit',
+            'century-gothic': 'Century Gothic',
+            'opendyslexic': 'OpenDyslexic',
+            'verdana': 'Verdana'
+        };
+
+        // --- GESTION DES PROFILS D'AMÉNAGEMENT ---
+        function loadSavedProfiles() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY_PROFILES);
+                state.customProfiles = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                state.customProfiles = [];
+            }
+        }
+
+        function persistSavedProfiles() {
+            try {
+                localStorage.setItem(STORAGE_KEY_PROFILES, JSON.stringify(state.customProfiles));
+            } catch (e) {
+                console.warn('Impossible de sauvegarder les profils', e);
+            }
+        }
+
+        function openSaveProfileModal() {
+            if (!els.modalSaveProfile) return;
+            const defaultName = 'Profil ' + (state.customProfiles.length + 1);
+            if (els.inputProfileName) {
+                els.inputProfileName.value = defaultName;
+            }
+            if (els.modalSummaryFont) {
+                els.modalSummaryFont.textContent = FONT_LABELS[state.font] || state.font;
+            }
+            if (els.modalSummaryAccommodations) {
+                const chips = [];
+                if (state.accommodations.zorzi) {
+                    chips.push('<span class="profile-summary-chip chip-zorzi">Espacement Zorzi</span>');
+                }
+                if (state.accommodations.pastel) {
+                    chips.push('<span class="profile-summary-chip chip-pastel">Fond pastel</span>');
+                }
+                if (state.accommodations.graphemes) {
+                    chips.push('<span class="profile-summary-chip chip-graphemes">Graphèmes CERAS</span>');
+                }
+                if (state.accommodations.silentLetters) {
+                    chips.push('<span class="profile-summary-chip chip-silent">Lettres muettes</span>');
+                }
+                if (state.accommodations.syllables) {
+                    chips.push('<span class="profile-summary-chip chip-syllables">Syllabes bicolores</span>');
+                }
+                if (chips.length === 0) {
+                    chips.push('<span style="font-size:0.78rem; color:var(--text-muted); font-style:italic;">Aucun aménagement actif</span>');
+                }
+                els.modalSummaryAccommodations.innerHTML = chips.join(' ');
+            }
+            els.modalSaveProfile.style.display = 'flex';
+            if (window.fa?.createIcons) {
+                window.fa.createIcons(els.modalSaveProfile);
+            }
+            setTimeout(() => {
+                if (els.inputProfileName) {
+                    els.inputProfileName.focus();
+                    els.inputProfileName.select();
+                }
+            }, 60);
+        }
+
+        function closeSaveProfileModal() {
+            if (els.modalSaveProfile) {
+                els.modalSaveProfile.style.display = 'none';
+            }
+        }
+
+        function confirmSaveProfileModal() {
+            const raw = els.inputProfileName ? els.inputProfileName.value : '';
+            const trimmed = (raw || '').trim();
+            if (!trimmed) {
+                if (typeof showToast === 'function') {
+                    showToast("Veuillez indiquer un nom pour ce profil.", "warn");
+                }
+                if (els.inputProfileName) els.inputProfileName.focus();
+                return;
+            }
+
+            const newProfile = {
+                id: 'prof_' + Date.now(),
+                name: trimmed,
+                font: state.font,
+                accommodations: { ...state.accommodations }
+            };
+
+            state.customProfiles.push(newProfile);
+            persistSavedProfiles();
+            state.activeProfile = newProfile.id;
+            renderProfilePills();
+            closeSaveProfileModal();
+            if (typeof showToast === 'function') {
+                const fontName = FONT_LABELS[state.font] || state.font;
+                showToast(`Profil "${trimmed}" enregistré (police: ${fontName}) !`, 'success');
+            }
+        }
+
+        function saveCurrentProfile() {
+            openSaveProfileModal();
+        }
+
+        function deleteCustomProfile(id, event) {
+            if (event) event.stopPropagation();
+            const p = state.customProfiles.find(x => x.id === id);
+            const pName = p ? p.name : 'le profil';
+            if (!window.confirm(`Supprimer le profil "${pName}" ?`)) return;
+
+            state.customProfiles = state.customProfiles.filter(x => x.id !== id);
+            persistSavedProfiles();
+
+            if (state.activeProfile === id) {
+                state.activeProfile = 'custom';
+            }
+            renderProfilePills();
+            if (typeof showToast === 'function') {
+                showToast(`Profil "${pName}" supprimé`, 'info');
+            }
+        }
+
+        function renderProfilePills() {
+            if (!els.customProfilesSlot) return;
+
+            els.customProfilesSlot.innerHTML = state.customProfiles.map(p => `
+                <button class="profile-btn ${state.activeProfile === p.id ? 'active' : ''}" data-profile="${p.id}" title="Profil personnalisé : ${p.name}">
+                    <i data-fa="user"></i>
+                    <span>${p.name}</span>
+                    <span class="profile-btn-del" data-del-id="${p.id}" title="Supprimer ce profil">&times;</span>
+                </button>
+            `).join('');
+
+            // Mise à jour de l'état actif sur tous les boutons de profil
+            document.querySelectorAll('.profile-btn[data-profile]').forEach(btn => {
+                const prof = btn.dataset.profile;
+                btn.classList.toggle('active', state.activeProfile === prof);
+            });
+
+            // Écouteurs pour les pilules personnalisées et la suppression
+            els.customProfilesSlot.querySelectorAll('.profile-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const delBtn = e.target.closest('.profile-btn-del');
+                    if (delBtn) {
+                        deleteCustomProfile(delBtn.dataset.delId, e);
+                        return;
+                    }
+                    applyProfile(btn.dataset.profile);
+                });
+            });
+
+            if (window.fa?.createIcons) {
+                window.fa.createIcons(els.customProfilesSlot);
+            }
+        }
+
+        // --- ÉDITION DIRECTE IN-SITU DANS LA FICHE ---
+        function setEditingMode(editing) {
+            state.isEditingText = editing;
+            if (editing) {
+                // Si c'est le texte d'exemple par défaut initial, effacer complètement pour collage/écriture directe !
+                if (state.isInitialPlaceholder) {
+                    state.text = '';
+                    els.worksheetEditor.value = '';
+                    state.isInitialPlaceholder = false;
+                } else {
+                    els.worksheetEditor.value = state.text;
+                }
+
+                els.adapterWorksheetText.style.display = 'none';
+                els.worksheetEditor.style.display = 'block';
+                els.worksheetEditor.focus();
+                if (els.btnToggleEditLabel) els.btnToggleEditLabel.textContent = 'Appliquer';
+                if (els.worksheetEditStatus) {
+                    els.worksheetEditStatus.innerHTML = '<i data-fa="check" style="margin-right:4px;"></i> Tapez ou collez votre texte, puis cliquez à côté pour adapter';
+                }
+            } else {
+                const val = els.worksheetEditor.value;
+                state.text = val;
+                state.baseTokens = tokenize(val);
+                els.worksheetEditor.style.display = 'none';
+                els.adapterWorksheetText.style.display = 'block';
+                if (els.btnToggleEditLabel) els.btnToggleEditLabel.textContent = 'Modifier le texte';
+                if (els.worksheetEditStatus) {
+                    els.worksheetEditStatus.innerHTML = '<i data-fa="pen" style="margin-right:4px;"></i> Cliquez sur le texte pour l\'éditer';
+                }
+                renderAdapter();
+            }
+            if (window.fa?.createIcons && els.worksheetCard) {
+                window.fa.createIcons(els.worksheetCard);
+            }
+        }
 
         // --- LOGIC ---
 
@@ -1962,25 +2533,6 @@
             }
 
             return chars.join('');
-        }
-
-        function renderPresets() {
-            els.presetList.innerHTML = PRESET_TEXTS.map(preset => `
-                <button class="preset-btn ${state.text === preset.content ? 'active' : ''}" data-id="${preset.id}">
-                    <div class="preset-title">${preset.title}</div>
-                    <div class="preset-preview">${preset.content}</div>
-                </button>
-            `).join('');
-
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = e.currentTarget.dataset.id;
-                    const preset = PRESET_TEXTS.find(p => p.id === id);
-                    if (preset) {
-                        updateText(preset.content);
-                    }
-                });
-            });
         }
 
         // --- CERAS GRAPHÈMES (SONS-COULEURS - api.ceras.ch) ---
@@ -2340,7 +2892,7 @@
 
         function renderAdapter() {
             if (state.text.trim() === '') {
-                els.adapterWorksheetText.textContent = "Aucun texte saisi. Passez par l'onglet 'Éditer texte' pour ajouter une consigne.";
+                els.adapterWorksheetText.innerHTML = '<span style="color:var(--text-muted); font-style:italic;">Aucun texte saisi. Cliquez ici pour taper ou coller votre consigne...</span>';
                 return;
             }
 
@@ -2349,6 +2901,9 @@
             // Zorzi and font apply to both header and text!
             if (els.worksheetHeader) {
                 applyAccommodationClasses(els.worksheetHeader);
+            }
+            if (els.worksheetEditor) {
+                applyAccommodationClasses(els.worksheetEditor);
             }
             applyAccommodationClasses(els.adapterWorksheetText);
 
@@ -2365,10 +2920,11 @@
         function updateText(newText) {
             stopTts();
             state.text = newText;
-            els.textInput.value = newText;
+            if (els.worksheetEditor && !state.isEditingText) {
+                els.worksheetEditor.value = newText;
+            }
             state.baseTokens = tokenize(newText);
 
-            renderPresets();
             if (state.activeTab === 'simulation') {
                 renderOutput();
             } else if (state.activeTab === 'adapter') {
@@ -2396,37 +2952,28 @@
             if (tab === 'adapter') {
                 els.viewportTitle.textContent = 'Adaptateur de texte pour fiches DYS';
                 els.viewportSubtitle.textContent = 'Générez des consignes ou lectures adaptées prêtes pour la classe';
-                els.viewEdit.style.display = 'none';
                 els.viewSimulation.style.display = 'none';
                 els.viewAdapter.style.display = 'flex';
                 if (els.sectionAccommodations) els.sectionAccommodations.style.display = 'block';
-                if (els.sectionSimControls) els.sectionSimControls.style.display = 'none';
-                if (els.sectionPresets) els.sectionPresets.style.display = 'none';
+
+                if (state.isEditingText) {
+                    setEditingMode(false);
+                }
 
                 clearInterval(mutationInterval);
                 renderAdapter();
-            } else if (tab === 'edit') {
-                els.viewportTitle.textContent = 'Éditeur de texte libre';
-                els.viewportSubtitle.textContent = 'Modifiez le texte ou choisissez un exemple ci-contre';
-                els.viewEdit.style.display = 'flex';
-                els.viewSimulation.style.display = 'none';
-                els.viewAdapter.style.display = 'none';
-                if (els.sectionAccommodations) els.sectionAccommodations.style.display = 'none';
-                if (els.sectionSimControls) els.sectionSimControls.style.display = 'none';
-                if (els.sectionPresets) els.sectionPresets.style.display = 'block';
-
-                clearInterval(mutationInterval);
             } else if (tab === 'simulation') {
                 els.viewportTitle.textContent = 'Visualisation en temps réel';
                 els.viewportSubtitle.textContent = "Observez les effets de la dyslexie et l'effet des aménagements";
-                els.viewEdit.style.display = 'none';
                 els.viewAdapter.style.display = 'none';
                 els.viewSimulation.style.display = 'flex';
                 if (els.sectionAccommodations) els.sectionAccommodations.style.display = 'block';
-                if (els.sectionSimControls) els.sectionSimControls.style.display = 'block';
-                if (els.sectionPresets) els.sectionPresets.style.display = 'none';
 
-                updateText(els.textInput.value);
+                if (state.isEditingText) {
+                    setEditingMode(false);
+                }
+
+                updateText(state.text);
                 startMutationInterval();
             }
         }
@@ -2449,7 +2996,6 @@
 
             // Refresh UI views
             if (state.activeTab === 'simulation') {
-                // re-render DOM tokens to include or exclude syllable spans
                 els.dyslexicOutput.innerHTML = '';
                 renderOutput();
             } else if (state.activeTab === 'adapter') {
@@ -2459,10 +3005,6 @@
 
         function applyProfile(profileName) {
             state.activeProfile = profileName;
-
-            els.profileBtns.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.profile === profileName);
-            });
 
             if (profileName === 'visuo') {
                 state.accommodations.zorzi = true;
@@ -2478,8 +3020,16 @@
                 state.accommodations.graphemes = true;
                 state.accommodations.silentLetters = true;
                 state.accommodations.syllables = false;
+            } else {
+                // Recherche dans les profils personnalisés enregistrés
+                const customP = state.customProfiles.find(x => x.id === profileName);
+                if (customP) {
+                    state.font = customP.font || 'outfit';
+                    state.accommodations = { ...customP.accommodations };
+                }
             }
 
+            renderProfilePills();
             syncAccommodationInputs();
         }
 
@@ -2495,7 +3045,7 @@
             el.addEventListener('change', (e) => {
                 state.accommodations[key] = e.target.checked;
                 state.activeProfile = 'custom';
-                els.profileBtns.forEach(b => b.classList.toggle('active', b.dataset.profile === 'custom'));
+                renderProfilePills();
                 syncAccommodationInputs();
             });
         });
@@ -2504,56 +3054,576 @@
             els.compFontSelect.addEventListener('change', (e) => {
                 state.font = e.target.value;
                 state.activeProfile = 'custom';
-                els.profileBtns.forEach(b => b.classList.toggle('active', b.dataset.profile === 'custom'));
+                renderProfilePills();
                 syncAccommodationInputs();
             });
         }
 
-        // Profile buttons
+        // Profile buttons intégrés
         els.profileBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 applyProfile(e.currentTarget.dataset.profile);
             });
         });
 
-        // Sliders & Mixing
-        els.inputSeverity.addEventListener('input', (e) => {
-            state.severity = parseFloat(e.target.value);
-            els.valSeverity.textContent = Math.round(state.severity * 100) + '%';
-            if (state.activeTab === 'simulation') renderOutput();
+        if (els.btnSaveProfile) {
+            els.btnSaveProfile.addEventListener('click', saveCurrentProfile);
+        }
+
+        if (els.btnModalCloseProfile) {
+            els.btnModalCloseProfile.addEventListener('click', closeSaveProfileModal);
+        }
+        if (els.btnModalCancelProfile) {
+            els.btnModalCancelProfile.addEventListener('click', closeSaveProfileModal);
+        }
+        if (els.btnModalConfirmProfile) {
+            els.btnModalConfirmProfile.addEventListener('click', confirmSaveProfileModal);
+        }
+        if (els.inputProfileName) {
+            els.inputProfileName.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmSaveProfileModal();
+                } else if (e.key === 'Escape') {
+                    closeSaveProfileModal();
+                }
+            });
+        }
+        if (els.modalSaveProfile) {
+            els.modalSaveProfile.addEventListener('click', (e) => {
+                if (e.target === els.modalSaveProfile) {
+                    closeSaveProfileModal();
+                }
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && els.modalSaveProfile && els.modalSaveProfile.style.display !== 'none') {
+                closeSaveProfileModal();
+            }
         });
 
-        els.inputSpeed.addEventListener('input', (e) => {
-            state.speed = parseFloat(e.target.value);
-            els.valSpeed.textContent = state.speed;
-            startMutationInterval();
-        });
-
-        els.mixingBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                els.mixingBtns.forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                state.mixingStyle = e.target.dataset.style;
+        // Intensity slider dans la barre supérieure du simulateur
+        if (els.inputSeverity) {
+            els.inputSeverity.addEventListener('input', (e) => {
+                state.severity = parseFloat(e.target.value);
+                if (els.valSeverity) els.valSeverity.textContent = Math.round(state.severity * 100) + '%';
                 if (state.activeTab === 'simulation') renderOutput();
             });
-        });
+        }
 
+        // Tabs
         els.tabBtns.forEach(btn => {
             btn.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab));
         });
 
-        els.btnStartSim.addEventListener('click', () => switchTab('simulation'));
-        els.btnGoAdapter.addEventListener('click', () => switchTab('adapter'));
-        els.btnEmptyEdit.addEventListener('click', () => switchTab('edit'));
+        if (els.btnEmptyGoAdapter) {
+            els.btnEmptyGoAdapter.addEventListener('click', () => switchTab('adapter'));
+        }
 
-        els.textInput.addEventListener('input', (e) => {
-            state.text = e.target.value;
+        // Édition in-situ dans la fiche adaptée
+        if (els.adapterWorksheetText) {
+            els.adapterWorksheetText.addEventListener('click', () => {
+                setEditingMode(true);
+            });
+        }
+        if (els.btnToggleEdit) {
+            els.btnToggleEdit.addEventListener('click', () => {
+                setEditingMode(!state.isEditingText);
+            });
+        }
+        if (els.worksheetEditor) {
+            els.worksheetEditor.addEventListener('input', (e) => {
+                state.text = e.target.value;
+                state.baseTokens = tokenize(e.target.value);
+            });
+            els.worksheetEditor.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    setEditingMode(false);
+                }
+            });
+            els.worksheetEditor.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (state.isEditingText && document.activeElement !== els.worksheetEditor) {
+                        setEditingMode(false);
+                    }
+                }, 120);
+            });
+        }
+
+        // Clic à côté du textarea : validation et application automatique des aménagements
+        document.addEventListener('pointerdown', (e) => {
+            if (!state.isEditingText) return;
+            if (e.target.closest('#worksheetEditor') || e.target.closest('#btnToggleEdit')) {
+                return;
+            }
+            setEditingMode(false);
         });
 
         // Actions: Print
-        els.btnPrintWorksheet.addEventListener('click', () => {
-            window.print();
-        });
+        if (els.btnPrintWorksheet) {
+            els.btnPrintWorksheet.addEventListener('click', () => {
+                if (state.isEditingText) setEditingMode(false);
+                window.print();
+            });
+        }
+
+        // --- EXPORT WORD (.DOCX) NATIF CLIENT-SIDE ---
+        const CRC32_TABLE = (() => {
+            const table = new Uint32Array(256);
+            for (let i = 0; i < 256; i++) {
+                let c = i;
+                for (let k = 0; k < 8; k++) {
+                    c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+                }
+                table[i] = c;
+            }
+            return table;
+        })();
+
+        function getCrc32(bytes) {
+            let crc = 0xFFFFFFFF;
+            for (let i = 0; i < bytes.length; i++) {
+                crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ bytes[i]) & 0xFF];
+            }
+            return (crc ^ 0xFFFFFFFF) >>> 0;
+        }
+
+        function buildZip(files) {
+            const encoder = new TextEncoder();
+            const entries = files.map(f => {
+                const data = typeof f.data === 'string' ? encoder.encode(f.data) : f.data;
+                const nameBytes = encoder.encode(f.name);
+                return { name: f.name, nameBytes, data, size: data.length, crc: getCrc32(data) };
+            });
+
+            let localSize = 0;
+            entries.forEach(e => {
+                localSize += 30 + e.nameBytes.length + e.size;
+            });
+
+            let cdSize = 0;
+            entries.forEach(e => {
+                cdSize += 46 + e.nameBytes.length;
+            });
+
+            const buf = new Uint8Array(localSize + cdSize + 22);
+            const view = new DataView(buf.buffer);
+            let offset = 0;
+            const cdEntries = [];
+
+            entries.forEach(e => {
+                const localOffset = offset;
+                cdEntries.push({ ...e, offset: localOffset });
+
+                view.setUint32(offset, 0x04034b50, true);
+                view.setUint16(offset + 4, 20, true);
+                view.setUint16(offset + 6, 0, true);
+                view.setUint16(offset + 8, 0, true); // compression: store (0)
+                view.setUint16(offset + 10, 0, true);
+                view.setUint16(offset + 12, 0, true);
+                view.setUint32(offset + 14, e.crc, true);
+                view.setUint32(offset + 18, e.size, true);
+                view.setUint32(offset + 22, e.size, true);
+                view.setUint16(offset + 26, e.nameBytes.length, true);
+                view.setUint16(offset + 28, 0, true);
+                offset += 30;
+
+                buf.set(e.nameBytes, offset);
+                offset += e.nameBytes.length;
+
+                buf.set(e.data, offset);
+                offset += e.size;
+            });
+
+            const cdStart = offset;
+
+            cdEntries.forEach(e => {
+                view.setUint32(offset, 0x02014b50, true);
+                view.setUint16(offset + 4, 20, true);       // version made by
+                view.setUint16(offset + 6, 20, true);       // version needed to extract
+                view.setUint16(offset + 8, 0, true);        // general purpose bit flag
+                view.setUint16(offset + 10, 0, true);       // compression method (0 = stored)
+                view.setUint16(offset + 12, 0, true);       // last mod file time
+                view.setUint16(offset + 14, 0, true);       // last mod file date (2 bytes)
+                view.setUint32(offset + 16, e.crc, true);   // crc-32 (offset + 16)
+                view.setUint32(offset + 20, e.size, true);  // compressed size (offset + 20)
+                view.setUint32(offset + 24, e.size, true);  // uncompressed size (offset + 24)
+                view.setUint16(offset + 28, e.nameBytes.length, true); // file name length (offset + 28)
+                view.setUint16(offset + 30, 0, true);       // extra field length
+                view.setUint16(offset + 32, 0, true);       // file comment length
+                view.setUint16(offset + 34, 0, true);       // disk number start
+                view.setUint16(offset + 36, 0, true);       // internal file attributes
+                view.setUint32(offset + 38, 0, true);       // external file attributes
+                view.setUint32(offset + 42, e.offset, true);// relative offset of local header
+                offset += 46;
+
+                buf.set(e.nameBytes, offset);
+                offset += e.nameBytes.length;
+            });
+
+            view.setUint32(offset, 0x06054b50, true);
+            view.setUint16(offset + 4, 0, true);
+            view.setUint16(offset + 6, 0, true);
+            view.setUint16(offset + 8, entries.length, true);
+            view.setUint16(offset + 10, entries.length, true);
+            view.setUint32(offset + 12, offset - cdStart, true);
+            view.setUint32(offset + 16, cdStart, true);
+            view.setUint16(offset + 20, 0, true);
+
+            return buf;
+        }
+
+        function xmlEscape(str) {
+            return (str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        function getWordFontName(fontKey) {
+            switch (fontKey) {
+                case 'century-gothic': return 'Century Gothic';
+                case 'opendyslexic': return 'OpenDyslexic';
+                case 'verdana': return 'Verdana';
+                default: return 'Outfit';
+            }
+        }
+
+        function generateDocxBlob() {
+            const fontName = getWordFontName(state.font);
+            const isZorzi = state.accommodations.zorzi;
+            const isPastel = state.accommodations.pastel;
+            const isGraphemes = state.accommodations.graphemes;
+            const isSilent = state.accommodations.silentLetters;
+            const isSyllables = state.accommodations.syllables;
+
+            const fontXml = `<w:rFonts w:ascii="${xmlEscape(fontName)}" w:hAnsi="${xmlEscape(fontName)}" w:cs="${xmlEscape(fontName)}"/>`;
+
+            const CERAS_COLOR_MAP = {
+                'graph-o': 'CA8A04',
+                'graph-an': 'EA580C',
+                'graph-in': '15803D',
+                'graph-e-open': '9333EA',
+                'graph-e-closed': '1D4ED8',
+                'graph-ou': 'DC2626',
+                'graph-on': '854D0E',
+                'graph-eu': '0284C7',
+                'graph-un': '334155'
+            };
+
+            // Schema-compliant ISO/IEC 29500-1 element order for w:rPr:
+            // w:rFonts -> w:b -> w:color -> w:spacing -> w:sz -> w:szCs -> w:u -> w:shd
+            function formatRunXml(text, options = {}) {
+                if (!text) return '';
+                let rPr = fontXml;
+                if (options.bold) rPr += `<w:b/>`;
+                if (options.color) rPr += `<w:color w:val="${options.color}"/>`;
+                if (options.spacing !== undefined) {
+                    if (options.spacing) rPr += `<w:spacing w:val="${options.spacing}"/>`;
+                } else if (isZorzi) {
+                    rPr += `<w:spacing w:val="50"/>`;
+                }
+                const szVal = options.sz || (isZorzi ? 30 : 28);
+                rPr += `<w:sz w:val="${szVal}"/><w:szCs w:val="${szVal}"/>`;
+                if (options.underline) rPr += `<w:u w:val="single"/>`;
+                if (options.shd) rPr += `<w:shd w:val="clear" w:color="auto" w:fill="${options.shd}"/>`;
+                return `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${xmlEscape(text)}</w:t></w:r>`;
+            }
+
+            function formatTokenDocxRuns(tokenText, isWord) {
+                if (!isWord || (!isSyllables && !isGraphemes && !isSilent)) {
+                    return formatRunXml(tokenText);
+                }
+
+                const graphemeMatches = isGraphemes ? findGraphemes(tokenText) : [];
+                const rawSilent = isSilent ? findSilentLetters(tokenText) : new Set();
+
+                graphemeMatches.forEach(m => {
+                    for (let k = m.start; k < m.end; k++) {
+                        rawSilent.delete(k);
+                    }
+                });
+
+                function renderSubstrRuns(text, offset, len, sylClass) {
+                    let out = '';
+                    let i = 0;
+                    const sylColor = sylClass === 'syl-even' ? '1D4ED8' : (sylClass === 'syl-odd' ? 'DC2626' : null);
+
+                    while (i < len) {
+                        const charIdx = offset + i;
+                        const gm = graphemeMatches.find(m => m.start === charIdx);
+                        if (gm && gm.end <= offset + len) {
+                            const gLen = gm.end - gm.start;
+                            const chunk = text.slice(i, i + gLen);
+                            if (gm.className === 'graph-oi') {
+                                out += formatRunXml(chunk, { color: 'FFFFFF', shd: '0F172A', bold: true });
+                            } else if (gm.className === 'graph-un') {
+                                out += formatRunXml(chunk, { color: '334155', underline: true, bold: true });
+                            } else {
+                                const col = CERAS_COLOR_MAP[gm.className] || '000000';
+                                out += formatRunXml(chunk, { color: col, bold: true });
+                            }
+                            i += gLen;
+                            continue;
+                        }
+                        if (rawSilent.has(charIdx)) {
+                            let sLen = 1;
+                            while (i + sLen < len && rawSilent.has(offset + i + sLen)) {
+                                sLen++;
+                            }
+                            const chunk = text.slice(i, i + sLen);
+                            out += formatRunXml(chunk, { color: '94A3B8' });
+                            i += sLen;
+                            continue;
+                        }
+                        out += formatRunXml(text[i], { color: sylColor, bold: !!sylColor });
+                        i++;
+                    }
+                    return out;
+                }
+
+                if (!isSyllables) {
+                    return renderSubstrRuns(tokenText, 0, tokenText.length, null);
+                }
+
+                const syllables = syllabifyWord(tokenText);
+                let charOffset = 0;
+                let sylRuns = '';
+                syllables.forEach((syl, idx) => {
+                    const sylClass = idx % 2 === 0 ? 'syl-even' : 'syl-odd';
+                    sylRuns += renderSubstrRuns(syl, charOffset, syl.length, sylClass);
+                    charOffset += syl.length;
+                });
+                return sylRuns;
+            }
+
+            const rawParagraphs = (state.text || '').split('\n');
+            const pPrSpacing = isZorzi
+                ? `<w:spacing w:line="528" w:lineRule="auto" w:after="240"/>`
+                : `<w:spacing w:line="360" w:lineRule="auto" w:after="160"/>`;
+            const pastelShd = isPastel ? `<w:shd w:val="clear" w:color="auto" w:fill="FAF7EE"/>` : '';
+
+            let paragraphsXml = '';
+            rawParagraphs.forEach(pText => {
+                if (!pText.trim()) {
+                    paragraphsXml += `<w:p><w:pPr>${pastelShd}${pPrSpacing}</w:pPr></w:p>`;
+                    return;
+                }
+                const tokens = tokenize(pText);
+                let pRunsXml = '';
+                tokens.forEach(t => {
+                    pRunsXml += formatTokenDocxRuns(t.original, t.isWord);
+                });
+                paragraphsXml += `<w:p><w:pPr>${pastelShd}${pPrSpacing}</w:pPr>${pRunsXml}</w:p>`;
+            });
+
+            let legendXml = '';
+            if (isGraphemes) {
+                const lPpr = `
+                  <w:pPr>
+                    <w:pBdr>
+                      <w:top w:val="single" w:sz="4" w:space="4" w:color="CBD5E1"/>
+                      <w:left w:val="single" w:sz="4" w:space="4" w:color="CBD5E1"/>
+                      <w:bottom w:val="single" w:sz="4" w:space="4" w:color="CBD5E1"/>
+                      <w:right w:val="single" w:sz="4" w:space="4" w:color="CBD5E1"/>
+                    </w:pBdr>
+                    <w:shd w:val="clear" w:color="auto" w:fill="F8FAFC"/>
+                    <w:spacing w:after="240" w:before="60"/>
+                  </w:pPr>`;
+
+                const lRuns = [
+                    formatRunXml("RÉFÉRENTIEL CERAS : ", { bold: true, color: "64748B", sz: 18, spacing: 0 }),
+                    formatRunXml("o/au/eau  ", { bold: true, color: "CA8A04", sz: 18, spacing: 0 }),
+                    formatRunXml("an/en  ", { bold: true, color: "EA580C", sz: 18, spacing: 0 }),
+                    formatRunXml("in/ain  ", { bold: true, color: "15803D", sz: 18, spacing: 0 }),
+                    formatRunXml("è/ê/ai  ", { bold: true, color: "9333EA", sz: 18, spacing: 0 }),
+                    formatRunXml("é/er/ez  ", { bold: true, color: "1D4ED8", sz: 18, spacing: 0 }),
+                    formatRunXml("ou  ", { bold: true, color: "DC2626", sz: 18, spacing: 0 }),
+                    formatRunXml("oi", { bold: true, color: "FFFFFF", shd: "0F172A", sz: 18, spacing: 0 }),
+                    formatRunXml("  ", { sz: 18, spacing: 0 }),
+                    formatRunXml("on/om  ", { bold: true, color: "854D0E", sz: 18, spacing: 0 }),
+                    formatRunXml("eu/oeu  ", { bold: true, color: "0284C7", sz: 18, spacing: 0 }),
+                    formatRunXml("un (1)", { bold: true, color: "334155", underline: true, sz: 18, spacing: 0 })
+                ].join('');
+
+                legendXml = `<w:p>${lPpr}${lRuns}</w:p>`;
+            }
+
+            const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <w:body>
+    <w:p>
+      <w:pPr>
+        <w:pBdr>
+          <w:bottom w:val="dashed" w:sz="6" w:space="8" w:color="94A3B8"/>
+        </w:pBdr>
+        <w:tabs>
+          <w:tab w:val="right" w:pos="9072"/>
+        </w:tabs>
+        <w:spacing w:after="240"/>
+      </w:pPr>
+      ${formatRunXml("Prénom : ", { bold: true, sz: 22, spacing: 0 })}
+      ${formatRunXml("                          ", { underline: true, sz: 22, spacing: 0 })}
+      <w:r><w:tab/></w:r>
+      ${formatRunXml("Date : ", { bold: true, sz: 22, spacing: 0 })}
+      ${formatRunXml("                  ", { underline: true, sz: 22, spacing: 0 })}
+    </w:p>
+    ${legendXml}
+    ${paragraphsXml}
+    <w:sectPr>
+      <w:pgSz w:w="11906" w:h="16838"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+
+            const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+
+            const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+            const docRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>`;
+
+            const zipBytes = buildZip([
+                { name: '[Content_Types].xml', data: contentTypesXml },
+                { name: '_rels/.rels', data: relsXml },
+                { name: 'word/_rels/document.xml.rels', data: docRelsXml },
+                { name: 'word/document.xml', data: docXml }
+            ]);
+
+            return new Blob([zipBytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        }
+
+        function exportWord() {
+            try {
+                if (state.isEditingText) setEditingMode(false);
+                const clean = (state.text || '').trim();
+                if (!clean) {
+                    if (typeof showToast === 'function') {
+                        showToast("Veuillez entrer du texte avant d'exporter en Word.", "warn");
+                    }
+                    return;
+                }
+
+                const blob = generateDocxBlob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const now = new Date();
+                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                a.download = `fiche_adaptee_${state.font}_${dateStr}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+                if (typeof showToast === 'function') {
+                    showToast("Fiche Word (.docx) exportée avec succès !", "success");
+                }
+            } catch (err) {
+                console.error("Erreur lors de l'export Word:", err);
+                if (typeof showToast === 'function') {
+                    showToast("Une erreur est survenue lors de l'export Word.", "error");
+                }
+            }
+        }
+
+        if (els.btnExportWord) {
+            els.btnExportWord.addEventListener('click', exportWord);
+        }
+
+        // --- PARTAGE PAR URL AVEC PROFIL D'AMÉNAGEMENT ---
+        function getShareUrl() {
+            const params = new URLSearchParams();
+            params.set('z', state.accommodations.zorzi ? '1' : '0');
+            params.set('font', state.font);
+            params.set('p', state.accommodations.pastel ? '1' : '0');
+            params.set('g', state.accommodations.graphemes ? '1' : '0');
+            params.set('s', state.accommodations.silentLetters ? '1' : '0');
+            params.set('syl', state.accommodations.syllables ? '1' : '0');
+            if (state.activeProfile && state.activeProfile !== 'custom') {
+                params.set('prof', state.activeProfile);
+            }
+            return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+        }
+
+        async function shareApp() {
+            const shareUrl = getShareUrl();
+            try {
+                window.history.replaceState(null, '', shareUrl);
+                await navigator.clipboard.writeText(shareUrl);
+                const originalHtml = els.btnShare.innerHTML;
+                els.btnShare.innerHTML = '<i data-fa="check"></i> <span class="hidden-mobile">Lien copié !</span>';
+                if (typeof showToast === 'function') {
+                    showToast("Lien copié avec votre profil d'aménagement !", "success");
+                }
+                setTimeout(() => {
+                    els.btnShare.innerHTML = originalHtml;
+                    window.fa?.createIcons?.(els.btnShare);
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+                if (typeof showToast === 'function') {
+                    showToast("Impossible de copier le lien dans le presse-papiers.", "error");
+                }
+            }
+        }
+
+        if (els.btnShare) {
+            els.btnShare.addEventListener('click', shareApp);
+        }
+
+        function applyUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.toString()) return false;
+
+            let hasParam = false;
+            if (urlParams.has('z')) {
+                state.accommodations.zorzi = urlParams.get('z') === '1';
+                hasParam = true;
+            }
+            if (urlParams.has('font')) {
+                const f = urlParams.get('font');
+                if (['outfit', 'century-gothic', 'opendyslexic', 'verdana'].includes(f)) {
+                    state.font = f;
+                    hasParam = true;
+                }
+            }
+            if (urlParams.has('p')) {
+                state.accommodations.pastel = urlParams.get('p') === '1';
+                hasParam = true;
+            }
+            if (urlParams.has('g')) {
+                state.accommodations.graphemes = urlParams.get('g') === '1';
+                hasParam = true;
+            }
+            if (urlParams.has('s')) {
+                state.accommodations.silentLetters = urlParams.get('s') === '1';
+                hasParam = true;
+            }
+            if (urlParams.has('syl')) {
+                state.accommodations.syllables = urlParams.get('syl') === '1';
+                hasParam = true;
+            }
+            if (urlParams.has('prof')) {
+                state.activeProfile = urlParams.get('prof');
+                hasParam = true;
+            } else if (hasParam) {
+                state.activeProfile = 'custom';
+            }
+
+            return hasParam;
+        }
 
         // --- TEXT-TO-SPEECH (TTS) ---
         const tts = {
@@ -2657,32 +3727,18 @@
         window.addEventListener('beforeunload', stopTts);
         window.addEventListener('pagehide', stopTts);
 
-        els.btnShare.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(window.location.href);
-                const originalHtml = els.btnShare.innerHTML;
-                els.btnShare.innerHTML = '<i data-fa="check"></i> <span class="hidden-mobile">Lien copié !</span>';
-                setTimeout(() => {
-                    els.btnShare.innerHTML = originalHtml;
-                    window.fa?.createIcons?.(els.btnShare);
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy', err);
-            }
-        });
-
         function resetSimulator() {
             state.severity = 0.8;
             state.speed = 5;
-            els.inputSeverity.value = 0.8;
-            els.valSeverity.textContent = '80%';
-            els.inputSpeed.value = 5;
-            els.valSpeed.textContent = '5';
+            if (els.inputSeverity) els.inputSeverity.value = 0.8;
+            if (els.valSeverity) els.valSeverity.textContent = '80%';
             state.font = 'outfit';
             state.accommodations = { zorzi: false, pastel: false, graphemes: false, silentLetters: false, syllables: false };
             state.activeProfile = 'custom';
+            state.isInitialPlaceholder = true;
             syncAccommodationInputs();
-            updateText(PRESET_TEXTS[0].content);
+            renderProfilePills();
+            updateText(DEFAULT_TEXT);
             switchTab('adapter');
             if (typeof showToast === 'function') {
                 showToast("Application réinitialisée", "info");
@@ -2691,10 +3747,17 @@
         window.__onResetApp = resetSimulator;
 
         function init() {
-            window.fa?.createIcons?.(document.body);
-            updateText(PRESET_TEXTS[0].content);
+            loadSavedProfiles();
+            const hasUrlConfig = applyUrlParams();
+            updateText(state.text);
             syncAccommodationInputs();
+            renderProfilePills();
             switchTab('adapter');
+
+            if (hasUrlConfig && typeof showToast === 'function') {
+                showToast("Profil d'aménagement chargé depuis le lien !", "info");
+            }
+            window.fa?.createIcons?.(document.body);
         }
 
         document.addEventListener('DOMContentLoaded', init);
