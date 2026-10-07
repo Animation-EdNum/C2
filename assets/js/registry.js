@@ -1108,8 +1108,8 @@ window.REGISTRY = [
     "isTeacher": true,
     "dataLevel": null,
     "icon": "dt-eye",
-    "title": "Lentille de dyslexie",
-    "desc": "Simulateur de lecture pour sensibiliser aux troubles DYS.",
+    "title": "Adaptateur & Simulateur DYS",
+    "desc": "Adaptateur de textes pour élèves DYS et simulateur immersif.",
     "tags": [
       "#Outil",
       "#Sensibilisation",

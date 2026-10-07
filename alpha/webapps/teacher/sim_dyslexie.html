@@ -23,9 +23,10 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lentille de dyslexie &amp; Adaptateur DYS</title>
-    <meta property="og:title" content="Lentille de dyslexie &amp; Adaptateur DYS">
-    <meta property="og:description" content="Simulateur de lecture pour sensibiliser aux troubles DYS et boîte à outils pour adapter les textes des élèves.">
+    <title>Adaptateur &amp; Simulateur DYS</title>
+    <meta property="og:title" content="Adaptateur &amp; Simulateur DYS">
+    <meta property="og:description"
+        content="Boîte à outils pour adapter les textes des élèves (fiches DYS) et simulateur de sensibilisation.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../../assets/js/fa-subset.js"></script>
@@ -537,7 +538,7 @@
         }
 
         .sim-view {
-            display: flex;
+            display: none;
             flex-direction: column;
             height: 100%;
             position: relative;
@@ -564,8 +565,32 @@
             line-height: 2.2 !important;
         }
 
+        .font-outfit {
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .font-century-gothic {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'Tw Cen MT', sans-serif !important;
+        }
+
+        .font-opendyslexic,
         .comp-font-dys {
             font-family: 'OpenDyslexic', sans-serif !important;
+        }
+
+        .font-verdana {
+            font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+        }
+
+        .silent-letter {
+            color: #94a3b8 !important;
+            opacity: 0.65;
+            transition: color 0.2s, opacity 0.2s;
+        }
+
+        body.dark .silent-letter {
+            color: #64748b !important;
+            opacity: 0.65;
         }
 
         .comp-pastel {
@@ -749,46 +774,118 @@
             line-height: 1.2;
         }
 
-        .chip-o { background: rgba(202, 138, 4, 0.12); color: #ca8a04; border: 1px solid rgba(202, 138, 4, 0.35); }
-        .chip-an { background: #ffedd5; color: #ea580c; }
-        .chip-in { background: #dcfce7; color: #15803d; }
-        .chip-e-open { background: #f3e8ff; color: #9333ea; }
-        .chip-e-closed { background: #dbeafe; color: #1d4ed8; }
-        .chip-ou { background: #fee2e2; color: #dc2626; }
-        .chip-oi { background: #0f172a; color: #ffffff; }
-        .chip-on { background: rgba(133, 77, 14, 0.12); color: #854d0e; border: 1px solid rgba(133, 77, 14, 0.35); }
-        .chip-eu { background: #e0f2fe; color: #0284c7; }
-        .chip-un { background: transparent; color: #334155; text-decoration: underline 2px solid #64748b; text-underline-offset: 2px; }
+        .chip-o {
+            background: rgba(202, 138, 4, 0.12);
+            color: #ca8a04;
+            border: 1px solid rgba(202, 138, 4, 0.35);
+        }
 
-        body.dark .chip-o { background: rgba(250, 204, 21, 0.15); color: #fde047; border-color: rgba(250, 204, 21, 0.35); }
-        body.dark .chip-an { background: rgba(234, 88, 12, 0.25); color: #fb923c; }
-        body.dark .chip-in { background: rgba(22, 101, 52, 0.25); color: #4ade80; }
-        body.dark .chip-e-open { background: rgba(147, 51, 234, 0.25); color: #c084fc; }
-        body.dark .chip-e-closed { background: rgba(29, 78, 216, 0.25); color: #60a5fa; }
-        body.dark .chip-ou { background: rgba(220, 38, 38, 0.25); color: #f87171; }
-        body.dark .chip-oi { background: #000000; color: #ffffff; border: 1px solid #475569; }
-        body.dark .chip-on { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.35); }
-        body.dark .chip-eu { background: rgba(2, 132, 199, 0.25); color: #38bdf8; }
-        body.dark .chip-un { background: transparent; color: #e2e8f0; text-decoration: underline 2px solid #94a3b8; }
+        .chip-an {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .chip-in {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .chip-e-open {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+
+        .chip-e-closed {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .chip-ou {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .chip-oi {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        .chip-on {
+            background: rgba(133, 77, 14, 0.12);
+            color: #854d0e;
+            border: 1px solid rgba(133, 77, 14, 0.35);
+        }
+
+        .chip-eu {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .chip-un {
+            background: transparent;
+            color: #334155;
+            text-decoration: underline 2px solid #64748b;
+            text-underline-offset: 2px;
+        }
+
+        body.dark .chip-o {
+            background: rgba(250, 204, 21, 0.15);
+            color: #fde047;
+            border-color: rgba(250, 204, 21, 0.35);
+        }
+
+        body.dark .chip-an {
+            background: rgba(234, 88, 12, 0.25);
+            color: #fb923c;
+        }
+
+        body.dark .chip-in {
+            background: rgba(22, 101, 52, 0.25);
+            color: #4ade80;
+        }
+
+        body.dark .chip-e-open {
+            background: rgba(147, 51, 234, 0.25);
+            color: #c084fc;
+        }
+
+        body.dark .chip-e-closed {
+            background: rgba(29, 78, 216, 0.25);
+            color: #60a5fa;
+        }
+
+        body.dark .chip-ou {
+            background: rgba(220, 38, 38, 0.25);
+            color: #f87171;
+        }
+
+        body.dark .chip-oi {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #475569;
+        }
+
+        body.dark .chip-on {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.35);
+        }
+
+        body.dark .chip-eu {
+            background: rgba(2, 132, 199, 0.25);
+            color: #38bdf8;
+        }
+
+        body.dark .chip-un {
+            background: transparent;
+            color: #e2e8f0;
+            text-decoration: underline 2px solid #94a3b8;
+        }
 
 
         .dyslexic-text span {
             transition: all 0.2s;
             display: inline-block;
-        }
-
-        .dyslexic-text span.focused {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-radius: 4px;
-            box-shadow: 0 0 0 2px var(--primary);
-            transform: scale(1.05);
-            z-index: 10;
-            position: relative;
-        }
-
-        .dyslexic-text span.dimmed {
-            opacity: 0.4;
         }
 
         .empty-state {
@@ -810,7 +907,7 @@
 
         /* ADAPTER VIEW */
         .adapter-view {
-            display: none;
+            display: flex;
             flex-direction: column;
             height: 100%;
             gap: 1.25rem;
@@ -909,8 +1006,21 @@
             word-spacing: 0.4em !important;
         }
 
+        .worksheet-header.font-outfit {
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .worksheet-header.font-century-gothic {
+            font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'Tw Cen MT', sans-serif !important;
+        }
+
+        .worksheet-header.font-opendyslexic,
         .worksheet-header.comp-font-dys {
             font-family: 'OpenDyslexic', sans-serif !important;
+        }
+
+        .worksheet-header.font-verdana {
+            font-family: Verdana, Geneva, Tahoma, sans-serif !important;
         }
 
         .worksheet-header span {
@@ -952,9 +1062,12 @@
         }
 
         @keyframes pulse-tts {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.02);
             }
@@ -1025,14 +1138,17 @@
                 gap: 0.75rem;
                 padding: 1rem;
             }
+
             .header-title-wrapper {
                 width: 100%;
                 justify-content: flex-start;
                 gap: 0.6rem;
             }
+
             .header-title-wrapper h1 {
                 font-size: 1.15rem;
             }
+
             .header-right-group {
                 width: 100%;
                 display: flex;
@@ -1041,6 +1157,7 @@
                 gap: 0.45rem;
                 flex-wrap: nowrap;
             }
+
             .header-actions {
                 display: flex;
                 align-items: center;
@@ -1048,6 +1165,7 @@
                 flex: 1 1 auto;
                 min-width: 0;
             }
+
             .header-actions .btn {
                 flex: 1 1 auto;
                 min-width: 0;
@@ -1221,6 +1339,30 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+
+            .silent-letter {
+                color: #94a3b8 !important;
+                opacity: 0.7 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .font-outfit {
+                font-family: 'Outfit', sans-serif !important;
+            }
+
+            .font-century-gothic {
+                font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', 'Tw Cen MT', sans-serif !important;
+            }
+
+            .font-opendyslexic,
+            .comp-font-dys {
+                font-family: 'OpenDyslexic', sans-serif !important;
+            }
+
+            .font-verdana {
+                font-family: Verdana, Geneva, Tahoma, sans-serif !important;
+            }
         }
     </style>
 </head>
@@ -1239,7 +1381,7 @@
                 </div>
                 <div>
                     <h1>
-                        Lentille de dyslexie &amp; Adaptateur DYS
+                        Adaptateur &amp; Simulateur DYS
                         <span class="badge-alpha">Alpha</span>
                     </h1>
                 </div>
@@ -1267,38 +1409,49 @@
                         <i data-fa="shield-check" style="width:14px;height:14px;color:var(--primary);"></i>
                         Aménagements compensatoires
                     </div>
-                    <p style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.4;">
-                        Activez ces leviers pour constater en direct l'atténuation de la gêne de lecture.
+                    <p
+                        style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.4;">
+                        Il n’existe pas de réglage universel : testez les aides avec l’élève et conservez celles qui lui sont réellement utiles.
                     </p>
 
                     <label class="checkbox-card" for="compZorzi">
                         <input type="checkbox" id="compZorzi">
                         <div>
-                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Espacement Zorzi</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Lettres (+0.25em), mots (+0.4em) et interligne (2.2)</div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Espacement Zorzi
+                            </div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Lettres (+0.25em), mots
+                                (+0.4em) et interligne (2.2)</div>
                         </div>
                     </label>
 
-                    <label class="checkbox-card" for="compFontDys">
-                        <input type="checkbox" id="compFontDys">
-                        <div>
-                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Police adaptée OpenDyslexic</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Base des lettres épaissie pour éviter les inversions</div>
-                        </div>
-                    </label>
+                    <div class="input-group" style="margin-top: 0.65rem; margin-bottom: 0.65rem;">
+                        <label for="compFontSelect" style="display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.35rem;">
+                            <span><i data-fa="font" style="margin-right: 4px; color: var(--primary);"></i> Police de caractères</span>
+                        </label>
+                        <select id="compFontSelect" class="form-select" style="width: 100%; padding: 0.5rem 0.65rem; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--glass-bg); color: var(--text-main); font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: inherit;">
+                            <option value="outfit">Outfit (police par défaut)</option>
+                            <option value="century-gothic">Century Gothic (ronde et claire)</option>
+                            <option value="opendyslexic">OpenDyslexic (base épaissie)</option>
+                            <option value="verdana">Verdana (espacement large)</option>
+                        </select>
+                    </div>
 
                     <label class="checkbox-card" for="compPastel">
                         <input type="checkbox" id="compPastel">
                         <div>
-                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Fond ivoire / pastel</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Atténue l'éblouissement et le contraste violent (selon la sensibilité personnelle de l'élève)</div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Fond ivoire /
+                                pastel</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Atténue l'éblouissement et le
+                                contraste violent (selon la sensibilité personnelle de l'élève)</div>
                         </div>
                     </label>
                     <label class="checkbox-card" for="compGraphemes">
                         <input type="checkbox" id="compGraphemes">
                         <div>
-                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Coloration des graphèmes (sons)</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Code sons-couleurs CERAS (o, an, in, è, é, ou, oi, on, eu, un)</div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Coloration des
+                                graphèmes (sons)</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Code sons-couleurs CERAS (o,
+                                an, in, è, é, ou, oi, on, eu, un)</div>
                         </div>
                     </label>
 
@@ -1315,20 +1468,30 @@
                         <span class="ceras-chip chip-un" title="Son [œ̃]">1 un</span>
                     </div>
 
+                    <label class="checkbox-card" for="compSilentLetters">
+                        <input type="checkbox" id="compSilentLetters">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Sons &amp; lettres muettes grisés</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Atténue les lettres non prononcées (e muet, s, t, d finaux, u de qu/gu, h...)</div>
+                        </div>
+                    </label>
+
                     <label class="checkbox-card" for="compSyllables">
                         <input type="checkbox" id="compSyllables">
                         <div>
-                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Découpage syllabique bicolore</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Alternance bleu / rouge pour guider le décodage</div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Découpage
+                                syllabique bicolore</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">Alternance bleu / rouge pour
+                                guider le décodage</div>
                         </div>
                     </label>
                 </div>
 
                 <!-- SIMULATEUR CONTROLS -->
-                <div class="panel-section" id="sectionSimControls">
+                <div class="panel-section" id="sectionSimControls" style="display: none;">
                     <div class="panel-section-title">
                         <i data-fa="gear" style="width:14px;height:14px;"></i>
-                        Perturbations DYS
+                        Obstacles artificiels de lecture
                     </div>
 
                     <div class="input-group">
@@ -1348,7 +1511,7 @@
                     </div>
 
                     <div class="input-group" style="margin-top: 0.75rem;">
-                        <label>Type de trouble</label>
+                        <label>Type de perturbation simulée</label>
                         <div class="mixing-grid">
                             <button class="mixing-btn active" data-style="all">Mixte</button>
                             <button class="mixing-btn" data-style="offset">Décalages</button>
@@ -1357,39 +1520,25 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 0.75rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
-                        <label class="checkbox-card" for="inputFocusMode">
-                            <input type="checkbox" id="inputFocusMode">
-                            <div>
-                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Mode Focus</div>
-                                <div style="font-size: 0.7rem; color: var(--text-secondary);">Surligne le mot en cours</div>
-                            </div>
-                        </label>
-
-                        <div class="input-group" id="focusSpeedContainer"
-                            style="display: none; margin-top: 0.6rem; padding: 0.65rem; background: rgba(0,0,0,0.03); border-radius: var(--radius-lg);">
-                            <label>
-                                <span>Vitesse de lecture</span>
-                                <span class="value-badge" id="valFocusSpeed">100 MPM</span>
-                            </label>
-                            <input type="range" id="inputFocusSpeed" min="200" max="1000" step="50" value="600">
-                        </div>
+                    <div class="info-banner" style="margin-top: 1rem;">
+                        <i data-fa="circle-info" style="width:14px;height:14px;"></i>
+                        <p>La dyslexie est un trouble cognitif, pas visuel. Ce simulateur recrée l'effort cognitif, la
+                            perte de repères et la surcharge attentionnelle nécessaires au décodage. Ce n'est pas une
+                            reproduction fidèle de ce que voit une personne dyslexique !</p>
                     </div>
                 </div>
 
-                <!-- TEXTES D'EXEMPLE -->
-                <div class="panel-section">
+                <!-- TEXTES D'EXEMPLE (VISIBLE SOUS ÉDITER TEXTE UNIQUEMENT) -->
+                <div class="panel-section" id="sectionPresets" style="display: none;">
                     <div class="panel-section-title">
                         <i data-fa="book-open" style="width:14px;height:14px;"></i>
                         Textes d'exemple
                     </div>
+                    <p style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.4;">
+                        Sélectionnez un modèle ci-dessous pour charger son contenu dans l'éditeur.
+                    </p>
                     <div class="preset-list" id="presetList">
                         <!-- Populated by JS -->
-                    </div>
-
-                    <div class="info-banner">
-                        <i data-fa="circle-info" style="width:14px;height:14px;"></i>
-                        <p>La dyslexie est un trouble cognitif, non visuel. Ce simulateur recrée l'effort cognitif phénoménal, la perte de repères et la surcharge attentionnelle nécessaires au décodage.</p>
                     </div>
                 </div>
             </aside>
@@ -1397,54 +1546,49 @@
             <main class="results-panel">
                 <div class="results-header no-print">
                     <div class="results-title-group">
-                        <h2 id="viewportTitle">Visualisation en temps réel</h2>
-                        <p id="viewportSubtitle">Observez les effets de la dyslexie et l'effet des aménagements</p>
+                        <h2 id="viewportTitle">Adaptateur de texte pour fiches DYS</h2>
+                        <p id="viewportSubtitle">Générez des consignes ou lectures adaptées prêtes pour la classe</p>
                     </div>
                     <div class="tabs" style="margin-bottom: 0;">
-                        <button class="tab-btn active" data-tab="simulation">
-                            <i data-fa="eye" style="width:14px;height:14px;"></i> Simulateur
-                        </button>
-                        <button class="tab-btn" data-tab="adapter">
+                        <button class="tab-btn active" data-tab="adapter">
                             <i data-fa="book-open-reader" style="width:14px;height:14px;"></i> Adaptateur DYS
                         </button>
                         <button class="tab-btn" data-tab="edit">
                             <i data-fa="pen" style="width:14px;height:14px;"></i> Éditer texte
+                        </button>
+                        <button class="tab-btn" data-tab="simulation">
+                            <i data-fa="eye" style="width:14px;height:14px;"></i> Simulateur
                         </button>
                     </div>
                 </div>
 
                 <div class="workspace-area">
                     <!-- VIEW 1: SIMULATEUR -->
-                    <div class="sim-view" id="viewSimulation">
-                        <div class="sim-actions no-print">
-                            <button class="btn btn-secondary" id="btnTtsSim" title="Écouter le texte à voix haute (synthèse vocale)">
-                                <i data-fa="volume-high" style="width:16px;height:16px;"></i> <span class="tts-btn-label">Lecture audio</span>
-                            </button>
-                        </div>
-
+                    <div class="sim-view" id="viewSimulation" style="display: none;">
                         <div class="empty-state" id="emptyState">
                             <i data-fa="volume-high"></i>
-                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte pour voir la simulation.</p>
+                            <p style="font-weight: 600; margin-bottom: 1rem;">Veuillez entrer du texte pour voir la
+                                simulation.</p>
                             <button class="btn btn-secondary" id="btnEmptyEdit">Passer en mode édition</button>
                         </div>
                         <div class="dyslexic-text" id="dyslexicOutput"></div>
                     </div>
 
                     <!-- VIEW 2: ADAPTATEUR DYS (FICHE ÉLÈVE) -->
-                    <div class="adapter-view" id="viewAdapter">
+                    <div class="adapter-view" id="viewAdapter" style="display: flex;">
                         <div class="no-print">
-                            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                            <div
+                                style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em;">
                                 Profils d'adaptation en 1 clic :
                             </div>
                             <div class="profile-pills">
-                                <button class="profile-btn" data-profile="visuo" title="Profil ciblant l'empan visuo-attentionnel (travaux de S. Valdois)">
+                                <button class="profile-btn" data-profile="visuo"
+                                    title="Profil ciblant l'empan visuo-attentionnel (travaux de S. Valdois)">
                                     <i data-fa="layer-group"></i> Dyslexie visuo-attentionnelle
                                 </button>
-                                <button class="profile-btn" data-profile="debut" title="Profil pour apprenti lecteur (coloration des graphèmes CERAS, espacement Zorzi et police adaptée)">
+                                <button class="profile-btn" data-profile="debut"
+                                    title="Profil pour apprenti lecteur (coloration des graphèmes CERAS, espacement Zorzi, police Century Gothic et sons muets grisés)">
                                     <i data-fa="chalkboard-user"></i> Début de lecture
-                                </button>
-                                <button class="profile-btn" data-profile="confort">
-                                    <i data-fa="palette"></i> Confort visuel
                                 </button>
                                 <button class="profile-btn active" data-profile="custom">
                                     <i data-fa="sliders"></i> Personnalisé
@@ -1452,7 +1596,7 @@
                             </div>
                             <div class="info-banner" style="margin-top: 0.75rem; margin-bottom: 0.25rem;">
                                 <i data-fa="circle-info" style="width:14px;height:14px;flex-shrink:0;"></i>
-                                <p>Ces aménagements typographiques viennent en complément du travail explicite sur le code (correspondances graphèmes-phonèmes) et la fluence de lecture, qui reste le levier principal de progression.</p>
+                                <p>Ces aides typographiques complètent, sans les remplacer, le travail sur le code (correspondances graphèmes-phonèmes) et la fluence de lecture.</p>
                             </div>
                         </div>
 
@@ -1487,10 +1631,13 @@
                         </div>
 
                         <div class="worksheet-actions no-print">
-                            <button class="btn btn-secondary" id="btnTtsAdapter" title="Écouter le texte à voix haute (synthèse vocale)">
-                                <i data-fa="volume-high" style="width:16px;height:16px;"></i> <span class="tts-btn-label">Lecture audio</span>
+                            <button class="btn btn-secondary" id="btnTtsAdapter"
+                                title="Écouter le texte à voix haute (synthèse vocale)">
+                                <i data-fa="volume-high" style="width:16px;height:16px;"></i> <span
+                                    class="tts-btn-label">Lecture audio</span>
                             </button>
-                            <button class="btn btn-primary" id="btnPrintWorksheet" title="Imprimer la fiche A4 prête pour la classe">
+                            <button class="btn btn-primary" id="btnPrintWorksheet"
+                                title="Imprimer la fiche A4 prête pour la classe">
                                 <i data-fa="print" style="width:16px;height:16px;"></i> Imprimer la fiche adaptée (A4)
                             </button>
                         </div>
@@ -1498,10 +1645,11 @@
 
                     <!-- VIEW 3: ÉDITEUR LIBRE -->
                     <div class="edit-view" id="viewEdit">
-                        <textarea id="textInput" placeholder="Collez ou tapez votre consigne, exercice ou texte ici..."></textarea>
+                        <textarea id="textInput"
+                            placeholder="Collez ou tapez votre consigne, exercice ou texte ici..."></textarea>
                         <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
                             <button class="btn btn-secondary" id="btnGoAdapter" style="padding: 0.85rem 1.5rem;">
-                                <i data-fa="book-open-reader" style="width:16px;height:16px;"></i> Adapter pour la classe
+                                <i data-fa="book-open-reader" style="width:16px;height:16px;"></i> Adapter pour un élève
                             </button>
                             <button class="btn btn-primary" id="btnStartSim" style="padding: 0.85rem 1.5rem;">
                                 <i data-fa="eye" style="width:16px;height:16px;"></i> Lancer la simulation
@@ -1516,11 +1664,15 @@
             <p>
                 Webapp conçue par Vivian Epiney de l'<a
                     href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones artificiels
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> avec <a href="../../../merci.html"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> et quelques neurones
+                artificiels
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
-                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100% libre</a>
-                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer">Code 100%
+                        libre</a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                        rel="noopener noreferrer">AGPL-3.0</a>)
                     · <a href="../../../mentions-legales.html">Mentions légales</a>
                     · <a href="../../../confidentialite.html">Confidentialité</a>
                     · <a href="../../../cgu.html">CGU</a>
@@ -1572,7 +1724,7 @@
         function getVocalicNuclei(word) {
             // Mask silent 'u' in 'qu' and 'gu' before e,i,y so it is not treated as a separate vowel
             const masked = word.replace(/qu/gi, m => m[0] + '#')
-                               .replace(/gu([eéèêëiîïy])/gi, (m, v) => m[0] + '#' + v);
+                .replace(/gu([eéèêëiîïy])/gi, (m, v) => m[0] + '#' + v);
 
             // Compound vowels and diphthongs in French
             const regex = /(eau|oeu|œu|oin|ien|ian|ieu|ion|ai|aî|ay|ei|eî|ey|au|ou|où|oû|eu|eû|oi|oî|oy|ui|[aàâäeéèêëiîïoôöuûüùyœæ])/gi;
@@ -1685,24 +1837,21 @@
             text: PRESET_TEXTS[0].content,
             speed: 5,
             severity: 0.8,
-            activeTab: 'simulation', // 'simulation', 'adapter', 'edit'
+            activeTab: 'adapter', // 'adapter' by default!
             mixingStyle: 'all',
-            focusMode: false,
-            focusSpeedMs: 600,
             baseTokens: [],
-            focusedIndex: -1,
+            font: 'outfit', // 'outfit', 'century-gothic', 'opendyslexic', 'verdana'
             accommodations: {
                 zorzi: false,
-                fontDys: false,
                 pastel: false,
                 graphemes: false,
+                silentLetters: false,
                 syllables: false
             },
             activeProfile: 'custom'
         };
 
         let mutationInterval = null;
-        let focusInterval = null;
 
         // --- DOM Elements ---
         const els = {
@@ -1711,19 +1860,19 @@
             inputSpeed: document.getElementById('inputSpeed'),
             valSpeed: document.getElementById('valSpeed'),
             mixingBtns: document.querySelectorAll('.mixing-btn'),
-            inputFocusMode: document.getElementById('inputFocusMode'),
-            focusSpeedContainer: document.getElementById('focusSpeedContainer'),
-            inputFocusSpeed: document.getElementById('inputFocusSpeed'),
-            valFocusSpeed: document.getElementById('valFocusSpeed'),
 
             // Accommodations
             compZorzi: document.getElementById('compZorzi'),
-            compFontDys: document.getElementById('compFontDys'),
+            compFontSelect: document.getElementById('compFontSelect'),
             compPastel: document.getElementById('compPastel'),
             compGraphemes: document.getElementById('compGraphemes'),
+            compSilentLetters: document.getElementById('compSilentLetters'),
             compSyllables: document.getElementById('compSyllables'),
             cerasMiniLegend: document.getElementById('cerasMiniLegend'),
             cerasWorksheetLegend: document.getElementById('cerasWorksheetLegend'),
+            sectionAccommodations: document.getElementById('sectionAccommodations'),
+            sectionSimControls: document.getElementById('sectionSimControls'),
+            sectionPresets: document.getElementById('sectionPresets'),
 
             presetList: document.getElementById('presetList'),
 
@@ -1747,7 +1896,6 @@
             adapterWorksheetText: document.getElementById('adapterWorksheetText'),
             btnPrintWorksheet: document.getElementById('btnPrintWorksheet'),
             btnTtsAdapter: document.getElementById('btnTtsAdapter'),
-            btnTtsSim: document.getElementById('btnTtsSim'),
 
             btnShare: document.getElementById('shareBtn'),
             btnReset: document.getElementById('reset-cache-btn')
@@ -1905,21 +2053,184 @@
             return matches;
         }
 
-        function colorizeWordGraphemes(word, matches) {
-            if (!matches || matches.length === 0) return word;
-            let result = '';
-            let lastIdx = 0;
-            matches.forEach(m => {
-                if (m.start > lastIdx) {
-                    result += word.slice(lastIdx, m.start);
-                }
-                result += `<span class="${m.className}">${word.slice(m.start, m.end)}</span>`;
-                lastIdx = m.end;
-            });
-            if (lastIdx < word.length) {
-                result += word.slice(lastIdx);
+        // --- SONS & LETTRES MUETTES DU FRANÇAIS ---
+        function findSilentLetters(word) {
+            const w = word.toLowerCase();
+            const len = w.length;
+            const silent = new Set();
+            if (len === 0) return silent;
+
+            // 1. Initial 'h' is silent in French
+            if (w[0] === 'h') {
+                silent.add(0);
             }
-            return result;
+            // Medial 'h' not preceded by 'c' or 'p' (théâtre, cahier, souhait...)
+            for (let i = 1; i < len; i++) {
+                if (w[i] === 'h' && w[i - 1] !== 'c' && w[i - 1] !== 'p') {
+                    silent.add(i);
+                }
+            }
+
+            // 2. 'u' after 'q' (everywhere: qui, que, quand, quoi, chaque, claque, quel...)
+            for (let i = 0; i < len - 1; i++) {
+                if (w[i] === 'q' && w[i + 1] === 'u') {
+                    silent.add(i + 1);
+                }
+            }
+
+            // 'u' after 'g' followed by e, é, è, ê, i, î, y (guitare, bague, vague, guide, guépard...)
+            for (let i = 0; i < len - 2; i++) {
+                if (w[i] === 'g' && w[i + 1] === 'u' && /[eéèêëiîïy]/.test(w[i + 2])) {
+                    silent.add(i + 1);
+                }
+            }
+
+            // 3. Specific known words / numbers / irregulars
+            if (w === 'est') { // verbe être
+                silent.add(1);
+                silent.add(2);
+                return silent;
+            }
+            if (w === 'et') { // conjonction
+                silent.add(1);
+                return silent;
+            }
+            if (w === 'sept') { // p muet, t prononcé
+                silent.add(2);
+                return silent;
+            }
+            if (w === 'fils') { // l muet, s prononcé
+                silent.add(2);
+                return silent;
+            }
+            if (w === 'vingt') { // g et t muets
+                silent.add(3);
+                silent.add(4);
+                return silent;
+            }
+            if (/^(doigt|doigts)$/.test(w)) {
+                silent.add(3); // g
+                silent.add(4); // t
+                if (len === 6) silent.add(5); // s
+                return silent;
+            }
+            if (/^(temps|printemps)$/.test(w)) {
+                silent.add(len - 2); // p
+                silent.add(len - 1); // s
+                return silent;
+            }
+            if (/^(corps|poids|puits)$/.test(w)) {
+                silent.add(len - 2);
+                silent.add(len - 1);
+                return silent;
+            }
+            if (/^(champ|champs|camp|camps|drap|draps|loup|loups|trop|coup|coups|sirop|sirops|galop|galops)$/.test(w)) {
+                if (w.endsWith('s')) {
+                    silent.add(len - 2);
+                    silent.add(len - 1);
+                } else {
+                    silent.add(len - 1);
+                }
+                return silent;
+            }
+            if (/^(long|longs|sang|sangs|rang|rangs|poing|poings|bourg|bourgs)$/.test(w)) {
+                if (w.endsWith('s')) {
+                    silent.add(len - 2);
+                    silent.add(len - 1);
+                } else {
+                    silent.add(len - 1);
+                }
+                return silent;
+            }
+            if (/^(banc|bancs|blanc|blancs|franc|francs|flanc|flancs|tronc|troncs|porc|porcs|estomac|tabac|caoutchouc)$/.test(w)) {
+                if (w.endsWith('s')) {
+                    silent.add(len - 2);
+                    silent.add(len - 1);
+                } else {
+                    silent.add(len - 1);
+                }
+                return silent;
+            }
+            if (/^(deux|trois|prix|yeux|voix|paix|faux|choix|croix|noix|doux|vieux|mieux)$/.test(w)) {
+                silent.add(len - 1);
+                return silent;
+            }
+
+            // Silent internal 'p' in compter, dompter, sculpter, baptême, prompt
+            const pMatch = w.match(/(compt|dompt|sculpt|baptêm|prompt)/);
+            if (pMatch) {
+                const pIdx = w.indexOf('p', pMatch.index);
+                if (pIdx !== -1) silent.add(pIdx);
+            }
+
+            // 4. Verbal ending '-ent' (3e pers. pluriel : jouent, parlent, dorment, étaient, doivent...)
+            // vs nouns/adjectives/adverbs in -ent / -ment (moment, souvent, enfant, dent, vent, etc.)
+            const isNotVerbEnt = /^(souvent|moment|patient|content|lent|vent|dent|cent|enfant|client|parent|serpent|argent|agent|absent|récent|présent|accident|talent|élément|torrent|comment|vraiment|autrement|seulement|bâtiment|vêtement|mouvement|document|instrument|sentiment|gouvernement)$/.test(w) || /ement$/.test(w);
+
+            if (w.endsWith('ent') && len >= 4) {
+                if (!isNotVerbEnt) {
+                    // Verb 3rd plural: 'ent' is completely silent
+                    silent.add(len - 3);
+                    silent.add(len - 2);
+                    silent.add(len - 1);
+                    return silent;
+                } else {
+                    // Noun/adv: only final 't' is silent, 'en' is nasal
+                    silent.add(len - 1);
+                    return silent;
+                }
+            }
+
+            // 5. Polysyllabic trailing 'e' and 'es'
+            // Monosyllables where e/es is pronounced: le, de, me, te, se, ce, ne, que, les, des, mes, tes, ses, ces
+            const isMonosyllableFunc = /^(le|de|me|te|se|ce|ne|que|les|des|mes|tes|ses|ces)$/.test(w);
+            if (!isMonosyllableFunc && len >= 3) {
+                if (w.endsWith('es')) {
+                    // e.g. tables, portes, petites, clôtures, mètres, oreilles, affaires
+                    silent.add(len - 2);
+                    silent.add(len - 1);
+                    return silent;
+                } else if (w.endsWith('e') && !/[éèêë]e$/.test(w.slice(-2))) {
+                    // e.g. table, porte, petite, clôture, large, réveille
+                    silent.add(len - 1);
+                    return silent;
+                } else if (w.endsWith('ée') || w.endsWith('ées')) {
+                    // e.g. entrée -> second e is silent
+                    silent.add(len - (w.endsWith('ées') ? 2 : 1));
+                    if (w.endsWith('ées')) silent.add(len - 1);
+                    return silent;
+                }
+            }
+
+            // 6. Exceptions: final consonants that are pronounced
+            const pronouncedFinalExceptions = new Set([
+                'bus', 'plus', 'os', 'mars', 'ours', 'lys', 'tennis', 'oasis', 'cactus', 'virus', 'sens', 'as', 'vis', 'maïs', 'tous', 'chaos', 'hélas', 'ananas', 'iris',
+                'huit', 'net', 'brut', 'dot', 'but', 'août', 'luth', 'mat', 'kit', 'chut', 'contact', 'correct', 'direct', 'exact', 'strict', 'tact', 'test', 'toast', 'ouest',
+                'sud', 'round', 'stand', 'bled', 'week-end',
+                'cap', 'slip', 'stop', 'top', 'bip', 'clap',
+                'six', 'dix', 'index', 'lynx', 'box', 'fax',
+                'gaz', 'jazz', 'quartz', 'merguez',
+                'sac', 'lac', 'bac', 'bec', 'sec', 'choc', 'bloc', 'parc', 'arc', 'duc', 'clic', 'pic', 'flic', 'avec', 'échec', 'public', 'trafic'
+            ]);
+
+            if (pronouncedFinalExceptions.has(w)) {
+                return silent;
+            }
+
+            // 7. Compound final consonant clusters: ds$, ts$, ps$, cs$, gs$
+            if (len >= 3 && /(ds|ts|ps|cs|gs)$/.test(w)) {
+                silent.add(len - 2);
+                silent.add(len - 1);
+                return silent;
+            }
+
+            // 8. Single final silent consonants: d, p, s, t, x, z, g, b
+            if (len >= 2 && /[dpstxzgb]$/.test(w)) {
+                silent.add(len - 1);
+                return silent;
+            }
+
+            return silent;
         }
 
         function formatTokenText(tokenText, isWord) {
@@ -1929,51 +2240,73 @@
 
             const useSyllables = state.accommodations.syllables;
             const useGraphemes = state.accommodations.graphemes;
+            const useSilent = state.accommodations.silentLetters;
 
-            if (!useSyllables && !useGraphemes) {
+            if (!useSyllables && !useGraphemes && !useSilent) {
                 return tokenText;
             }
 
-            if (useGraphemes && !useSyllables) {
-                const matches = findGraphemes(tokenText);
-                return colorizeWordGraphemes(tokenText, matches);
+            const graphemeMatches = useGraphemes ? findGraphemes(tokenText) : [];
+            const rawSilent = useSilent ? findSilentLetters(tokenText) : new Set();
+
+            // Collision prevention: pronounced graphemes are never silent letters
+            graphemeMatches.forEach(m => {
+                for (let k = m.start; k < m.end; k++) {
+                    rawSilent.delete(k);
+                }
+            });
+
+            function renderSubstr(text, offset, len) {
+                let res = '';
+                let i = 0;
+                while (i < len) {
+                    const charIdx = offset + i;
+                    // Check if starts a grapheme
+                    const gm = graphemeMatches.find(m => m.start === charIdx);
+                    if (gm && gm.end <= offset + len) {
+                        const gLen = gm.end - gm.start;
+                        res += `<span class="${gm.className}">${text.slice(i, i + gLen)}</span>`;
+                        i += gLen;
+                        continue;
+                    }
+                    // Check if silent letter
+                    if (rawSilent.has(charIdx)) {
+                        let sLen = 1;
+                        while (i + sLen < len && rawSilent.has(offset + i + sLen)) {
+                            sLen++;
+                        }
+                        res += `<span class="silent-letter">${text.slice(i, i + sLen)}</span>`;
+                        i += sLen;
+                        continue;
+                    }
+                    res += text[i];
+                    i++;
+                }
+                return res;
+            }
+
+            if (!useSyllables) {
+                return renderSubstr(tokenText, 0, tokenText.length);
             }
 
             const syllables = syllabifyWord(tokenText);
-            if (!useGraphemes && useSyllables) {
-                return syllables.map((syl, idx) => `<span class="syl-${idx % 2 === 0 ? 'even' : 'odd'}">${syl}</span>`).join('');
-            }
-
-            // Both graphemes and syllables are active
-            const matches = findGraphemes(tokenText);
             let charOffset = 0;
             return syllables.map((syl, idx) => {
-                const sylStart = charOffset;
-                const sylEnd = charOffset + syl.length;
-                charOffset = sylEnd;
-
-                const sylMatches = [];
-                matches.forEach(m => {
-                    const start = Math.max(sylStart, m.start);
-                    const end = Math.min(sylEnd, m.end);
-                    if (start < end) {
-                        sylMatches.push({
-                            start: start - sylStart,
-                            end: end - sylStart,
-                            className: m.className
-                        });
-                    }
-                });
-
-                const sylContent = colorizeWordGraphemes(syl, sylMatches);
+                const sylContent = renderSubstr(syl, charOffset, syl.length);
+                charOffset += syl.length;
                 return `<span class="syl-${idx % 2 === 0 ? 'even' : 'odd'}">${sylContent}</span>`;
             }).join('');
         }
 
         function applyAccommodationClasses(el) {
+            if (!el) return;
             el.classList.toggle('comp-zorzi', state.accommodations.zorzi);
-            el.classList.toggle('comp-font-dys', state.accommodations.fontDys);
             el.classList.toggle('comp-pastel', state.accommodations.pastel);
+            el.classList.remove('font-outfit', 'font-century-gothic', 'font-opendyslexic', 'font-arial', 'font-verdana', 'comp-font-dys');
+            el.classList.add(`font-${state.font}`);
+            if (state.font === 'opendyslexic') {
+                el.classList.add('comp-font-dys');
+            }
         }
 
         function renderOutput() {
@@ -1992,7 +2325,7 @@
                 els.dyslexicOutput.innerHTML = state.baseTokens.map(t => `<span id="tok-${t.id}">${formatTokenText(t.original, t.isWord)}</span>`).join('');
             }
 
-            state.baseTokens.forEach((t, i) => {
+            state.baseTokens.forEach((t) => {
                 const span = document.getElementById(`tok-${t.id}`);
                 if (!span) return;
 
@@ -2001,17 +2334,6 @@
 
                 if (span.innerHTML !== formattedHtml) {
                     span.innerHTML = formattedHtml;
-                }
-
-                const isFocused = state.focusMode && i === state.focusedIndex;
-                const isDimmed = state.focusMode && !isFocused && t.isWord;
-
-                if (isFocused) {
-                    span.className = 'focused';
-                } else if (isDimmed) {
-                    span.className = 'dimmed';
-                } else {
-                    span.className = '';
                 }
             });
         }
@@ -2024,13 +2346,11 @@
 
             // Pastel background applies to the card container
             els.worksheetCard.classList.toggle('comp-pastel', state.accommodations.pastel);
-            // Zorzi and OpenDyslexic font apply to both header and text!
+            // Zorzi and font apply to both header and text!
             if (els.worksheetHeader) {
-                els.worksheetHeader.classList.toggle('comp-zorzi', state.accommodations.zorzi);
-                els.worksheetHeader.classList.toggle('comp-font-dys', state.accommodations.fontDys);
+                applyAccommodationClasses(els.worksheetHeader);
             }
-            els.adapterWorksheetText.classList.toggle('comp-zorzi', state.accommodations.zorzi);
-            els.adapterWorksheetText.classList.toggle('comp-font-dys', state.accommodations.fontDys);
+            applyAccommodationClasses(els.adapterWorksheetText);
 
             if (els.cerasWorksheetLegend) {
                 els.cerasWorksheetLegend.style.display = state.accommodations.graphemes ? 'block' : 'none';
@@ -2047,14 +2367,6 @@
             state.text = newText;
             els.textInput.value = newText;
             state.baseTokens = tokenize(newText);
-
-            if (state.focusMode) {
-                let startIdx = 0;
-                while (startIdx < state.baseTokens.length && !state.baseTokens[startIdx].isWord) {
-                    startIdx++;
-                }
-                state.focusedIndex = startIdx < state.baseTokens.length ? startIdx : -1;
-            }
 
             renderPresets();
             if (state.activeTab === 'simulation') {
@@ -2074,24 +2386,6 @@
             }, intervalTime);
         }
 
-        function startFocusInterval() {
-            clearInterval(focusInterval);
-            if (!state.focusMode || state.activeTab !== 'simulation') return;
-
-            focusInterval = setInterval(() => {
-                state.focusedIndex++;
-                while (state.focusedIndex < state.baseTokens.length && !state.baseTokens[state.focusedIndex].isWord) {
-                    state.focusedIndex++;
-                }
-                if (state.focusedIndex >= state.baseTokens.length) {
-                    let first = 0;
-                    while (first < state.baseTokens.length && !state.baseTokens[first].isWord) first++;
-                    state.focusedIndex = first < state.baseTokens.length ? first : -1;
-                }
-                renderOutput();
-            }, state.focusSpeedMs);
-        }
-
         function switchTab(tab) {
             state.activeTab = tab;
 
@@ -2099,49 +2393,51 @@
                 btn.classList.toggle('active', btn.dataset.tab === tab);
             });
 
-            const simControls = document.getElementById('sectionSimControls');
-
-            if (tab === 'simulation') {
-                els.viewportTitle.textContent = 'Visualisation en temps réel';
-                els.viewportSubtitle.textContent = "Observez les effets de la dyslexie et l'effet des aménagements";
-                els.viewEdit.style.display = 'none';
-                els.viewAdapter.style.display = 'none';
-                els.viewSimulation.style.display = 'flex';
-                if (simControls) simControls.style.display = 'block';
-
-                updateText(els.textInput.value);
-                startMutationInterval();
-                startFocusInterval();
-            } else if (tab === 'adapter') {
+            if (tab === 'adapter') {
                 els.viewportTitle.textContent = 'Adaptateur de texte pour fiches DYS';
                 els.viewportSubtitle.textContent = 'Générez des consignes ou lectures adaptées prêtes pour la classe';
                 els.viewEdit.style.display = 'none';
                 els.viewSimulation.style.display = 'none';
                 els.viewAdapter.style.display = 'flex';
-                if (simControls) simControls.style.display = 'none';
+                if (els.sectionAccommodations) els.sectionAccommodations.style.display = 'block';
+                if (els.sectionSimControls) els.sectionSimControls.style.display = 'none';
+                if (els.sectionPresets) els.sectionPresets.style.display = 'none';
 
                 clearInterval(mutationInterval);
-                clearInterval(focusInterval);
                 renderAdapter();
-            } else {
+            } else if (tab === 'edit') {
                 els.viewportTitle.textContent = 'Éditeur de texte libre';
-                els.viewportSubtitle.textContent = 'Modifiez le texte à simuler ou à adapter';
+                els.viewportSubtitle.textContent = 'Modifiez le texte ou choisissez un exemple ci-contre';
                 els.viewEdit.style.display = 'flex';
                 els.viewSimulation.style.display = 'none';
                 els.viewAdapter.style.display = 'none';
-                if (simControls) simControls.style.display = 'none';
+                if (els.sectionAccommodations) els.sectionAccommodations.style.display = 'none';
+                if (els.sectionSimControls) els.sectionSimControls.style.display = 'none';
+                if (els.sectionPresets) els.sectionPresets.style.display = 'block';
 
                 clearInterval(mutationInterval);
-                clearInterval(focusInterval);
+            } else if (tab === 'simulation') {
+                els.viewportTitle.textContent = 'Visualisation en temps réel';
+                els.viewportSubtitle.textContent = "Observez les effets de la dyslexie et l'effet des aménagements";
+                els.viewEdit.style.display = 'none';
+                els.viewAdapter.style.display = 'none';
+                els.viewSimulation.style.display = 'flex';
+                if (els.sectionAccommodations) els.sectionAccommodations.style.display = 'block';
+                if (els.sectionSimControls) els.sectionSimControls.style.display = 'block';
+                if (els.sectionPresets) els.sectionPresets.style.display = 'none';
+
+                updateText(els.textInput.value);
+                startMutationInterval();
             }
         }
 
         // --- ACCOMMODATIONS STATE MANAGEMENT ---
         function syncAccommodationInputs() {
             els.compZorzi.checked = state.accommodations.zorzi;
-            els.compFontDys.checked = state.accommodations.fontDys;
+            if (els.compFontSelect) els.compFontSelect.value = state.font;
             els.compPastel.checked = state.accommodations.pastel;
             els.compGraphemes.checked = state.accommodations.graphemes;
+            if (els.compSilentLetters) els.compSilentLetters.checked = state.accommodations.silentLetters;
             els.compSyllables.checked = state.accommodations.syllables;
 
             if (els.cerasMiniLegend) {
@@ -2170,21 +2466,17 @@
 
             if (profileName === 'visuo') {
                 state.accommodations.zorzi = true;
-                state.accommodations.fontDys = true;
+                state.font = 'opendyslexic';
                 state.accommodations.pastel = true;
                 state.accommodations.graphemes = false;
+                state.accommodations.silentLetters = false;
                 state.accommodations.syllables = false;
             } else if (profileName === 'debut') {
                 state.accommodations.zorzi = true;
-                state.accommodations.fontDys = true;
+                state.font = 'century-gothic';
                 state.accommodations.pastel = false;
                 state.accommodations.graphemes = true;
-                state.accommodations.syllables = false;
-            } else if (profileName === 'confort') {
-                state.accommodations.zorzi = true;
-                state.accommodations.fontDys = false;
-                state.accommodations.pastel = true;
-                state.accommodations.graphemes = false;
+                state.accommodations.silentLetters = true;
                 state.accommodations.syllables = false;
             }
 
@@ -2194,11 +2486,12 @@
         // Accommodations checkboxes event listeners
         [
             { el: els.compZorzi, key: 'zorzi' },
-            { el: els.compFontDys, key: 'fontDys' },
             { el: els.compPastel, key: 'pastel' },
             { el: els.compGraphemes, key: 'graphemes' },
+            { el: els.compSilentLetters, key: 'silentLetters' },
             { el: els.compSyllables, key: 'syllables' }
         ].forEach(({ el, key }) => {
+            if (!el) return;
             el.addEventListener('change', (e) => {
                 state.accommodations[key] = e.target.checked;
                 state.activeProfile = 'custom';
@@ -2206,6 +2499,15 @@
                 syncAccommodationInputs();
             });
         });
+
+        if (els.compFontSelect) {
+            els.compFontSelect.addEventListener('change', (e) => {
+                state.font = e.target.value;
+                state.activeProfile = 'custom';
+                els.profileBtns.forEach(b => b.classList.toggle('active', b.dataset.profile === 'custom'));
+                syncAccommodationInputs();
+            });
+        }
 
         // Profile buttons
         els.profileBtns.forEach(btn => {
@@ -2236,31 +2538,6 @@
             });
         });
 
-        els.inputFocusMode.addEventListener('change', (e) => {
-            state.focusMode = e.target.checked;
-            els.focusSpeedContainer.style.display = state.focusMode ? 'block' : 'none';
-
-            if (state.focusMode) {
-                let startIdx = 0;
-                while (startIdx < state.baseTokens.length && !state.baseTokens[startIdx].isWord) {
-                    startIdx++;
-                }
-                state.focusedIndex = startIdx < state.baseTokens.length ? startIdx : -1;
-                startFocusInterval();
-            } else {
-                state.focusedIndex = -1;
-                clearInterval(focusInterval);
-            }
-            if (state.activeTab === 'simulation') renderOutput();
-        });
-
-        els.inputFocusSpeed.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value);
-            state.focusSpeedMs = 1200 - val;
-            els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
-            startFocusInterval();
-        });
-
         els.tabBtns.forEach(btn => {
             btn.addEventListener('click', (e) => switchTab(e.currentTarget.dataset.tab));
         });
@@ -2289,8 +2566,8 @@
             if (!tts.supported) return null;
             const voices = window.speechSynthesis.getVoices() || [];
             return voices.find(v => v.lang === 'fr-FR' && !v.name.includes('Compact')) ||
-                   voices.find(v => v.lang && (v.lang === 'fr-FR' || v.lang.startsWith('fr') || v.lang === 'fr_FR')) ||
-                   null;
+                voices.find(v => v.lang && (v.lang === 'fr-FR' || v.lang.startsWith('fr') || v.lang === 'fr_FR')) ||
+                null;
         }
 
         if (tts.supported && 'onvoiceschanged' in window.speechSynthesis) {
@@ -2301,19 +2578,18 @@
 
         function updateTtsUI(speaking) {
             tts.isSpeaking = speaking;
-            const btns = [els.btnTtsAdapter, els.btnTtsSim].filter(Boolean);
+            const btn = els.btnTtsAdapter;
+            if (!btn) return;
 
-            btns.forEach(btn => {
-                if (speaking) {
-                    btn.classList.add('tts-active');
-                    btn.innerHTML = '<i data-fa="stop" style="width:16px;height:16px;"></i> <span class="tts-btn-label">Arrêter</span>';
-                    btn.title = 'Arrêter la lecture audio';
-                } else {
-                    btn.classList.remove('tts-active');
-                    btn.innerHTML = '<i data-fa="volume-high" style="width:16px;height:16px;"></i> <span class="tts-btn-label">Lecture audio</span>';
-                    btn.title = 'Écouter le texte à voix haute (synthèse vocale)';
-                }
-            });
+            if (speaking) {
+                btn.classList.add('tts-active');
+                btn.innerHTML = '<i data-fa="stop" style="width:16px;height:16px;"></i> <span class="tts-btn-label">Arrêter</span>';
+                btn.title = 'Arrêter la lecture audio';
+            } else {
+                btn.classList.remove('tts-active');
+                btn.innerHTML = '<i data-fa="volume-high" style="width:16px;height:16px;"></i> <span class="tts-btn-label">Lecture audio</span>';
+                btn.title = 'Écouter le texte à voix haute (synthèse vocale)';
+            }
             if (window.fa?.createIcons) {
                 window.fa.createIcons();
             }
@@ -2378,7 +2654,6 @@
         }
 
         if (els.btnTtsAdapter) els.btnTtsAdapter.addEventListener('click', toggleTts);
-        if (els.btnTtsSim) els.btnTtsSim.addEventListener('click', toggleTts);
         window.addEventListener('beforeunload', stopTts);
         window.addEventListener('pagehide', stopTts);
 
@@ -2403,13 +2678,14 @@
             els.valSeverity.textContent = '80%';
             els.inputSpeed.value = 5;
             els.valSpeed.textContent = '5';
-            state.accommodations = { zorzi: false, fontDys: false, pastel: false, graphemes: false, syllables: false };
+            state.font = 'outfit';
+            state.accommodations = { zorzi: false, pastel: false, graphemes: false, silentLetters: false, syllables: false };
             state.activeProfile = 'custom';
             syncAccommodationInputs();
             updateText(PRESET_TEXTS[0].content);
-            switchTab('simulation');
+            switchTab('adapter');
             if (typeof showToast === 'function') {
-                showToast("Simulateur réinitialisé", "info");
+                showToast("Application réinitialisée", "info");
             }
         }
         window.__onResetApp = resetSimulator;
@@ -2417,9 +2693,8 @@
         function init() {
             window.fa?.createIcons?.(document.body);
             updateText(PRESET_TEXTS[0].content);
-            els.valFocusSpeed.textContent = Math.round(60000 / state.focusSpeedMs) + ' MPM';
             syncAccommodationInputs();
-            switchTab('simulation');
+            switchTab('adapter');
         }
 
         document.addEventListener('DOMContentLoaded', init);

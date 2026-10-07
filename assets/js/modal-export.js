@@ -245,15 +245,44 @@
                         // 5. Remplacer la barre d'input élève par un bandeau typographique propre
                         const studentBar = clonedTarget.querySelector('.modal-student-bar');
                         if (studentBar) {
-                            studentBar.innerHTML = `
-                                <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:${isDark ? '#818cf8' : '#4f46e5'};">Élève :</span>
-                                        <span style="font-size:1.05rem; font-weight:700; color:${isDark ? '#f8fafc' : '#0f172a'};">${this._escapeHtml(studentName || 'Non renseigné')}</span>
-                                    </div>
-                                    <span style="font-size:0.8rem; font-weight:600; color:${isDark ? '#94a3b8' : '#64748b'};">${dateFormatted}</span>
-                                </div>
-                            `;
+                            const barContainer = clonedDoc.createElement('div');
+                            barContainer.style.display = 'flex';
+                            barContainer.style.alignItems = 'center';
+                            barContainer.style.justifyContent = 'space-between';
+                            barContainer.style.width = '100%';
+
+                            const studentGroup = clonedDoc.createElement('div');
+                            studentGroup.style.display = 'flex';
+                            studentGroup.style.alignItems = 'center';
+                            studentGroup.style.gap = '8px';
+
+                            const labelSpan = clonedDoc.createElement('span');
+                            labelSpan.style.fontSize = '0.8rem';
+                            labelSpan.style.fontWeight = '700';
+                            labelSpan.style.textTransform = 'uppercase';
+                            labelSpan.style.letterSpacing = '0.05em';
+                            labelSpan.style.color = isDark ? '#818cf8' : '#4f46e5';
+                            labelSpan.textContent = 'Élève :';
+
+                            const nameSpan = clonedDoc.createElement('span');
+                            nameSpan.style.fontSize = '1.05rem';
+                            nameSpan.style.fontWeight = '700';
+                            nameSpan.style.color = isDark ? '#f8fafc' : '#0f172a';
+                            nameSpan.textContent = studentName || 'Non renseigné';
+
+                            studentGroup.appendChild(labelSpan);
+                            studentGroup.appendChild(nameSpan);
+
+                            const dateSpan = clonedDoc.createElement('span');
+                            dateSpan.style.fontSize = '0.8rem';
+                            dateSpan.style.fontWeight = '600';
+                            dateSpan.style.color = isDark ? '#94a3b8' : '#64748b';
+                            dateSpan.textContent = dateFormatted;
+
+                            barContainer.appendChild(studentGroup);
+                            barContainer.appendChild(dateSpan);
+
+                            studentBar.replaceChildren(barContainer);
                             studentBar.style.padding = '10px 14px';
                             studentBar.style.borderRadius = '10px';
                             studentBar.style.border = isDark ? '1px solid #334155' : '1px solid #e0e7ff';
@@ -283,24 +312,34 @@
 
                         // 8. Ajouter un pied de page officiel épuré
                         const officialFooter = clonedDoc.createElement('div');
-                        officialFooter.style.cssText = `
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            margin-top: 22px;
-                            padding-top: 12px;
-                            border-top: 1px dashed ${isDark ? '#334155' : '#cbd5e1'};
-                            font-size: 0.75rem;
-                            font-weight: 500;
-                            color: ${isDark ? '#94a3b8' : '#64748b'};
-                            font-family: inherit;
-                        `;
-                        officialFooter.innerHTML = `
-                            <span style="display:flex; align-items:center; gap:6px;">
-                                <strong style="color:${isDark ? '#e2e8f0' : '#1e293b'}">Suite EdNum</strong> · Animation-EdNum (HEP-VS)
-                            </span>
-                            <span>Bilan officiel · ${dateFormatted} à ${timeFormatted}</span>
-                        `;
+                        officialFooter.style.display = 'flex';
+                        officialFooter.style.justifyContent = 'space-between';
+                        officialFooter.style.alignItems = 'center';
+                        officialFooter.style.marginTop = '22px';
+                        officialFooter.style.paddingTop = '12px';
+                        officialFooter.style.borderTop = `1px dashed ${isDark ? '#334155' : '#cbd5e1'}`;
+                        officialFooter.style.fontSize = '0.75rem';
+                        officialFooter.style.fontWeight = '500';
+                        officialFooter.style.color = isDark ? '#94a3b8' : '#64748b';
+                        officialFooter.style.fontFamily = 'inherit';
+
+                        const leftSpan = clonedDoc.createElement('span');
+                        leftSpan.style.display = 'flex';
+                        leftSpan.style.alignItems = 'center';
+                        leftSpan.style.gap = '6px';
+
+                        const strongTitle = clonedDoc.createElement('strong');
+                        strongTitle.style.color = isDark ? '#e2e8f0' : '#1e293b';
+                        strongTitle.textContent = 'Suite EdNum';
+
+                        leftSpan.appendChild(strongTitle);
+                        leftSpan.appendChild(clonedDoc.createTextNode(' · Animation-EdNum (HEP-VS)'));
+
+                        const rightSpan = clonedDoc.createElement('span');
+                        rightSpan.textContent = `Bilan officiel · ${dateFormatted} à ${timeFormatted}`;
+
+                        officialFooter.appendChild(leftSpan);
+                        officialFooter.appendChild(rightSpan);
                         clonedTarget.appendChild(officialFooter);
                     }
                 });
