@@ -49,37 +49,27 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
         assert.strictEqual(simView.style.display, 'none', 'La vue simulateur doit être masquée par défaut');
     });
 
-    await t.test('Ordre des onglets : Adaptateur DYS, Éditer texte, Simulateur', () => {
+    await t.test('Ordre des onglets : Adaptateur DYS et Simulateur', () => {
         const tabs = Array.from(window.document.querySelectorAll('.tabs .tab-btn'));
         const tabKeys = tabs.map(tab => tab.dataset.tab);
-        assert.deepStrictEqual(tabKeys, ['adapter', 'edit', 'simulation'], 'L\'ordre des onglets doit être adaptateur - éditer - simulateur');
+        assert.deepStrictEqual(tabKeys, ['adapter', 'simulation'], 'L\'ordre des onglets doit être adaptateur - simulateur');
     });
 
-    await t.test('Textes d\'exemple affichés uniquement dans l\'onglet éditer texte, avec aménagements masqués', () => {
-        const sectionPresets = window.document.getElementById('sectionPresets');
-        const sectionAccommodations = window.document.getElementById('sectionAccommodations');
-        const sectionSimControls = window.document.getElementById('sectionSimControls');
-
-        // Initialement (sur l'adaptateur) : aménagements visibles, presets et sim masqués
-        assert.strictEqual(sectionAccommodations.style.display, 'block');
-        assert.strictEqual(sectionPresets.style.display, 'none');
-        assert.strictEqual(sectionSimControls.style.display, 'none');
-
-        // Bascule sur l'onglet "Éditer texte"
-        const editTab = window.document.querySelector('.tab-btn[data-tab="edit"]');
-        editTab.click();
-
-        assert.strictEqual(sectionAccommodations.style.display, 'none', 'Les aménagements doivent être masqués sous éditer texte');
-        assert.strictEqual(sectionSimControls.style.display, 'none', 'Les perturbations DYS doivent être masquées sous éditer texte');
-        assert.strictEqual(sectionPresets.style.display, 'block', 'Les textes d\'exemple doivent être visibles sous éditer texte');
-
-        // Bascule sur l'onglet "Simulateur"
+    await t.test('Bascule entre Adaptateur et Simulateur', () => {
+        const adapterTab = window.document.querySelector('.tab-btn[data-tab="adapter"]');
         const simTab = window.document.querySelector('.tab-btn[data-tab="simulation"]');
-        simTab.click();
+        const adapterView = window.document.getElementById('viewAdapter');
+        const simView = window.document.getElementById('viewSimulation');
 
-        assert.strictEqual(sectionAccommodations.style.display, 'block', 'Les aménagements doivent être visibles sur le simulateur');
-        assert.strictEqual(sectionSimControls.style.display, 'block', 'Les perturbations DYS doivent être visibles sur le simulateur');
-        assert.strictEqual(sectionPresets.style.display, 'none', 'Les textes d\'exemple doivent être masqués sur le simulateur');
+        // Bascule sur le simulateur
+        simTab.click();
+        assert.strictEqual(adapterView.style.display, 'none', 'La vue adaptateur doit être masquée');
+        assert.strictEqual(simView.style.display, 'flex', 'La vue simulateur doit être visible');
+
+        // Revenir sur l'adaptateur
+        adapterTab.click();
+        assert.strictEqual(adapterView.style.display, 'flex', 'La vue adaptateur doit être affichée');
+        assert.strictEqual(simView.style.display, 'none', 'La vue simulateur doit être masquée');
     });
 
     await t.test('Sélecteur de 4 polices présent (Outfit, Century Gothic, OpenDyslexic, Verdana) sans Arial', () => {
@@ -106,18 +96,18 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
         assert.strictEqual(visualBtn, null, 'Le bouton profil "Confort visuel" ne doit plus exister');
     });
 
-    await t.test('Intitulés pédagogiques et renommages (Obstacles artificiels, Type de perturbation simulée, Adapter pour un élève, sous-titre)', () => {
-        const simSectionTitle = window.document.querySelector('#sectionSimControls .panel-section-title').textContent;
-        assert.ok(simSectionTitle.includes('Obstacles artificiels de lecture'), 'Titre doit être "Obstacles artificiels de lecture"');
-
-        const simControls = window.document.getElementById('sectionSimControls');
-        assert.ok(simControls.textContent.includes('Type de perturbation simulée'), 'Doit contenir "Type de perturbation simulée"');
+    await t.test('Intitulés pédagogiques et renommages (Adaptateur DYS, Simulateur, sous-titre)', () => {
+        const simTab = window.document.querySelector('.tab-btn[data-tab="simulation"]');
+        assert.ok(simTab.textContent.includes('Simulateur'), 'L\'onglet doit s\'appeler "Simulateur"');
 
         const compSubtitle = window.document.querySelector('#sectionAccommodations p').textContent;
         assert.ok(compSubtitle.includes('Il n’existe pas de réglage universel : testez les aides avec l’élève et conservez celles qui lui sont réellement utiles.'), 'Le sous-titre des aménagements doit correspondre exactement');
 
-        const btnGoAdapter = window.document.getElementById('btnGoAdapter');
-        assert.ok(btnGoAdapter.textContent.includes('Adapter pour un élève'), 'Le bouton doit être "Adapter pour un élève"');
+        const btnGoAdapter = window.document.getElementById('btnEmptyGoAdapter');
+        assert.ok(btnGoAdapter.textContent.includes('Passer à l\'adaptateur'), 'Le bouton vide doit être "Passer à l\'adaptateur"');
+
+        const worksheetEditor = window.document.getElementById('worksheetEditor');
+        assert.ok(worksheetEditor, 'L\'éditeur de texte in situ worksheetEditor doit exister');
     });
 
     await t.test('Profil début de lecture active la police Century Gothic et les lettres muettes grisées', () => {

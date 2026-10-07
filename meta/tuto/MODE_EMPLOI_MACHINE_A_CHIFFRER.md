@@ -1,56 +1,71 @@
 # 🔐 Mode d'emploi : Machine à chiffrer
 
-La **Machine à chiffrer** initie les élèves aux principes fondamentaux de la **cryptographie historique**, en particulier le **chiffre de César** (décalage de lettres) à l'aide d'une double roue rotative interactive.
+La **Machine à chiffrer** initie les élèves aux principes fondamentaux de la **cryptographie et de la sécurité des communications** à travers cinq chiffres et outils historiques interactifs : César, Vigenère, Atbash, Morse et un laboratoire d'interception Hacker.
 
-Alignement : Cycle 2 et Cycle 3 (sécurité, cryptographie et histoire de l'information).
+Alignement : Cycle 2 et Cycle 3 (sécurité, cryptographie, algorithmes et histoire de l'information).
 
 ---
 
 ## Pourquoi cet outil ?
 
-- **Notion de clé de chiffrement :** Comprendre qu'un message secret nécessite un algorithme (le décalage) et un paramètre secret appelé la **clé** (le nombre de crans de décalage).
-- **Symétrie chiffrement / déchiffrement :** Découvrir que déchiffrer consiste à appliquer l'opération inverse (décaler de $-k$ ou tourner la roue en sens inverse).
-- **Histoire des sciences :** Découvrir comment Jules César protégeait ses correspondances militaires il y a plus de 2000 ans.
+- **Notion de clé de chiffrement :** Comprendre qu'un message secret repose sur un algorithme (la méthode de transformation) et une **clé** (paramètre secret permettant de chiffrer et déchiffrer).
+- **Symétrie chiffrement / déchiffrement :** Expérimenter que lire un message secret nécessite d'appliquer l'opération mathématique inverse.
+- **Évolution de la cryptographie :** Passer du simple décalage monoalphabétique antique (César, Atbash) au chiffrement polyalphabétique robuste de la Renaissance (Vigenère), jusqu'au code télégraphique (Morse).
+- **Cryptanalyse :** Comprendre comment les pirates et espions cassent les codes grâce à l'analyse de fréquence des lettres et à la force brute.
 
 ---
 
-## 1. La Roue de César interactive
+## 1. Les 5 modes de la machine (onglets)
 
-L'écran présente une double roue alphabétique :
-- **Roue extérieure (A–Z) :** L'alphabet d'origine (lettres en clair).
-- **Roue intérieure (A–Z) :** L'alphabet décalé (lettres chiffrées).
-- **Curseur de décalage (Clé $k$) :** De $0$ à $25$. Tourner la molette fait pivoter la roue intérieure avec une animation fluide.
+La barre supérieure donne accès à 5 univers cryptographiques :
 
-> **Exemple avec une clé $k = 3$ :**
-> - La lettre `A` devient `D`
-> - La lettre `B` devient `E`
-> - La lettre `Z` devient `C` (rebouclage circulaire).
-
----
-
-## 2. Les fonctionnalités
-
-| Outil | Description |
-|---|---|
-| 🔒 **Chiffrer un message** | Tapez un texte en clair → la machine applique le décalage sélectionné et affiche le message secret. |
-| 🔓 **Déchiffrer un message** | Entrez un texte chiffré et la clé → la machine restaure le texte original. |
-| 🎲 **Clé aléatoire** | Tire un décalage au sort pour créer un nouveau défi instantané. |
-| 📋 **Copier le résultat** | Copie le texte chiffré dans le presse-papiers pour l'envoyer à un camarade. |
+| Onglet | Méthode | Principe & Clé |
+|---|---|---|
+| 🔄 **Code César** | Chiffrement par décalage | Une roue rotative interactive décale l'alphabet de $0$ à $25$ crans. |
+| 🗝️ **Code Vigenère** | Chiffrement polyalphabétique | Utilise un **mot-clé secret** (ex. `SECRET`) pour varier le décalage de chaque lettre. |
+| 🔁 **Atbash** | Chiffrement par miroir | Inversement alphabétique hébreu : A devient Z, B devient Y, C devient X… |
+| 📻 **Morse** | Code télégraphique binaire | Traduit le texte en impulsions courtes (ti / `.`) et longues (tah / `-`). |
+| 🔍 **Hacker** | Laboratoire de cryptanalyse | Interception, graphique de fréquence des lettres et bouton de force brute. |
 
 ---
 
-## 3. Cryptanalyse : Casser le code !
+## 2. Le Chiffre de César (Roue interactive)
 
-L'application permet d'introduire des méthodes simples d'attaque cryptographique :
-
-1. **Attaque par force brute :** Puisqu'il n'y a que 25 clés possibles, un élève peut tester chaque position de la roue jusqu'à ce qu'un texte lisible apparaisse.
-2. **Analyse fréquentielle :** En français, la lettre la plus fréquente est le **E**. En repérant la lettre la plus récurrente dans un message chiffré, on peut deviner le décalage appliqué.
+L'écran présente une double roue alphabétique rotative :
+- **Roue extérieure :** Lettres du texte en clair (A–Z).
+- **Roue intérieure :** Lettres chiffrées correspondantes.
+- **Curseur de décalage (Clé $k$) :** De $0$ à $25$. Tourner la molette ou cliquer sur **« Aléatoire »** fait pivoter la roue intérieure.
+- Tapez dans le panneau gauche pour chiffrer en direct, ou dans le panneau droit pour déchiffrer.
 
 ---
 
-## 🏫 Activité collaborative : Le courrier de l'Empire
+## 3. Le Chiffre de Vigenère (Mot-clé secret)
 
-1. **Étape 1 :** L'enseignant choisit une clé du jour (ex. $k = 7$).
-2. **Étape 2 :** Chaque élève rédige une courte consigne ou devinette, la chiffre avec la roue et la transmet à son voisin.
-3. **Étape 3 :** Le destinataire applique le déchiffrement pour lire le message et y répondre.
-4. **Variante experte :** Transmettre un message chiffré **sans donner la clé** : le camarade doit trouver la clé par déduction !
+Le chiffre de César ayant la faiblesse d'utiliser un décalage fixe, Vigenère introduit une clé composée d'un mot :
+1. Saisissez votre texte en clair.
+2. Choisissez une **Clé secrète** (ex. `LION`).
+3. La première lettre du texte est décalée selon `L`, la deuxième selon `I`, la troisième selon `O`, etc.
+4. Pour déchiffrer, le destinataire doit impérativement connaître ce mot-clé.
+
+---
+
+## 4. Atbash & Morse
+
+- **Atbash :** Chiffrement par substitution miroir antique. Particularité remarquable : chiffrer ou déchiffrer correspond exactement à la même opération ($A \leftrightarrow Z$) !
+- **Code Morse :** L'alphabet est converti en signaux sonores et visuels. Idéal pour faire le lien avec la transmission d'informations par télégraphe et les codes binaires.
+
+---
+
+## 5. Le Laboratoire « Hacker » (Cryptanalyse)
+
+Cet onglet transforme l'élève en détective cryptographique :
+1. Cliquez sur **« Intercepter un message »** pour charger un texte chiffré mystère sans connaître la clé.
+2. **Analyse fréquentielle :** L'outil trace un histogramme des lettres les plus fréquentes du message intercepté et le compare à la distribution naturelle de la langue française (où la lettre **E** est largement prédominante avec ~15% des occurrences).
+3. **Craquer le code (Brute Force) :** Cliquez sur le bouton **« Craquer le code »** pour voir l'ordinateur tester instantanément toutes les 25 clés possibles jusqu'à trouver un français cohérent.
+
+---
+
+## 6. Actions rapides & Copie
+
+- **Copier le texte :** Boutons dédiés pour copier instantanément le message chiffré dans le presse-papiers (`#btn-copy-cipher`) afin de le transmettre à un camarade.
+- **Effacer :** Boutons corbeille pour vider les zones de texte.

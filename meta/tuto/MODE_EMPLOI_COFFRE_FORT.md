@@ -1,44 +1,61 @@
 # 🔒 Mode d'emploi : Coffre-fort numérique
 
-**Coffre-fort numérique** sensibilise les élèves à la protection de la vie privée, à la distinction entre données personnelles et publiques, et à la création de mots de passe robustes.
+**Coffre-fort numérique** sensibilise les élèves du Cycle 1 et du Cycle 2 à la protection de la sphère privée en ligne, à la distinction entre données personnelles confidentielles et informations publiques, ainsi qu'aux bons réflexes face aux risques numériques.
+
+Alignement : Cycle 1 et Cycle 2 (Éducation numérique, citoyenneté numérique, protection des données et de l'identité).
 
 ---
 
 ## Pourquoi cet outil ?
 
-- **Sphère privée :** Discerner les informations partageables (pseudo, couleur préférée) de celles qui doivent rester confidentielles (adresse, mot de passe, photos de famille).
-- **Sécurité des mots de passe :** Expérimenter les critères de robustesse (longueur, complexité, absence d'informations évidentes).
-- **Esprit critique :** Analyser des scénarios numériques concrets (messages suspects, demandes d'inconnus, phishing).
+- **Sphère privée & Identité :** Discerner ce qui peut être partagé librement (un pseudo de jeu, une couleur préférée) de ce qui doit impérativement rester confidentiel (adresse postale, mot de passe, numéro de téléphone, photos de famille).
+- **Esprit critique & Réflexes de sécurité :** Analyser des situations concrètes du quotidien numérique (messages d'inconnus, demandes d'accès à la caméra, offres suspectes, partage de photos entre camarades).
+- **Respect de la vie privée :** 100% autonome et local, aucune information saisie ne quitte l'appareil.
 
 ---
 
-## 1. Trois modes d'apprentissage
+## 1. Deux modes d'apprentissage
 
-| Mode | Ce que fait l'élève | Objectif |
-|---|---|---|
-| 🗂️ **Tri des Données** | Ranger des cartes dans le Coffre privé 🔒 ou la Vitrine publique 🌐 | Discerner données sensibles vs informations anodines. |
-| ❓ **Scénarios / Quiz** | Répondre à des mises en situation réelles | Adopter les bons réflexes face aux risques en ligne. |
-| 🔑 **Testeur de Mots de Passe** | Tester la robustesse de mots de passe en direct | Construire des mots de passe solides et mémorisables. |
+L'application propose deux onglets en haut de l'écran :
+
+| Mode | Intitulé | Ce que fait l'élève | Objectif |
+|---|---|---|---|
+| 🗂️ **Mode Tri** | Classer les informations | Glisse ou clique sur des cartes d'informations pour les ranger dans le coffre **Privé 🔒** ou le globe **Public 🌍**. | Catégoriser les données personnelles sensibles vs anodines. |
+| 💬 **Scénarios** | Mises en situation | Répond à une série de 5 questions à choix multiples contextualisées. | Développer les bons réflexes face aux dangers du web. |
 
 ---
 
-## 2. Mode « Tri des Données »
+## 2. Mode 1 : Mode Tri
 
-Des cartes sont proposées (ex. *Mon adresse*, *Mon pseudo de jeu*, *Le mot de passe de ma boîte mail*, *Mon animal préféré*). L'élève les classe :
-- **Coffre-fort 🔒** = données privées, à ne jamais divulguer.
-- **Vitrine 🌐** = informations publiques, sans risque.
+Des cartes d'informations courantes sont présentées au centre de l'écran (ex. *« Mon adresse de maison »*, *« Mon pseudo de jeu »*, *« Le mot de passe de ma tablette »*, *« Mon sport préféré »*).
 
-L'application explique ensuite pourquoi certaines données sont sensibles.
+### Deux niveaux scolaires adaptés :
+- **🟢 Niveau 3-4H (Cycle 1 / Début Cycle 2) :** Cartes très visuelles aux concepts simples et immédiats (prénom, doudou, nom de famille, école).
+- **🟡 Niveau 5-6H / 7-8H (Cycle 2) :** Cartes plus subtiles (géolocalisation, photo de vacances, numéro AVS, adresse email institutionnelle).
 
-## 3. Mode « Scénarios / Quiz »
+### Comment jouer :
+1. Observez l'information affichée sur la carte.
+2. Déposez-la dans la bonne zone :
+   - 🔒 **Coffre Privé :** Informations sensibles à garder secrètes car elles permettent de localiser, d'identifier ou de nuire à l'enfant.
+   - 🌍 **Zone Publique :** Informations partageables sans danger car elles ne révèlent pas l'identité réelle.
+3. Si le classement est correct, la carte est validée. En cas d'erreur, une explication immédiate clarifie pourquoi cette donnée est sensible.
 
-Mini-mises en situation avec choix de réactions :
-- **🟢 Facile :** 5 questions fondamentales pour débuter.
-- **🔴 Difficile :** 5 questions sur l'ingénierie sociale, le phishing et le droit à l'image.
+---
 
-## 4. Mode « Testeur de Mots de Passe »
+## 3. Mode 2 : Scénarios (Quiz interactif)
 
-Un champ de saisie **100% local** (aucune donnée transmise) permet de tester des mots de passe :
-- **Jauge de solidité :** Très faible → Faible → Moyen → Robuste → Incassable.
-- **Checklist interactive :** Longueur ≥ 8, majuscules, chiffres, symboles.
-- **Conseils :** Méthode de la phrase de passe mémorisable.
+L'élève découvre une suite de **5 mises en situation réalistes** réparties par thématiques (Sécurité des comptes, Réseaux sociaux, Droit à l'image, Phishing / Escroqueries, Cyberintimidation) :
+
+1. L'élève lit attentivement la situation et les 3 réactions possibles.
+2. Il sélectionne la décision qui lui semble la plus sûre et responsable.
+3. **Feedback pédagogique immédiat :**
+   - Un encadré vert (Bravo !) ou ambre détaille précisément **pourquoi** ce choix est le meilleur comportement à adopter.
+4. L'élève clique sur **« Question suivante ➔ »** pour poursuivre son parcours d'enquêteur citoyen.
+
+---
+
+## 4. Gamification & Suivi
+
+- **Victoires & Série 🔥 :** Compteurs encourageant l'élève lors des bonnes réponses consécutives.
+- **Bouton camembert :** Affiche les statistiques globales de la session.
+- **Accessibilité :** Thème clair / sombre 🌙, mode TBI et son commutable via le menu ⚙.

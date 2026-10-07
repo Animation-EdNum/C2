@@ -1,77 +1,72 @@
-# 👓 Mode d'emploi : Lentille de dyslexie
+# 👓 Mode d'emploi : Adaptateur & Simulateur DYS
 
-La **Lentille de dyslexie** est un simulateur immersif qui reproduit les perturbations visuelles vécues par les personnes dyslexiques lors de la lecture. Il permet aussi d'expérimenter en direct l'efficacité des aménagements compensatoires.
+L'**Adaptateur & Simulateur DYS** est une boîte à outils pédagogique double :
+1. Un **générateur de fiches de lecture adaptées** (aménagements typographiques et phonologiques, export Word .docx natif et impression A4).
+2. Un **simulateur de sensibilisation cognitive** permettant de faire ressentir la surcharge attentionnelle et l'effort de décodage vécus par les élèves dyslexiques.
 
-Destiné aux enseignant·e·s, parents, professionnels de l'éducation et élèves.
-
----
-
-## Pourquoi cet outil ?
-
-- **Développer l'empathie :** Ressentir physiquement l'effort épuisant qu'exige le déchiffrage d'un texte court pour un élève non compensé.
-- **Comprendre la double tâche :** Quand 90% de l'énergie cognitive est absorbée par le décodage, il ne reste rien pour la compréhension du sens.
-- **Valider l'impact des aménagements :** Tester en direct la différence spectaculaire que produisent une police adaptée, un espacement aéré, le découpage syllabique ou la lecture audio.
+100% hors-ligne · Zéro publicité · Zéro transmission de données élève sur serveur · Conforme aux recommandations pédagogiques · Licence libre AGPL-3.0.
 
 ---
 
-## 1. Les perturbations simulées
+## 🎯 Finalités pédagogiques
 
-L'application reproduit les manifestations de la gêne de décodage et les difficultés de l'empan visuo-attentionnel :
-
-| Perturbation | Ce qui se passe à l'écran |
-|---|---|
-| 🔄 **Confusions de lettres miroirs** | Les lettres proches se permutent en temps réel : `b` ↔ `d`, `p` ↔ `q`, `u` ↔ `n`. |
-| 🌊 **Lettres flottantes** | Les caractères bougent, glissent ou dansent le long de la ligne. |
-| 🌫️ **Encombrement visuel** (*crowding*) | Les mots se rapprochent, se chevauchent, se brouillent. |
-| 🔀 **Sauts de ligne** | Le regard perd sa ligne et saute ou relit involontairement la même. |
+- **Adapter les supports de classe en direct :** Transformer n'importe quel texte, consigne ou fiche d'évaluation en support accessible et adapté aux besoins spécifiques de l'élève.
+- **Respecter la démarche clinique & pédagogique :** Il n'existe pas de réglage universel pour tous les élèves. L'outil permet de tester les aides une à une avec l'élève et de conserver uniquement celles qui lui sont réellement utiles.
+- **Sensibiliser sans véhiculer de neuromythe :** La dyslexie est un trouble neurodéveloppemental de l'apprentissage de la lecture (déficit phonologique durable), et non un trouble de la vision. Le simulateur recrée artificiellement la surcharge mentale et la lenteur de décodage pour favoriser l'empathie, sans prétendre reproduire une vue optique.
+- **Complémentarité essentielle :** Ces adaptations de présentation soutiennent l'élève mais ne remplacent pas l'enseignement explicite du code (correspondances graphèmes-phonèmes) et l'entraînement régulier de la fluence.
 
 ---
 
-## 2. Les aménagements compensatoires
+## 📄 1. L'Adaptateur DYS (Fiche de lecture adaptée)
 
-Des interrupteurs permettent d'activer chaque outil de compensation et d'en constater l'effet immédiat :
+L'onglet **« Adaptateur DYS »** est l'écran principal de travail.
 
-| Aménagement | Effet | Équivalent en classe |
-|---|---|---|
-| **Police OpenDyslexic** | Base alourdie des lettres pour empêcher la rotation mentale. | Utiliser une police sans empattement claire (OpenDyslexic, Lexie Readable, Andika). |
-| **Coloration des graphèmes** | Repère et colore les graphèmes complexes selon le référentiel sons-couleurs CERAS (`api.ceras.ch`) : jaune ([o]), orange ([ã]), vert sapin ([ɛ̃]), violet ([ɛ]), bleu foncé ([e]), rouge ([u]), noir ([wa] en blanc sur fond noir), marron ([ɔ̃]), bleu ([ø]/[œ]), chiffre 1 ([œ̃] souligné). Couleurs de texte directes sans aplats de fond agressifs pour préserver le confort visuel. | Utiliser le code sons-couleurs CERAS pour soutenir le décodage phonème-graphème explicite. |
-| **Coloration syllabique** | Découpe visuellement les unités phonologiques en bicolore alterné (bleu / rouge). | Colorer les syllabes dans les supports distribués (début de lecture). |
-| **Fond teinté pastel** | Réduit l'éblouissement du blanc pur (préférence personnelle de l'élève). | Imprimer sur papier ivoire ou pastel plutôt que blanc pur. |
+### Saisie et édition du texte in situ
+- Cliquez directement sur le texte de la fiche de travail. Une zone de saisie s'ouvre sur place (*in situ*).
+- Tapez ou collez votre consigne, poésie, problème de mathématiques ou extrait de lecture.
+- En cliquant en dehors de la zone d'édition (ou sur le bouton *Appliquer*), les aménagements sélectionnés sont automatiquement appliqués au texte.
+
+### Les aménagements compensatoires disponibles
+- **Espacement Zorzi :** Augmente l'espacement entre les lettres (+0.25em), entre les mots (+0.4em) et l'interligne (2.2), réduisant l'encombrement visuel (*crowding*).
+- **Police de caractères :**
+  - *Outfit* : Police moderne par défaut, sans empattement.
+  - *Century Gothic* : Police ronde, aérée et très lisible, recommandée pour le Cycle 1 et l'entrée dans l'écrit.
+  - *OpenDyslexic* : Police à base épaissie, adaptée aux élèves présentant des difficultés visuo-attentionnelles.
+  - *Verdana* : Police standard à espacement large naturel.
+- **Fond ivoire / pastel :** Atténue le contraste violent du blanc pur (selon la sensibilité personnelle de l'élève).
+- **Coloration des graphèmes (sons) :** Identifie et colore les graphèmes complexes selon le référentiel sons-couleurs **CERAS** (o, an, in, è, é, ou, oi, on, eu, un). Une légende dynamique s'ajoute automatiquement au haut de la fiche.
+- **Sons & lettres muettes grisés :** Atténue visuellement les lettres non prononcées en français (lettres finales silencieuses `-s`, `-t`, `-d`, `-e` muet, lettre `h`, lettre `u` après `q` ou `g`), allégeant immédiatement la charge de décodage.
+- **Découpage syllabique bicolore :** Alterne les syllabes écrites en bleu et rouge pour soutenir la segmentation phonologique.
+
+### Profils d'adaptation en 1 clic & profils personnalisés
+- **Dyslexie visuo-attentionnelle :** Active la police OpenDyslexic, l'espacement Zorzi et le fond pastel (inspiré des travaux de S. Valdois sur l'empan visuo-attentionnel).
+- **Début de lecture :** Combine la police Century Gothic, l'espacement Zorzi, la coloration des graphèmes CERAS et les lettres muettes grisées (idéal pour les apprentis lecteurs de 3-4H).
+- **Personnalisé :** Cochez manuellement les aménagements utiles.
+- **Enregistrer profil :** Cliquez sur **« Enregistrer profil »** pour sauvegarder les réglages d'un élève précis (ex. *« Profil Théo »*). Le profil reste disponible dans votre navigateur pour vos futures fiches.
+
+### Actions & Exports
+- **Lecture audio :** Active la synthèse vocale native pour soulager le coût cognitif du décodage.
+- **Exporter au format Word (.docx) :** Télécharge instantanément un document Microsoft Word (.docx) fidèle, prêt à être retouché dans votre traitement de texte habituel.
+- **Imprimer la fiche (A4) :** Lance l'impression propre sur papier A4 avec en-tête (`Prénom :`, `Date :`), masquant l'interface applicative et conservant couleurs, polices et espacements.
 
 ---
 
-## 3. L'Adaptateur de texte pour fiches DYS (Nouvel outil classe)
+## 🧠 2. Le Simulateur de sensibilisation
 
-L'onglet **« Adaptateur DYS »** transforme l'application en une véritable boîte à outils de préparation pédagogique :
+L'onglet **« Simulateur »** est un outil de démonstration destiné aux enseignant·e·s, aux parents et aux camarades de classe :
 
-1. **Collez votre consigne ou texte :** Rendez-vous sur l'onglet *Éditer texte* ou choisissez un texte d'exemple.
-2. **Choisissez un profil d'adaptation ou personnalisez en 1 clic :**
-   - **⚡ Dyslexie visuo-attentionnelle :** Active l'espacement Zorzi (+0.25em lettres, +0.4em mots, interligne 2.2), la police adaptée et le fond ivoire apaisant (en référence aux travaux de Sylviane Valdois sur l'empan visuo-attentionnel).
-   - **📖 Début de lecture :** Combine la coloration des graphèmes CERAS, l'espacement Zorzi et la police adaptée.
-   - **👁️ Confort visuel :** Aère le texte avec un interligne généreux et un fond doux anti-fatigue.
-   - **🛠️ Personnalisé :** Cochez ou décochez librement chaque aménagement dans le panneau latéral (notamment la **coloration des graphèmes CERAS** et/ou le **découpage syllabique**).
-3. **Prévisualisez la fiche élève A4 :** L'aperçu affiche un en-tête d'évaluation (`Prénom :`, `Date :`), la légende des sons-couleurs CERAS (si activée) et le texte fidèlement transformé avec les aménagements actifs.
-4. **Imprimez ou écoutez directement le texte :**
-   - **Bouton « Lecture audio » :** Lit le texte à voix haute via la synthèse vocale native pour soulager le coût cognitif du décodage.
-   - **Bouton « Imprimer la fiche adaptée (A4) » :** Génère une impression directe et propre (styles d'impression optimisés, masquage des menus et barres d'outils, maintien de la légende, de la coloration des graphèmes, du découpage syllabique et des espacements).
-
-> [!IMPORTANT]
-> **Complémentarité pédagogique :** Ces aménagements typographiques viennent en complément du travail explicite sur le code (correspondances graphèmes-phonèmes) et la fluence de lecture, qui reste le levier principal de progression des élèves.
+- **Objectif :** Faire ressentir la perte d'automaticité, la lenteur et la fatigue extrême induites par un décodage laborieux.
+- **Intensité réglable :** Un curseur (de 0% à 100%) module le niveau d'instabilité artificielle pour adapter la démonstration.
+- **Passerelle directe :** Un bouton permet de basculer instantanément le texte vers l'adaptateur pour montrer comment une mise en page adaptée neutralise l'obstacle.
 
 ---
 
-## 4. Scénario d'atelier (15-20 min)
+## 💡 3. Déroulement d'un atelier de sensibilisation (15 min)
 
-Ce déroulé fonctionne en réunion de parents, formation enseignante ou séance de sensibilisation en classe :
+1. **Phase 1 — Surcharge cognitive (5 min) :** Projetez un texte avec le simulateur activé. Demandez à un adulte ou élève de lire à voix haute.
+2. **Phase 2 — Vérification de la compréhension (2 min) :** Posez une question sur le sens du texte : le lecteur peinera souvent à répondre car 90% de son attention a été mobilisée par le simple décodage des lettres.
+3. **Phase 3 — Démonstration des aides (5 min) :** Basculez sur l'Adaptateur DYS, activez l'espacement Zorzi, une police adaptée et le grisage des lettres muettes. Constatez la reprise immédiate d'une lecture fluide.
 
-**Étape 1 — Immersion (5 min) :**
-Projetez un texte au tableau avec toutes les perturbations activées. Demandez à un volontaire de lire à voix haute en chronométrant.
+---
 
-**Étape 2 — Question piège (3 min) :**
-Posez une question de compréhension sur le contenu. Constatez que le lecteur n'a souvent rien retenu : toute son énergie a été absorbée par le décodage.
-
-**Étape 3 — Compensation (5 min) :**
-Activez l'espacement Zorzi, la police OpenDyslexic et le fond pastel ou le découpage syllabique. Faites relire le même passage : la fluidité s'améliore immédiatement et visiblement.
-
-**Conclusion :**
-La dyslexie n'est pas un manque d'intelligence. C'est un mode de traitement neurovisuel différent qui nécessite des supports adaptés — et ces adaptations sont simples à mettre en place.
+*Outil développé par l'Animation Pédagogique en Éducation Numérique (HEP-VS) · Licence libre AGPL-3.0.*

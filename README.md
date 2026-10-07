@@ -111,13 +111,13 @@ Un petit utilitaire sans publicité permettant de générer instantanément un b
 Outil visuel pour désigner un·e élève au hasard. Gère l'importation de listes de classe (XLS/XLSX, CSV, ENT) et l'exportation, la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
 
 #### Roue de la chance (`webapps/teacher/roue_de_la_chance.html`)
-Roue interactive personnalisable pour le tirage au sort en classe, l'attribution des rôles, les privilèges ou les questions d'éducation numérique. Gestion des listes personnelles (`localStorage`), présélections intégrées, générateur 1 à N et mode plein écran adapté aux TBI/TNI.
+Roue interactive personnalisable pour le tirage au sort en classe, l'attribution des rôles, les privilèges ou les questions d'éducation numérique. Gestion des listes personnelles (`localStorage`), présélections intégrées, générateur 1 à N et mode plein écran adapté aux TBI/TNI. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_ROUE_DE_LA_CHANCE.md).
 
 #### Créateur de QR codes (`webapps/teacher/qrcode.html`)
 Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables, projection TBI, téléchargement HD et copie presse-papier). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_QRCODE.md).
 
 #### Minuteur visuel (Time-Timer) (`webapps/teacher/time_timer.html`)
-Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, réglage fluide au glisser-déposer, raccourcis d'activités prédéfinis, carillons sonores (Web Audio API sans ressource externe) et modes plein écran / projection TBI pour structurer le temps en classe.
+Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, réglage fluide au glisser-déposer, raccourcis d'activités prédéfinis, carillons sonores (Web Audio API sans ressource externe) et modes plein écran / projection TBI pour structurer le temps en classe. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIME_TIMER.md).
 
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
 - 🏗️ **Jeu de la grue** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_JEU_DE_LA_GRUE.md)
@@ -128,10 +128,10 @@ Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, régla
 - 🔀 **Réseau de tri** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
 - 🔒 **Coffre-fort numérique** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
 - 🧠 **Dresseur de neurones & Détective IA** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
-- 👓 **Lentille de dyslexie (DYS)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
+- 👓 **Adaptateur & Simulateur DYS** : Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration CERAS, syllabes bicolores, lettres muettes grisées, polices adaptées, profils personnalisés, export Word .docx et impression A4) et simulateur de sensibilisation cognitive. [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
 - 🛡️ **Anonymiseur de textes** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_ANONYMISEUR.md)
 - 🃏 **Une chose après l'autre (Tri par insertion)** : [Mode d'emploi](meta/tuto/MODE_EMPLOI_TRI_INSERTION.md)
-- ⌨️ **Tape-Texte (Clavier suisse romand QWERTZ)** : Entraînement à la saisie de texte au clavier avec 10 niveaux progressifs, statistiques MPM et précision en direct.
+- ⌨️ **Tape-Texte (Clavier suisse romand QWERTZ)** : Entraînement progressif en 10 niveaux à la frappe rapide et fluide sur disposition QWERTZ suisse, statistiques MPM et précision en direct, analyse des erreurs et export de bilan élève. [Mode d'emploi](meta/tuto/MODE_EMPLOI_DACTYLO.md)
 
 
 ---

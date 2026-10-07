@@ -33,13 +33,13 @@ Pour éviter les mots de passe trop simples ou les suites aléatoires impossible
 
 ```
 [ Mot de base ] + [ Nombre ] + [ Symbole ] + [ Service ]
-    LiCorne         2026           !            inst     ➜  LiCorne2026!inst
+    LiCorne         2026           !            ins     ➜  LiCorne2026!ins
 ```
 
 ### Les 4 ingrédients indispensables :
 1. **Mot de base (min. 4 lettres) :** Un mot familier pour l'élève (animal, objet, lieu, passion). Une majuscule est automatiquement suggérée ou requise pour casser l'uniformité.
 2. **Nombre (1 à 4 chiffres) :** Une année marquante ou un nombre fétiche (ex. `2026`, `42`).
-3. **Nom du site ou service :** Le nom de la plateforme ciblée (ex. *scratch*, *teams*, *instagram*). L'application prélève automatiquement les **4 premières lettres** du service (ex. `scra`, `team`, `inst`). Cela garantit que l'élève utilise un mot de passe **différent pour chaque compte**, tout en retenant la même formule !
+3. **Nom du site ou service :** Le nom de la plateforme ciblée (ex. *edu.vs.ch*, *scratch*, *teams*, *instagram*). L'application prélève automatiquement les **3 premières lettres** du service (ex. `edu`, `scr`, `tea`, `ins`). Cela garantit que l'élève utilise un mot de passe **différent pour chaque compte**, tout en retenant la même formule !
 4. **Caractère spécial :** Un symbole de ponctuation (`!`, `@`, `#`, `$`, `%`, `+`) pour bloquer les attaques automatisées.
 
 ### Paramètres complémentaires :

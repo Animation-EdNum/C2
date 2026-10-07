@@ -72,6 +72,7 @@ def test_tirage_reset(page: Page):
 
 def test_sim_dyslexie_reset(page: Page):
     page.goto("http://localhost:8000/alpha/webapps/teacher/sim_dyslexie.html")
+    page.click(".tab-btn[data-tab='simulation']")
     page.locator("#inputSeverity").fill("0.3")
     page.locator("#inputSeverity").dispatch_event("input")
     expect(page.locator("#valSeverity")).to_have_text("30%")

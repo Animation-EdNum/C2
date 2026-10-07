@@ -1,6 +1,6 @@
 # 🔐 Mode d'emploi : Mots secrets
 
-**Mots secrets** est une application d'espionnage numérique qui enseigne le codage binaire des caractères : chaque lettre a un numéro (A=1, B=2, …, Z=26) que l'on représente en binaire sur 8 bits grâce aux puissances de 2.
+**Mots secrets** est une application d'espionnage numérique qui enseigne le codage binaire des caractères : chaque lettre de l'alphabet est associée à son rang (A=1, B=2, …, Z=26), que l'élève convertit en code binaire sur **5 bits** grâce aux puissances de 2 ($16, 8, 4, 2, 1$).
 
 Alignement programme : Cycle 2, Décodages 7-8H · Activité 2 — *Codages en folie, séance 2*.
 
@@ -8,18 +8,19 @@ Alignement programme : Cycle 2, Décodages 7-8H · Activité 2 — *Codages en f
 
 ## Pourquoi cet outil ?
 
-- **Représentation des caractères :** Comprendre qu'un texte est découpé en caractères et que chaque lettre se réduit à une suite de 0 et de 1.
-- **Puissances de 2 :** Pratiquer la décomposition additive ($128, 64, 32, 16, 8, 4, 2, 1$) comme calcul mental.
-- **Collaboration & défi :** Créer des messages chiffrés à échanger entre camarades.
+- **Représentation des caractères :** Comprendre qu'un texte est découpé en caractères élémentaires et que chaque lettre est encodée sous forme de nombres binaires.
+- **Pourquoi 5 bits ? :** L'alphabet comptant 26 lettres, 4 bits sont insuffisants ($2^4 = 16$), tandis que 5 bits offrent 32 combinaisons ($2^5 = 32$), ce qui couvre largement A à Z.
+- **Calcul mental & puissances de 2 :** Pratiquer la décomposition additive rapide avec les valeurs $16, 8, 4, 2, 1$.
+- **Collaboration & cryptographie :** Créer des messages chiffrés à échanger entre camarades de classe.
 
 ---
 
-## 1. Les deux modes de jeu
+## 1. Deux modes de jeu
 
 | Mode | Démarche |
 |---|---|
-| ✏️ **Encode !** | L'application propose un mot ; l'élève convertit chaque lettre en binaire. Entraînement progressif (Facile → Moyen → Difficile). |
-| 🎮 **(Dé)code un mot** | L'élève chiffre son propre message ou déchiffre un code reçu — mode libre et collaboratif. |
+| ✏️ **Encode !** | L'application propose un mot mystère ; l'élève convertit chaque lettre en binaire une par une. Progression guidée par niveaux. |
+| 🎮 **(Dé)code un mot** | Mode libre et collaboratif : l'élève tape son propre texte pour voir son code binaire, ou déchiffre une suite binaire reçue d'un camarade. |
 
 ---
 
@@ -27,50 +28,39 @@ Alignement programme : Cycle 2, Décodages 7-8H · Activité 2 — *Codages en f
 
 Un mot secret est proposé, l'élève le code **lettre par lettre** :
 
-1. Repérez la lettre demandée (affichée en haut du tableau).
-2. Trouvez son rang dans l'alphabet (ex. **C = 3**).
-3. Activez les interrupteurs binaires pour obtenir la somme exacte :
-   Pour **3** → activez `2` et `1` ($2 + 1 = 3$) → binaire `00000011`.
-4. Cliquez **Vérifier** (ou `Entrée`) pour passer à la lettre suivante.
+1. Repérez la lettre active surlignée dans le mot.
+2. Trouvez son rang dans l'alphabet (ex. **C = 3** ou **M = 13**).
+3. Activez les **5 commutateurs binaires** ($16, 8, 4, 2, 1$) pour obtenir la somme exacte :
+   - Pour **3** (C) : activez `2` et `1` ($2 + 1 = 3$) ➔ binaire `00011`.
+   - Pour **13** (M) : activez `8`, `4` et `1` ($8 + 4 + 1 = 13$) ➔ binaire `01101`.
+4. La somme en direct s'affiche sous les interrupteurs pour assister le calcul.
+5. Cliquez sur **« Vérifier (Entrée) »** pour valider et passer à la lettre suivante.
 
 ### Niveaux de difficulté
-
-- **🟢 Facile :** Mots de 3 lettres (ex. *BUS*, *SKI*).
-- **🟡 Moyen :** Mots de 4 lettres (ex. *LION*, *LUNE*).
-- **🔴 Difficile :** Mots de 5-6 lettres (ex. *ROBOT*, *ÉTOILE*).
+- **🟢 Facile :** Mots courts de 3 lettres (ex. *BUS*, *SKI*, *LAC*).
+- **🟡 Moyen :** Mots de 4 lettres (ex. *LION*, *LUNE*, *ROSE*).
+- **🔴 Difficile :** Mots de 5 à 6 lettres (ex. *ROBOT*, *ÉTOILE*, *SOLEIL*).
 
 ---
 
 ## 3. L'alphabet binaire secret (aide intégrée)
 
-Un panneau dépliable **« 📋 Alphabet binaire secret »** montre la correspondance complète lettre → numéro → binaire.
+Un panneau déroulant **« 📋 Alphabet binaire secret »** liste la correspondance complète lettre ↔ rang ↔ code binaire sur 5 bits.
 
-- **Aide adaptative :** En cas d'erreurs consécutives, le dictionnaire se déverrouille automatiquement.
-- **Pour les évaluations :** Le dictionnaire peut être masqué via l'option de partage `&hideDict=1`.
+- **Aide adaptative :** En cas d'erreur de l'élève, le bandeau d'aide se déverrouille automatiquement avec un message d'encouragement.
+- **Évaluation :** Le panneau peut être replié à tout moment pour encourager la recherche mentale autonome.
 
 ---
 
 ## 4. Mode « (Dé)code un mot » — Mode libre
 
-### Chiffrer
-Saisissez un mot → l'application génère la suite d'octets binaires correspondante. L'élève peut la recopier sur papier pour défier un camarade.
-
-### Déchiffrer
-Entrez une suite de 0 et de 1 reçue → l'application traduit les octets en lettres lisibles.
+- **Encoder un message secret :** Saisissez un mot de votre choix ➔ l'application affiche la séquence de blocs binaires correspondante. L'élève peut la recopier sur papier pour lancer un défi à la classe.
+- **Déchiffrer un code :** Saisissez une séquence de 0 et de 1 ➔ l'application traduit instantanément le code en texte clair.
 
 ---
 
-## 5. Scores & récompenses
+## 5. Scores & statistiques
 
-- **Barre de progression :** Nombre de mots codés avec succès.
-- **Série de victoires 🔥 :** Récompense visuelle pour les enchaînements sans erreur.
-- **Statistiques :** Consultables via le bouton camembert.
-
----
-
-## 🏫 Activité suggérée : « Les Espions de la classe »
-
-1. La classe se divise en binômes : **Agent A** et **Agent B**.
-2. **Agent A** choisit un mot dans le mode *(Dé)code un mot*, note le code binaire sur une feuille et transmet le message.
-3. **Agent B** décompose chaque octet en puissances de 2 de tête ($16+4+1 = 21 \rightarrow$ U), reconstitue le mot et vérifie dans l'application.
-4. Les rôles sont inversés.
+- **Suivi de session :** Compteurs de victoires et de série 🔥 sans faute.
+- **Statistiques :** Bouton camembert en bas de carte affichant les détails de précision.
+- **Raccourcis :** Touche `Entrée` pour vérifier la lettre en cours.

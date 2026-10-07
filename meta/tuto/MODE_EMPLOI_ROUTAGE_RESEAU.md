@@ -31,12 +31,12 @@ Alignement programme : Cycle 2, Décodages 7-8H · Activité 8 — *Les réseaux
 ## 2. Comment jouer
 
 1. Cliquez sur le point de départ **A**.
-2. Cliquez successivement sur les routeurs voisins pour construire votre itinéraire.
-3. Les arêtes sélectionnées s'illuminent et le compteur d'UTI cumulé s'actualise en direct.
-4. Pour revenir en arrière, recliquez sur le nœud précédent.
-5. Cliquez sur **Vérifier** :
-   - ✅ Chemin optimal → confettis et série 🔥 !
-   - ❌ Chemin plus rapide existant → le système affiche votre coût et vous invite à chercher mieux.
+2. Cliquez successivement sur les routeurs clignotants voisins pour construire votre itinéraire.
+3. Les arêtes sélectionnées s'illuminent et le compteur d'UTI cumulé s'actualise en temps réel.
+4. **Revenir en arrière :** Utilisez le bouton **« ↩ Annuler »** pour retirer le dernier tronçon, ou **« 🔄 Reset »** pour recommencer depuis le début.
+5. **Validation automatique :** Dès que vous atteignez le routeur d'arrivée **B**, l'application calcule instantanément le score :
+   - ✅ Chemin optimal → confettis, série 🔥 et bouton « Suivant » !
+   - ❌ Chemin plus rapide existant → le système affiche votre coût en UTI et vous invite à chercher un itinéraire plus économique.
 
 ---
 
