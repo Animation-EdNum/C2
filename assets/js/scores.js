@@ -313,9 +313,30 @@ const ScoreManager = {
             resetBtn.addEventListener('click', () => this.resetScores());
         }
 
+        const loadModalExporter = async () => {
+            if (window.ModalExporter) {
+                return;
+            }
+            if (typeof document === 'undefined') {
+                return;
+            }
+            const rootPath = document.querySelector('link[rel="root"]')?.getAttribute('href') || './';
+            const s = document.createElement('script');
+            s.src = (rootPath.endsWith('/') ? rootPath : rootPath + '/') + 'assets/js/modal-export.js';
+            await new Promise((resolve) => {
+                s.onload = resolve;
+                s.onerror = resolve;
+                document.head.appendChild(s);
+            });
+            if (window.ModalExporter && typeof window.ModalExporter.decorateModal === 'function') {
+                window.ModalExporter.decorateModal(document.getElementById('score-modal-content'));
+            }
+        };
+
         const exportBtn = document.getElementById('btn-export-scores-action');
         if (exportBtn) {
-            exportBtn.addEventListener('click', () => {
+            exportBtn.addEventListener('click', async () => {
+                await loadModalExporter();
                 if (window.ModalExporter && typeof window.ModalExporter.exportModal === 'function') {
                     window.ModalExporter.exportModal(document.getElementById('score-modal-content'), { appName: this.appId });
                 }
@@ -336,6 +357,8 @@ const ScoreManager = {
 
         if (window.ModalExporter && typeof window.ModalExporter.decorateModal === 'function') {
             window.ModalExporter.decorateModal(document.getElementById('score-modal-content'));
+        } else {
+            loadModalExporter();
         }
 
         this.addSwipeToClose();

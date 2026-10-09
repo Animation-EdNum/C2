@@ -96,6 +96,7 @@
 - **[2026-10-08]** [UX/Pedagogy] Overhaul of Jeu de la grue (`alpha/webapps/jeu_de_la_grue.html`): simplified controls to 3 horizontal buttons (Left, Action/Claw, Right), removed manual height/vertical commands, added automated crane arm descent and ascent animation for block pickup/dropoff on rail, eliminated duplicate script tags, added instant cooldown cancel on program edit, and updated tutorial guide (`MODE_EMPLOI_JEU_DE_LA_GRUE.md`) and README to align with 1-2H DÉ>CODAGE curriculum.
 - **[2026-10-09]** [Memory/Rules] Added code simplification directive (YAGNI, SOLID, DRY, KISS) to `meta/memory/user-preferences.md` with the 3-step structured review protocol (Critique, Purged Code, What Did Not Survive).
 - **[2026-10-09]** [Refactor/DRY] Extracted duplicate CSS from 3 regulatory pages (`cgu.html`, `confidentialite.html`, `mentions-legales.html`) into unified `assets/css/legal.css` (-1,415 lines of redundant code eliminated), updated Service Worker cache manifest (`ednum-52587246`, 76 assets), and verified 100% unit tests passing (227 tests).
+- **[2026-10-09]** [Refactor/SOLID] Decoupled PWA Service Worker lifecycle from `theme.js` into dedicated `assets/js/pwa.js`, made `modal-export.js` loaded on-demand in `scores.js`, updated all 31 HTML files, and added `test_pwa.js` (232 passing tests, SW manifest `ednum-225b44b1`, 77 assets).
 
 
 
