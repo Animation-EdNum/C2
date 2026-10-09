@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-e3b3a0f4';
+const CACHE_NAME = 'ednum-52587246';
 const ASSETS = [
     './',
     './index.html',
@@ -33,6 +33,7 @@ const ASSETS = [
     './assets/css/components.css',
     './assets/css/compresseur_magique.css',
     './assets/css/generateur_mot_de_passe.css',
+    './assets/css/legal.css',
     './assets/css/routage_reseau.css',
     './assets/css/teacher.css',
     './assets/css/tokens.css',
