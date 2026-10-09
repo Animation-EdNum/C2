@@ -34,3 +34,15 @@ This document defines how the human user prefers code delivered, reviewed, and f
 - **Target Audience:** Swiss primary and secondary school pupils (Cycles 1-3, 4-15 years old) and their teachers. Keep interfaces distraction-free, visually engaging, and accessible.
 - **Action-Oriented Buttons:** Button icons and tooltips must convey the *action* that will take place upon clicking, rather than the current state of the system.
 - **Aesthetic Excellence:** Glassmorphism, smooth micro-animations, curated color palettes, and full WCAG AA contrast in both light and dark modes.
+
+## 6. Code Simplification & Review Directive (YAGNI, SOLID, DRY, KISS)
+- **Primary Directive:** Upon receiving code or when reviewing components for simplification, run the code through YAGNI + SOLID + DRY + KISS principles, eliminate overengineering, and present what survives.
+- **Mandatory 3-Step Review Structure:**
+  1. **The Critique:** Briefly identify specific violations:
+     - **YAGNI (You Aren't Gonna Need It):** Flag unnecessary abstractions, premature optimizations, speculative features.
+     - **SOLID:** Point out tight coupling, bloated interfaces, or multi-responsibility classes/functions.
+     - **DRY (Don't Repeat Yourself):** Identify duplicated logic, duplicated styles, or boilerplate.
+     - **KISS (Keep It Simple, Stupid):** Highlight convoluted patterns, deep nesting, or complex logic that can be written directly.
+  2. **The Purged Code:** Output the refactored code (clean, direct, functional, and stripped of overengineering).
+  3. **What Did Not Survive:** Concise bulleted list explaining what was deleted or simplified and why.
+
