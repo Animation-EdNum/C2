@@ -596,11 +596,11 @@ body.high-contrast .app-shell ~ footer.no-print a {
 }
 
 .ui-modal-content {
-    background: var(--card-bg, rgba(255, 255, 255, 0.98));
+    background: var(--card-bg, rgba(255, 255, 255, 0.95));
     border: var(--glass-border);
     box-shadow: var(--glass-shadow);
     border-radius: var(--radius-2xl);
-    padding: 30px;
+    padding: 28px;
     width: 90%;
     max-width: 600px;
     max-height: 90vh;
@@ -609,11 +609,14 @@ body.high-contrast .app-shell ~ footer.no-print a {
     transform: scale(0.95) translateY(20px);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     color: var(--text-color, #1a202c);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
 }
 
 body.dark .ui-modal-content {
-    background: #2d3748;
+    background: var(--card-bg, rgba(30, 41, 59, 0.95));
     color: #f7fafc;
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .ui-modal-overlay.active .ui-modal-content,
@@ -621,13 +624,90 @@ body.dark .ui-modal-content {
     transform: scale(1) translateY(0);
 }
 
+/* En-tête de modale unifié */
+#score-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-main, #1e293b);
+    margin: 0 0 12px 0;
+    padding-right: 36px;
+}
+
+#score-modal-title i,
+#score-modal-title svg {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+body.dark #score-modal-title {
+    color: #f8fafc;
+}
+
+/* Empty state visuel et bienveillant pour élèves */
+.stat-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 36px 20px;
+    gap: 10px;
+}
+
+.stat-empty-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: var(--radius-full);
+    background: rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+body.dark .stat-empty-icon {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.stat-empty-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.stat-empty-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main, #1e293b);
+    margin: 0;
+}
+
+body.dark .stat-empty-title {
+    color: #f8fafc;
+}
+
+.stat-empty-subtitle {
+    font-size: 0.88rem;
+    color: var(--text-muted, #64748b);
+    max-width: 380px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+body.dark .stat-empty-subtitle {
+    color: #94a3b8;
+}
+
 .score-modal-actions {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 8px;
-    margin-top: 18px;
-    padding-top: 14px;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
     border-top: 1px solid var(--border, #e2e8f0);
     flex-wrap: wrap;
 }
@@ -637,59 +717,26 @@ body.dark .score-modal-actions {
 }
 
 .score-modal-actions .btn-export-scores {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     gap: 6px;
-    padding: 7px 14px;
-    background: var(--primary, #4f46e5);
-    color: #ffffff;
-    border: 1px solid transparent;
-    border-radius: var(--radius-md, 8px);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.score-modal-actions .btn-export-scores:hover {
-    background: var(--primary-hover, #4338ca);
-    transform: translateY(-1px);
 }
 
 .score-modal-actions .btn-reset-scores,
 .btn-reset-scores {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     gap: 6px;
-    margin-top: 0;
-    padding: 7px 12px;
-    background: transparent;
-    color: var(--text-muted, #64748b);
-    border: 1px solid var(--border, #cbd5e1);
-    border-radius: var(--radius-md, 8px);
-    font-size: 0.82rem;
-    font-weight: 500;
-    cursor: pointer;
-    width: auto;
-    transition: all 0.15s ease;
-}
-
-.score-modal-actions .btn-reset-scores:hover,
-.btn-reset-scores:hover {
-    background: rgba(239, 68, 68, 0.08);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.3);
-    transform: none;
 }
 
 .stat-mode-title {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid var(--primary-color, #667eea);
-    padding-bottom: 5px;
-    font-size: 1.2rem;
+    margin-top: 22px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--accent, var(--primary, #0284c7));
+    padding-bottom: 6px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main, #1e293b);
+}
+
+body.dark .stat-mode-title {
+    color: #f8fafc;
 }
 
 .stat-table-wrapper {
@@ -700,24 +747,25 @@ body.dark .score-modal-actions {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 15px;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
 }
 
 .stat-table th, .stat-table td {
-    padding: 12px 8px;
+    padding: 10px 12px;
     text-align: left;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--border, rgba(0, 0, 0, 0.08));
 }
 
 .stat-table th {
-    font-weight: bold;
-    color: var(--primary-color, #667eea);
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent, var(--primary, #0284c7));
 }
 
-/* Dark mode overrides (si géré par des classes sur body, à ajuster selon le projet) */
-
 body.dark .stat-table th, body.dark .stat-table td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .menu-item-btn {
@@ -1779,7 +1827,7 @@ body.dark .ui-btn-close:hover {
 
 .modal-export-watermark .watermark-student {
     font-weight: 700;
-    color: var(--primary, #4f46e5);
+    color: var(--accent, var(--primary, #0284c7));
 }
 
 .modal-student-bar {
@@ -1816,8 +1864,8 @@ body.dark .ui-btn-close:hover {
 }
 
 .modal-student-input:focus {
-    border-color: var(--primary, #4f46e5);
-    box-shadow: 0 0 0 2px var(--primary-light, rgba(79, 70, 229, 0.15));
+    border-color: var(--accent, var(--primary, #0284c7));
+    box-shadow: 0 0 0 2px var(--accent-light, rgba(2, 132, 199, 0.15));
 }
 
 body.dark .modal-student-bar {

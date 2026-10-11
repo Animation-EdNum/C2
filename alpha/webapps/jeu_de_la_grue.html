@@ -289,19 +289,8 @@
             background: rgba(30, 41, 59, 0.3);
         }
 
-        .cup-slot.active-slot {
-            background: rgba(245, 158, 11, 0.4);
-            border-color: rgba(245, 158, 11, 0.8);
-            transition: background 0.3s;
-        }
-
-        body.dark .cup-slot.active-slot {
-            background: rgba(245, 158, 11, 0.5);
-            border-color: rgba(245, 158, 11, 0.9);
-        }
-
         .cup.active-column {
-            background: rgba(245, 158, 11, 0.15); /* light accent background */
+            background: rgba(245, 158, 11, 0.15);
             transition: background 0.3s;
         }
 
@@ -525,6 +514,8 @@
             box-shadow: 0 4px 0 #cbd5e1;
             transition: all 0.2s;
             font-size: 24px;
+            position: relative;
+            cursor: pointer;
         }
 
         body.dark .prog-step {
@@ -790,48 +781,47 @@
                 flex-direction: column;
                 justify-content: center;
             }
-
         }
 
+        .grue-onboarding-hint {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent, #f59e0b);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+            z-index: 1000;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            animation: bounceGrueHint 1.2s ease-in-out infinite;
+        }
 
-.grue-onboarding-hint {
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent, #f59e0b);
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
-    z-index: 1000;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    animation: bounceGrueHint 1.2s ease-in-out infinite;
-}
-.grue-onboarding-hint::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 7px;
-    border-style: solid;
-    border-color: var(--accent, #f59e0b) transparent transparent transparent;
-}
-@keyframes bounceGrueHint {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50%       { transform: translateX(-50%) translateY(-5px); }
-}
+        .grue-onboarding-hint::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 7px;
+            border-style: solid;
+            border-color: var(--accent, #f59e0b) transparent transparent transparent;
+        }
 
-</style>
+        @keyframes bounceGrueHint {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50%       { transform: translateX(-50%) translateY(-5px); }
+        }
+    </style>
 </head>
 
 <body>
@@ -872,7 +862,6 @@
                             <i data-fa="moon" id="icon-moon"></i>
                             <span id="themeToggleText">Sombre</span>
                         </button>
-                    
                         <div class="dropdown-divider"></div>
                         <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
                             <i data-fa="arrows-rotate"></i>
@@ -884,7 +873,6 @@
         </header>
 
         <main>
-
             <div class="chal-instruction">Déplace la grue pour attraper et déplacer des objets !</div>
 
             <details class="instructions">
@@ -907,86 +895,70 @@
             </div>
 
             <div class="desktop-layout">
-            <!-- GAME BOARDS -->
-            <div class="game-boards">
-                <div class="board-wrapper">
-                    <div class="board-title">Objectif</div>
-                    <div class="board target-board" id="target-board">
-                        <div class="large-cup">
-                            <div class="cup"></div>
-                            <div class="cup"></div>
-                            <div class="cup"></div>
+                <!-- GAME BOARDS -->
+                <div class="game-boards">
+                    <div class="board-wrapper">
+                        <div class="board-title">Objectif</div>
+                        <div class="board target-board" id="target-board"></div>
+                    </div>
+
+                    <div class="board-wrapper main-wrapper">
+                        <div class="board-title">Zone de travail</div>
+                        <div class="crane-layer" id="crane-layer">
+                            <div class="crane-rail"></div>
+                            <div class="crane" id="crane">
+                                <div class="crane-motor"></div>
+                                <div class="crane-arm" id="crane-arm"></div>
+                                <div class="crane-claw" id="crane-claw"></div>
+                            </div>
+                        </div>
+                        <div class="board main-board" id="main-board"></div>
+                    </div>
+                </div>
+
+                <div class="desktop-layout-side">
+                    <!-- PROGRAMMING AREA -->
+                    <div class="program-area">
+                        <div class="program-strip-wrapper">
+                            <div class="program-strip" id="program-strip"></div>
+                        </div>
+
+                        <div class="controls-panel">
+                            <div class="instructions-group">
+                                <button class="instruction-btn left-color" id="btn-inst-left" aria-label="Gauche" title="Aller à gauche"><i
+                                        data-fa="arrow-left"></i></button>
+                                <button class="instruction-btn action-color" id="btn-inst-action"
+                                    aria-label="Action" title="Attraper ou poser un cube"><i data-fa="hand-fist" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i></button>
+                                <button class="instruction-btn right-color" id="btn-inst-right" aria-label="Droite" title="Aller à droite"><i
+                                        data-fa="arrow-right"></i></button>
+                            </div>
+
+                            <div class="execution-group">
+                                <button class="exec-btn del-btn" id="btn-inst-del"><i data-fa="trash-can"></i>
+                                    Effacer</button>
+                                <button class="exec-btn clear-btn" id="btn-inst-clear"><i data-fa="trash-can"></i> Tout
+                                    vider</button>
+                                <button class="exec-btn play-btn" id="play-btn"><i
+                                        data-fa="play"></i> Exécuter</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="board-wrapper main-wrapper">
-                    <div class="board-title">Zone de travail</div>
-                    <div class="crane-layer" id="crane-layer">
-                        <div class="crane-rail"></div>
-                        <div class="crane" id="crane">
-                            <div class="crane-motor"></div>
-                            <div class="crane-arm" id="crane-arm"></div>
-                            <div class="crane-claw" id="crane-claw"></div>
-                        </div>
-                    </div>
-                    <div class="board main-board" id="main-board">
-                        <div class="large-cup">
-                            <div class="cup" id="cup-0"></div>
-                            <div class="cup" id="cup-1"></div>
-                            <div class="cup" id="cup-2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="desktop-layout-side">
-            <!-- PROGRAMMING AREA -->
-            <div class="program-area">
-                <div class="program-strip-wrapper">
-                    <div class="program-strip" id="program-strip">
-                        <!-- Instructions apparaitront ici -->
-                    </div>
-                </div>
-
-                <div class="controls-panel">
-                    <div class="instructions-group">
-                        <button class="instruction-btn left-color" id="btn-inst-left" aria-label="Gauche" title="Aller à gauche"><i
-                                data-fa="arrow-left"></i></button>
-                        <button class="instruction-btn action-color" id="btn-inst-action"
-                            aria-label="Action" title="Attraper ou poser un cube"><i data-fa="hand-fist" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i></button>
-                        <button class="instruction-btn right-color" id="btn-inst-right" aria-label="Droite" title="Aller à droite"><i
-                                data-fa="arrow-right"></i></button>
-                    </div>
-
-                    <div class="execution-group">
-                        <button class="exec-btn del-btn" id="btn-inst-del"><i data-fa="trash-can"></i>
-                            Effacer</button>
-                        <button class="exec-btn clear-btn" id="btn-inst-clear"><i data-fa="trash-can"></i> Tout
-                            vider</button>
-                        <button class="exec-btn play-btn" id="play-btn"><i
-                                data-fa="play"></i> Exécuter</button>
-                    </div>
-                </div>
-            </div>
-
-            </div>
             </div>
 
             <div class="card-footer">
                 <button class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
                 <div class="score-bar">
-                <div class="score-item">
-                    <div class="score-label">Victoires</div>
-                    <div class="score-value" id="global-correct">0</div>
-                </div>
-                <div class="score-item">
-                    <div class="score-label">Série 🔥</div>
-                    <div class="score-value" id="global-streak">0</div>
+                    <div class="score-item">
+                        <div class="score-label">Victoires</div>
+                        <div class="score-value" id="global-correct">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Série 🔥</div>
+                        <div class="score-value" id="global-streak">0</div>
+                    </div>
                 </div>
             </div>
-            </div>
-
         </main>
     </div>
 
@@ -1008,12 +980,15 @@
 
     <script src="../../assets/js/confetti.js"></script>
     <script>
-        let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
-        let globalCorrect = 0, globalStreak = 0, globalBest = 0;
+        let currentDifficulty = 'medium';
+        let globalCorrect = 0;
+        let globalStreak = 0;
+        let globalBest = 0;
         let currentMistakes = 0;
 
         const NUM_CUPS = 3;
         const MAX_STACK = 3;
+        const COLORS = ['#3b82f6', '#ef4444', '#10b981'];
 
         let cups = [[], [], []];
         let initialCupsState = [[], [], []];
@@ -1028,11 +1003,8 @@
         const mainBoardEl = document.getElementById('main-board');
         const craneEl = document.getElementById('crane');
         const craneArmEl = document.getElementById('crane-arm');
-        const craneClawEl = document.getElementById('crane-claw');
         const programStrip = document.getElementById('program-strip');
         const playBtn = document.getElementById('play-btn');
-
-        let cachedCups = [];
 
         function init() {
             setupEventListeners();
@@ -1042,55 +1014,79 @@
         }
 
         function setupEventListeners() {
-            document.getElementById('diff-easy').addEventListener('click', () => setDifficulty('easy'));
-            document.getElementById('diff-medium').addEventListener('click', () => setDifficulty('medium'));
-            document.getElementById('diff-hard').addEventListener('click', () => setDifficulty('hard'));
+            document.getElementById('diff-easy').addEventListener('click', () => { setDifficulty('easy'); });
+            document.getElementById('diff-medium').addEventListener('click', () => { setDifficulty('medium'); });
+            document.getElementById('diff-hard').addEventListener('click', () => { setDifficulty('hard'); });
 
-            document.getElementById('btn-inst-left').addEventListener('click', () => addInstruction('left'));
-            document.getElementById('btn-inst-right').addEventListener('click', () => addInstruction('right'));
-            document.getElementById('btn-inst-action').addEventListener('click', () => addInstruction('action'));
+            document.getElementById('btn-inst-left').addEventListener('click', () => { addInstruction('left'); });
+            document.getElementById('btn-inst-right').addEventListener('click', () => { addInstruction('right'); });
+            document.getElementById('btn-inst-action').addEventListener('click', () => { addInstruction('action'); });
 
-            document.getElementById('btn-inst-del').addEventListener('click', () => deleteLastInstruction());
-            document.getElementById('btn-inst-clear').addEventListener('click', () => clearProgram());
-            document.getElementById('play-btn').addEventListener('click', () => executeProgram());
+            document.getElementById('btn-inst-del').addEventListener('click', () => { deleteLastInstruction(); });
+            document.getElementById('btn-inst-clear').addEventListener('click', () => { clearProgram(); });
+            document.getElementById('play-btn').addEventListener('click', () => { executeProgram(); });
 
             window.addEventListener('keydown', (e) => {
-                if (e.repeat || isExecuting) return;
-                if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+                if (e.repeat || isExecuting) {
+                    return;
+                }
+                if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                    return;
+                }
 
                 switch (e.key) {
-                    case 'ArrowLeft': e.preventDefault(); addInstruction('left'); break;
-                    case 'ArrowRight': e.preventDefault(); addInstruction('right'); break;
-                    case ' ': e.preventDefault(); addInstruction('action'); break;
-                    case 'Enter': e.preventDefault(); executeProgram(); break;
-                    case 'Backspace': e.preventDefault(); deleteLastInstruction(); break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        addInstruction('left');
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        addInstruction('right');
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        addInstruction('action');
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        executeProgram();
+                        break;
+                    case 'Backspace':
+                        e.preventDefault();
+                        deleteLastInstruction();
+                        break;
                 }
             });
 
             window.addEventListener('c2_change_difficulty', (e) => {
                 const nextDiff = e.detail.difficulty;
-                if (nextDiff === '4') document.getElementById('diff-easy')?.click();
-                else if (nextDiff === '6') document.getElementById('diff-medium')?.click();
-                else if (nextDiff === '8') document.getElementById('diff-hard')?.click();
+                if (nextDiff === '4') {
+                    document.getElementById('diff-easy')?.click();
+                } else if (nextDiff === '6') {
+                    document.getElementById('diff-medium')?.click();
+                } else if (nextDiff === '8') {
+                    document.getElementById('diff-hard')?.click();
+                }
             });
         }
 
         function setDifficulty(diff) {
             currentDifficulty = diff;
-            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             document.getElementById(`diff-${diff}`).classList.add('active');
             startNewLevel();
         }
 
         function generateRandomState(numBlocks) {
-            let state = [[], [], []];
-            const colors = ['#3b82f6', '#ef4444', '#10b981']; // Standard blue, red, green
+            const state = [[], [], []];
             for (let i = 0; i < numBlocks; i++) {
                 let cupIdx;
                 do {
                     cupIdx = Math.floor(Math.random() * NUM_CUPS);
                 } while (state[cupIdx].length >= MAX_STACK);
-                state[cupIdx].push({ id: i, color: colors[i % colors.length] });
+                state[cupIdx].push({ id: i, color: COLORS[i % COLORS.length] });
             }
             return state;
         }
@@ -1104,27 +1100,26 @@
             currentMistakes = 0;
             clearProgram();
 
-            let numBlocks = currentDifficulty === 'easy' ? 1 : (currentDifficulty === 'medium' ? 2 : 3);
-
+            const numBlocks = currentDifficulty === 'easy' ? 1 : (currentDifficulty === 'medium' ? 2 : 3);
             cups = generateRandomState(numBlocks);
-            targetCups = generateRandomState(numBlocks);
-
-            // Ensure they are different
-            while (JSON.stringify(cups) === JSON.stringify(targetCups)) {
+            do {
                 targetCups = generateRandomState(numBlocks);
-            }
+            } while (JSON.stringify(cups) === JSON.stringify(targetCups));
 
             initialCupsState = JSON.parse(JSON.stringify(cups));
             craneState = { pos: 0, holding: null };
-            if (craneArmEl) craneArmEl.style.height = '10px';
-
+            if (craneArmEl) {
+                craneArmEl.style.height = '10px';
+            }
             renderAll();
         }
 
         function resetToInitial() {
             cups = JSON.parse(JSON.stringify(initialCupsState));
             craneState = { pos: 0, holding: null };
-            if (craneArmEl) craneArmEl.style.height = '10px';
+            if (craneArmEl) {
+                craneArmEl.style.height = '10px';
+            }
             renderAll();
         }
 
@@ -1136,40 +1131,33 @@
         }
 
         function renderBoard(boardState, container, isTarget) {
-            container.innerHTML = '';
-            if (!isTarget) cachedCups = [];
+            container.replaceChildren();
 
-            let largeCupEl = document.createElement('div');
+            const largeCupEl = document.createElement('div');
             largeCupEl.className = 'large-cup';
             container.appendChild(largeCupEl);
 
             for (let i = 0; i < NUM_CUPS; i++) {
-                let cupEl = document.createElement('div');
+                const cupEl = document.createElement('div');
                 cupEl.className = 'cup';
                 if (!isTarget) {
                     cupEl.id = `cup-${i}`;
                 }
 
-                // Add background slots for visual guidance
-                let slotsContainer = document.createElement('div');
+                const slotsContainer = document.createElement('div');
                 slotsContainer.className = 'cup-slots';
                 for (let s = 0; s < MAX_STACK; s++) {
-                    let slotEl = document.createElement('div');
+                    const slotEl = document.createElement('div');
                     slotEl.className = 'cup-slot';
                     slotsContainer.appendChild(slotEl);
                 }
                 cupEl.appendChild(slotsContainer);
 
-                if (!isTarget) {
-                    cachedCups[i] = { el: cupEl };
-                }
-
-                let blocksContainer = document.createElement('div');
+                const blocksContainer = document.createElement('div');
                 blocksContainer.className = 'cup-blocks';
-                // Render from bottom to top, flex column-reverse handles this naturally
                 for (let j = 0; j < boardState[i].length; j++) {
-                    let block = boardState[i][j];
-                    let blockEl = document.createElement('div');
+                    const block = boardState[i][j];
+                    const blockEl = document.createElement('div');
                     blockEl.className = 'cube';
                     blockEl.style.setProperty('--cube-color', block.color);
                     blocksContainer.appendChild(blockEl);
@@ -1183,27 +1171,16 @@
         function updateCraneVisuals() {
             const cupWidth = 70;
             const gap = 6;
-            const baseX = craneState.pos * (cupWidth + gap);
+            craneEl.style.left = `${craneState.pos * (cupWidth + gap)}px`;
 
-            craneEl.style.left = `${baseX}px`;
-
+            craneEl.classList.toggle('holding', Boolean(craneState.holding));
             if (craneState.holding) {
-                craneEl.classList.add('holding');
                 craneEl.style.setProperty('--held-color', craneState.holding.color);
-            } else {
-                craneEl.classList.remove('holding');
             }
 
-            for (let i = 0; i < NUM_CUPS; i++) {
-                let cup = cachedCups[i];
-                if (cup) {
-                    if (i === craneState.pos) {
-                        cup.el.classList.add('active-column');
-                    } else {
-                        cup.el.classList.remove('active-column');
-                    }
-                }
-            }
+            document.querySelectorAll('#main-board .cup').forEach((cupEl, i) => {
+                cupEl.classList.toggle('active-column', i === craneState.pos);
+            });
         }
 
         function clearCooldown() {
@@ -1216,16 +1193,19 @@
         }
 
         function addInstruction(type) {
-            if (isExecuting) return;
+            if (isExecuting) {
+                return;
+            }
             clearCooldown();
-
             program.push(type);
             renderProgram();
             playSound('click');
         }
 
         function deleteLastInstruction() {
-            if (isExecuting || program.length === 0) return;
+            if (isExecuting || program.length === 0) {
+                return;
+            }
             clearCooldown();
             program.pop();
             renderProgram();
@@ -1233,7 +1213,9 @@
         }
 
         function removeSpecificCmd(index) {
-            if (isExecuting) return;
+            if (isExecuting) {
+                return;
+            }
             clearCooldown();
             program.splice(index, 1);
             renderProgram();
@@ -1241,68 +1223,49 @@
         }
 
         function clearProgram() {
-            if (isExecuting) return;
+            if (isExecuting) {
+                return;
+            }
             clearCooldown();
             program = [];
             renderProgram();
         }
 
         function renderProgram() {
-            programStrip.innerHTML = '';
+            programStrip.replaceChildren();
+            let isHolding = false;
+
             program.forEach((inst, idx) => {
-                let stepEl = document.createElement('div');
-                stepEl.className = 'prog-step ' + inst + '-color';
+                const stepEl = document.createElement('div');
+                stepEl.className = `prog-step ${inst}-color`;
                 stepEl.id = `prog-step-${idx}`;
-                stepEl.style.cursor = 'pointer';
-                stepEl.style.position = 'relative';
-                stepEl.addEventListener('click', () => removeSpecificCmd(idx));
+                stepEl.addEventListener('click', () => { removeSpecificCmd(idx); });
 
                 let icon = '';
                 let isFlipped = false;
-                if (inst === 'left') icon = 'arrow-left';
-                else if (inst === 'right') icon = 'arrow-right';
-                else if (inst === 'action') {
-                    // determine if holding at this point
-                    let simulatedHolding = false;
-                    for (let j = 0; j <= idx; j++) {
-                        if (program[j] === 'action') {
-                            simulatedHolding = !simulatedHolding;
-                        }
-                    }
-                    if (simulatedHolding) {
-                        icon = 'hand-fist'; // action that just grabbed
-                    } else {
-                        icon = 'hand'; // action that just dropped
-                    }
+                if (inst === 'left') {
+                    icon = 'arrow-left';
+                } else if (inst === 'right') {
+                    icon = 'arrow-right';
+                } else if (inst === 'action') {
+                    isHolding = !isHolding;
+                    icon = isHolding ? 'hand-fist' : 'hand';
                     isFlipped = true;
                 }
 
-                if (isFlipped) {
-                    stepEl.innerHTML = `<i data-fa="${icon}" style="transform: rotate(180deg); display: inline-block;"></i>`;
-                } else {
-                    stepEl.innerHTML = `<i data-fa="${icon}"></i>`;
-                }
+                const iconStyle = isFlipped ? 'style="transform: rotate(180deg); display: inline-block;"' : '';
+                stepEl.innerHTML = `<i data-fa="${icon}" ${iconStyle}></i>`;
                 programStrip.appendChild(stepEl);
             });
+
             window.fa?.createIcons?.();
             playBtn.disabled = program.length === 0 || isExecuting || isCooldown;
 
-            // Update the main action button based on final state
-            let finalHolding = false;
-            program.forEach(inst => {
-                if (inst === 'action') finalHolding = !finalHolding;
-            });
-            let actionIcon = document.getElementById('action-icon');
-            if (actionIcon) {
-                let actionBtn = actionIcon.parentElement;
-                if (actionBtn) {
-                    if (finalHolding) {
-                        actionBtn.innerHTML = '<i data-fa="hand" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i>';
-                    } else {
-                        actionBtn.innerHTML = '<i data-fa="hand-fist" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i>';
-                    }
-                    window.fa?.createIcons?.();
-                }
+            const actionBtn = document.getElementById('btn-inst-action');
+            if (actionBtn) {
+                const nextActionIcon = isHolding ? 'hand' : 'hand-fist';
+                actionBtn.innerHTML = `<i data-fa="${nextActionIcon}" style="transform: rotate(180deg); display: inline-block;" id="action-icon"></i>`;
+                window.fa?.createIcons?.();
             }
         }
 
@@ -1314,125 +1277,114 @@
                     craneState.pos--;
                     return { valid: true };
                 }
-                return { valid: false, reason: buildToastNode('arrow-left', 'Mur !') };
-            } else if (inst === 'right') {
+                return { valid: false, reason: 'Mur à gauche !' };
+            }
+            if (inst === 'right') {
                 if (craneState.pos < NUM_CUPS - 1) {
                     craneState.pos++;
                     return { valid: true };
                 }
-                return { valid: false, reason: buildToastNode('arrow-right', 'Mur !') };
+                return { valid: false, reason: 'Mur à droite !' };
             }
-            return { valid: false, reason: buildToastNode('question', 'Action inconnue.') };
+            return { valid: false, reason: 'Action inconnue.' };
         }
 
         async function executeActionInstruction() {
-            let currentStack = cups[craneState.pos];
-            let blocksInCup = currentStack.length;
-            const baseArmHeight = 10;
-            const dropPerLevel = 65;
-            const topSlotArmHeight = 45;
+            const currentStack = cups[craneState.pos];
+            const blocksInCup = currentStack.length;
+            const isGrabbing = !craneState.holding;
 
-            if (!craneState.holding) {
-                // Wants to grab
-                if (blocksInCup === 0) {
-                    return { valid: false, reason: buildToastNode('hand-fist', 'Rien ici !') };
-                }
-                let targetLevel = MAX_STACK - blocksInCup;
-                let targetArmHeight = topSlotArmHeight + (targetLevel * dropPerLevel);
+            if (isGrabbing && blocksInCup === 0) {
+                return { valid: false, reason: 'Rien à attraper !' };
+            }
+            if (!isGrabbing && blocksInCup >= MAX_STACK) {
+                return { valid: false, reason: 'Colonne pleine !' };
+            }
 
-                // 1. Lower arm
-                craneArmEl.style.height = `${targetArmHeight}px`;
-                await delay(450);
-                if (!isExecuting) return { valid: false };
+            const targetLevel = isGrabbing ? (MAX_STACK - blocksInCup) : (MAX_STACK - blocksInCup - 1);
+            const targetArmHeight = 45 + (targetLevel * 65);
 
-                // 2. Grab block
+            craneArmEl.style.height = `${targetArmHeight}px`;
+            await delay(450);
+            if (!isExecuting) {
+                return { valid: false };
+            }
+
+            if (isGrabbing) {
                 craneState.holding = currentStack.pop();
-                playSound('click');
-                renderBoard(cups, mainBoardEl, false);
-                craneEl.classList.add('holding');
-                craneEl.style.setProperty('--held-color', craneState.holding.color);
-                await delay(250);
-                if (!isExecuting) return { valid: false };
-
-                // 3. Raise arm
-                craneArmEl.style.height = `${baseArmHeight}px`;
-                await delay(450);
-                return { valid: true };
             } else {
-                // Wants to drop
-                if (blocksInCup >= MAX_STACK) {
-                    return { valid: false, reason: buildToastNode('layer-group', 'Colonne pleine !') };
-                }
-                let targetLevel = MAX_STACK - blocksInCup - 1;
-                let targetArmHeight = topSlotArmHeight + (targetLevel * dropPerLevel);
-
-                // 1. Lower arm with held block
-                craneArmEl.style.height = `${targetArmHeight}px`;
-                await delay(450);
-                if (!isExecuting) return { valid: false };
-
-                // 2. Drop block
                 currentStack.push(craneState.holding);
                 craneState.holding = null;
-                playSound('click');
-                renderBoard(cups, mainBoardEl, false);
-                craneEl.classList.remove('holding');
-                await delay(250);
-                if (!isExecuting) return { valid: false };
-
-                // 3. Raise arm
-                craneArmEl.style.height = `${baseArmHeight}px`;
-                await delay(450);
-                return { valid: true };
             }
+            playSound('click');
+            renderBoard(cups, mainBoardEl, false);
+            updateCraneVisuals();
+            await delay(250);
+            if (!isExecuting) {
+                return { valid: false };
+            }
+
+            craneArmEl.style.height = '10px';
+            await delay(450);
+            return { valid: true };
         }
 
         async function executeProgram() {
-            if (isExecuting || isCooldown || program.length === 0) return;
+            if (isExecuting || isCooldown || program.length === 0) {
+                return;
+            }
             isExecuting = true;
             playBtn.disabled = true;
 
             resetToInitial();
             renderAll();
             await delay(400);
-            if (!isExecuting) return;
+            if (!isExecuting) {
+                return;
+            }
 
             const progSteps = document.querySelectorAll('.prog-step');
 
             for (let i = 0; i < program.length; i++) {
-                if (!isExecuting) return;
+                if (!isExecuting) {
+                    return;
+                }
 
                 progSteps.forEach(el => {
-                    el.classList.remove('active');
-                    el.classList.remove('error-step');
+                    el.classList.remove('active', 'error-step');
                 });
-                let currentStepEl = progSteps[i];
-                if (currentStepEl) currentStepEl.classList.add('active');
+                const currentStepEl = progSteps[i];
+                if (currentStepEl) {
+                    currentStepEl.classList.add('active');
+                }
 
-                let inst = program[i];
-
+                const inst = program[i];
+                let result;
                 if (inst === 'action') {
-                    let result = await executeActionInstruction();
-                    if (!result.valid) {
-                        if (result.reason) showToast(result.reason, 'error', 5000);
-                        if (currentStepEl) currentStepEl.classList.add('error-step');
-                        break;
-                    }
+                    result = await executeActionInstruction();
                 } else {
-                    let result = processMoveInstruction(inst);
-                    if (!result.valid) {
-                        showToast(result.reason, 'error', 5000);
-                        if (currentStepEl) currentStepEl.classList.add('error-step');
-                        break;
-                    } else {
+                    result = processMoveInstruction(inst);
+                    if (result.valid) {
                         updateCraneVisuals();
                         playSound('click');
+                        await delay(500);
                     }
-                    await delay(500);
+                }
+
+                if (!result.valid) {
+                    if (result.reason) {
+                        showToast(result.reason, 'error', 4000);
+                    }
+                    if (currentStepEl) {
+                        currentStepEl.classList.add('error-step');
+                    }
+                    break;
                 }
             }
 
-            if (!isExecuting) return;
+            if (!isExecuting) {
+                return;
+            }
             progSteps.forEach(el => {
                 if (!el.classList.contains('error-step')) {
                     el.classList.remove('active');
@@ -1441,47 +1393,8 @@
             checkWin();
         }
 
-        function buildToastNode(mainIcon, msgText) {
-            let container = document.createElement('div');
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.style.gap = '8px';
-
-            let stackSpan = document.createElement('span');
-            stackSpan.style.display = 'inline-flex';
-            stackSpan.style.alignItems = 'center';
-            stackSpan.style.justifyContent = 'center';
-            stackSpan.style.position = 'relative';
-            stackSpan.style.width = '24px';
-            stackSpan.style.height = '24px';
-
-            let i1 = document.createElement('i');
-            i1.setAttribute('data-fa', mainIcon);
-            i1.style.position = 'absolute';
-            i1.style.width = '14px';
-            i1.style.height = '14px';
-            i1.style.zIndex = '1';
-
-            let i2 = document.createElement('i');
-            i2.setAttribute('data-fa', 'ban');
-            i2.style.color = '#fff';
-            i2.style.position = 'absolute';
-            i2.style.width = '24px';
-            i2.style.height = '24px';
-            i2.style.zIndex = '2';
-
-            stackSpan.appendChild(i1);
-            stackSpan.appendChild(i2);
-
-            let textNode = document.createTextNode(msgText);
-
-            container.appendChild(stackSpan);
-            container.appendChild(textNode);
-            return container;
-        }
-
         function checkWin() {
-            let isWin = JSON.stringify(cups) === JSON.stringify(targetCups) && !craneState.holding;
+            const isWin = JSON.stringify(cups) === JSON.stringify(targetCups) && !craneState.holding;
 
             if (isWin) {
                 updateScore(true);
@@ -1489,23 +1402,17 @@
                 showToast('Bien joué ! Exercice réussi.', 'success');
                 setTimeout(() => {
                     startNewLevel();
-                }, 4000);
+                }, 3500);
             } else {
                 currentMistakes++;
                 updateScore(false);
                 playSound('error');
 
-                let errorReason;
-                if (craneState.holding) {
-                    errorReason = buildToastNode('hand-fist', "Objet non posé !");
-                } else {
-                    errorReason = buildToastNode('shapes', "Disposition incorrecte !");
-                }
+                const errorReason = craneState.holding ? 'Objet non posé !' : 'Disposition incorrecte !';
+                showToast(errorReason, 'error', 4000);
 
-                showToast(errorReason, 'error', 5000);
                 isExecuting = false;
                 isCooldown = true;
-
                 playBtn.disabled = true;
 
                 window.failTimeout = setTimeout(() => {
@@ -1513,7 +1420,7 @@
                     renderProgram();
                     resetToInitial();
                     renderAll();
-                }, 5000);
+                }, 4000);
             }
         }
 
@@ -1522,7 +1429,9 @@
                 globalCorrect++;
                 globalStreak++;
                 const wasNewRecord = globalStreak > globalBest;
-                if (wasNewRecord) globalBest = globalStreak;
+                if (wasNewRecord) {
+                    globalBest = globalStreak;
+                }
                 handleStreakCelebration(globalStreak, false, wasNewRecord);
                 ScoreManager.addSuccess('jeu_de_la_grue', currentDifficulty, currentMistakes);
             } else {
@@ -1537,27 +1446,19 @@
 
         function showGrueOnboardingHint() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('noNudges') === '1') return;
-            if (localStorage.getItem('grue_seen_hint')) return;
-            const INSTRUCTION_BTN_SELECTOR = '.instruction-btn';
-            let hintTimer;
-            const cancelHint = () => {
-                clearTimeout(hintTimer);
-                localStorage.setItem('grue_seen_hint', '1');
-                document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
-                    btn.removeEventListener('click', cancelHint)
-                );
-            };
-            document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
-                btn.addEventListener('click', cancelHint, { once: true })
-            );
-            hintTimer = setTimeout(() => {
-                document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
-                    btn.removeEventListener('click', cancelHint)
-                );
-                if (localStorage.getItem('grue_seen_hint')) return;
-                const targetBtn = document.querySelector('.instruction-btn.action-color') || document.querySelector('.instruction-btn');
-                if (!targetBtn) return;
+            if (urlParams.get('noNudges') === '1' || localStorage.getItem('grue_seen_hint')) {
+                return;
+            }
+
+            const hintTimer = setTimeout(() => {
+                if (localStorage.getItem('grue_seen_hint')) {
+                    return;
+                }
+                const targetBtn = document.getElementById('btn-inst-action');
+                if (!targetBtn) {
+                    return;
+                }
+
                 localStorage.setItem('grue_seen_hint', '1');
                 const hint = document.createElement('div');
                 hint.className = 'grue-onboarding-hint';
@@ -1565,32 +1466,30 @@
                 targetBtn.style.position = 'relative';
                 targetBtn.appendChild(hint);
                 window.fa?.createIcons?.();
-                const removeHint = () => {
-                    if (!hint.parentNode) return;
-                    hint.style.opacity = '0';
-                    setTimeout(() => hint.remove(), 300);
-                    document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
-                        btn.removeEventListener('click', removeHint)
-                    );
-                };
-                document.querySelectorAll(INSTRUCTION_BTN_SELECTOR).forEach(btn =>
-                    btn.addEventListener('click', removeHint, { once: true })
-                );
-                setTimeout(removeHint, 5000);
-            }, 3000);
-        }
 
+                const dismiss = () => {
+                    hint.remove();
+                    document.removeEventListener('click', dismiss);
+                };
+                setTimeout(() => {
+                    document.addEventListener('click', dismiss, { once: true });
+                }, 100);
+                setTimeout(dismiss, 5000);
+            }, 3000);
+
+            const onFirstClick = () => {
+                clearTimeout(hintTimer);
+                localStorage.setItem('grue_seen_hint', '1');
+            };
+            document.querySelectorAll('.instruction-btn').forEach(btn => {
+                btn.addEventListener('click', onFirstClick, { once: true });
+            });
+        }
     </script>
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/pwa.js"></script>
-<i data-fa="hand" style="display:none;"></i>
-<i data-fa="shapes" style="display:none;"></i>
-<i data-fa="ban" style="display:none;"></i>
-<i data-fa="cubes" style="display:none;"></i>
-<i data-fa="layer-group" style="display:none;"></i>
     <script src="../../assets/js/url-params.js"></script>
-
 </body>
 
 </html>

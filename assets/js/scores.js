@@ -285,18 +285,23 @@ const ScoreManager = {
         const modalHtml = `
             <div id="score-details-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
                 <div class="ui-modal-content" id="score-modal-content">
-                    <h2 id="score-modal-title">📊 Statistiques détaillées</h2>
-                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="Fermer" data-html2canvas-ignore="true">✖</button>
+                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="Fermer" data-html2canvas-ignore="true"><i data-fa="xmark"></i></button>
+                    <h2 id="score-modal-title">
+                        <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                        Statistiques détaillées
+                    </h2>
                     <div class="modal-student-bar">
                         <label for="score-student-name"><strong>Élève :</strong></label>
                         <input type="text" id="score-student-name" class="modal-student-input" placeholder="Prénom et Nom de l'élève" autocomplete="name">
                     </div>
                     <div id="score-modal-body"></div>
                     <div class="score-modal-actions" data-html2canvas-ignore="true">
-                        <button type="button" class="btn-export-scores" id="btn-export-scores-action">
-                            <i data-fa="image"></i> Exporter en image (PNG)
+                        <button type="button" class="btn btn-outline-error btn-small btn-reset-scores" id="btn-reset-scores-action">
+                            <i data-fa="arrows-rotate"></i> Réinitialiser les scores
                         </button>
-                        <button type="button" class="btn-reset-scores" id="btn-reset-scores-action">Réinitialiser les scores</button>
+                        <button type="button" class="btn btn-primary btn-small btn-export-scores" id="btn-export-scores-action">
+                            <i data-fa="arrow-down-to-square"></i> Exporter en image (PNG)
+                        </button>
                     </div>
                 </div>
             </div>
@@ -435,12 +440,31 @@ const ScoreManager = {
         body.replaceChildren();
 
         if (Object.keys(this.stats).length === 0) {
-            const p = document.createElement('p');
-            p.style.textAlign = 'center';
-            p.style.color = 'var(--text-color)';
-            p.style.opacity = '0.7';
-            p.textContent = 'Aucune statistique enregistrée pour le moment.';
-            body.appendChild(p);
+            const emptyContainer = document.createElement('div');
+            emptyContainer.className = 'stat-empty-state';
+
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'stat-empty-icon';
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', 'dt-chart-pie');
+            icon.setAttribute('style', '--fa-secondary: #22c55e; --fa-secondary-opacity: 0.6; --fa-primary: #ef4444; --fa-primary-opacity: 0.6;');
+            iconDiv.appendChild(icon);
+
+            const titleP = document.createElement('p');
+            titleP.className = 'stat-empty-title';
+            titleP.textContent = 'Aucune statistique pour le moment';
+
+            const subP = document.createElement('p');
+            subP.className = 'stat-empty-subtitle';
+            subP.textContent = 'Résous des exercices dans l\'application pour voir tes réussites et ta progression s\'afficher ici !';
+
+            emptyContainer.appendChild(iconDiv);
+            emptyContainer.appendChild(titleP);
+            emptyContainer.appendChild(subP);
+            body.appendChild(emptyContainer);
+            if (typeof window.fa?.createIcons === 'function') {
+                window.fa.createIcons();
+            }
             return;
         }
 

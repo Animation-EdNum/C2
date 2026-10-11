@@ -31,72 +31,53 @@
 - **[2026-05-14]** [Code Quality] Centralized victory streaks API to `handleStreakCelebration()` (`confetti.js`).
 - **[2026-05-15]** [Rebranding] Applied rebranding to `index.html` and `indexC1.html` (red/white palette).
 - **[2026-05-17]** [Configuration] Programmatically bulk-configured FontAwesome Pro Kit via internal PUT API.
-- **[2026-05-20]** [Security/PWA] Fixed XSS (removed inline `onclick` handlers), added `aria-live` to toasts, and enabled PWA `skipWaiting` with a user-facing update toast.
-- **[2026-05-20]** [Quality] Cleaned up redundant `!important` in `components.css` and added 4 new E2E test suites (CI updated).
-- **[2026-05-21]** [Refactor] Extracted inline CSS of 5 stable webapps to `assets/css/` and migrated all inline `onclick` handlers of alpha apps (`machine_a_chiffrer`, `jeu_de_la_grue`) to `addEventListener`.
-- **[2026-05-22]** [Feature] Coffre-fort: added Easy/Hard difficulty levels (5 questions each) and strictly excluded the Password utility from scoring (with defensive cleanup of legacy stats in `scores.js`).
-- **[2026-05-25]** [Feature] Integrated color mode (4 colors, 2 bits/pixel) into `binaire_studio.html`: B&W ↔ color toggle, palette, custom encode/decode levels, cooperative share links, CSS variables mapping.
-- **[2026-05-25]** [Cleanup] Removed alpha app `pixels_binaires.html` (functionality fully absorbed by `binaire_studio.html`).
-- **[2026-05-27]** [Feature] Polished *Bases du pseudocode*: enforced linear progression (Easy → Medium → Hard), replaced the bluebot with a neutral symmetrical drone SVG, and fixed the global stats modal rendering crash.
-- **[2026-05-27]** [Bugfix] Cross-cutting critical fixes: timer race condition in the Simulateur d'automate speech bubble, dark mode race conditions in `theme.js`, unreadable `<select>` option text on Chrome/Windows, duplicate difficulty-nudge popups in `ScoreManager`, DOM reordering breaking robot/stars/memory in `initLevel()`.
-- **[2026-05-27]** [Bugfix] Strict validation of loop/while levels in the pseudocode webapp (rejects over-stepping cases such as "3 stars in 4 moves").
-- **[2026-05-27]** [Registry] Added *Dresseur de neurones*, removed orphan *Pixels Binaires*, deduplicated 6 alpha-app icons, and diversified 5 alpha app backgrounds (cyan/purple/pink/red/amber).
-- **[2026-05-28]** [Feature] Machine à Trier scoring overhaul: victories and streaks count only on full bin completion, while errors are tracked instantly. Stats modal adapted (hides "Avec essais", uses standard "Succès").
-- **[2026-05-28]** [UX] Réseau de tri: added swap icons (↕) on active comparators, hover tooltips, and ephemeral onboarding hint ("Clique ici !") shown once via localStorage (`reseau_tri_seen_hint`). Removed pulseSwap animation.
-- **[2026-05-28]** [UX] Simulateur d'automate: added ephemeral onboarding hint for Exploration mode. A bounce-animated bubble appears above the "Avancer" button on first visit (localStorage key `automate_explore_seen_hint`). Disappears on first pad click or after 5 s. Styles added to `automate.css`; logic in `automate-ui.js` (`showExploreOnboardingHint()`). Respects `?noNudges=1` URL param.
-- **[2026-05-28]** [Registry] Renamed *Bases du pseudocode* → *Pseudo-code* in `registry.js` (title, dataLevel 7-8H→9CO, ref → "Connected 3 · 2C | Un programme adéquat", badge 7-8H→9CO) and in `apprendre_pseudocode.html` (`<title>`, og:title, `<h1>`).
-- **[2026-05-28]** [Feature] Pseudo-code: Redesigned the Ticket Vending Machine (removed client smiley, enlarged hardware machine, added touch line spacing with instant mixed-choice dropdown extracted from code, removed step-by-step button, added Level 3 Expert with SwissPass half-fare, and realistic 3D ticket stacking in loops).
-- **[2026-05-28]** [UI/UX] Pseudo-code: Aesthetic overhaul of the loudspeaker (realistic 2-way speaker) with integrated status LED, compact touch "+" button to insert code, and sticky hardware panel on desktop.
-- **[2026-05-28]** [Bugfix] Pseudo-code: Handled hardware Play/Pause button on speaker (updated `music_playing` state, unblocked command wait loop) and automated code execution start on hardware interaction.
-- **[2026-05-29]** [System/UI] Unified memory/tutorials. Updated Cycle 1 portal (`indexC1.html`) to use premium duotone icons, fixed action buttons overlap, and integrated explicit High Contrast toggles into all Option dropdowns (`theme.js`).
-- **[2026-05-30]** [Feature/A11y] Grid keyboard accessibility, unclipped styling, custom grid sharing and user manual updates for the Automate simulator. Added CI smoke test.
-- **[2026-08-12]** [Scores] Score audit: Harmonized `MODE_LABELS` (e.g. "Chasse au trésor"), incremented `totalAttempts` in `addMistake()` with self-healing migration on load (`scores.js`), and added visual score bar in the Decode tab of Secret Words (`binaire_message.html`).
-- **[2026-08-12]** [Scores] Pixel Studio (`binaire_studio.html`): Integrated score tracking into `ScoreManager` and added visual score bars for **Decode** and **Encode** modes.
-- **[2026-08-19]** [Docs/Tuto] User guide overhaul and expansion (`meta/tuto/`) across all stable, alpha, and teacher applications (14 comprehensive tutorials, README links, Swiss PER / Décodages alignment).
-- **[2026-08-20]** [Security] Fixed VICE security issue #75 (`vice/code/xss-dom`) in `assets/js/index-main.js`: replaced `recentsGrid.innerHTML = ''` with `recentsGrid.textContent = ''`.
-- **[2026-08-20]** [Security] Fixed VICE security issue #74 (`vice/deps/vulnerable-dep`): updated vulnerable transitive dependency (`undici`) via `npm audit fix`.
-- **[2026-08-22]** [Feature/TBI] Added classroom projection mode (TBI mode) across binary coding, parity bit, password generator, and lucky draw apps with container overflow safeguards.
-- **[2026-08-24]** [Feature/Apps] Extracted Password Generator (`generateur_mot_de_passe.html`) into a standalone webapp with tabbed interface (create, test, tips), drag-and-drop mechanics, pattern detection, and crack time estimation. Added QR Code Generator alpha tool for teachers.
-- **[2026-08-25]** [CI/PWA] Integrated `sw-sync.yml` workflow for automated Service Worker manifest hashing and commits on `main`. Added immediate client SW update notifications (`skipWaiting`).
-- **[2026-08-26]** [Feature/Apps] Extraction of Password Generator (`generateur_mot_de_passe.html`) into standalone webapp with tabbed interface (Generate, Test, Tips), drag-and-drop mechanics, security pattern detection, entropy estimation, and TBI projection mode. Added QR code generator tool (alpha) for teachers.
-- **[2026-08-26]** [PWA] Forced immediate Service Worker update for all clients via `skipWaiting` and toast notification.
-- **[2026-08-26]** [Bugfix] Harmonized option dropdown IDs in alpha webapps, fixed TBI calculator display, and visually unified score progress bars.
-- **[2026-08-27]** [Design] Harmonized background gradients across all webapps using Tailwind-inspired color palettes (transposed into 100% pure Vanilla CSS custom properties).
-- **[2026-08-27]** [Testing] Refactored Playwright test suite: encapsulated evaluated functions (`page.evaluate`) into IIFE expressions to avoid global scope leaks, and replaced Canvas mocks with direct DOM assertions for confetti tests.
-- **[2026-08-27]** [UI/UX] Integrated container overflow safeguards across all webapps in TBI projection mode.
-- **[2026-08-27]** [CI/PWA] Automated Service Worker manifest generation and cache hashing with CRLF normalization and path resolution fixes.
-- **[2026-08-27]** [CI] Added `npm ci` step in CI workflow to guarantee jsdom loading during unit tests and automated synchronization of agent memory files.
-- **[2026-08-27]** [Branding] Global update of AGPL-3.0 legal attribution links in app footers and general codebase cleanup.
-- **[2026-08-28]** [Feature/Apps] Optimized mobile responsiveness of Password Generator on smartphones and complete overhaul of the security "Golden Rules", accompanied by regression test updates.
-- **[2026-08-28]** [UI/UX] Global mobile adaptability improvements and fixed a blocking bug on portal category filters.
-- **[2026-08-30]** [Docs/Assets] Overhauled documentation screenshots across all 16 applications with high-DPI framing and no footers, updated README with Password Generator pedagogical context (edu.vs.ch), and refreshed CONTRIBUTING guide.
-- **[2026-09-03]** [Portal/UI] Major portal overhaul: migrated action buttons to smart sticky header with parallax reveal, replaced redundant tabs with a header role toggle button (students ↔ teachers), converted search bar to on-demand toggle via magnifying glass, added student "Utilitaires" section (GeoGebra, AutoDraw, Swisstopo), introduced compact external cards, and deployed universal cache/app reset buttons across all 20 webapps.
-- **[2026-09-03]** [Portal C1] Harmonized Cycle 1 portal (`indexC1.html`): integrated action buttons into smart sticky header with parallax scroll reveal and standardized button order.
-- **[2026-09-04]** [Feature/PWA] Added interactive PWA installation guide for iOS and macOS Safari. Refactored portal external cards and replaced role toggle with footer link. Added ALPHA badge to all alpha application headers. Resized app icons with transparent background for macOS Dock and dark mode. Promoted QR code generator to production (`webapps/teacher/qrcode.html`), added 10CO insertion sort app (`alpha/webapps/tri_insertion.html`) and DYS worksheet adapter.
-- **[2026-09-06]** [Feature/Teacher] Added visual 60-minute Time-Timer classroom countdown tool in alpha. Unified card headers, flattened accessible footers outside `.app-shell`, and fixed mobile input auto-zoom on iOS. Renamed Time-Timer to Minuteur visuel, polished UI options, and added customizable disk color.
-- **[2026-09-06]** [Feature/Alpha] Added Dactylo touch typing webapp (`alpha/webapps/dactylo.html`) for Swiss Romand QWERTZ layout with 10 progressive levels (Cycle 2 & 3), real-time WPM/accuracy tracking, keyboard error heatmaps, and Web Audio sound feedback.
-- **[2026-09-06]** [Teacher/Production] Promoted Minuteur visuel (`time_timer.html`) from alpha to production in `webapps/teacher/`. Fixed QR code preview circle overflow. Updated teacher header icon link to return to `index.html#teachers`. Implemented `window.__onResetApp` hooks across all teacher webapps (`bareme`, `tirage`, `qrcode`, `time_timer`, `sim_dyslexie`).
-- **[2026-09-06]** [A11y/Dark Mode] Comprehensive audit and resolution of dark mode text input bugs across all 26 HTML webapps: fixed white-on-white text input focus in `tirage.html`, introduced `color-scheme: dark;` in `base.css` and `teacher.css` for native browser form controls (spinners, scrollbars, dropdowns), and verified 100% WCAG AA compliance via automated Playwright audit.
-- **[2026-09-06]** [UI/Portal] Fixed external link icon disappearing on card hover in portal compact cards (`.external-link-icon`). Excluded `.external-link-icon` from `.card-title` logo styling rules and ensured high-contrast white glyph with subtle diagonal translate animation on hover across light and dark modes.
-- **[2026-09-06]** [Registry/Curriculum] Updated degree badges and curricula references in `registry.js`: adjusted GeoGebra Classique to 7H-10CO, Swisstopo to 3H-10CO, Le Dico des Ados to 5H-10CO, streamlined ia-pedia description, and updated official curriculum refs for Dactylo (`EN 23 · Usages — Saisie d'un texte`) and Password Generator (`EN 23 · Usages — Processus d'identification personnelle`).
-- **[2026-09-06]** [Security/VICE] Resolved GitHub Code Scanning alert #94 (High severity DOM XSS in `portal.js` line 194): eliminated direct `.innerHTML` assignment by parsing modal template via safe `DOMParser` and appending DOM nodes. Updated Service Worker cache manifest and verified 100% unit tests passing (111 tests).
-- **[2026-09-07]** [Memory/Refactor] Streamlined and consolidated all 5 canonical agent memory files (`project-context.md`, `decisions.md`, `code-patterns.md`, `user-preferences.md`, `event-log.md`). Pruned duplicate rules, sharpened domain boundaries, integrated testing idioms into code patterns, and eliminated rogue files.
-- **[2026-09-08]** [Apps/Polish] Minuteur visuel & Générateur de mot de passe: added customizable audio/tones and visual status to timer; streamlined block mode and updated security golden rules for passwords.
-- **[2026-09-10]** [UI/Navigation] Sober UI overhaul: standardized dedicated `[←]` back button across all 26 webapps, removed redundant subtitles for distraction-free layouts, refreshed portal header (expanding search, teacher ghost button), and improved QR export sheets.
-- **[2026-09-11]** [PWA/Bugfix] Bypassed Service Worker registration for web crawlers in `theme.js` to save bandwidth, hardened `qrcode.html` against null URLs, and updated SW cache manifest (`ednum-16781fbb`).
-- **[2026-09-13]** [Portal/Badges] Harmonized teacher tool badges: extended `PROF_BADGES` in `portal.js` with `Outil`, `Outils`, and `Exercices` to guarantee consistent `.badge.prof` styling across all teacher cards, updated unit tests (`test_portal.js`), and regenerated Service Worker manifest (`ednum-4b6f9eba`).
-- **[2026-09-16]** [Teacher/Production] Promoted Roue de la chance to production (`webapps/teacher/roue_de_la_chance.html`) with presets, personal list persistence, and standardized AGPL-3.0 attribution footers.
-- **[2026-09-17]** [Teacher/Tools] Enhanced classroom workflows: integrated offline class roster import (Swiss ENT XLS/XLSX/CSV) into Tirage au sort, and added Anonymiseur tool with complete tutorial (`MODE_EMPLOI_ANONYMISEUR.md`).
-- **[2026-09-18]** [Legal/Compliance] Updated regulatory documentation (`confidentialite.html`, `mentions-legales.html`, `cgu.html`): clarified local data storage under LIPDA/LPD, formalized HEP-VS / school / teacher governance roles, added dedicated data subject rights section, designated Valais Data Protection Officer with incident reporting protocol, and integrated LHand / eCH-0059 digital accessibility compliance.
-- **[2026-10-02]** [App/Pedagogy] Renamed "Dactylo" to "Tape-Texte" in UI, metadata, and curriculum registry (`EN 23 · Usages — Saisie d'un texte`) to align with primary school pedagogy (Cycle 2 focus on keyboard text entry regardless of typing style). Migrated storage key to `tapetexte-scores` with backwards compatibility.
-- **[2026-10-02]** [UI/Layout] Standardized vertical and horizontal card centering with bottom-anchored footers across all 25 webapps via `components.css`. Automated viewport tests verified across Desktop 1440p (2560x1305), Laptop 1080p, Tablet, and Mobile without any top-cropping or layout clipping.
-- **[2026-10-04]** [UI/Bugfix] Fixed narrow card shrink-wrapping on wide screens: added explicit `width: 100%; box-sizing: border-box;` to `.container` and `.app-shell` across `components.css` and individual webapp stylesheets. Restored full 1400px wide layout for interactive network routing, binary encoding, and simulation boards.
-- **[2026-10-06]** [Feature/Teacher] Major overhaul of Adaptateur & Simulateur DYS (`alpha/webapps/teacher/sim_dyslexie.html`): in-situ text editing directly on the student worksheet, custom named profile saving and loading (`localStorage`), native Microsoft Word (.docx) export, CERAS grapheme-phoneme coloring, greyed-out silent letters, and Century Gothic font support.
-- **[2026-10-07]** [Audit/Quality] Comprehensive repository audit (25 webapps + 6 portals/legal pages): updated unit test suite to 227 passing tests (100%), fixed orphaned FontAwesome icons (`circle-question` ➔ `circle-info`, `font` ➔ `a`), verified 100% CSP and `<link rel="root">` compliance, synchronized Service Worker manifest (`ednum-6514e3b9`, 75 assets), and audited/realigned all pedagogical guides (`meta/tuto/`) and README against live codebase.
-- **[2026-10-08]** [UX/Pedagogy] Overhaul of Jeu de la grue (`alpha/webapps/jeu_de_la_grue.html`): simplified controls to 3 horizontal buttons (Left, Action/Claw, Right), removed manual height/vertical commands, added automated crane arm descent and ascent animation for block pickup/dropoff on rail, eliminated duplicate script tags, added instant cooldown cancel on program edit, and updated tutorial guide (`MODE_EMPLOI_JEU_DE_LA_GRUE.md`) and README to align with 1-2H DÉ>CODAGE curriculum.
-- **[2026-10-09]** [Memory/Rules] Added code simplification directive (YAGNI, SOLID, DRY, KISS) to `meta/memory/user-preferences.md` with the 3-step structured review protocol (Critique, Purged Code, What Did Not Survive).
-- **[2026-10-09]** [Refactor/DRY] Extracted duplicate CSS from 3 regulatory pages (`cgu.html`, `confidentialite.html`, `mentions-legales.html`) into unified `assets/css/legal.css` (-1,415 lines of redundant code eliminated), updated Service Worker cache manifest (`ednum-52587246`, 76 assets), and verified 100% unit tests passing (227 tests).
-- **[2026-10-09]** [Refactor/SOLID] Decoupled PWA Service Worker lifecycle from `theme.js` into dedicated `assets/js/pwa.js`, made `modal-export.js` loaded on-demand in `scores.js`, updated all 31 HTML files, and added `test_pwa.js` (232 passing tests, SW manifest `ednum-225b44b1`, 77 assets).
-
-
-
+- **[2026-05-20]** [Security/PWA] Fixed inline XSS handlers, added toast `aria-live`, and enabled PWA `skipWaiting`.
+- **[2026-05-20]** [Quality] Cleaned up CSS `!important` declarations and added 4 E2E test suites.
+- **[2026-05-21]** [Refactor] Extracted inline styles to `assets/css/` and migrated remaining `onclick` attributes.
+- **[2026-05-22]** [Feature] Added Easy/Hard difficulty levels to Coffre-fort and excluded Password utility from scores.
+- **[2026-05-25]** [Feature] Added color mode (4 colors, 2 bits/pixel) and cooperative share links to Pixel Studio.
+- **[2026-05-25]** [Cleanup] Removed deprecated alpha app `pixels_binaires.html` (absorbed into Pixel Studio).
+- **[2026-05-27]** [Feature] Polished Pseudo-code with linear progression, neutral drone SVG, and stats modal fixes.
+- **[2026-05-27]** [Bugfix] Fixed timer races in Automate, theme dark mode transitions, and select element contrast.
+- **[2026-05-27]** [Registry] Registered Dresseur de neurones and diversified alpha application theme palettes.
+- **[2026-05-28]** [Scores] Overhauled Machine à Trier scoring: victories require complete bin clearance.
+- **[2026-05-28]** [UX] Added swap icons (↕) and onboarding hints to Réseau de tri and Automate simulator.
+- **[2026-05-28]** [Registry] Renamed Bases du pseudocode to Pseudo-code and aligned curriculum references to 9CO.
+- **[2026-05-28]** [Feature] Redesigned Ticket Vending Machine and Loudspeaker hardware panels in Pseudo-code.
+- **[2026-05-29]** [UI/A11y] Modernized Cycle 1 portal with duotone icons and integrated High Contrast toggles.
+- **[2026-05-30]** [A11y] Added keyboard grid navigation and custom grid sharing to Automate simulator.
+- **[2026-08-12]** [Scores] Harmonized ScoreManager labels, fixed attempt count tracking, and added score bars.
+- **[2026-08-19]** [Docs] Overhauled and expanded comprehensive user guides across all 14 applications (`meta/tuto/`).
+- **[2026-08-20]** [Security] Resolved VICE security alerts #74 and #75 (DOM XSS and dependency updates).
+- **[2026-08-22]** [Feature] Added classroom projection (TBI) mode with container overflow safeguards.
+- **[2026-08-24]** [Feature] Extracted Password Generator into standalone webapp and added QR Code Generator for teachers.
+- **[2026-08-26]** [PWA] Automated Service Worker manifest hashing workflow and enabled client `skipWaiting` toast.
+- **[2026-08-27]** [Design] Harmonized background gradients across all webapps using pure CSS tokens.
+- **[2026-08-27]** [CI/Testing] Added jsdom to CI workflow, refined Playwright test suite, and updated AGPL-3.0 attribution.
+- **[2026-08-28]** [Mobile/UX] Improved smartphone responsiveness across Password Generator and portal category filters.
+- **[2026-08-30]** [Docs] Updated high-DPI screenshots across all 16 applications and refreshed documentation.
+- **[2026-09-03]** [Portal] Overhauled main and Cycle 1 portals with smart sticky headers, role toggle, and Utilitaires cards.
+- **[2026-09-04]** [PWA/Apps] Added PWA install guide, promoted QR code to prod, and created Tri par insertion (10CO).
+- **[2026-09-06]** [Feature/Teacher] Launched and promoted Minuteur visuel (`time_timer.html`) to production.
+- **[2026-09-06]** [Feature/Alpha] Added Tape-Texte (Dactylo) touch typing webapp with Swiss Romand QWERTZ layout.
+- **[2026-09-06]** [A11y/Dark Mode] Audited and resolved dark mode text input contrast issues across all 26 HTML webapps.
+- **[2026-09-06]** [Security/Registry] Fixed DOM XSS alert #94 in `portal.js` and updated Swiss curriculum references.
+- **[2026-09-07]** [Memory] Consolidated and pruned the 5 canonical agent memory files.
+- **[2026-09-08]** [Polish] Added customizable audio tones to Minuteur visuel and refined Password Generator rules.
+- **[2026-09-10]** [UI/Navigation] Standardized dedicated `[←]` back buttons and clean headers across all 26 webapps.
+- **[2026-09-11]** [PWA] Bypassed Service Worker registration for web crawlers and hardened `qrcode.html`.
+- **[2026-09-13]** [Portal] Harmonized teacher tool badges (`.badge.prof`) across all cards in `portal.js`.
+- **[2026-09-16]** [Teacher/Production] Promoted Roue de la chance to production with presets and list persistence.
+- **[2026-09-17]** [Teacher/Tools] Added offline class roster import (XLS/XLSX/CSV) to Tirage au sort and created Anonymiseur.
+- **[2026-09-18]** [Compliance] Updated regulatory documentation (LIPDA/LPD, Valais DPO, LHand / eCH-0059 accessibility).
+- **[2026-10-02]** [Pedagogy] Renamed Dactylo to Tape-Texte (EN 23) and migrated score storage key.
+- **[2026-10-02]** [UI/Layout] Standardized responsive centering and bottom-anchored footers across all 25 webapps.
+- **[2026-10-04]** [UI/Layout] Fixed card width shrink-wrapping on wide screens in `components.css`.
+- **[2026-10-06]** [Feature/Teacher] Overhauled Adaptateur & Simulateur DYS: CERAS coloring, silent letters, docx export.
+- **[2026-10-07]** [Quality] Repository audit: 100% unit tests passing, CSP compliance, and synchronized tutorials.
+- **[2026-10-08]** [Pedagogy] Simplified Jeu de la grue controls to 3 horizontal buttons with automated crane arm.
+- **[2026-10-09]** [Memory] Added code simplification directive (YAGNI, SOLID, DRY, KISS) to user preferences.
+- **[2026-10-09]** [Refactor/DRY] Extracted duplicate CSS from regulatory pages into `assets/css/legal.css` (-1,415 lines).
+- **[2026-10-09]** [Refactor/SOLID] Decoupled PWA Service Worker into `assets/js/pwa.js` and made `modal-export.js` on-demand.
+- **[2026-10-11]** [Refactor/Simplification] Simplified Jeu de la grue (-705 lines, single-pass simulation, unified crane logic).
+- **[2026-10-11]** [Design/Scores] Harmonized global ScoreManager modal: vector SVG icons, standard `.btn` classes, and glassmorphism.
