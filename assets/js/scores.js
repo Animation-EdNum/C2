@@ -78,7 +78,9 @@ const ScoreManager = {
     },
 
     _escapeHtml(unsafe) {
-        if (unsafe === null || unsafe === undefined) { return ''; }
+        if (unsafe === null || unsafe === undefined) {
+            return '';
+        }
         return String(unsafe)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -86,8 +88,6 @@ const ScoreManager = {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
     },
-
-
 
     init(appId) {
         this.appId = appId;
@@ -140,7 +140,9 @@ const ScoreManager = {
 
     ensurePath(mode, difficulty) {
         const key = this._diffKey(difficulty);
-        if (!this.stats[mode]) this.stats[mode] = {};
+        if (!this.stats[mode]) {
+            this.stats[mode] = {};
+        }
         if (!this.stats[mode][key]) {
             this.stats[mode][key] = {
                 totalAttempts: 0,
@@ -222,7 +224,9 @@ const ScoreManager = {
 
     showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('noNudges') === '1') return;
+        if (urlParams.get('noNudges') === '1') {
+            return;
+        }
 
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
@@ -333,9 +337,6 @@ const ScoreManager = {
                 s.onerror = resolve;
                 document.head.appendChild(s);
             });
-            if (window.ModalExporter && typeof window.ModalExporter.decorateModal === 'function') {
-                window.ModalExporter.decorateModal(document.getElementById('score-modal-content'));
-            }
         };
 
         const exportBtn = document.getElementById('btn-export-scores-action');
@@ -360,9 +361,7 @@ const ScoreManager = {
             });
         }
 
-        if (window.ModalExporter && typeof window.ModalExporter.decorateModal === 'function') {
-            window.ModalExporter.decorateModal(document.getElementById('score-modal-content'));
-        } else {
+        if (!window.ModalExporter) {
             loadModalExporter();
         }
 
@@ -373,7 +372,9 @@ const ScoreManager = {
         let touchStartX = 0;
         let touchStartY = 0;
         const modalContent = document.getElementById('score-modal-content');
-        if (!modalContent) return;
+        if (!modalContent) {
+            return;
+        }
 
         modalContent.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
@@ -435,7 +436,9 @@ const ScoreManager = {
 
     renderModalContent() {
         const body = document.getElementById('score-modal-body');
-        if (!body) return;
+        if (!body) {
+            return;
+        }
 
         body.replaceChildren();
 
@@ -573,7 +576,9 @@ const ScoreManager = {
 
                 const tbody = document.createElement('tbody');
                 for (const diff in this.stats[mode]) {
-                    if (diff === this._NO_DIFF) continue;
+                    if (diff === this._NO_DIFF) {
+                        continue;
+                    }
                     const st = this.stats[mode][diff];
                     const diffName = this.DIFF_LABELS[diff] || diff;
 
@@ -616,7 +621,9 @@ const ScoreManager = {
         setTimeout(() => {
             document.querySelectorAll('.stat-donut-circle').forEach(circle => {
                 const target = circle.getAttribute('data-target');
-                if (target) circle.style.strokeDashoffset = target;
+                if (target) {
+                    circle.style.strokeDashoffset = target;
+                }
             });
         }, 50);
     },

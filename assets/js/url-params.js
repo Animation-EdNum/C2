@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.hasSharedGrid = false;
 window.keyboardModified = false;
+let isShareModalInitialized = false;
 
 function applyGridToState(state, gridId, robotId, targetId, parsedObstacles, parsedRobot, parsedTarget) {
     state.obstacles = [...parsedObstacles];
@@ -65,15 +66,17 @@ function applyUrlParameters() {
         }
 
         const parsedObstacles = [];
-        if (obstaclesVal !== null) {
-            if (obstaclesVal !== '') {
-                obstaclesVal.split(';').forEach(pair => {
-                    const parts = pair.split(',');
-                    if (parts.length === 2) {
-                        parsedObstacles.push({ r: parseInt(parts[0], 10), c: parseInt(parts[1], 10) });
+        if (obstaclesVal) {
+            obstaclesVal.split(';').forEach(pair => {
+                const parts = pair.split(',');
+                if (parts.length === 2) {
+                    const r = parseInt(parts[0], 10);
+                    const c = parseInt(parts[1], 10);
+                    if (!Number.isNaN(r) && !Number.isNaN(c)) {
+                        parsedObstacles.push({ r, c });
                     }
-                });
-            }
+                }
+            });
         }
 
         let parsedRobot = null;
@@ -120,11 +123,11 @@ function applyUrlParameters() {
         window.isSharedApp = true;
     }
 
-
     if (urlParams.get('highContrast') === '1') {
         localStorage.setItem('global_theme', 'high-contrast');
-        if (typeof setTheme === 'function') setTheme('high-contrast');
-        else {
+        if (typeof setTheme === 'function') {
+            setTheme('high-contrast');
+        } else {
             document.body.classList.remove('dark');
             document.body.classList.add('high-contrast');
         }
@@ -133,44 +136,60 @@ function applyUrlParameters() {
     // 1. Interface & Navigation Hiding
     if (urlParams.get('only') === '1') {
         const tabs = document.querySelector('.tabs');
-        if (tabs) tabs.style.display = 'none';
+        if (tabs) {
+            tabs.style.display = 'none';
+        }
     }
 
     if (urlParams.get('noHome') === '1') {
         const homeBtns = document.querySelectorAll('a[href*="index.html"], a[href*="indexC1.html"], .header-back-btn');
-        homeBtns.forEach(homeBtn => homeBtn.remove());
+        homeBtns.forEach(homeBtn => {
+            homeBtn.remove();
+        });
     }
 
     if (urlParams.get('noSettings') === '1') {
         const settingsDropdown = document.querySelector('.settings-dropdown');
-        if (settingsDropdown) settingsDropdown.style.display = 'none';
+        if (settingsDropdown) {
+            settingsDropdown.style.display = 'none';
+        }
     }
 
     if (urlParams.get('noAudio') === '1') {
         const audioBtn = document.getElementById('audio-toggle-btn');
-        if (audioBtn) audioBtn.style.display = 'none';
+        if (audioBtn) {
+            audioBtn.style.display = 'none';
+        }
     }
 
     if (urlParams.get('coloredCmds') === '1') {
         document.body.classList.add('colored-cmds');
         const toggleBtn = document.getElementById('colored-cmds-toggle-btn');
-        if (toggleBtn) toggleBtn.style.display = 'none';
+        if (toggleBtn) {
+            toggleBtn.style.display = 'none';
+        }
     }
 
     if (urlParams.get('coloredWeights') === '1') {
         const toggleBtn = document.getElementById('colored-weights-toggle-btn');
-        if (toggleBtn) toggleBtn.style.display = 'none';
+        if (toggleBtn) {
+            toggleBtn.style.display = 'none';
+        }
     }
 
     if (urlParams.get('noInstructions') === '1') {
         const instructions = document.querySelectorAll('.instructions, .chal-instruction');
-        instructions.forEach(el => el.style.display = 'none');
+        instructions.forEach(el => {
+            el.style.display = 'none';
+        });
     }
 
     if (urlParams.get('mode') === 'tbi' || urlParams.get('tbi') === '1' || urlParams.get('projection') === '1') {
         document.body.classList.add('projection');
         const projText = document.getElementById('projectionToggleText');
-        if (projText) projText.textContent = 'Mode normal';
+        if (projText) {
+            projText.textContent = 'Mode normal';
+        }
     }
 
     // 2. Locks
@@ -181,10 +200,16 @@ function applyUrlParameters() {
             btn.disabled = true;
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
-            btn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); return false; };
+            btn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            };
         });
         const diffSelect = document.getElementById('difficulty-select');
-        if (diffSelect) diffSelect.disabled = true;
+        if (diffSelect) {
+            diffSelect.disabled = true;
+        }
     }
 
     if (urlParams.has('forceMat')) {
@@ -196,12 +221,16 @@ function applyUrlParameters() {
 
     if (urlParams.get('lockMat') === '1') {
         const matBtn = document.getElementById('btn-open-mats');
-        if (matBtn) matBtn.style.display = 'none';
+        if (matBtn) {
+            matBtn.style.display = 'none';
+        }
     }
 
     if (urlParams.get('lockSkin') === '1') {
         const skinBtn = document.getElementById('btn-open-skins');
-        if (skinBtn) skinBtn.style.display = 'none';
+        if (skinBtn) {
+            skinBtn.style.display = 'none';
+        }
 
         // Disable skin unlocking entirely
         window.isSkinUnlockDisabled = true;
@@ -213,9 +242,13 @@ function applyUrlParameters() {
 
     if (urlParams.has('lockSpeed')) {
         const speedBtn = document.getElementById('btn-speed');
-        if (speedBtn) speedBtn.style.display = 'none';
+        if (speedBtn) {
+            speedBtn.style.display = 'none';
+        }
         const speedToggleBtn = document.getElementById('speed-toggle-btn');
-        if (speedToggleBtn) speedToggleBtn.style.display = 'none';
+        if (speedToggleBtn) {
+            speedToggleBtn.style.display = 'none';
+        }
 
         if (typeof window.setSpeedLevel === 'function') {
             window.setSpeedLevel(parseInt(urlParams.get('lockSpeed'), 10));
@@ -228,11 +261,6 @@ function applyUrlParameters() {
 
     if (urlParams.get('blindcode') === '1') {
         window.forceBlindcode = true;
-    }
-
-    if (urlParams.get('noDrag') === '1') {
-        // This is handled by individual apps, we can set a global flag
-        window.noDragParam = true;
     }
 
     // 3. Tab routing
@@ -260,7 +288,9 @@ function applyUrlParameters() {
                         const wasLocked = btn.disabled;
                         btn.disabled = false;
                         btn.click();
-                        if (wasLocked) btn.disabled = true;
+                        if (wasLocked) {
+                            btn.disabled = true;
+                        }
                         clicked = true;
                     }
                 });
@@ -273,7 +303,9 @@ function applyUrlParameters() {
                     const wasLocked = diffBtn.disabled;
                     diffBtn.disabled = false;
                     diffBtn.click();
-                    if (wasLocked) diffBtn.disabled = true;
+                    if (wasLocked) {
+                        diffBtn.disabled = true;
+                    }
                     clicked = true;
                 }
             }
@@ -287,8 +319,12 @@ function applyUrlParameters() {
                     setDifficulty(diff);
                 } else if (typeof window.currentDifficulty !== 'undefined') {
                     window.currentDifficulty = diff;
-                    if (typeof generateSequence === 'function') generateSequence();
-                    if (typeof initLevel === 'function') initLevel();
+                    if (typeof generateSequence === 'function') {
+                        generateSequence();
+                    }
+                    if (typeof initLevel === 'function') {
+                        initLevel();
+                    }
                 }
             }
         }, 150);
@@ -297,21 +333,27 @@ function applyUrlParameters() {
     // Hide grid toolbar buttons based on restrictions
     if (urlParams.get('lockMat') === '1') {
         const cycleMatBtns = document.querySelectorAll('.icon-action-btn[id$="-cycle-mat"]');
-        cycleMatBtns.forEach(btn => btn.style.display = 'none');
+        cycleMatBtns.forEach(btn => {
+            btn.style.display = 'none';
+        });
     }
     if (urlParams.has('lockSpeed')) {
         const toggleSpeedBtns = document.querySelectorAll('.icon-action-btn[id$="-toggle-speed"]');
-        toggleSpeedBtns.forEach(btn => btn.style.display = 'none');
+        toggleSpeedBtns.forEach(btn => {
+            btn.style.display = 'none';
+        });
     }
     if (urlParams.get('hideGrid') === '1') {
         const hideGridBtns = document.querySelectorAll('.icon-action-btn[id$="-hide-grid"]');
-        hideGridBtns.forEach(btn => btn.style.display = 'none');
+        hideGridBtns.forEach(btn => {
+            btn.style.display = 'none';
+        });
     }
 }
 
 function initShareModal() {
-    if (window.isSharedApp) {
-        return; // Hide on Shared Apps
+    if (isShareModalInitialized || window.isSharedApp) {
+        return;
     }
 
     // Check if share button exists, if not, create it in settings-dropdown-content
@@ -341,7 +383,7 @@ function initShareModal() {
         }
     }
 
-    // Create Modal HTML
+    // Create Modal HTML if not already in DOM
     const modalHTML = `
     <div id="share-modal-overlay" class="ui-modal-overlay" aria-hidden="true">
         <div id="share-modal" class="ui-modal-content" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
@@ -629,82 +671,122 @@ function initShareModal() {
         </div>
     </div>`;
 
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    let modalOverlay = document.getElementById('share-modal-overlay');
+    if (!modalOverlay) {
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        modalOverlay = document.getElementById('share-modal-overlay');
+    }
     window.fa?.createIcons?.();
 
     // Context-Aware Options: Hide options for features not in the current app
     if (!document.getElementById('btn-open-mats')) {
         const lblLockMat = document.getElementById('lbl-lockMat');
         const lblForceMat = document.getElementById('lbl-forceMat');
-        if (lblLockMat) lblLockMat.style.display = 'none';
-        if (lblForceMat) lblForceMat.style.display = 'none';
+        if (lblLockMat) {
+            lblLockMat.style.display = 'none';
+        }
+        if (lblForceMat) {
+            lblForceMat.style.display = 'none';
+        }
     }
     if (!document.getElementById('btn-open-skins')) {
         const lblLockSkin = document.getElementById('lbl-lockSkin');
-        if (lblLockSkin) lblLockSkin.style.display = 'none';
+        if (lblLockSkin) {
+            lblLockSkin.style.display = 'none';
+        }
     }
     if (!document.getElementById('btn-speed') && !document.getElementById('speed-toggle-btn')) {
         const lblLockSpeed = document.getElementById('lbl-lockSpeed');
-        if (lblLockSpeed) lblLockSpeed.style.display = 'none';
+        if (lblLockSpeed) {
+            lblLockSpeed.style.display = 'none';
+        }
     }
     if (!document.getElementById('btn-toggle-cmds') && !document.getElementById('hide-cmd-toggle-btn')) {
         const lblNoCmdToggle = document.getElementById('lbl-noCmdToggle');
         const lblBlindcode = document.getElementById('lbl-blindcode');
-        if (lblNoCmdToggle) lblNoCmdToggle.style.display = 'none';
-        if (lblBlindcode) lblBlindcode.style.display = 'none';
+        if (lblNoCmdToggle) {
+            lblNoCmdToggle.style.display = 'none';
+        }
+        if (lblBlindcode) {
+            lblBlindcode.style.display = 'none';
+        }
     }
     if (!document.getElementById('audio-toggle-btn')) {
         const lblNoAudio = document.getElementById('lbl-noAudio');
-        if (lblNoAudio) lblNoAudio.style.display = 'none';
+        if (lblNoAudio) {
+            lblNoAudio.style.display = 'none';
+        }
     }
-
 
     const hasInstructions = document.querySelectorAll('.instructions, .chal-instruction').length > 0;
     if (hasInstructions) {
-        document.getElementById('lbl-noInstructions').style.display = 'flex';
+        const lblNoInst = document.getElementById('lbl-noInstructions');
+        if (lblNoInst) {
+            lblNoInst.style.display = 'flex';
+        }
     }
 
     // Specific Options Logic
     const hasDifficulties = document.querySelectorAll('.diff-btn').length > 0 || document.getElementById('difficulty-select');
     if (!hasDifficulties) {
         const lblLockDiff = document.getElementById('lbl-lockDiff');
-        if (lblLockDiff) lblLockDiff.style.display = 'none';
+        if (lblLockDiff) {
+            lblLockDiff.style.display = 'none';
+        }
     }
 
     if (document.querySelector('.alpha-section')) {
-        document.getElementById('lbl-hideDict').style.display = 'flex';
+        const lbl = document.getElementById('lbl-hideDict');
+        if (lbl) {
+            lbl.style.display = 'flex';
+        }
     }
     if (window.location.pathname.includes('routage_reseau.html')) {
-        document.getElementById('lbl-lockTopology').style.display = 'flex';
-        document.getElementById('lbl-coloredWeights').style.display = 'flex';
+        const lbl1 = document.getElementById('lbl-lockTopology');
+        if (lbl1) {
+            lbl1.style.display = 'flex';
+        }
+        const lbl2 = document.getElementById('lbl-coloredWeights');
+        if (lbl2) {
+            lbl2.style.display = 'flex';
+        }
     }
     if (window.location.pathname.includes('bit_de_parite.html')) {
-        document.getElementById('lbl-strictMode').style.display = 'flex';
+        const lbl = document.getElementById('lbl-strictMode');
+        if (lbl) {
+            lbl.style.display = 'flex';
+        }
     }
     if (window.location.pathname.includes('simulateur_automate.html')) {
-        document.getElementById('lbl-hideGrid').style.display = 'flex';
-        document.getElementById('lbl-coloredCmds').style.display = 'flex';
-        document.getElementById('lbl-lockSkin').style.display = 'flex';
-        document.getElementById('lbl-lockMat').style.display = 'flex';
-        document.getElementById('lbl-forceMat').style.display = 'flex';
-        document.getElementById('lbl-lockSpeed').style.display = 'flex';
+        ['lbl-hideGrid', 'lbl-coloredCmds', 'lbl-lockSkin', 'lbl-lockMat', 'lbl-forceMat', 'lbl-lockSpeed'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = 'flex';
+            }
+        });
     }
     if (window.location.pathname.includes('binaire_studio.html')) {
-        document.getElementById('lbl-unlockEditor').style.display = 'flex';
-        document.getElementById('lbl-colorMode').style.display = 'flex';
+        const lbl1 = document.getElementById('lbl-unlockEditor');
+        if (lbl1) {
+            lbl1.style.display = 'flex';
+        }
+        const lbl2 = document.getElementById('lbl-colorMode');
+        if (lbl2) {
+            lbl2.style.display = 'flex';
+        }
     }
     if (document.getElementById('projection-toggle-btn') || document.body.classList.contains('projection') || window.location.pathname.includes('generateur_mot_de_passe.html')) {
         const lblTbi = document.getElementById('lbl-tbi');
-        if (lblTbi) lblTbi.style.display = 'flex';
+        if (lblTbi) {
+            lblTbi.style.display = 'flex';
+        }
         const optTbi = document.getElementById('opt-tbi');
         if (optTbi && document.body.classList.contains('projection')) {
             optTbi.checked = true;
         }
     }
 
-
     // Event Listeners
-    const modalOverlay = document.getElementById('share-modal-overlay');
     const btnClose = document.getElementById('btn-close-share');
     const btnCopy = document.getElementById('btn-copy-share');
     const btnQrShare = document.getElementById('btn-qr-share');
@@ -738,8 +820,11 @@ function initShareModal() {
             currentDiff = window.currentDifficulty;
         } else {
             const activeDiff = document.querySelector('.view.active .diff-btn.active') || document.querySelector('.diff-btn.active');
-            if (activeDiff) currentDiff = activeDiff.dataset.diff || activeDiff.id.split('-').pop();
-            else if (document.getElementById('difficulty-select')) currentDiff = document.getElementById('difficulty-select').value;
+            if (activeDiff) {
+                currentDiff = activeDiff.dataset.diff || activeDiff.id.split('-').pop();
+            } else if (document.getElementById('difficulty-select')) {
+                currentDiff = document.getElementById('difficulty-select').value;
+            }
         }
 
         if (currentDiff) {
@@ -818,7 +903,9 @@ function initShareModal() {
         const forceMatCb = document.getElementById('opt-forceMat');
         if (forceMatCb) {
             let currentMat = localStorage.getItem('at_active_mat') || 'none';
-            if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
+            if (typeof window.activeMat !== 'undefined') {
+                currentMat = window.activeMat;
+            }
 
             if (optOnly && optOnly.checked) {
                 // If "Mode actuel uniquement" is checked, we automatically apply and disable "Tapis imposé"
@@ -851,16 +938,20 @@ function initShareModal() {
             }
         }
 
-        urlInput.value = url.toString();
+        if (urlInput) {
+            urlInput.value = url.toString();
+        }
 
         // Reset copy button state
-        btnCopy.replaceChildren();
-        const icon = document.createElement('i');
-        icon.setAttribute('data-fa', 'clipboard');
-        btnCopy.appendChild(icon);
-        btnCopy.appendChild(document.createTextNode(' Copier'));
-        btnCopy.classList.remove('btn-success');
-        window.fa?.createIcons?.();
+        if (btnCopy) {
+            btnCopy.replaceChildren();
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', 'clipboard');
+            btnCopy.appendChild(icon);
+            btnCopy.appendChild(document.createTextNode(' Copier'));
+            btnCopy.classList.remove('btn-success');
+            window.fa?.createIcons?.();
+        }
 
         if (qrContainer && qrContainer.style.display === 'block' && typeof QRious !== 'undefined') {
             generateQrCode();
@@ -871,16 +962,24 @@ function initShareModal() {
         const forceMatCb = document.getElementById('opt-forceMat');
         if (forceMatCb) {
             let currentMat = localStorage.getItem('at_active_mat') || 'none';
-            if (typeof window.activeMat !== 'undefined') currentMat = window.activeMat;
+            if (typeof window.activeMat !== 'undefined') {
+                currentMat = window.activeMat;
+            }
             if (currentMat === 'custom') {
                 forceMatCb.disabled = true;
                 forceMatCb.checked = false;
-                document.getElementById('lbl-forceMat').style.opacity = '0.5';
-                document.getElementById('lbl-forceMat').title = 'Impossible de forcer un tapis personnalisé';
+                const lbl = document.getElementById('lbl-forceMat');
+                if (lbl) {
+                    lbl.style.opacity = '0.5';
+                    lbl.title = 'Impossible de forcer un tapis personnalisé';
+                }
             } else {
                 forceMatCb.disabled = false;
-                document.getElementById('lbl-forceMat').style.opacity = '1';
-                document.getElementById('lbl-forceMat').title = '';
+                const lbl = document.getElementById('lbl-forceMat');
+                if (lbl) {
+                    lbl.style.opacity = '1';
+                    lbl.title = '';
+                }
             }
         }
 
@@ -896,7 +995,9 @@ function initShareModal() {
             } else {
                 lblCustomGrid.style.display = 'none';
                 const optCustomGrid = document.getElementById('opt-customGrid');
-                if (optCustomGrid) optCustomGrid.checked = false;
+                if (optCustomGrid) {
+                    optCustomGrid.checked = false;
+                }
             }
         }
 
@@ -904,9 +1005,11 @@ function initShareModal() {
         modalOverlay.classList.add('active');
     });
 
-    btnClose.addEventListener('click', () => {
-        modalOverlay.classList.remove('active');
-    });
+    if (btnClose) {
+        btnClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+    }
 
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
@@ -919,7 +1022,6 @@ function initShareModal() {
             modalOverlay.classList.remove('active');
         }
     });
-
 
     // Presets Logic
     const btnPresetMission = document.getElementById('btn-preset-mission');
@@ -936,7 +1038,9 @@ function initShareModal() {
         resetAllCheckboxes();
         ids.forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.checked = true;
+            if (el) {
+                el.checked = true;
+            }
         });
         updateShareUrl();
         if (typeof showToast === 'function') {
@@ -945,83 +1049,106 @@ function initShareModal() {
     }
 
     if (btnPresetMission) {
-        btnPresetMission.addEventListener('click', () => applyPreset(['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'], "Mode Mission appliqué"));
+        btnPresetMission.addEventListener('click', () => {
+            applyPreset(['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'], "Mode Mission appliqué");
+        });
     }
 
     if (btnPresetEntrainement) {
-        btnPresetEntrainement.addEventListener('click', () => applyPreset(['opt-noHome', 'opt-only'], "Mode Entraînement appliqué"));
+        btnPresetEntrainement.addEventListener('click', () => {
+            applyPreset(['opt-noHome', 'opt-only'], "Mode Entraînement appliqué");
+        });
     }
 
     if (btnPresetInclusif) {
-        btnPresetInclusif.addEventListener('click', () => applyPreset(['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'], "Mode Inclusif appliqué"));
+        btnPresetInclusif.addEventListener('click', () => {
+            applyPreset(['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'], "Mode Inclusif appliqué");
+        });
     }
 
-    btnToggleAdvanced.addEventListener('click', () => {
-        const isVisible = advancedOptions.style.display === 'block';
-        advancedOptions.style.display = isVisible ? 'none' : 'block';
-        btnToggleAdvanced.replaceChildren(document.createTextNode('Options Avancées '));
-        const icon = document.createElement('i');
-        icon.setAttribute('data-fa', `chevron-${isVisible ? 'down' : 'up'}`);
-        btnToggleAdvanced.appendChild(icon);
-        window.fa?.createIcons?.();
-    });
+    if (btnToggleAdvanced && advancedOptions) {
+        btnToggleAdvanced.addEventListener('click', () => {
+            const isVisible = advancedOptions.style.display === 'block';
+            advancedOptions.style.display = isVisible ? 'none' : 'block';
+            btnToggleAdvanced.replaceChildren(document.createTextNode('Options Avancées '));
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', `chevron-${isVisible ? 'down' : 'up'}`);
+            btnToggleAdvanced.appendChild(icon);
+            window.fa?.createIcons?.();
+        });
+    }
 
     checkboxes.forEach(cb => {
         cb.addEventListener('change', updateShareUrl);
     });
 
-    btnTestLink.addEventListener('click', () => {
-        window.open(urlInput.value, '_blank');
-    });
+    if (btnTestLink && urlInput) {
+        btnTestLink.addEventListener('click', () => {
+            window.open(urlInput.value, '_blank');
+        });
+    }
 
-    btnCopy.addEventListener('click', () => {
-        navigator.clipboard.writeText(urlInput.value).then(() => {
-            btnCopy.replaceChildren();
-            const icon = document.createElement('i');
-            icon.setAttribute('data-fa', 'clipboard');
-            btnCopy.appendChild(icon);
-            btnCopy.appendChild(document.createTextNode(' Copié !'));
-            btnCopy.classList.add('btn-success');
-            window.fa?.createIcons?.();
+    if (btnCopy && urlInput) {
+        btnCopy.addEventListener('click', () => {
+            navigator.clipboard.writeText(urlInput.value).then(() => {
+                btnCopy.replaceChildren();
+                const icon = document.createElement('i');
+                icon.setAttribute('data-fa', 'clipboard');
+                btnCopy.appendChild(icon);
+                btnCopy.appendChild(document.createTextNode(' Copié !'));
+                btnCopy.classList.add('btn-success');
+                window.fa?.createIcons?.();
 
-            if (typeof showToast === 'function') {
-                showToast("Lien copié dans le presse-papiers !", true);
+                if (typeof showToast === 'function') {
+                    showToast("Lien copié dans le presse-papiers !", true);
+                }
+            });
+        });
+    }
+
+    if (btnQrShare) {
+        btnQrShare.addEventListener('click', () => {
+            if (qrContainer && qrContainer.style.display === 'block') {
+                qrContainer.style.display = 'none';
+                if (btnDownloadQr) {
+                    btnDownloadQr.style.display = 'none';
+                }
+                btnQrShare.replaceChildren();
+                const icon = document.createElement('i');
+                icon.setAttribute('data-fa', 'qrcode');
+                btnQrShare.appendChild(icon);
+                btnQrShare.appendChild(document.createTextNode(' Afficher le QR Code'));
+                window.fa?.createIcons?.();
+                return;
+            }
+
+            // Dynamically load QRious if not present
+            if (typeof QRious === 'undefined') {
+                const rootLink = document.querySelector('link[rel="root"]');
+                let rootPath = rootLink ? rootLink.getAttribute('href') : './';
+                if (!rootPath.endsWith('/')) {
+                    rootPath += '/';
+                }
+                const script = document.createElement('script');
+                script.src = rootPath + 'assets/js/vendor/qrious.min.js';
+                script.onload = () => {
+                    generateQrCode();
+                };
+                document.body.appendChild(script);
+            } else {
+                generateQrCode();
             }
         });
-    });
-
-    btnQrShare.addEventListener('click', () => {
-        if (qrContainer.style.display === 'block') {
-            qrContainer.style.display = 'none';
-            if (btnDownloadQr) btnDownloadQr.style.display = 'none';
-            btnQrShare.replaceChildren();
-            const icon = document.createElement('i');
-            icon.setAttribute('data-fa', 'qrcode');
-            btnQrShare.appendChild(icon);
-            btnQrShare.appendChild(document.createTextNode(' Afficher le QR Code'));
-            window.fa?.createIcons?.();
-            return;
-        }
-
-        // Dynamically load QRious if not present
-        if (typeof QRious === 'undefined') {
-            const rootLink = document.querySelector('link[rel="root"]');
-            let rootPath = rootLink ? rootLink.getAttribute('href') : './';
-            if (!rootPath.endsWith('/')) rootPath += '/';
-            const script = document.createElement('script');
-            script.src = rootPath + 'assets/js/vendor/qrious.min.js';
-            script.onload = () => {
-                generateQrCode();
-            };
-            document.body.appendChild(script);
-        } else {
-            generateQrCode();
-        }
-    });
+    }
 
     function generateQrCode() {
+        if (!qrContainer || !qrCanvas || !urlInput) {
+            return;
+        }
         qrContainer.style.display = 'block';
-        if (btnDownloadQr) btnDownloadQr.style.display = 'inline-block';
+        if (btnDownloadQr) {
+            btnDownloadQr.style.display = 'inline-block';
+        }
         btnQrShare.replaceChildren();
         const icon = document.createElement('i');
         icon.setAttribute('data-fa', 'qrcode');
@@ -1037,7 +1164,9 @@ function initShareModal() {
 
     if (btnDownloadQr) {
         btnDownloadQr.addEventListener('click', () => {
-            if (!qrCanvas) return;
+            if (!qrCanvas) {
+                return;
+            }
             const dataUrl = qrCanvas.toDataURL('image/png');
             const a = document.createElement('a');
             a.href = dataUrl;
@@ -1047,4 +1176,6 @@ function initShareModal() {
             document.body.removeChild(a);
         });
     }
+
+    isShareModalInitialized = true;
 }

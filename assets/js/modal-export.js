@@ -141,7 +141,12 @@
         },
 
         _escapeHtml(text) {
-            if (!text) return '';
+            if (typeof ScoreManager !== 'undefined' && typeof ScoreManager._escapeHtml === 'function') {
+                return ScoreManager._escapeHtml(text);
+            }
+            if (!text) {
+                return '';
+            }
             return String(text)
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -217,7 +222,9 @@
                         }
 
                         const clonedTarget = clonedDoc.querySelector('.exporting-modal');
-                        if (!clonedTarget) return;
+                        if (!clonedTarget) {
+                            return;
+                        }
 
                         // 2. Encadrement propre sous forme de carte imprimable
                         clonedTarget.style.width = '640px';

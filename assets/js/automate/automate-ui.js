@@ -3,28 +3,46 @@
 
 window.treasureBubbleState = { active: false, timer: null, removeTimer: null, hasPlaced: false, text: 'Clique-moi pour ajouter un trésor et des obstacles', wrapper: null, textDiv: null };
 
+function clearTreasureBubble() {
+    if (window.treasureBubbleState.timer) {
+        clearTimeout(window.treasureBubbleState.timer);
+        window.treasureBubbleState.timer = null;
+    }
+    if (window.treasureBubbleState.removeTimer) {
+        clearTimeout(window.treasureBubbleState.removeTimer);
+        window.treasureBubbleState.removeTimer = null;
+    }
+    if (window.treasureBubbleState.wrapper) {
+        window.treasureBubbleState.wrapper.remove();
+        window.treasureBubbleState.wrapper = null;
+        window.treasureBubbleState.textDiv = null;
+    }
+    window.treasureBubbleState.active = false;
+}
+
 function handleTreasureBubbleClick(e) {
     e.stopPropagation();
     window.treasureBubbleState.text = "Clique sur le bouton ci-dessous";
-    if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
+    if (window.treasureBubbleState.removeTimer) {
+        clearTimeout(window.treasureBubbleState.removeTimer);
+    }
 
     if (window.treasureBubbleState.textDiv) {
         window.treasureBubbleState.textDiv.textContent = window.treasureBubbleState.text;
     }
 
     window.treasureBubbleState.removeTimer = setTimeout(() => {
-        window.treasureBubbleState.active = false;
-        if (window.treasureBubbleState.wrapper) {
-            window.treasureBubbleState.wrapper.remove();
-            window.treasureBubbleState.wrapper = null;
-            window.treasureBubbleState.textDiv = null;
-        }
+        clearTreasureBubble();
     }, 5000);
 }
 
 function triggerTreasureBubble(tab) {
-    if (window.treasureBubbleState.hasPlaced) return;
-    if (activeTab !== 'explore' && activeTab !== 'simulator') return;
+    if (window.treasureBubbleState.hasPlaced) {
+        return;
+    }
+    if (activeTab !== 'explore' && activeTab !== 'simulator') {
+        return;
+    }
 
     window.treasureBubbleState.active = true;
     window.treasureBubbleState.text = 'Clique-moi pour ajouter un trésor et des obstacles';
@@ -69,14 +87,11 @@ function triggerTreasureBubble(tab) {
         window.treasureBubbleState.wrapper = wrapper;
         window.treasureBubbleState.textDiv = textDiv;
 
-        if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
+        if (window.treasureBubbleState.removeTimer) {
+            clearTimeout(window.treasureBubbleState.removeTimer);
+        }
         window.treasureBubbleState.removeTimer = setTimeout(() => {
-            window.treasureBubbleState.active = false;
-            if (window.treasureBubbleState.wrapper) {
-                window.treasureBubbleState.wrapper.remove();
-                window.treasureBubbleState.wrapper = null;
-                window.treasureBubbleState.textDiv = null;
-            }
+            clearTreasureBubble();
         }, 5000);
     }
 }
@@ -354,15 +369,7 @@ function switchTab(event, tab) {
     startTabTimer(tab);
 
     if (window.treasureBubbleState) {
-        if (window.treasureBubbleState.timer) clearTimeout(window.treasureBubbleState.timer);
-        if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
-        if (window.treasureBubbleState.wrapper) {
-            window.treasureBubbleState.wrapper.remove();
-            window.treasureBubbleState.wrapper = null;
-            window.treasureBubbleState.textDiv = null;
-        }
-        window.treasureBubbleState.active = false;
-
+        clearTreasureBubble();
         if (!window.treasureBubbleState.hasPlaced && (tab === 'explore' || tab === 'simulator')) {
             window.treasureBubbleState.timer = setTimeout(() => {
                 triggerTreasureBubble(tab);
@@ -607,7 +614,9 @@ function initApplication() {
         }
     }
 
-    if (activeSkin === 'pirate' || activeSkin === 'manta') startOceanRipples();
+    if (activeSkin === 'pirate' || activeSkin === 'manta') {
+        startOceanRipples();
+    }
 
     if (window.cmdsHiddenByDefault && commandsVisible && !window.forceBlindcode) {
         toggleCommands();
@@ -616,8 +625,12 @@ function initApplication() {
     // Apply force blindcode if parameter is set
     if (window.forceBlindcode) {
         const toggleBtn = document.getElementById('hide-cmd-toggle-btn');
-        if (toggleBtn) toggleBtn.style.display = 'none';
-        if (commandsVisible) toggleCommands(); // trigger hiding if currently visible
+        if (toggleBtn) {
+            toggleBtn.style.display = 'none';
+        }
+        if (commandsVisible) {
+            toggleCommands();
+        }
     }
 
     // Onboarding éphémère mode Exploration (first-time hint)
@@ -1027,9 +1040,13 @@ function onGridSizeChanged() {
         buildGrid('explore-grid', GRID_ROWS, GRID_COLS);
         randomizeSimulatorPosition();
         randomizeExplorePosition();
-        if (activeTab === 'challenge') newChallenge();
-        else if (activeTab === 'read') newReadChallenge();
-        else if (activeTab === 'draw') newDrawChallenge();
+        if (activeTab === 'challenge') {
+            newChallenge();
+        } else if (activeTab === 'read') {
+            newReadChallenge();
+        } else if (activeTab === 'draw') {
+            newDrawChallenge();
+        }
     }, 200);
 }
 

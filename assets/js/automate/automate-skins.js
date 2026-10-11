@@ -155,13 +155,21 @@ const AT_SVGS = {
 
 window.addEventListener('DOMContentLoaded', () => {
     const padFwd = document.getElementById('pad-fwd');
-    if (padFwd) padFwd['innerHTML'] = AT_SVGS.forward;
+    if (padFwd) {
+        padFwd['innerHTML'] = AT_SVGS.forward;
+    }
     const padBwd = document.getElementById('pad-bwd');
-    if (padBwd) padBwd['innerHTML'] = AT_SVGS.backward;
+    if (padBwd) {
+        padBwd['innerHTML'] = AT_SVGS.backward;
+    }
     const padLeft = document.getElementById('pad-left');
-    if (padLeft) padLeft['innerHTML'] = AT_SVGS.left;
+    if (padLeft) {
+        padLeft['innerHTML'] = AT_SVGS.left;
+    }
     const padRight = document.getElementById('pad-right');
-    if (padRight) padRight['innerHTML'] = AT_SVGS.right;
+    if (padRight) {
+        padRight['innerHTML'] = AT_SVGS.right;
+    }
 
     const legendContainer = document.getElementById('legend-container');
     if (legendContainer) {
@@ -199,9 +207,13 @@ const trapListeners = new WeakMap();
 
 function setupFocusTrap(modalId) {
     const modal = document.getElementById(modalId);
-    if (!modal) return;
+    if (!modal) {
+        return;
+    }
     const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-    if (focusableElements.length === 0) return;
+    if (focusableElements.length === 0) {
+        return;
+    }
 
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
@@ -242,7 +254,9 @@ function openMatsModal() {
 }
 
 function closeMatsModal() {
-    if (drawerTriggerElement) drawerTriggerElement.focus();
+    if (drawerTriggerElement) {
+        drawerTriggerElement.focus();
+    }
     playSound('click');
     document.getElementById('mats-drawer').classList.remove('active');
     document.getElementById('mats-drawer-overlay').classList.remove('active');
@@ -818,7 +832,9 @@ if (memoryMode) {
 
 let activeMat = localStorage.getItem('at_active_mat') || 'none';
 generateMatContent(activeMat);
-if (!MAT_CONFIG[activeMat]) activeMat = 'none';
+if (!MAT_CONFIG[activeMat]) {
+    activeMat = 'none';
+}
 
 const MAT_GRID_CONSTRAINTS = {
     'alphabet': { cols: 6, rows: 6 },
@@ -830,7 +846,9 @@ const MAT_GRID_CONSTRAINTS = {
 };
 
 function updateGridSizeSlidersState() {
-    if (!gridColsSlider || !gridRowsSlider) return;
+    if (!gridColsSlider || !gridRowsSlider) {
+        return;
+    }
     const constraint = MAT_GRID_CONSTRAINTS[activeMat];
     const locked = !!constraint;
     const title = locked ? `Taille fixe de ${constraint.cols}x${constraint.rows} pour ce tapis` : '';
@@ -849,8 +867,6 @@ function updateGridSizeSlidersState() {
     }
 }
 
-
-
 let unlockedSkins = JSON.parse(localStorage.getItem('at_unlocked_skins') || '["default"]');
 if ((typeof window.unlockAllSkins !== 'undefined' && window.unlockAllSkins) || new URLSearchParams(window.location.search).get('unlockAllSkins') === '1') {
     unlockedSkins = Object.keys(SKIN_CONFIG);
@@ -862,7 +878,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 let activeSkin = localStorage.getItem('at_active_skin') || 'default';
-if (!SKIN_CONFIG[activeSkin]) activeSkin = 'default';
+if (!SKIN_CONFIG[activeSkin]) {
+    activeSkin = 'default';
+}
 
 const ROBOT_SVGS = {
     'indecis': `
@@ -1777,15 +1795,19 @@ const ROBOT_SVGS = {
 </svg>`
 };
 
-const ROBOT_PREVIEW_SVGS = {};
-for (const skinId in ROBOT_SVGS) {
-    let svg = ROBOT_SVGS[skinId];
-    svg = svg.replace(PREVIEW_ANIMATION_REGEX, ''); // Remove animations for preview
-    svg = svg.replace(PREVIEW_CSS_ANIMATION_REGEX, ''); // Remove CSS animations
-    svg = svg.replace(PREVIEW_FILTER_TAG_REGEX, ''); // Remove SVG filters for better performance
-    svg = svg.replace(PREVIEW_FILTER_ATTR_REGEX, ''); // Remove filter attributes
-    if (skinId === 'volcano') {
+function createStaticPreviewSvg(rawSvg, isVolcano = false) {
+    let svg = rawSvg
+        .replace(PREVIEW_ANIMATION_REGEX, '')
+        .replace(PREVIEW_CSS_ANIMATION_REGEX, '')
+        .replace(PREVIEW_FILTER_TAG_REGEX, '')
+        .replace(PREVIEW_FILTER_ATTR_REGEX, '');
+    if (isVolcano) {
         svg = svg.replace(PREVIEW_VOLCANO_TRANSFORM_REGEX, '<g transform="scale(0.6) translate(36, 0)">');
     }
-    ROBOT_PREVIEW_SVGS[skinId] = svg;
+    return svg;
+}
+
+const ROBOT_PREVIEW_SVGS = {};
+for (const skinId in ROBOT_SVGS) {
+    ROBOT_PREVIEW_SVGS[skinId] = createStaticPreviewSvg(ROBOT_SVGS[skinId], skinId === 'volcano');
 }

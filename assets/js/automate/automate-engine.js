@@ -1254,23 +1254,49 @@ let simState = {
         function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
         function findShortestPath(startR, startC, startD, targetR, targetC, obstacles) {
+            const obsSet = new Set(obstacles.map(o => `${o.r},${o.c}`));
             const queue = [{ r: startR, c: startC, d: startD, path: [] }];
             const visited = new Set([`${startR},${startC},${startD}`]);
-            const cmds = ['forward', 'left', 'right', 'backward'];
+            const dr = [-1, 0, 1, 0];
+            const dc = [0, 1, 0, -1];
 
             while (queue.length > 0) {
                 const curr = queue.shift();
-                if (curr.r === targetR && curr.c === targetC) return curr.path; // Stop exactement sur l'étoile
+                if (curr.r === targetR && curr.c === targetC) {
+                    return curr.path;
+                }
 
-                for (let cmd of cmds) {
-                    const res = moveRobot({ robotRow: curr.r, robotCol: curr.c, robotDir: curr.d, obstacles }, cmd);
-                    if (!res.blocked) {
-                        const key = `${res.robotRow},${res.robotCol},${res.robotDir}`;
+                if (curr.path.length >= 12) {
+                    continue;
+                }
+
+                // 1. Tourner à gauche
+                const leftD = curr.d - 1;
+                const leftKey = `${curr.r},${curr.c},${leftD}`;
+                if (!visited.has(leftKey)) {
+                    visited.add(leftKey);
+                    queue.push({ r: curr.r, c: curr.c, d: leftD, path: [...curr.path, 'left'] });
+                }
+
+                // 2. Tourner à droite
+                const rightD = curr.d + 1;
+                const rightKey = `${curr.r},${curr.c},${rightD}`;
+                if (!visited.has(rightKey)) {
+                    visited.add(rightKey);
+                    queue.push({ r: curr.r, c: curr.c, d: rightD, path: [...curr.path, 'right'] });
+                }
+
+                // 3. Avancer et reculer
+                const normD = ((curr.d % 4) + 4) % 4;
+                for (const cmd of ['forward', 'backward']) {
+                    const step = cmd === 'forward' ? 1 : -1;
+                    const nr = curr.r + dr[normD] * step;
+                    const nc = curr.c + dc[normD] * step;
+                    if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS && !obsSet.has(`${nr},${nc}`)) {
+                        const key = `${nr},${nc},${curr.d}`;
                         if (!visited.has(key)) {
                             visited.add(key);
-                            if (curr.path.length < 12) {
-                                queue.push({ r: res.robotRow, c: res.robotCol, d: res.robotDir, path: [...curr.path, cmd] });
-                            }
+                            queue.push({ r: nr, c: nc, d: curr.d, path: [...curr.path, cmd] });
                         }
                     }
                 }
@@ -1291,26 +1317,49 @@ let simState = {
 
             for (let r = minR; r <= maxR; r++) {
                 for (let c = minC; c <= maxC; c++) {
-                    if ((r === startR && c === startC) || (r === targetR && c === targetC)) continue;
-                    if (obsGrid[r] && obsGrid[r][c]) return true;
+                    if ((r === startR && c === startC) || (r === targetR && c === targetC)) {
+                        continue;
+                    }
+                    if (obsGrid[r] && obsGrid[r][c]) {
+                        return true;
+                    }
                 }
             }
             return false;
         }
 
         function generateChallengePath(diff) {
-            let minL, maxL, minBack;
-            if (diff === 'easy') { minL = 3; maxL = 4; minBack = 0; }
-            else if (diff === 'medium') { minL = 4; maxL = 5; minBack = 0; }
-            else if (diff === 'hard') { minL = 6; maxL = 8; minBack = 0; }
-            else { minL = 6; maxL = 10; minBack = 1; } // extreme
+            let minL = 3;
+            let maxL = 4;
+            let minBack = 0;
+            if (diff === 'easy') {
+                minL = 3;
+                maxL = 4;
+                minBack = 0;
+            } else if (diff === 'medium') {
+                minL = 4;
+                maxL = 5;
+                minBack = 0;
+            } else if (diff === 'hard') {
+                minL = 6;
+                maxL = 8;
+                minBack = 0;
+            } else {
+                minL = 6;
+                maxL = 10;
+                minBack = 1;
+            } // extreme
 
             let obstacles = [];
             const obsGrid = Array(GRID_ROWS);
-            for (let r = 0; r < GRID_ROWS; r++) obsGrid[r] = Array(GRID_COLS).fill(false);
+            for (let r = 0; r < GRID_ROWS; r++) {
+                obsGrid[r] = Array(GRID_COLS).fill(false);
+            }
 
             for (let attempts = 0; attempts < 1000; attempts++) {
-                for (const o of obstacles) obsGrid[o.r][o.c] = false;
+                for (const o of obstacles) {
+                    obsGrid[o.r][o.c] = false;
+                }
                 obstacles = [];
 
                 let startR = randomInt(0, GRID_ROWS - 1);
@@ -1320,12 +1369,18 @@ let simState = {
                 let targetR = randomInt(0, GRID_ROWS - 1);
                 let targetC = randomInt(0, GRID_COLS - 1);
 
-                if (startR === targetR && startC === targetC) continue;
+                if (startR === targetR && startC === targetC) {
+                    continue;
+                }
 
                 let numObs = 0;
-                if (diff === 'medium') numObs = randomInt(1, 2);
-                else if (diff === 'hard') numObs = randomInt(3, 4);
-                else if (diff === 'extreme') numObs = randomInt(5, 7);
+                if (diff === 'medium') {
+                    numObs = randomInt(1, 2);
+                } else if (diff === 'hard') {
+                    numObs = randomInt(3, 4);
+                } else if (diff === 'extreme') {
+                    numObs = randomInt(5, 7);
+                }
 
                 while (obstacles.length < numObs) {
                     let or = randomInt(0, GRID_ROWS - 1);
@@ -1340,8 +1395,10 @@ let simState = {
 
                 // Pour Medium et plus, forcer un obstacle entre automate et cible si possible
                 if (diff !== 'easy' && !hasObstacleBetween(startR, startC, targetR, targetC, obsGrid)) {
-                    const minR = Math.min(startR, targetR), maxR = Math.max(startR, targetR);
-                    const minC = Math.min(startC, targetC), maxC = Math.max(startC, targetC);
+                    const minR = Math.min(startR, targetR);
+                    const maxR = Math.max(startR, targetR);
+                    const minC = Math.min(startC, targetC);
+                    const maxC = Math.max(startC, targetC);
                     if (maxR - minR > 0 || maxC - minC > 0) {
                         let or = randomInt(minR, maxR);
                         let oc = randomInt(minC, maxC);
@@ -1359,8 +1416,12 @@ let simState = {
                 if (path && path.length >= minL && path.length <= maxL) {
                     let backwardCount = path.filter(c => c === 'backward').length;
 
-                    if (diff !== 'extreme' && backwardCount > 0) continue;
-                    if (diff === 'extreme' && backwardCount < minBack) continue;
+                    if (diff !== 'extreme' && backwardCount > 0) {
+                        continue;
+                    }
+                    if (diff === 'extreme' && backwardCount < minBack) {
+                        continue;
+                    }
 
                     return { startR, startC, startD, targetR, targetC, correct: path, obstacles };
                 }

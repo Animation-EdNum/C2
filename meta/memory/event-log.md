@@ -81,3 +81,4 @@
 - **[2026-10-09]** [Refactor/SOLID] Decoupled PWA Service Worker into `assets/js/pwa.js` and made `modal-export.js` on-demand.
 - **[2026-10-11]** [Refactor/Simplification] Simplified Jeu de la grue (-705 lines, single-pass simulation, unified crane logic).
 - **[2026-10-11]** [Design/Scores] Harmonized global ScoreManager modal: vector SVG icons, standard `.btn` classes, and glassmorphism.
+- **[2026-10-11]** [Refactor/Assets] Phase 1: Shared core refactoring (KISS/DRY/YAGNI in url-params, scores, modal-export, automate, and unified CSS).
