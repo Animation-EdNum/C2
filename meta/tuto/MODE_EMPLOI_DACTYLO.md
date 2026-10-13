@@ -10,7 +10,7 @@
 
 - **PER EN 23 (Usages — Saisie d'un texte) :** Développer une frappe fluide et précise au clavier d'ordinateur pour libérer l'attention cognitive de l'élève au profit de la réflexion, de l'orthographe et de la rédaction de textes.
 - **Disposition QWERTZ suisse romande :** Intègre les touches et spécificités helvétiques : touches directes d'accentuation (`é`, `è`, `à`), inversion `Z`/`Y`, cédille `ç`, chiffres accessibles avec la touche Majuscule (`Shift`), et symboles suisses (`CHF`).
-- **Guidage visuel interactif :** Un clavier visuel reproduit fidèlement la disposition physique du clavier suisse et indique en temps réel la touche à frapper ainsi que la touche Majuscule le cas échéant.
+- **Guidage visuel adaptatif :** Le clavier visuel reste masqué pendant la frappe normale pour encourager l'élève à regarder son écran et mémoriser l'emplacement des touches sur son clavier physique. En cas d'erreur de frappe au clavier physique, le clavier visuel apparaît pour aider l'élève à repérer où se trouve la touche recherchée.
 
 ---
 
@@ -19,10 +19,9 @@
 1. **Sélection du niveau :** L'élève choisit son niveau dans le menu déroulant en haut à gauche (ou commence au niveau 1).
 2. **Saisie du texte :** 
    - Le texte à reproduire s'affiche dans le bandeau central. La lettre courante est mise en évidence.
-   - Sur le **clavier visuel**, la touche attendue s'allume en violet/indigo.
-   - Si la lettre nécessite la touche Majuscule (majuscules, chiffres ou caractères supérieurs), la touche `Maj ⇧` s'allume également en violet clair pour rappeler à l'élève de maintenir la touche Majuscule.
-   - En cas d'erreur de frappe, la touche erronée clignote en rouge et un bandeau d'alerte indique le caractère attendu.
-   - La saisie peut s'effectuer directement au **clavier physique** de l'ordinateur, ou de manière tactile en cliquant sur les touches du clavier virtuel (tablettes/écrans tactiles).
+   - La saisie s'effectue exclusivement au **clavier physique** de l'ordinateur. Les touches du clavier virtuel ne sont pas cliquables pour empêcher les élèves de contourner la frappe physique à la souris ou au tactile.
+   - **En cas d'erreur sur le clavier physique :** le clavier visuel apparaît immédiatement. La touche attendue s'allume en violet/indigo avec une pulsation visuelle, et la touche frappée par erreur s'allume en rouge. Si la touche nécessite la touche Majuscule, les touches `Maj ⇧` s'allument également.
+   - Dès que l'élève frappe la touche correcte sur son clavier physique, le clavier visuel disparaît à nouveau pour reprendre la frappe en continu.
 3. **Indicateurs en direct :**
    - **Précision (%) :** Pourcentage de touches réussies du premier coup.
    - **Vitesse (MPM) :** Mots par minute calculés en temps réel (norme standard : 5 caractères = 1 mot).

@@ -415,13 +415,29 @@
             border-radius: var(--radius-xs);
         }
 
-        /* KEYBOARD CONTAINER */
+        /* KEYBOARD CONTAINER (Guide visuel en cas d'erreur) */
         .keyboard-section {
             padding: 0 1.75rem 1.75rem;
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             gap: 0.75rem;
+            animation: keyboardSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .keyboard-section.visible {
+            display: flex;
+        }
+
+        @keyframes keyboardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .keyboard-header {
@@ -437,6 +453,24 @@
             color: var(--text-muted);
         }
 
+        .keyboard-guide-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .keyboard-guide-hint strong {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: var(--radius-xs);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-family: var(--font-mono, monospace);
+            text-transform: none;
+        }
+
         .keyboard-wrapper {
             background: var(--key-plate-bg);
             border: 1px solid var(--border);
@@ -449,6 +483,7 @@
             width: 100%;
             max-width: 960px;
             user-select: none;
+            pointer-events: none; /* Désactive tout clic/appui tactile : guide visuel uniquement */
         }
 
         .keyboard-row {
@@ -470,19 +505,14 @@
             justify-content: center;
             font-weight: 700;
             font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default; /* Pas de curseur pointer */
+            pointer-events: none; /* Touche non cliquable */
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            touch-action: manipulation;
             box-sizing: border-box;
             flex: 1;
             min-width: 0;
             line-height: 1.1;
-        }
-
-        .key:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
         }
 
         .key.special {
@@ -507,13 +537,25 @@
             color: white !important;
             border-color: var(--primary-hover) !important;
             border-bottom-color: #312e81 !important;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.45);
-            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45), 0 4px 14px rgba(79, 70, 229, 0.45);
+            transform: translateY(-2px) scale(1.03);
             z-index: 2;
+            animation: targetKeyPulse 1.2s infinite ease-in-out;
+        }
+
+        @keyframes targetKeyPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45), 0 4px 14px rgba(79, 70, 229, 0.45);
+                transform: translateY(-2px) scale(1.03);
+            }
+            50% {
+                box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.65), 0 6px 18px rgba(79, 70, 229, 0.65);
+                transform: translateY(-3px) scale(1.06);
+            }
         }
 
         .key.target .key-shift-label {
-            color: rgba(255, 255, 255, 0.8) !important;
+            color: rgba(255, 255, 255, 0.85) !important;
         }
 
         .key.target-shift {
@@ -521,9 +563,19 @@
             color: white !important;
             border-color: #6366f1 !important;
             border-bottom-color: #4338ca !important;
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.4), 0 4px 10px rgba(99, 102, 241, 0.35);
             transform: translateY(-1px);
             z-index: 1;
+            animation: targetShiftPulse 1.2s infinite ease-in-out;
+        }
+
+        @keyframes targetShiftPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.4), 0 4px 10px rgba(99, 102, 241, 0.35);
+            }
+            50% {
+                box-shadow: 0 0 0 5px rgba(129, 140, 248, 0.6), 0 5px 14px rgba(99, 102, 241, 0.5);
+            }
         }
 
         .key.wrong {
@@ -534,6 +586,15 @@
             box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45);
             transform: translateY(-2px) scale(1.02);
             z-index: 2;
+            animation: wrongShake 0.35s ease-out;
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateY(-2px) scale(1.02) rotate(0deg); }
+            20% { transform: translateY(-2px) scale(1.02) rotate(-3deg); }
+            40% { transform: translateY(-2px) scale(1.02) rotate(3deg); }
+            60% { transform: translateY(-2px) scale(1.02) rotate(-2deg); }
+            80% { transform: translateY(-2px) scale(1.02) rotate(2deg); }
         }
 
         .key.wrong .key-shift-label {
@@ -1129,13 +1190,13 @@
                 </div>
             </div>
 
-            <!-- VISUAL KEYBOARD -->
-            <div class="keyboard-section">
+            <!-- VISUAL KEYBOARD (Guide de repérage en cas d'erreur au clavier physique) -->
+            <div class="keyboard-section" id="keyboardSection" aria-live="polite">
                 <div class="keyboard-header">
-                    <span>Disposition QWERTZ · Suisse Romand</span>
-                    <span>Clavier physique ou tactile</span>
+                    <span><i data-fa="keyboard"></i> Disposition QWERTZ · Clavier physique</span>
+                    <span class="keyboard-guide-hint" id="keyboardGuideHint"><i data-fa="circle-info"></i> Repère la touche demandée ci-dessous</span>
                 </div>
-                <div class="keyboard-wrapper" id="visualKeyboard" role="region" aria-label="Clavier visuel interactif">
+                <div class="keyboard-wrapper" id="visualKeyboard" role="region" aria-label="Repère visuel du clavier physique">
                     <!-- Dynamic keys rendered by JS -->
                 </div>
             </div>
@@ -1459,6 +1520,8 @@
             const textDisplay = document.getElementById('textDisplay');
             const errorBanner = document.getElementById('errorBanner');
             const errorMessage = document.getElementById('errorMessage');
+            const keyboardSection = document.getElementById('keyboardSection');
+            const keyboardGuideHint = document.getElementById('keyboardGuideHint');
             const visualKeyboard = document.getElementById('visualKeyboard');
             const gameView = document.getElementById('gameView');
             const resultsView = document.getElementById('resultsView');
@@ -1549,7 +1612,21 @@
                 updateFooterScoreBar();
             }
 
-            // --- GÉNÉRATION DU CLAVIER VISUEL ---
+            // --- AFFICHER / MASQUER LE GUIDE CLAVIER VISUEL ---
+            function showVirtualKeyboard() {
+                if (keyboardSection && !keyboardSection.classList.contains('visible')) {
+                    keyboardSection.classList.add('visible');
+                    window.fa?.createIcons?.();
+                }
+            }
+
+            function hideVirtualKeyboard() {
+                if (keyboardSection && keyboardSection.classList.contains('visible')) {
+                    keyboardSection.classList.remove('visible');
+                }
+            }
+
+            // --- GÉNÉRATION DU CLAVIER VISUEL (GUIDE VISUEL SANS SAISIE AU CLIC) ---
             const keyElementMap = {}; // id -> element
 
             function buildKeyboard() {
@@ -1574,12 +1651,7 @@
                         labelSpan.textContent = key.label === '' ? ' ' : key.label;
                         keyEl.appendChild(labelSpan);
 
-                        // Clic tactile / souris
-                        keyEl.addEventListener('click', () => {
-                            if (isFinished) return;
-                            handleKeyInput(key.char !== undefined ? key.char : key.label);
-                        });
-
+                        // Aucun événement 'click' : la frappe s'effectue uniquement au clavier physique
                         keyElementMap[key.id] = keyEl;
                         rowEl.appendChild(keyEl);
                     });
@@ -1614,6 +1686,7 @@
                 }
 
                 errorBanner.style.display = 'none';
+                hideVirtualKeyboard();
                 gameView.style.display = 'block';
                 resultsView.style.display = 'none';
 
@@ -1699,6 +1772,15 @@
                     if (keyElementMap['ShiftRight']) keyElementMap['ShiftRight'].classList.add('target-shift');
                 }
 
+                if (keyboardGuideHint) {
+                    const displayExpected = (expected === ' ') ? 'Espace' : expected;
+                    if (needsShift) {
+                        keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> Maintiens <strong>Maj ⇧</strong> et tape <strong>${displayExpected}</strong>`;
+                    } else {
+                        keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> Touche à frapper : <strong>${displayExpected}</strong>`;
+                    }
+                }
+
                 // Afficher la fausse touche en rouge si erreur
                 if (flashError && wrongChar) {
                     for (const row of KEYBOARD_ROWS) {
@@ -1742,7 +1824,7 @@
                 statErrors.textContent = errors;
             }
 
-            // --- GESTION DE LA FRAPPE ---
+            // --- GESTION DE LA FRAPPE AU CLAVIER PHYSIQUE ---
             function handleKeyInput(char) {
                 if (isFinished) return;
                 const text = LEVELS[currentLevelIdx].text;
@@ -1751,11 +1833,12 @@
                 if (!startTime) startTime = Date.now();
 
                 if (char === expected) {
-                    // Correct
+                    // Touche correcte
                     currentIndex++;
                     flashError = false;
                     wrongChar = null;
                     errorBanner.style.display = 'none';
+                    hideVirtualKeyboard();
 
                     if (typeof playSound === 'function') playSound('click');
 
@@ -1765,7 +1848,7 @@
                         return;
                     }
                 } else if (char && char.length === 1) {
-                    // Erreur
+                    // Erreur au clavier physique -> faire apparaître le clavier visuel pour repérer la touche
                     errors++;
                     errorDetails[expected] = (errorDetails[expected] || 0) + 1;
                     flashError = true;
@@ -1775,8 +1858,9 @@
 
                     const displayWrong = (char === ' ') ? 'Espace' : char;
                     const displayExpected = (expected === ' ') ? 'Espace' : expected;
-                    errorMessage.innerHTML = `Tu as tapé <strong>${displayWrong}</strong> au lieu de <strong>${displayExpected}</strong>.`;
+                    errorMessage.innerHTML = `Tu as tapé <strong>${displayWrong}</strong> au lieu de <strong>${displayExpected}</strong>. Repère la touche ci-dessous sur le clavier.`;
                     errorBanner.style.display = 'flex';
+                    showVirtualKeyboard();
                     window.fa?.createIcons?.();
 
                     if (errorTimeout) clearTimeout(errorTimeout);
@@ -1835,6 +1919,7 @@
             // --- FIN DE NIVEAU & BILAN ---
             function finishLevel() {
                 isFinished = true;
+                hideVirtualKeyboard();
                 const text = LEVELS[currentLevelIdx].text;
                 const minutes = Math.max(0.01, (endTime - startTime) / 60000);
                 const finalWpm = Math.round((text.length / 5) / minutes);
