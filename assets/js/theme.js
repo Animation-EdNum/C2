@@ -31,19 +31,29 @@
         if (iconSun) iconSun.style.display = theme === 'dark' ? 'block' : 'none';
         if (iconMoon) iconMoon.style.display = theme === 'light' ? 'block' : 'none';
 
+        const t = function (key, fallback) {
+            if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                return window.I18N.t(key, fallback);
+            }
+            return fallback;
+        };
+
         const themeToggleText = document.getElementById('themeToggleText');
         if (themeToggleText) {
-            if (theme === 'dark') themeToggleText.textContent = 'Clair';
-            else themeToggleText.textContent = 'Sombre';
+            if (theme === 'dark') {
+                themeToggleText.textContent = t('theme.light', 'Clair');
+            } else {
+                themeToggleText.textContent = t('theme.dark', 'Sombre');
+            }
         }
 
         // Mettre à jour le texte du bouton contraste élevé s'il existe
         const hcToggleText = document.getElementById('hcToggleText');
         if (hcToggleText) {
             if (theme === 'high-contrast') {
-                hcToggleText.textContent = 'Désactiver contraste';
+                hcToggleText.textContent = t('theme.disable_contrast', 'Désactiver contraste');
             } else {
-                hcToggleText.textContent = 'Contraste élevé';
+                hcToggleText.textContent = t('theme.high_contrast', 'Contraste élevé');
             }
         }
 
@@ -103,14 +113,20 @@
                     divider.id = 'hc-dropdown-divider';
                     dropdownContent.insertBefore(divider, themeBtn.nextSibling);
 
-                    // Créer le bouton Contraste Élevé
+                    const t = function (key, fallback) {
+                        if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                            return window.I18N.t(key, fallback);
+                        }
+                        return fallback;
+                    };
+
                     const hcBtn = document.createElement('button');
                     hcBtn.className = 'menu-item-btn';
                     hcBtn.id = 'high-contrast-toggle-btn';
-                    hcBtn.setAttribute('aria-label', 'Activer/Désactiver le contraste élevé');
+                    hcBtn.setAttribute('aria-label', t('theme.hc_toggle_aria', 'Activer/Désactiver le contraste élevé'));
 
                     const savedTheme = localStorage.getItem('global_theme') || 'light';
-                    const initialText = savedTheme === 'high-contrast' ? 'Désactiver contraste' : 'Contraste élevé';
+                    const initialText = savedTheme === 'high-contrast' ? t('theme.disable_contrast', 'Désactiver contraste') : t('theme.high_contrast', 'Contraste élevé');
                     const initialIcon = savedTheme === 'high-contrast' ? 'circle-check' : 'eye';
 
                     const hcIcon = document.createElement('i');
@@ -163,7 +179,10 @@
                     window.__onResetApp();
                     return;
                 }
-                if (confirm("Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")) {
+                const confirmMsg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                    ? window.I18N.t('theme.reset_confirm', "Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).")
+                    : "Êtes-vous sûr de vouloir réinitialiser l'application ? Cela effacera toutes les données sauvegardées (scores, progression, cache).";
+                if (confirm(confirmMsg)) {
                     // Clear localStorage and sessionStorage
                     try {
                         localStorage.clear();

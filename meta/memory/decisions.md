@@ -39,3 +39,23 @@ This document records the architectural choices, library selections, and the rat
 
 ## 7. Packaging & Distribution
 - **Standalone Static Server CLI (`bin/ednum.js`):** Distributed as `@ednum/suite-ednum`. Implements directory traversal protection (verifying canonical paths against trailing-slash root) and HSTS headers while remaining 100% dependency-free.
+
+## 8. Internationalization (i18n) & Swiss Standard German (de-CH)
+- **Single Codebase Runtime Translation:** Rather than duplicating 31 HTML pages into a `/de/` folder (which would double maintenance overhead and bugfix complexity for inline scripts), the platform uses a single codebase. French remains the source markup in HTML and the natural fallback, while German is applied dynamically at runtime.
+- **Synchronous JS Dictionaries over `fetch()`:** To respect the hard requirement that pages must run locally from `file://` and under strict CSP (`default-src 'self'`), translation dictionaries are plain JavaScript files (`assets/js/i18n/de.js`) registering themselves synchronously into `window.I18N`. No asynchronous `fetch()` of JSON is permitted.
+- **Zero-FOUC (Flash of Unstyled/Unlocalized Content):** `i18n.js` loads synchronously in `<head>`. If the locale is detected as `de`, it immediately sets `<html lang="de-CH">` and attaches `.i18n-loading` (hiding the document body until dictionary strings are injected or an 800ms safety timeout expires).
+- **Swiss Standard German (de-CH) Conventions:**
+  - Strictly `ss` everywhere: the German letter Eszett (`ß`) is forbidden across all dictionaries, UI strings, and comments.
+  - Swiss pedagogical terminology: Zyklus 1 (1.-4. Primar), Zyklus 2 (5.-8. Primar), Zyklus 3 (9.-11. OS), aligned with Lehrplan 21 / Oberwallis.
+  - Typographical ellipsis (`…`) instead of three dots (`...`).
+  - Swiss German date formatting (`dd.MM.yyyy`) via `I18N.formatDate()`.
+- **Locale Resolution Hierarchy:**
+  1. URL parameter (`?lang=de` or `?lang=fr`)
+  2. `localStorage.getItem('global_lang')`
+  3. Browser language (`navigator.language` starting with `de` → `'de'`)
+  4. Default fallback: `'fr'`
+- **Declarative DOM Translation Engine:**
+  - `data-i18n="key"`: Replaces `textContent` while preserving original French in `data-i18n-orig`.
+  - `data-i18n-html="key"`: Replaces `innerHTML` for trusted simple formatting strings.
+  - `data-i18n-attr="attr1:key1;attr2:key2"`: Translates attributes (`title`, `aria-label`, `placeholder`, `data-tooltip`).
+- **Dynamic Language Switcher (Staged Rollout):** Standardized `FR`/`DE` toggle inserted in action headers or settings dropdowns. Hidden from the general public by default while translation expansion is in progress (can be activated for development/testing via `?show_lang=1` or `localStorage.getItem('show_lang_btn') === '1'`). Switching sets `localStorage` and reloads the page with `?lang=` to guarantee clean state reset. Portal and share links carry `?lang=de` when German is active.

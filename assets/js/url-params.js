@@ -356,6 +356,13 @@ function initShareModal() {
         return;
     }
 
+    const t = function (key, fallback) {
+        if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+            return window.I18N.t(key, fallback);
+        }
+        return fallback;
+    };
+
     // Check if share button exists, if not, create it in settings-dropdown-content
     let shareBtn = document.getElementById('btn-share');
     if (!shareBtn) {
@@ -364,13 +371,13 @@ function initShareModal() {
             shareBtn = document.createElement('button');
             shareBtn.className = 'menu-item-btn';
             shareBtn.id = 'btn-share';
-            shareBtn.title = 'Partager';
-            shareBtn.setAttribute('aria-label', 'Partager');
+            shareBtn.title = t('url_params.share', 'Partager');
+            shareBtn.setAttribute('aria-label', t('url_params.share', 'Partager'));
             shareBtn.replaceChildren();
             const shareIcon = document.createElement('i');
             shareIcon.setAttribute('data-fa', 'share-nodes');
             shareBtn.appendChild(shareIcon);
-            shareBtn.appendChild(document.createTextNode(' Partager'));
+            shareBtn.appendChild(document.createTextNode(' ' + t('url_params.share', 'Partager')));
             // Insert at the bottom of the settings menu
             const divider = document.createElement('div');
             divider.className = 'dropdown-divider';
@@ -387,20 +394,20 @@ function initShareModal() {
     const modalHTML = `
     <div id="share-modal-overlay" class="ui-modal-overlay" aria-hidden="true">
         <div id="share-modal" class="ui-modal-content" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
-            <button class="ui-btn-close" id="btn-close-share" aria-label="Fermer"><i data-fa="xmark"></i></button>
+            <button class="ui-btn-close" id="btn-close-share" aria-label="${t('common.close', 'Fermer')}"><i data-fa="xmark"></i></button>
 
             <div class="share-header">
-                <h2 id="share-modal-title"><i data-fa="share-nodes"></i> Partager l'activité</h2>
-                <p>Générez un lien préconfiguré pour vos élèves.</p>
+                <h2 id="share-modal-title"><i data-fa="share-nodes"></i> ${t('url_params.share_title', "Partager l'activité")}</h2>
+                <p>${t('url_params.share_subtitle', 'Générez un lien préconfiguré pour vos élèves.')}</p>
             </div>
 
             <div class="share-main">
                 <div class="share-url-container">
                     <input type="text" id="share-url-input" readonly>
-                    <button class="btn btn-primary" id="btn-test-link"><i data-fa="arrow-up-right-from-square"></i> Tester</button>
-                    <button class="btn btn-primary" id="btn-copy-share"><i data-fa="clipboard"></i> Copier</button>
-                    <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> QR</button>
-                    <button class="btn btn-primary" id="btn-download-qr" style="display: none;"><i data-fa="download"></i> Télécharger le QR</button>
+                    <button class="btn btn-primary" id="btn-test-link"><i data-fa="arrow-up-right-from-square"></i> ${t('url_params.test', 'Tester')}</button>
+                    <button class="btn btn-primary" id="btn-copy-share"><i data-fa="clipboard"></i> ${t('url_params.copy', 'Copier')}</button>
+                    <button class="btn btn-primary" id="btn-qr-share"><i data-fa="qrcode"></i> ${t('url_params.qr', 'QR')}</button>
+                    <button class="btn btn-primary" id="btn-download-qr" style="display: none;"><i data-fa="download"></i> ${t('url_params.download_qr', 'Télécharger le QR')}</button>
                 </div>
                 <div id="share-qr-container" style="display: none; text-align: center; margin-top: 15px;">
                     <canvas id="share-qr-canvas"></canvas>
@@ -408,15 +415,15 @@ function initShareModal() {
             </div>
 
             <div class="share-presets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
-                <button class="btn btn-preset" id="btn-preset-mission" style="flex: 1;" title="Mes élèves font exactement ce que j'ai préparé"><i data-fa="bullseye"></i> Mission</button>
-                <button class="btn btn-preset" id="btn-preset-entrainement" style="flex: 1;" title="Je leur donne l'outil, ils explorent / refont à leur rythme"><i data-fa="dumbbell"></i> Entraînement</button>
-                <button class="btn btn-preset" id="btn-preset-inclusif" style="flex: 1;" title="J'ai un·e élève dys, TSA, ou non-latéralisé·e dans le groupe"><i data-fa="hand-holding-heart"></i> Inclusif</button>
+                <button class="btn btn-preset" id="btn-preset-mission" style="flex: 1;" title="${t('url_params.preset_mission_title', 'Mes élèves font exactement ce que j\'ai préparé')}"><i data-fa="bullseye"></i> ${t('url_params.preset_mission', 'Mission')}</button>
+                <button class="btn btn-preset" id="btn-preset-entrainement" style="flex: 1;" title="${t('url_params.preset_training_title', 'Je leur donne l\'outil, ils explorent / refont à leur rythme')}"><i data-fa="dumbbell"></i> ${t('url_params.preset_training', 'Entraînement')}</button>
+                <button class="btn btn-preset" id="btn-preset-inclusif" style="flex: 1;" title="${t('url_params.preset_inclusive_title', 'J\'ai un·e élève dys, TSA, ou non-latéralisé·e dans le groupe')}"><i data-fa="hand-holding-heart"></i> ${t('url_params.preset_inclusive', 'Inclusif')}</button>
             </div>
 
             <div class="share-advanced">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <button id="btn-toggle-advanced" class="btn-advanced-toggle">
-                        Options Avancées <i data-fa="chevron-down"></i>
+                        ${t('url_params.advanced_options', 'Options Avancées')} <i data-fa="chevron-down"></i>
                     </button>
                 </div>
 
@@ -805,6 +812,10 @@ function initShareModal() {
         url.search = ''; // Clear existing params
 
         // Add basic state
+        if (typeof window !== 'undefined' && window.I18N && window.I18N.locale === 'de') {
+            url.searchParams.set('lang', 'de');
+        }
+
         if (typeof window.activeTab !== 'undefined') {
             url.searchParams.set('tab', window.activeTab);
         } else {
@@ -1091,16 +1102,22 @@ function initShareModal() {
     if (btnCopy && urlInput) {
         btnCopy.addEventListener('click', () => {
             navigator.clipboard.writeText(urlInput.value).then(() => {
+                const copiedLabel = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                    ? window.I18N.t('common.copied', 'Copié !')
+                    : 'Copié !';
                 btnCopy.replaceChildren();
                 const icon = document.createElement('i');
                 icon.setAttribute('data-fa', 'clipboard');
                 btnCopy.appendChild(icon);
-                btnCopy.appendChild(document.createTextNode(' Copié !'));
+                btnCopy.appendChild(document.createTextNode(' ' + copiedLabel));
                 btnCopy.classList.add('btn-success');
                 window.fa?.createIcons?.();
 
                 if (typeof showToast === 'function') {
-                    showToast("Lien copié dans le presse-papiers !", true);
+                    const toastMsg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('url_params.copied', 'Lien copié dans le presse-papiers !')
+                        : 'Lien copié dans le presse-papiers !';
+                    showToast(toastMsg, true);
                 }
             });
         });

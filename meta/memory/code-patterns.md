@@ -27,6 +27,23 @@ This document records code conventions, reusable hooks, and established project 
   <div class="header-icon" aria-hidden="true"><i data-fa="nom-icone"></i></div>
   ```
 - **Flat Legal Footer:** Attribution footers must sit outside `.app-shell` as a flat, transparent block (`margin-top: 1.5rem; text-align: center; opacity: 0.85;`). Never trap footers inside nested cards.
+  - **Standard localized footer template:**
+    ```html
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer" data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+    ```
   - **Webapps attribution:** Must feature the full name `Vivian Epiney de l'AP EdNum, HEP-VS` and include links to the 3 regulatory pages (`mentions-legales.html`, `confidentialite.html`, `cgu.html`) with appropriate relative paths (`../`, `../../`, `../../../`).
   - **Portals attribution:** Features `Portail conçu par l'AP EdNum, HEP-VS` with links to the 3 regulatory pages.
   - **Licensing:** Code is licensed under AGPL-3.0; pedagogical and didactic contents under CC BY-SA 4.0; vector icons under Font Awesome Pro.
@@ -96,3 +113,29 @@ This document records code conventions, reusable hooks, and established project 
   ```
 - **Direct DOM Assertions over Canvas Mocks:** Assert the presence, attributes, and lifecycle of DOM nodes (e.g. `#confetti-canvas`, toast elements, score badges) rather than monkey-patching canvas contexts.
 - **JSDOM Unit Tests (`meta/tests/unit/`):** Run via `npm run test:unit`. Instantiate JSDOM with `runScripts: "dangerously"`, eval the target script, and execute timer callbacks synchronously when testing staggered sequences.
+
+## 5. Internationalization (i18n) Idioms & Workflow
+- **Script Ingestion Order:** In `<head>`, always include `i18n.js` and locale dictionaries before any UI rendering logic:
+  ```html
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/i18n/de.js"></script>
+  ```
+  *(Adjust path relatively: `../assets/js/...` in `webapps/`, `../../assets/js/...` in `webapps/teacher/`).*
+- **Declarative HTML Translation:**
+  - `data-i18n="app.key"`: Translates text content while caching original French fallback in `data-i18n-orig`.
+  - `data-i18n-attr="title:app.title_key;aria-label:app.aria_key"`: Translates attributes separated by `;`.
+  - `data-i18n-html="app.html_key"`: Translates simple safe HTML templates (e.g. bold or emphasis).
+- **Programmatic Translations in JavaScript:**
+  ```javascript
+  const label = I18N.t('scores.streak', 'Série de {count} !', { count: currentStreak });
+  ```
+  Always provide the source French string as the second argument as a natural fallback.
+- **Locale-Aware Date Formatting:**
+  ```javascript
+  const formatted = I18N.formatDate(new Date(), { day: '2-digit', month: '2-digit', year: 'numeric' });
+  ```
+  Formats automatically as `dd.MM.yyyy` for both `fr-CH` and `de-CH`.
+- **URL Parameter Preservation on Internal Links:** When rendering portal cards or sharing links, append `?lang=de` if `I18N.locale === 'de'` so student and shared links stay in German without requiring manual toggling.
+- **Strict Swiss Standard German (de-CH) Rules:**
+  - Never use the German letter Eszett (`ß`) anywhere (enforced by automated unit test in `test_i18n.js`).
+  - Always use typographical ellipsis (`…`), never three dots (`...`).

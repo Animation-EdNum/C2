@@ -2,8 +2,8 @@
 
 ## 1. Mission & Scope
 - **Project:** Suite EdNum (Animation-EdNum, HEP-VS).
-- **Target Audience:** Primary & lower secondary school students in Switzerland (PER cycles 1-8H & Cycle 3 up to 10CO) and their teachers.
-- **Goal:** Teach CS concepts (algorithms, binary, networks, cryptography, logic) through interactive, distraction-free web applications complementing the *Décodages* and *Connected* teaching materials.
+- **Target Audience:** Primary & lower secondary school students in Switzerland (PER cycles 1-8H & Cycle 3 up to 10CO in Romandie; Zyklus 1-3 in German-speaking cantons like Oberwallis / Lehrplan 21) and their teachers.
+- **Goal:** Teach CS concepts (algorithms, binary, networks, cryptography, logic) through interactive, distraction-free web applications complementing the *Décodages* and *Connected* teaching materials in French and Swiss Standard German (de-CH).
 
 ## 2. Application Portfolio (25 Webapps & 2 Portals)
 - **Portals:**
@@ -20,12 +20,14 @@
 ## 3. Core Architectural Constraints
 - **100% Offline-First (PWA):** Zero external CDN dependencies. All assets (fonts, icons, audio, scripts) are locally hosted under `assets/`.
 - **Vanilla Stack:** Pure HTML5, JavaScript (ES6+), and CSS. No UI frameworks (React, Vue, Tailwind) allowed.
+- **Internationalization (i18n):** Zero-CORS, synchronous runtime translation engine (`assets/js/i18n.js` + `assets/js/i18n/de.js`). Supports French and Swiss Standard German (de-CH: strict `ss`, no `ß`, Swiss pedagogical terms). Runs locally from `file://`.
 - **Service Worker (`sw.js`):** Caches the application for complete offline usage. Automatically generated via `meta/scripts/generate-sw-manifest.js` (or `npm run build:sw`) and verified via `npm run check:sw`.
 - **Persistence:** Synchronous client-side `localStorage` exclusively.
 - **Attribution & Licensing:** AGPL-3.0. Every app features the standardized attribution footer linking to AP EdNum, HEP-VS and `merci.html`.
 
 ## 4. Current Status & Active Focus
-- **Active Focus:** Performance hot loops, mobile navigation fluidity, teacher workflows (roster import/export), and CI hardening.
+- **Active Focus:** Bilingual Swiss Standard German (de-CH) localization rollout, performance hot loops, mobile navigation fluidity, and CI hardening.
+- **Swiss Standard German (de-CH) Expansion:** Single-codebase runtime translation engine (`i18n.js`), shared UI localization (`theme.js`, `pwa.js`, `scores.js`, `modal-export.js`, `url-params.js`), localized registry and cards, and progressive app translation (Batch 1 student apps 100% complete). Language toggle button hidden for general public by default (`?show_lang=1` for dev/testing).
 - **Teacher Tools & Classroom Integration:** Promoted Roue de la chance to production, integrated Swiss ENT/ISM class roster import (XLSX, CSV via local SheetJS) and export in Tirage au sort.
 - **Hot-Loop Performance & Security:** Optimized DOM queries in hot loops (`automate-engine.js`, `scores.js`), hardened PWA toast DOM construction against XSS, and pinned GitHub Actions commit SHAs across CI workflows.
 - **Standardized Universal Reset & TBI:** All applications support `#reset-cache-btn` with `window.__onResetApp` hook and overflow-safe TBI whiteboard projection modes.

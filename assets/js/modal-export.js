@@ -180,12 +180,11 @@
             }
 
             const now = new Date();
-            const dateFormatted = now.toLocaleDateString('fr-CH', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            const timeFormatted = now.toLocaleTimeString('fr-CH', {
+            const dateFormatted = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.formatDate === 'function')
+                ? window.I18N.formatDate(now)
+                : now.toLocaleDateString('fr-CH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const timeLocale = (typeof window !== 'undefined' && window.I18N && window.I18N.locale === 'de') ? 'de-CH' : 'fr-CH';
+            const timeFormatted = now.toLocaleTimeString(timeLocale, {
                 hour: '2-digit',
                 minute: '2-digit'
             });
@@ -258,6 +257,13 @@
                             barContainer.style.justifyContent = 'space-between';
                             barContainer.style.width = '100%';
 
+                            const t = function (key, fallback) {
+                                if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                                    return window.I18N.t(key, fallback);
+                                }
+                                return fallback;
+                            };
+
                             const studentGroup = clonedDoc.createElement('div');
                             studentGroup.style.display = 'flex';
                             studentGroup.style.alignItems = 'center';
@@ -269,13 +275,13 @@
                             labelSpan.style.textTransform = 'uppercase';
                             labelSpan.style.letterSpacing = '0.05em';
                             labelSpan.style.color = isDark ? '#818cf8' : '#4f46e5';
-                            labelSpan.textContent = 'Élève :';
+                            labelSpan.textContent = t('modal_export.student_name', 'Élève :');
 
                             const nameSpan = clonedDoc.createElement('span');
                             nameSpan.style.fontSize = '1.05rem';
                             nameSpan.style.fontWeight = '700';
                             nameSpan.style.color = isDark ? '#f8fafc' : '#0f172a';
-                            nameSpan.textContent = studentName || 'Non renseigné';
+                            nameSpan.textContent = studentName || t('modal_export.unnamed', 'Non renseigné');
 
                             studentGroup.appendChild(labelSpan);
                             studentGroup.appendChild(nameSpan);
@@ -342,8 +348,11 @@
                         leftSpan.appendChild(strongTitle);
                         leftSpan.appendChild(clonedDoc.createTextNode(' · Animation-EdNum (HEP-VS)'));
 
+                        const isDe = typeof window !== 'undefined' && window.I18N && window.I18N.locale === 'de';
                         const rightSpan = clonedDoc.createElement('span');
-                        rightSpan.textContent = `Bilan officiel · ${dateFormatted} à ${timeFormatted}`;
+                        rightSpan.textContent = isDe
+                            ? `Offizielle Übersicht · ${dateFormatted} um ${timeFormatted}`
+                            : `Bilan officiel · ${dateFormatted} à ${timeFormatted}`;
 
                         officialFooter.appendChild(leftSpan);
                         officialFooter.appendChild(rightSpan);
@@ -428,7 +437,10 @@
                         }
 
                         if (typeof window.showToast === 'function') {
-                            window.showToast("Image téléchargée avec succès !", "success");
+                            const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                                ? window.I18N.t('modal_export.exported_toast', "Image téléchargée avec succès !")
+                                : "Image téléchargée avec succès !";
+                            window.showToast(msg, "success");
                         }
                     }, 'image/png');
                 } else {
@@ -441,7 +453,10 @@
                     document.body.removeChild(a);
 
                     if (typeof window.showToast === 'function') {
-                        window.showToast("Image téléchargée avec succès !", "success");
+                        const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                            ? window.I18N.t('modal_export.exported_toast', "Image téléchargée avec succès !")
+                            : "Image téléchargée avec succès !";
+                        window.showToast(msg, "success");
                     }
                 }
             } catch (err) {

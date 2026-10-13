@@ -209,6 +209,6 @@
             // 7. Retours sonore et visuel
             if (typeof playSound === 'function') playSound('click');
             if (typeof showToast === 'function') {
-                showToast("Simulateur réinitialisé", "info");
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_reset') : "Simulateur réinitialisé", "info");
             }
         };

@@ -77,6 +77,23 @@ const ScoreManager = {
         return (difficulty === null || difficulty === undefined) ? this._NO_DIFF : String(difficulty);
     },
 
+    getModeLabel(mode) {
+        const fallback = this.MODE_LABELS[mode] || mode;
+        if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+            return window.I18N.t('scores.mode.' + mode, fallback);
+        }
+        return fallback;
+    },
+
+    getDiffLabel(difficulty) {
+        const key = this._diffKey(difficulty);
+        const fallback = this.DIFF_LABELS[key] || String(difficulty);
+        if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+            return window.I18N.t('scores.diff.' + key, fallback);
+        }
+        return fallback;
+    },
+
     _escapeHtml(unsafe) {
         if (unsafe === null || unsafe === undefined) {
             return '';
@@ -274,7 +291,10 @@ const ScoreManager = {
     },
 
     resetScores() {
-        if (confirm("Voulez-vous vraiment réinitialiser toutes vos statistiques pour cette application ?")) {
+        const confirmMsg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+            ? window.I18N.t('scores.reset_confirm', "Voulez-vous vraiment réinitialiser toutes vos statistiques pour cette application ?")
+            : "Voulez-vous vraiment réinitialiser toutes vos statistiques pour cette application ?";
+        if (confirm(confirmMsg)) {
             this.stats = {};
             this.saveStats();
             this.renderModalContent();
@@ -286,25 +306,32 @@ const ScoreManager = {
             return;
         }
 
+        const t = function (key, fallback) {
+            if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                return window.I18N.t(key, fallback);
+            }
+            return fallback;
+        };
+
         const modalHtml = `
             <div id="score-details-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="score-modal-title">
                 <div class="ui-modal-content" id="score-modal-content">
-                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="Fermer" data-html2canvas-ignore="true"><i data-fa="xmark"></i></button>
+                    <button class="ui-btn-close" id="btn-close-score-modal" aria-label="${t('common.close', 'Fermer')}" data-html2canvas-ignore="true"><i data-fa="xmark"></i></button>
                     <h2 id="score-modal-title">
                         <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
-                        Statistiques détaillées
+                        ${t('scores.modal_title', 'Statistiques détaillées')}
                     </h2>
                     <div class="modal-student-bar">
-                        <label for="score-student-name"><strong>Élève :</strong></label>
-                        <input type="text" id="score-student-name" class="modal-student-input" placeholder="Prénom et Nom de l'élève" autocomplete="name">
+                        <label for="score-student-name"><strong>${t('modal_export.student_name', 'Élève :')}</strong></label>
+                        <input type="text" id="score-student-name" class="modal-student-input" placeholder="${t('modal_export.student_placeholder', "Prénom et Nom de l'élève")}" autocomplete="name">
                     </div>
                     <div id="score-modal-body"></div>
                     <div class="score-modal-actions" data-html2canvas-ignore="true">
                         <button type="button" class="btn btn-outline-error btn-small btn-reset-scores" id="btn-reset-scores-action">
-                            <i data-fa="arrows-rotate"></i> Réinitialiser les scores
+                            <i data-fa="arrows-rotate"></i> ${t('scores.reset_btn', 'Réinitialiser les scores')}
                         </button>
                         <button type="button" class="btn btn-primary btn-small btn-export-scores" id="btn-export-scores-action">
-                            <i data-fa="arrow-down-to-square"></i> Exporter en image (PNG)
+                            <i data-fa="arrow-down-to-square"></i> ${t('scores.export_btn', 'Exporter en image (PNG)')}
                         </button>
                     </div>
                 </div>
@@ -442,6 +469,13 @@ const ScoreManager = {
 
         body.replaceChildren();
 
+        const t = function (key, fallback) {
+            if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                return window.I18N.t(key, fallback);
+            }
+            return fallback;
+        };
+
         if (Object.keys(this.stats).length === 0) {
             const emptyContainer = document.createElement('div');
             emptyContainer.className = 'stat-empty-state';
@@ -455,11 +489,11 @@ const ScoreManager = {
 
             const titleP = document.createElement('p');
             titleP.className = 'stat-empty-title';
-            titleP.textContent = 'Aucune statistique pour le moment';
+            titleP.textContent = t('scores.no_data', 'Aucune statistique pour le moment');
 
             const subP = document.createElement('p');
             subP.className = 'stat-empty-subtitle';
-            subP.textContent = 'Résous des exercices dans l\'application pour voir tes réussites et ta progression s\'afficher ici !';
+            subP.textContent = t('scores.no_data_sub', 'Résous des exercices dans l\'application pour voir tes réussites et ta progression s\'afficher ici !');
 
             emptyContainer.appendChild(iconDiv);
             emptyContainer.appendChild(titleP);
@@ -472,7 +506,7 @@ const ScoreManager = {
         }
 
         for (const mode in this.stats) {
-            const modeName = this.MODE_LABELS[mode] || mode;
+            const modeName = this.getModeLabel(mode);
             const diffs = Object.keys(this.stats[mode]);
 
             let aggSuccess1st = 0;
@@ -529,12 +563,12 @@ const ScoreManager = {
             };
 
             if (this.appId === 'machine_a_trier') {
-                legend.appendChild(createLegendItem('color-success-1st', 'Succès', String(aggSuccess1st)));
+                legend.appendChild(createLegendItem('color-success-1st', t('scores.success_col', 'Succès'), String(aggSuccess1st)));
             } else {
-                legend.appendChild(createLegendItem('color-success-1st', 'Du 1er coup', String(aggSuccess1st)));
-                legend.appendChild(createLegendItem('color-success-more', 'Avec essais', String(aggSuccessMore)));
+                legend.appendChild(createLegendItem('color-success-1st', t('scores.first_try_col', 'Du 1er coup'), String(aggSuccess1st)));
+                legend.appendChild(createLegendItem('color-success-more', t('scores.with_tries', 'Avec essais'), String(aggSuccessMore)));
             }
-            legend.appendChild(createLegendItem('color-mistakes', 'Erreurs', String(aggMistakes)));
+            legend.appendChild(createLegendItem('color-mistakes', t('scores.mistakes_col', 'Erreurs'), String(aggMistakes)));
 
             const effDiv = document.createElement('div');
             effDiv.style.marginTop = '10px';
@@ -543,7 +577,7 @@ const ScoreManager = {
             effDiv.style.opacity = '0.8';
 
             const strong = document.createElement('strong');
-            strong.textContent = 'Efficacité globale : ';
+            strong.textContent = t('scores.global_efficiency', 'Efficacité globale : ');
             effDiv.appendChild(strong);
 
             const effText = document.createTextNode(`${totalActions > 0 ? Math.round((totalSuccess / totalActions) * 100) : 0}%`);
@@ -564,8 +598,8 @@ const ScoreManager = {
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
                 const headers = this.appId === 'machine_a_trier'
-                    ? ['Difficulté', 'Succès', 'Erreurs']
-                    : ['Difficulté', '1er coup', 'Total', 'Erreurs'];
+                    ? [t('scores.level_col', 'Difficulté'), t('scores.success_col', 'Succès'), t('scores.mistakes_col', 'Erreurs')]
+                    : [t('scores.level_col', 'Difficulté'), t('scores.first_try_col', '1er coup'), t('scores.total_col', 'Total'), t('scores.mistakes_col', 'Erreurs')];
                 headers.forEach(text => {
                     const th = document.createElement('th');
                     th.textContent = text;
@@ -580,7 +614,7 @@ const ScoreManager = {
                         continue;
                     }
                     const st = this.stats[mode][diff];
-                    const diffName = this.DIFF_LABELS[diff] || diff;
+                    const diffName = this.getDiffLabel(diff);
 
                     const tr = document.createElement('tr');
 

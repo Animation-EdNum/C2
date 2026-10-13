@@ -281,6 +281,18 @@ window.REGISTRY = [
       "#Défi"
     ],
     "ref": "DÉ>CODAGE 3-4 · Scénario 2 — Automates · Blue-Bot",
+    "i18n": {
+      "de": {
+        "title": "Simulator Automat",
+        "desc": "Programmiere den Roboter auf interaktiven Matten und löse Aufgaben.",
+        "tags": [
+          "#Programmieren",
+          "#Fehlersuche",
+          "#Herausforderung"
+        ],
+        "ref": "Connected 1 · 1.1 | Befehle und Roboter"
+      }
+    },
     "badges": [
       {
         "text": "3-4H",
@@ -308,6 +320,18 @@ window.REGISTRY = [
       "#Binaire"
     ],
     "ref": "DÉ>CODAGE 5-6 · Scénario 4 — Codage de données, codage binaire",
+    "i18n": {
+      "de": {
+        "title": "Pixel Studio",
+        "desc": "Zeichne Pixelbilder und entdecke, wie Computer Bilder als Bits speichern.",
+        "tags": [
+          "#Kreativität",
+          "#Code",
+          "#Binär"
+        ],
+        "ref": "Connected 1 · 1.2 | Bilder aus Nullen und Einsen"
+      }
+    },
     "badges": [
       {
         "text": "5-6H",
@@ -331,6 +355,18 @@ window.REGISTRY = [
       "#Mot de passe"
     ],
     "ref": "EN 23 · Usages — Processus d'identification personnelle",
+    "i18n": {
+      "de": {
+        "title": "Passwort-Generator",
+        "desc": "Erstelle sichere Passwörter und teste ihren Schutz vor Angriffen.",
+        "tags": [
+          "#Sicherheit",
+          "#Schutz",
+          "#Passwort"
+        ],
+        "ref": "Medien und Informatik · Sicherheit"
+      }
+    },
     "badges": [
       {
         "text": "5H-10CO",
@@ -354,6 +390,18 @@ window.REGISTRY = [
       "#Maths"
     ],
     "ref": "DÉ>CODAGE 7-8 · Activité 2 — Codages en folie (séance 1)",
+    "i18n": {
+      "de": {
+        "title": "Binäre Codierung",
+        "desc": "Öffne den geheimen Tresor mit Schaltern und lerne das Binärsystem.",
+        "tags": [
+          "#Binär",
+          "#Codierung",
+          "#Mathematik"
+        ],
+        "ref": "Connected 1 · 1.2 | Zahlen in Binär"
+      }
+    },
     "badges": [
       {
         "text": "7-8H",
@@ -377,6 +425,18 @@ window.REGISTRY = [
       "#Binaire"
     ],
     "ref": "DÉ>CODAGE 7-8 · Activité 2 — Codages en folie (séance 2)",
+    "i18n": {
+      "de": {
+        "title": "Geheime Wörter",
+        "desc": "Erstelle und entschlüssle geheime Botschaften mit Binärcode.",
+        "tags": [
+          "#Geheimnis",
+          "#Code",
+          "#Binär"
+        ],
+        "ref": "Connected 1 · 1.2 | Geheime Botschaften"
+      }
+    },
     "badges": [
       {
         "text": "7-8H",
@@ -399,6 +459,18 @@ window.REGISTRY = [
       "#Défi"
     ],
     "ref": "DÉ>CODAGE 7-8 · Activité 8 — Les réseaux, Niveau 2",
+    "i18n": {
+      "de": {
+        "title": "Netzwerk-Routing",
+        "desc": "Entdecke, wie Datenpakete über Netzwerke und das Internet reisen.",
+        "tags": [
+          "#Internet",
+          "#Netzwerk",
+          "#Herausforderung"
+        ],
+        "ref": "Connected 2 · 2.2 | Wie Daten reisen"
+      }
+    },
     "badges": [
       {
         "text": "7-8H",
@@ -423,6 +495,19 @@ window.REGISTRY = [
       "#Binaire"
     ],
     "ref": "DÉ>CODAGE 7-8 · Enquête 5 — Peut-on détecter des erreurs lors de la transmission de données ?",
+    "i18n": {
+      "de": {
+        "title": "Paritätsbit",
+        "desc": "Finde Übertragungsfehler in Daten mit dem Paritätsbit-Zaubertrick.",
+        "tags": [
+          "#Internet",
+          "#Mathematik",
+          "#Herausforderung",
+          "#Binär"
+        ],
+        "ref": "Connected 2 · 2.1 | Fehler finden und beheben"
+      }
+    },
     "badges": [
       {
         "text": "7-8H",
@@ -446,6 +531,17 @@ window.REGISTRY = [
       "#Classe",
       "#Evaluation"
     ],
+    "i18n": {
+      "de": {
+        "title": "Notenskala-Generator",
+        "desc": "Praktisches Werkzeug zur Erstellung und zum Drucken von Notenskalen.",
+        "tags": [
+          "#Werkzeug",
+          "#Klasse",
+          "#Beurteilung"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "Évaluation",
@@ -469,6 +565,17 @@ window.REGISTRY = [
       "#Gestion",
       "#Classe"
     ],
+    "i18n": {
+      "de": {
+        "title": "Zufallsauslosung",
+        "desc": "Wähle Schülerinnen und Schüler oder Gruppen per Zufall aus.",
+        "tags": [
+          "#Werkzeug",
+          "#Klassenführung",
+          "#Klasse"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "Gestion de classe",
@@ -493,7 +600,12 @@ window.REGISTRY = [
     ],
     "category": null,
     "inIndex": false,
-    "inC1": true
+    "inC1": true,
+    "i18n": {
+      "de": {
+        "title": "Sortiermaschine"
+      }
+    }
   },
   {
     "id": "ext-alphawebappsjeu",
@@ -509,7 +621,12 @@ window.REGISTRY = [
     ],
     "category": null,
     "inIndex": false,
-    "inC1": true
+    "inC1": true,
+    "i18n": {
+      "de": {
+        "title": "Kranspiel"
+      }
+    }
   },
   {
     "id": "ext-webappssimulate",
@@ -525,7 +642,12 @@ window.REGISTRY = [
     ],
     "category": null,
     "inIndex": false,
-    "inC1": true
+    "inC1": true,
+    "i18n": {
+      "de": {
+        "title": "Simulator Automat"
+      }
+    }
   },
   {
     "id": "ext-scratch",
@@ -551,7 +673,18 @@ window.REGISTRY = [
     ],
     "category": "students_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Scratch",
+        "desc": "Plattform zum Erstellen interaktiver Geschichten, Spiele und Animationen.",
+        "tags": [
+          "#Programmieren",
+          "#Kreativität"
+        ],
+        "ref": "DÉ>CODAGE 7-8 · Szenarien 2 und 7"
+      }
+    }
   },
   {
     "id": "ext-iapedia",
@@ -578,7 +711,18 @@ window.REGISTRY = [
     ],
     "category": "students_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "ia-pedia",
+        "desc": "Vereinfacht Wikipedia-Artikel für deine Schulstufe und beantwortet Fragen.",
+        "tags": [
+          "#Wikipedia",
+          "#Recherche",
+          "#KI"
+        ]
+      }
+    }
   },
   {
     "id": "ext-ledicodesados",
@@ -604,7 +748,17 @@ window.REGISTRY = [
     ],
     "category": "students_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Le Dico des Ados",
+        "desc": "Freies und kollaboratives Wörterbuch zum Nachschlagen und Erweitern von Definitionen.",
+        "tags": [
+          "#Recherche",
+          "#Sprache"
+        ]
+      }
+    }
   },
   {
     "id": "ext-vikidia",
@@ -630,7 +784,17 @@ window.REGISTRY = [
     ],
     "category": "students_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Vikidia",
+        "desc": "Freie und partizipative Online-Enzyklopädie für Kinder und Jugendliche.",
+        "tags": [
+          "#Recherche",
+          "#Information"
+        ]
+      }
+    }
   },
   {
     "id": "ext-qwantjunior",
@@ -657,7 +821,18 @@ window.REGISTRY = [
     ],
     "category": "students_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Qwant Junior",
+        "desc": "Die sichere Suchmaschine für Kinder, die die Privatsphäre respektiert.",
+        "tags": [
+          "#Recherche",
+          "#Suchmaschine",
+          "#Sicherheit"
+        ]
+      }
+    }
   },
   {
     "id": "ext-monkeytype",
@@ -684,7 +859,18 @@ window.REGISTRY = [
     ],
     "category": "students_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Monkeytype",
+        "desc": "Teste und verbessere deine Tippgeschwindigkeit und Genauigkeit auf der Tastatur.",
+        "tags": [
+          "#Tastatur",
+          "#Geschwindigkeit",
+          "#Tippen"
+        ]
+      }
+    }
   },
   {
     "id": "ext-sharepointapednum",
@@ -713,7 +899,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "SharePoint AP EdNum",
+        "desc": "Pädagogische Ressourcen und Dokumente der pädagogischen Animation (HEP-VS).",
+        "tags": [
+          "#Ressourcen",
+          "#HEP-VS"
+        ]
+      }
+    }
   },
   {
     "id": "ext-usethenews",
@@ -742,7 +938,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "UseTheNews",
+        "desc": "Initiative zur Förderung der Medien- und Informationskompetenz von Jugendlichen.",
+        "tags": [
+          "#Medien",
+          "#Information"
+        ]
+      }
+    }
   },
   {
     "id": "ext-thymiosuite",
@@ -769,7 +975,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Thymio Suite (Computer)",
+        "desc": "Programmierumgebungen für den Lernroboter Thymio (VPL, Scratch, Python).",
+        "tags": [
+          "#Robotik",
+          "#Programmieren"
+        ]
+      }
+    }
   },
   {
     "id": "ext-scratchjr-desktop",
@@ -797,7 +1013,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Scratch Junior (Computer)",
+        "desc": "Visuelle Programmiersprache für jüngere Kinder (Zyklus 1) auf dem Desktop.",
+        "tags": [
+          "#Programmieren",
+          "#Zyklus 1"
+        ]
+      }
+    }
   },
   {
     "id": "ext-scratchjr-tablet",
@@ -825,7 +1051,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Scratch Junior (Tablet)",
+        "desc": "Visuelle Programmiersprache für jüngere Kinder auf Tablets.",
+        "tags": [
+          "#Programmieren",
+          "#Zyklus 1"
+        ]
+      }
+    }
   },
   {
     "id": "ext-ladigitale",
@@ -852,7 +1088,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "La Digitale",
+        "desc": "Freie und datenschutzfreundliche digitale Werkzeuge für den Unterricht.",
+        "tags": [
+          "#Freie Tools",
+          "#Datenschutz"
+        ]
+      }
+    }
   },
   {
     "id": "ext-learningapps",
@@ -879,7 +1125,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "LearningApps",
+        "desc": "Interaktive Lernbausteine und Übungen für alle Fächer.",
+        "tags": [
+          "#Übungen",
+          "#Interaktiv"
+        ]
+      }
+    }
   },
   {
     "id": "ext-geogebra",
@@ -906,7 +1162,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "GeoGebra",
+        "desc": "Mathematische Ressourcen und Unterrichtsmaterialien.",
+        "tags": [
+          "#Mathematik",
+          "#Werkzeuge"
+        ]
+      }
+    }
   },
   {
     "id": "ext-anton",
@@ -934,7 +1200,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Anton",
+        "desc": "Lern-App mit Übungen und Spielen für die Primar- und Sekundarstufe.",
+        "tags": [
+          "#Übungen",
+          "#Lernen"
+        ]
+      }
+    }
   },
   {
     "id": "ext-iletaitunehistoire",
@@ -962,7 +1238,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_external",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Il était une histoire",
+        "desc": "Digitale Bibliothek mit Geschichten, Fabeln, Gedichten und Liedern.",
+        "tags": [
+          "#Lesen",
+          "#Geschichten"
+        ]
+      }
+    }
   },
   {
     "id": "ext-swisstopo",
@@ -989,7 +1275,17 @@ window.REGISTRY = [
     ],
     "category": "students_utilities",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Swisstopo",
+        "desc": "Karten und Geodaten der Schweiz interaktiv erkunden.",
+        "tags": [
+          "#Karten",
+          "#Geografie"
+        ]
+      }
+    }
   },
   {
     "id": "ext-autodraw",
@@ -1016,7 +1312,17 @@ window.REGISTRY = [
     ],
     "category": "students_utilities",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "AutoDraw",
+        "desc": "Schnelles Zeichnen mit Unterstützung durch künstliche Intelligenz.",
+        "tags": [
+          "#Zeichnen",
+          "#KI"
+        ]
+      }
+    }
   },
   {
     "id": "ext-geogebra-students",
@@ -1043,7 +1349,17 @@ window.REGISTRY = [
     ],
     "category": "students_utilities",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "GeoGebra Klassisch",
+        "desc": "Interaktive Software für Geometrie, Algebra und Tabellenkalkulation.",
+        "tags": [
+          "#Mathematik",
+          "#Geometrie"
+        ]
+      }
+    }
   },
   {
     "id": "ext-classroomscreen",
@@ -1071,7 +1387,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_utilities",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Classroomscreen",
+        "desc": "Interaktives Dashboard für die digitale Wandtafel (Timer, Zufallsauswahl, Symbole).",
+        "tags": [
+          "#Klassenführung",
+          "#Werkzeuge"
+        ]
+      }
+    }
   },
   {
     "id": "ext-canva",
@@ -1099,7 +1425,17 @@ window.REGISTRY = [
     ],
     "category": "teachers_utilities",
     "inIndex": true,
-    "inC1": false
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Canva",
+        "desc": "Plattform für Grafikdesign, Präsentationen und Unterrichtsmaterialien.",
+        "tags": [
+          "#Design",
+          "#Erstellung"
+        ]
+      }
+    }
   },
   {
     "id": "tool-sim-dyslexie",
@@ -1168,6 +1504,17 @@ window.REGISTRY = [
       "#Tirage"
     ],
     "ref": null,
+    "i18n": {
+      "de": {
+        "title": "Glücksrad",
+        "desc": "Interaktives Glücksrad für faire Zufallsauswahlen und Animationen.",
+        "tags": [
+          "#Werkzeug",
+          "#Animation",
+          "#Klasse"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "Gestion de classe",
@@ -1193,6 +1540,18 @@ window.REGISTRY = [
       "#Partage"
     ],
     "ref": null,
+    "i18n": {
+      "de": {
+        "title": "QR-Code-Ersteller",
+        "desc": "Schneller Generator für unterrichtstaugliche QR-Codes (Links, Texte, Druckblätter).",
+        "tags": [
+          "#Werkzeug",
+          "#QR",
+          "#Klasse",
+          "#Teilen"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "Outil",
@@ -1218,6 +1577,18 @@ window.REGISTRY = [
       "#Temps"
     ],
     "ref": null,
+    "i18n": {
+      "de": {
+        "title": "Visueller Timer",
+        "desc": "Visueller Countdown-Timer für Zeitmanagement und Fokus im Unterricht.",
+        "tags": [
+          "#Werkzeug",
+          "#Klassenführung",
+          "#Klasse",
+          "#Zeit"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "Gestion de classe",

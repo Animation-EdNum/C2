@@ -69,8 +69,15 @@
                             const content = document.createElement('div');
                             content.className = 'c2-toast-update-content';
 
+                            const t = function (key, fallback) {
+                                if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                                    return window.I18N.t(key, fallback);
+                                }
+                                return fallback;
+                            };
+
                             const text = document.createElement('span');
-                            text.textContent = 'Une mise à jour de la Suite EdNum est disponible.';
+                            text.textContent = t('pwa.update_available', 'Une mise à jour de la Suite EdNum est disponible.');
 
                             const btn = document.createElement('button');
                             btn.className = 'c2-toast-btn';
@@ -79,7 +86,7 @@
                             icon.setAttribute('data-fa', 'arrows-rotate');
 
                             const label = document.createElement('span');
-                            label.textContent = 'Mettre à jour maintenant';
+                            label.textContent = t('pwa.update_now', 'Mettre à jour maintenant');
 
                             btn.appendChild(icon);
                             btn.appendChild(document.createTextNode(' '));

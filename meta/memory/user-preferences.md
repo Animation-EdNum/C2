@@ -19,6 +19,7 @@ This document defines how the human user prefers code delivered, reviewed, and f
   ```
 - **Surgical Edits:** Favor targeted, minimal replacements (`replace_file_content`) over rewriting entire files.
 - **Typography in UI:** Always use true typographical ellipsis (`…`) in user-facing texts, never three periods (`...`).
+- **Swiss Standard German (de-CH) Rules:** Always use `ss`, never Eszett (`ß`), across all dictionaries, UI strings, and comments. Use Swiss educational terminology (Zyklus 1-3, Primar, OS).
 
 ## 3. Workspace Cleanliness & Zero Pollution
 - **No Temporary Files:** Never commit temporary scratch scripts, test dumps, or python automation helpers to the workspace. Clean up temporary files immediately after use.

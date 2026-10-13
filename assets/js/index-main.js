@@ -14,6 +14,15 @@ function updateRoleButton(tabId) {
     const headerLogoLink = document.getElementById('header-logo-link') || document.querySelector('.header-logo');
 
     if (studentsBtn) {
+        const isDe = window.I18N && window.I18N.locale === 'de';
+        const span = document.createElement('span');
+        span.className = 'hide-mobile';
+        span.textContent = isDe ? 'Bereich ' : 'Espace ';
+        studentsBtn.replaceChildren(span, isDe ? 'Schüler' : 'élèves');
+        const titleText = isDe ? 'Zum Schülerbereich wechseln' : "Accéder à l'espace élèves";
+        studentsBtn.setAttribute('title', titleText);
+        studentsBtn.setAttribute('aria-label', titleText);
+
         if (tabId === 'teachers') {
             studentsBtn.classList.remove('active');
             studentsBtn.removeAttribute('aria-current');
@@ -24,12 +33,14 @@ function updateRoleButton(tabId) {
     }
 
     if (ghostBtn) {
+        const isDe = window.I18N && window.I18N.locale === 'de';
         const span = document.createElement('span');
         span.className = 'hide-mobile';
-        span.textContent = 'Espace ';
-        ghostBtn.replaceChildren(span, 'enseignant·e·s');
-        ghostBtn.setAttribute('title', "Accéder à l'espace enseignant·e·s");
-        ghostBtn.setAttribute('aria-label', "Accéder à l'espace enseignant·e·s");
+        span.textContent = isDe ? 'Bereich ' : 'Espace ';
+        ghostBtn.replaceChildren(span, isDe ? 'Lehrpersonen' : 'enseignant·e·s');
+        const titleText = isDe ? 'Zum Lehrpersonenbereich wechseln' : "Accéder à l'espace enseignant·e·s";
+        ghostBtn.setAttribute('title', titleText);
+        ghostBtn.setAttribute('aria-label', titleText);
         ghostBtn.setAttribute('href', '#teachers');
 
         if (tabId === 'teachers') {
@@ -42,20 +53,25 @@ function updateRoleButton(tabId) {
     }
 
     if (headerLogoLink) {
+        const isDe = window.I18N && window.I18N.locale === 'de';
         if (tabId === 'students') {
-            headerLogoLink.setAttribute('title', "Accéder à l'espace enseignant·e·s");
-            headerLogoLink.setAttribute('aria-label', "EdNum.org - Accéder à l'espace enseignant·e·s");
+            const titleText = isDe ? 'Zum Lehrpersonenbereich wechseln' : "Accéder à l'espace enseignant·e·s";
+            headerLogoLink.setAttribute('title', titleText);
+            headerLogoLink.setAttribute('aria-label', `EdNum.org - ${titleText}`);
         } else {
-            headerLogoLink.setAttribute('title', "Retour à l'espace élèves");
-            headerLogoLink.setAttribute('aria-label', "EdNum.org - Retour à l'espace élèves");
+            const titleText = isDe ? 'Zurück zum Schülerbereich' : "Retour à l'espace élèves";
+            headerLogoLink.setAttribute('title', titleText);
+            headerLogoLink.setAttribute('aria-label', `EdNum.org - ${titleText}`);
         }
     }
 
     if (tabId === 'teachers') {
         if (roleBtn) {
+            const isDe = window.I18N && window.I18N.locale === 'de';
+            const titleText = isDe ? 'Zurück zum Schülerbereich' : "Retour à l'espace élèves";
             roleBtn.style.display = 'inline-flex';
-            roleBtn.setAttribute('title', "Retour à l'espace élèves");
-            roleBtn.setAttribute('aria-label', "Retour à l'espace élèves");
+            roleBtn.setAttribute('title', titleText);
+            roleBtn.setAttribute('aria-label', titleText);
             roleBtn.textContent = '';
             const icon = document.createElement('i');
             icon.setAttribute('data-fa', 'graduation-cap');
@@ -98,7 +114,10 @@ function filterApps(level) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
         const text = (btn.innerText || btn.textContent || '').trim();
-        if (currentFilter !== 'all' && text === currentFilter) {
+        const matchesLevel = text === currentFilter ||
+            btn.dataset.level === currentFilter ||
+            btn.id === 'filter-' + currentFilter.replace(/\s+/g, '');
+        if (currentFilter !== 'all' && matchesLevel) {
             btn.classList.add('active');
         }
     });
@@ -213,7 +232,9 @@ function executeFilters() {
                 noResults.style.padding = '3rem 1rem';
                 noResults.style.color = 'var(--text-light)';
                 noResults.style.fontSize = '1.1rem';
-                noResults.textContent = 'Aucune application trouvée pour cette recherche.';
+                noResults.textContent = window.I18N ?
+                    window.I18N.t('portal.no_results', 'Aucune application trouvée pour cette recherche.') :
+                    'Aucune application trouvée pour cette recherche.';
                 view.appendChild(noResults);
             }
             noResults.style.display = 'block';
@@ -237,8 +258,18 @@ function matchDegree(dataLevel, filter, card) {
         if (s === f) return true;
 
         if (f === '9-10 CO' || f === '9-10CO') {
-            if (s.includes('10CO') || s.includes('10 CO') || s.includes('9CO') || s.includes('CYCLE 3')) return true;
+            if (s.includes('10CO') || s.includes('10 CO') || s.includes('9CO') || s.includes('CYCLE 3') || s.includes('ZYKLUS 3') || s.includes('9.-10. OS') || s.includes('9.-11. OS') || s.includes('10. OS')) return true;
             return false;
+        }
+
+        if (f === '5-6H' && (s.includes('5.-6. PRIMAR') || s.includes('5-6H'))) {
+            return true;
+        }
+        if (f === '7-8H' && (s.includes('7.-8. PRIMAR') || s.includes('7-8H'))) {
+            return true;
+        }
+        if (f === '3-4H' && (s.includes('3.-4. PRIMAR') || s.includes('3-4H'))) {
+            return true;
         }
 
         // Support '... JUSQU'À ...' or '...-...' (e.g. "5H JUSQU'À 10CO", "7H JUSQU'À 10CO", "5H JUSQU'À 8H", "3H JUSQU'À 8H")
