@@ -126,4 +126,83 @@ test('dactylo.html - Visual keyboard guidance & non-clickable keys', async (t) =
             'Next char must be char-current'
         );
     });
+
+    await t.test('complex key recipe for circumflex "ê" highlights step 1 (^) and step 2 (e) with badges and explains recipe', () => {
+        const levelSelect = window.document.getElementById('levelSelect');
+        const keyboardSection = window.document.getElementById('keyboardSection');
+        const errorBanner = window.document.getElementById('errorBanner');
+        const errorMessage = window.document.getElementById('errorMessage');
+
+        // Select Level 3 (id 2, index 2): "été vélo déjà mère père frère forêt..."
+        levelSelect.value = "2";
+        levelSelect.dispatchEvent(new window.Event('change'));
+
+        // Advance to word "forêt", character 'ê' (index 38: "été vélo déjà mère père frère for" -> length 33, 'f'=33, 'o'=34, 'r'=35, 'ê'=36)
+        // Find index of 'ê' in the current level text
+        const text = "été vélo déjà mère père frère forêt fête règle café vérité élève";
+        const targetIndex = text.indexOf('ê');
+        assert.ok(targetIndex > 0, 'Target character ê should exist in Level 3');
+
+        // Type all characters up to 'ê'
+        for (let i = 0; i < targetIndex; i++) {
+            window.dispatchEvent(new window.KeyboardEvent('keydown', { key: text[i], bubbles: true }));
+        }
+
+        // Verify we are now on 'ê'
+        const currentSpan = window.document.querySelector('.char-current');
+        assert.strictEqual(currentSpan?.textContent, 'ê', 'Current character should be ê');
+
+        // Simulate wrong key press (e.g. student types 'e' instead of 'ê')
+        window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'e', bubbles: true }));
+
+        // 1. Keyboard is visible
+        assert.strictEqual(keyboardSection.classList.contains('visible'), true, 'Keyboard should be visible after error');
+
+        // 2. Step 1 (Equal / ^) has target-step-1 class and badge ❶
+        const step1Key = window.document.querySelector('.key[data-key-id="Equal"]');
+        assert.ok(step1Key.classList.contains('target-step-1'), 'Key Equal (^) should have target-step-1 class');
+        const badge1 = step1Key.querySelector('.key-step-pill.step-1');
+        assert.ok(badge1, 'Step 1 key should have ❶ badge');
+        assert.strictEqual(badge1.textContent, '❶');
+
+        // 3. Step 2 (KeyE / e) has target-step-2 class and badge ❷
+        const step2Key = window.document.querySelector('.key[data-key-id="KeyE"]');
+        assert.ok(step2Key.classList.contains('target-step-2'), 'Key KeyE (e) should have target-step-2 class');
+        const badge2 = step2Key.querySelector('.key-step-pill.step-2');
+        assert.ok(badge2, 'Step 2 key should have ❷ badge');
+        assert.strictEqual(badge2.textContent, '❷');
+
+        // 4. Error message contains detailed recipe explanation
+        assert.strictEqual(errorBanner.style.display, 'flex');
+        assert.ok(errorMessage.innerHTML.includes('circonflexe'), 'Error message should explain circumflex recipe');
+        assert.ok(errorMessage.innerHTML.includes('^'), 'Error message should mention ^');
+
+        // 5. When student presses dead key '^', step 1 becomes done (✓)
+        window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Dead', code: 'Equal', bubbles: true }));
+        assert.ok(step1Key.classList.contains('done'), 'Step 1 key should be marked done after pressing dead key');
+        assert.strictEqual(step1Key.querySelector('.key-step-pill').textContent, '✓');
+
+        // 6. When student types 'e', it successfully completes 'ê' and advances
+        window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ê', code: 'KeyE', bubbles: true }));
+        assert.strictEqual(keyboardSection.classList.contains('visible'), false, 'Keyboard should hide after typing correct ê');
+        const nextSpan = window.document.querySelector('.char-current');
+        assert.strictEqual(nextSpan?.textContent, 't', 'Next character after forêt should be t');
+    });
+
+    await t.test('btnToggleKeyboard toggles keyboard guide visibility on demand', () => {
+        const btnToggleKeyboard = window.document.getElementById('btnToggleKeyboard');
+        const keyboardSection = window.document.getElementById('keyboardSection');
+        assert.ok(btnToggleKeyboard, 'btnToggleKeyboard should exist in DOM');
+
+        assert.strictEqual(keyboardSection.classList.contains('visible'), false, 'Keyboard initially hidden');
+
+        // Click to open
+        btnToggleKeyboard.click();
+        assert.strictEqual(keyboardSection.classList.contains('visible'), true, 'Keyboard should be visible after click');
+
+        // Click to close
+        btnToggleKeyboard.click();
+        assert.strictEqual(keyboardSection.classList.contains('visible'), false, 'Keyboard should be hidden after second click');
+    });
 });
+

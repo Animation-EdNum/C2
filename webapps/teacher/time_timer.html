@@ -614,6 +614,42 @@
             box-shadow: 0 0 0 2px var(--glass-bg), 0 3px 8px rgba(0, 0, 0, 0.2);
         }
 
+        .color-swatch.rainbow-swatch {
+            background: conic-gradient(from 0deg, #f43f5e, #fb923c, #facc15, #4ade80, #38bdf8, #818cf8, #f43f5e);
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-swatch.rainbow-swatch::after {
+            content: "🌈";
+            font-size: 0.85rem;
+            line-height: 1;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+            pointer-events: none;
+        }
+
+        body.theme-rainbow #clockOuterRing {
+            stroke: #38bdf8;
+            stroke-width: 8;
+        }
+
+        body.theme-rainbow #centerPivot circle:nth-child(2) {
+            fill: #0284c7;
+        }
+
+        body.theme-rainbow #dragHandle {
+            fill: #0ea5e9;
+            stroke: #ffffff;
+            stroke-width: 3.5;
+        }
+
+        #rainbowCloud {
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.22));
+            transition: transform 0.08s linear;
+        }
+
         .custom-color-wrapper {
             position: relative;
             display: inline-flex;
@@ -961,14 +997,30 @@
                         <filter id="diskGlow" x="-20%" y="-20%" width="140%" height="140%">
                             <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--timer-disk-color)" flood-opacity="0.35"/>
                         </filter>
+
+                        <!-- Clip path for Rainbow concentric wedge -->
+                        <clipPath id="timerDiskClip">
+                            <path id="timerDiskClipPath" d=""></path>
+                        </clipPath>
                     </defs>
 
                     <!-- Base Clock Outer Ring -->
-                    <circle cx="250" cy="250" r="235" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="6"/>
+                    <circle id="clockOuterRing" cx="250" cy="250" r="235" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="6"/>
                     <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2"/>
 
-                    <!-- Colored Timer Disk/Arc -->
+                    <!-- Colored Timer Disk/Arc (Standard solid color) -->
                     <path id="timerDisk" d="" fill="var(--timer-disk-color)" filter="url(#diskGlow)"></path>
+
+                    <!-- Rainbow Concentric Arcs Group (Active when settings.color === 'rainbow') -->
+                    <g id="rainbowGroup" clip-path="url(#timerDiskClip)" style="display:none;" filter="url(#diskGlow)">
+                        <!-- 6 concentric colored bands from outer to inner matching physical Time Timer -->
+                        <circle cx="250" cy="250" r="210" fill="#f43f5e"/>
+                        <circle cx="250" cy="250" r="175" fill="#fb923c"/>
+                        <circle cx="250" cy="250" r="140" fill="#facc15"/>
+                        <circle cx="250" cy="250" r="105" fill="#4ade80"/>
+                        <circle cx="250" cy="250" r="70"  fill="#38bdf8"/>
+                        <circle cx="250" cy="250" r="35"  fill="#818cf8"/>
+                    </g>
 
                     <!-- Optional Inner cutout for Doughnut/Ring style -->
                     <circle id="donutHole" cx="250" cy="250" r="95" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="2" style="display:none;"></circle>
@@ -978,6 +1030,28 @@
 
                     <!-- Dial Numbers (0, 5, 10, ... 55, 60) -->
                     <g id="dialNumbersGroup"></g>
+
+                    <!-- Rainbow Mascot Cloud (gliding at the leading/trailing edge) -->
+                    <g id="rainbowCloud" style="display:none; pointer-events:none;">
+                        <!-- Sun rays crest -->
+                        <g class="cloud-sunburst">
+                            <circle cx="16" cy="-12" r="10" fill="#f59e0b"/>
+                            <line x1="25" y1="-21" x2="29" y2="-25" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="16" y1="-24" x2="16" y2="-29" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="27" y1="-12" x2="32" y2="-12" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                            <line x1="24" y1="-3" x2="28" y2="1" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                        </g>
+                        <!-- Puffy Cloud Body -->
+                        <path d="M -24,8 C -30,8 -34,3 -34,-2 C -34,-7 -29,-11 -23,-11 C -21,-19 -13,-24 -3,-24 C 6,-24 13,-19 16,-12 C 21,-13 26,-8 26,-2 C 30,-2 33,2 33,6 C 33,10 29,14 24,14 L -24,14 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8" stroke-linejoin="round" filter="drop-shadow(0 2px 5px rgba(0,0,0,0.2))"/>
+                        <!-- Smiling Happy Eyes -->
+                        <path d="M -14,-3 Q -10,-8 -6,-3" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+                        <path d="M 4,-3 Q 8,-8 12,-3" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+                        <!-- Blushing Rosy Cheeks -->
+                        <ellipse cx="-15" cy="4" rx="4" ry="2.5" fill="#fb7185" opacity="0.85"/>
+                        <ellipse cx="13" cy="4" rx="4" ry="2.5" fill="#fb7185" opacity="0.85"/>
+                        <!-- Cute Mouth -->
+                        <path d="M -3,2 Q -1,5.5 1,2" fill="none" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+                    </g>
 
                     <!-- Center Pivot Pin (Heartbeat Pulse) -->
                     <g id="centerPivot" class="center-pivot">
@@ -1049,6 +1123,7 @@
                     <div class="option-group" style="grid-column: 1 / -1;">
                         <label class="option-label">Couleur du disque</label>
                         <div class="color-palette" id="colorPalette">
+                            <button class="color-swatch rainbow-swatch" data-color="rainbow" title="Arc-en-ciel magique 🌈"></button>
                             <button class="color-swatch active" style="background:#ef4444;" data-color="#ef4444" title="Rouge classique"></button>
                             <button class="color-swatch" style="background:#0ea5e9;" data-color="#0ea5e9" title="Bleu ciel"></button>
                             <button class="color-swatch" style="background:#10b981;" data-color="#10b981" title="Vert menthe"></button>
@@ -1125,6 +1200,10 @@
 
                     <!-- Option: Checkboxes -->
                     <div class="option-group" style="justify-content: center; gap: 8px; grid-column: 1 / -1;">
+                        <label class="custom-checkbox-row" id="rainbowCloudOptionRow">
+                            <input type="checkbox" id="checkRainbowCloud" checked>
+                            <span>Mascotte nuage souriant (mode arc-en-ciel) ☁️</span>
+                        </label>
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkAutoStart" checked>
                             <span>Démarrer immédiatement au clic d'un préréglage</span>
@@ -1225,6 +1304,10 @@
 
             // DOM Elements
             const timerDisk = document.getElementById('timerDisk');
+            const timerDiskClipPath = document.getElementById('timerDiskClipPath');
+            const rainbowGroup = document.getElementById('rainbowGroup');
+            const rainbowCloud = document.getElementById('rainbowCloud');
+            const checkRainbowCloud = document.getElementById('checkRainbowCloud');
             const donutHole = document.getElementById('donutHole');
             const dragHandle = document.getElementById('dragHandle');
             const tickMarksGroup = document.getElementById('tickMarksGroup');
@@ -1881,7 +1964,8 @@
                 warningSeconds: 60,
                 ticking: false,
                 lastMinutes: 10,
-                activityTitle: ''
+                activityTitle: '',
+                rainbowCloud: true
             };
 
             function loadSettings() {
@@ -1901,12 +1985,17 @@
                         if (parsed.showPulseDots === undefined) {
                             parsed.showPulseDots = true;
                         }
+                        if (parsed.rainbowCloud === undefined) {
+                            parsed.rainbowCloud = true;
+                        }
                         settings = Object.assign(settings, parsed);
                     }
                 } catch (e) { }
 
                 // Apply to UI
-                document.documentElement.style.setProperty('--timer-disk-color', settings.color);
+                const isRainbow = settings.color === 'rainbow';
+                document.body.classList.toggle('theme-rainbow', isRainbow);
+                document.documentElement.style.setProperty('--timer-disk-color', isRainbow ? '#38bdf8' : settings.color);
                 let matchedSwatch = false;
                 document.querySelectorAll('.color-swatch').forEach(sw => {
                     const isMatch = (sw.dataset.color || '').toLowerCase() === (settings.color || '').toLowerCase();
@@ -1915,7 +2004,10 @@
                 });
                 if (customColorInput) {
                     customColorInput.value = (settings.color && settings.color.startsWith('#')) ? settings.color : '#ef4444';
-                    customColorInput.classList.toggle('active', !matchedSwatch);
+                    customColorInput.classList.toggle('active', !matchedSwatch && !isRainbow);
+                }
+                if (checkRainbowCloud) {
+                    checkRainbowCloud.checked = settings.rainbowCloud !== false;
                 }
                 diskStyleSelect.value = settings.style;
                 directionSelect.value = settings.direction;
@@ -1960,6 +2052,22 @@
                 dialNumbersGroup.innerHTML = '';
 
                 const isCounterClockwise = settings.direction === 'counter-clockwise';
+                const isRainbow = settings.color === 'rainbow';
+
+                const RAINBOW_NUMBER_COLORS = {
+                    0: '#ef4444',
+                    5: '#ef4444',
+                    10: '#f97316',
+                    15: '#eab308',
+                    20: '#22c55e',
+                    25: '#06b6d4',
+                    30: '#0ea5e9',
+                    35: '#3b82f6',
+                    40: '#6366f1',
+                    45: '#8b5cf6',
+                    50: '#ec4899',
+                    55: '#f43f5e'
+                };
 
                 // 60 tick marks
                 for (let i = 0; i < 60; i++) {
@@ -1969,7 +2077,11 @@
 
                     const tickLength = isMajor ? 14 : 7;
                     const strokeWidth = isMajor ? 3 : 1.5;
-                    const strokeColor = isMajor ? 'var(--clock-tick-major)' : 'var(--clock-tick)';
+                    const displayMin = isCounterClockwise ? ((60 - i) % 60) : i;
+                    let strokeColor = isMajor ? 'var(--clock-tick-major)' : 'var(--clock-tick)';
+                    if (isRainbow && isMajor) {
+                        strokeColor = RAINBOW_NUMBER_COLORS[displayMin] || 'var(--clock-tick-major)';
+                    }
 
                     const r1 = RADIUS + 16;
                     const r2 = r1 - tickLength;
@@ -2010,7 +2122,7 @@
                     text.setAttribute('font-family', "'Outfit', sans-serif");
                     text.setAttribute('font-size', '18');
                     text.setAttribute('font-weight', minuteVal % 15 === 0 ? '800' : '700');
-                    text.setAttribute('fill', 'var(--clock-num)');
+                    text.setAttribute('fill', isRainbow ? (RAINBOW_NUMBER_COLORS[minuteVal] || 'var(--clock-num)') : 'var(--clock-num)');
                     text.textContent = (minuteVal === 0) ? '0' : minuteVal.toString();
                     dialNumbersGroup.appendChild(text);
                 }
@@ -2021,9 +2133,13 @@
                 const secs = (overrideSecs !== undefined) ? overrideSecs : remainingSeconds;
                 const fraction = Math.max(0, Math.min(1, secs / 3600));
                 const angleDeg = fraction * 360;
+                const isRainbow = settings.color === 'rainbow';
 
                 if (fraction <= 0) {
                     timerDisk.setAttribute('d', '');
+                    if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', '');
+                    if (rainbowGroup) rainbowGroup.style.display = 'none';
+                    if (rainbowCloud) rainbowCloud.style.display = 'none';
                     dragHandle.style.display = 'none';
                     return;
                 }
@@ -2036,7 +2152,24 @@
                         A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY - RADIUS}
                         Z
                     `;
-                    timerDisk.setAttribute('d', d);
+                    if (isRainbow) {
+                        timerDisk.setAttribute('d', '');
+                        if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', d);
+                        if (rainbowGroup) rainbowGroup.style.display = 'block';
+                        if (rainbowCloud) {
+                            if (settings.rainbowCloud !== false) {
+                                rainbowCloud.setAttribute('transform', `translate(${CX}, ${CY - 128}) rotate(-90)`);
+                                rainbowCloud.style.display = 'block';
+                            } else {
+                                rainbowCloud.style.display = 'none';
+                            }
+                        }
+                    } else {
+                        timerDisk.setAttribute('d', d);
+                        if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', '');
+                        if (rainbowGroup) rainbowGroup.style.display = 'none';
+                        if (rainbowCloud) rainbowCloud.style.display = 'none';
+                    }
                     dragHandle.style.display = 'none';
                     return;
                 }
@@ -2048,8 +2181,8 @@
                 const topX = CX;
                 const topY = CY - RADIUS;
 
-                // End of arc coordinate
-                let endX, endY;
+                // End of arc coordinate & arm rotation angle
+                let endX, endY, armAngleDeg;
                 let sweepFlag;
 
                 if (isCounterClockwise) {
@@ -2057,11 +2190,13 @@
                     endX = CX - RADIUS * Math.sin(angleRad);
                     endY = CY - RADIUS * Math.cos(angleRad);
                     sweepFlag = 0; // Sweep counter-clockwise
+                    armAngleDeg = -90 - angleDeg;
                 } else {
                     // Clockwise from 12 o'clock
                     endX = CX + RADIUS * Math.sin(angleRad);
                     endY = CY - RADIUS * Math.cos(angleRad);
                     sweepFlag = 1; // Sweep clockwise
+                    armAngleDeg = -90 + angleDeg;
                 }
 
                 const largeArcFlag = angleDeg > 180 ? 1 : 0;
@@ -2072,7 +2207,30 @@
                     A ${RADIUS} ${RADIUS} 0 ${largeArcFlag} ${sweepFlag} ${endX.toFixed(2)} ${endY.toFixed(2)}
                     Z
                 `;
-                timerDisk.setAttribute('d', pathData);
+
+                if (isRainbow) {
+                    timerDisk.setAttribute('d', '');
+                    if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', pathData);
+                    if (rainbowGroup) rainbowGroup.style.display = 'block';
+
+                    if (rainbowCloud) {
+                        if (settings.rainbowCloud !== false) {
+                            const cloudR = 128;
+                            const armRad = (armAngleDeg * Math.PI) / 180;
+                            const cloudX = CX + cloudR * Math.cos(armRad);
+                            const cloudY = CY + cloudR * Math.sin(armRad);
+                            rainbowCloud.setAttribute('transform', `translate(${cloudX.toFixed(2)}, ${cloudY.toFixed(2)}) rotate(${armAngleDeg.toFixed(2)})`);
+                            rainbowCloud.style.display = 'block';
+                        } else {
+                            rainbowCloud.style.display = 'none';
+                        }
+                    }
+                } else {
+                    timerDisk.setAttribute('d', pathData);
+                    if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', '');
+                    if (rainbowGroup) rainbowGroup.style.display = 'none';
+                    if (rainbowCloud) rainbowCloud.style.display = 'none';
+                }
 
                 // Update drag knob position
                 dragHandle.setAttribute('cx', endX.toFixed(2));
@@ -2463,13 +2621,18 @@
                 if (!swatch) return;
                 const color = swatch.dataset.color;
                 settings.color = color;
-                document.documentElement.style.setProperty('--timer-disk-color', color);
+                const isRainbow = color === 'rainbow';
+                document.body.classList.toggle('theme-rainbow', isRainbow);
+                document.documentElement.style.setProperty('--timer-disk-color', isRainbow ? '#38bdf8' : color);
                 document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw === swatch));
                 if (customColorInput) {
                     customColorInput.classList.remove('active');
-                    customColorInput.value = color;
+                    if (!isRainbow && color.startsWith('#')) {
+                        customColorInput.value = color;
+                    }
                 }
                 saveSettings();
+                buildClockDial();
                 renderDisk();
             });
 
@@ -2477,9 +2640,19 @@
                 customColorInput.addEventListener('input', (e) => {
                     const color = e.target.value;
                     settings.color = color;
+                    document.body.classList.remove('theme-rainbow');
                     document.documentElement.style.setProperty('--timer-disk-color', color);
                     document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
                     customColorInput.classList.add('active');
+                    saveSettings();
+                    buildClockDial();
+                    renderDisk();
+                });
+            }
+
+            if (checkRainbowCloud) {
+                checkRainbowCloud.addEventListener('change', () => {
+                    settings.rainbowCloud = checkRainbowCloud.checked;
                     saveSettings();
                     renderDisk();
                 });
@@ -2733,7 +2906,8 @@
                     warningSeconds: 60,
                     ticking: false,
                     lastMinutes: 10,
-                    activityTitle: ''
+                    activityTitle: '',
+                    rainbowCloud: true
                 };
 
                 activityTitleInput.value = '';
