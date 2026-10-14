@@ -25,6 +25,7 @@ function localizeBadgeText(text) {
         '9-11CO': '9.-11. OS',
         '10CO': '10. OS',
         '1-2H': '1.-2. Primar',
+        '2-3H': '2.-3. Primar',
         '3-4H': '3.-4. Primar',
         'Cycle 1': 'Zyklus 1',
         'Cycle 2': 'Zyklus 2',
@@ -77,7 +78,8 @@ function getLocalizedApp(app) {
         desc: de.desc !== undefined ? de.desc : app.desc,
         tags: de.tags || app.tags,
         ref: de.ref !== undefined ? de.ref : app.ref,
-        badges: de.badges || app.badges
+        badges: de.badges || app.badges,
+        c1Badge: de.c1Badge || app.c1Badge
     };
 }
 
@@ -149,8 +151,11 @@ function renderExternalCard(app) {
 
 function renderC1Card(app) {
     const localized = getLocalizedApp(app);
+    const badgeText = localized.c1Badge || (localized.dataLevel ? localizeBadgeText(localized.dataLevel) : '');
+    const badgeHtml = badgeText ? `<div class="card-c1-badge"><span class="badge-pill-c1">${badgeText}</span></div>` : '';
     return `
             <a href="${localized.href}" class="card" style="${localized.style || ''}">
+                ${badgeHtml}
                 <div class="card-icon-main">
                     ${localized.c1Icon ? `<i data-fa="${localized.c1Icon}" style="color: #fff;"></i>` : ''}
                 </div>

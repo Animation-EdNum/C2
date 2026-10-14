@@ -190,6 +190,100 @@
         },
 
         /**
+         * Assigne de façon sécurisée du contenu HTML simple (tags inline autorisés)
+         * sans jamais recourir à une affectation directe innerHTML, éliminant tout risque XSS (règle VICE vice/code/xss-dom).
+         */
+        setSanitizedHtml: function (targetEl, htmlString) {
+            if (!targetEl || typeof htmlString !== 'string') {
+                return;
+            }
+
+            const docObj = targetEl.ownerDocument || (typeof document !== 'undefined' ? document : null);
+            const winObj = (docObj && docObj.defaultView) || (typeof window !== 'undefined' ? window : null);
+
+            if (!docObj || !winObj || typeof winObj.DOMParser === 'undefined') {
+                targetEl.textContent = htmlString.replace(/<[^>]+>/g, '');
+                return;
+            }
+
+            const parser = new winObj.DOMParser();
+            const parsedDoc = parser.parseFromString(htmlString, 'text/html');
+            const allowedTags = new Set(['STRONG', 'EM', 'B', 'I', 'U', 'SPAN', 'BR', 'P', 'A', 'CODE', 'KBD', 'SMALL', 'SUB', 'SUP']);
+            const dangerousTags = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'SVG', 'MATH']);
+
+            function sanitizeNode(node) {
+                if (node.nodeType === 3) {
+                    return docObj.createTextNode(node.textContent || '');
+                }
+                if (node.nodeType === 1) {
+                    const tag = node.nodeName.toUpperCase();
+                    if (allowedTags.has(tag)) {
+                        const cleanEl = docObj.createElement(tag.toLowerCase());
+
+                        if (tag === 'A') {
+                            const href = (node.getAttribute('href') || '').trim();
+                            const lowerHref = href.toLowerCase();
+                            if (lowerHref && !lowerHref.startsWith('javascript:') && !lowerHref.startsWith('vbscript:') && !lowerHref.startsWith('data:')) {
+                                cleanEl.setAttribute('href', href);
+                            }
+                            if (node.hasAttribute('target')) {
+                                cleanEl.setAttribute('target', node.getAttribute('target'));
+                            }
+                            if (node.hasAttribute('rel')) {
+                                cleanEl.setAttribute('rel', node.getAttribute('rel'));
+                            } else if (cleanEl.getAttribute('target') === '_blank') {
+                                cleanEl.setAttribute('rel', 'noopener noreferrer');
+                            }
+                        }
+
+                        if (node.hasAttribute('class')) {
+                            cleanEl.setAttribute('class', node.getAttribute('class'));
+                        }
+
+                        const children = node.childNodes;
+                        for (let i = 0; i < children.length; i++) {
+                            const cleanChild = sanitizeNode(children[i]);
+                            if (cleanChild) {
+                                cleanEl.appendChild(cleanChild);
+                            }
+                        }
+                        return cleanEl;
+                    }
+
+                    if (dangerousTags.has(tag)) {
+                        return null;
+                    }
+
+                    if (node.childNodes && node.childNodes.length > 0) {
+                        const frag = docObj.createDocumentFragment();
+                        for (let i = 0; i < node.childNodes.length; i++) {
+                            const cleanChild = sanitizeNode(node.childNodes[i]);
+                            if (cleanChild) {
+                                frag.appendChild(cleanChild);
+                            }
+                        }
+                        return frag;
+                    } else if (node.textContent) {
+                        return docObj.createTextNode(node.textContent);
+                    }
+                }
+                return null;
+            }
+
+            while (targetEl.firstChild) {
+                targetEl.removeChild(targetEl.firstChild);
+            }
+
+            const bodyChildren = (parsedDoc.body && parsedDoc.body.childNodes) ? parsedDoc.body.childNodes : [];
+            for (let i = 0; i < bodyChildren.length; i++) {
+                const cleanChild = sanitizeNode(bodyChildren[i]);
+                if (cleanChild) {
+                    targetEl.appendChild(cleanChild);
+                }
+            }
+        },
+
+        /**
          * Applique les traductions aux éléments du DOM contenant data-i18n, data-i18n-html ou data-i18n-attr.
          */
         apply: function (root) {
@@ -212,7 +306,7 @@
                 }
             }
 
-            // 2. HTML content via data-i18n-html (pour chaînes de confiance avec balises simples)
+            // 2. HTML content via data-i18n-html (sécurisé via setSanitizedHtml, sans injection innerHTML directe)
             const htmlNodes = targetRoot.querySelectorAll('[data-i18n-html]');
             for (let i = 0; i < htmlNodes.length; i++) {
                 const el = htmlNodes[i];
@@ -223,9 +317,7 @@
                     }
                     const fallback = el.getAttribute('data-i18n-orig-html');
                     const translated = this.t(key, fallback);
-                    if (translated !== fallback || this.locale === 'de') {
-                        el.innerHTML = translated;
-                    }
+                    this.setSanitizedHtml(el, translated);
                 }
             }
 

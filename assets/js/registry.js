@@ -56,7 +56,7 @@ window.REGISTRY = [
     "id": "app-machine-trier",
     "href": "alpha/webapps/machine_a_trier.html",
     "isAlpha": true,
-    "dataLevel": "1-2H",
+    "dataLevel": "1-2H, 3-4H",
     "icon": "dt-shapes",
     "title": "Machine à trier",
     "desc": "Glisse et trie les objets par couleur ou par forme.",
@@ -68,6 +68,10 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "1-2H",
+        "grey": false
+      },
+      {
+        "text": "3-4H",
         "grey": false
       }
     ],
@@ -103,7 +107,7 @@ window.REGISTRY = [
     "id": "app-jeu-grue",
     "href": "alpha/webapps/jeu_de_la_grue.html",
     "isAlpha": true,
-    "dataLevel": "1-2H",
+    "dataLevel": "3-4H",
     "icon": "dt-arrow-up-from-square",
     "title": "Jeu de la grue",
     "desc": "Programme la grue pour empiler des blocs.",
@@ -111,10 +115,10 @@ window.REGISTRY = [
       "#Algorithmique",
       "#Séquence"
     ],
-    "ref": "DÉ>CODAGE 1-2 · Activité 2",
+    "ref": "DÉ>CODAGE 3-4 · Activité 2",
     "badges": [
       {
-        "text": "1-2H",
+        "text": "3-4H",
         "grey": false
       }
     ],
@@ -589,7 +593,8 @@ window.REGISTRY = [
   {
     "id": "ext-alphawebappsmac",
     "href": "alpha/webapps/machine_a_trier.html",
-    "dataLevel": null,
+    "dataLevel": "1-2H, 3-4H",
+    "c1Badge": "1-2H (TNI) · 3-4H",
     "style": "--theme-start: #15803d; --theme-end: #166534;",
     "title": "Machine à trier",
     "c1Icon": "dt-shapes",
@@ -603,14 +608,16 @@ window.REGISTRY = [
     "inC1": true,
     "i18n": {
       "de": {
-        "title": "Sortiermaschine"
+        "title": "Sortiermaschine",
+        "c1Badge": "1.-2. Primar (Tafel) · 3.-4. Primar"
       }
     }
   },
   {
     "id": "ext-alphawebappsjeu",
     "href": "alpha/webapps/jeu_de_la_grue.html",
-    "dataLevel": null,
+    "dataLevel": "3-4H",
+    "c1Badge": "3-4H",
     "style": "--theme-start: #f6d365; --theme-end: #fda085;",
     "title": "Jeu de la grue",
     "c1Icon": "dt-arrow-up-from-square",
@@ -624,14 +631,16 @@ window.REGISTRY = [
     "inC1": true,
     "i18n": {
       "de": {
-        "title": "Kranspiel"
+        "title": "Kranspiel",
+        "c1Badge": "3.-4. Primar"
       }
     }
   },
   {
     "id": "ext-webappssimulate",
     "href": "webapps/simulateur_automate.html",
-    "dataLevel": null,
+    "dataLevel": "3-4H",
+    "c1Badge": "3-4H",
     "style": "--theme-start: #3b82f6; --theme-end: #1d4ed8;",
     "title": "Simulateur d'automate",
     "c1Icon": "dt-robot-astromech",
@@ -645,7 +654,8 @@ window.REGISTRY = [
     "inC1": true,
     "i18n": {
       "de": {
-        "title": "Simulator Automat"
+        "title": "Simulator Automat",
+        "c1Badge": "3.-4. Primar"
       }
     }
   },

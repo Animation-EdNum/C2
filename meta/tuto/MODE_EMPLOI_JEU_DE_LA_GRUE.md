@@ -2,7 +2,7 @@
 
 Le **Jeu de la grue** initie les élèves à la pensée algorithmique, à la planification séquentielle et à la résolution de problèmes spatiaux. L'élève programme une grue sur rail pour réorganiser des cubes colorés et reproduire la disposition cible.
 
-Alignement : Cycles 1 et 2 PER (1-2H DÉ>CODAGE, pensée computationnelle & planification séquentielle).
+Alignement : Cycle 1 PER (3-4H uniquement, DÉ>CODAGE, pensée computationnelle & planification séquentielle).
 
 ---
 
@@ -20,7 +20,7 @@ Alignement : Cycles 1 et 2 PER (1-2H DÉ>CODAGE, pensée computationnelle & plan
 
 | Niveau | Nombre de cubes | Démarche requise |
 |---|---|---|
-| 🟢 **Facile** | 1 cube | Trajet direct — idéal pour le Cycle 1 (1-2H) ou la prise en main rapide. |
+| 🟢 **Facile** *(défaut)* | 1 cube | Trajet direct — niveau activé par défaut, idéal pour les élèves de 3-4H ou la prise en main rapide. |
 | 🟡 **Moyen** | 2 cubes | Première coordination et ordonnancement de déplacements entre colonnes. |
 | 🔴 **Difficile** | 3 cubes | Impose des déplacements intermédiaires (stockage temporaire sur la colonne libre pour libérer un cube inférieur). |
 

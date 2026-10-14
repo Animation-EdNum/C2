@@ -2,6 +2,12 @@
 
 **Machine à trier** est une application web interactive qui enseigne les principes du **classement, du tri et de la catégorisation** à travers une activité de manipulation ludique. L'élève doit ranger des objets dans des bacs étiquetés en fonction d'un critère donné (couleur, forme, quantité ou taille).
 
+Alignement : Cycle 1 PER (**1-2H et 3-4H**).
+
+> 💡 **Recommandation pédagogique pour les 1-2H :**
+> À ce stade (1-2H), l'éducation numérique est conçue pour se dérouler **exclusivement en mode débranché** (sans écrans individuels pour les élèves).
+> Si vous souhaitez utiliser la *Machine à trier* en version numérique, **privilégiez son utilisation au grand écran (TNI / TBI)** avec l'ensemble de la classe, plutôt que sur des tablettes ou ordinateurs individuels. En 3-4H, un travail en binômes sur tablette/ordinateur peut être envisagé.
+
 ---
 
 ## 🌟 Pourquoi utiliser cet outil en classe ?

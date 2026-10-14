@@ -220,6 +220,8 @@
         'portal_c1.header_title': 'EdNum Zyklus 1',
         'portal_c1.header_subtitle': 'Aktivitäten zur informatischen Bildung für die 1.-4. Primarstufe',
         'portal_c1.switch_c2': 'Zum Portal Zyklus 2 & 3',
+        'portal_c1.pedagogy_title': 'Pädagogische Empfehlung für die 1.-2. Primarstufe',
+        'portal_c1.pedagogy_text': 'Auf dieser Stufe erfolgt die informatische Bildung <strong>ausschliesslich ungestöpselt (ohne Bildschirme)</strong>. Wenn Sie die digitale Version der <em>Sortiermaschine</em> einsetzen möchten, <strong>bevorzugen Sie deren Nutzung an der interaktiven Grossleinwand (Whiteboard / Smartboard)</strong> mit der ganzen Klasse anstelle von Einzelgeräten.',
 
         // --- PILOT APP: BINÄRE CODIERUNG (BINAIRE_CODAGE.HTML) ---
         'binaire_codage.title': 'Binäre Codierung',

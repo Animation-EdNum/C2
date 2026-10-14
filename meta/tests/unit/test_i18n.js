@@ -127,6 +127,50 @@ test('i18n.js - DOM Application', async (t) => {
         const input = doc.getElementById('search');
         assert.strictEqual(input.getAttribute('placeholder'), 'App, Thema oder Stichwort suchen…');
     });
+
+    await t.test('translates data-i18n-html safely with allowed inline tags without raw innerHTML assignment', () => {
+        const sampleHtml = `<!DOCTYPE html>
+        <html>
+        <head></head>
+        <body>
+            <p id="c1-banner" data-i18n-html="portal_c1.pedagogy_text">
+                Texte initial <strong>important</strong> et <em>italique</em>.
+            </p>
+        </body>
+        </html>`;
+
+        const win = setupI18nDOM({ html: sampleHtml, url: 'http://localhost/?lang=de' });
+        const doc = win.document;
+        win.I18N.apply(doc);
+
+        const banner = doc.getElementById('c1-banner');
+        assert.ok(banner.querySelector('strong'), 'Should contain sanitized <strong> element');
+        assert.ok(banner.querySelector('em'), 'Should contain sanitized <em> element');
+        assert.strictEqual(banner.querySelector('strong').textContent, 'ausschliesslich ungestöpselt (ohne Bildschirme)');
+        assert.strictEqual(banner.querySelector('em').textContent, 'Sortiermaschine');
+    });
+
+    await t.test('setSanitizedHtml neutralizes XSS vectors while preserving safe content', () => {
+        const win = setupI18nDOM();
+        const doc = win.document;
+        const target = doc.createElement('div');
+
+        // Test with XSS payloads: script tag, onclick, javascript: href, img onerror
+        const maliciousHtml = 'Bonjour <strong>monde</strong>! ' +
+            '<a href="javascript:alert(\'xss\')" onclick="alert(1)"><span onclick="alert(2)">Lien</span></a>' +
+            '<script>alert("xss")</script><img src="x" onerror="alert(3)">';
+
+        win.I18N.setSanitizedHtml(target, maliciousHtml);
+
+        assert.strictEqual(target.querySelectorAll('script').length, 0, 'No script tags allowed');
+        assert.strictEqual(target.querySelectorAll('img').length, 0, 'No img tags allowed');
+        assert.strictEqual(target.querySelector('strong').textContent, 'monde', 'Safe strong tag preserved');
+
+        const link = target.querySelector('a');
+        assert.ok(link, 'Link tag preserved');
+        assert.strictEqual(link.hasAttribute('href'), false, 'javascript: href stripped');
+        assert.strictEqual(link.hasAttribute('onclick'), false, 'onclick attribute stripped');
+    });
 });
 
 test('i18n.js - Dictionary completeness audit', () => {

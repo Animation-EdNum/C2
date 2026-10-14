@@ -160,6 +160,42 @@ test('renderIndexCard', async (t) => {
     });
 });
 
+test('renderC1Card', async (t) => {
+    await t.test('renders card with title, icon, and c1Badge', () => {
+        const window = setupDOM();
+        const html = window.renderC1Card({
+            href: 'alpha/webapps/machine_a_trier.html',
+            title: 'Machine à trier',
+            c1Icon: 'dt-shapes',
+            c1SmallIcons: ['check'],
+            c1Badge: '1-2H (TNI) · 3-4H'
+        });
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const a = tempDiv.querySelector('a');
+        assert.ok(a);
+        assert.strictEqual(a.getAttribute('href'), 'alpha/webapps/machine_a_trier.html');
+        assert.ok(a.querySelector('.badge-pill-c1'));
+        assert.strictEqual(a.querySelector('.badge-pill-c1').textContent, '1-2H (TNI) · 3-4H');
+        assert.ok(a.querySelector('.card-title').textContent.includes('Machine à trier'));
+    });
+
+    await t.test('renders card with fallback to dataLevel if c1Badge not present', () => {
+        const window = setupDOM();
+        const html = window.renderC1Card({
+            href: 'alpha/webapps/jeu_de_la_grue.html',
+            title: 'Jeu de la grue',
+            dataLevel: '3-4H'
+        });
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const a = tempDiv.querySelector('a');
+        assert.ok(a);
+        assert.ok(a.querySelector('.badge-pill-c1'));
+        assert.strictEqual(a.querySelector('.badge-pill-c1').textContent, '3-4H');
+    });
+});
+
 test('loadRegistry', async (t) => {
     await t.test('returns empty array when window.REGISTRY is undefined', async () => {
         const window = setupDOM();
