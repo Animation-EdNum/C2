@@ -404,7 +404,7 @@ let simState = {
                 simState.blindRunAborted = true;
             }
             playSound('click');
-            if (simState.program.length >= 24) { showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_mem_full') : 'Mémoire pleine (24 commandes max)', 'error'); return; }
+            if (simState.program.length >= 24) { showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_mem_full', 'Mémoire pleine (24 commandes max)') : 'Mémoire pleine (24 commandes max)', 'error'); return; }
             simState.program.push(cmd); renderProgram();
         }
 
@@ -446,7 +446,7 @@ let simState = {
                 setTimeout(() => document.getElementById('explore-robot').classList.remove('shake'), 350);
                 document.body.classList.add('window-shake');
                 setTimeout(() => document.body.classList.remove('window-shake'), 500);
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_obstacle') : 'Attention ! Obstacle en vue. Exécution stoppée.', 'error');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_obstacle', 'Attention ! Obstacle en vue. Exécution stoppée.') : 'Attention ! Obstacle en vue. Exécution stoppée.', 'error');
             } else {
                 if (cmd === 'forward' || cmd === 'backward') {
                     await sleep(350);
@@ -471,7 +471,7 @@ let simState = {
                 exploreState.firstTryCount += exploreState.firstAttempt ? 1 : 0;
                 exploreState.consecutiveMistakes = 0;
 
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_treasure') : 'Trésor trouvé ! Félicitations !', 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_treasure', 'Trésor trouvé ! Félicitations !') : 'Trésor trouvé ! Félicitations !', 'success');
                 
                 const counterVal = document.getElementById('sim-star-counter-val');
                 if (counterVal) counterVal.textContent = exploreState.starCount;
@@ -930,7 +930,7 @@ let simState = {
             // Shake global de la fenêtre
             document.body.classList.add('window-shake');
             setTimeout(() => document.body.classList.remove('window-shake'), 500);
-            showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_obstacle') : 'Attention ! Obstacle en vue. Exécution stoppée.', 'error');
+            showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_obstacle', 'Attention ! Obstacle en vue. Exécution stoppée.') : 'Attention ! Obstacle en vue. Exécution stoppée.', 'error');
         }
 
         function handleTargetReached() {
@@ -985,9 +985,9 @@ let simState = {
                     unlockSkin('manta');
                 }
 
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_treasure') : 'Trésor trouvé ! Félicitations !', 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_treasure', 'Trésor trouvé ! Félicitations !') : 'Trésor trouvé ! Félicitations !', 'success');
             } else {
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_reward') : 'Bravo ! Tu as atteint la récompense !', 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_reward', 'Bravo ! Tu as atteint la récompense !') : 'Bravo ! Tu as atteint la récompense !', 'success');
             }
 
             const counterVal = document.getElementById('sim-star-counter-val');
@@ -1022,9 +1022,9 @@ let simState = {
 
             simState.firstAttempt = false; // Exécution sans succès
             if (simState.targetRow !== null && simState.targetCol !== null) {
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_finished_no_treasure') : "Exécution terminée mais tu n'es pas arrivé sur le trésor", 'warn');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_finished_no_treasure', "Exécution terminée mais tu n'es pas arrivé sur le trésor") : "Exécution terminée mais tu n'es pas arrivé sur le trésor", 'warn');
             } else {
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_finished') : "Exécution terminée !", 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_finished', "Exécution terminée !") : "Exécution terminée !", 'success');
             }
         }
 
@@ -1175,14 +1175,14 @@ let simState = {
 
                 playSound('success');
                 handleStreakCelebration(1, false, false); // Paire individuelle — légère célébration
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_pair_found') : 'Paire trouvée ! 🎉', 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_pair_found', 'Paire trouvée ! 🎉') : 'Paire trouvée ! 🎉', 'success');
                 memoryPairsFound++;
                 if (memoryPairsFound >= 4) unlockSkin('helicopter');
 
                 const header = document.getElementById('sim-end-header');
                 if (header && typeof memoryMode !== 'undefined' && memoryMode) {
                     const totalPairs = Math.floor((MAT_CONFIG[activeMat]?.content?.length || 0) / 2);
-                    const pairsLabel = (window.I18N ? window.I18N.t('simulateur_automate.memory_pairs_found') : 'Paires trouvées');
+                    const pairsLabel = (window.I18N ? window.I18N.t('simulateur_automate.memory_pairs_found', 'Paires trouvées') : 'Paires trouvées');
                     header.textContent = `${pairsLabel} : ${memoryPairsFound}/${totalPairs}`;
                 }
 
@@ -1211,7 +1211,7 @@ let simState = {
                     );
                     if (remainingContent.length === 0) {
                         handleStreakCelebration(3, false, false); // All pairs found = mini fête
-                        showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_all_pairs') : '🔥 Toutes les paires trouvées ! Champion !', 'success');
+                        showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_all_pairs', '🔥 Toutes les paires trouvées ! Champion !') : '🔥 Toutes les paires trouvées ! Champion !', 'success');
                     }
                 }, 600);
 
@@ -1699,7 +1699,7 @@ let simState = {
             drawState.startC = chal.startC;
 
             let instructionHTML;
-            if (window.I18N && window.I18N.getLang() === 'de') {
+            if (window.I18N && (window.I18N.locale === 'de' || (typeof window.I18N.getLang === 'function' && window.I18N.getLang() === 'de'))) {
                 const shapeDe = SHAPE_NAMES_DE[chal.name] || chal.name;
                 instructionHTML = `Programmiere den Automaten, um <strong>${shapeDe}</strong> zu zeichnen!<br>`;
             } else {
@@ -1709,7 +1709,7 @@ let simState = {
             instructionHTML += generateShapeThumbnail(chal.path, chal.startD);
 
             if (drawState.difficulty === 'hard' || drawState.difficulty === 'extreme') {
-                const noHelp = (window.I18N && window.I18N.getLang() === 'de') ? 'Keine Hilfe auf dem Raster!' : "Pas d'aide sur la grille !";
+                const noHelp = (window.I18N && (window.I18N.locale === 'de' || (typeof window.I18N.getLang === 'function' && window.I18N.getLang() === 'de'))) ? 'Keine Hilfe auf dem Raster!' : "Pas d'aide sur la grille !";
                 instructionHTML += `<div style="font-size: 0.9em; margin-top: 5px; color: var(--text-muted);"><i data-fa="eye-slash" style="width: 16px; height: 16px; vertical-align: middle;"></i> ${noHelp}</div>`;
             }
 
@@ -1844,7 +1844,7 @@ let simState = {
             // Validation
             const targetSet = new Set(drawState.targetCells.map(c => `${c.r},${c.c}`));
             let isCorrect = true;
-            let errorMsg = (window.I18N ? window.I18N.t('simulateur_automate.err_shape_not_exact') : `La forme n'est pas exacte !`);
+            let errorMsg = (window.I18N ? window.I18N.t('simulateur_automate.err_shape_not_exact', `La forme n'est pas exacte !`) : `La forme n'est pas exacte !`);
 
             if (visited.size !== targetSet.size) {
                 isCorrect = false;
@@ -1860,13 +1860,13 @@ let simState = {
             if (isCorrect && drawState.mustClose) {
                 if (currR !== drawState.startR || currC !== drawState.startC) {
                     isCorrect = false;
-                    errorMsg = (window.I18N ? window.I18N.t('simulateur_automate.err_shape_must_close') : `La forme doit être fermée !`);
+                    errorMsg = (window.I18N ? window.I18N.t('simulateur_automate.err_shape_must_close', `La forme doit être fermée !`) : `La forme doit être fermée !`);
                 }
             }
 
             if (isCorrect) {
                 playSound('success');
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_shape_success') : 'Forme réussie !', 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_shape_success', 'Forme réussie !') : 'Forme réussie !', 'success');
                 simState.consecutiveMistakes = 0;
 
                 drawGlobalScore++;
@@ -1957,7 +1957,7 @@ let simState = {
 
             readState.program = [...chal.correct];
             readState.bugIndex = -1;
-            document.getElementById('read-instruction')['innerHTML'] = (window.I18N ? window.I18N.t('simulateur_automate.instruction_read') : "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>");
+            document.getElementById('read-instruction')['innerHTML'] = (window.I18N ? window.I18N.t('simulateur_automate.instruction_read', "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>") : "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>");
 
             buildGrid('read-grid', GRID_ROWS, GRID_COLS, chal.obstacles);
             renderRobot('read-grid', 'read-robot', chal.startR, chal.startC, chal.startD);
@@ -2028,7 +2028,7 @@ let simState = {
 
                 playSound('success');
                 handleStreakCelebration(1, false, false); // Read: light celebration, no streak
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_success') : `Excellent ! C'est la bonne réponse !`, 'success');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_success', `Excellent ! C'est la bonne réponse !`) : `Excellent ! C'est la bonne réponse !`, 'success');
 
                 if (readGlobalStreak > 0) {
                     const readIsExtreme = (readState.difficulty === 'extreme');
@@ -2049,7 +2049,7 @@ let simState = {
                 if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
                 ScoreManager.addMistake("read", readState.difficulty);
                 document.getElementById('read-global-streak').textContent = readGlobalStreak;
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_fail') : 'Faux. Essaie encore !', 'error');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_fail', 'Faux. Essaie encore !') : 'Faux. Essaie encore !', 'error');
                 readState.locked = false;
             }
 
@@ -2179,7 +2179,7 @@ let simState = {
 
                     if (f1Streak >= 3) unlockSkin('f1');
 
-                    showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_chal_success') : `Bravo ! Pilotage réussi !`, 'success');
+                    showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_chal_success', `Bravo ! Pilotage réussi !`) : `Bravo ! Pilotage réussi !`, 'success');
                     el.classList.add('correct');
                     const target = document.getElementById('chal-target');
                     if (target) target.classList.add('pulse');
@@ -2194,7 +2194,7 @@ let simState = {
                     ScoreManager.addMistake("chal", chalState.difficulty);
                     document.getElementById('global-streak').textContent = globalStreak;
                     chalState.options.forEach((o, j) => { if (o.isCorrect) opts[j].classList.add('correct'); });
-                    showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_chal_fail') : 'Faux. Clique sur la proposition en vert pour voir la solution.', 'error');
+                    showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_chal_fail', 'Faux. Clique sur la proposition en vert pour voir la solution.') : 'Faux. Clique sur la proposition en vert pour voir la solution.', 'error');
                 }
                 document.getElementById('btn-next-challenge').style.display = 'inline-flex';
                 if (option.isCorrect) setTimeout(() => { if (document.getElementById('btn-next-challenge').style.display !== 'none' && activeTab === 'challenge') newChallenge(); }, 3000);

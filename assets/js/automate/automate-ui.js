@@ -119,15 +119,15 @@ function toggleCommands() {
         // Commandes visibles => On propose de les masquer => icône barrée (eye-slash)
         if (iconEyeOff) iconEyeOff.style.display = 'block';
         if (iconEye) iconEye.style.display = 'none';
-        if (toggleText) toggleText.textContent = (window.I18N ? window.I18N.t('simulateur_automate.hide_cmds') : 'Masquer commandes');
-        if (toggleBtn) toggleBtn.setAttribute('title', (window.I18N ? window.I18N.t('simulateur_automate.hide_cmds_title') : 'Masquer les commandes'));
+        if (toggleText) toggleText.textContent = (window.I18N ? window.I18N.t('simulateur_automate.hide_cmds', 'Masquer commandes') : 'Masquer commandes');
+        if (toggleBtn) toggleBtn.setAttribute('title', (window.I18N ? window.I18N.t('simulateur_automate.hide_cmds_title', 'Masquer les commandes') : 'Masquer les commandes'));
         if (simProgram) simProgram.classList.remove('masked');
     } else {
         // Commandes masquées => On propose de les afficher => icône normale (eye)
         if (iconEyeOff) iconEyeOff.style.display = 'none';
         if (iconEye) iconEye.style.display = 'block';
-        if (toggleText) toggleText.textContent = (window.I18N ? window.I18N.t('simulateur_automate.show_cmds') : 'Afficher commandes');
-        if (toggleBtn) toggleBtn.setAttribute('title', (window.I18N ? window.I18N.t('simulateur_automate.show_cmds_title') : 'Afficher les commandes'));
+        if (toggleText) toggleText.textContent = (window.I18N ? window.I18N.t('simulateur_automate.show_cmds', 'Afficher commandes') : 'Afficher commandes');
+        if (toggleBtn) toggleBtn.setAttribute('title', (window.I18N ? window.I18N.t('simulateur_automate.show_cmds_title', 'Afficher les commandes') : 'Afficher les commandes'));
         if (simProgram) simProgram.classList.add('masked');
     }
 }
@@ -150,7 +150,7 @@ window.setSpeedLevel = function (level) {
         // Si on est en rapide, on propose de passer en lent, donc icône lent
         if (iconSpd1) iconSpd1.style.display = 'block';
         if (iconSpd2) iconSpd2.style.display = 'none';
-        if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = (window.I18N ? window.I18N.t('simulateur_automate.speed_slow') : 'Lent');
+        if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = (window.I18N ? window.I18N.t('simulateur_automate.speed_slow', 'Lent') : 'Lent');
 
         const setSpeedBtnIcon = (btn) => {
             if (btn) {
@@ -167,7 +167,7 @@ window.setSpeedLevel = function (level) {
         // Si on est en lent, on propose de passer en rapide, donc icône rapide
         if (iconSpd1) iconSpd1.style.display = 'none';
         if (iconSpd2) iconSpd2.style.display = 'block';
-        if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = (window.I18N ? window.I18N.t('simulateur_automate.speed_fast') : 'Rapide');
+        if (document.getElementById('speedToggleText')) document.getElementById('speedToggleText').textContent = (window.I18N ? window.I18N.t('simulateur_automate.speed_fast', 'Rapide') : 'Rapide');
 
         const setSpeedBtnIcon = (btn) => {
             if (btn) {
@@ -893,7 +893,7 @@ document.getElementById('sim-grid').addEventListener('drop', (e) => {
     simState.startDir = simState.robotDir;
     resetSimulatorPosition();
     if (isSimTarget) {
-        showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+        showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure', 'Trésor récupéré manuellement. Ne compte pas pour le score.') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
         placeRandomSimTarget(true);
     }
 });
@@ -920,7 +920,7 @@ document.getElementById('explore-grid').addEventListener('drop', (e) => {
     renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
 
     if (isExploreTarget) {
-        showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+        showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure', 'Trésor récupéré manuellement. Ne compte pas pour le score.') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
         placeRandomExploreTarget(true);
     }
 });
@@ -1217,7 +1217,7 @@ document.addEventListener('keydown', (e) => {
             simState.startDir = simState.robotDir;
             resetSimulatorPosition();
             if (isTarget) {
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure', 'Trésor récupéré manuellement. Ne compte pas pour le score.') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
                 placeRandomSimTarget(true);
             }
         } else if (gridId === 'explore-grid') {
@@ -1238,7 +1238,7 @@ document.addEventListener('keydown', (e) => {
             renderRobot('explore-grid', 'explore-robot', exploreState.robotRow, exploreState.robotCol, exploreState.robotDir);
 
             if (isTarget) {
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
+                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_manual_treasure', 'Trésor récupéré manuellement. Ne compte pas pour le score.') : 'Trésor récupéré manuellement. Ne compte pas pour le score.', 'warn');
                 placeRandomExploreTarget(true);
             }
         } else if (gridId === 'read-grid') {

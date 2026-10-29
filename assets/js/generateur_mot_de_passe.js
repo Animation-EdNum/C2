@@ -781,7 +781,12 @@
         btnEl.addEventListener('click', () => {
             const val = inputEl.value;
             if (!val) {
-                if (typeof showToast === 'function') showToast('Aucun mot de passe à copier.', 'warn');
+                if (typeof showToast === 'function') {
+                    const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('generateur_mot_de_passe.toast_no_password', 'Aucun mot de passe à copier.')
+                        : 'Aucun mot de passe à copier.';
+                    showToast(msg, 'warn');
+                }
                 return;
             }
             navigator.clipboard.writeText(val).then(() => {
@@ -789,11 +794,19 @@
                     ? val[0] + '•'.repeat(val.length - 1)
                     : val.substring(0, 3) + '•••' + val.substring(val.length - 2);
                 if (typeof showToast === 'function') {
-                    showToast(`Copié : ${masked}`, 'success');
+                    const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('generateur_mot_de_passe.toast_copied', `Copié : ${masked}`, { masked })
+                        : `Copié : ${masked}`;
+                    showToast(msg, 'success');
                 }
                 if (typeof playSound === 'function') playSound('click');
             }).catch(() => {
-                if (typeof showToast === 'function') showToast('Impossible de copier automatiquement.', 'error');
+                if (typeof showToast === 'function') {
+                    const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('generateur_mot_de_passe.toast_copy_error', 'Impossible de copier automatiquement.')
+                        : 'Impossible de copier automatiquement.';
+                    showToast(msg, 'error');
+                }
             });
         });
     }
@@ -820,7 +833,10 @@
         elCreatedPwInput.addEventListener('copy', (e) => {
             e.preventDefault();
             if (typeof showToast === 'function') {
-                showToast('Recopie le mot de passe à la main ! ✍️', 'info');
+                const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                    ? window.I18N.t('generateur_mot_de_passe.toast_type_by_hand', 'Recopie le mot de passe à la main ! ✍️')
+                    : 'Recopie le mot de passe à la main ! ✍️';
+                showToast(msg, 'info');
             }
         });
         elCreatedPwInput.addEventListener('cut', (e) => {

@@ -102,6 +102,18 @@ test('i18n.js - Translation and Interpolation', async (t) => {
         const formattedFr = winFr.I18N.formatDate(date);
         assert.ok(formattedFr.includes('13') && formattedFr.includes('10') && formattedFr.includes('2026'));
     });
+
+    await t.test('translates simulateur_automate toasts correctly in fr and de', () => {
+        const winFr = setupI18nDOM({ url: 'http://localhost/?lang=fr' });
+        assert.strictEqual(winFr.I18N.t('simulateur_automate.toast_finished', 'Exécution terminée !'), 'Exécution terminée !');
+        assert.strictEqual(winFr.I18N.t('simulateur_automate.toast_finished'), 'Exécution terminée !');
+        assert.strictEqual(winFr.I18N.getLang(), 'fr');
+
+        const winDe = setupI18nDOM({ url: 'http://localhost/?lang=de' });
+        assert.strictEqual(winDe.I18N.t('simulateur_automate.toast_finished', 'Exécution terminée !'), 'Ausführung beendet!');
+        assert.strictEqual(winDe.I18N.t('simulateur_automate.toast_finished'), 'Ausführung beendet!');
+        assert.strictEqual(winDe.I18N.getLang(), 'de');
+    });
 });
 
 test('i18n.js - DOM Application', async (t) => {

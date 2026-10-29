@@ -83,8 +83,37 @@
 
     const I18N = {
         locale: currentLocale,
+        getLang: function () {
+            return this.locale;
+        },
         dictionaries: {
-            fr: {},
+            fr: {
+                'simulateur_automate.toast_obstacle': 'Attention ! Obstacle en vue. Exécution stoppée.',
+                'simulateur_automate.toast_treasure': 'Trésor trouvé ! Félicitations !',
+                'simulateur_automate.toast_reward': 'Bravo ! Tu as atteint la récompense !',
+                'simulateur_automate.toast_finished_no_treasure': "Exécution terminée mais tu n'es pas arrivé sur le trésor",
+                'simulateur_automate.toast_finished': "Exécution terminée !",
+                'simulateur_automate.toast_pair_found': 'Paire trouvée ! 🎉',
+                'simulateur_automate.toast_all_pairs': '🔥 Toutes les paires trouvées ! Champion !',
+                'simulateur_automate.toast_shape_success': 'Forme réussie !',
+                'simulateur_automate.toast_chal_success': 'Bravo ! Pilotage réussi !',
+                'simulateur_automate.toast_chal_fail': 'Faux. Clique sur la proposition en vert pour voir la solution.',
+                'simulateur_automate.toast_read_success': "Excellent ! C'est la bonne réponse !",
+                'simulateur_automate.toast_read_fail': 'Faux. Essaie encore !',
+                'simulateur_automate.toast_reset': 'Simulateur réinitialisé',
+                'simulateur_automate.toast_mem_full': 'Mémoire pleine (24 commandes max)',
+                'simulateur_automate.toast_manual_treasure': 'Trésor récupéré manuellement. Ne compte pas pour le score.',
+                'simulateur_automate.memory_pairs_found': 'Paires trouvées',
+                'simulateur_automate.err_shape_must_close': 'La forme doit être fermée !',
+                'simulateur_automate.err_shape_not_exact': "La forme n'est pas exacte !",
+                'simulateur_automate.show_cmds_title': 'Afficher les commandes',
+                'simulateur_automate.hide_cmds_title': 'Masquer les commandes',
+                'simulateur_automate.show_cmds': 'Afficher commandes',
+                'simulateur_automate.hide_cmds': 'Masquer commandes',
+                'simulateur_automate.speed_fast': 'Rapide',
+                'simulateur_automate.speed_slow': 'Lent',
+                'simulateur_automate.instruction_read': "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>"
+            },
             de: {}
         },
 

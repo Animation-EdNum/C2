@@ -461,7 +461,10 @@
                 }
             } catch (err) {
                 if (typeof window.showToast === 'function') {
-                    window.showToast("Erreur lors de l'exportation de l'image.", "error");
+                    const errMsg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('modal_export.export_error', "Erreur lors de l'exportation de l'image.")
+                        : "Erreur lors de l'exportation de l'image.";
+                    window.showToast(errMsg, "error");
                 }
             } finally {
                 if (exportBtn) {
@@ -505,22 +508,34 @@
                         try {
                             await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
                             if (typeof window.showToast === 'function') {
-                                window.showToast("Image copiée dans le presse-papiers !", "success");
+                                const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                                    ? window.I18N.t('modal_export.copied_toast', "Image copiée dans le presse-papiers !")
+                                    : "Image copiée dans le presse-papiers !";
+                                window.showToast(msg, "success");
                             }
                         } catch (e) {
                             if (typeof window.showToast === 'function') {
-                                window.showToast("Presse-papiers inaccessible. Utilisez 'Exporter en image'.", "warning");
+                                const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                                    ? window.I18N.t('modal_export.copy_inaccessible', "Presse-papiers inaccessible. Utilisez 'Exporter en image'.")
+                                    : "Presse-papiers inaccessible. Utilisez 'Exporter en image'.";
+                                window.showToast(msg, "warning");
                             }
                         }
                     }, 'image/png');
                 } else {
                     if (typeof window.showToast === 'function') {
-                        window.showToast("Copie d'image non supportée sur ce navigateur.", "warning");
+                        const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                            ? window.I18N.t('modal_export.copy_unsupported', "Copie d'image non supportée sur ce navigateur.")
+                            : "Copie d'image non supportée sur ce navigateur.";
+                        window.showToast(msg, "warning");
                     }
                 }
             } catch (err) {
                 if (typeof window.showToast === 'function') {
-                    window.showToast("Erreur lors de la capture de l'image.", "error");
+                    const msg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('modal_export.capture_error', "Erreur lors de la capture de l'image.")
+                        : "Erreur lors de la capture de l'image.";
+                    window.showToast(msg, "error");
                 }
             } finally {
                 if (copyBtn) {
