@@ -408,11 +408,22 @@
             let parts = [];
             for (let i = 0; i < 8; i++) { if (calcState[i] && (8 - i) <= currentBits) { sum += powers[i]; parts.push(powers[i]); } }
 
+            const calcResultArea = document.getElementById('calc-result-area');
             if (parts.length === 0) {
                 const clickBitsMsg = window.I18N ? window.I18N.t('binaire_codage.click_bits', 'Clique sur les bits pour calculer') : 'Clique sur les bits pour calculer';
-                document.getElementById('calc-result-area').innerHTML = `<span style="color:#999">${clickBitsMsg}</span>`;
+                const msgSpan = document.createElement('span');
+                msgSpan.style.color = '#999';
+                msgSpan.textContent = clickBitsMsg;
+                calcResultArea.replaceChildren(msgSpan);
             } else {
-                document.getElementById('calc-result-area').innerHTML = `<div class="calc-operation">${ScoreManager._escapeHtml(parts.join(' + '))} = <span class="calc-sum">${ScoreManager._escapeHtml(sum)}</span></div>`;
+                const opDiv = document.createElement('div');
+                opDiv.className = 'calc-operation';
+                opDiv.textContent = parts.join(' + ') + ' = ';
+                const sumSpan = document.createElement('span');
+                sumSpan.className = 'calc-sum';
+                sumSpan.textContent = String(sum);
+                opDiv.appendChild(sumSpan);
+                calcResultArea.replaceChildren(opDiv);
             }
         }
 
@@ -483,7 +494,7 @@
 
                 fb.className = 'vault-feedback success';
                 const unlockedMsg = window.I18N ? window.I18N.t('binaire_codage.congrats', 'DÉVERROUILLÉ !') : 'DÉVERROUILLÉ !';
-                fb.innerHTML = `✅ ${unlockedMsg} (${ScoreManager._escapeHtml(explainBinary(userBin))})`;
+                fb.textContent = `✅ ${unlockedMsg} (${explainBinary(userBin)})`;
 
                 // Animation Coffre
                 if (vaultScreen) vaultScreen.classList.add('success');
@@ -523,11 +534,16 @@
                 fb.className = 'vault-feedback error';
                 if (decBinMistakes === 1) {
                     const wrongMsg = window.I18N ? window.I18N.t('binaire_codage.try_again', 'CODE INCORRECT') : 'CODE INCORRECT';
-                    fb.innerHTML = `❌ ${wrongMsg} (${ScoreManager._escapeHtml(explainBinary(userBin))})`;
+                    fb.textContent = `❌ ${wrongMsg} (${explainBinary(userBin)})`;
                 } else {
                     const errMsg = window.I18N ? window.I18N.t('common.error', 'ERREUR') : 'ERREUR';
                     const targetLbl = window.I18N ? window.I18N.t('binaire_codage.target_code', 'CIBLE') : 'CIBLE';
-                    fb.innerHTML = `❌ ${errMsg} (${ScoreManager._escapeHtml(explainBinary(userBin))}). ${targetLbl} : <strong>${ScoreManager._escapeHtml(explainBinary(expectedBin))}</strong>`;
+                    const targetStrong = document.createElement('strong');
+                    targetStrong.textContent = explainBinary(expectedBin);
+                    fb.replaceChildren(
+                        document.createTextNode(`❌ ${errMsg} (${explainBinary(userBin)}). ${targetLbl} : `),
+                        targetStrong
+                    );
                 }
 
                 card.style.animation = 'none';
@@ -574,7 +590,7 @@
                 updateGlobalScore(true, isExtreme);
                 ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
                 const correctMsg = window.I18N ? window.I18N.t('scores.perfect', 'Exact !') : 'Exact !';
-                fb.innerHTML = `✅ ${correctMsg} ${ScoreManager._escapeHtml(explainBinary(currentBinString))}.`;
+                fb.textContent = `✅ ${correctMsg} ${explainBinary(currentBinString)}.`;
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
 
                 if (binDecMistakes === 0) {
@@ -619,10 +635,10 @@
                 fb.className = 'feedback error';
                 if (binDecMistakes === 1) {
                     const retryMsg = window.I18N ? window.I18N.t('binaire_codage.try_again', 'Faux. Essaie encore !') : 'Faux. Essaie encore !';
-                    fb.innerHTML = `❌ ${retryMsg}`;
+                    fb.textContent = `❌ ${retryMsg}`;
                 } else {
                     const retryMsg2 = window.I18N ? window.I18N.t('binaire_codage.try_again', 'Faux.') : 'Faux.';
-                    fb.innerHTML = `❌ ${retryMsg2} ${ScoreManager._escapeHtml(explainBinary(currentBinString))}.`;
+                    fb.textContent = `❌ ${retryMsg2} ${explainBinary(currentBinString)}.`;
                 }
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'shake 0.4s';
             }

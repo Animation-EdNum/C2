@@ -852,6 +852,7 @@
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
     <div class="app-shell">
         <header>
             <div class="header-title-wrapper">
@@ -909,7 +910,7 @@
             </div>
         </header>
 
-        <main class="app-main">
+        <main class="app-main" id="main-content">
             <!-- VIEW 1: PLAY VIEW -->
             <div class="wheel-layout" id="playView">
                 <div class="wheel-stage">
@@ -1009,9 +1010,9 @@
 
                 <!-- Textarea for choices -->
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                        <label for="choicesInput"
-                            style="font-size: 0.9rem; font-weight: 700;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <label for="choicesInput" style="font-size: 0.9rem; font-weight: 700;">
                             Liste des éléments :
                         </label>
                         <button type="button" class="btn-save-custom" id="saveCustomListBtn"
@@ -1063,11 +1064,20 @@
             <p>
                 <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
                     href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
-                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                    href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                    data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
-                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a> (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>) · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a> · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a> · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a> · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                            data-i18n="common.footer.free_code">Code 100% libre</span></a> (<a
+                        href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                        rel="noopener noreferrer">AGPL-3.0</a>) · <a href="../../mentions-legales.html"
+                        data-i18n="common.footer.legal">Mentions légales</a> · <a href="../../confidentialite.html"
+                        data-i18n="common.footer.privacy">Confidentialité</a> · <a href="../../cgu.html"
+                        data-i18n="common.footer.terms">CGU</a> · <a href="../../merci.html"
+                        data-i18n="common.footer.credits">Remerciements</a>
                 </span>
             </p>
         </footer>
@@ -1559,14 +1569,27 @@
             // History Chips
             historyCountBadge.textContent = `${state.history.length} tiré${state.history.length > 1 ? 's' : ''}`;
             if (state.history.length === 0) {
-                historyChips.innerHTML = `<span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Aucun élément tiré pour le moment.</span>`;
+                const emptySpan = document.createElement('span');
+                emptySpan.style.fontSize = '0.85rem';
+                emptySpan.style.color = 'var(--text-muted)';
+                emptySpan.style.fontStyle = 'italic';
+                emptySpan.textContent = 'Aucun élément tiré pour le moment.';
+                historyChips.replaceChildren(emptySpan);
             } else {
-                historyChips.innerHTML = state.history.slice(0, 10).map((item, idx) => `
-                    <div class="history-chip">
-                        <span style="opacity: 0.6; font-size: 0.75rem;">#${state.history.length - idx}</span>
-                        <span>${item}</span>
-                    </div>
-                `).join('');
+                const chips = state.history.slice(0, 10).map((item, idx) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'history-chip';
+                    const numSpan = document.createElement('span');
+                    numSpan.style.opacity = '0.6';
+                    numSpan.style.fontSize = '0.75rem';
+                    numSpan.textContent = `#${state.history.length - idx} `;
+                    const labelSpan = document.createElement('span');
+                    labelSpan.textContent = item;
+                    chip.appendChild(numSpan);
+                    chip.appendChild(labelSpan);
+                    return chip;
+                });
+                historyChips.replaceChildren(...chips);
             }
         }
 

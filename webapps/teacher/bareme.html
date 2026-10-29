@@ -788,18 +788,28 @@
             const rowsCount = Math.ceil(data.length / groupsPerRow);
 
             // Header
-            let headerRow = '<tr>';
+            const headerTr = document.createElement('tr');
             for (let k = 0; k < groupsPerRow; k++) {
-                if (showMistakes) headerRow += '<th>-Pts</th>';
-                headerRow += '<th>Pts</th><th class="col-end">Note</th>';
+                if (showMistakes) {
+                    const thLost = document.createElement('th');
+                    thLost.textContent = '-Pts';
+                    headerTr.appendChild(thLost);
+                }
+                const thPts = document.createElement('th');
+                thPts.textContent = 'Pts';
+                headerTr.appendChild(thPts);
+
+                const thGrade = document.createElement('th');
+                thGrade.className = 'col-end';
+                thGrade.textContent = 'Note';
+                headerTr.appendChild(thGrade);
             }
-            headerRow += '</tr>';
-            thead.innerHTML = headerRow;
+            thead.replaceChildren(headerTr);
 
             // Body
+            tbody.replaceChildren();
             for (let i = 0; i < rowsCount; i++) {
                 const tr = document.createElement('tr');
-                let rowHtml = '';
 
                 for (let col = 0; col < groupsPerRow; col++) {
                     const index = col * rowsCount + i;
@@ -809,22 +819,36 @@
                         const isDemarcation = item.isPassing && (index + 1 < data.length && !data[index + 1].isPassing);
                         const pc = item.isPassing ? 'passing-row' : 'failing-row';
                         const gc = item.isPassing ? 'passing' : 'failing';
-                        const dem = isDemarcation ? ' demarcation-bottom' : '';
                         const gd = parseFloat(item.grade.toFixed(2));
                         const lost = Math.round((totalPoints - item.points) * 100) / 100;
                         const ld = lost === 0 ? '0' : `-${lost}`;
 
-                        let html = '';
-                        if (showMistakes) html += `<td class="${pc} mistake${dem}">${ld}</td>`;
-                        html += `<td class="${pc}${dem}">${item.points}</td>`;
-                        html += `<td class="grade ${gc} ${pc} col-end${dem}">${gd}</td>`;
-                        rowHtml += html;
+                        if (showMistakes) {
+                            const tdLost = document.createElement('td');
+                            tdLost.className = `${pc} mistake${isDemarcation ? ' demarcation-bottom' : ''}`;
+                            tdLost.textContent = ld;
+                            tr.appendChild(tdLost);
+                        }
+
+                        const tdPts = document.createElement('td');
+                        tdPts.className = `${pc}${isDemarcation ? ' demarcation-bottom' : ''}`;
+                        tdPts.textContent = String(item.points);
+                        tr.appendChild(tdPts);
+
+                        const tdGrade = document.createElement('td');
+                        tdGrade.className = `grade ${gc} ${pc} col-end${isDemarcation ? ' demarcation-bottom' : ''}`;
+                        tdGrade.textContent = String(gd);
+                        tr.appendChild(tdGrade);
                     } else {
-                        if (showMistakes) rowHtml += '<td></td>';
-                        rowHtml += '<td></td><td class="col-end"></td>';
+                        if (showMistakes) {
+                            tr.appendChild(document.createElement('td'));
+                        }
+                        tr.appendChild(document.createElement('td'));
+                        const emptyEnd = document.createElement('td');
+                        emptyEnd.className = 'col-end';
+                        tr.appendChild(emptyEnd);
                     }
                 }
-                tr.innerHTML = rowHtml;
                 tbody.appendChild(tr);
             }
         }
@@ -1034,9 +1058,8 @@
             // 2. Générer les données
             const data = generateData(totalPoints, pointsFor4, increment, rounding);
 
-            // 3. Sauvegarder le tableau actuel (affiché à l'écran)
-            const savedBody = document.getElementById('tableBody').innerHTML;
-            const savedHead = document.getElementById('tableHead').innerHTML;
+            // 3. Sauvegarder les données de calcul pour réinitialiser fidèlement après impression
+            // (évite toute affectation innerHTML lors de la restauration)
 
             // 4. Calculer le nombre optimal de groupes de colonnes
             //    pour tenir en ≤ 65 lignes sur une page A4 portrait
@@ -1065,8 +1088,7 @@
             const restore = () => {
                 document.body.classList.remove('printing');
                 document.documentElement.style.removeProperty('--print-zoom');
-                document.getElementById('tableBody').innerHTML = savedBody;
-                document.getElementById('tableHead').innerHTML = savedHead;
+                calculate();
                 window.removeEventListener('afterprint', restore);
             };
             window.addEventListener('afterprint', restore);

@@ -1555,28 +1555,42 @@
                 if (!testWarningSoundBtn) {
                     return;
                 }
+                const icon = document.createElement('i');
+                icon.style.width = '11px';
+                icon.style.height = '11px';
                 if (playing) {
-                    testWarningSoundBtn.innerHTML = '<i data-fa="square" style="width:11px;height:11px;"></i>';
+                    icon.setAttribute('data-fa', 'square');
                     testWarningSoundBtn.title = 'Arrêter la lecture du signal';
                     testWarningSoundBtn.classList.add('btn-playing');
                 } else {
-                    testWarningSoundBtn.innerHTML = '<i data-fa="play" style="width:11px;height:11px;"></i>';
+                    icon.setAttribute('data-fa', 'play');
                     testWarningSoundBtn.title = 'Écouter le signal sonore choisi';
                     testWarningSoundBtn.classList.remove('btn-playing');
                 }
+                testWarningSoundBtn.replaceChildren(icon);
                 window.fa?.createIcons?.();
             }
 
             function updateTestSoundBtnUI(playing) {
-                if (!testSoundBtn) return;
+                if (!testSoundBtn) {
+                    return;
+                }
                 if (playing) {
-                    testSoundBtn.innerHTML = '<i data-fa="square" style="width:11px;height:11px;"></i> <span>Arrêter</span>';
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-fa', 'square');
+                    icon.style.width = '11px';
+                    icon.style.height = '11px';
+                    const span = document.createElement('span');
+                    span.textContent = 'Arrêter';
                     testSoundBtn.title = 'Arrêter la lecture du son';
                     testSoundBtn.classList.add('btn-playing');
+                    testSoundBtn.replaceChildren(icon, document.createTextNode(' '), span);
                 } else {
-                    testSoundBtn.innerHTML = '<span>Tester</span>';
+                    const span = document.createElement('span');
+                    span.textContent = 'Tester';
                     testSoundBtn.title = 'Écouter le son choisi';
                     testSoundBtn.classList.remove('btn-playing');
+                    testSoundBtn.replaceChildren(span);
                 }
                 window.fa?.createIcons?.();
             }

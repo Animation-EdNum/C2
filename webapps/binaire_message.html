@@ -456,7 +456,9 @@
             document.getElementById('decoder-input').disabled = true;
             document.getElementById('decoder-workspace').style.display = 'block';
 
-            document.getElementById('decode-alpha-grid').innerHTML = document.getElementById('alpha-grid').innerHTML;
+            const srcGrid = document.getElementById('alpha-grid');
+            const destGrid = document.getElementById('decode-alpha-grid');
+            destGrid.replaceChildren(...Array.from(srcGrid.cloneNode(true).childNodes));
 
             decodeCurrentIndex = 0;
             decodeWordResult = Array(decodeBlocks.length).fill('_');
@@ -497,14 +499,23 @@
             const bits = block.split('').map(Number);
             const powers = [16, 8, 4, 2, 1];
 
-            let htmlBits = [];
-            let htmlVals = [];
             let sumStr = [];
             let sum = 0;
+            const bitEls = [];
+            const valEls = [];
 
             for (let i = 0; i < 5; i++) {
-                htmlBits.push(`<div class="encode-bit-btn ${bits[i] ? 'active' : ''}" style="cursor:default;">${bits[i]}</div>`);
-                htmlVals.push(`<div class="encode-value-label">${powers[i]}</div>`);
+                const bDiv = document.createElement('div');
+                bDiv.className = `encode-bit-btn ${bits[i] ? 'active' : ''}`;
+                bDiv.style.cursor = 'default';
+                bDiv.textContent = String(bits[i]);
+                bitEls.push(bDiv);
+
+                const vDiv = document.createElement('div');
+                vDiv.className = 'encode-value-label';
+                vDiv.textContent = String(powers[i]);
+                valEls.push(vDiv);
+
                 if (bits[i] === 1) {
                     sumStr.push(powers[i]);
                     sum += powers[i];
@@ -513,8 +524,8 @@
                 }
             }
 
-            document.getElementById('decode-bits-display').innerHTML = htmlBits.join('');
-            document.getElementById('decode-values-row').innerHTML = htmlVals.join('');
+            document.getElementById('decode-bits-display').replaceChildren(...bitEls);
+            document.getElementById('decode-values-row').replaceChildren(...valEls);
             document.getElementById('decode-live-calc').innerText = `${sumStr.join(' + ')} = ${sum}`;
             document.getElementById('decode-live-calc').className = 'live-calc';
         }
@@ -622,11 +633,21 @@
         // ========================================== 
         function generateAlphaGrid() {
             const grid = document.getElementById('alpha-grid');
-            let html = [];
+            const cells = [];
             for (let i = 1; i <= 26; i++) {
-                html.push(`<div class="alpha-cell"><span class="alpha-cell-letter">${rankToLetter(i)}</span><span class="alpha-cell-bin">${rankToBin5(i)}</span></div>`);
+                const cell = document.createElement('div');
+                cell.className = 'alpha-cell';
+                const lSpan = document.createElement('span');
+                lSpan.className = 'alpha-cell-letter';
+                lSpan.textContent = rankToLetter(i);
+                const bSpan = document.createElement('span');
+                bSpan.className = 'alpha-cell-bin';
+                bSpan.textContent = rankToBin5(i);
+                cell.appendChild(lSpan);
+                cell.appendChild(bSpan);
+                cells.push(cell);
             }
-            grid.innerHTML = html.join('');
+            grid.replaceChildren(...cells);
         }
 
         // Corrigé pour éviter des animations saccadées
@@ -678,9 +699,13 @@
 
         function renderGame() {
             const display = document.getElementById('encode-word-display');
-            display.innerHTML = encodeWord.split('').map((l, i) =>
-                `<div class="encode-letter-box ${i < encodeIndex ? 'completed' : (i === encodeIndex ? 'current' : '')}">${l}</div>`
-            ).join('');
+            const letterBoxes = encodeWord.split('').map((l, i) => {
+                const box = document.createElement('div');
+                box.className = `encode-letter-box ${i < encodeIndex ? 'completed' : (i === encodeIndex ? 'current' : '')}`;
+                box.textContent = l;
+                return box;
+            });
+            display.replaceChildren(...letterBoxes);
 
             const info = document.getElementById('encode-info');
             if (encodeIndex >= encodeWord.length) {
@@ -694,10 +719,22 @@
             }
 
             const powers = [16, 8, 4, 2, 1];
-            document.getElementById('encode-bits-row').innerHTML = powers.map((p, i) =>
-                `<button class="encode-bit-btn ${encodeBits[i] ? 'active' : ''}" id="encode-bit-${i}">${encodeBits[i]}</button>`
-            ).join('');
-            document.getElementById('encode-values-row').innerHTML = powers.map(p => `<div class="encode-value-label">${p}</div>`).join('');
+            const bitBtns = powers.map((p, i) => {
+                const btn = document.createElement('button');
+                btn.className = `encode-bit-btn ${encodeBits[i] ? 'active' : ''}`;
+                btn.id = `encode-bit-${i}`;
+                btn.textContent = String(encodeBits[i]);
+                return btn;
+            });
+            document.getElementById('encode-bits-row').replaceChildren(...bitBtns);
+
+            const valLabels = powers.map(p => {
+                const div = document.createElement('div');
+                div.className = 'encode-value-label';
+                div.textContent = String(p);
+                return div;
+            });
+            document.getElementById('encode-values-row').replaceChildren(...valLabels);
         }
 
         function toggleBit(idx) {
