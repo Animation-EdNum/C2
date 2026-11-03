@@ -412,6 +412,120 @@ Favre\tArthur`;
         assert.strictEqual(trigger.getAttribute('aria-expanded'), 'false', 'Trigger should have aria-expanded="false" after second click');
         assert.ok(content.hasAttribute('hidden'), 'Content should be hidden again');
     });
+    await t.test('Dates: All dates (birth or simple dates, FR, DE, IT) are replaced by [Date]', () => {
+        engine.state.mode = 'labels';
+        const text = "Lucas est né le 14.05.2013 (11 ans). Une rencontre aura lieu le 24 octobre avec M. Martin ou le 12/11/2025. Geboren am 5. Mai 2012 in Zürich, nato il 3 maggio 2014.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('[Date de naissance]'), 'Must not contain [Date de naissance]');
+        assert.ok(result.cleanText.includes('[Date]'), 'Must contain [Date]');
+        assert.ok(!result.cleanText.includes('14.05.2013'), 'Original date 14.05.2013 should be redacted');
+        assert.ok(!result.cleanText.includes('24 octobre'), 'Original date 24 octobre should be redacted');
+        assert.ok(!result.cleanText.includes('12/11/2025'), 'Original date 12/11/2025 should be redacted');
+        assert.ok(!result.cleanText.includes('5. Mai 2012'), 'German date 5. Mai 2012 should be redacted');
+        assert.ok(!result.cleanText.includes('3 maggio 2014'), 'Italian date 3 maggio 2014 should be redacted');
+        assert.ok(result.cleanText.includes('[Âge]'), 'Age should be labeled [Âge]');
+    });
+
+    await t.test('Common names: Recognizes Lionel and single common names', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Lionel a participé activement au cours avec Léon et Patrick.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('Lionel'), 'Lionel should be redacted');
+        assert.ok(!result.cleanText.includes('Léon'), 'Léon should be redacted');
+        assert.ok(!result.cleanText.includes('Patrick'), 'Patrick should be redacted');
+        assert.ok(result.cleanText.includes('[Personne 1]'), 'Should be [Personne 1]');
+        assert.ok(result.cleanText.includes('[Personne 2]'), 'Should be [Personne 2]');
+        assert.ok(result.cleanText.includes('[Personne 3]'), 'Should be [Personne 3]');
+    });
+
+    await t.test('Heuristic NER: Finds Firstname + Lastname without database and propagates single mentions', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        // Lionel Favre is not in the swiss names list as a full name, Favre is unknown
+        const text = "Observation pour Lionel Favre : très bon bilan. Plus tard, Lionel a continué ses efforts avec Favre.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('Lionel Favre'), 'Lionel Favre should be redacted');
+        assert.ok(!result.cleanText.includes('Lionel a'), 'Standalone Lionel should be redacted');
+        assert.ok(!result.cleanText.includes('avec Favre'), 'Standalone Favre should be redacted');
+        // Both full name and isolated parts should map to the same [Personne 1]
+        const personne1Matches = result.cleanText.match(/\[Personne 1\]/g) || [];
+        assert.strictEqual(personne1Matches.length, 3, 'Lionel Favre, Lionel and Favre must all resolve to [Personne 1]');
+    });
+
+    await t.test('Compound names and hyphenated surnames are fully anonymized', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Rencontre avec M. Jean-Pierre Dupont-Moretti et Mme Anne-Claire Rochat-Favre.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('Jean-Pierre'), 'Compound first name should be redacted');
+        assert.ok(!result.cleanText.includes('Dupont-Moretti'), 'Compound last name should be redacted');
+        assert.ok(!result.cleanText.includes('Anne-Claire'), 'Compound first name Anne-Claire should be redacted');
+        assert.ok(!result.cleanText.includes('Rochat-Favre'), 'Compound surname Rochat-Favre should be redacted');
+        assert.ok(result.cleanText.includes('[Personne 1]'));
+        assert.ok(result.cleanText.includes('[Personne 2]'));
+    });
+
+    await t.test('Multi-country phone numbers (FR, DE, AT, IT, CH)', () => {
+        engine.state.mode = 'labels';
+        const text = "Contacts: CH 079 123 45 67, FR 06 12 34 56 78, DE 0151 12345678, AT 0664 1234567, IT 333 1234567, Intl +33 1 42 68 10 20.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('079 123 45 67'), 'Swiss phone redacted');
+        assert.ok(!result.cleanText.includes('06 12 34 56 78'), 'French phone redacted');
+        assert.ok(!result.cleanText.includes('0151 12345678'), 'German phone redacted');
+        assert.ok(!result.cleanText.includes('0664 1234567'), 'Austrian phone redacted');
+        assert.ok(!result.cleanText.includes('333 1234567'), 'Italian phone redacted');
+        assert.ok(!result.cleanText.includes('+33 1 42 68 10 20'), 'Intl phone redacted');
+        assert.strictEqual(result.replacements.filter(r => r.type === 'phone').length, 6);
+    });
+
+    await t.test('Multi-country addresses and postal codes (FR, DE, AT, IT, CH)', () => {
+        engine.state.mode = 'labels';
+        const text = "Adresses: 1950 Sion, 75001 Paris, D-10115 Berlin, A-1010 Wien, 20121 Milano.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('1950 Sion'), 'Swiss postal city redacted');
+        assert.ok(!result.cleanText.includes('75001 Paris'), 'French postal city redacted');
+        assert.ok(!result.cleanText.includes('D-10115 Berlin'), 'German postal city redacted');
+        assert.ok(!result.cleanText.includes('A-1010 Wien'), 'Austrian postal city redacted');
+        assert.ok(!result.cleanText.includes('20121 Milano'), 'Italian postal city redacted');
+    });
+
+    await t.test('Official identifiers: Swiss AVS, French NIR (Social Security) and Italian Codice Fiscale', () => {
+        engine.state.mode = 'labels';
+        const text = "Identifiants: AVS 756.1234.5678.90, NIR 1 85 12 75 108 123 45, CF RSSMRA85M01H501Z.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('756.1234.5678.90'), 'AVS redacted');
+        assert.ok(!result.cleanText.includes('1 85 12 75 108 123 45'), 'NIR redacted');
+        assert.ok(!result.cleanText.includes('RSSMRA85M01H501Z'), 'Codice Fiscale redacted');
+        assert.strictEqual(result.replacements.filter(r => r.type === 'avs').length, 3);
+    });
+    await t.test('Reverse anonymization: Re-injects real names into AI responses', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = ['Lucas Dupont', 'Emma Bovary'];
+        const text = "Lucas Dupont a bien travaillé avec Emma Bovary.";
+        const anonymized = engine.runAnonymization(text);
+
+        // Simulate AI answering using the tags [Élève 1] and [Élève 2]
+        const aiResponse = "Pour [Élève 1], proposer des exercices de géométrie. Pour [Élève 2], encourager la lecture.";
+        const restored = engine.reverseAnonymization(aiResponse);
+
+        assert.strictEqual(
+            restored,
+            "Pour Lucas Dupont, proposer des exercices de géométrie. Pour Emma Bovary, encourager la lecture.",
+            "Should accurately replace [Élève 1] by Lucas Dupont and [Élève 2] by Emma Bovary"
+        );
+
+        // Modal elements check in DOM
+        const revertBtn = window.document.getElementById('revertAiBtn');
+        const revertModal = window.document.getElementById('revertModal');
+        assert.ok(revertBtn, '#revertAiBtn should exist in DOM');
+        assert.ok(revertModal, '#revertModal should exist in DOM');
+    });
 });
-
-
