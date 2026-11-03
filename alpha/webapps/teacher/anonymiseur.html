@@ -1605,6 +1605,7 @@
                 'Jérôme', 'Jerome', 'Ludovic', 'Cyril', 'Cyrille', 'Sylvain', 'Xavier', 'Matthieu', 'Mathias', 'Gaël', 'Gael',
                 'Loïs', 'Lois', 'Léo-Paul', 'Jean-Pierre', 'Jean-Luc', 'Jean-Marc', 'Pierre-Alain', 'Marc-Antoine', 'Marc-André',
                 'Jean-Christophe', 'Jean-François', 'Jean-Marie', 'Jean-Baptiste', 'Charles', 'Gilles', 'Grégoire', 'Denis',
+                'Vivian', 'Diego', 'Joris', 'Walter', 'Sebastian', 'Aloys', 'Tomas', 'Erfan',
                 // Filles
                 'Emma', 'Mia', 'Sofia', 'Sophia', 'Olivia', 'Alice', 'Chloé', 'Chloe', 'Léa', 'Lea',
                 'Jade', 'Louise', 'Lina', 'Mila', 'Ambre', 'Rose', 'Anna', 'Elena', 'Camille', 'Julia',
@@ -1617,19 +1618,24 @@
                 'Sandrine', 'Delphine', 'Patricia', 'Martine', 'Françoise', 'Francoise', 'Chantal', 'Monique', 'Nicole',
                 'Brigitte', 'Corinne', 'Laurence', 'Virginie', 'Stéphanie', 'Stephanie', 'Christelle', 'Séverine', 'Severine',
                 'Karine', 'Sandra', 'Magali', 'Vanessa', 'Mélanie', 'Melanie', 'Julie', 'Caroline', 'Marie-Claire',
-                'Anne-Sophie', 'Marie-Laure', 'Anne-Marie', 'Marie-Thérèse', 'Marie-Hélène', 'Marie-Louise', 'Marie-Christine', 'Marie-Pierre'
+                'Anne-Sophie', 'Marie-Laure', 'Anne-Marie', 'Marie-Thérèse', 'Marie-Hélène', 'Marie-Louise', 'Marie-Christine', 'Marie-Pierre',
+                'Eliane', 'Éliane', 'Francesca', 'Carminho', 'Aline', 'Bienvenue', 'Céleste'
             ];
+
+            const COMMON_NAMES_SET = new Set(COMMON_SWISS_NAMES.map(n => n.toLowerCase()));
 
             // Liste de stopwords et termes à ne JAMAIS anonymiser en tant que nom de personne
             const NAME_STOPWORDS = new Set([
-                // Jours (FR, DE, IT)
+                // Jours (FR, DE, IT, EN)
                 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche',
                 'montag', 'dienstag', 'mittwoch', 'donnerstag', 'freitag', 'samstag', 'sonntag',
                 'lunedi', 'martedi', 'mercoledi', 'giovedi', 'venerdi', 'sabato', 'domenica',
-                // Mois (FR, DE, IT)
+                'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+                // Mois (FR, DE, IT, EN)
                 'janvier', 'février', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'aout', 'septembre', 'octobre', 'novembre', 'décembre', 'decembre',
                 'januar', 'jänner', 'janner', 'februar', 'feber', 'märz', 'maerz', 'april', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'dezember',
                 'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',
+                'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december',
                 // Matières et domaines scolaires
                 'français', 'francais', 'mathématiques', 'mathematiques', 'maths', 'histoire', 'géographie', 'geographie', 'géo', 'geo',
                 'sciences', 'allemand', 'anglais', 'italien', 'musique', 'dessin', 'acm', 'arts', 'visuels', 'plastiques',
@@ -1642,9 +1648,17 @@
                 'test', 'examen', 'note', 'moyenne', 'fiche', 'dossier', 'observation', 'protocole', 'décision', 'decision',
                 'réunion', 'reunion', 'conférence', 'conference', 'conseil', 'direction', 'secrétariat', 'secretariat',
                 'canton', 'département', 'departement', 'service', 'enseignement', 'inspection', 'commission', 'espace', 'titulaire',
+                // Institutions, organisations, médias, tech, outils
+                'cours', 'formation', 'atelier', 'workshop', 'séminaire', 'seminaire', 'colloque', 'session',
+                'bibliothèque', 'bibliotheque', 'bibliothécaire', 'bibliothecaire', 'bibliothécaires', 'bibliothecaires',
+                'musée', 'musee', 'museum', 'rietberg', 'collection', 'collections', 'documentation',
+                'wikimedia', 'wikipedia', 'wikidata', 'commons', 'openrefine', 'glam', 'glamhack', 'slido', 'infomaniak',
+                'kdrive', 'drive', 'google', 'github', 'zoom', 'teams', 'moodle', 'user', 'head', 'admin', 'trainer', 'trainers',
+                'image', 'images', 'photo', 'photos', 'video', 'videos', 'audio', 'slides', 'présentation', 'presentation',
+                'app', 'web', 'site', 'mail', 'email', 'sujet', 'subject', 'objet', 'from', 'sent', 'envoyé', 'envoye',
                 // Lieux et géographie courante
                 'suisse', 'france', 'allemagne', 'autriche', 'italie', 'valais', 'vaud', 'genève', 'geneve', 'fribourg',
-                'neuchâtel', 'neuchatel', 'jura', 'berne', 'zurich', 'tessin', 'sion', 'sierre', 'martigny', 'monthey',
+                'neuchâtel', 'neuchatel', 'jura', 'berne', 'bern', 'zurich', 'zürich', 'tessin', 'sion', 'sierre', 'martigny', 'monthey',
                 'brigue', 'lausanne', 'yverdon', 'vevey', 'montreux', 'morges', 'nyon', 'paris', 'lyon', 'grenoble',
                 'milan', 'rome', 'turin', 'berlin', 'vienne', 'aoste', 'europe',
                 // Mots grammaticaux fréquents / Déterminants / Pronoms / Prépositions / Conjonctions
@@ -1656,7 +1670,19 @@
                 'comme', 'quand', 'lorsque', 'puisque', 'quoique', 'après', 'apres', 'avant', 'avec', 'sans', 'sous', 'sur', 'dans', 'pour', 'par', 'chez', 'vers', 'entre',
                 'pendant', 'durant', 'dès', 'depuis', 'très', 'tres', 'trop', 'bien', 'plus', 'moins', 'tout', 'toute', 'tous', 'toutes',
                 'même', 'meme', 'aussi', 'encore', 'toujours', 'jamais', 'souvent', 'parfois', 'ainsi', 'alors', 'puis', 'ensuite', 'enfin',
-                'bonjour', 'bonsoir', 'salut', 'merci', 'cordialement', 'salutations', 'veuillez', 'chère', 'cher', 'chers'
+                'bonjour', 'bonsoir', 'salut', 'merci', 'cordialement', 'salutations', 'veuillez', 'chère', 'cher', 'chers',
+                // Mots allemands / anglais courants
+                'hat', 'intern', 'gearbeitet', 'und', 'vereinheitlicht', 'alle', 'gerne', 'jederzeit', 'melden', 'anfragen', 'bitte', 'per', 'an',
+                'the', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'and', 'or', 'that', 'this', 'first', 'secondly', 'how', 'lot', 'face',
+                'challenges', 'metadata', 'databases', 'two', 'one', 'go', 'process', 'finish', 'start', 'look', 'whole', 'potential',
+                'before', 'uploading', 'participants', 'some', 'previous', 'knowledge', 'course', 'beginners', 'everyone', 'welcome',
+                'due', 'lack', 'time', 'data', 'exemplary'
+            ]);
+
+            // Acronymes et sigles d'organisations / pays / techniques (jamais un nom de personne)
+            const NON_PERSON_ACRONYMS = new Set([
+                'CH', 'FR', 'DE', 'IT', 'AT', 'EU', 'USA', 'UK', 'SA', 'AG', 'SARL', 'GMBH', 'LLC', 'IT', 'PV', 'RH', 'TNI', 'TBI',
+                'CO', 'HEP', 'EP', 'AVS', 'AI', 'IA', 'PC', 'MAC', 'PDF', 'URL', 'HTML', 'CSS', 'JS', 'API', 'WMCH', 'GLAM', 'ID', 'CIE', 'JMW'
             ]);
 
             // Pseudonymes de remplacement réalistes
@@ -1957,17 +1983,18 @@
                 // 4. Téléphones : Suisse (+41), France (+33), Allemagne (+49), Autriche (+43), Italie (+39)
                 if (getPatternEnabled('phones')) {
                     // Indicatifs internationaux avec ou sans (0)
-                    const intlPhoneRe = /(?:\+(?:41|33|49|43|39)|00(?:41|33|49|43|39))\s*(?:\(0\)\s*)?[1-9](?:[\s./-]?\d){6,12}\b/g;
+                    const intlPhoneRe = /(?:\+(?:41|33|49|43|39)|00(?:41|33|49|43|39))[ \t]*(?:\(0\)[ \t]*)?[1-9](?:[ \t./-]*\d){6,12}\b/g;
                     let m;
                     while ((m = intlPhoneRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'phone', 'phone:' + m[0].replace(/\D/g, ''));
                     }
                     // Formats nationaux suisses et français (ex: 079 123 45 67, 06 12 34 56 78, 021 311 22 33)
-                    const natFrChPhoneRe = /\b0[1-9](?:[\s./-]?\d{2}){4}\b/g;
+                    const natFrChPhoneRe = /\b0[1-9](?:[ \t./-]*\d{2}){4}\b/g;
                     while ((m = natFrChPhoneRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'phone', 'phone:' + m[0].replace(/\D/g, ''));
                     }
-                    const natCh3partPhoneRe = /\b0[1-9]\d(?:\s*[\d.-]\s*|\s*){6,8}\b/g;
+                    // Format national suisse à 3 blocs (garantir la fin sur un chiffre \d pour ne pas avaler le point)
+                    const natCh3partPhoneRe = /\b0[1-9]\d(?:[ \t./-]*\d){6,8}\b/g;
                     while ((m = natCh3partPhoneRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'phone', 'phone:' + m[0].replace(/\D/g, ''));
                     }
@@ -1991,10 +2018,27 @@
                     while ((m = dateRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date');
                     }
-                    // Dates textuelles avec mois en FR, DE, IT (ex: "14 mai 2023", "14. Mai 2023", "le 24 octobre", "am 12. Oktober", "il 5 maggio 2024")
-                    const textualDateRe = /(?:(?:n[eé](?:e)?\s+le|geboren\s+am|geb\.?|nato(?:\/a)?\s+il|nata\s+il|le|am|il)\s+)?\b(?:0?[1-9]|[12]\d|3[01])(?:\.|\s*er)?\s+(?:janvier|f[eé]vrier|fevrier|mars|avril|mai|juin|juillet|ao[uû]t|aout|septembre|octobre|novembre|d[eé]cembre|decembre|januar|j[aä]nner|janner|februar|feber|m[aä]rz|maerz|marz|april|juni|juli|august|september|oktober|november|dezember|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(?:19|20)\d{2})?\b/gi;
+                    // Dates textuelles avec mois en FR, DE, IT, EN (ex: "14 mai 2023", "14. Mai 2023", "le 24 octobre", "am 12. Oktober", "il 5 maggio 2024", "03 November 2026")
+                    const textualDateRe = /(?:(?:n[eé](?:e)?\s+le|geboren\s+am|geb\.?|nato(?:\/a)?\s+il|nata\s+il|le|am|il|on)\s+)?\b(?:0?[1-9]|[12]\d|3[01])(?:\.|\s*er)?\s+(?:janvier|f[eé]vrier|fevrier|mars|avril|mai|juin|juillet|ao[uû]t|aout|septembre|octobre|novembre|d[eé]cembre|decembre|januar|j[aä]nner|janner|februar|feber|m[aä]rz|maerz|marz|april|juni|juli|august|september|oktober|november|dezember|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+(?:19|20)?\d{2})?\b/gi;
                     while ((m = textualDateRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date');
+                    }
+                    // Format anglais "Month DD, YYYY" (ex: "February 09, 2026")
+                    const enMonthFirstDateRe = /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+(?:0?[1-9]|[12]\d|3[01])(?:st|nd|rd|th)?,?\s+(?:19|20)\d{2}\b/gi;
+                    while ((m = enMonthFirstDateRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date');
+                    }
+                    // Dates courtes sans année précédées d'un marqueur (ex: "Le 24.11", "les dates du 24.11 et 1.12", "les mardis 10.11, 17.11, 24.11, 1.12 et 8.12")
+                    const shortDateSeriesRe = /(?:(?:le|du|au|les|dès|vers|dates?\s+du|mardis?|lundis?|mercredis?|jeudis?|vendredis?|samedis?|dimanches?)\s+)((?:0?[1-9]|[12]\d|3[01])\.(?:1[0-2]|0?[1-9])(?:\s*(?:,|et|ou|-)\s*(?:0?[1-9]|[12]\d|3[01])\.(?:1[0-2]|0?[1-9]))*)\b/gi;
+                    while ((m = shortDateSeriesRe.exec(rawText)) !== null) {
+                        const series = m[1];
+                        const seriesStart = m.index + m[0].indexOf(series);
+                        const singleShortDateRe = /\b(?:0?[1-9]|[12]\d|3[01])\.(?:1[0-2]|0?[1-9])\b/g;
+                        let sm;
+                        while ((sm = singleShortDateRe.exec(series)) !== null) {
+                            const dateStart = seriesStart + sm.index;
+                            addInterval(dateStart, dateStart + sm[0].length, sm[0], 'dob', 'date');
+                        }
                     }
                     // Âges : FR: "âgé de 11 ans", "11 ans", DE: "11 Jahre alt", "11 Jahre", IT: "11 anni"
                     const ageRe = /\b(?:(?:âgé(?:e)?\s+de\s+)?\d{1,2}\s*ans|\d{1,2}\s*(?:Jahre(?:\s+alt)?|J\.)|\d{1,2}\s*anni)\b/gi;
@@ -2003,22 +2047,7 @@
                     }
                 }
 
-                // 6. Civilités (adultes, enseignants, parents, directeurs -> Personne X) avec noms composés et particules
-                const discoveredPersons = [];
-                if (getPatternEnabled('common_names')) {
-                    const titleRe = /\b(?:M\.|Mme|Mlle|Monsieur|Madame|Mademoiselle|Dr|Docteur|Prof\.|Professeur|Maître|Me|Herr|Frau|Sig\.|Sig\.ra)\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*(?:\s+(?:(?:de|du|des|d'|d’|von|van|di|da)\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|\s+[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)?)\b/g;
-                    let m;
-                    while ((m = titleRe.exec(rawText)) !== null) {
-                        const personKey = 'person:' + m[0].toLowerCase().trim();
-                        addInterval(m.index, m.index + m[0].length, m[0], 'name', personKey);
-                        if (m[1]) {
-                            const pParts = m[1].split(/\s+/).filter(p => p.length >= 3 && !NAME_STOPWORDS.has(p.toLowerCase()));
-                            discoveredPersons.push({ full: m[1], parts: pParts, canonicalKey: personKey });
-                        }
-                    }
-                }
-
-                // 7. Roster Élèves de la classe (UNIQUEMENT les noms de la liste de classe)
+                // 6. Roster Élèves de la classe (prioritaire sur les noms génériques)
                 if (getPatternEnabled('roster') && state.roster.length > 0) {
                     const rosterEntries = buildRosterEntries(state.roster);
                     for (const entry of rosterEntries) {
@@ -2032,7 +2061,7 @@
                     }
                 }
 
-                // 8. Classes & Établissements
+                // 7. Classes & Établissements
                 if (getPatternEnabled('school_class')) {
                     const classRe = /\b(?:1[01]CO|[1-8]H(?:-[A-Z0-9]+)?|Cycle\s+[123]|CO\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+|Centre\s+scolaire\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+|École\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+)\b/g;
                     let m;
@@ -2041,7 +2070,7 @@
                     }
                 }
 
-                // 9. Adresses & Codes postaux (Suisse 4 chiffres, France 5 chiffres, Allemagne 5 chiffres, Autriche 4 chiffres, Italie 5 chiffres)
+                // 8. Adresses & Codes postaux (PAS DE "Cours")
                 if (getPatternEnabled('addresses')) {
                     // NPA / Code postal + Ville (ex: "1950 Sion", "CH-1000 Lausanne", "75001 Paris", "D-10115 Berlin", "8001 Zürich", "A-1010 Wien", "20121 Milano")
                     const npaRe = /\b(?:(?:CH-|A-|AT-)[1-9]\d{3}|(?:F-|FR-|D-|DE-|I-|IT-)\d{5}|[1-9]\d{3}|\d{5})\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+(?:\s+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+)*)\b/g;
@@ -2049,8 +2078,8 @@
                     while ((m = npaRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'city', 'city');
                     }
-                    // Noms de rues + numéros (FR, IT, DE avec tirets pour noms de rues comme Général-de-Gaulle)
-                    const streetRe = /\b(?:Rue|Avenue|Av\.|Chemin|Ch\.|Route|Rte|Place|Boulevard|Bd|Impasse|Allée|Voie|Square|Quai|Via|Viale|Corso|Piazza|Vicolo|rue|avenue|chemin|route|place|boulevard|allée|quai|via|Cours(?=\s+(?:de\s+la\s+|du\s+|des\s+|d')?[A-ZÀ-ŸÄÖÜ]))\s+(?:de\s+la\s+|du\s+|des\s+|d'|dell'|della\s+|del\s+|dei\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+(?:\s+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+)*(?:\s+\d+[a-zA-Z]?)?\b/g;
+                    // Noms de rues + numéros (SANS "Cours" pour éviter les faux positifs)
+                    const streetRe = /\b(?:Rue|Avenue|Av\.|Chemin|Ch\.|Route|Rte|Place|Boulevard|Bd|Impasse|Allée|Voie|Square|Quai|Sentier|Passage|Ruelle|Via|Viale|Corso|Piazza|Vicolo|rue|avenue|chemin|route|place|boulevard|allée|quai|via)\s+(?:de\s+la\s+|du\s+|des\s+|d'|dell'|della\s+|del\s+|dei\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+(?:\s+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+)*(?:[ \t]+\d+[a-zA-Z]?)?\b/g;
                     while ((m = streetRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'address', 'address');
                     }
@@ -2060,74 +2089,133 @@
                     }
                 }
 
-                // 10. Détection contextuelle, heuristique "Prénom + Nom" sans base, et prénoms fréquents
+                // 9. Personnes : Détection contextuelle, en-têtes d'emails, salutations, heuristique "Prénom + Nom" et propagation
+                const discoveredPersons = [];
+
+                function registerDiscoveredPerson(fullName, canonicalKey) {
+                    const cleanFull = fullName.trim();
+                    const normKey = canonicalKey || ('person:' + cleanFull.toLowerCase().replace(/[-_]/g, ' '));
+                    let dp = discoveredPersons.find(p => p.canonicalKey === normKey);
+                    if (!dp) {
+                        dp = { canonicalKey: normKey, full: cleanFull, parts: new Set() };
+                        discoveredPersons.push(dp);
+                    }
+                    dp.parts.add(cleanFull);
+                    dp.parts.add(cleanFull.replace(/\s+/g, '-'));
+                    dp.parts.add(cleanFull.replace(/-/g, ' '));
+                    const words = cleanFull.split(/[\s-]+/).filter(w => w.length >= 3 && !NAME_STOPWORDS.has(w.toLowerCase()) && !NON_PERSON_ACRONYMS.has(w));
+                    for (const w of words) {
+                        dp.parts.add(w);
+                    }
+                    if (cleanFull.includes(' ')) {
+                        const tokens = cleanFull.split(/\s+/);
+                        if (tokens.length >= 2) {
+                            dp.parts.add(tokens[0] + '-' + tokens[1]);
+                            dp.parts.add(tokens[0] + ' ' + tokens[1]);
+                        }
+                    }
+                    return dp;
+                }
+
                 if (getPatternEnabled('common_names')) {
-                    // A. Détection après déclencheurs contextuels scolaires / rôles :
-                    // "Élève : Lionel Favre", "l'élève Alessandro Bernasconi", "parents de Marc-Antoine Blanc :", "enseignant : Marc Rochat"
-                    const roleContextRe = /\b(?:(?:Élève|Eleve|Étudiant(?:e)?|Etudiant(?:e)?|Enfant|Candidat(?:e)?|Apprenant(?:e)?)\s*[:\-]\s*|(?:l'élève|l'enfant|l'étudiant(?:e)?|l'adolescent(?:e)?)\s+|(?:parents?\s+de|père\s+de|mère\s+de|responsables?\s+de|tuteurs?\s+de)\s+|(?:enseignant(?:e)?|professeur(?:e)?|titulaire|maître|maîtresse|maitresse|directeur|directrice|psychologue|doyen(?:ne)?|médiateur|médiatrice|orthophoniste|logopédiste|psychomotricien(?:ne)?)\s*[:\-]\s*|(?:Contact\s+parents?|Coordonnées)\s*[:\-]\s*)([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*(?:\s+(?:(?:de|du|des|d'|d’|von|van|di|da)\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|\s+[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)?)\b/gi;
+                    // A. Civilités (ex: "M. Jean-Pierre Dupont", "Mme Sophie Martin")
+                    const titleRe = /\b(?:M\.|Mme|Mlle|Monsieur|Madame|Mademoiselle|Dr|Docteur|Prof\.|Professeur|Maître|Me|Herr|Frau|Sig\.|Sig\.ra)\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*(?:[ \t]+(?:(?:de|du|des|d'|d’|von|van|di|da)[ \t]+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|[ \t]+[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)?)\b/g;
                     let m;
-                    while ((m = roleContextRe.exec(rawText)) !== null) {
-                        const captured = m[1];
-                        if (captured && captured.length >= 2) {
-                            const nameStart = m.index + m[0].lastIndexOf(captured);
-                            const personKey = 'person:' + captured.toLowerCase().trim();
-                            addInterval(nameStart, nameStart + captured.length, captured, 'name', personKey);
-                            const parts = captured.split(/\s+/).filter(p => p.length >= 3 && !NAME_STOPWORDS.has(p.toLowerCase()));
-                            discoveredPersons.push({ full: captured, parts, canonicalKey: personKey });
+                    while ((m = titleRe.exec(rawText)) !== null) {
+                        const dp = registerDiscoveredPerson(m[1] || m[0]);
+                        addInterval(m.index, m.index + m[0].length, m[0], 'name', dp.canonicalKey);
+                    }
+
+                    // B. En-têtes d'emails (ex: "From: Lionel Walter <...>", "To: Vivian Epiney <...>", "Cc: Jean Marc Wyss <...>")
+                    const emailHeaderNameRe = /(?:From|De|To|À|A|Cc|Bcc|Cci):\s*([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:[ \t-]+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+){1,3})\s*</g;
+                    while ((m = emailHeaderNameRe.exec(rawText)) !== null) {
+                        const name = m[1].trim();
+                        const start = m.index + m[0].indexOf(name);
+                        const dp = registerDiscoveredPerson(name);
+                        addInterval(start, start + name.length, name, 'name', dp.canonicalKey);
+                    }
+
+                    // C. Salutations (ex: "Salut Vivian,", "Hello Jean-Marc,", "Cher Lionel,", "Chers Vivian et Jean-Marc,")
+                    const salutationRe = /(?:Salut|Bonjour|Bonsoir|Hello|Cher|Chère|Chers|Chères)\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)?)(?:\s+et\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)?))?/g;
+                    while ((m = salutationRe.exec(rawText)) !== null) {
+                        if (m[1] && !NAME_STOPWORDS.has(m[1].toLowerCase())) {
+                            const start1 = m.index + m[0].indexOf(m[1]);
+                            const m1Low = m[1].toLowerCase().replace(/-/g, ' ');
+                            const matchedDp = discoveredPersons.find(p => p.canonicalKey.includes(m1Low) || Array.from(p.parts).some(pt => pt.toLowerCase() === m[1].toLowerCase()));
+                            const key = matchedDp ? matchedDp.canonicalKey : ('person:' + m[1].toLowerCase());
+                            addInterval(start1, start1 + m[1].length, m[1], 'name', key);
+                            registerDiscoveredPerson(m[1], key);
+                        }
+                        if (m[2] && !NAME_STOPWORDS.has(m[2].toLowerCase())) {
+                            const start2 = m.index + m[0].lastIndexOf(m[2]);
+                            const m2Low = m[2].toLowerCase().replace(/-/g, ' ');
+                            const matchedDp = discoveredPersons.find(p => p.canonicalKey.includes(m2Low) || Array.from(p.parts).some(pt => pt.toLowerCase() === m[2].toLowerCase()));
+                            const key = matchedDp ? matchedDp.canonicalKey : ('person:' + m[2].toLowerCase());
+                            addInterval(start2, start2 + m[2].length, m[2], 'name', key);
+                            registerDiscoveredPerson(m[2], key);
                         }
                     }
 
-                    // B. Détection heuristique de "Prénom Nom" sans base de données (2 mots avec majuscules et tirets)
-                    // Ex: "Lionel Favre", "Matteo Rossi", "Pierre-Alain Rochat", "Anne-Claire Dubois", "Lucas DUPONT", "Lionel FAVRE"
-                    const pairCandidateRe = /\b([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*)\s+((?:(?:de|du|des|d'|d’|von|van|di|da)\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)\b/g;
+                    // D. Déclencheurs contextuels scolaires / rôles / contacts :
+                    const contactRoleRe = /(?:(?:Élève|Eleve|Étudiant(?:e)?|Etudiant(?:e)?|Enfant|Candidat(?:e)?|Apprenant(?:e)?)\s*[:\-]\s*|(?:l'élève|l'enfant|l'étudiant(?:e)?|l'adolescent(?:e)?)\s+|(?:parents?\s+de|père\s+de|mère\s+de|responsables?\s+de|tuteurs?\s+de)\s+|(?:enseignant(?:e)?|professeur(?:e)?|titulaire|maître|maîtresse|maitresse|directeur|directrice|psychologue|doyen(?:ne)?|médiateur|médiatrice|orthophoniste|logopédiste|psychomotricien(?:ne)?)\s*[:\-]\s*|(?:Contact\s+parents?|[Cc]oordonnées\s+de|[Cc]oordonnées|[Cc]ontacter|[Cc]ollègue\s+de|[Cc]ollègue|[Qq]uestion\s+de|[Ss]uggestion\s+de|[Rr]éponse\s+de)\s*[:\-]?[ \t]*)([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*(?:[ \t]+(?:(?:de|du|des|d'|d’|von|van|di|da)[ \t]+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|[ \t]+[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)?)\b/g;
+                    while ((m = contactRoleRe.exec(rawText)) !== null) {
+                        const captured = m[1];
+                        if (captured && captured.length >= 2) {
+                            const nameStart = m.index + m[0].lastIndexOf(captured);
+                            const dp = registerDiscoveredPerson(captured);
+                            addInterval(nameStart, nameStart + captured.length, captured, 'name', dp.canonicalKey);
+                        }
+                    }
+
+                    // E. Détection heuristique générale "Prénom + Nom" sur la même ligne ([ \t]+)
+                    const pairCandidateRe = /(?<![\p{L}\p{M}])(\p{Lu}[\p{Ll}ß]+(?:-\p{Lu}[\p{Ll}ß]+)*)[ \t]+((?:(?:de|du|des|d'|d’|von|van|di|da)[ \t]+)?\p{Lu}[\p{Ll}ß]+(?:-\p{Lu}[\p{Ll}ß]+)*(?:[ \t]+\p{Lu}[\p{Ll}ß]+)?|\p{Lu}{2,}(?:-\p{Lu}{2,})*)(?![\p{L}\p{M}])/gu;
                     while ((m = pairCandidateRe.exec(rawText)) !== null) {
                         const w1 = m[1];
                         const w2 = m[2];
                         const w1Low = w1.toLowerCase();
-                        const w2Clean = w2.replace(/^(?:de|du|des|d'|d’|von|van|di|da)\s+/i, '');
-                        const w2Low = w2Clean.toLowerCase();
+                        const w2Tokens = w2.split(/[ \t]+/).filter(Boolean);
+                        const w2Clean = w2Tokens[w2Tokens.length - 1];
+                        const w2CleanLow = w2Clean.toLowerCase();
 
-                        // Élimination des faux positifs par les stopwords
-                        if (NAME_STOPWORDS.has(w1Low) || NAME_STOPWORDS.has(w2Low)) continue;
+                        if (NAME_STOPWORDS.has(w1Low) || NAME_STOPWORDS.has(w2CleanLow)) continue;
+                        if (NON_PERSON_ACRONYMS.has(w1) || NON_PERSON_ACRONYMS.has(w2Clean)) continue;
 
-                        let isValidPerson = false;
-                        // Critère 1 : Le premier mot est un prénom connu (ex: Lionel, Lucas, Sophie...)
-                        if (COMMON_SWISS_NAMES.some(fn => fn.toLowerCase() === w1Low)) {
-                            isValidPerson = true;
-                        }
-                        // Critère 2 : Le deuxième mot est un nom de famille en TOUTES MAJUSCULES (ex: Lionel FAVRE)
-                        else if (w2 === w2.toUpperCase() && w2.length >= 2) {
-                            isValidPerson = true;
-                        }
-                        // Critère 3 : La paire se trouve en milieu de phrase (après une minuscule, virgule, ou préposition)
-                        else {
+                        let isValid = false;
+                        if (COMMON_NAMES_SET.has(w1Low)) {
+                            isValid = true;
+                        } else if (w2 === w2.toUpperCase() && w2.length >= 3 && !NON_PERSON_ACRONYMS.has(w2)) {
+                            isValid = true;
+                        } else {
                             const preText = rawText.substring(Math.max(0, m.index - 25), m.index);
-                            const isMidSentence = /[,;:(«"\-\s][a-zà-ÿäöüß]+\s+$/.test(preText) || /[,;:(«"\-]\s*$/.test(preText);
+                            const isMidSentence = /(?:de|par|pour|avec|chez|sur|à|a)\s+$/i.test(preText) || /[,;:(«"\-]\s*$/.test(preText);
                             if (isMidSentence) {
-                                isValidPerson = true;
+                                isValid = true;
                             } else {
-                                // En début de phrase : accepté si suivi d'un verbe d'action courant
                                 const postText = rawText.substring(m.index + m[0].length, Math.min(rawText.length, m.index + m[0].length + 20));
                                 if (/^\s+(?:a|est|participe|travaille|présente|montre|rencontre|semble|doit|peut|souhaite|vient)\b/i.test(postText)) {
-                                    isValidPerson = true;
+                                    isValid = true;
                                 }
                             }
                         }
 
-                        if (isValidPerson) {
-                            const personKey = 'person:' + m[0].toLowerCase().trim();
-                            addInterval(m.index, m.index + m[0].length, m[0], 'name', personKey);
-                            const parts = [w1, w2Clean].filter(p => p.length >= 3 && !NAME_STOPWORDS.has(p.toLowerCase()));
-                            discoveredPersons.push({ full: m[0], parts, canonicalKey: personKey });
+                        if (isValid) {
+                            const fullFound = m[0].trim();
+                            const normKey = 'person:' + fullFound.toLowerCase().replace(/[-_]/g, ' ');
+                            const dp = registerDiscoveredPerson(fullFound, normKey);
+                            addInterval(m.index, m.index + fullFound.length, fullFound, 'name', dp.canonicalKey);
                         }
                     }
 
-                    // C. Propagation des noms découverts : rattache les prénoms ou noms isolés à la même personne
+                    // F. Propagation des personnes découvertes (prénoms ou noms isolés)
                     for (const dp of discoveredPersons) {
-                        for (const part of dp.parts) {
-                            if (!part || part.length < 3 || NAME_STOPWORDS.has(part.toLowerCase())) continue;
+                        const sortedParts = Array.from(dp.parts).sort((a, b) => b.length - a.length);
+                        for (const part of sortedParts) {
+                            if (!part || part.length < 3) continue;
+                            const pLow = part.toLowerCase();
+                            if (NAME_STOPWORDS.has(pLow) || NON_PERSON_ACRONYMS.has(part)) continue;
+
                             const escPart = part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                            const partRe = new RegExp('\\b' + escPart + '\\b', 'g');
+                            const partRe = new RegExp('(?<![\\p{L}\\p{M}-])' + escPart + '(?![\\p{L}\\p{M}-])', 'gu');
                             let pm;
                             while ((pm = partRe.exec(rawText)) !== null) {
                                 addInterval(pm.index, pm.index + pm[0].length, pm[0], 'name', dp.canonicalKey);
@@ -2135,13 +2223,16 @@
                         }
                     }
 
-                    // D. Prénoms fréquents isolés (liste étendue incluant Lionel, Léon, prénoms composés...)
+                    // G. Prénoms fréquents isolés restants
                     for (const fn of COMMON_SWISS_NAMES) {
                         const escFn = fn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const fnRe = new RegExp('\\b' + escFn + '\\b', 'gi');
-                        let m;
-                        while ((m = fnRe.exec(rawText)) !== null) {
-                            addInterval(m.index, m.index + m[0].length, m[0], 'name', 'person:' + m[0].toLowerCase().trim());
+                        const fnRe = new RegExp('(?<![\\p{L}\\p{M}-])' + escFn + '(?![\\p{L}\\p{M}-])', 'giu');
+                        let fm;
+                        while ((fm = fnRe.exec(rawText)) !== null) {
+                            const fnLow = fm[0].toLowerCase();
+                            const matchedDp = discoveredPersons.find(p => p.canonicalKey.includes(fnLow) || Array.from(p.parts).some(pt => pt.toLowerCase() === fnLow));
+                            const key = matchedDp ? matchedDp.canonicalKey : ('person:' + fnLow);
+                            addInterval(fm.index, fm.index + fm[0].length, fm[0], 'name', key);
                         }
                     }
                 }
@@ -2197,6 +2288,9 @@
                 const remainder = rawText.substring(lastIdx);
                 cleanText += remainder;
                 htmlOutput += escapeHtml(remainder);
+
+                // Garde-fou sécurité : replier les balises identiques consécutives (ex: [Personne 1] [Personne 1] -> [Personne 1])
+                cleanText = cleanText.replace(/(\[(?:Personne|Élève|Email|Téléphone)\s+\d+\])(?:[ \t-]+\1)+/g, '$1');
 
                 return { cleanText, htmlOutput, stats, totalCount: replacements.length, replacements };
             }

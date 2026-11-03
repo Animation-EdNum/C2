@@ -528,4 +528,64 @@ Favre\tArthur`;
         assert.ok(revertBtn, '#revertAiBtn should exist in DOM');
         assert.ok(revertModal, '#revertModal should exist in DOM');
     });
+
+    await t.test('Real-world email exchange: Consistent identity mapping, no false positive street, dot after phone preserved', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const sampleEmail = `Cours Wikimedia pour Bibliothécaires
+Vivian Epiney
+
+Jean Marc Wyss
+Hello Jean-Marc,
+
+Pourrais-tu stp répondre à la question de Lionel Walter sur les supports GLAM ?
+
+Merci et belle fin de journée !
+
+Vivian Epiney
+Wikimedia CH
+From: Lionel Walter <lionel.walter@arbim.ch>
+Sent: 03 November 2026 12:07
+To: Vivian Epiney <vivian.epiney@wikimedia.ch>
+Cc: Jean Marc Wyss <jean.marc.wyss@wikimedia.ch>
+Subject: Re: Cours Wikimedia pour Bibliothécaires
+ 
+Salut Vivian,
+
+C'est comme tu veux. Le 24.11, ce sera le début de l'introduction à openrefine.
+
+Uploading Image Collections to Wikimedia Commons with OpenRefine
+Joris Burla, Head Collection Documentation, Museum Rietberg
+
+Voici les coordonnées de Eliane Blumer : blumer.eliane@hispeed.ch, 079 728 47 41. Elle était là en 2024.
+
+Les mardis 10.11, 17.11, 24.11, 1.12 et 8.12 à Yverdon.
+
+--
+Lionel Walter
+arbim IT
+Rue Faller 2, 1202 Genève
++41 76 499 12 32`;
+
+        const result = engine.runAnonymization(sampleEmail);
+
+        // 1. Cours Wikimedia must NOT be detected as a street address
+        assert.ok(!result.cleanText.includes('[Adresse] pour'), 'Cours Wikimedia should not be converted to [Adresse]');
+        assert.ok(result.cleanText.includes('Cours Wikimedia pour Bibliothécaires'), 'Title intact');
+
+        // 2. Identity unification: "Vivian Epiney" and "Vivian" share the same Person tag
+        assert.ok(!/\[Personne \d+\]-[Personne \d+]/.test(result.cleanText), 'Compound names should not be split into two separate tags');
+        assert.ok(!/\[Personne (\d+)\][ \t]+\[Personne \1\]/.test(result.cleanText), 'No consecutive duplicate person tags');
+
+        // 3. Dot after phone number must be preserved
+        assert.ok(result.cleanText.includes('. Elle était là'), 'Punctuation dot after phone number must not be swallowed');
+
+        // 4. Non-person entities remain intact
+        assert.ok(result.cleanText.includes('Wikimedia Commons'), 'Wikimedia Commons preserved');
+        assert.ok(result.cleanText.includes('arbim IT'), 'arbim IT preserved');
+
+        // 5. Short dates properly handled
+        assert.ok(!result.cleanText.includes('24.11'), 'Date 24.11 anonymized');
+        assert.ok(!result.cleanText.includes('1.12'), 'Date 1.12 anonymized');
+    });
 });
