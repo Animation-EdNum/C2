@@ -793,7 +793,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_external",
-    "inIndex": true,
+    "inIndex": false,
     "inC1": false,
     "i18n": {
       "de": {
@@ -868,7 +868,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_external",
-    "inIndex": true,
+    "inIndex": false,
     "inC1": false,
     "i18n": {
       "de": {
@@ -1266,6 +1266,7 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
+    "isTeacher": true,
     "dataLevel": "3H-10CO",
     "icon": "map",
     "iconStyle": null,
@@ -1283,7 +1284,7 @@ window.REGISTRY = [
         "grey": false
       }
     ],
-    "category": "students_utilities",
+    "category": "teachers_external",
     "inIndex": true,
     "inC1": false,
     "i18n": {
@@ -1321,7 +1322,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_utilities",
-    "inIndex": true,
+    "inIndex": false,
     "inC1": false,
     "i18n": {
       "de": {
@@ -1358,7 +1359,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_utilities",
-    "inIndex": true,
+    "inIndex": false,
     "inC1": false,
     "i18n": {
       "de": {
