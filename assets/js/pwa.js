@@ -6,8 +6,10 @@
  * Responsabilités uniques :
  *   - Détection des moteurs d'indexation / bots (contournement de pré-cache)
  *   - Enregistrement autonome de sw.js
- *   - Notification non-bloquante de mise à jour (toast) et rechargement contrôlé
- *   - Vérifications périodiques et à la réactivation d'onglet
+ *   - Mise à jour automatique transparente sur le portail et au chargement initial
+ *   - Notification non-bloquante de mise à jour (toast) pour les webapps avec session active
+ *   - Prise en charge immédiate des workers déjà en attente (registration.waiting)
+ *   - Vérifications périodiques, immédiates et à la réactivation d'onglet
  */
 
 (function () {
@@ -45,16 +47,86 @@
             }
         });
 
-        // Période de grâce : appliquer la mise à jour silencieusement dans les 6s après chargement
+        // Détection de la page d'accueil / portail (index.html, indexC1.html, ou racine)
+        const isPortal = !window.location.pathname.includes('/webapps/') && !window.location.pathname.includes('/alpha/webapps/');
+
+        function applyUpdate(worker) {
+            if (!worker) return;
+            try {
+                worker.postMessage('skipWaiting');
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        // Période de grâce : appliquer la mise à jour silencieusement dans les 30s après chargement
+        // (permet de télécharger les 79 assets du pré-cache sans être coupé par un timer trop court)
         let justLoaded = true;
         const loadTimer = setTimeout(() => {
             justLoaded = false;
-        }, 6000);
+        }, 30000);
         if (loadTimer && typeof loadTimer.unref === 'function') {
             loadTimer.unref();
         }
 
+        function promptOrAutoUpdate(worker) {
+            if (!worker) return;
+
+            // Sur le portail (lanceur sans données de session à préserver) ou lors du chargement initial :
+            // mise à jour automatique immédiate sans bloquer l'utilisateur
+            if (isPortal || justLoaded) {
+                applyUpdate(worker);
+                return;
+            }
+
+            // Dans une webapp en cours d'utilisation active : proposer le toast non-bloquant
+            if (typeof showToast === 'function') {
+                const content = document.createElement('div');
+                content.className = 'c2-toast-update-content';
+
+                const t = function (key, fallback) {
+                    if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                        return window.I18N.t(key, fallback);
+                    }
+                    return fallback;
+                };
+
+                const text = document.createElement('span');
+                text.textContent = t('pwa.update_available', 'Une mise à jour de la Suite EdNum est disponible.');
+
+                const btn = document.createElement('button');
+                btn.className = 'c2-toast-btn';
+
+                const icon = document.createElement('i');
+                icon.setAttribute('data-fa', 'arrows-rotate');
+
+                const label = document.createElement('span');
+                label.textContent = t('pwa.update_now', 'Mettre à jour maintenant');
+
+                btn.appendChild(icon);
+                btn.appendChild(document.createTextNode(' '));
+                btn.appendChild(label);
+                btn.addEventListener('click', () => {
+                    applyUpdate(worker);
+                });
+
+                content.appendChild(text);
+                content.appendChild(btn);
+
+                showToast(content, 'info', 86400000); // 24h
+            } else {
+                // Si showToast n'est pas disponible, appliquer la mise à jour directement
+                applyUpdate(worker);
+            }
+        }
+
         navigator.serviceWorker.register(rootPath + 'sw.js').then((registration) => {
+            // 1. Un worker est DÉJÀ en attente (waiting) depuis une visite précédente
+            if (registration.waiting && navigator.serviceWorker.controller) {
+                promptOrAutoUpdate(registration.waiting);
+            }
+
+            // 2. Détection d'un nouveau worker en cours d'installation
             registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
                 if (!newWorker) {
@@ -63,61 +135,36 @@
 
                 newWorker.addEventListener('statechange', () => {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        if (justLoaded) {
-                            newWorker.postMessage('skipWaiting');
-                        } else if (typeof showToast === 'function') {
-                            const content = document.createElement('div');
-                            content.className = 'c2-toast-update-content';
-
-                            const t = function (key, fallback) {
-                                if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
-                                    return window.I18N.t(key, fallback);
-                                }
-                                return fallback;
-                            };
-
-                            const text = document.createElement('span');
-                            text.textContent = t('pwa.update_available', 'Une mise à jour de la Suite EdNum est disponible.');
-
-                            const btn = document.createElement('button');
-                            btn.className = 'c2-toast-btn';
-
-                            const icon = document.createElement('i');
-                            icon.setAttribute('data-fa', 'arrows-rotate');
-
-                            const label = document.createElement('span');
-                            label.textContent = t('pwa.update_now', 'Mettre à jour maintenant');
-
-                            btn.appendChild(icon);
-                            btn.appendChild(document.createTextNode(' '));
-                            btn.appendChild(label);
-                            btn.addEventListener('click', () => {
-                                newWorker.postMessage('skipWaiting');
-                            });
-
-                            content.appendChild(text);
-                            content.appendChild(btn);
-
-                            showToast(content, 'info', 86400000); // 24h
-                        }
+                        promptOrAutoUpdate(newWorker);
                     }
                 });
             });
 
-            // Vérifications proactives
+            // 3. Vérifications proactives lors du retour sur l'onglet
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') {
-                    registration.update();
+                    registration.update().then(() => {
+                        if (registration.waiting && navigator.serviceWorker.controller) {
+                            promptOrAutoUpdate(registration.waiting);
+                        }
+                    }).catch(() => {});
                 }
             });
 
-            // Vérification périodique toutes les 60 minutes
+            // 4. Vérification périodique toutes les 30 minutes
             const intervalId = setInterval(() => {
-                registration.update();
-            }, 60 * 60 * 1000);
+                registration.update().then(() => {
+                    if (registration.waiting && navigator.serviceWorker.controller) {
+                        promptOrAutoUpdate(registration.waiting);
+                    }
+                }).catch(() => {});
+            }, 30 * 60 * 1000);
             if (intervalId && typeof intervalId.unref === 'function') {
                 intervalId.unref();
             }
+
+            // 5. Forcer une vérification réseau immédiate à chaque chargement de page
+            registration.update().catch(() => {});
 
         }).catch(() => {
             // Échec silencieux

@@ -106,4 +106,138 @@ test('pwa.js - Service Worker Registration and Crawler Bypass', async (t) => {
             dom.window.close();
         }
     });
+
+    await t.test('automatically posts skipWaiting when registration.waiting is already present on portal', async () => {
+        let skipWaitingCalled = false;
+        const mockWorker = {
+            postMessage: (msg) => {
+                if (msg === 'skipWaiting') skipWaitingCalled = true;
+            }
+        };
+
+        const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+            runScripts: 'dangerously',
+            url: 'http://localhost/index.html'
+        });
+        const window = dom.window;
+
+        window.navigator.serviceWorker = {
+            controller: { state: 'activated' },
+            addEventListener: () => {},
+            register: () => Promise.resolve({
+                waiting: mockWorker,
+                addEventListener: () => {},
+                update: () => Promise.resolve()
+            })
+        };
+
+        try {
+            window.eval(pwaSrc);
+            window.dispatchEvent(new window.Event('load'));
+            // Wait microtask for register().then()
+            await new Promise(r => setTimeout(r, 10));
+
+            assert.strictEqual(skipWaitingCalled, true, 'skipWaiting should be sent immediately to waiting worker');
+        } finally {
+            dom.window.close();
+        }
+    });
+
+    await t.test('automatically posts skipWaiting on portal when newWorker becomes installed', async () => {
+        let skipWaitingCalled = false;
+        let updatefoundCb = null;
+        let statechangeCb = null;
+
+        const mockInstallingWorker = {
+            state: 'installing',
+            addEventListener: (evt, cb) => {
+                if (evt === 'statechange') statechangeCb = cb;
+            },
+            postMessage: (msg) => {
+                if (msg === 'skipWaiting') skipWaitingCalled = true;
+            }
+        };
+
+        const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+            runScripts: 'dangerously',
+            url: 'http://localhost/index.html'
+        });
+        const window = dom.window;
+
+        window.navigator.serviceWorker = {
+            controller: { state: 'activated' },
+            addEventListener: () => {},
+            register: () => Promise.resolve({
+                waiting: null,
+                installing: mockInstallingWorker,
+                addEventListener: (evt, cb) => {
+                    if (evt === 'updatefound') updatefoundCb = cb;
+                },
+                update: () => Promise.resolve()
+            })
+        };
+
+        try {
+            window.eval(pwaSrc);
+            window.dispatchEvent(new window.Event('load'));
+            await new Promise(r => setTimeout(r, 10));
+
+            // Simulate updatefound and worker installation
+            assert.ok(updatefoundCb, 'updatefound listener should be registered');
+            updatefoundCb();
+
+            mockInstallingWorker.state = 'installed';
+            assert.ok(statechangeCb, 'statechange listener should be registered');
+            statechangeCb();
+
+            assert.strictEqual(skipWaitingCalled, true, 'skipWaiting should be sent to newly installed worker on portal');
+        } finally {
+            dom.window.close();
+        }
+    });
+
+    await t.test('controllerchange triggers window.location.reload when controller existed', async () => {
+        let reloadCalled = false;
+        let controllerChangeCb = null;
+
+        const { VirtualConsole } = require('jsdom');
+        const virtualConsole = new VirtualConsole();
+        virtualConsole.on('jsdomError', (err) => {
+            if (err.message && err.message.includes('navigation to another Document')) {
+                reloadCalled = true;
+            }
+        });
+
+        const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+            runScripts: 'dangerously',
+            url: 'http://localhost/index.html',
+            virtualConsole
+        });
+        const window = dom.window;
+
+        window.navigator.serviceWorker = {
+            controller: { state: 'activated' },
+            addEventListener: (evt, cb) => {
+                if (evt === 'controllerchange') controllerChangeCb = cb;
+            },
+            register: () => Promise.resolve({
+                waiting: null,
+                addEventListener: () => {},
+                update: () => Promise.resolve()
+            })
+        };
+
+        try {
+            window.eval(pwaSrc);
+            window.dispatchEvent(new window.Event('load'));
+            await new Promise(r => setTimeout(r, 10));
+
+            assert.ok(controllerChangeCb, 'controllerchange listener should be registered');
+            controllerChangeCb();
+
+            assert.strictEqual(reloadCalled, true, 'window.location.reload should be called on controller change');
+        } finally {
+            dom.window.close();
+        }
+    });
 });
