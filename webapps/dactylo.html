@@ -1,0 +1,3406 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>Tape-Texte · Clavier Suisse Romand (Cycle 2 &amp; 3)</title>
+    <meta property="og:title" content="Tape-Texte · Clavier Suisse Romand">
+    <meta property="og:description"
+        content="Entraîne-toi à la saisie de texte au clavier avec la disposition QWERTZ suisse romande.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/tokens.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/utilities.css">
+    <script src="../assets/js/i18n.js"></script>
+    <script src="../assets/js/i18n/de.js"></script>
+    <script src="../assets/js/audio.js"></script>
+    <script src="../assets/js/toast.js"></script>
+    <script src="../assets/js/vendor/html2canvas.min.js"></script>
+    <script src="../assets/js/modal-export.js"></script>
+    <script src="../assets/js/fa-subset.js"></script>
+    <style>
+        body>header,
+        body>.app-shell {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: rgba(79, 70, 229, 0.12);
+            --accent: #06b6d4;
+            --bg-gradient-start: #1e1b4b;
+            --bg-gradient-end: #312e81;
+
+            --card-bg: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            --key-bg: #ffffff;
+            --key-text: #1e293b;
+            --key-border: #cbd5e1;
+            --key-special-bg: #e2e8f0;
+            --key-special-text: #475569;
+            --key-plate-bg: #f1f5f9;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e1b4b;
+            --card-bg: #1e293b;
+            --primary-light: rgba(99, 102, 241, 0.25);
+            --glass-bg: rgba(15, 23, 42, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #94a3b8;
+            --border: #334155;
+
+            --key-bg: #1e293b;
+            --key-text: #f8fafc;
+            --key-border: #475569;
+            --key-special-bg: #0f172a;
+            --key-special-text: #94a3b8;
+            --key-plate-bg: rgba(0, 0, 0, 0.35);
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 1.25rem 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+
+        .app-shell {
+            max-width: 1080px;
+            width: 100%;
+            margin: auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header.app-header {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-light);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0;
+        }
+
+        .badge-alpha {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-level {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .custom-select {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--card-bg, #ffffff);
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .custom-select:focus {
+            border-color: var(--primary);
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--card-bg, rgba(255, 255, 255, 0.8));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-pill);
+            font-size: 0.85rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat-label {
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-family: var(--font-mono, ui-monospace, monospace);
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
+
+        .stat-value.highlight {
+            color: var(--primary);
+        }
+
+        .stat-unit {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), #818cf8);
+            transition: width 0.2s ease-out;
+        }
+
+        /* TYPING CARD */
+        .typing-area {
+            padding: 2rem 1.75rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .level-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .level-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .record-badge-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .text-display-box {
+            background: var(--card-bg, #ffffff);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 2rem 2.25rem;
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            outline: none;
+            cursor: text;
+        }
+
+        .text-display-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .text-display-content {
+            font-family: var(--font-mono, "SF Mono", Menlo, Consolas, Monaco, monospace);
+            font-size: 1.75rem;
+            line-height: 2.1;
+            letter-spacing: 0.15em;
+            text-align: center;
+            word-break: break-word;
+            user-select: none;
+        }
+
+        .char-correct {
+            color: #10b981;
+        }
+
+        .char-future {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .char-current {
+            color: var(--primary);
+            font-weight: 800;
+            position: relative;
+            background: var(--primary-light);
+            border-radius: var(--radius-xs);
+            padding: 2px 4px;
+            box-shadow: 0 0 0 1px var(--primary);
+            animation: cursorPulse 1.2s infinite ease-in-out;
+        }
+
+        .char-current.space {
+            color: var(--primary);
+            opacity: 0.85;
+        }
+
+        .char-error {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.18);
+            border-radius: var(--radius-xs);
+            padding: 2px 4px;
+            box-shadow: 0 0 0 1px #ef4444;
+            animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes cursorPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-3px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(3px, 0, 0);
+            }
+        }
+
+        /* ERROR FEEDBACK BANNER */
+        .error-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: var(--radius-lg);
+            color: #dc2626;
+            font-size: 0.9rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        body.dark .error-banner {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .error-banner-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .error-main-msg {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .error-recipe-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            color: var(--text-main);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            line-height: 1.4;
+        }
+
+        body.dark .error-recipe-hint {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #f1f5f9;
+        }
+
+        .kbd-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1px 6px;
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            border-bottom: 2px solid #94a3b8;
+            border-radius: 4px;
+            font-family: var(--font-mono, monospace);
+            font-weight: 800;
+            font-size: 0.85em;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        body.dark .kbd-chip {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #475569;
+            border-bottom-color: #334155;
+        }
+
+        .error-banner strong {
+            font-family: var(--font-mono, monospace);
+            padding: 2px 6px;
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: var(--radius-xs);
+        }
+
+        /* KEYBOARD CONTAINER (Guide visuel en cas d'erreur) */
+        .keyboard-section {
+            padding: 0 1.75rem 1.75rem;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            animation: keyboardSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .keyboard-section.visible {
+            display: flex;
+        }
+
+        @keyframes keyboardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .keyboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 960px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        .keyboard-guide-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .keyboard-guide-hint strong {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: var(--radius-xs);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-family: var(--font-mono, monospace);
+            text-transform: none;
+        }
+
+        .keyboard-wrapper {
+            background: var(--key-plate-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 12px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 960px;
+            user-select: none;
+            pointer-events: none;
+            /* Désactive tout clic/appui tactile : guide visuel uniquement */
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .key {
+            height: 48px;
+            background: var(--key-bg);
+            color: var(--key-text);
+            border: 1px solid var(--key-border);
+            border-bottom: 3px solid var(--key-border);
+            border-radius: var(--radius-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: default;
+            /* Pas de curseur pointer */
+            pointer-events: none;
+            /* Touche non cliquable */
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-sizing: border-box;
+            flex: 1;
+            min-width: 0;
+            line-height: 1.1;
+        }
+
+        .key.special {
+            background: var(--key-special-bg);
+            color: var(--key-special-text);
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .key-shift-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1;
+            margin-bottom: 1px;
+        }
+
+        .key.target {
+            background: var(--primary) !important;
+            color: white !important;
+            border-color: var(--primary-hover) !important;
+            border-bottom-color: #312e81 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45), 0 4px 14px rgba(79, 70, 229, 0.45);
+            transform: translateY(-2px) scale(1.03);
+            z-index: 2;
+            animation: targetKeyPulse 1.2s infinite ease-in-out;
+        }
+
+        @keyframes targetKeyPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45), 0 4px 14px rgba(79, 70, 229, 0.45);
+                transform: translateY(-2px) scale(1.03);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.65), 0 6px 18px rgba(79, 70, 229, 0.65);
+                transform: translateY(-3px) scale(1.06);
+            }
+        }
+
+        .key.target .key-shift-label {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+
+        .key.target-shift {
+            background: #818cf8 !important;
+            color: white !important;
+            border-color: #6366f1 !important;
+            border-bottom-color: #4338ca !important;
+            box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.4), 0 4px 10px rgba(99, 102, 241, 0.35);
+            transform: translateY(-1px);
+            z-index: 1;
+            animation: targetShiftPulse 1.2s infinite ease-in-out;
+        }
+
+        .key.target-altgr {
+            background: #0ea5e9 !important;
+            color: white !important;
+            border-color: #0284c7 !important;
+            border-bottom-color: #0369a1 !important;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.4), 0 4px 10px rgba(2, 132, 199, 0.35);
+            transform: translateY(-1px);
+            z-index: 2;
+            animation: targetShiftPulse 1.2s infinite ease-in-out;
+        }
+
+        .key.target-step-1 {
+            background: #f59e0b !important;
+            color: white !important;
+            border-color: #d97706 !important;
+            border-bottom-color: #b45309 !important;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45), 0 4px 14px rgba(217, 119, 6, 0.45);
+            transform: translateY(-2px) scale(1.04);
+            z-index: 5;
+            animation: targetStep1Pulse 1.2s infinite ease-in-out;
+        }
+
+        .key.target-step-1.done {
+            background: #10b981 !important;
+            color: white !important;
+            border-color: #059669 !important;
+            border-bottom-color: #047857 !important;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
+            transform: translateY(0) scale(1);
+            animation: none !important;
+        }
+
+        .key.target-step-2 {
+            background: var(--primary) !important;
+            color: white !important;
+            border-color: var(--primary-hover) !important;
+            border-bottom-color: #312e81 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45), 0 4px 14px rgba(79, 70, 229, 0.45);
+            transform: translateY(-2px) scale(1.04);
+            z-index: 5;
+            animation: targetKeyPulse 1.2s infinite ease-in-out;
+        }
+
+        .key-step-pill {
+            position: absolute;
+            top: -8px;
+            right: -6px;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 4px;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+            z-index: 10;
+            pointer-events: none;
+            line-height: 1;
+            animation: bounceIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .key-step-pill.step-1 {
+            background: #f59e0b;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+        }
+
+        .key-step-pill.step-2 {
+            background: #6366f1;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+        }
+
+        .key-step-pill.step-done {
+            background: #10b981 !important;
+            color: #ffffff !important;
+            border: 2px solid #ffffff !important;
+        }
+
+        @keyframes targetStep1Pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45), 0 4px 14px rgba(217, 119, 6, 0.45);
+                transform: translateY(-2px) scale(1.04);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.65), 0 6px 18px rgba(217, 119, 6, 0.65);
+                transform: translateY(-3px) scale(1.07);
+            }
+        }
+
+        @keyframes targetShiftPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.4), 0 4px 10px rgba(99, 102, 241, 0.35);
+            }
+
+            50% {
+                box-shadow: 0 0 0 5px rgba(129, 140, 248, 0.6), 0 5px 14px rgba(99, 102, 241, 0.5);
+            }
+        }
+
+        .key.wrong {
+            background: #ef4444 !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+            border-bottom-color: #b91c1c !important;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45);
+            transform: translateY(-2px) scale(1.02);
+            z-index: 2;
+            animation: wrongShake 0.35s ease-out;
+        }
+
+        @keyframes wrongShake {
+
+            0%,
+            100% {
+                transform: translateY(-2px) scale(1.02) rotate(0deg);
+            }
+
+            20% {
+                transform: translateY(-2px) scale(1.02) rotate(-3deg);
+            }
+
+            40% {
+                transform: translateY(-2px) scale(1.02) rotate(3deg);
+            }
+
+            60% {
+                transform: translateY(-2px) scale(1.02) rotate(-2deg);
+            }
+
+            80% {
+                transform: translateY(-2px) scale(1.02) rotate(2deg);
+            }
+        }
+
+        .key.wrong .key-shift-label {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        /* RESULTS SCREEN */
+        .results-card {
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2rem;
+            animation: fadeIn 0.4s var(--spring-easing) forwards;
+        }
+
+        .results-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.5rem 0 0.25rem;
+            color: var(--text-main);
+        }
+
+        .results-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .record-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
+            border-radius: var(--radius-pill);
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+            animation: bounceIn 0.6s var(--spring-easing) forwards;
+        }
+
+        .results-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+            width: 100%;
+            max-width: 580px;
+        }
+
+        .result-stat-box {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .result-stat-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        .result-stat-val {
+            font-family: var(--font-mono, ui-monospace, monospace);
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .result-stat-val.accuracy {
+            color: #10b981;
+        }
+
+        .result-stat-val.wpm {
+            color: var(--primary);
+        }
+
+        .result-stat-val.errors {
+            color: var(--text-secondary);
+        }
+
+        .result-stat-unit {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .error-analysis {
+            width: 100%;
+            max-width: 580px;
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+        }
+
+        .error-analysis-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .error-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .error-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+        }
+
+        .error-tag-char {
+            font-family: var(--font-mono, monospace);
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .error-tag-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            padding: 1px 6px;
+            border-radius: var(--radius-pill);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* CONFETTI CANVAS */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* CARD FOOTER */
+        .card-footer {
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.25rem 0 1.5rem;
+            border-top: 1px solid var(--border);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 1024px) {
+            .card-footer {
+                padding: 1.25rem 1.75rem 1.5rem;
+            }
+        }
+
+        /* FOOTER */
+        footer.no-print {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        footer.no-print a {
+            color: var(--text-secondary);
+            text-decoration: underline;
+        }
+
+        footer.no-print a:hover {
+            color: var(--primary);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.6);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem 0.5rem 1.5rem;
+            }
+
+            .app-shell {
+                border-radius: var(--radius-xl);
+            }
+
+            header.app-header {
+                padding: 1rem;
+            }
+
+            .toolbar {
+                padding: 0.75rem 1rem;
+            }
+
+            .typing-area {
+                padding: 1.25rem 1rem 1rem;
+            }
+
+            .text-display-content {
+                font-size: 1.35rem;
+                letter-spacing: 0.1em;
+            }
+
+            .keyboard-section {
+                padding: 0 0.5rem 1rem;
+            }
+
+            .keyboard-wrapper {
+                padding: 6px;
+                gap: 4px;
+            }
+
+            .keyboard-row {
+                gap: 3px;
+            }
+
+            .key {
+                height: 40px;
+                font-size: 0.82rem;
+            }
+
+            .key-shift-label {
+                font-size: 0.55rem;
+            }
+
+            .results-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .card-footer {
+                padding: 1rem 1rem 1.25rem;
+            }
+        }
+
+        /* DACTYLO SCORE MODAL */
+        .dactylo-modal-content {
+            max-width: 600px;
+            width: 92%;
+            padding: 1.5rem;
+            border-radius: var(--radius-xl, 16px);
+        }
+
+        .dactylo-modal-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .dactylo-modal-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0.35rem 0 0.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .dactylo-modal-header .modal-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .dactylo-modal-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-summary-box {
+            background: var(--key-plate-bg, rgba(0, 0, 0, 0.03));
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: var(--radius-md, 8px);
+            padding: 0.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        body.dark .modal-summary-box {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: #334155;
+        }
+
+        .modal-summary-box .summary-box-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+        }
+
+        .modal-summary-box .summary-box-value {
+            font-family: var(--font-mono, monospace);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .modal-summary-box .summary-box-value.highlight {
+            color: var(--primary);
+        }
+
+        .modal-summary-box .summary-box-value.accuracy {
+            color: #10b981;
+        }
+
+        .dactylo-scores-table-wrapper {
+            max-height: 240px;
+            overflow-y: auto;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: var(--radius-md, 8px);
+            margin-bottom: 1rem;
+            background: var(--card-bg, #ffffff);
+        }
+
+        body.dark .dactylo-scores-table-wrapper {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .dactylo-stat-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            text-align: left;
+        }
+
+        .dactylo-stat-table th {
+            position: sticky;
+            top: 0;
+            background: var(--key-plate-bg, #f8fafc);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border, #e2e8f0);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            z-index: 1;
+        }
+
+        body.dark .dactylo-stat-table th {
+            background: #0f172a;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        .dactylo-stat-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid var(--border, #f1f5f9);
+            color: var(--text-main);
+        }
+
+        body.dark .dactylo-stat-table td {
+            border-color: #334155;
+        }
+
+        .dactylo-stat-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dactylo-stat-table tr.completed-row {
+            background: rgba(16, 185, 129, 0.04);
+        }
+
+        body.dark .dactylo-stat-table tr.completed-row {
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .level-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: var(--radius-pill, 9999px);
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .level-status-pill.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        body.dark .level-status-pill.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .level-status-pill.pending {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--text-muted);
+        }
+
+        .dactylo-modal-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border, #e2e8f0);
+        }
+
+        body.dark .dactylo-modal-actions {
+            border-top-color: #334155;
+        }
+
+        .dactylo-modal-actions .btn {
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md, 8px);
+        }
+
+        .btn-subtle {
+            background: transparent;
+            border: 1px solid var(--border, #cbd5e1);
+            color: var(--text-muted, #64748b);
+            font-weight: 500;
+        }
+
+        .btn-subtle:hover {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        .modal-export-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border, #cbd5e1);
+            font-size: 0.7rem;
+            color: var(--text-muted, #64748b);
+        }
+
+        @media (max-width: 600px) {
+            .dactylo-modal-content {
+                padding: 1.25rem;
+            }
+
+            .dactylo-modal-summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dactylo-modal-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .dactylo-modal-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-shell" id="main-content">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
+                    <a href="../index.html" class="header-back-btn" title="Retour à l'accueil"
+                        aria-label="Retour à l'accueil" data-i18n-attr="title:common.home,aria-label:common.home">
+                        <i data-fa="arrow-left"></i>
+                    </a>
+                    <div class="header-icon" aria-hidden="true">
+                        <i data-fa="keyboard"></i>
+                    </div>
+                    <div>
+                        <h1>
+                            Tape-Texte
+                            <span class="badge-level">Cycle 2 &amp; 3</span>
+                            <span data-i18n="dactylo.title">Tape-Texte</span>
+                            <span class="badge-level" data-i18n="dactylo.badge_level">Cycle 2 &amp; 3</span>
+                        </h1>
+                    </div>
+            </div>
+
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn">
+                        <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn"
+                            data-i18n-attr="title:common.options,aria-label:common.options">
+                            <i data-fa="gear"></i>
+                        </button>
+                        <div class="settings-dropdown-content">
+                            <button class="menu-item-btn" id="menuOpenScoresBtn" aria-label="Voir mes statistiques"
+                                data-action="show-stats">
+                                <i data-fa="dt-chart-pie"
+                                    style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                                <span>Statistiques détaillées</span>
+                                <span data-i18n="dactylo.modal_scores_title">Statistiques détaillées</span>
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                                <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                                <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                                <span id="audioToggleText">Activer son</span>
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                                <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                                <i data-fa="moon" id="icon-moon"></i>
+                                <span id="themeToggleText">Sombre</span>
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
+                                <i data-fa="arrows-rotate"></i>
+                                <span id="resetCacheText">Réinitialiser scores</span>
+                                <span id="resetCacheText" data-i18n="dactylo.btn_reset_scores">Réinitialiser
+                                    scores</span>
+                            </button>
+                        </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TOOLBAR & PROGRESS -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <label for="levelSelect" style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">Niveau
+                    :</label>
+                <label for="levelSelect" style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);"
+                    data-i18n="dactylo.level_label">Niveau :</label>
+                <select id="levelSelect" class="custom-select" aria-label="Sélectionner le niveau"></select>
+                <button class="btn btn-secondary" id="btnRestartLevel" title="Recommencer le niveau"
+                    style="padding:6px 12px; font-size:0.85rem;">
+                    <i data-fa="arrows-rotate"></i> Recommencer
+                    <i data-fa="arrows-rotate"></i> <span data-i18n="common.restart">Recommencer</span>
+                </button>
+                <button class="btn btn-secondary" id="btnToggleKeyboard" title="Afficher ou masquer l'aide clavier"
+                    style="padding:6px 12px; font-size:0.85rem;">
+                    <i data-fa="keyboard"></i> Clavier
+                    <i data-fa="keyboard"></i> <span data-i18n="dactylo.toggle_keyboard">Clavier</span>
+                </button>
+            </div>
+
+            <div class="toolbar-group">
+                <div class="stat-pill" title="Précision de frappe">
+                    <span class="stat-label">Précision :</span>
+                    <span class="stat-label" data-i18n="dactylo.stats_accuracy">Précision :</span>
+                    <span class="stat-value" id="statAccuracy">100%</span>
+                </div>
+                <div class="stat-pill" title="Vitesse de frappe en Mots Par Minute (MPM)">
+                    <span class="stat-label">Vitesse :</span>
+                    <span class="stat-label" data-i18n="dactylo.stats_speed">Vitesse :</span>
+                    <span class="stat-value highlight" id="statWpm">0</span>
+                    <span class="stat-unit">MPM</span>
+                    <span class="stat-unit" id="statUnit" data-i18n="dactylo.unit_wpm">MPM</span>
+                </div>
+                <div class="stat-pill" title="Nombre d'erreurs commises">
+                    <span class="stat-label">Erreurs :</span>
+                    <span class="stat-label" data-i18n="dactylo.stats_errors">Erreurs :</span>
+                    <span class="stat-value" id="statErrors">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-bar-container" aria-hidden="true">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+
+        <!-- MAIN GAME VIEW -->
+        <main id="gameView">
+            <div class="typing-area">
+                <div class="level-banner">
+                    <span class="level-desc" id="levelDesc"></span>
+                    <span class="record-badge-small" id="levelRecord" style="display:none;"></span>
+                </div>
+
+                <div class="text-display-box" id="textDisplayBox" tabindex="0" role="textbox"
+                    aria-label="Zone d'exercice de frappe">
+                    <div class="text-display-content" id="textDisplay"></div>
+                </div>
+
+                <div class="error-banner" id="errorBanner" style="display:none;" role="alert">
+                    <i data-fa="circle-xmark" style="flex-shrink:0; margin-top:2px;"></i>
+                    <div class="error-banner-body" id="errorMessage"></div>
+                </div>
+            </div>
+
+            <!-- VISUAL KEYBOARD (Guide de repérage en cas d'erreur au clavier physique) -->
+            <div class="keyboard-section" id="keyboardSection" aria-live="polite">
+                <div class="keyboard-header">
+                    <span><i data-fa="keyboard"></i> Disposition QWERTZ · Clavier physique</span>
+                    <span class="keyboard-guide-hint" id="keyboardGuideHint"><i data-fa="circle-info"></i> Repère la
+                        touche demandée ci-dessous</span>
+                </div>
+                <div class="keyboard-wrapper" id="visualKeyboard" role="region"
+                    aria-label="Repère visuel du clavier physique">
+                    <!-- Dynamic keys rendered by JS -->
+                </div>
+            </div>
+
+            <!-- CARD FOOTER (Standard Unifié) -->
+            <div class="card-footer">
+                <button class="icon-action-btn" id="btnOpenDactyloScores" aria-label="Voir mes statistiques"
+                    title="Voir mes statistiques" data-action="show-stats">
+                    <i data-fa="dt-chart-pie"
+                        style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                </button>
+                <div class="score-bar">
+                    <div class="score-item">
+                        <div class="score-label">Niveaux réussis</div>
+                        <div class="score-label" data-i18n="dactylo.col_status">Niveaux réussis</div>
+                        <div class="score-value" id="footerCompletedLevels">0 / 10</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Record max 🔥</div>
+                        <div class="score-label" data-i18n="dactylo.record_max">Record max 🔥</div>
+                        <div class="score-value" id="footerBestWpm">0 MPM</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RESULTS VIEW -->
+        <section class="results-card" id="resultsView" style="display:none;">
+            <div class="results-header">
+                <div class="record-badge" id="recordBadge" style="display:none;">
+                    <i data-fa="trophy-star"></i> Nouveau Record !
+                    <i data-fa="trophy-star"></i> <span data-i18n="dactylo.new_record">Nouveau Record !</span>
+                </div>
+                <h2>Bien joué !</h2>
+                <p class="results-subtitle" id="resultsSubtitle">Tu as terminé ce niveau avec succès.</p>
+                <h2 data-i18n="dactylo.results_title">Bien joué !</h2>
+                <p class="results-subtitle" id="resultsSubtitle" data-i18n="dactylo.results_subtitle">Tu as terminé ce
+                    niveau avec succès.</p>
+            </div>
+
+            <div class="results-stats-grid">
+                <div class="result-stat-box">
+                    <div class="result-stat-label">Précision</div>
+                    <div class="result-stat-label" data-i18n="dactylo.stats_accuracy">Précision</div>
+                    <div class="result-stat-val accuracy" id="resultAccuracy">100%</div>
+                </div>
+                <div class="result-stat-box">
+                    <div class="result-stat-label">Vitesse</div>
+                    <div class="result-stat-label" data-i18n="dactylo.stats_speed">Vitesse</div>
+                    <div class="result-stat-val wpm" id="resultWpm">0</div>
+                    <div class="result-stat-unit">MPM</div>
+                    <div class="result-stat-unit" data-i18n="dactylo.unit_wpm">MPM</div>
+                </div>
+                <div class="result-stat-box">
+                    <div class="result-stat-label">Erreurs</div>
+                    <div class="result-stat-label" data-i18n="dactylo.stats_errors">Erreurs</div>
+                    <div class="result-stat-val errors" id="resultErrors">0</div>
+                </div>
+            </div>
+
+            <div class="error-analysis" id="errorAnalysis" style="display:none;">
+                <div class="error-analysis-title">Touches à travailler :</div>
+                <div class="error-analysis-title" data-i18n="dactylo.keys_to_practice">Touches à travailler :</div>
+                <div class="error-tags" id="errorTags"></div>
+            </div>
+
+            <div class="results-actions">
+                <button class="btn btn-secondary" id="btnRetry">
+                    <i data-fa="rotate-left"></i> Réessayer
+                    <i data-fa="rotate-left"></i> <span data-i18n="dactylo.btn_retry">Réessayer</span>
+                </button>
+                <button class="btn btn-secondary" id="btnResultsViewScoreModal">
+                    <i data-fa="dt-chart-pie"
+                        style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                    Statistiques détaillées
+                    <i data-fa="dt-chart-pie"
+                        style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                    <span data-i18n="dactylo.modal_scores_title">Statistiques détaillées</span>
+                </button>
+                <button class="btn btn-primary" id="btnNextLevel">
+                    Niveau suivant <i data-fa="arrow-right"></i>
+                    <span data-i18n="dactylo.btn_next_level">Niveau suivant</span> <i data-fa="arrow-right"></i>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- DACTYLO SCORE MODAL -->
+    <div id="dactylo-score-modal" class="ui-modal-overlay" aria-hidden="true" role="dialog"
+        aria-labelledby="dactylo-score-modal-title">
+        <div class="ui-modal-content dactylo-modal-content" id="dactylo-modal-content">
+            <button class="ui-btn-close" id="btn-close-dactylo-modal" aria-label="Fermer"
+                data-html2canvas-ignore="true"><i data-fa="xmark"></i></button>
+
+            <div class="dactylo-modal-header">
+                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:6px;">
+                    <span class="badge-level">Cycle 2 &amp; 3 · HEP-VS</span>
+                </div>
+                <h2 id="dactylo-score-modal-title">
+                    <i data-fa="dt-chart-pie"
+                        style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                    Statistiques détaillées
+                    <i data-fa="dt-chart-pie"
+                        style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                    <span data-i18n="dactylo.modal_scores_title">Statistiques détaillées</span>
+                </h2>
+                <p class="modal-subtitle">Tape-Texte · Clavier QWERTZ Suisse Romand</p>
+                <p class="modal-subtitle" data-i18n="dactylo.modal_subtitle">Tape-Texte · Clavier QWERTZ Suisse Romand
+                </p>
+            </div>
+
+            <!-- Student Info Bar -->
+            <div class="modal-student-bar">
+                <label for="dactyloStudentName"><strong>Élève :</strong></label>
+                <input type="text" id="dactyloStudentName" class="modal-student-input"
+                    placeholder="Prénom et Nom de l'élève" autocomplete="name">
+                <label for="dactyloStudentName"><strong data-i18n="dactylo.student_label">Élève :</strong></label>
+                <input type="text" id="dactyloStudentName" class="modal-student-input"
+                    placeholder="Prénom et Nom de l'élève" autocomplete="name"
+                    data-i18n-attr="placeholder:dactylo.student_name_placeholder">
+                <span class="modal-date-badge" id="dactyloModalDate"></span>
+            </div>
+
+            <!-- Summary Cards Grid -->
+            <div class="dactylo-modal-summary-grid">
+                <div class="modal-summary-box">
+                    <span class="summary-box-label">Niveaux réussis</span>
+                    <span class="summary-box-label" data-i18n="dactylo.levels_completed">Niveaux réussis</span>
+                    <span class="summary-box-value highlight" id="modalCompletedLevels">0 / 10</span>
+                </div>
+                <div class="modal-summary-box">
+                    <span class="summary-box-label">Vitesse moyenne</span>
+                    <span class="summary-box-label" data-i18n="dactylo.avg_speed">Vitesse moyenne</span>
+                    <span class="summary-box-value" id="modalAvgWpm">0 MPM</span>
+                </div>
+                <div class="modal-summary-box">
+                    <span class="summary-box-label">Précision moyenne</span>
+                    <span class="summary-box-label" data-i18n="dactylo.avg_accuracy">Précision moyenne</span>
+                    <span class="summary-box-value accuracy" id="modalAvgAcc">100%</span>
+                </div>
+            </div>
+
+            <!-- Levels Progress Table -->
+            <div class="dactylo-scores-table-wrapper">
+                <table class="dactylo-stat-table">
+                    <thead>
+                        <tr>
+                            <th>Niveau</th>
+                            <th>Record Vitesse</th>
+                            <th>Précision</th>
+                            <th>Statut</th>
+                            <th data-i18n="dactylo.col_level">Niveau</th>
+                            <th data-i18n="dactylo.col_speed">Record Vitesse</th>
+                            <th data-i18n="dactylo.col_accuracy">Précision</th>
+                            <th data-i18n="dactylo.col_status">Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dactyloScoresTableBody">
+                        <!-- Populated dynamically by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Actions (ignored by html2canvas export) -->
+            <div class="dactylo-modal-actions" data-html2canvas-ignore="true">
+                <button type="button" class="btn btn-subtle" id="btnResetDactyloScores">
+                    <i data-fa="arrows-rotate"></i> Réinitialiser
+                    <i data-fa="arrows-rotate"></i> <span data-i18n="dactylo.btn_reset_scores">Réinitialiser</span>
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnCopyDactyloModal">
+                    <i data-fa="copy"></i> Copier l'image
+                    <i data-fa="copy"></i> <span data-i18n="dactylo.btn_copy_modal">Copier l'image</span>
+                </button>
+                <button type="button" class="btn btn-primary" id="btnExportDactyloModal">
+                    <i data-fa="image"></i> Exporter en image (PNG)
+                    <i data-fa="image"></i> <span data-i18n="dactylo.btn_export">Exporter en image (PNG)</span>
+                </button>
+            </div>
+
+            <!-- Official Export Footer -->
+            <div class="modal-export-footer">
+                <span>Suite EdNum · Animation-EdNum (HEP-VS)</span>
+                <span id="modalExportTimestamp"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="no-print">
+        <p>
+            Webapp conçue pour le Cycle 2 &amp; 3 par Vivian Epiney de l'<a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                        data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/pwa.js"></script>
+    <script>
+        /* SPDX-License-Identifier: AGPL-3.0-only
+         * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+         * Dactylo Web Application — QWERTZ Suisse Romand
+         */
+
+        (function () {
+            'use strict';
+
+            // --- HELPER LANGUE ---
+            function isGerman() {
+                return (window.I18N && window.I18N.getLang() === 'de');
+            }
+
+            // --- NIVEAUX PEDAGOGIQUES ---
+            const LEVELS = [
+            const LEVELS_FR = [
+                {
+                    id: 1,
+                    name: "1. Mots très simples",
+                    description: "Trouve ton rythme sur les petits mots fréquents de deux à trois lettres.",
+                    text: "le la les de du un une il elle on a y en ce se sa son"
+                },
+                {
+                    id: 2,
+                    name: "2. Mots courants",
+                    description: "On allonge un peu les mots. Garde les yeux sur l'écran plutôt que sur tes mains !",
+                    text: "qui que quoi dont pour dans sur sous vers avec sans oui non bien tout"
+                },
+                {
+                    id: 3,
+                    name: "3. Accents romands (é, è, à)",
+                    description: "Apprivoise les touches é, è et à propres à notre disposition de clavier.",
+                    text: "été vélo déjà mère père frère forêt fête règle café vérité élève"
+                },
+                {
+                    id: 4,
+                    name: "4. Premières phrases simples",
+                    description: "Enchaîne les mots avec fluidité. Utilise le pouce pour la barre d'espace.",
+                    text: "le chat boit du lait. tu aimes la musique. il fait très beau aujourd'hui."
+                },
+                {
+                    id: 5,
+                    name: "5. Majuscules et ponctuation",
+                    description: "Maintiens la touche Shift (Majuscule) d'une main pendant que l'autre frappe la lettre.",
+                    text: "La Terre tourne autour du Soleil. Les étoiles brillent dans la nuit noire."
+                },
+                {
+                    id: 6,
+                    name: "6. Le monde numérique",
+                    description: "Vocabulaire de l'éducation numérique : entraîne-toi sur des termes technologiques.",
+                    text: "ordinateur écran clavier souris robot pixel données réseau code internet boucle"
+                },
+                {
+                    id: 7,
+                    name: "7. Mots longs et endurance",
+                    description: "Développe ta précision sur des mots plus longs demandant de la régularité.",
+                    text: "communication apprentissage magnifique développement concentration extraordinaire scientifique"
+                },
+                {
+                    id: 8,
+                    name: "8. Chiffres et symboles (Shift)",
+                    description: "Un peu de gymnastique avec la rangée du haut pour combiner chiffres et symboles.",
+                    text: "Dans 10 jours, nous aurons 24 défis et 100% de réussite ! Prix : 15 CHF."
+                },
+                {
+                    id: 9,
+                    name: "9. Paragraphe fluide",
+                    description: "Mets tout en pratique dans un texte continu. Ne t'arrête pas en cas d'erreur, poursuis ton élan !",
+                    text: "La saisie au clavier permet de libérer son attention. Plus les mains mémorisent l'emplacement des touches, plus la pensée peut se concentrer sur les idées, la créativité et la rédaction."
+                },
+                {
+                    id: 10,
+                    name: "10. Le grand défi",
+                    description: "Un défi complet mêlant lettres, accents, ponctuation et chiffres. Respire et fais confiance à tes mains !",
+                    text: "Le Cervin culmine à 4478 mètres d'altitude entre la Suisse et l'Italie. Sa silhouette pyramidale fascine les alpinistes depuis plus de 150 ans. Avec de la pratique quotidienne, tes mains voleront bientôt sur le clavier sans hésiter !"
+                }
+            ];
+
+            // --- CLAVIER QWERTZ SUISSE ROMAND ---
+            const KEYBOARD_ROWS = [
+                [
+                    { id: 'Backquote', label: '§', shift: '°' },
+                    { id: 'Digit1', label: '1', shift: '+' },
+                    { id: 'Digit2', label: '2', shift: '"' },
+                    { id: 'Digit3', label: '3', shift: '*' },
+                    { id: 'Digit4', label: '4', shift: 'ç' },
+                    { id: 'Digit5', label: '5', shift: '%' },
+                    { id: 'Digit6', label: '6', shift: '&' },
+                    { id: 'Digit7', label: '7', shift: '/' },
+                    { id: 'Digit8', label: '8', shift: '(' },
+                    { id: 'Digit9', label: '9', shift: ')' },
+                    { id: 'Digit0', label: '0', shift: '=' },
+                    { id: 'Minus', label: '\'', shift: '?' },
+                    { id: 'Equal', label: '^', shift: '`' },
+                    { id: 'Backspace', label: '←', char: 'Backspace', special: true, flex: 1.6 }
+                ],
+                [
+                    { id: 'Tab', label: 'Tab', char: 'Tab', special: true, flex: 1.3 },
+                    { id: 'KeyQ', label: 'q', shift: 'Q' },
+                    { id: 'KeyW', label: 'w', shift: 'W' },
+                    { id: 'KeyE', label: 'e', shift: 'E' },
+                    { id: 'KeyR', label: 'r', shift: 'R' },
+                    { id: 'KeyT', label: 't', shift: 'T' },
+                    { id: 'KeyZ', label: 'z', shift: 'Z' },
+                    { id: 'KeyU', label: 'u', shift: 'U' },
+                    { id: 'KeyI', label: 'i', shift: 'I' },
+                    { id: 'KeyO', label: 'o', shift: 'O' },
+                    { id: 'KeyP', label: 'p', shift: 'P' },
+                    { id: 'BracketLeft', label: 'è', shift: 'ü' },
+                    { id: 'BracketRight', label: '¨', shift: '!' },
+                    { id: 'Enter', label: 'Entrée', char: 'Enter', special: true, flex: 1.6 }
+                ],
+                [
+                    { id: 'CapsLock', label: 'Verr Maj', char: 'CapsLock', special: true, flex: 1.5 },
+                    { id: 'KeyA', label: 'a', shift: 'A' },
+                    { id: 'KeyS', label: 's', shift: 'S' },
+                    { id: 'KeyD', label: 'd', shift: 'D' },
+                    { id: 'KeyF', label: 'f', shift: 'F' },
+                    { id: 'KeyG', label: 'g', shift: 'G' },
+                    { id: 'KeyH', label: 'h', shift: 'H' },
+                    { id: 'KeyJ', label: 'j', shift: 'J' },
+                    { id: 'KeyK', label: 'k', shift: 'K' },
+                    { id: 'KeyL', label: 'l', shift: 'L' },
+                    { id: 'Semicolon', label: 'é', shift: 'ö' },
+                    { id: 'Quote', label: 'à', shift: 'ä' },
+                    { id: 'Backslash', label: '$', shift: '£', flex: 1.4 }
+                ],
+                [
+                    { id: 'ShiftLeft', label: 'Maj ⇧', char: 'Shift', special: true, flex: 1.8 },
+                    { id: 'IntlBackslash', label: '<', shift: '>' },
+                    { id: 'KeyY', label: 'y', shift: 'Y' },
+                    { id: 'KeyX', label: 'x', shift: 'X' },
+                    { id: 'KeyC', label: 'c', shift: 'C' },
+                    { id: 'KeyV', label: 'v', shift: 'V' },
+                    { id: 'KeyB', label: 'b', shift: 'B' },
+                    { id: 'KeyN', label: 'n', shift: 'N' },
+                    { id: 'KeyM', label: 'm', shift: 'M' },
+                    { id: 'Comma', label: ',', shift: ';' },
+                    { id: 'Period', label: '.', shift: ':' },
+                    { id: 'Slash', label: '-', shift: '_' },
+                    { id: 'ShiftRight', label: 'Maj ⇧', char: 'Shift', special: true, flex: 2.2 }
+                ],
+                [
+                    { id: 'ControlLeft', label: 'Ctrl', special: true, flex: 1.2 },
+                    { id: 'AltLeft', label: 'Alt', special: true, flex: 1.2 },
+                    { id: 'Space', label: 'Espace', char: ' ', flex: 6 },
+                    { id: 'AltRight', label: 'AltGr', special: true, flex: 1.2 },
+                    { id: 'ControlRight', label: 'Ctrl', special: true, flex: 1.2 }
+                ]
+            const LEVELS_DE = [
+                {
+                    id: 1,
+                    name: "1. Einfache Wörter",
+                    description: "Finde deinen Rhythmus mit kurzen Wörtern aus zwei bis drei Buchstaben.",
+                    text: "der die das und ist ein eine wir sie du er es zu im am so da wo"
+                },
+                {
+                    id: 2,
+                    name: "2. Häufige Wörter",
+                    description: "Jetzt werden die Wörter etwas länger. Schau auf den Bildschirm statt auf deine Hände!",
+                    text: "hier dort wenn aber auch noch nach sehr viel weil ganz mein dein nicht"
+                },
+                {
+                    id: 3,
+                    name: "3. Schweizer Umlaute (ä, ö, ü)",
+                    description: "Übe die direkten Tasten ä, ö und ü auf der Schweizer Tastatur.",
+                    text: "für über spät hören schön März früh grün Vögel Bäume Grüsse Tür kühl"
+                },
+                {
+                    id: 4,
+                    name: "4. Erste einfache Sätze",
+                    description: "Tippe flüssig von Wort zu Wort. Nutze den Daumen für die Leertaste.",
+                    text: "Die Katze schläft gerne. Die Sonne scheint heute hell. Wir spielen draussen."
+                },
+                {
+                    id: 5,
+                    name: "5. Grossschreibung und Satzzeichen",
+                    description: "Halte die Umschalt-Taste (Shift) mit einer Hand, während die andere tippt.",
+                    text: "In der Schule lernen die Kinder mit Freude, Neugier und grossem Fleiss."
+                },
+                {
+                    id: 6,
+                    name: "6. Digitale Welt",
+                    description: "Informatische Bildung: Übe wichtige Begriffe aus der digitalen Welt.",
+                    text: "Computer Tastatur Maus Roboter Daten Netzwerk Bildschirm Code Internet Datei"
+                },
+                {
+                    id: 7,
+                    name: "7. Lange Wörter und Ausdauer",
+                    description: "Entwickle deine Genauigkeit bei längeren zusammengesetzten Wörtern.",
+                    text: "Aufmerksamkeit Konzentration Zusammenarbeit Entwicklung Wissenschaft Information"
+                },
+                {
+                    id: 8,
+                    name: "8. Zahlen und Symbole (Umschalt)",
+                    description: "Ein bisschen Gymnastik mit der oberen Zahlenreihe und Sonderzeichen.",
+                    text: "In 10 Tagen gibt es 24 Aufgaben mit 100% Erfolg! Preis: 15 CHF."
+                },
+                {
+                    id: 9,
+                    name: "9. Flüssiger Abschnitt",
+                    description: "Wende alles in einem zusammenhängenden Text an. Bei Fehlern einfach weiter tippen!",
+                    text: "Das Schreiben mit der Tastatur entlastet die Aufmerksamkeit. Je sicherer die Hände tippen, desto freier sind die Gedanken für eigene Ideen, Kreativität und sprachlichen Ausdruck."
+                },
+                {
+                    id: 10,
+                    name: "10. Die grosse Challenge",
+                    description: "Eine vollständige Herausforderung mit Buchstaben, Umlauten, Zahlen und Satzzeichen.",
+                    text: "Das Matterhorn ist 4478 Meter hoch und steht zwischen der Schweiz und Italien. Seine Pyramidenform fasziniert Bergsteiger seit über 150 Jahren. Mit täglicher Übung fliegen deine Finger bald über die Tasten!"
+                }
+            ];
+
+            function getActiveLevels() {
+                return isGerman() ? LEVELS_DE : LEVELS_FR;
+            }
+
+            let LEVELS = getActiveLevels();
+
+            // --- CLAVIER QWERTZ SUISSE (BILINGUE FR / DE) ---
+            function getKeyboardRows() {
+                const de = isGerman();
+                return [
+                    [
+                        { id: 'Backquote', label: '§', shift: '°' },
+                        { id: 'Digit1', label: '1', shift: '+' },
+                        { id: 'Digit2', label: '2', shift: '"' },
+                        { id: 'Digit3', label: '3', shift: '*' },
+                        { id: 'Digit4', label: '4', shift: 'ç' },
+                        { id: 'Digit5', label: '5', shift: '%' },
+                        { id: 'Digit6', label: '6', shift: '&' },
+                        { id: 'Digit7', label: '7', shift: '/' },
+                        { id: 'Digit8', label: '8', shift: '(' },
+                        { id: 'Digit9', label: '9', shift: ')' },
+                        { id: 'Digit0', label: '0', shift: '=' },
+                        { id: 'Minus', label: '\'', shift: '?' },
+                        { id: 'Equal', label: '^', shift: '`' },
+                        { id: 'Backspace', label: '←', char: 'Backspace', special: true, flex: 1.6 }
+                    ],
+                    [
+                        { id: 'Tab', label: 'Tab', char: 'Tab', special: true, flex: 1.3 },
+                        { id: 'KeyQ', label: 'q', shift: 'Q' },
+                        { id: 'KeyW', label: 'w', shift: 'W' },
+                        { id: 'KeyE', label: 'e', shift: 'E' },
+                        { id: 'KeyR', label: 'r', shift: 'R' },
+                        { id: 'KeyT', label: 't', shift: 'T' },
+                        { id: 'KeyZ', label: 'z', shift: 'Z' },
+                        { id: 'KeyU', label: 'u', shift: 'U' },
+                        { id: 'KeyI', label: 'i', shift: 'I' },
+                        { id: 'KeyO', label: 'o', shift: 'O' },
+                        { id: 'KeyP', label: 'p', shift: 'P' },
+                        { id: 'BracketLeft', label: de ? 'ü' : 'è', shift: de ? 'è' : 'ü' },
+                        { id: 'BracketRight', label: '¨', shift: '!' },
+                        { id: 'Enter', label: de ? 'Eingabe' : 'Entrée', char: 'Enter', special: true, flex: 1.6 }
+                    ],
+                    [
+                        { id: 'CapsLock', label: de ? 'Feststell' : 'Verr Maj', char: 'CapsLock', special: true, flex: 1.5 },
+                        { id: 'KeyA', label: 'a', shift: 'A' },
+                        { id: 'KeyS', label: 's', shift: 'S' },
+                        { id: 'KeyD', label: 'd', shift: 'D' },
+                        { id: 'KeyF', label: 'f', shift: 'F' },
+                        { id: 'KeyG', label: 'g', shift: 'G' },
+                        { id: 'KeyH', label: 'h', shift: 'H' },
+                        { id: 'KeyJ', label: 'j', shift: 'J' },
+                        { id: 'KeyK', label: 'k', shift: 'K' },
+                        { id: 'KeyL', label: 'l', shift: 'L' },
+                        { id: 'Semicolon', label: de ? 'ö' : 'é', shift: de ? 'é' : 'ö' },
+                        { id: 'Quote', label: de ? 'ä' : 'à', shift: de ? 'à' : 'ä' },
+                        { id: 'Backslash', label: '$', shift: '£', flex: 1.4 }
+                    ],
+                    [
+                        { id: 'ShiftLeft', label: de ? 'Umschalt ⇧' : 'Maj ⇧', char: 'Shift', special: true, flex: 1.8 },
+                        { id: 'IntlBackslash', label: '<', shift: '>' },
+                        { id: 'KeyY', label: 'y', shift: 'Y' },
+                        { id: 'KeyX', label: 'x', shift: 'X' },
+                        { id: 'KeyC', label: 'c', shift: 'C' },
+                        { id: 'KeyV', label: 'v', shift: 'V' },
+                        { id: 'KeyB', label: 'b', shift: 'B' },
+                        { id: 'KeyN', label: 'n', shift: 'N' },
+                        { id: 'KeyM', label: 'm', shift: 'M' },
+                        { id: 'Comma', label: ',', shift: ';' },
+                        { id: 'Period', label: '.', shift: ':' },
+                        { id: 'Slash', label: '-', shift: '_' },
+                        { id: 'ShiftRight', label: de ? 'Umschalt ⇧' : 'Maj ⇧', char: 'Shift', special: true, flex: 2.2 }
+                    ],
+                    [
+                        { id: 'ControlLeft', label: 'Ctrl', special: true, flex: 1.2 },
+                        { id: 'AltLeft', label: 'Alt', special: true, flex: 1.2 },
+                        { id: 'Space', label: de ? 'Leertaste' : 'Espace', char: ' ', flex: 6 },
+                        { id: 'AltRight', label: 'AltGr', special: true, flex: 1.2 },
+                        { id: 'ControlRight', label: 'Ctrl', special: true, flex: 1.2 }
+                    ]
+                ];
+            }
+
+            // --- ÉLÉMENTS DU DOM ---
+            const levelSelect = document.getElementById('levelSelect');
+            const btnRestartLevel = document.getElementById('btnRestartLevel');
+            const btnToggleKeyboard = document.getElementById('btnToggleKeyboard');
+            const statAccuracy = document.getElementById('statAccuracy');
+            const statWpm = document.getElementById('statWpm');
+            const statErrors = document.getElementById('statErrors');
+            const progressBar = document.getElementById('progressBar');
+            const levelDesc = document.getElementById('levelDesc');
+            const levelRecord = document.getElementById('levelRecord');
+            const textDisplayBox = document.getElementById('textDisplayBox');
+            const textDisplay = document.getElementById('textDisplay');
+            const errorBanner = document.getElementById('errorBanner');
+            const errorMessage = document.getElementById('errorMessage');
+            const keyboardSection = document.getElementById('keyboardSection');
+            const keyboardGuideHint = document.getElementById('keyboardGuideHint');
+            const visualKeyboard = document.getElementById('visualKeyboard');
+            const gameView = document.getElementById('gameView');
+            const resultsView = document.getElementById('resultsView');
+            const recordBadge = document.getElementById('recordBadge');
+            const resultsSubtitle = document.getElementById('resultsSubtitle');
+            const resultAccuracy = document.getElementById('resultAccuracy');
+            const resultWpm = document.getElementById('resultWpm');
+            const resultErrors = document.getElementById('resultErrors');
+            const errorAnalysis = document.getElementById('errorAnalysis');
+            const errorTags = document.getElementById('errorTags');
+            const btnRetry = document.getElementById('btnRetry');
+            const btnNextLevel = document.getElementById('btnNextLevel');
+
+            // --- ÉLÉMENTS DE LA MODALE DE BILAN & EXPORT ---
+            const dactyloScoreModal = document.getElementById('dactylo-score-modal');
+            const dactyloModalContent = document.getElementById('dactylo-modal-content');
+            const btnCloseDactyloModal = document.getElementById('btn-close-dactylo-modal');
+            const btnOpenDactyloScores = document.getElementById('btnOpenDactyloScores');
+            const menuOpenScoresBtn = document.getElementById('menuOpenScoresBtn');
+            const btnResultsViewScoreModal = document.getElementById('btnResultsViewScoreModal');
+            const btnExportDactyloModal = document.getElementById('btnExportDactyloModal');
+            const btnCopyDactyloModal = document.getElementById('btnCopyDactyloModal');
+            const btnResetDactyloScores = document.getElementById('btnResetDactyloScores');
+            const dactyloStudentName = document.getElementById('dactyloStudentName');
+            const dactyloModalDate = document.getElementById('dactyloModalDate');
+            const modalCompletedLevels = document.getElementById('modalCompletedLevels');
+            const modalAvgWpm = document.getElementById('modalAvgWpm');
+            const modalAvgAcc = document.getElementById('modalAvgAcc');
+            const dactyloScoresTableBody = document.getElementById('dactyloScoresTableBody');
+            const modalExportTimestamp = document.getElementById('modalExportTimestamp');
+            const footerCompletedLevels = document.getElementById('footerCompletedLevels');
+            const footerBestWpm = document.getElementById('footerBestWpm');
+
+            // --- ÉTAT DU JEU ---
+            let currentLevelIdx = 0;
+            let currentIndex = 0;
+            let errors = 0;
+            let errorDetails = {};
+            let startTime = null;
+            let endTime = null;
+            let flashError = false;
+            let wrongChar = null;
+            let errorTimeout = null;
+            let isFinished = false;
+            let pendingDeadKey = false;
+
+            const STORAGE_KEY = 'tapetexte-scores';
+            const LEGACY_STORAGE_KEY = 'dactylo-scores';
+            let scores = {};
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+                if (saved) {
+                    scores = JSON.parse(saved);
+                }
+            } catch (e) {
+                scores = {};
+            }
+
+            function updateFooterScoreBar() {
+                const unit = isGerman() ? 'WPM' : 'MPM';
+                let completed = 0;
+                let maxWpm = 0;
+                Object.values(scores).forEach(s => {
+                    if (s) {
+                        completed++;
+                        if (s.wpm > maxWpm) {
+                            maxWpm = s.wpm;
+                        }
+                    }
+                });
+                if (footerCompletedLevels) {
+                    footerCompletedLevels.textContent = `${completed} / ${LEVELS.length}`;
+                }
+                if (footerBestWpm) {
+                    footerBestWpm.textContent = `${maxWpm} MPM`;
+                    footerBestWpm.textContent = `${maxWpm} ${unit}`;
+                }
+            }
+
+            // --- INITIALISATION DES NIVEAUX ---
+            function initLevelSelect() {
+                const unit = isGerman() ? 'WPM' : 'MPM';
+                levelSelect.innerHTML = '';
+                LEVELS.forEach((lvl, i) => {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    const best = scores[lvl.id];
+                    opt.textContent = lvl.name + (best ? ` (${best.wpm} MPM)` : '');
+                    opt.textContent = lvl.name + (best ? ` (${best.wpm} ${unit})` : '');
+                    levelSelect.appendChild(opt);
+                });
+                levelSelect.value = currentLevelIdx;
+                updateFooterScoreBar();
+            }
+
+            // --- AFFICHER / MASQUER LE GUIDE CLAVIER VISUEL ---
+            function showVirtualKeyboard() {
+                if (keyboardSection && !keyboardSection.classList.contains('visible')) {
+                    keyboardSection.classList.add('visible');
+                    window.fa?.createIcons?.();
+                }
+            }
+
+            function hideVirtualKeyboard() {
+                if (keyboardSection && keyboardSection.classList.contains('visible')) {
+                    keyboardSection.classList.remove('visible');
+                }
+            }
+
+            // --- GÉNÉRATION DU CLAVIER VISUEL (GUIDE VISUEL SANS SAISIE AU CLIC) ---
+            const keyElementMap = {}; // id -> element
+
+            function buildKeyboard() {
+                visualKeyboard.innerHTML = '';
+                KEYBOARD_ROWS.forEach(row => {
+                    const rows = getKeyboardRows();
+                    rows.forEach(row => {
+                        const rowEl = document.createElement('div');
+                        rowEl.className = 'keyboard-row';
+                        row.forEach(key => {
+                            const keyEl = document.createElement('div');
+                            keyEl.className = 'key' + (key.special ? ' special' : '');
+                            keyEl.style.flex = key.flex || 1;
+                            keyEl.dataset.keyId = key.id;
+
+                            if (key.shift) {
+                                const shiftSpan = document.createElement('span');
+                                shiftSpan.className = 'key-shift-label';
+                                shiftSpan.textContent = key.shift;
+                                keyEl.appendChild(shiftSpan);
+                            }
+
+                            const labelSpan = document.createElement('span');
+                            labelSpan.textContent = key.label === '' ? ' ' : key.label;
+                            keyEl.appendChild(labelSpan);
+
+                            // Aucun événement 'click' : la frappe s'effectue uniquement au clavier physique
+                            keyElementMap[key.id] = keyEl;
+                            rowEl.appendChild(keyEl);
+                        });
+                        visualKeyboard.appendChild(rowEl);
+                    });
+                }
+
+            // --- GESTION DU NIVEAU ACTIF ---
+            function loadLevel(idx) {
+                        currentLevelIdx = Math.max(0, Math.min(LEVELS.length - 1, idx));
+                        levelSelect.value = currentLevelIdx;
+                        currentIndex = 0;
+                        errors = 0;
+                        errorDetails = {};
+                        startTime = null;
+                        endTime = null;
+                        flashError = false;
+                        wrongChar = null;
+                        isFinished = false;
+                        pendingDeadKey = false;
+
+                        if (errorTimeout) clearTimeout(errorTimeout);
+
+                        const currentLevel = LEVELS[currentLevelIdx];
+                        levelDesc.textContent = currentLevel.description;
+
+                        const best = scores[currentLevel.id];
+                        if (best) {
+                            levelRecord.innerHTML = `<i data-fa="trophy-star"></i> Record : ${best.wpm} MPM (${best.accuracy}%)`;
+                            const unit = isGerman() ? 'WPM' : 'MPM';
+                            const recordLabel = isGerman() ? 'Rekord' : 'Record';
+                            levelRecord.innerHTML = `<i data-fa="trophy-star"></i> ${recordLabel} : ${best.wpm} ${unit} (${best.accuracy}%)`;
+                            levelRecord.style.display = 'inline-flex';
+                        } else {
+                            levelRecord.style.display = 'none';
+                        }
+
+                        errorBanner.style.display = 'none';
+                        hideVirtualKeyboard();
+                        gameView.style.display = 'block';
+                        resultsView.style.display = 'none';
+
+                        renderText();
+                        updateStats();
+                        updateKeyboardHighlight();
+                        window.fa?.createIcons?.();
+                        textDisplayBox.focus();
+                    }
+
+            // --- RENDU DU TEXTE D'EXERCICE ---
+            function renderText() {
+                        const text = LEVELS[currentLevelIdx].text;
+                        textDisplay.innerHTML = '';
+
+                        for (let i = 0; i < text.length; i++) {
+                            const char = text[i];
+                            const span = document.createElement('span');
+                            span.id = 'char-' + i;
+
+                            if (i < currentIndex) {
+                                span.className = 'char-correct';
+                                span.textContent = char;
+                            } else if (i === currentIndex) {
+                                if (flashError) {
+                                    span.className = 'char-error';
+                                } else {
+                                    span.className = 'char-current' + (char === ' ' ? ' space' : '');
+                                }
+                                span.textContent = (char === ' ') ? '␣' : char;
+                            } else {
+                                span.className = 'char-future';
+                                span.textContent = char;
+                            }
+
+                            textDisplay.appendChild(span);
+                        }
+                    }
+
+            // --- MOTEUR DE RECETTES DE TOUCHES (TOUTES TOUCHES, TOUCHES MORTES & SYMBOLES) ---
+            function getKeyRecipe(char) {
+                        if (!char) return null;
+                        const de = isGerman();
+
+                        // Normalisation typographique
+                        if (char === '’' || char === '`') char = "'";
+                        if (char === '«' || char === '»' || char === '“' || char === '”') char = '"';
+                        if (char === '–' || char === '—') char = '-';
+                        if (char === '\u00A0') char = ' ';
+
+                        // 1. Circonflexe minuscule (ê, â, î, ô, û)
+                        const circumflexMap = {
+                            'ê': 'KeyE', 'â': 'KeyA', 'î': 'KeyI', 'ô': 'KeyO', 'û': 'KeyU'
+                        };
+                        if (circumflexMap[char]) {
+                            const baseLetter = char.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            return {
+                                char,
+                                type: 'dead',
+                                step1KeyId: 'Equal',     // Touche ^
+                                step1Label: '^',
+                                step1Shift: false,
+                                step2KeyId: circumflexMap[char],
+                                step2Label: baseLetter,
+                                step2Shift: false,
+                                hintHtml: `❶ Tape <strong>^</strong> puis ❷ Tape <strong>${baseLetter}</strong>`,
+                                recipeExplain: `Pour faire <strong>${char}</strong> : tape d'abord la touche circonflexe <span class="kbd-chip">^</span> (touche ❶), puis la lettre <span class="kbd-chip">${baseLetter}</span> (touche ❷).`
+                        hintHtml: de
+                                    ? `❶ Drücke <strong>^</strong> und dann ❷ <strong>${baseLetter}</strong>`
+                                    : `❶ Tape <strong>^</strong> puis ❷ Tape <strong>${baseLetter}</strong>`,
+                                recipeExplain: de
+                                    ? `Für <strong>${char}</strong>: Zuerst Zirkumflex <span class="kbd-chip">^</span> (Taste ❶), dann <span class="kbd-chip">${baseLetter}</span> (Taste ❷).`
+                                    : `Pour faire <strong>${char}</strong> : tape d'abord la touche circonflexe <span class="kbd-chip">^</span> (touche ❶), puis la lettre <span class="kbd-chip">${baseLetter}</span> (touche ❷).`
+                            };
+                        }
+
+                        // 2. Circonflexe majuscule (Ê, Â, Î, Ô, Û)
+                        const circumflexUpperMap = {
+                            'Ê': 'KeyE', 'Â': 'KeyA', 'Î': 'KeyI', 'Ô': 'KeyO', 'Û': 'KeyU'
+                        };
+                        if (circumflexUpperMap[char]) {
+                            const baseUpper = char.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            const shiftLabel = de ? 'Umschalt ⇧' : 'Maj ⇧';
+                            return {
+                                char,
+                                type: 'dead-shift',
+                                step1KeyId: 'Equal',
+                                step1Label: '^',
+                                step1Shift: false,
+                                step2KeyId: circumflexUpperMap[char],
+                                step2Label: baseUpper,
+                                step2Shift: true,
+                                hintHtml: `❶ Tape <strong>^</strong> puis ❷ Maintiens <strong>Maj ⇧</strong> + <strong>${baseUpper}</strong>`,
+                                recipeExplain: `Pour faire <strong>${char}</strong> : tape d'abord <span class="kbd-chip">^</span>, puis maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${baseUpper}</span>.`
+                        hintHtml: de
+                                    ? `❶ Drücke <strong>^</strong> und dann ❷ Halte <strong>${shiftLabel}</strong> + <strong>${baseUpper}</strong>`
+                                    : `❶ Tape <strong>^</strong> puis ❷ Maintiens <strong>Maj ⇧</strong> + <strong>${baseUpper}</strong>`,
+                                recipeExplain: de
+                                    ? `Für <strong>${char}</strong>: Zuerst <span class="kbd-chip">^</span>, dann halte <span class="kbd-chip">${shiftLabel}</span> und drücke <span class="kbd-chip">${baseUpper}</span>.`
+                                    : `Pour faire <strong>${char}</strong> : tape d'abord <span class="kbd-chip">^</span>, puis maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${baseUpper}</span>.`
+                            };
+                        }
+
+                        // 3. Tréma minuscule (ë, ï, ÿ)
+                        const tremaMap = {
+                            'ë': 'KeyE', 'ï': 'KeyI', 'ÿ': 'KeyY'
+                        };
+                        if (tremaMap[char]) {
+                            const baseLetter = char.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            return {
+                                char,
+                                type: 'dead',
+                                step1KeyId: 'BracketRight', // Touche ¨
+                                step1Label: '¨',
+                                step1Shift: false,
+                                step2KeyId: tremaMap[char],
+                                step2Label: baseLetter,
+                                step2Shift: false,
+                                hintHtml: `❶ Tape <strong>¨</strong> puis ❷ Tape <strong>${baseLetter}</strong>`,
+                                recipeExplain: `Pour faire <strong>${char}</strong> : tape d'abord la touche tréma <span class="kbd-chip">¨</span> (touche ❶), puis la lettre <span class="kbd-chip">${baseLetter}</span> (touche ❷).`
+                        hintHtml: de
+                                    ? `❶ Drücke <strong>¨</strong> und dann ❷ <strong>${baseLetter}</strong>`
+                                    : `❶ Tape <strong>¨</strong> puis ❷ Tape <strong>${baseLetter}</strong>`,
+                                recipeExplain: de
+                                    ? `Für <strong>${char}</strong>: Zuerst Trema <span class="kbd-chip">¨</span> (Taste ❶), dann <span class="kbd-chip">${baseLetter}</span> (Taste ❷).`
+                                    : `Pour faire <strong>${char}</strong> : tape d'abord la touche tréma <span class="kbd-chip">¨</span> (touche ❶), puis la lettre <span class="kbd-chip">${baseLetter}</span> (touche ❷).`
+                            };
+                        }
+
+                        // 4. Tréma majuscule (Ë, Ï)
+                        const tremaUpperMap = {
+                            'Ë': 'KeyE', 'Ï': 'KeyI'
+                        };
+                        if (tremaUpperMap[char]) {
+                            const baseUpper = char.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            const shiftLabel = de ? 'Umschalt ⇧' : 'Maj ⇧';
+                            return {
+                                char,
+                                type: 'dead-shift',
+                                step1KeyId: 'BracketRight',
+                                step1Label: '¨',
+                                step1Shift: false,
+                                step2KeyId: tremaUpperMap[char],
+                                step2Label: baseUpper,
+                                step2Shift: true,
+                                hintHtml: `❶ Tape <strong>¨</strong> puis ❷ Maintiens <strong>Maj ⇧</strong> + <strong>${baseUpper}</strong>`,
+                                recipeExplain: `Pour faire <strong>${char}</strong> : tape d'abord <span class="kbd-chip">¨</span>, puis maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${baseUpper}</span>.`
+                        hintHtml: de
+                                    ? `❶ Drücke <strong>¨</strong> und dann ❷ Halte <strong>${shiftLabel}</strong> + <strong>${baseUpper}</strong>`
+                                    : `❶ Tape <strong>¨</strong> puis ❷ Maintiens <strong>Maj ⇧</strong> + <strong>${baseUpper}</strong>`,
+                                recipeExplain: de
+                                    ? `Für <strong>${char}</strong>: Zuerst <span class="kbd-chip">¨</span>, dann halte <span class="kbd-chip">${shiftLabel}</span> und drücke <span class="kbd-chip">${baseUpper}</span>.`
+                                    : `Pour faire <strong>${char}</strong> : tape d'abord <span class="kbd-chip">¨</span>, puis maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${baseUpper}</span>.`
+                            };
+                        }
+
+                        // 5. Cas spéciaux suisses avec Shift (ü, ö, ä)
+                        if (char === 'ü') {
+                            return {
+                                char,
+                                type: 'shift',
+                                keyId: 'BracketLeft',
+                                keyLabel: 'è (ü)',
+                                hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>è (ü)</strong>`,
+                                recipeExplain: `Pour faire <strong>ü</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur la touche <span class="kbd-chip">è</span>.`
+                            };
+                            // 5. Cas spéciaux suisses : ä, ö, ü / à, é, è
+                            if (de) {
+                                // En Suisse allemand : ä, ö, ü sont directs
+                                if (char === 'ä') {
+                                    return {
+                                        char,
+                                        type: 'direct',
+                                        keyId: 'Quote',
+                                        keyLabel: 'ä',
+                                        hintHtml: `Taste: <strong>ä</strong>`,
+                                        recipeExplain: `Taste drücken: Drücke direkt auf <span class="kbd-chip">ä</span>.`
+                                    };
+                                }
+                                if (char === 'ö') {
+                                    return {
+                                        char,
+                                        type: 'direct',
+                                        keyId: 'Semicolon',
+                                        keyLabel: 'ö',
+                                        hintHtml: `Taste: <strong>ö</strong>`,
+                                        recipeExplain: `Taste drücken: Drücke direkt auf <span class="kbd-chip">ö</span>.`
+                                    };
+                                }
+                                if (char === 'ü') {
+                                    return {
+                                        char,
+                                        type: 'direct',
+                                        keyId: 'BracketLeft',
+                                        keyLabel: 'ü',
+                                        hintHtml: `Taste: <strong>ü</strong>`,
+                                        recipeExplain: `Taste drücken: Drücke direkt auf <span class="kbd-chip">ü</span>.`
+                                    };
+                                }
+                                // Accents français en mode suisse alémanique : nécessitent Umschalt (Shift)
+                                if (char === 'à') {
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'Quote',
+                                        keyLabel: 'ä (à)',
+                                        hintHtml: `Halte <strong>Umschalt ⇧</strong> + drücke <strong>ä (à)</strong>`,
+                                        recipeExplain: `Für <strong>à</strong>: Halte <span class="kbd-chip">Umschalt ⇧</span> und drücke die Taste <span class="kbd-chip">ä</span>.`
+                                    };
+                                }
+                                if (char === 'é') {
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'Semicolon',
+                                        keyLabel: 'ö (é)',
+                                        hintHtml: `Halte <strong>Umschalt ⇧</strong> + drücke <strong>ö (é)</strong>`,
+                                        recipeExplain: `Für <strong>é</strong>: Halte <span class="kbd-chip">Umschalt ⇧</span> und drücke die Taste <span class="kbd-chip">ö</span>.`
+                                    };
+                                }
+                                if (char === 'è') {
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'BracketLeft',
+                                        keyLabel: 'ü (è)',
+                                        hintHtml: `Halte <strong>Umschalt ⇧</strong> + drücke <strong>ü (è)</strong>`,
+                                        recipeExplain: `Für <strong>è</strong>: Halte <span class="kbd-chip">Umschalt ⇧</span> und drücke die Taste <span class="kbd-chip">ü</span>.`
+                                    };
+                                }
+                                // Majuscules Umlaut (Ä, Ö, Ü) : Feststell (CapsLock)
+                                if (char === 'Ä') {
+                                    return {
+                                        char,
+                                        type: 'caps',
+                                        keyId: 'Quote',
+                                        keyLabel: 'ä',
+                                        hintHtml: `Aktiviere <strong>Feststell</strong>, drücke <strong>ä</strong>, dann deaktiviere <strong>Feststell</strong>`,
+                                        recipeExplain: `Für <strong>Ä</strong>: Aktiviere <span class="kbd-chip">Feststell</span>, drücke <span class="kbd-chip">ä</span>, dann deaktiviere <span class="kbd-chip">Feststell</span>.`
+                                    };
+                                }
+                                if (char === 'Ö') {
+                                    return {
+                                        char,
+                                        type: 'caps',
+                                        keyId: 'Semicolon',
+                                        keyLabel: 'ö',
+                                        hintHtml: `Aktiviere <strong>Feststell</strong>, drücke <strong>ö</strong>, dann deaktiviere <strong>Feststell</strong>`,
+                                        recipeExplain: `Für <strong>Ö</strong>: Aktiviere <span class="kbd-chip">Feststell</span>, drücke <span class="kbd-chip">ö</span>, dann deaktiviere <span class="kbd-chip">Feststell</span>.`
+                                    };
+                                }
+                                if (char === 'Ü') {
+                                    return {
+                                        char,
+                                        type: 'caps',
+                                        keyId: 'BracketLeft',
+                                        keyLabel: 'ü',
+                                        hintHtml: `Aktiviere <strong>Feststell</strong>, drücke <strong>ü</strong>, dann deaktiviere <strong>Feststell</strong>`,
+                                        recipeExplain: `Für <strong>Ü</strong>: Aktiviere <span class="kbd-chip">Feststell</span>, drücke <span class="kbd-chip">ü</span>, dann deaktiviere <span class="kbd-chip">Feststell</span>.`
+                                    };
+                                }
+                            } else {
+                                // En Suisse romand : ü, ö, ä avec Shift
+                                if (char === 'ü') {
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'BracketLeft',
+                                        keyLabel: 'è (ü)',
+                                        hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>è (ü)</strong>`,
+                                        recipeExplain: `Pour faire <strong>ü</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur la touche <span class="kbd-chip">è</span>.`
+                                    };
+                                }
+                                if (char === 'ö') {
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'Semicolon',
+                                        keyLabel: 'é (ö)',
+                                        hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>é (ö)</strong>`,
+                                        recipeExplain: `Pour faire <strong>ö</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur la touche <span class="kbd-chip">é</span>.`
+                                    };
+                                }
+                                if (char === 'ä') {
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'Quote',
+                                        keyLabel: 'à (ä)',
+                                        hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>à (ä)</strong>`,
+                                        recipeExplain: `Pour faire <strong>ä</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur la touche <span class="kbd-chip">à</span>.`
+                                    };
+                                }
+                                // Majuscules accentuées courantes romandes (É, È, À) : Verr Maj (CapsLock)
+                                if (char === 'É') {
+                                    return {
+                                        char,
+                                        type: 'caps',
+                                        keyId: 'Semicolon',
+                                        keyLabel: 'é',
+                                        hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>é</strong>, puis désactive <strong>Verr Maj</strong>`,
+                                        recipeExplain: `Pour faire <strong>É</strong> : active <span class="kbd-chip">Verr Maj</span>, tape la touche <span class="kbd-chip">é</span>, puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                    };
+                                }
+                                if (char === 'È') {
+                                    return {
+                                        char,
+                                        type: 'caps',
+                                        keyId: 'BracketLeft',
+                                        keyLabel: 'è',
+                                        hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>è</strong>, puis désactive <strong>Verr Maj</strong>`,
+                                        recipeExplain: `Pour faire <strong>È</strong> : active <span class="kbd-chip">Verr Maj</span>, tape la touche <span class="kbd-chip">è</span>, puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                    };
+                                }
+                                if (char === 'À') {
+                                    return {
+                                        char,
+                                        type: 'caps',
+                                        keyId: 'Quote',
+                                        keyLabel: 'à',
+                                        hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>à</strong>, puis désactive <strong>Verr Maj</strong>`,
+                                        recipeExplain: `Pour faire <strong>À</strong> : active <span class="kbd-chip">Verr Maj</span>, tape la touche <span class="kbd-chip">à</span>, puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                    };
+                                }
+                            }
+                            if (char === 'ö') {
+                                return {
+                                    char,
+                                    type: 'shift',
+                                    keyId: 'Semicolon',
+                                    keyLabel: 'é (ö)',
+                                    hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>é (ö)</strong>`,
+                                    recipeExplain: `Pour faire <strong>ö</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur la touche <span class="kbd-chip">é</span>.`
+                                };
+                            }
+                            if (char === 'ä') {
+                                return {
+                                    char,
+                                    type: 'shift',
+                                    keyId: 'Quote',
+                                    keyLabel: 'à (ä)',
+                                    hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>à (ä)</strong>`,
+                                    recipeExplain: `Pour faire <strong>ä</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur la touche <span class="kbd-chip">à</span>.`
+                                };
+                            }
+
+                            // 6. Accent grave 'ù'
+                            if (char === 'ù') {
+                                const shiftLabel = de ? 'Umschalt ⇧' : 'Maj ⇧';
+                                return {
+                                    char,
+                                    type: 'dead',
+                                    step1KeyId: 'Equal',
+                                    step1Label: '`',
+                                    step1Shift: true,
+                                    step2KeyId: 'KeyU',
+                                    step2Label: 'u',
+                                    step2Shift: false,
+                                    hintHtml: `❶ Tape <strong>\`</strong> (Maj + ^) puis ❷ Tape <strong>u</strong>`,
+                                    recipeExplain: `Pour faire <strong>ù</strong> : fais l'accent grave <span class="kbd-chip">\`</span> (<span class="kbd-chip">Maj ⇧</span> + <span class="kbd-chip">^</span>), puis tape la lettre <span class="kbd-chip">u</span>.`
+                        hintHtml: de
+                                        ? `❶ Drücke <strong>\`</strong> (${shiftLabel} + ^) und dann ❷ <strong>u</strong>`
+                                        : `❶ Tape <strong>\`</strong> (Maj + ^) puis ❷ Tape <strong>u</strong>`,
+                                    recipeExplain: de
+                                        ? `Für <strong>ù</strong>: Zuerst Gravis-Akzent <span class="kbd-chip">\`</span> (<span class="kbd-chip">${shiftLabel}</span> + <span class="kbd-chip">^</span>), dann Taste <span class="kbd-chip">u</span>.`
+                                        : `Pour faire <strong>ù</strong> : fais l'accent grave <span class="kbd-chip">\`</span> (<span class="kbd-chip">Maj ⇧</span> + <span class="kbd-chip">^</span>), puis tape la lettre <span class="kbd-chip">u</span>.`
+                                };
+                            }
+
+                            // 7. Majuscules accentuées courantes (É, È, À, Ç)
+                            if (char === 'É') {
+                                return {
+                                    char,
+                                    type: 'caps',
+                                    keyId: 'Semicolon',
+                                    keyLabel: 'é',
+                                    hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>é</strong>, puis désactive <strong>Verr Maj</strong>`,
+                                    recipeExplain: `Pour faire <strong>É</strong> : active <span class="kbd-chip">Verr Maj</span>, tape la touche <span class="kbd-chip">é</span>, puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                };
+                            }
+                            if (char === 'È') {
+                                return {
+                                    char,
+                                    type: 'caps',
+                                    keyId: 'BracketLeft',
+                                    keyLabel: 'è',
+                                    hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>è</strong>, puis désactive <strong>Verr Maj</strong>`,
+                                    recipeExplain: `Pour faire <strong>È</strong> : active <span class="kbd-chip">Verr Maj</span>, tape la touche <span class="kbd-chip">è</span>, puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                };
+                            }
+                            if (char === 'À') {
+                                return {
+                                    char,
+                                    type: 'caps',
+                                    keyId: 'Quote',
+                                    keyLabel: 'à',
+                                    hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>à</strong>, puis désactive <strong>Verr Maj</strong>`,
+                                    recipeExplain: `Pour faire <strong>À</strong> : active <span class="kbd-chip">Verr Maj</span>, tape la touche <span class="kbd-chip">à</span>, puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                };
+                            }
+                            // 7. Ç
+                            if (char === 'Ç') {
+                                const capsLabel = de ? 'Feststell' : 'Verr Maj';
+                                const shiftLabel = de ? 'Umschalt ⇧' : 'Maj ⇧';
+                                return {
+                                    char,
+                                    type: 'caps',
+                                    keyId: 'Digit4',
+                                    shift: true,
+                                    keyLabel: 'ç',
+                                    hintHtml: `Active <strong>Verr Maj</strong>, tape <strong>ç</strong> (Maj + 4), puis désactive <strong>Verr Maj</strong>`,
+                                    recipeExplain: `Pour faire <strong>Ç</strong> : active <span class="kbd-chip">Verr Maj</span>, tape <span class="kbd-chip">ç</span> (<span class="kbd-chip">Maj ⇧</span> + <span class="kbd-chip">4</span>), puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                        hintHtml: de
+                                        ? `Aktiviere <strong>${capsLabel}</strong>, drücke <strong>ç</strong> (${shiftLabel} + 4), dann deaktiviere <strong>${capsLabel}</strong>`
+                                        : `Active <strong>Verr Maj</strong>, tape <strong>ç</strong> (Maj + 4), puis désactive <strong>Verr Maj</strong>`,
+                                    recipeExplain: de
+                                        ? `Für <strong>Ç</strong>: Aktiviere <span class="kbd-chip">${capsLabel}</span>, drücke <span class="kbd-chip">ç</span> (<span class="kbd-chip">${shiftLabel}</span> + <span class="kbd-chip">4</span>), dann deaktiviere <span class="kbd-chip">${capsLabel}</span>.`
+                                        : `Pour faire <strong>Ç</strong> : active <span class="kbd-chip">Verr Maj</span>, tape <span class="kbd-chip">ç</span> (<span class="kbd-chip">Maj ⇧</span> + <span class="kbd-chip">4</span>), puis désactive <span class="kbd-chip">Verr Maj</span>.`
+                                };
+                            }
+
+                            // 8. Symboles AltGr
+                            const altGrMap = {
+                                '@': { keyId: 'Digit2', label: '2' },
+                                '#': { keyId: 'Digit3', label: '3' },
+                                '~': { keyId: 'Equal', label: '^' },
+                                '€': { keyId: 'KeyE', label: 'e' },
+                                '{': { keyId: 'BracketLeft', label: 'è' },
+                                '}': { keyId: 'Quote', label: 'à' },
+                                '{': { keyId: 'BracketLeft', label: de ? 'ü' : 'è' },
+                                '}': { keyId: 'Quote', label: de ? 'ä' : 'à' },
+                                '[': { keyId: 'BracketRight', label: '¨' },
+                                ']': { keyId: 'Backslash', label: '$' },
+                                '\\': { keyId: 'IntlBackslash', label: '<' },
+                                '|': { keyId: 'Digit1', label: '1' }
+                            };
+                            if (altGrMap[char]) {
+                                const item = altGrMap[char];
+                                return {
+                                    char,
+                                    type: 'altgr',
+                                    keyId: item.keyId,
+                                    keyLabel: item.label,
+                                    hintHtml: `Maintiens <strong>AltGr</strong> + appuie sur <strong>${item.label}</strong>`,
+                                    recipeExplain: `Pour faire <strong>${char}</strong> : maintiens la touche <span class="kbd-chip">AltGr</span> et appuie sur <span class="kbd-chip">${item.label}</span>.`
+                        hintHtml: de
+                                        ? `Halte <strong>AltGr</strong> + drücke <strong>${item.label}</strong>`
+                                        : `Maintiens <strong>AltGr</strong> + appuie sur <strong>${item.label}</strong>`,
+                                    recipeExplain: de
+                                        ? `Für <strong>${char}</strong>: Halte die Taste <span class="kbd-chip">AltGr</span> und drücke <span class="kbd-chip">${item.label}</span>.`
+                                        : `Pour faire <strong>${char}</strong> : maintiens la touche <span class="kbd-chip">AltGr</span> et appuie sur <span class="kbd-chip">${item.label}</span>.`
+                                };
+                            }
+
+                            // 9. Recherche directe ou Shift dans KEYBOARD_ROWS
+                            for (const row of KEYBOARD_ROWS) {
+                                // 9. Recherche directe ou Shift dans getKeyboardRows()
+                                const currentRows = getKeyboardRows();
+                                for (const row of currentRows) {
+                                    for (const key of row) {
+                                        if (char === ' ' && key.id === 'Space') {
+                                            return {
+                                                char,
+                                                type: 'direct',
+                                                keyId: 'Space',
+                                                keyLabel: 'Espace',
+                                                hintHtml: `Appuie sur la <strong>Barre d'espace</strong>`,
+                                                recipeExplain: `Pour faire un espace : appuie sur la <span class="kbd-chip">Barre d'espace</span> avec le pouce.`
+                                keyLabel: de ? 'Leertaste' : 'Espace',
+                                                hintHtml: de
+                                                    ? `Drücke die <strong>Leertaste</strong>`
+                                                    : `Appuie sur la <strong>Barre d'espace</strong>`,
+                                                recipeExplain: de
+                                                    ? `Für ein Leerzeichen: Drücke die <span class="kbd-chip">Leertaste</span> mit dem Daumen.`
+                                                    : `Pour faire un espace : appuie sur la <span class="kbd-chip">Barre d'espace</span> avec le pouce.`
+                                            };
+                                        }
+                                        if (key.label === char) {
+                                            return {
+                                                char,
+                                                type: 'direct',
+                                                keyId: key.id,
+                                                keyLabel: key.label,
+                                                hintHtml: `Touche : <strong>${key.label}</strong>`,
+                                                recipeExplain: `Touche à frapper : appuie directement sur <span class="kbd-chip">${key.label}</span>.`
+                                hintHtml: de
+                                                    ? `Taste: <strong>${key.label}</strong>`
+                                                    : `Touche : <strong>${key.label}</strong>`,
+                                                recipeExplain: de
+                                                    ? `Taste drücken: Drücke direkt auf <span class="kbd-chip">${key.label}</span>.`
+                                                    : `Touche à frapper : appuie directement sur <span class="kbd-chip">${key.label}</span>.`
+                                            };
+                                        }
+                                        if (key.shift === char) {
+                                            const shiftLabel = de ? 'Umschalt ⇧' : 'Maj ⇧';
+                                            return {
+                                                char,
+                                                type: 'shift',
+                                                keyId: key.id,
+                                                keyLabel: key.label || char,
+                                                hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${key.label || char}</strong>`,
+                                                recipeExplain: `Pour faire <strong>${char}</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${key.label || char}</span>.`
+                                hintHtml: de
+                                                    ? `Halte <strong>${shiftLabel}</strong> + drücke <strong>${key.label || char}</strong>`
+                                                    : `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${key.label || char}</strong>`,
+                                                recipeExplain: de
+                                                    ? `Für <strong>${char}</strong>: Halte <span class="kbd-chip">${shiftLabel}</span> und drücke <span class="kbd-chip">${key.label || char}</span>.`
+                                                    : `Pour faire <strong>${char}</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${key.label || char}</span>.`
+                                            };
+                                        }
+                                    }
+                                }
+
+                                // 10. Majuscule simple A-Z
+                                if (/^[A-Z]$/.test(char)) {
+                                    const lower = char.toLowerCase();
+                                    const shiftLabel = de ? 'Umschalt ⇧' : 'Maj ⇧';
+                                    return {
+                                        char,
+                                        type: 'shift',
+                                        keyId: 'Key' + char,
+                                        keyLabel: lower,
+                                        hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${lower}</strong>`,
+                                        recipeExplain: `Pour faire <strong>${char}</strong> (majuscule) : maintiens <span class="kbd-chip">Maj ⇧</span> d'une main et tape <span class="kbd-chip">${lower}</span> de l'autre.`
+                        hintHtml: de
+                                            ? `Halte <strong>${shiftLabel}</strong> + drücke <strong>${lower}</strong>`
+                                            : `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${lower}</strong>`,
+                                        recipeExplain: de
+                                            ? `Für <strong>${char}</strong> (Grossbuchstabe): Halte <span class="kbd-chip">${shiftLabel}</span> mit einer Hand und drücke <span class="kbd-chip">${lower}</span> mit der anderen.`
+                                            : `Pour faire <strong>${char}</strong> (majuscule) : maintiens <span class="kbd-chip">Maj ⇧</span> d'une main et tape <span class="kbd-chip">${lower}</span> de l'autre.`
+                                    };
+                                }
+
+                                // Repli de secours
+                                return {
+                                    char,
+                                    type: 'direct',
+                                    keyId: null,
+                                    keyLabel: char,
+                                    hintHtml: `Touche : <strong>${char}</strong>`,
+                                    recipeExplain: `Touche demandée : <span class="kbd-chip">${char}</span>.`
+                    hintHtml: de ? `Taste: <strong>${char}</strong>` : `Touche : <strong>${char}</strong>`,
+                                    recipeExplain: de ? `Verlangte Taste: <span class="kbd-chip">${char}</span>.` : `Touche demandée : <span class="kbd-chip">${char}</span>.`
+                                };
+                            }
+
+                            // --- MISE EN SURBRILLANCE DU CLAVIER ---
+                            function updateKeyboardHighlight() {
+                                // Nettoyer les surbrillances et badges d'étapes existants
+                                Object.values(keyElementMap).forEach(el => {
+                                    el.classList.remove('target', 'target-shift', 'target-altgr', 'target-step-1', 'target-step-2', 'done', 'wrong');
+                                    const oldBadge = el.querySelector('.key-step-pill');
+                                    if (oldBadge) oldBadge.remove();
+                                });
+
+                                if (isFinished) return;
+
+                                const text = LEVELS[currentLevelIdx].text;
+                                const expected = text[currentIndex];
+                                if (!expected) return;
+
+                                const recipe = getKeyRecipe(expected);
+
+                                if (recipe) {
+                                    if (recipe.type === 'dead' || recipe.type === 'dead-shift') {
+                                        const step1El = keyElementMap[recipe.step1KeyId];
+                                        const step2El = keyElementMap[recipe.step2KeyId];
+
+                                        if (step1El) {
+                                            step1El.classList.add('target-step-1');
+                                            if (pendingDeadKey) {
+                                                step1El.classList.add('done');
+                                            }
+                                            const badge1 = document.createElement('span');
+                                            badge1.className = 'key-step-pill step-1' + (pendingDeadKey ? ' step-done' : '');
+                                            badge1.textContent = pendingDeadKey ? '✓' : '❶';
+                                            step1El.appendChild(badge1);
+                                        }
+
+                                        if (step2El) {
+                                            step2El.classList.add('target-step-2');
+                                            const badge2 = document.createElement('span');
+                                            badge2.className = 'key-step-pill step-2';
+                                            badge2.textContent = '❷';
+                                            step2El.appendChild(badge2);
+                                        }
+
+                                        if (recipe.step2Shift) {
+                                            keyElementMap['ShiftLeft']?.classList.add('target-shift');
+                                            keyElementMap['ShiftRight']?.classList.add('target-shift');
+                                        }
+
+                                        if (keyboardGuideHint) {
+                                            if (pendingDeadKey) {
+                                                keyboardGuideHint.innerHTML = `<i data-fa="circle-check"></i> Étape 1 réussie (<strong>${recipe.step1Label}</strong>) ! Maintenant tape <strong>${recipe.step2Label}</strong>`;
+                                                keyboardGuideHint.innerHTML = isGerman()
+                                                    ? `<i data-fa="circle-check"></i> Schritt 1 geschafft (<strong>${recipe.step1Label}</strong>)! Jetzt tippe <strong>${recipe.step2Label}</strong>`
+                                                    : `<i data-fa="circle-check"></i> Étape 1 réussie (<strong>${recipe.step1Label}</strong>) ! Maintenant tape <strong>${recipe.step2Label}</strong>`;
+                                            } else {
+                                                keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                                            }
+                                        }
+                                    } else if (recipe.type === 'shift') {
+                                        keyElementMap['ShiftLeft']?.classList.add('target-shift');
+                                        keyElementMap['ShiftRight']?.classList.add('target-shift');
+                                        if (recipe.keyId && keyElementMap[recipe.keyId]) {
+                                            keyElementMap[recipe.keyId].classList.add('target');
+                                        }
+                                        if (keyboardGuideHint) {
+                                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                                        }
+                                    } else if (recipe.type === 'altgr') {
+                                        keyElementMap['AltRight']?.classList.add('target-altgr');
+                                        if (recipe.keyId && keyElementMap[recipe.keyId]) {
+                                            keyElementMap[recipe.keyId].classList.add('target');
+                                        }
+                                        if (keyboardGuideHint) {
+                                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                                        }
+                                    } else if (recipe.type === 'caps') {
+                                        keyElementMap['CapsLock']?.classList.add('target-shift');
+                                        if (recipe.keyId && keyElementMap[recipe.keyId]) {
+                                            keyElementMap[recipe.keyId].classList.add('target');
+                                        }
+                                        if (keyboardGuideHint) {
+                                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                                        }
+                                    } else { // 'direct'
+                                        if (recipe.keyId && keyElementMap[recipe.keyId]) {
+                                            keyElementMap[recipe.keyId].classList.add('target');
+                                        }
+                                        if (keyboardGuideHint) {
+                                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                                        }
+                                    }
+                                }
+
+                                // Afficher la fausse touche en rouge si erreur
+                                if (flashError && wrongChar) {
+                                    const wrongRecipe = getKeyRecipe(wrongChar);
+                                    if (wrongRecipe && wrongRecipe.keyId && keyElementMap[wrongRecipe.keyId]) {
+                                        keyElementMap[wrongRecipe.keyId].classList.add('wrong');
+                                    } else if (wrongRecipe && wrongRecipe.step2KeyId && keyElementMap[wrongRecipe.step2KeyId]) {
+                                        keyElementMap[wrongRecipe.step2KeyId].classList.add('wrong');
+                                    }
+                                }
+
+                                window.fa?.createIcons?.();
+                            }
+
+                            // --- CALCUL DES STATISTIQUES ---
+                            function calculateWpm() {
+                                if (!startTime) return 0;
+                                const finish = endTime || Date.now();
+                                const minutes = (finish - startTime) / 60000;
+                                if (minutes <= 0.001) return 0;
+                                // Formule standard internationale : 5 caractères = 1 mot
+                                return Math.round((currentIndex / 5) / minutes);
+                            }
+
+                            function calculateAccuracy() {
+                                if (currentIndex === 0) return 100;
+                                const correct = Math.max(0, currentIndex - errors);
+                                return Math.max(0, Math.round((correct / (correct + errors)) * 100));
+                            }
+
+                            function updateStats() {
+                                const text = LEVELS[currentLevelIdx].text;
+                                const progressPct = Math.min(100, Math.round((currentIndex / text.length) * 100));
+                                progressBar.style.width = progressPct + '%';
+
+                                statAccuracy.textContent = calculateAccuracy() + '%';
+                                statWpm.textContent = calculateWpm();
+                                statErrors.textContent = errors;
+                            }
+
+                            // --- GESTION DE LA FRAPPE AU CLAVIER PHYSIQUE ---
+                            function handleKeyInput(char) {
+                                if (isFinished) return;
+                                const text = LEVELS[currentLevelIdx].text;
+                                const expected = text[currentIndex];
+                                const recipe = getKeyRecipe(expected);
+
+                                if (!startTime) startTime = Date.now();
+
+                                // Validation si frappe correcte ou si deuxième étape de touche morte réussie
+                                const isMatch = (char === expected) || (
+                                    pendingDeadKey && recipe && (recipe.type === 'dead' || recipe.type === 'dead-shift') &&
+                                    char && char.toLowerCase() === recipe.step2Label.toLowerCase()
+                                );
+
+                                if (isMatch) {
+                                    // Touche correcte
+                                    currentIndex++;
+                                    flashError = false;
+                                    wrongChar = null;
+                                    pendingDeadKey = false;
+                                    errorBanner.style.display = 'none';
+                                    hideVirtualKeyboard();
+
+                                    if (typeof playSound === 'function') playSound('click');
+
+                                    if (currentIndex >= text.length) {
+                                        endTime = Date.now();
+                                        finishLevel();
+                                        return;
+                                    }
+                                } else if (char && char.length === 1) {
+                                    // Erreur au clavier physique -> faire apparaître le clavier visuel pour guider l'élève
+                                    pendingDeadKey = false;
+                                    errors++;
+                                    errorDetails[expected] = (errorDetails[expected] || 0) + 1;
+                                    flashError = true;
+                                    wrongChar = char;
+
+                                    if (typeof playSound === 'function') playSound('error');
+
+                                    const displayWrong = (char === ' ') ? 'Espace' : char;
+                                    const displayExpected = (expected === ' ') ? 'Espace' : expected;
+                                    const spaceName = isGerman() ? 'Leertaste' : 'Espace';
+                                    const displayWrong = (char === ' ') ? spaceName : char;
+                                    const displayExpected = (expected === ' ') ? spaceName : expected;
+
+                                    let recipeHtml = '';
+                                    if (recipe && recipe.recipeExplain) {
+                                        recipeHtml = `<div class="error-recipe-hint"><i data-fa="lightbulb"></i> ${recipe.recipeExplain}</div>`;
+                                    }
+
+                                    const errorText = isGerman()
+                                        ? `Du hast <strong>${displayWrong}</strong> statt <strong>${displayExpected}</strong> getippt.`
+                                        : `Tu as tapé <strong>${displayWrong}</strong> au lieu de <strong>${displayExpected}</strong>.`;
+
+                                    errorMessage.innerHTML = `
+                        <div class="error-main-msg">
+                            Tu as tapé <strong>${displayWrong}</strong> au lieu de <strong>${displayExpected}</strong>.
+                            ${errorText}
+                        </div>
+                        ${recipeHtml}
+                    `;
+                                    errorBanner.style.display = 'flex';
+                                    showVirtualKeyboard();
+                                    window.fa?.createIcons?.();
+
+                                    if (errorTimeout) clearTimeout(errorTimeout);
+                                    errorTimeout = setTimeout(() => {
+                                        flashError = false;
+                                        wrongChar = null;
+                                        updateKeyboardHighlight();
+                                        renderText();
+                                    }, 4000);
+                                }
+
+                                renderText();
+                                updateStats();
+                                updateKeyboardHighlight();
+                            }
+
+                            // --- ÉCOUTEUR CLAVIER PHYSIQUE ---
+                            window.addEventListener('keydown', (e) => {
+                                if (dactyloScoreModal && (dactyloScoreModal.classList.contains('active') || dactyloScoreModal.classList.contains('visible'))) {
+                                    if (e.key === 'Escape') {
+                                        closeDactyloScoreModal();
+                                    }
+                                    return;
+                                }
+
+                                if (isFinished) {
+                                    if (e.key === 'Enter') {
+                                        if (currentLevelIdx < LEVELS.length - 1) {
+                                            loadLevel(currentLevelIdx + 1);
+                                        } else {
+                                            loadLevel(currentLevelIdx);
+                                        }
+                                    } else if (e.key === 'Escape') {
+                                        loadLevel(currentLevelIdx);
+                                    }
+                                    return;
+                                }
+
+                                const text = LEVELS[currentLevelIdx].text;
+                                const expected = text[currentIndex];
+                                const recipe = getKeyRecipe(expected);
+
+                                // Détection de la touche morte pour les combinaisons (ex: accent circonflexe ^ pour ê)
+                                if (recipe && (recipe.type === 'dead' || recipe.type === 'dead-shift')) {
+                                    const isDeadPress = (e.key === 'Dead' || e.key === recipe.step1Label || e.code === recipe.step1KeyId);
+                                    if (isDeadPress) {
+                                        pendingDeadKey = true;
+                                        if (typeof playSound === 'function') playSound('click');
+                                        updateKeyboardHighlight();
+                                        return;
+                                    }
+                                }
+
+                                // Touches système ignorées
+                                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                                if (['Shift', 'Alt', 'Control', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(e.key)) {
+                                    if (e.key === 'Escape') {
+                                        loadLevel(currentLevelIdx);
+                                    }
+                                    return;
+                                }
+
+                                // Empêcher le défilement sur Espace
+                                if (e.key === ' ') {
+                                    e.preventDefault();
+                                }
+
+                                handleKeyInput(e.key);
+                            });
+
+                            // --- FIN DE NIVEAU & BILAN ---
+                            function finishLevel() {
+                                isFinished = true;
+                                hideVirtualKeyboard();
+                                const text = LEVELS[currentLevelIdx].text;
+                                const minutes = Math.max(0.01, (endTime - startTime) / 60000);
+                                const finalWpm = Math.round((text.length / 5) / minutes);
+                                const finalAcc = Math.max(0, Math.round(((text.length - errors) / text.length) * 100));
+
+                                const lvlId = LEVELS[currentLevelIdx].id;
+                                const existing = scores[lvlId];
+                                const isBetter = !existing || finalWpm > existing.wpm || (finalWpm === existing.wpm && finalAcc > existing.accuracy);
+
+                                if (isBetter) {
+                                    scores[lvlId] = { wpm: finalWpm, accuracy: finalAcc, date: Date.now() };
+                                    try {
+                                        localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+                                    } catch (e) { }
+                                    initLevelSelect();
+                                    recordBadge.style.display = 'inline-flex';
+                                } else {
+                                    recordBadge.style.display = 'none';
+                                }
+
+                                resultAccuracy.textContent = finalAcc + '%';
+                                resultWpm.textContent = finalWpm;
+                                resultErrors.textContent = errors;
+
+                                const unit = isGerman() ? 'WPM' : 'MPM';
+                                if (!isBetter && existing) {
+                                    resultsSubtitle.textContent = `Niveau réussi ! Record actuel : ${existing.wpm} MPM (${existing.accuracy}%).`;
+                                    resultsSubtitle.textContent = isGerman()
+                                        ? `Niveau geschafft! Aktueller Rekord: ${existing.wpm} ${unit} (${existing.accuracy}%).`
+                                        : `Niveau réussi ! Record actuel : ${existing.wpm} MPM (${existing.accuracy}%).`;
+                                } else {
+                                    resultsSubtitle.textContent = `Félicitations ! Tu as complété ce niveau avec succès.`;
+                                    resultsSubtitle.textContent = isGerman()
+                                        ? `Herzlichen Glückwunsch! Du hast dieses Niveau erfolgreich abgeschlossen.`
+                                        : `Félicitations ! Tu as complété ce niveau avec succès.`;
+                                }
+
+                                // Analyse des touches à travailler
+                                const sortedErrors = Object.entries(errorDetails).sort((a, b) => b[1] - a[1]);
+                                if (sortedErrors.length > 0) {
+                                    errorTags.innerHTML = '';
+                                    const spaceName = isGerman() ? 'Leertaste' : 'Espace';
+                                    sortedErrors.forEach(([ch, count]) => {
+                                        const tag = document.createElement('div');
+                                        tag.className = 'error-tag';
+                                        const displayCh = ch === ' ' ? 'Espace' : ch;
+                                        const displayCh = ch === ' ' ? spaceName : ch;
+                                        tag.innerHTML = `<span class="error-tag-char">${displayCh}</span><span class="error-tag-count">${count}×</span>`;
+                                        errorTags.appendChild(tag);
+                                    });
+                                    errorAnalysis.style.display = 'block';
+                                } else {
+                                    errorAnalysis.style.display = 'none';
+                                }
+
+                                // Bouton suivant désactivé au niveau 10
+                                if (currentLevelIdx >= LEVELS.length - 1) {
+                                    btnNextLevel.style.display = 'none';
+                                } else {
+                                    btnNextLevel.style.display = 'inline-flex';
+                                }
+
+                                gameView.style.display = 'none';
+                                resultsView.style.display = 'flex';
+
+                                if (typeof playSound === 'function') playSound('win');
+                                launchConfetti();
+                                window.fa?.createIcons?.();
+                            }
+
+                            // --- EFFET DE CONFETTIS ---
+                            function launchConfetti() {
+                                const canvas = document.getElementById('confetti-canvas');
+                                if (!canvas) return;
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = window.innerWidth;
+                                canvas.height = window.innerHeight;
+
+                                const pieces = [];
+                                const colors = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+                                for (let i = 0; i < 90; i++) {
+                                    pieces.push({
+                                        x: Math.random() * canvas.width,
+                                        y: Math.random() * -canvas.height,
+                                        w: Math.random() * 10 + 6,
+                                        h: Math.random() * 8 + 4,
+                                        color: colors[Math.floor(Math.random() * colors.length)],
+                                        rot: Math.random() * 360,
+                                        vx: (Math.random() - 0.5) * 4,
+                                        vy: Math.random() * 3 + 3,
+                                        vRot: (Math.random() - 0.5) * 10
+                                    });
+                                }
+
+                                let start = Date.now();
+                                function draw() {
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    pieces.forEach(p => {
+                                        p.x += p.vx;
+                                        p.y += p.vy;
+                                        p.rot += p.vRot;
+                                        ctx.save();
+                                        ctx.translate(p.x, p.y);
+                                        ctx.rotate(p.rot * Math.PI / 180);
+                                        ctx.fillStyle = p.color;
+                                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                                        ctx.restore();
+                                    });
+
+                                    if (Date.now() - start < 3500) {
+                                        requestAnimationFrame(draw);
+                                    } else {
+                                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    }
+                                }
+                                requestAnimationFrame(draw);
+                            }
+
+                            // --- ÉCOUTEURS D'ÉVÉNEMENTS UI ---
+                            levelSelect.addEventListener('change', (e) => {
+                                loadLevel(parseInt(e.target.value, 10));
+                            });
+
+                            btnRestartLevel.addEventListener('click', () => {
+                                loadLevel(currentLevelIdx);
+                            });
+
+                            if (btnToggleKeyboard) {
+                                btnToggleKeyboard.addEventListener('click', () => {
+                                    if (keyboardSection.classList.contains('visible')) {
+                                        hideVirtualKeyboard();
+                                    } else {
+                                        showVirtualKeyboard();
+                                        updateKeyboardHighlight();
+                                    }
+                                });
+                            }
+
+                            btnRetry.addEventListener('click', () => {
+                                loadLevel(currentLevelIdx);
+                            });
+
+                            btnNextLevel.addEventListener('click', () => {
+                                if (currentLevelIdx < LEVELS.length - 1) {
+                                    loadLevel(currentLevelIdx + 1);
+                                }
+                            });
+
+                            // Focus automatique sur le conteneur de frappe
+                            textDisplayBox.addEventListener('click', () => {
+                                textDisplayBox.focus();
+                            });
+
+                            // Réinitialisation des scores via le menu d'options
+                            const resetCacheBtn = document.getElementById('reset-cache-btn');
+                            if (resetCacheBtn) {
+                                resetCacheBtn.addEventListener('click', () => {
+                                    if (confirm("Réinitialiser tous les records de Tape-Texte ?")) {
+                                        const confirmMsg = isGerman() ? "Alle Tape-Texte-Ergebnisse zurücksetzen?" : "Réinitialiser tous les records de Tape-Texte ?";
+                                        if (confirm(confirmMsg)) {
+                                            scores = {};
+                                            localStorage.removeItem(STORAGE_KEY);
+                                            localStorage.removeItem(LEGACY_STORAGE_KEY);
+                                            initLevelSelect();
+                                            loadLevel(currentLevelIdx);
+                                        }
+                                    });
+                            }
+
+                            // --- GESTION DE LA MODALE DE BILAN & EXPORT ---
+                            function renderDactyloScoreModal() {
+                                if (!dactyloScoreModal) {
+                                    return;
+                                }
+
+                                const de = isGerman();
+                                const unit = de ? 'WPM' : 'MPM';
+                                const locale = de ? 'de-CH' : 'fr-CH';
+                                const now = new Date();
+                                const dateFormatted = now.toLocaleDateString('fr-CH', {
+                                    const dateFormatted = now.toLocaleDateString(locale, {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric'
+                                    });
+                                    const timeFormatted = now.toLocaleTimeString('fr-CH', {
+                                        const timeFormatted = now.toLocaleTimeString(locale, {
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        });
+
+                                        if(dactyloModalDate) {
+                                            dactyloModalDate.textContent = dateFormatted;
+                                        }
+                if(modalExportTimestamp) {
+                                            modalExportTimestamp.textContent = `${dateFormatted} à ${timeFormatted}`;
+                                            modalExportTimestamp.textContent = de ? `${dateFormatted} um ${timeFormatted}` : `${dateFormatted} à ${timeFormatted}`;
+                                        }
+
+                if(dactyloStudentName) {
+                                            const savedName = (window.ModalExporter && typeof window.ModalExporter.getStudentName === 'function')
+                                                ? window.ModalExporter.getStudentName()
+                                                : (localStorage.getItem('c2_student_name') || '');
+                                            dactyloStudentName.value = savedName;
+                                        }
+
+                let completedCount = 0;
+                                        let totalWpm = 0;
+                                        let totalAcc = 0;
+
+                                        if(dactyloScoresTableBody) {
+                                            dactyloScoresTableBody.innerHTML = '';
+
+                                            LEVELS.forEach((lvl, idx) => {
+                                                const tr = document.createElement('tr');
+                                                const best = scores[lvl.id];
+
+                                                if (best) {
+                                                    completedCount++;
+                                                    totalWpm += best.wpm;
+                                                    totalAcc += best.accuracy;
+                                                    tr.className = 'completed-row';
+
+                                                    const tdLvl = document.createElement('td');
+                                                    tdLvl.className = 'level-name-col';
+                                                    tdLvl.innerHTML = `<strong>Niveau ${idx + 1}</strong> <span class="level-sub">${lvl.name}</span>`;
+
+                                                    const tdWpm = document.createElement('td');
+                                                    tdWpm.className = 'score-num-col';
+                                                    tdWpm.textContent = `${best.wpm} MPM`;
+                                                    tdWpm.textContent = `${best.wpm} ${unit}`;
+
+                                                    const tdAcc = document.createElement('td');
+                                                    tdAcc.className = 'score-num-col';
+                                                    tdAcc.textContent = `${best.accuracy}%`;
+
+                                                    const tdStatus = document.createElement('td');
+                                                    tdStatus.className = 'score-status-col';
+                                                    tdStatus.innerHTML = `<span class="level-status-pill success"><i data-fa="circle-check"></i> Validé</span>`;
+                                                    const validText = de ? 'Bestanden' : 'Validé';
+                                                    tdStatus.innerHTML = `<span class="level-status-pill success"><i data-fa="circle-check"></i> ${validText}</span>`;
+
+                                                    tr.appendChild(tdLvl);
+                                                    tr.appendChild(tdWpm);
+                                                    tr.appendChild(tdAcc);
+                                                    tr.appendChild(tdStatus);
+                                                } else {
+                                                    const tdLvl = document.createElement('td');
+                                                    tdLvl.className = 'level-name-col';
+                                                    tdLvl.innerHTML = `<strong>Niveau ${idx + 1}</strong> <span class="level-sub">${lvl.name}</span>`;
+
+                                                    const tdWpm = document.createElement('td');
+                                                    tdWpm.className = 'score-num-col';
+                                                    tdWpm.textContent = '—';
+
+                                                    const tdAcc = document.createElement('td');
+                                                    tdAcc.className = 'score-num-col';
+                                                    tdAcc.textContent = '—';
+
+                                                    const tdStatus = document.createElement('td');
+                                                    tdStatus.className = 'score-status-col';
+                                                    tdStatus.innerHTML = `<span class="level-status-pill pending">Non complété</span>`;
+                                                    const pendingText = de ? 'Ausstehend' : 'Non complété';
+                                                    tdStatus.innerHTML = `<span class="level-status-pill pending">${pendingText}</span>`;
+
+                                                    tr.appendChild(tdLvl);
+                                                    tr.appendChild(tdWpm);
+                                                    tr.appendChild(tdAcc);
+                                                    tr.appendChild(tdStatus);
+                                                }
+
+                                                dactyloScoresTableBody.appendChild(tr);
+                                            });
+                                        }
+
+                if(modalCompletedLevels) {
+                                            modalCompletedLevels.textContent = `${completedCount} / ${LEVELS.length}`;
+                                        }
+                if(modalAvgWpm) {
+                                            const avgWpm = completedCount > 0 ? Math.round(totalWpm / completedCount) : 0;
+                                            modalAvgWpm.textContent = `${avgWpm} MPM`;
+                                            modalAvgWpm.textContent = `${avgWpm} ${unit}`;
+                                        }
+                if(modalAvgAcc) {
+                                            const avgAcc = completedCount > 0 ? Math.round(totalAcc / completedCount) : 0;
+                                            modalAvgAcc.textContent = `${avgAcc}%`;
+                                        }
+
+                if(window.fa && typeof window.fa.createIcons === 'function') {
+                                    window.fa.createIcons();
+                                }
+            }
+
+                            function openDactyloScoreModal() {
+                                renderDactyloScoreModal();
+                                if (dactyloScoreModal) {
+                                    dactyloScoreModal.classList.add('active');
+                                    dactyloScoreModal.classList.add('visible');
+                                    dactyloScoreModal.setAttribute('aria-hidden', 'false');
+                                }
+                            }
+
+                            function closeDactyloScoreModal() {
+                                if (dactyloScoreModal) {
+                                    dactyloScoreModal.classList.remove('active');
+                                    dactyloScoreModal.classList.remove('visible');
+                                    dactyloScoreModal.setAttribute('aria-hidden', 'true');
+                                }
+                            }
+
+                            // Écouteur global pour tout élément déclencheur de statistiques
+                            document.addEventListener('click', (e) => {
+                                const statsTrigger = e.target.closest('[data-action="show-stats"]');
+                                if (statsTrigger) {
+                                    e.preventDefault();
+                                    const dropdownContent = document.querySelector('.settings-dropdown-content');
+                                    if (dropdownContent) {
+                                        dropdownContent.classList.remove('show');
+                                    }
+                                    document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
+                                    openDactyloScoreModal();
+                                }
+                            });
+
+                            // Boutons d'ouverture spécifiques de la modale
+                            if (btnOpenDactyloScores) {
+                                btnOpenDactyloScores.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    openDactyloScoreModal();
+                                });
+                            }
+                            if (menuOpenScoresBtn) {
+                                menuOpenScoresBtn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    const dropdownContent = document.querySelector('.settings-dropdown-content');
+                                    if (dropdownContent) {
+                                        dropdownContent.classList.remove('show');
+                                    }
+                                    document.querySelectorAll('.app-header.dropdown-open').forEach(h => h.classList.remove('dropdown-open'));
+                                    openDactyloScoreModal();
+                                });
+                            }
+                            if (btnResultsViewScoreModal) {
+                                btnResultsViewScoreModal.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    openDactyloScoreModal();
+                                });
+                            }
+
+                            // Fermeture de la modale
+                            if (btnCloseDactyloModal) {
+                                btnCloseDactyloModal.addEventListener('click', closeDactyloScoreModal);
+                            }
+                            if (dactyloScoreModal) {
+                                dactyloScoreModal.addEventListener('click', (e) => {
+                                    if (e.target === dactyloScoreModal) {
+                                        closeDactyloScoreModal();
+                                    }
+                                });
+                            }
+
+                            // Sauvegarde en direct du prénom/nom de l'élève
+                            if (dactyloStudentName) {
+                                dactyloStudentName.addEventListener('input', (e) => {
+                                    if (window.ModalExporter && typeof window.ModalExporter.saveStudentName === 'function') {
+                                        window.ModalExporter.saveStudentName(e.target.value);
+                                    }
+                                });
+                            }
+
+                            // Export image PNG
+                            if (btnExportDactyloModal) {
+                                btnExportDactyloModal.addEventListener('click', async () => {
+                                    if (window.ModalExporter && typeof window.ModalExporter.exportModal === 'function') {
+                                        await window.ModalExporter.exportModal(dactyloModalContent, {
+                                            appName: 'Tape-Texte'
+                                        });
+                                    }
+                                });
+                            }
+
+                            // Copie d'image dans le presse-papiers
+                            if (btnCopyDactyloModal) {
+                                btnCopyDactyloModal.addEventListener('click', async () => {
+                                    if (window.ModalExporter && typeof window.ModalExporter.copyModal === 'function') {
+                                        await window.ModalExporter.copyModal(dactyloModalContent, {
+                                            appName: 'Tape-Texte'
+                                        });
+                                    }
+                                });
+                            }
+
+                            // Réinitialisation des scores depuis la modale
+                            if (btnResetDactyloScores) {
+                                btnResetDactyloScores.addEventListener('click', () => {
+                                    if (confirm("Réinitialiser tous les records de Tape-Texte ?")) {
+                                        const confirmMsg = isGerman() ? "Alle Tape-Texte-Ergebnisse zurücksetzen?" : "Réinitialiser tous les records de Tape-Texte ?";
+                                        if (confirm(confirmMsg)) {
+                                            scores = {};
+                                            localStorage.removeItem(STORAGE_KEY);
+                                            localStorage.removeItem(LEGACY_STORAGE_KEY);
+                                            initLevelSelect();
+                                            loadLevel(currentLevelIdx);
+                                            renderDactyloScoreModal();
+                                        }
+                                    });
+                            }
+
+                            // --- ÉCOUTEUR RÉACTIF DU CHANGEMENT DE LANGUE ---
+                            window.addEventListener('languageChanged', () => {
+                                LEVELS = getActiveLevels();
+                                buildKeyboard();
+                                initLevelSelect();
+                                loadLevel(currentLevelIdx < LEVELS.length ? currentLevelIdx : 0);
+                            });
+
+                            // --- DÉMARRAGE ---
+                            buildKeyboard();
+                            initLevelSelect();
+                            loadLevel(0);
+                            window.fa?.createIcons?.();
+                        })();
+    </script>
+</body>
+
+</html>

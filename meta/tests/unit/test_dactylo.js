@@ -5,7 +5,7 @@ const path = require('path');
 const { JSDOM } = require('jsdom');
 
 function setupDactyloDOM() {
-    const htmlPath = path.resolve(__dirname, '../../../alpha/webapps/dactylo.html');
+    const htmlPath = path.resolve(__dirname, '../../../webapps/dactylo.html');
     const html = fs.readFileSync(htmlPath, 'utf8');
     const dom = new JSDOM(html, {
         runScripts: 'dangerously',

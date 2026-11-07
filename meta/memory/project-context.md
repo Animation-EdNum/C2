@@ -9,13 +9,13 @@
 - **Portals:**
   - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
   - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
-- **Production Student Apps (`webapps/` - 7 apps):**
-  - Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`).
-- **Alpha Student Apps (`alpha/webapps/` - 11 apps):**
-  - Coffre-fort, Compresseur magique, Machine à chiffrer, Machine à trier, Jeu de la grue, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Tape-Texte (`dactylo`), Une chose après l'autre (`tri_insertion`).
-- **Teacher Tools (`webapps/teacher/` - 5 production, 2 alpha):**
-  - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`), Roue de la chance (`roue_de_la_chance.html`).
-  - Alpha: Adaptateur & Simulateur DYS (`alpha/webapps/teacher/sim_dyslexie.html`), Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`).
+- **Production Student Apps (`webapps/` - 10 apps):**
+  - Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`), Tape-Texte (`dactylo.html`), Machine à trier (`machine_a_trier.html`), Jeu de la grue (`jeu_de_la_grue.html`).
+- **Alpha Student Apps (`alpha/webapps/` - 8 apps):**
+  - Coffre-fort, Compresseur magique, Machine à chiffrer, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Une chose après l'autre (`tri_insertion`).
+- **Teacher Tools (`webapps/teacher/` - 6 production, 1 alpha):**
+  - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`), Roue de la chance (`roue_de_la_chance.html`), Adaptateur & Simulateur DYS (`sim_dyslexie.html`).
+  - Alpha: Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`).
 
 ## 3. Core Architectural Constraints
 - **100% Offline-First (PWA):** Zero external CDN dependencies. All assets (fonts, icons, audio, scripts) are locally hosted under `assets/`.
@@ -27,7 +27,8 @@
 
 ## 4. Current Status & Active Focus
 - **Active Focus:** Bilingual Swiss Standard German (de-CH) localization rollout, performance hot loops, mobile navigation fluidity, and CI hardening.
-- **Swiss Standard German (de-CH) Expansion:** Single-codebase runtime translation engine (`i18n.js`), shared UI localization (`theme.js`, `pwa.js`, `scores.js`, `modal-export.js`, `url-params.js`), localized registry and cards, and progressive app translation (Batch 1 student apps 100% complete). Language toggle button hidden for general public by default (`?show_lang=1` for dev/testing).
+- **Official Webapp Promotions:** Promoted 4 webapps from alpha to production: Adaptateur & Simulateur DYS (`webapps/teacher/sim_dyslexie.html`), Tape-Texte (`webapps/dactylo.html`), Machine à trier (`webapps/machine_a_trier.html`), and Jeu de la grue (`webapps/jeu_de_la_grue.html`). Removed alpha badges and moved to official paths.
+- **Swiss Standard German (de-CH) Expansion:** Single-codebase runtime translation engine (`i18n.js`), shared UI localization (`theme.js`, `pwa.js`, `scores.js`, `modal-export.js`, `url-params.js`), localized registry and cards. All 4 newly promoted webapps fully localized in Swiss Standard German with strict zero `ß` (`ss` only). Tape-Texte adapted with custom Swiss German texts (`LEVELS_DE`) and bilingual Swiss QWERTZ keyboard mechanics. All 277 unit tests passing. Language toggle button hidden for general public by default (`?show_lang=1` for dev/testing).
 - **Teacher Tools & Classroom Integration:** Promoted Roue de la chance to production, integrated Swiss ENT/ISM class roster import (XLSX, CSV via local SheetJS) and export in Tirage au sort.
 - **Hot-Loop Performance & Security:** Optimized DOM queries in hot loops (`automate-engine.js`, `scores.js`), hardened PWA toast DOM construction against XSS, and pinned GitHub Actions commit SHAs across CI workflows.
 - **Standardized Universal Reset & TBI:** All applications support `#reset-cache-btn` with `window.__onResetApp` hook and overflow-safe TBI whiteboard projection modes.

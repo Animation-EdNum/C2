@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-c688d905';
+const CACHE_NAME = 'ednum-714c1069';
 const ASSETS = [
     './',
     './index.html',
@@ -13,15 +13,11 @@ const ASSETS = [
     './alpha/webapps/apprendre_pseudocode.html',
     './alpha/webapps/coffre_fort.html',
     './alpha/webapps/compresseur_magique.html',
-    './alpha/webapps/dactylo.html',
     './alpha/webapps/detective_ia.html',
     './alpha/webapps/dresseur_neurones.html',
-    './alpha/webapps/jeu_de_la_grue.html',
     './alpha/webapps/machine_a_chiffrer.html',
-    './alpha/webapps/machine_a_trier.html',
     './alpha/webapps/reseau_de_tri.html',
     './alpha/webapps/teacher/anonymiseur.html',
-    './alpha/webapps/teacher/sim_dyslexie.html',
     './alpha/webapps/tri_insertion.html',
     './assets/apple-touch-icon.png',
     './assets/css/automate.css',
@@ -73,12 +69,16 @@ const ASSETS = [
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
     './webapps/bit_de_parite.html',
+    './webapps/dactylo.html',
     './webapps/generateur_mot_de_passe.html',
+    './webapps/jeu_de_la_grue.html',
+    './webapps/machine_a_trier.html',
     './webapps/routage_reseau.html',
     './webapps/simulateur_automate.html',
     './webapps/teacher/bareme.html',
     './webapps/teacher/qrcode.html',
     './webapps/teacher/roue_de_la_chance.html',
+    './webapps/teacher/sim_dyslexie.html',
     './webapps/teacher/time_timer.html',
     './webapps/teacher/tirage.html'
 ];

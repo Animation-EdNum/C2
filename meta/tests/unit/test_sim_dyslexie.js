@@ -6,7 +6,7 @@ const { JSDOM } = require('jsdom');
 const fs = require('fs');
 const path = require('path');
 
-const htmlPath = path.resolve(__dirname, '../../../alpha/webapps/teacher/sim_dyslexie.html');
+const htmlPath = path.resolve(__dirname, '../../../webapps/teacher/sim_dyslexie.html');
 
 function setupDOM() {
     const htmlContent = fs.readFileSync(htmlPath, 'utf8');
@@ -28,6 +28,14 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
         if (window) {
             window.close();
         }
+    });
+
+    await t.test('production version does not contain alpha badge and links to teacher space', () => {
+        const badge = window.document.querySelector('.badge-alpha');
+        assert.strictEqual(badge, null, 'Alpha badge should be removed in production');
+        const backBtn = window.document.querySelector('.header-back-btn');
+        assert.ok(backBtn, 'Back button should exist');
+        assert.strictEqual(backBtn.getAttribute('href'), '../../index.html#teachers', 'Back button should link to teacher space');
     });
 
     await t.test('Titre de l\'outil renommé en Adaptateur & Simulateur DYS', () => {

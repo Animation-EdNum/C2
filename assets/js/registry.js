@@ -25,8 +25,7 @@ window.REGISTRY = [
   },
   {
     "id": "app-dactylo",
-    "href": "alpha/webapps/dactylo.html",
-    "isAlpha": true,
+    "href": "webapps/dactylo.html",
     "dataLevel": "5-8H, 9-10CO",
     "icon": "keyboard",
     "title": "Tape-Texte",
@@ -38,6 +37,18 @@ window.REGISTRY = [
       "#Frappe"
     ],
     "ref": "EN 23 · Usages — Saisie d'un texte",
+    "i18n": {
+      "de": {
+        "title": "Tastatur-Training",
+        "desc": "Übe das schnelle und genaue Schreiben auf der Schweizer Tastatur.",
+        "tags": [
+          "#Tastatur",
+          "#Tippen",
+          "#Tasten",
+          "#Eingabe"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "5-8H",
@@ -54,8 +65,7 @@ window.REGISTRY = [
   },
   {
     "id": "app-machine-trier",
-    "href": "alpha/webapps/machine_a_trier.html",
-    "isAlpha": true,
+    "href": "webapps/machine_a_trier.html",
     "dataLevel": "1-2H, 3-4H",
     "icon": "dt-shapes",
     "title": "Machine à trier",
@@ -65,6 +75,16 @@ window.REGISTRY = [
       "#Tri"
     ],
     "ref": "DÉ>CODAGE 1-2 · Activité 3",
+    "i18n": {
+      "de": {
+        "title": "Sortiermaschine",
+        "desc": "Ziehe und sortiere die Objekte nach Farbe oder Form.",
+        "tags": [
+          "#Algorithmen",
+          "#Sortieren"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "1-2H",
@@ -105,8 +125,7 @@ window.REGISTRY = [
   },
   {
     "id": "app-jeu-grue",
-    "href": "alpha/webapps/jeu_de_la_grue.html",
-    "isAlpha": true,
+    "href": "webapps/jeu_de_la_grue.html",
     "dataLevel": "3-4H",
     "icon": "dt-arrow-up-from-square",
     "title": "Jeu de la grue",
@@ -116,6 +135,16 @@ window.REGISTRY = [
       "#Séquence"
     ],
     "ref": "DÉ>CODAGE 3-4 · Activité 2",
+    "i18n": {
+      "de": {
+        "title": "Kranspiel",
+        "desc": "Programmiere den Kran, um Blöcke zu stapeln.",
+        "tags": [
+          "#Algorithmen",
+          "#Sequenz"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "3-4H",
@@ -591,8 +620,8 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "ext-alphawebappsmac",
-    "href": "alpha/webapps/machine_a_trier.html",
+    "id": "ext-webappsmac",
+    "href": "webapps/machine_a_trier.html",
     "dataLevel": "1-2H, 3-4H",
     "c1Badge": "1-2H (TNI) · 3-4H",
     "style": "--theme-start: #15803d; --theme-end: #166534;",
@@ -614,8 +643,8 @@ window.REGISTRY = [
     }
   },
   {
-    "id": "ext-alphawebappsjeu",
-    "href": "alpha/webapps/jeu_de_la_grue.html",
+    "id": "ext-webappsjeu",
+    "href": "webapps/jeu_de_la_grue.html",
     "dataLevel": "3-4H",
     "c1Badge": "3-4H",
     "style": "--theme-start: #f6d365; --theme-end: #fda085;",
@@ -1450,8 +1479,7 @@ window.REGISTRY = [
   },
   {
     "id": "tool-sim-dyslexie",
-    "href": "alpha/webapps/teacher/sim_dyslexie.html",
-    "isAlpha": true,
+    "href": "webapps/teacher/sim_dyslexie.html",
     "isTeacher": true,
     "dataLevel": null,
     "icon": "dt-eye",
@@ -1462,7 +1490,17 @@ window.REGISTRY = [
       "#Sensibilisation",
       "#DYS"
     ],
-    "ref": "Alpha",
+    "i18n": {
+      "de": {
+        "title": "DYS-Adapter & Simulator",
+        "desc": "Textanpassung für Schülerinnen und Schüler mit LRS/DYS und immersiver Simulator.",
+        "tags": [
+          "#Werkzeug",
+          "#Sensibilisierung",
+          "#DYS"
+        ]
+      }
+    },
     "badges": [
       {
         "text": "Outil",

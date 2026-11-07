@@ -71,7 +71,7 @@ def test_tirage_reset(page: Page):
     expect(page.locator(".c2-toast")).to_be_visible()
 
 def test_sim_dyslexie_reset(page: Page):
-    page.goto("http://localhost:8000/alpha/webapps/teacher/sim_dyslexie.html")
+    page.goto("http://localhost:8000/webapps/teacher/sim_dyslexie.html")
     page.click(".tab-btn[data-tab='simulation']")
     page.locator("#inputSeverity").fill("0.3")
     page.locator("#inputSeverity").dispatch_event("input")
