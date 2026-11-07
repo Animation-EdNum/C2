@@ -32,17 +32,17 @@
                 if (urlLang === 'de' || urlLang === 'de-CH') {
                     try {
                         localStorage.setItem(STORAGE_KEY_LANG, 'de');
-                    } catch (e) {}
+                    } catch (e) { }
                     return 'de';
                 }
                 if (urlLang === 'fr' || urlLang === 'fr-CH') {
                     try {
                         localStorage.setItem(STORAGE_KEY_LANG, 'fr');
-                    } catch (e) {}
+                    } catch (e) { }
                     return 'fr';
                 }
             }
-        } catch (e) {}
+        } catch (e) { }
 
         // 2. Persistance localStorage
         try {
@@ -50,7 +50,7 @@
             if (savedLang === 'de' || savedLang === 'fr') {
                 return savedLang;
             }
-        } catch (e) {}
+        } catch (e) { }
 
         // 3. Préférence navigateur
         try {
@@ -58,7 +58,7 @@
             if (navLang.toLowerCase().startsWith('de')) {
                 return 'de';
             }
-        } catch (e) {}
+        } catch (e) { }
 
         // 4. Par défaut : français
         return 'fr';
@@ -112,7 +112,29 @@
                 'simulateur_automate.hide_cmds': 'Masquer commandes',
                 'simulateur_automate.speed_fast': 'Rapide',
                 'simulateur_automate.speed_slow': 'Lent',
-                'simulateur_automate.instruction_read': "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>"
+                'simulateur_automate.instruction_read': "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>",
+
+                // Machine à trier
+                'machine_a_trier.toast_correct': 'Bravo !',
+                'machine_a_trier.toast_wrong': 'Oups, essaie un autre bac !',
+                'machine_a_trier.toast_fell': 'Objet tombé !',
+
+                // Jeu de la grue
+                'jeu_de_la_grue.toast_left_wall': 'Mur à gauche !',
+                'jeu_de_la_grue.toast_right_wall': 'Mur à droite !',
+                'jeu_de_la_grue.toast_action_unknown': 'Action inconnue.',
+                'jeu_de_la_grue.toast_nothing_to_grab': 'Rien à attraper !',
+                'jeu_de_la_grue.toast_column_full': 'Colonne pleine !',
+                'jeu_de_la_grue.toast_not_dropped': 'Objet non posé !',
+                'jeu_de_la_grue.toast_incorrect_layout': 'Disposition incorrecte !',
+                'jeu_de_la_grue.toast_success': 'Bien joué ! Exercice réussi.',
+                'jeu_de_la_grue.onboarding_hint': 'Clique pour ajouter une commande !',
+
+                // Adaptateur DYS
+                'sim_dyslexie.results_title': 'Adaptateur de texte pour fiches DYS',
+                'sim_dyslexie.results_subtitle': 'Générez des consignes ou lectures adaptées prêtes pour la classe',
+                'sim_dyslexie.toast_copied': "Lien copié avec votre profil d'aménagement !",
+                'sim_dyslexie.toast_profile_saved': 'Profil enregistré avec succès !'
             },
             de: {}
         },
@@ -139,7 +161,7 @@
             const targetLocale = (newLocale === 'de' || newLocale === 'de-CH') ? 'de' : 'fr';
             try {
                 localStorage.setItem(STORAGE_KEY_LANG, targetLocale);
-            } catch (e) {}
+            } catch (e) { }
             this.locale = targetLocale;
 
             if (typeof document !== 'undefined' && document.documentElement) {
@@ -356,7 +378,7 @@
                 const el = attrNodes[i];
                 const attrSpec = el.getAttribute('data-i18n-attr');
                 if (attrSpec) {
-                    const pairs = attrSpec.split(';');
+                    const pairs = attrSpec.split(/[;,]/);
                     for (let j = 0; j < pairs.length; j++) {
                         const parts = pairs[j].split(':');
                         if (parts.length === 2) {
@@ -446,7 +468,7 @@
                 if (!showToggle && typeof localStorage !== 'undefined') {
                     showToggle = localStorage.getItem('show_lang_btn') === '1';
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             const existingBtn = document.getElementById('lang-toggle-btn');
             if (existingBtn) {

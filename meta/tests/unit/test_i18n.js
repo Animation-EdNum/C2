@@ -114,6 +114,20 @@ test('i18n.js - Translation and Interpolation', async (t) => {
         assert.strictEqual(winDe.I18N.t('simulateur_automate.toast_finished'), 'Ausführung beendet!');
         assert.strictEqual(winDe.I18N.getLang(), 'de');
     });
+
+    await t.test('translates machine_a_trier and jeu_de_la_grue toasts correctly in fr and de without raw key leaks', () => {
+        const winFr = setupI18nDOM({ url: 'http://localhost/?lang=fr' });
+        assert.strictEqual(winFr.I18N.t('machine_a_trier.toast_correct', 'Bravo !'), 'Bravo !');
+        assert.strictEqual(winFr.I18N.t('machine_a_trier.toast_correct'), 'Bravo !');
+        assert.strictEqual(winFr.I18N.t('jeu_de_la_grue.toast_success', 'Bien joué ! Exercice réussi.'), 'Bien joué ! Exercice réussi.');
+        assert.strictEqual(winFr.I18N.t('jeu_de_la_grue.toast_left_wall'), 'Mur à gauche !');
+
+        const winDe = setupI18nDOM({ url: 'http://localhost/?lang=de' });
+        assert.strictEqual(winDe.I18N.t('machine_a_trier.toast_correct', 'Bravo !'), 'Bravo! Richtig einsortiert!');
+        assert.strictEqual(winDe.I18N.t('machine_a_trier.toast_correct'), 'Bravo! Richtig einsortiert!');
+        assert.strictEqual(winDe.I18N.t('jeu_de_la_grue.toast_success', 'Bien joué ! Exercice réussi.'), 'Gut gemacht! Ziel erreicht!');
+        assert.strictEqual(winDe.I18N.t('jeu_de_la_grue.toast_left_wall'), 'Mauer links!');
+    });
 });
 
 test('i18n.js - DOM Application', async (t) => {
