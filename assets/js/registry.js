@@ -1092,7 +1092,7 @@ window.REGISTRY = [
     "icon": "sparkles",
     "iconStyle": null,
     "title": "Totem",
-    "desc": "Quel animal totem es-tu ? Un test ludique et surprenant pour aiguiser son esprit critique face au web.",
+    "desc": "Un test ludique pour aiguiser son esprit critique face aux pièges du web.",
     "tags": [
       "#EspritCritique",
       "#ÉducationAuxMédias",
@@ -1113,7 +1113,7 @@ window.REGISTRY = [
       "de": {
         "title": "Totem",
         "href": "https://guillaumetschupp.com/outils/totem/app.html#de",
-        "desc": "Welches Totemtier bist du? Ein spielerischer und überraschender Test zur Schärfung des kritischen Denkens im Web.",
+        "desc": "Ein spielerischer Test zur Schärfung des kritischen Denkens im Web.",
         "tags": [
           "#KritischesDenken",
           "#Medienbildung",
