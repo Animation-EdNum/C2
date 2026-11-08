@@ -266,7 +266,7 @@
 
             const parser = new winObj.DOMParser();
             const parsedDoc = parser.parseFromString(htmlString, 'text/html');
-            const allowedTags = new Set(['STRONG', 'EM', 'B', 'I', 'U', 'SPAN', 'BR', 'P', 'A', 'CODE', 'KBD', 'SMALL', 'SUB', 'SUP']);
+            const allowedTags = new Set(['STRONG', 'EM', 'B', 'I', 'U', 'SPAN', 'BR', 'P', 'A', 'CODE', 'KBD', 'SMALL', 'SUB', 'SUP', 'UL', 'LI']);
             const dangerousTags = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'SVG', 'MATH']);
 
             function sanitizeNode(node) {
@@ -539,7 +539,7 @@
             }
 
             // Cas B : Barre d'actions directe (.action-buttons, comme sur index.html et indexC1.html)
-            const actionButtons = document.querySelector('.action-buttons');
+            const actionButtons = document.querySelector('.action-buttons, .header-actions');
             if (actionButtons) {
                 const themeBtn = document.getElementById('theme-toggle-btn');
                 const langBtn = document.createElement('button');

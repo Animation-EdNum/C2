@@ -197,6 +197,20 @@ test('i18n.js - DOM Application', async (t) => {
         assert.strictEqual(link.hasAttribute('href'), false, 'javascript: href stripped');
         assert.strictEqual(link.hasAttribute('onclick'), false, 'onclick attribute stripped');
     });
+
+    await t.test('translates legal pages correctly in de mode', () => {
+        const merciHtml = fs.readFileSync('merci.html', 'utf8');
+        const win = setupI18nDOM({ html: merciHtml, url: 'http://localhost/?lang=de' });
+        const doc = win.document;
+        win.I18N.apply(doc);
+
+        const title = doc.querySelector('h1[data-i18n="merci.title"]');
+        assert.ok(title, 'Title element found');
+        assert.strictEqual(title.textContent, 'Danksagung');
+
+        const heroH2 = doc.querySelector('h2[data-i18n="merci.hero_title"]');
+        assert.strictEqual(heroH2.textContent, 'Die Wand der Heldinnen und Helden');
+    });
 });
 
 test('i18n.js - Dictionary completeness audit', () => {
@@ -225,7 +239,13 @@ test('i18n.js - Dictionary completeness audit', () => {
         'modal_export.export_btn',
         'url_params.share_title',
         'portal.title',
-        'binaire_codage.title'
+        'binaire_codage.title',
+        'cgu.page_title',
+        'mentions.page_title',
+        'confidentialite.page_title',
+        'merci.page_title',
+        'common.back',
+        'legal.nav_aria'
     ];
 
     for (const key of requiredKeys) {
