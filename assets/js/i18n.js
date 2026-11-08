@@ -130,6 +130,10 @@
                 'jeu_de_la_grue.toast_success': 'Bien joué ! Exercice réussi.',
                 'jeu_de_la_grue.onboarding_hint': 'Clique pour ajouter une commande !',
 
+                                // Navigation & boutons communs
+                'common.home': "Retour à l'accueil",
+                'common.restart': "Recommencer",
+                'dactylo.toggle_keyboard_title': "Afficher ou masquer l'aide clavier",
                 // Adaptateur DYS
                 'sim_dyslexie.results_title': 'Adaptateur de texte pour fiches DYS',
                 'sim_dyslexie.results_subtitle': 'Générez des consignes ou lectures adaptées prêtes pour la classe',

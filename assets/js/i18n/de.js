@@ -15,6 +15,7 @@
     const deDict = {
         // --- ALLGEMEINE NAVIGATION & EN-TÊTE ---
         'common.skip_link': 'Zum Hauptinhalt springen',
+        'common.home': 'Zurück zur Startseite',
         'common.back_home': 'Zurück zur Startseite',
         'common.back_teachers': 'Zurück zum Lehrpersonenbereich',
         'common.options': 'Optionen',
@@ -27,6 +28,7 @@
         'common.copy_error': 'Fehler beim Kopieren',
         'common.download': 'Herunterladen',
         'common.reset': 'Zurücksetzen',
+        'common.restart': 'Neu starten',
         'common.loading': 'Wird geladen…',
         'common.error': 'Fehler',
         'common.success': 'Erfolg',
@@ -644,6 +646,7 @@
         'sim_dyslexie.save_profile': 'Als neues Profil speichern',
         'sim_dyslexie.toast_copied': 'Text in die Zwischenablage kopiert!',
         'sim_dyslexie.toast_profile_saved': 'Profil erfolgreich gespeichert!',
+        'sim_dyslexie.no_universal_setting': 'Es gibt keine Universaleinstellung: Testen Sie die Hilfen mit der Schülerin oder dem Schüler und behalten Sie diejenigen, die wirklich nützlich sind.',
         'sim_dyslexie.default_text': 'Das Lesen ist ein komplexer Prozess. Für viele Kinder erfordert das Erkennen von Buchstaben und das Zusammensetzen von Wörtern enorme Anstrengung. Eine angepasste Typografie, grosszügige Abstände und kontrastarme Hintergründe erleichtern das Lesen und fördern das Textverständnis.',
 
         // Tape-Texte
@@ -658,6 +661,16 @@
         'dactylo.unit_wpm': 'WPM',
         'dactylo.unit_cpm': 'APM',
         'dactylo.toggle_keyboard': 'Tastatur',
+        'dactylo.toggle_keyboard_title': 'Tastaturhilfe ein- oder ausblenden',
+        'dactylo.footer_levels': 'Erfolgreiche Level',
+        'dactylo.footer_best': 'Max. Rekord 🔥',
+        'dactylo.results_subtitle': 'Du hast dieses Level erfolgreich abgeschlossen.',
+        'dactylo.keys_to_practice': 'Zu übende Tasten:',
+        'dactylo.modal_subtitle': 'Tastatur-Training · Schweizer Tastatur (QWERTZ)',
+        'dactylo.levels_completed': 'Erfolgreiche Level',
+        'dactylo.avg_speed': 'Durchschnittstempo',
+        'dactylo.avg_accuracy': 'Durchschnittliche Genauigkeit',
+
         'dactylo.keyboard_hint': 'Tippe auf deiner physischen Tastatur. Bei Fehlern leuchtet die gesuchte Taste auf.',
         'dactylo.btn_scores': 'Meine Rekorde',
         'dactylo.results_title': 'Ergebnis',
