@@ -561,7 +561,9 @@
         // Jeu de la grue
         'jeu_de_la_grue.title': 'Kranspiel',
         'jeu_de_la_grue.desc': 'Programmiere den Kran, um Blöcke zu stapeln.',
-        'jeu_de_la_grue.badge_level': '3.-4. Primar',
+        'jeu_de_la_grue.badge_level': '1.-2. & 3.-4. Primar',
+        'jeu_de_la_grue.badge_level_1_2h': '1.-2. Primar',
+        'jeu_de_la_grue.badge_level_3_4h': '3.-4. Primar',
         'jeu_de_la_grue.instruction': 'Bewege den Kran, um Objekte zu greifen und zu stapeln!',
         'jeu_de_la_grue.rule_summary': '📖 Wie funktioniert es? (zum Öffnen klicken)',
         'jeu_de_la_grue.rule_goal_title': 'Ziel des Spiels:',

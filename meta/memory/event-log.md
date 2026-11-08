@@ -90,3 +90,4 @@
 - **[2026-11-07]** [Promotion & i18n] Promoted 4 webapps to production (DYS, Tape-Texte, Machine à trier, Jeu de la grue) with full de-CH localization and Swiss QWERTZ levels.
 - **[2026-11-08]** [Portal] Reordered webapps by pedagogical grade progression (1-4H to 9-11CO) and added Totem external card in FR & DE.
 - **[2026-11-08]** [Portal] Enabled alpha-search reveal for hidden external sites (Vikidia, Monkeytype, AutoDraw, GeoGebra) and added Le Dico des Écoles & Dico API.
+- **[2026-11-08]** [Pedagogy/Cards] Updated DÉ>CODAGE card references for Machine à trier and Jeu de la grue, and added grey 1-2H pastille to Jeu de la grue.

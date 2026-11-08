@@ -10,7 +10,7 @@ window.REGISTRY = [
       "#Algorithmique",
       "#Tri"
     ],
-    "ref": "DÉ>CODAGE 1-2 · Activité 3",
+    "ref": "DÉ>CODAGE 1-2 · Activité 3 — La machine à trier & DÉ>CODAGE 3-4 · Activité 3 — La machine à trier",
     "i18n": {
       "de": {
         "title": "Sortiermaschine",
@@ -18,7 +18,8 @@ window.REGISTRY = [
         "tags": [
           "#Algorithmen",
           "#Sortieren"
-        ]
+        ],
+        "ref": "DÉ>CODAGE 1-2 · Aktivität 3 — Die Sortiermaschine & DÉ>CODAGE 3-4 · Aktivität 3 — Die Sortiermaschine"
       }
     },
     "badges": [
@@ -38,7 +39,7 @@ window.REGISTRY = [
   {
     "id": "app-jeu-grue",
     "href": "webapps/jeu_de_la_grue.html",
-    "dataLevel": "3-4H",
+    "dataLevel": "1-2H, 3-4H",
     "icon": "dt-arrow-up-from-square",
     "title": "Jeu de la grue",
     "desc": "Programme la grue pour empiler des blocs.",
@@ -46,7 +47,7 @@ window.REGISTRY = [
       "#Algorithmique",
       "#Séquence"
     ],
-    "ref": "DÉ>CODAGE 3-4 · Activité 2",
+    "ref": "DÉ>CODAGE 1-2 · Activité 2 — Le jeu de la grue & DÉ>CODAGE 3-4 · Activité 2 — Le jeu de la grue",
     "i18n": {
       "de": {
         "title": "Kranspiel",
@@ -54,10 +55,25 @@ window.REGISTRY = [
         "tags": [
           "#Algorithmen",
           "#Sequenz"
+        ],
+        "ref": "DÉ>CODAGE 1-2 · Aktivität 2 — Das Kranspiel & DÉ>CODAGE 3-4 · Aktivität 2 — Das Kranspiel",
+        "badges": [
+          {
+            "text": "1.-2. Primar",
+            "grey": true
+          },
+          {
+            "text": "3.-4. Primar",
+            "grey": false
+          }
         ]
       }
     },
     "badges": [
+      {
+        "text": "1-2H",
+        "grey": true
+      },
       {
         "text": "3-4H",
         "grey": false
@@ -816,8 +832,8 @@ window.REGISTRY = [
   {
     "id": "ext-webappsjeu",
     "href": "webapps/jeu_de_la_grue.html",
-    "dataLevel": "3-4H",
-    "c1Badge": "3-4H",
+    "dataLevel": "1-2H, 3-4H",
+    "c1Badge": "1-2H · 3-4H",
     "style": "--theme-start: #f6d365; --theme-end: #fda085;",
     "title": "Jeu de la grue",
     "c1Icon": "dt-arrow-up-from-square",
@@ -832,7 +848,7 @@ window.REGISTRY = [
     "i18n": {
       "de": {
         "title": "Kranspiel",
-        "c1Badge": "3.-4. Primar"
+        "c1Badge": "1.-2. · 3.-4. Primar"
       }
     }
   },

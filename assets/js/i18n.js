@@ -120,6 +120,9 @@
                 'machine_a_trier.toast_fell': 'Objet tombé !',
 
                 // Jeu de la grue
+                'jeu_de_la_grue.badge_level': '1-2H & 3-4H',
+                'jeu_de_la_grue.badge_level_1_2h': '1-2H',
+                'jeu_de_la_grue.badge_level_3_4h': '3-4H',
                 'jeu_de_la_grue.toast_left_wall': 'Mur à gauche !',
                 'jeu_de_la_grue.toast_right_wall': 'Mur à droite !',
                 'jeu_de_la_grue.toast_action_unknown': 'Action inconnue.',

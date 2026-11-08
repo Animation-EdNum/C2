@@ -10,7 +10,7 @@
   - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
   - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
 - **Production Student Apps (`webapps/` - 10 apps, ordered by pedagogical level):**
-  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 3-4H), Simulateur Automate (3-4H, 5-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5-8H & 9-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-10CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H).
+  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 1-4H / 1-2H & 3-4H), Simulateur Automate (3-4H, 5-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5-8H & 9-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-10CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H).
 - **External Student Resources (`students_external` & `students_utilities`):**
   - Production: Totem (`ext-totem`, 7H-10CO), Qwant Junior (`ext-qwantjunior`, 4H-8H), ia-pedia (`ext-iapedia`, 5H-10CO), Le Dico des Ados (`ext-ledicodesados`, 5H-10CO), Scratch (`ext-scratch`, 7H-10CO).
   - Hidden resources (revealed via "alpha" search trigger): Dico API (`ext-dicoapi`, 3H-8H, inclusive phonetic dictionary), Le Dico des Écoles (`ext-ledicodesecoles`, 3H-10CO, phonetic dictionary), Vikidia (`ext-vikidia`, 5H-8H), Monkeytype (`ext-monkeytype`, 5H-8H), AutoDraw (`ext-autodraw`, 3H-8H), GeoGebra Classique (`ext-geogebra-students`, 7H-10CO).
