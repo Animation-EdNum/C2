@@ -24,6 +24,8 @@ function localizeBadgeText(text) {
         '9-10CO': '9.-10. OS',
         '9-11CO': '9.-11. OS',
         '10CO': '10. OS',
+        '5H-10CO': '5. Primar - 10. OS',
+        '7H-10CO': '7. Primar - 10. OS',
         '1-2H': '1.-2. Primar',
         '2-3H': '2.-3. Primar',
         '3-4H': '3.-4. Primar',
@@ -63,7 +65,9 @@ function localizeHref(href, isExternal) {
 
 function getLocalizedApp(app) {
     const isDe = window.I18N && window.I18N.locale === 'de';
-    const localizedHref = localizeHref(app.href, app.isExternal);
+    const localizedHref = (isDe && app.i18n && app.i18n.de && app.i18n.de.href)
+        ? app.i18n.de.href
+        : localizeHref(app.href, app.isExternal);
     if (!isDe || !app.i18n || !app.i18n.de) {
         return {
             ...app,
@@ -73,7 +77,7 @@ function getLocalizedApp(app) {
     const de = app.i18n.de;
     return {
         ...app,
-        href: localizedHref,
+        href: de.href || localizedHref,
         title: de.title || app.title,
         desc: de.desc !== undefined ? de.desc : app.desc,
         tags: de.tags || app.tags,
@@ -146,6 +150,7 @@ function renderExternalCard(app) {
                         <i data-fa="arrow-up-right-from-square" class="external-link-icon" aria-hidden="true"></i>
                     </div>
                     ${localized.desc ? `<div class="card-desc">${localized.desc}</div>` : ''}
+                    ${localized.tags && localized.tags.length ? `<span class="tag-search-hidden" style="display:none;" aria-hidden="true">${localized.tags.join(' ')}</span>` : ''}
                 </a>`;
 }
 

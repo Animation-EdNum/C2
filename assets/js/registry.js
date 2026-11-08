@@ -1,69 +1,5 @@
 window.REGISTRY = [
   {
-    "id": "app-tri-insertion",
-    "href": "alpha/webapps/tri_insertion.html",
-    "isAlpha": true,
-    "dataLevel": "10CO",
-    "icon": "cards",
-    "title": "Une chose après l'autre",
-    "desc": "Trie les cartes de Jass en suivant l'organigramme du tri par insertion.",
-    "tags": [
-      "#Algorithmique",
-      "#Tri",
-      "#Cartes"
-    ],
-    "ref": "Connected 4 · 1C | Une chose après l'autre",
-    "badges": [
-      {
-        "text": "10CO",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-dactylo",
-    "href": "webapps/dactylo.html",
-    "dataLevel": "5-8H, 9-10CO",
-    "icon": "keyboard",
-    "title": "Tape-Texte",
-    "desc": "Entraîne-toi à la saisie de texte rapide et précise sur le clavier QWERTZ suisse romand.",
-    "tags": [
-      "#Clavier",
-      "#Dactylographie",
-      "#Touche",
-      "#Frappe"
-    ],
-    "ref": "EN 23 · Usages — Saisie d'un texte",
-    "i18n": {
-      "de": {
-        "title": "Tastatur-Training",
-        "desc": "Übe das schnelle und genaue Schreiben auf der Schweizer Tastatur.",
-        "tags": [
-          "#Tastatur",
-          "#Tippen",
-          "#Tasten",
-          "#Eingabe"
-        ]
-      }
-    },
-    "badges": [
-      {
-        "text": "5-8H",
-        "grey": false
-      },
-      {
-        "text": "9-11CO",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "app-machine-trier",
     "href": "webapps/machine_a_trier.html",
     "dataLevel": "1-2H, 3-4H",
@@ -92,30 +28,6 @@ window.REGISTRY = [
       },
       {
         "text": "3-4H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-apprendre-pseudocode",
-    "href": "alpha/webapps/apprendre_pseudocode.html",
-    "isAlpha": true,
-    "dataLevel": "9CO",
-    "icon": "dt-code",
-    "title": "Pseudo-code",
-    "desc": "Apprends à écrire tes premiers algorithmes pas à pas.",
-    "tags": [
-      "#Algorithmique",
-      "#Programmation",
-      "#Maths"
-    ],
-    "ref": "Connected 3 · 2C | Un programme adéquat",
-    "badges": [
-      {
-        "text": "9CO",
         "grey": false
       }
     ],
@@ -156,76 +68,6 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "app-machine-chiffrer",
-    "href": "alpha/webapps/machine_a_chiffrer.html",
-    "isAlpha": true,
-    "dataLevel": "7-8H",
-    "icon": "dt-key",
-    "title": "Machine à chiffrer",
-    "desc": "Code et décode des messages avec le chiffre de César.",
-    "tags": [
-      "#Cryptographie",
-      "#Sécurité"
-    ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
-    "badges": [
-      {
-        "text": "7-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-detective-ia",
-    "href": "alpha/webapps/detective_ia.html",
-    "isAlpha": true,
-    "dataLevel": "7-8H",
-    "icon": "dt-magnifying-glass",
-    "title": "Détective IA",
-    "desc": "Entraîne une IA à classer des objets ou résous des énigmes avec des arbres de décision.",
-    "tags": [
-      "#Intelligence Artificielle",
-      "#Classification",
-      "#Arbre de décision"
-    ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
-    "badges": [
-      {
-        "text": "7-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-reseau-tri",
-    "href": "alpha/webapps/reseau_de_tri.html",
-    "isAlpha": true,
-    "dataLevel": "5-6H",
-    "icon": "dt-shuffle",
-    "title": "Réseau de tri",
-    "desc": "Comprends comment les ordinateurs trient les nombres.",
-    "tags": [
-      "#Algorithmique",
-      "#Tri"
-    ],
-    "ref": "DÉ>CODAGE 5-6 · Alpha",
-    "badges": [
-      {
-        "text": "5-6H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "app-coffre-fort",
     "href": "alpha/webapps/coffre_fort.html",
     "isAlpha": true,
@@ -246,54 +88,6 @@ window.REGISTRY = [
       },
       {
         "text": "5-6H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-compresseur-magique",
-    "href": "alpha/webapps/compresseur_magique.html",
-    "isAlpha": true,
-    "dataLevel": "7-8H",
-    "icon": "dt-file-zipper",
-    "title": "Compresseur magique",
-    "desc": "Découvre comment réduire la taille d'une image grâce à la compression RLE.",
-    "tags": [
-      "#Codage",
-      "#Binaire",
-      "#Maths"
-    ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
-    "badges": [
-      {
-        "text": "7-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-dresseur-neurones",
-    "href": "alpha/webapps/dresseur_neurones.html",
-    "isAlpha": true,
-    "dataLevel": "7-8H",
-    "icon": "dt-brain-circuit",
-    "title": "Dresseur de neurones",
-    "desc": "Entraîne une IA à trier des fruits et découvre le biais algorithmique.",
-    "tags": [
-      "#Intelligence Artificielle",
-      "#Biais",
-      "#Classification"
-    ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
-    "badges": [
-      {
-        "text": "7-8H",
         "grey": false
       }
     ],
@@ -368,6 +162,69 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "5-6H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-reseau-tri",
+    "href": "alpha/webapps/reseau_de_tri.html",
+    "isAlpha": true,
+    "dataLevel": "5-6H",
+    "icon": "dt-shuffle",
+    "title": "Réseau de tri",
+    "desc": "Comprends comment les ordinateurs trient les nombres.",
+    "tags": [
+      "#Algorithmique",
+      "#Tri"
+    ],
+    "ref": "DÉ>CODAGE 5-6 · Alpha",
+    "badges": [
+      {
+        "text": "5-6H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-dactylo",
+    "href": "webapps/dactylo.html",
+    "dataLevel": "5-8H, 9-10CO",
+    "icon": "keyboard",
+    "title": "Tape-Texte",
+    "desc": "Entraîne-toi à la saisie de texte rapide et précise sur le clavier QWERTZ suisse romand.",
+    "tags": [
+      "#Clavier",
+      "#Dactylographie",
+      "#Touche",
+      "#Frappe"
+    ],
+    "ref": "EN 23 · Usages — Saisie d'un texte",
+    "i18n": {
+      "de": {
+        "title": "Tastatur-Training",
+        "desc": "Übe das schnelle und genaue Schreiben auf der Schweizer Tastatur.",
+        "tags": [
+          "#Tastatur",
+          "#Tippen",
+          "#Tasten",
+          "#Eingabe"
+        ]
+      }
+    },
+    "badges": [
+      {
+        "text": "5-8H",
+        "grey": false
+      },
+      {
+        "text": "9-11CO",
         "grey": false
       }
     ],
@@ -552,6 +409,293 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-machine-chiffrer",
+    "href": "alpha/webapps/machine_a_chiffrer.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "dt-key",
+    "title": "Machine à chiffrer",
+    "desc": "Code et décode des messages avec le chiffre de César.",
+    "tags": [
+      "#Cryptographie",
+      "#Sécurité"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-detective-ia",
+    "href": "alpha/webapps/detective_ia.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "dt-magnifying-glass",
+    "title": "Détective IA",
+    "desc": "Entraîne une IA à classer des objets ou résous des énigmes avec des arbres de décision.",
+    "tags": [
+      "#Intelligence Artificielle",
+      "#Classification",
+      "#Arbre de décision"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-compresseur-magique",
+    "href": "alpha/webapps/compresseur_magique.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "dt-file-zipper",
+    "title": "Compresseur magique",
+    "desc": "Découvre comment réduire la taille d'une image grâce à la compression RLE.",
+    "tags": [
+      "#Codage",
+      "#Binaire",
+      "#Maths"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-dresseur-neurones",
+    "href": "alpha/webapps/dresseur_neurones.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "dt-brain-circuit",
+    "title": "Dresseur de neurones",
+    "desc": "Entraîne une IA à trier des fruits et découvre le biais algorithmique.",
+    "tags": [
+      "#Intelligence Artificielle",
+      "#Biais",
+      "#Classification"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-apprendre-pseudocode",
+    "href": "alpha/webapps/apprendre_pseudocode.html",
+    "isAlpha": true,
+    "dataLevel": "9CO",
+    "icon": "dt-code",
+    "title": "Pseudo-code",
+    "desc": "Apprends à écrire tes premiers algorithmes pas à pas.",
+    "tags": [
+      "#Algorithmique",
+      "#Programmation",
+      "#Maths"
+    ],
+    "ref": "Connected 3 · 2C | Un programme adéquat",
+    "badges": [
+      {
+        "text": "9CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-tri-insertion",
+    "href": "alpha/webapps/tri_insertion.html",
+    "isAlpha": true,
+    "dataLevel": "10CO",
+    "icon": "cards",
+    "title": "Une chose après l'autre",
+    "desc": "Trie les cartes de Jass en suivant l'organigramme du tri par insertion.",
+    "tags": [
+      "#Algorithmique",
+      "#Tri",
+      "#Cartes"
+    ],
+    "ref": "Connected 4 · 1C | Une chose après l'autre",
+    "badges": [
+      {
+        "text": "10CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "tool-tirage",
+    "href": "webapps/teacher/tirage.html",
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "dt-dice",
+    "title": "Tirage au sort",
+    "desc": "Outil pour choisir au hasard un élève de la classe.",
+    "tags": [
+      "#Outil",
+      "#Gestion",
+      "#Classe"
+    ],
+    "i18n": {
+      "de": {
+        "title": "Zufallsauslosung",
+        "desc": "Wähle Schülerinnen und Schüler oder Gruppen per Zufall aus.",
+        "tags": [
+          "#Werkzeug",
+          "#Klassenführung",
+          "#Klasse"
+        ]
+      }
+    },
+    "badges": [
+      {
+        "text": "Gestion de classe",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "tool-roue-chance",
+    "href": "webapps/teacher/roue_de_la_chance.html",
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "bullseye",
+    "title": "Roue de la chance",
+    "desc": "Roue aléatoire pour tirer au sort les responsabilités, privilèges, questions et défis de la classe.",
+    "tags": [
+      "#Outil",
+      "#Classe",
+      "#Animation",
+      "#Tirage"
+    ],
+    "ref": null,
+    "i18n": {
+      "de": {
+        "title": "Glücksrad",
+        "desc": "Interaktives Glücksrad für faire Zufallsauswahlen und Animationen.",
+        "tags": [
+          "#Werkzeug",
+          "#Animation",
+          "#Klasse"
+        ]
+      }
+    },
+    "badges": [
+      {
+        "text": "Gestion de classe",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "tool-time-timer",
+    "href": "webapps/teacher/time_timer.html",
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "timer",
+    "title": "Minuteur visuel",
+    "desc": "Compte à rebours visuel (Time Timer®) pour gérer le temps en classe.",
+    "tags": [
+      "#Outil",
+      "#Gestion",
+      "#Classe",
+      "#Temps"
+    ],
+    "ref": null,
+    "i18n": {
+      "de": {
+        "title": "Visueller Timer",
+        "desc": "Visueller Countdown-Timer für Zeitmanagement und Fokus im Unterricht.",
+        "tags": [
+          "#Werkzeug",
+          "#Klassenführung",
+          "#Klasse",
+          "#Zeit"
+        ]
+      }
+    },
+    "badges": [
+      {
+        "text": "Gestion de classe",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "tool-qrcode",
+    "href": "webapps/teacher/qrcode.html",
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "qrcode",
+    "title": "Créateur de QR codes",
+    "desc": "Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables).",
+    "tags": [
+      "#Outil",
+      "#QR",
+      "#Classe",
+      "#Partage"
+    ],
+    "ref": null,
+    "i18n": {
+      "de": {
+        "title": "QR-Code-Ersteller",
+        "desc": "Schneller Generator für unterrichtstaugliche QR-Codes (Links, Texte, Druckblätter).",
+        "tags": [
+          "#Werkzeug",
+          "#QR",
+          "#Klasse",
+          "#Teilen"
+        ]
+      }
+    },
+    "badges": [
+      {
+        "text": "Outil",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "tool-bareme",
     "href": "webapps/teacher/bareme.html",
     "isTeacher": true,
@@ -586,32 +730,59 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "tool-tirage",
-    "href": "webapps/teacher/tirage.html",
+    "id": "tool-sim-dyslexie",
+    "href": "webapps/teacher/sim_dyslexie.html",
     "isTeacher": true,
     "dataLevel": null,
-    "icon": "dt-dice",
-    "title": "Tirage au sort",
-    "desc": "Outil pour choisir au hasard un élève de la classe.",
+    "icon": "dt-eye",
+    "title": "Adaptateur & Simulateur DYS",
+    "desc": "Adaptateur de textes pour élèves DYS et simulateur immersif.",
     "tags": [
       "#Outil",
-      "#Gestion",
-      "#Classe"
+      "#Sensibilisation",
+      "#DYS"
     ],
     "i18n": {
       "de": {
-        "title": "Zufallsauslosung",
-        "desc": "Wähle Schülerinnen und Schüler oder Gruppen per Zufall aus.",
+        "title": "DYS-Adapter & Simulator",
+        "desc": "Textanpassung für Schülerinnen und Schüler mit LRS/DYS und immersiver Simulator.",
         "tags": [
           "#Werkzeug",
-          "#Klassenführung",
-          "#Klasse"
+          "#Sensibilisierung",
+          "#DYS"
         ]
       }
     },
     "badges": [
       {
-        "text": "Gestion de classe",
+        "text": "Outil",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "tool-anonymiseur",
+    "href": "alpha/webapps/teacher/anonymiseur.html",
+    "isAlpha": true,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "user-shield",
+    "title": "Anonymiseur",
+    "desc": "Anonymise et pseudonymise vos textes et listes d'élèves 100% localement avant de les partager ou d'utiliser une IA.",
+    "tags": [
+      "#Outil",
+      "#Protection",
+      "#Données",
+      "#IA",
+      "#Anonymisation"
+    ],
+    "ref": "Alpha",
+    "badges": [
+      {
+        "text": "Protection des données",
         "grey": false
       }
     ],
@@ -689,24 +860,25 @@ window.REGISTRY = [
     }
   },
   {
-    "id": "ext-scratch",
-    "href": "https://scratch.mit.edu/projects/editor/",
+    "id": "ext-qwantjunior",
+    "href": "https://www.qwantjunior.com/",
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "7H-10CO",
-    "icon": "block-quote",
+    "dataLevel": "4H-8H",
+    "icon": "globe",
     "iconStyle": null,
-    "title": "Scratch",
-    "desc": "Une plateforme pour créer des histoires interactives, des jeux et des animations.",
+    "title": "Qwant Junior",
+    "desc": "Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.",
     "tags": [
-      "#Code",
-      "#Création"
+      "#Recherche",
+      "#Moteur",
+      "#Sécurité"
     ],
-    "ref": "DÉ&gt;CODAGE 7-8 · Scénario 2 et Scénario 7",
+    "ref": null,
     "badges": [
       {
-        "text": "7H-10CO",
+        "text": "4H-8H",
         "grey": false
       }
     ],
@@ -715,13 +887,87 @@ window.REGISTRY = [
     "inC1": false,
     "i18n": {
       "de": {
-        "title": "Scratch",
-        "desc": "Plattform zum Erstellen interaktiver Geschichten, Spiele und Animationen.",
+        "title": "Qwant Junior",
+        "desc": "Die sichere Suchmaschine für Kinder, die die Privatsphäre respektiert.",
         "tags": [
-          "#Programmieren",
-          "#Kreativität"
-        ],
-        "ref": "DÉ>CODAGE 7-8 · Szenarien 2 und 7"
+          "#Recherche",
+          "#Suchmaschine",
+          "#Sicherheit"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ext-vikidia",
+    "href": "https://fr.vikidia.org/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "5H-8H",
+    "icon": "globe",
+    "iconStyle": null,
+    "title": "Vikidia",
+    "desc": "Une encyclopédie en ligne libre et participative pour les jeunes lecteurs.",
+    "tags": [
+      "#Recherche",
+      "#Information"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "5H-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": false,
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Vikidia",
+        "desc": "Freie und partizipative Online-Enzyklopädie für Kinder und Jugendliche.",
+        "tags": [
+          "#Recherche",
+          "#Information"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ext-monkeytype",
+    "href": "https://monkeytype.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "dataLevel": "5H-8H",
+    "icon": "timer",
+    "iconStyle": null,
+    "title": "Monkeytype",
+    "desc": "Teste et améliore ta vitesse et ta précision de frappe au clavier.",
+    "tags": [
+      "#Clavier",
+      "#Vitesse",
+      "#Dactylographie"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "5H-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": false,
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Monkeytype",
+        "desc": "Teste und verbessere deine Tippgeschwindigkeit und Genauigkeit auf der Tastatur.",
+        "tags": [
+          "#Tastatur",
+          "#Geschwindigkeit",
+          "#Tippen"
+        ]
       }
     }
   },
@@ -800,61 +1046,24 @@ window.REGISTRY = [
     }
   },
   {
-    "id": "ext-vikidia",
-    "href": "https://fr.vikidia.org/",
+    "id": "ext-scratch",
+    "href": "https://scratch.mit.edu/projects/editor/",
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5H-8H",
-    "icon": "globe",
+    "dataLevel": "7H-10CO",
+    "icon": "block-quote",
     "iconStyle": null,
-    "title": "Vikidia",
-    "desc": "Une encyclopédie en ligne libre et participative pour les jeunes lecteurs.",
+    "title": "Scratch",
+    "desc": "Une plateforme pour créer des histoires interactives, des jeux et des animations.",
     "tags": [
-      "#Recherche",
-      "#Information"
+      "#Code",
+      "#Création"
     ],
-    "ref": null,
+    "ref": "DÉ&gt;CODAGE 7-8 · Scénario 2 et Scénario 7",
     "badges": [
       {
-        "text": "5H-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_external",
-    "inIndex": false,
-    "inC1": false,
-    "i18n": {
-      "de": {
-        "title": "Vikidia",
-        "desc": "Freie und partizipative Online-Enzyklopädie für Kinder und Jugendliche.",
-        "tags": [
-          "#Recherche",
-          "#Information"
-        ]
-      }
-    }
-  },
-  {
-    "id": "ext-qwantjunior",
-    "href": "https://www.qwantjunior.com/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "dataLevel": "4H-8H",
-    "icon": "globe",
-    "iconStyle": null,
-    "title": "Qwant Junior",
-    "desc": "Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.",
-    "tags": [
-      "#Recherche",
-      "#Moteur",
-      "#Sécurité"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "4H-8H",
+        "text": "7H-10CO",
         "grey": false
       }
     ],
@@ -863,50 +1072,59 @@ window.REGISTRY = [
     "inC1": false,
     "i18n": {
       "de": {
-        "title": "Qwant Junior",
-        "desc": "Die sichere Suchmaschine für Kinder, die die Privatsphäre respektiert.",
+        "title": "Scratch",
+        "desc": "Plattform zum Erstellen interaktiver Geschichten, Spiele und Animationen.",
         "tags": [
-          "#Recherche",
-          "#Suchmaschine",
-          "#Sicherheit"
-        ]
+          "#Programmieren",
+          "#Kreativität"
+        ],
+        "ref": "DÉ>CODAGE 7-8 · Szenarien 2 und 7"
       }
     }
   },
   {
-    "id": "ext-monkeytype",
-    "href": "https://monkeytype.com/",
+    "id": "ext-totem",
+    "href": "https://guillaumetschupp.com/outils/totem/app.html?lang=fr",
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
-    "dataLevel": "5H-8H",
-    "icon": "timer",
+    "dataLevel": "7H-10CO",
+    "icon": "sparkles",
     "iconStyle": null,
-    "title": "Monkeytype",
-    "desc": "Teste et améliore ta vitesse et ta précision de frappe au clavier.",
+    "title": "Totem",
+    "desc": "Quel animal totem es-tu ? Un test ludique et surprenant pour aiguiser son esprit critique face au web.",
     "tags": [
-      "#Clavier",
-      "#Vitesse",
-      "#Dactylographie"
+      "#EspritCritique",
+      "#ÉducationAuxMédias",
+      "#Sensibilisation",
+      "#Numérique"
     ],
     "ref": null,
     "badges": [
       {
-        "text": "5H-8H",
+        "text": "7H-10CO",
         "grey": false
       }
     ],
     "category": "students_external",
-    "inIndex": false,
+    "inIndex": true,
     "inC1": false,
     "i18n": {
       "de": {
-        "title": "Monkeytype",
-        "desc": "Teste und verbessere deine Tippgeschwindigkeit und Genauigkeit auf der Tastatur.",
+        "title": "Totem",
+        "href": "https://guillaumetschupp.com/outils/totem/app.html#de",
+        "desc": "Welches Totemtier bist du? Ein spielerischer und überraschender Test zur Schärfung des kritischen Denkens im Web.",
         "tags": [
-          "#Tastatur",
-          "#Geschwindigkeit",
-          "#Tippen"
+          "#KritischesDenken",
+          "#Medienbildung",
+          "#Datenschutz",
+          "#Privatsphäre"
+        ],
+        "badges": [
+          {
+            "text": "7. Primar - 10. OS",
+            "grey": false
+          }
         ]
       }
     }
@@ -985,6 +1203,82 @@ window.REGISTRY = [
         "tags": [
           "#Medien",
           "#Information"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ext-iletaitunehistoire",
+    "href": "https://www.iletaitunehistoire.com/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "3H-8H",
+    "icon": "book-open",
+    "iconStyle": null,
+    "title": "Il était une histoire",
+    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
+    "tags": [
+      "#Lecture",
+      "#Histoires",
+      "#Français"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-8H",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Il était une histoire",
+        "desc": "Digitale Bibliothek mit Geschichten, Fabeln, Gedichten und Liedern.",
+        "tags": [
+          "#Lesen",
+          "#Geschichten"
+        ]
+      }
+    }
+  },
+  {
+    "id": "ext-swisstopo",
+    "href": "https://map.geo.admin.ch/#/map?lang=fr&center=2604958.68,1118978.61&z=3.214&topic=ech&layers=ch.swisstopo.zeitreihen@year=1864,f;ch.bfs.gebaeude_wohnungs_register,f;ch.bav.haltestellen-oev,f;ch.swisstopo.swisstlm3d-wanderwege,f;ch.vbs.schiessanzeigen,f;ch.astra.wanderland-sperrungen_umleitungen,f&bgLayer=ch.swisstopo.pixelkarte-farbe",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isTeacher": true,
+    "dataLevel": "3H-10CO",
+    "icon": "map",
+    "iconStyle": null,
+    "title": "Swisstopo",
+    "desc": "Cartes nationales, vues aériennes et données géographiques officielles de la Suisse.",
+    "tags": [
+      "#Cartes",
+      "#Géographie",
+      "#Suisse"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-10CO",
+        "grey": false
+      }
+    ],
+    "category": "teachers_external",
+    "inIndex": true,
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Swisstopo",
+        "desc": "Karten und Geodaten der Schweiz interaktiv erkunden.",
+        "tags": [
+          "#Karten",
+          "#Geografie"
         ]
       }
     }
@@ -1252,82 +1546,6 @@ window.REGISTRY = [
     }
   },
   {
-    "id": "ext-iletaitunehistoire",
-    "href": "https://www.iletaitunehistoire.com/",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "isTeacher": true,
-    "dataLevel": "3H-8H",
-    "icon": "book-open",
-    "iconStyle": null,
-    "title": "Il était une histoire",
-    "desc": "Des histoires, contes, poésies et documentaires à lire et écouter en ligne.",
-    "tags": [
-      "#Lecture",
-      "#Histoires",
-      "#Français"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "3H-8H",
-        "grey": false
-      }
-    ],
-    "category": "teachers_external",
-    "inIndex": true,
-    "inC1": false,
-    "i18n": {
-      "de": {
-        "title": "Il était une histoire",
-        "desc": "Digitale Bibliothek mit Geschichten, Fabeln, Gedichten und Liedern.",
-        "tags": [
-          "#Lesen",
-          "#Geschichten"
-        ]
-      }
-    }
-  },
-  {
-    "id": "ext-swisstopo",
-    "href": "https://map.geo.admin.ch/#/map?lang=fr&center=2604958.68,1118978.61&z=3.214&topic=ech&layers=ch.swisstopo.zeitreihen@year=1864,f;ch.bfs.gebaeude_wohnungs_register,f;ch.bav.haltestellen-oev,f;ch.swisstopo.swisstlm3d-wanderwege,f;ch.vbs.schiessanzeigen,f;ch.astra.wanderland-sperrungen_umleitungen,f&bgLayer=ch.swisstopo.pixelkarte-farbe",
-    "target": "_blank",
-    "rel": "noopener noreferrer",
-    "isExternal": true,
-    "isTeacher": true,
-    "dataLevel": "3H-10CO",
-    "icon": "map",
-    "iconStyle": null,
-    "title": "Swisstopo",
-    "desc": "Cartes nationales, vues aériennes et données géographiques officielles de la Suisse.",
-    "tags": [
-      "#Cartes",
-      "#Géographie",
-      "#Suisse"
-    ],
-    "ref": null,
-    "badges": [
-      {
-        "text": "3H-10CO",
-        "grey": false
-      }
-    ],
-    "category": "teachers_external",
-    "inIndex": true,
-    "inC1": false,
-    "i18n": {
-      "de": {
-        "title": "Swisstopo",
-        "desc": "Karten und Geodaten der Schweiz interaktiv erkunden.",
-        "tags": [
-          "#Karten",
-          "#Geografie"
-        ]
-      }
-    }
-  },
-  {
     "id": "ext-autodraw",
     "href": "https://www.autodraw.com/",
     "target": "_blank",
@@ -1476,176 +1694,5 @@ window.REGISTRY = [
         ]
       }
     }
-  },
-  {
-    "id": "tool-sim-dyslexie",
-    "href": "webapps/teacher/sim_dyslexie.html",
-    "isTeacher": true,
-    "dataLevel": null,
-    "icon": "dt-eye",
-    "title": "Adaptateur & Simulateur DYS",
-    "desc": "Adaptateur de textes pour élèves DYS et simulateur immersif.",
-    "tags": [
-      "#Outil",
-      "#Sensibilisation",
-      "#DYS"
-    ],
-    "i18n": {
-      "de": {
-        "title": "DYS-Adapter & Simulator",
-        "desc": "Textanpassung für Schülerinnen und Schüler mit LRS/DYS und immersiver Simulator.",
-        "tags": [
-          "#Werkzeug",
-          "#Sensibilisierung",
-          "#DYS"
-        ]
-      }
-    },
-    "badges": [
-      {
-        "text": "Outil",
-        "grey": false
-      }
-    ],
-    "category": "teachers_tools",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "tool-anonymiseur",
-    "href": "alpha/webapps/teacher/anonymiseur.html",
-    "isAlpha": true,
-    "isTeacher": true,
-    "dataLevel": null,
-    "icon": "user-shield",
-    "title": "Anonymiseur",
-    "desc": "Anonymise et pseudonymise vos textes et listes d'élèves 100% localement avant de les partager ou d'utiliser une IA.",
-    "tags": [
-      "#Outil",
-      "#Protection",
-      "#Données",
-      "#IA",
-      "#Anonymisation"
-    ],
-    "ref": "Alpha",
-    "badges": [
-      {
-        "text": "Protection des données",
-        "grey": false
-      }
-    ],
-    "category": "teachers_tools",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "tool-roue-chance",
-    "href": "webapps/teacher/roue_de_la_chance.html",
-    "isTeacher": true,
-    "dataLevel": null,
-    "icon": "bullseye",
-    "title": "Roue de la chance",
-    "desc": "Roue aléatoire pour tirer au sort les responsabilités, privilèges, questions et défis de la classe.",
-    "tags": [
-      "#Outil",
-      "#Classe",
-      "#Animation",
-      "#Tirage"
-    ],
-    "ref": null,
-    "i18n": {
-      "de": {
-        "title": "Glücksrad",
-        "desc": "Interaktives Glücksrad für faire Zufallsauswahlen und Animationen.",
-        "tags": [
-          "#Werkzeug",
-          "#Animation",
-          "#Klasse"
-        ]
-      }
-    },
-    "badges": [
-      {
-        "text": "Gestion de classe",
-        "grey": false
-      }
-    ],
-    "category": "teachers_tools",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "tool-qrcode",
-    "href": "webapps/teacher/qrcode.html",
-    "isTeacher": true,
-    "dataLevel": null,
-    "icon": "qrcode",
-    "title": "Créateur de QR codes",
-    "desc": "Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables).",
-    "tags": [
-      "#Outil",
-      "#QR",
-      "#Classe",
-      "#Partage"
-    ],
-    "ref": null,
-    "i18n": {
-      "de": {
-        "title": "QR-Code-Ersteller",
-        "desc": "Schneller Generator für unterrichtstaugliche QR-Codes (Links, Texte, Druckblätter).",
-        "tags": [
-          "#Werkzeug",
-          "#QR",
-          "#Klasse",
-          "#Teilen"
-        ]
-      }
-    },
-    "badges": [
-      {
-        "text": "Outil",
-        "grey": false
-      }
-    ],
-    "category": "teachers_tools",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "tool-time-timer",
-    "href": "webapps/teacher/time_timer.html",
-    "isTeacher": true,
-    "dataLevel": null,
-    "icon": "timer",
-    "title": "Minuteur visuel",
-    "desc": "Compte à rebours visuel (Time Timer®) pour gérer le temps en classe.",
-    "tags": [
-      "#Outil",
-      "#Gestion",
-      "#Classe",
-      "#Temps"
-    ],
-    "ref": null,
-    "i18n": {
-      "de": {
-        "title": "Visueller Timer",
-        "desc": "Visueller Countdown-Timer für Zeitmanagement und Fokus im Unterricht.",
-        "tags": [
-          "#Werkzeug",
-          "#Klassenführung",
-          "#Klasse",
-          "#Zeit"
-        ]
-      }
-    },
-    "badges": [
-      {
-        "text": "Gestion de classe",
-        "grey": false
-      }
-    ],
-    "category": "teachers_tools",
-    "inIndex": true,
-    "inC1": false
   }
 ];

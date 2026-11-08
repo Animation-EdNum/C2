@@ -9,10 +9,10 @@
 - **Portals:**
   - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
   - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
-- **Production Student Apps (`webapps/` - 10 apps):**
-  - Simulateur Automate, Pixel Studio (`binaire_studio`), Mots secrets (`binaire_message`), Codage binaire, Bit de Parité, Routage Réseau, Générateur de Mot de passe (`generateur_mot_de_passe`), Tape-Texte (`dactylo.html`), Machine à trier (`machine_a_trier.html`), Jeu de la grue (`jeu_de_la_grue.html`).
-- **Alpha Student Apps (`alpha/webapps/` - 8 apps):**
-  - Coffre-fort, Compresseur magique, Machine à chiffrer, Réseau de tri, Détective IA, Dresseur de neurones, Pseudo-code (`apprendre_pseudocode`), Une chose après l'autre (`tri_insertion`).
+- **Production Student Apps (`webapps/` - 10 apps, ordered by pedagogical level):**
+  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 3-4H), Simulateur Automate (3-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5-8H & 9-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-10CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H).
+- **Alpha Student Apps (`alpha/webapps/` - 8 apps, ordered by pedagogical level):**
+  - Coffre-fort (3-6H), Réseau de tri (5-6H), Machine à chiffrer (7-8H), Détective IA (7-8H), Compresseur magique (7-8H), Dresseur de neurones (7-8H), Pseudo-code (`apprendre_pseudocode`, 9CO), Une chose après l'autre (`tri_insertion`, 10CO).
 - **Teacher Tools (`webapps/teacher/` - 6 production, 1 alpha):**
   - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`), Roue de la chance (`roue_de_la_chance.html`), Adaptateur & Simulateur DYS (`sim_dyslexie.html`).
   - Alpha: Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`).

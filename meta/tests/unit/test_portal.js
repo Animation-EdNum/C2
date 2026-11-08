@@ -160,6 +160,74 @@ test('renderIndexCard', async (t) => {
     });
 });
 
+test('renderExternalCard', async (t) => {
+    await t.test('renders external card with target, rel, badges, title and search tags', () => {
+        const window = setupDOM();
+        const html = window.renderExternalCard({
+            id: 'ext-test',
+            href: 'https://example.com/app',
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            isExternal: true,
+            title: 'Test External',
+            desc: 'A description',
+            icon: 'sparkles',
+            badges: [{ text: '7H-10CO', grey: false }],
+            tags: ['#EspritCritique', '#Medias']
+        });
+
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const a = tempDiv.querySelector('a');
+
+        assert.ok(a, 'Should render anchor element');
+        assert.strictEqual(a.getAttribute('href'), 'https://example.com/app');
+        assert.strictEqual(a.getAttribute('target'), '_blank');
+        assert.strictEqual(a.getAttribute('rel'), 'noopener noreferrer');
+        assert.ok(a.classList.contains('card-compact'));
+        assert.ok(a.classList.contains('external'));
+        assert.strictEqual(a.querySelector('.card-title span').textContent, 'Test External');
+        assert.strictEqual(a.querySelector('.card-desc').textContent, 'A description');
+        assert.ok(a.querySelector('.badges-wrapper .badge'));
+        assert.strictEqual(a.querySelector('.badges-wrapper .badge').textContent, '7H-10CO');
+        assert.ok(a.querySelector('.tag-search-hidden'));
+        assert.strictEqual(a.querySelector('.tag-search-hidden').textContent, '#EspritCritique #Medias');
+    });
+
+    await t.test('switches href and badge text dynamically in German locale', () => {
+        const window = setupDOM();
+        window.I18N = { locale: 'de' };
+
+        const html = window.renderExternalCard({
+            id: 'ext-totem',
+            href: 'https://example.com/fr',
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            isExternal: true,
+            title: 'Totem FR',
+            desc: 'Desc FR',
+            badges: [{ text: '7H-10CO', grey: false }],
+            i18n: {
+                de: {
+                    title: 'Totem DE',
+                    href: 'https://example.com/de',
+                    desc: 'Desc DE',
+                    badges: [{ text: '7. Primar - 10. OS', grey: false }]
+                }
+            }
+        });
+
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const a = tempDiv.querySelector('a');
+
+        assert.strictEqual(a.getAttribute('href'), 'https://example.com/de');
+        assert.strictEqual(a.querySelector('.card-title span').textContent, 'Totem DE');
+        assert.strictEqual(a.querySelector('.card-desc').textContent, 'Desc DE');
+        assert.strictEqual(a.querySelector('.badges-wrapper .badge').textContent, '7. Primar - 10. OS');
+    });
+});
+
 test('renderC1Card', async (t) => {
     await t.test('renders card with title, icon, and c1Badge', () => {
         const window = setupDOM();
@@ -232,6 +300,46 @@ test('loadRegistry', async (t) => {
         assert.deepEqual(appMotDePasse.badges, [
             { text: '5H-10CO', grey: false }
         ]);
+
+        const extTotem = registry.find(a => a.id === 'ext-totem');
+        assert.ok(extTotem, 'ext-totem should exist in registry');
+        assert.strictEqual(extTotem.category, 'students_external');
+        assert.strictEqual(extTotem.inIndex, true);
+        assert.strictEqual(extTotem.isExternal, true);
+        assert.strictEqual(extTotem.target, '_blank');
+        assert.strictEqual(extTotem.href, 'https://guillaumetschupp.com/outils/totem/app.html?lang=fr');
+        assert.strictEqual(extTotem.i18n.de.href, 'https://guillaumetschupp.com/outils/totem/app.html#de');
+        assert.strictEqual(JSON.stringify(extTotem).includes('ß'), false, 'ext-totem must strictly use ss and no ß');
+    });
+
+    await t.test('students_activities are ordered strictly by pedagogical grade progression (1H to 10CO)', () => {
+        const registryContent = fs.readFileSync('assets/js/registry.js', 'utf-8');
+        const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { runScripts: "dangerously" });
+        dom.window.eval(registryContent);
+        const activities = dom.window.REGISTRY.filter(a => a.category === 'students_activities');
+
+        const expectedIds = [
+            'app-machine-trier',         // 1-2H, 3-4H (1-4H)
+            'app-jeu-grue',              // 3-4H
+            'app-coffre-fort',           // 3-4H, 5-6H (3-6H)
+            'app-automate',              // 3-4H, 5-8H (3-8H)
+            'app-pixel',                 // 5-6H
+            'app-reseau-tri',            // 5-6H
+            'app-dactylo',               // 5-8H, 9-11CO
+            'app-mot-de-passe',          // 5H-10CO
+            'app-binaire',               // 7-8H
+            'app-mots',                  // 7-8H
+            'app-routage',               // 7-8H
+            'app-parite',                // 7-8H
+            'app-machine-chiffrer',      // 7-8H
+            'app-detective-ia',          // 7-8H
+            'app-compresseur-magique',   // 7-8H
+            'app-dresseur-neurones',     // 7-8H
+            'app-apprendre-pseudocode',  // 9CO
+            'app-tri-insertion'          // 10CO
+        ];
+
+        assert.deepEqual(activities.map(a => a.id), expectedIds, 'Activities must follow pedagogical grade progression');
     });
 });
 
