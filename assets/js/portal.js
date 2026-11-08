@@ -26,6 +26,7 @@ function localizeBadgeText(text) {
         '10CO': '10. OS',
         '5H-10CO': '5. Primar - 10. OS',
         '7H-10CO': '7. Primar - 10. OS',
+        '3H-10CO': '3. Primar - 10. OS',
         '1-2H': '1.-2. Primar',
         '2-3H': '2.-3. Primar',
         '3-4H': '3.-4. Primar',
@@ -107,8 +108,11 @@ function renderTags(tags) {
 function renderIndexCard(app) {
     const localized = getLocalizedApp(app);
     const classes = ['card'];
-    if (localized.isAlpha) {
+    if (localized.isAlpha || localized.isHidden) {
         classes.push('alpha-app');
+    }
+    if (localized.isHidden) {
+        classes.push('hidden-app');
     }
     if (localized.isExternal) {
         classes.push('external');
@@ -136,8 +140,11 @@ function renderIndexCard(app) {
 function renderExternalCard(app) {
     const localized = getLocalizedApp(app);
     const classes = ['card', 'card-compact', 'external'];
-    if (localized.isAlpha) {
+    if (localized.isAlpha || localized.isHidden) {
         classes.push('alpha-app');
+    }
+    if (localized.isHidden) {
+        classes.push('hidden-app');
     }
     const iconStyle = localized.iconStyle === null ? '' : (localized.iconStyle || 'width:32px;height:32px;flex-shrink:0;');
 

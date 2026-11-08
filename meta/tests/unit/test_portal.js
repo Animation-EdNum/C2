@@ -56,6 +56,24 @@ test('renderIndexCard', async (t) => {
         assert.ok(aElement.classList.contains('alpha-app'), 'Should contain "alpha-app" class');
     });
 
+    await t.test('adds alpha-app and hidden-app classes if isHidden is true', () => {
+        const window = setupDOM();
+        const html = window.renderIndexCard({ href: '#', title: 'Test', isHidden: true });
+        const tempDiv = window.document.createElement('div');
+        tempDiv.innerHTML = html;
+        const aElement = tempDiv.querySelector('a');
+
+        assert.ok(aElement.classList.contains('alpha-app'), 'Should contain "alpha-app" class');
+        assert.ok(aElement.classList.contains('hidden-app'), 'Should contain "hidden-app" class');
+
+        const extHtml = window.renderExternalCard({ href: '#', title: 'Ext', isHidden: true });
+        const extDiv = window.document.createElement('div');
+        extDiv.innerHTML = extHtml;
+        const extA = extDiv.querySelector('a');
+        assert.ok(extA.classList.contains('alpha-app'), 'External card should contain "alpha-app" class');
+        assert.ok(extA.classList.contains('hidden-app'), 'External card should contain "hidden-app" class');
+    });
+
     await t.test('adds external class if isExternal is true', () => {
         const window = setupDOM();
         const html = window.renderIndexCard({ href: '#', title: 'Test', isExternal: true });
@@ -310,6 +328,26 @@ test('loadRegistry', async (t) => {
         assert.strictEqual(extTotem.href, 'https://guillaumetschupp.com/outils/totem/app.html?lang=fr');
         assert.strictEqual(extTotem.i18n.de.href, 'https://guillaumetschupp.com/outils/totem/app.html#de');
         assert.strictEqual(JSON.stringify(extTotem).includes('ß'), false, 'ext-totem must strictly use ss and no ß');
+
+        const extDico = registry.find(a => a.id === 'ext-ledicodesecoles');
+        assert.ok(extDico, 'ext-ledicodesecoles should exist in registry');
+        assert.strictEqual(extDico.category, 'students_external');
+        assert.strictEqual(extDico.inIndex, true);
+        assert.strictEqual(extDico.isExternal, true);
+        assert.strictEqual(extDico.isAlpha, true);
+        assert.strictEqual(extDico.isHidden, true);
+        assert.strictEqual(extDico.target, '_blank');
+        assert.strictEqual(extDico.href, 'https://ledicodesecoles.fr/');
+        assert.strictEqual(JSON.stringify(extDico).includes('ß'), false, 'ext-ledicodesecoles must strictly use ss and no ß');
+
+        const hiddenIds = ['ext-vikidia', 'ext-monkeytype', 'ext-autodraw', 'ext-geogebra-students', 'ext-ledicodesecoles'];
+        for (const hId of hiddenIds) {
+            const item = registry.find(a => a.id === hId);
+            assert.ok(item, `${hId} should exist in registry`);
+            assert.strictEqual(item.inIndex, true, `${hId} should have inIndex: true so it enters portal DOM`);
+            assert.strictEqual(item.isAlpha, true, `${hId} should have isAlpha: true for alpha search reveal`);
+            assert.strictEqual(item.isHidden, true, `${hId} should have isHidden: true`);
+        }
     });
 
     await t.test('students_activities are ordered strictly by pedagogical grade progression (1H to 10CO)', () => {

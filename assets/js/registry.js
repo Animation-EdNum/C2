@@ -860,6 +860,53 @@ window.REGISTRY = [
     }
   },
   {
+    "id": "ext-ledicodesecoles",
+    "href": "https://ledicodesecoles.fr/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isAlpha": true,
+    "isHidden": true,
+    "dataLevel": "3H-10CO",
+    "icon": "book",
+    "iconStyle": null,
+    "title": "Le Dico des Écoles",
+    "desc": "Trouver l'orthographe d'un mot en l'écrivant comme on l'entend.",
+    "tags": [
+      "#Recherche",
+      "#Orthographe",
+      "#Dictionnaire",
+      "#Français"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-10CO",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Le Dico des Écoles",
+        "desc": "Phonetisches Wörterbuch, um Wörter nach dem Gehör nachzuschlagen.",
+        "tags": [
+          "#Wörterbuch",
+          "#Rechtschreibung",
+          "#Französisch"
+        ],
+        "badges": [
+          {
+            "text": "3. Primar - 10. OS",
+            "grey": false
+          }
+        ]
+      }
+    }
+  },
+  {
     "id": "ext-qwantjunior",
     "href": "https://www.qwantjunior.com/",
     "target": "_blank",
@@ -903,6 +950,8 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
+    "isAlpha": true,
+    "isHidden": true,
     "dataLevel": "5H-8H",
     "icon": "globe",
     "iconStyle": null,
@@ -920,7 +969,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_external",
-    "inIndex": false,
+    "inIndex": true,
     "inC1": false,
     "i18n": {
       "de": {
@@ -939,6 +988,8 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
+    "isAlpha": true,
+    "isHidden": true,
     "dataLevel": "5H-8H",
     "icon": "timer",
     "iconStyle": null,
@@ -957,7 +1008,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_external",
-    "inIndex": false,
+    "inIndex": true,
     "inC1": false,
     "i18n": {
       "de": {
@@ -1551,6 +1602,8 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
+    "isAlpha": true,
+    "isHidden": true,
     "dataLevel": "3H-8H",
     "icon": "pencil",
     "iconStyle": null,
@@ -1569,7 +1622,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_utilities",
-    "inIndex": false,
+    "inIndex": true,
     "inC1": false,
     "i18n": {
       "de": {
@@ -1588,6 +1641,8 @@ window.REGISTRY = [
     "target": "_blank",
     "rel": "noopener noreferrer",
     "isExternal": true,
+    "isAlpha": true,
+    "isHidden": true,
     "dataLevel": "7H-10CO",
     "icon": "compass",
     "iconStyle": null,
@@ -1606,7 +1661,7 @@ window.REGISTRY = [
       }
     ],
     "category": "students_utilities",
-    "inIndex": false,
+    "inIndex": true,
     "inC1": false,
     "i18n": {
       "de": {
