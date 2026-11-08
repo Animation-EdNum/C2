@@ -907,6 +907,53 @@ window.REGISTRY = [
     }
   },
   {
+    "id": "ext-dicoapi",
+    "href": "https://dicoapi.ch/",
+    "target": "_blank",
+    "rel": "noopener noreferrer",
+    "isExternal": true,
+    "isAlpha": true,
+    "isHidden": true,
+    "dataLevel": "3H-8H",
+    "icon": "books",
+    "iconStyle": null,
+    "title": "Dico API",
+    "desc": "Dictionnaire inclusif et illustré avec recherche phonétique.",
+    "tags": [
+      "#Recherche",
+      "#Dictionnaire",
+      "#Inclusion",
+      "#Orthographe"
+    ],
+    "ref": null,
+    "badges": [
+      {
+        "text": "3H-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_external",
+    "inIndex": true,
+    "inC1": false,
+    "i18n": {
+      "de": {
+        "title": "Dico API",
+        "desc": "Barrierefreies, illustriertes Wörterbuch mit phonetischer Suche.",
+        "tags": [
+          "#Wörterbuch",
+          "#Inklusion",
+          "#Rechtschreibung"
+        ],
+        "badges": [
+          {
+            "text": "3.-8. Primar",
+            "grey": false
+          }
+        ]
+      }
+    }
+  },
+  {
     "id": "ext-qwantjunior",
     "href": "https://www.qwantjunior.com/",
     "target": "_blank",

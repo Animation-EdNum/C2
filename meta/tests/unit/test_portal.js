@@ -340,7 +340,18 @@ test('loadRegistry', async (t) => {
         assert.strictEqual(extDico.href, 'https://ledicodesecoles.fr/');
         assert.strictEqual(JSON.stringify(extDico).includes('ß'), false, 'ext-ledicodesecoles must strictly use ss and no ß');
 
-        const hiddenIds = ['ext-vikidia', 'ext-monkeytype', 'ext-autodraw', 'ext-geogebra-students', 'ext-ledicodesecoles'];
+        const extDicoApi = registry.find(a => a.id === 'ext-dicoapi');
+        assert.ok(extDicoApi, 'ext-dicoapi should exist in registry');
+        assert.strictEqual(extDicoApi.category, 'students_external');
+        assert.strictEqual(extDicoApi.inIndex, true);
+        assert.strictEqual(extDicoApi.isExternal, true);
+        assert.strictEqual(extDicoApi.isAlpha, true);
+        assert.strictEqual(extDicoApi.isHidden, true);
+        assert.strictEqual(extDicoApi.target, '_blank');
+        assert.strictEqual(extDicoApi.href, 'https://dicoapi.ch/');
+        assert.strictEqual(JSON.stringify(extDicoApi).includes('ß'), false, 'ext-dicoapi must strictly use ss and no ß');
+
+        const hiddenIds = ['ext-vikidia', 'ext-monkeytype', 'ext-autodraw', 'ext-geogebra-students', 'ext-ledicodesecoles', 'ext-dicoapi'];
         for (const hId of hiddenIds) {
             const item = registry.find(a => a.id === hId);
             assert.ok(item, `${hId} should exist in registry`);

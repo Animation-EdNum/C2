@@ -89,4 +89,4 @@
 - **[2026-10-29]** [Audit] Remediated all `.innerHTML` assignments across 31 webapps and recompressed simulation assets.
 - **[2026-11-07]** [Promotion & i18n] Promoted 4 webapps to production (DYS, Tape-Texte, Machine à trier, Jeu de la grue) with full de-CH localization and Swiss QWERTZ levels.
 - **[2026-11-08]** [Portal] Reordered webapps by pedagogical grade progression (1-4H to 9-11CO) and added Totem external card in FR & DE.
-- **[2026-11-08]** [Portal] Enabled alpha-search reveal for hidden external sites (Vikidia, Monkeytype, AutoDraw, GeoGebra) and added Le Dico des Écoles.
+- **[2026-11-08]** [Portal] Enabled alpha-search reveal for hidden external sites (Vikidia, Monkeytype, AutoDraw, GeoGebra) and added Le Dico des Écoles & Dico API.
