@@ -10,7 +10,9 @@
   - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
   - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
 - **Production Student Apps (`webapps/` - 10 apps, ordered by pedagogical level):**
-  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 3-4H), Simulateur Automate (3-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5-8H & 9-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-10CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H).
+  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 3-4H), Simulateur Automate (3-4H, 5-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5-8H & 9-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-10CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H).
+- **External Student Resources (`students_external`):**
+  - Totem (`ext-totem`, 7H-10CO, media education & critical thinking).
 - **Alpha Student Apps (`alpha/webapps/` - 8 apps, ordered by pedagogical level):**
   - Coffre-fort (3-6H), Réseau de tri (5-6H), Machine à chiffrer (7-8H), Détective IA (7-8H), Compresseur magique (7-8H), Dresseur de neurones (7-8H), Pseudo-code (`apprendre_pseudocode`, 9CO), Une chose après l'autre (`tri_insertion`, 10CO).
 - **Teacher Tools (`webapps/teacher/` - 6 production, 1 alpha):**
@@ -26,9 +28,8 @@
 - **Attribution & Licensing:** AGPL-3.0. Every app features the standardized attribution footer linking to AP EdNum, HEP-VS and `merci.html`.
 
 ## 4. Current Status & Active Focus
-- **Active Focus:** Bilingual Swiss Standard German (de-CH) localization rollout, performance hot loops, mobile navigation fluidity, and CI hardening.
-- **Official Webapp Promotions:** Promoted 4 webapps from alpha to production: Adaptateur & Simulateur DYS (`webapps/teacher/sim_dyslexie.html`), Tape-Texte (`webapps/dactylo.html`), Machine à trier (`webapps/machine_a_trier.html`), and Jeu de la grue (`webapps/jeu_de_la_grue.html`). Removed alpha badges and moved to official paths.
-- **Swiss Standard German (de-CH) Expansion:** Single-codebase runtime translation engine (`i18n.js`), shared UI localization (`theme.js`, `pwa.js`, `scores.js`, `modal-export.js`, `url-params.js`), localized registry and cards. All 4 newly promoted webapps fully localized in Swiss Standard German with strict zero `ß` (`ss` only). Tape-Texte adapted with custom Swiss German texts (`LEVELS_DE`) and bilingual Swiss QWERTZ keyboard mechanics. All 277 unit tests passing. Language toggle button hidden for general public by default (`?show_lang=1` for dev/testing).
-- **Teacher Tools & Classroom Integration:** Promoted Roue de la chance to production, integrated Swiss ENT/ISM class roster import (XLSX, CSV via local SheetJS) and export in Tirage au sort.
-- **Hot-Loop Performance & Security:** Optimized DOM queries in hot loops (`automate-engine.js`, `scores.js`), hardened PWA toast DOM construction against XSS, and pinned GitHub Actions commit SHAs across CI workflows.
-- **Standardized Universal Reset & TBI:** All applications support `#reset-cache-btn` with `window.__onResetApp` hook and overflow-safe TBI whiteboard projection modes.
+- **Active Focus:** Bilingual Swiss Standard German (de-CH) localization rollout, pedagogical grade progression ordering, and CI/browser test hardening.
+- **Pedagogical Progression & External Resources:** Reordered all student apps by strict curriculum grade progression (1-4H to 9-11CO). Integrated external resource card "Totem" (7H-10CO) with bilingual support (`?lang=fr` / `#de`) and zero tracking.
+- **Swiss Standard German (de-CH) Rollout:** Single-codebase runtime translation engine (`i18n.js` + `de.js`, zero-FOUC in `<head>`, strict `ss`). All 10 production student apps, 6 teacher tools, and portal fully localized and audited via automated Playwright tests. All 282 unit tests passing.
+- **Production Promotions:** 4 webapps promoted to production: Adaptateur & Simulateur DYS (`webapps/teacher/sim_dyslexie.html`), Tape-Texte (`webapps/dactylo.html`), Machine à trier (`webapps/machine_a_trier.html`), and Jeu de la grue (`webapps/jeu_de_la_grue.html`).
+- **Offline Reliability:** Service Worker cache manifest synced (`ednum-cb8e9b26`, 79 offline assets). All regulatory footers and universal app resets (`window.__onResetApp`) active.

@@ -27,6 +27,8 @@ This document records the architectural choices, library selections, and the rat
 - **Dedicated Teacher Space (`#teachers`):** Accessible via a footer link and a subtle ghost button in the portal header. In teacher view, a distinct `graduation-cap` role button appears in the header to return to the student space.
 - **Teacher Tools Header Return:** Inside all teacher apps (`webapps/teacher/*`), the header home icon navigates back to `index.html#teachers` rather than the student landing page.
 - **Mobile Header Optimization:** On narrow viewports (≤ 640px), header grade badges (`.badge-level`) are hidden and navigation links are shortened (e.g. "Élèves", "Enseignant·e·s") with two-line layout support to keep action headers compact and avoid clipping.
+- **Pedagogical Grade Progression Ordering:** Webapps are ordered strictly by ascending target grades (1-4H, 3-4H, 3-6H, 3-8H, 5-6H, 5-8H, 7-8H, 9-11CO) across `registry.js` and portal views, providing an intuitive curriculum-aligned sequence for pupils and teachers.
+- **Bilingual External Resource Cards (`students_external`):** External educational links (e.g. Totem) are rendered as compact cards with cycle badges, hidden critical-thinking search tags, and localized URLs (`?lang=fr` / `#de`) without embedding third-party trackers.
 
 ## 5. Gamification & State Management
 - **Decoupled Score Management (`scores.js`):** Adaptive difficulty and statistics are centralized in `ScoreManager`. Total attempts are calculated as `totalSuccess + mistakes` with self-healing migration to keep metrics consistent across app restarts.

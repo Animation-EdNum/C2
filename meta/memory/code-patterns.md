@@ -26,6 +26,7 @@ This document records code conventions, reusable hooks, and established project 
   <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s"><i data-fa="arrow-left"></i></a>
   <div class="header-icon" aria-hidden="true"><i data-fa="nom-icone"></i></div>
   ```
+- **Zero-FOUC `<head>` Loading for i18n:** Include `i18n.js` and `i18n/de.js` synchronously in `<head>` (e.g. `<script src="../assets/js/i18n.js"></script>`) so that the anti-flash `.i18n-loading` class and `<html lang="de-CH">` are set before DOM rendering.
 - **Flat Legal Footer:** Attribution footers must sit outside `.app-shell` as a flat, transparent block (`margin-top: 1.5rem; text-align: center; opacity: 0.85;`). Never trap footers inside nested cards.
   - **Standard localized footer template:**
     ```html
@@ -88,6 +89,7 @@ This document records code conventions, reusable hooks, and established project 
   };
   ```
   The central `#reset-cache-btn` in `theme.js` invokes this hook automatically upon user confirmation.
+- **Safe Dynamic Translations with Fallback:** When calling `window.I18N.t(key, fallbackText)` for dynamic strings or toasts, always provide explicit French fallback text (e.g. `I18N.t('machine_a_trier.toast_correct', 'Bravo !')`) to prevent raw translation keys leaking to the UI if a key is absent from the dictionary.
 - **ScoreManager Usage (`scores.js`):**
   - Record success: `ScoreManager.addSuccess(modeKey, levelNumber, mistakesCount);`
   - Record mistake: `ScoreManager.addMistake(modeKey, levelNumber);`
