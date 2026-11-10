@@ -503,6 +503,35 @@
         body.dark footer a { color: #2dd4bf !important; }
         body.dark footer a:hover { color: #5eead4 !important; }
 
+        /* ========== PROJECTION / TNI MODE ========== */
+        body.projection {
+            font-size: 16px;
+        }
+        body.projection .config-panel,
+        body.projection footer {
+            display: none !important;
+        }
+        body.projection .app-main {
+            grid-template-columns: 1fr;
+            max-width: 100%;
+        }
+        body.projection .app-shell {
+            max-width: 100%;
+            padding: 0.5rem 1rem;
+        }
+        body.projection .grade-table th,
+        body.projection .grade-table td {
+            padding: 8px 12px;
+            font-size: 1.15rem;
+        }
+        body.projection .results-header {
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        body.projection .results-header h2 {
+            font-size: 1.5rem;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -535,6 +564,10 @@
                         <i data-fa="copy" style="width:18px;height:18px;"></i>
                         <span>Copier</span>
                     </button>
+                    <button class="btn btn-secondary" id="shareBtn" title="Partager le lien du barème">
+                        <i data-fa="share-nodes" style="width:18px;height:18px;"></i>
+                        <span>Partager</span>
+                    </button>
                     <button class="btn btn-primary" id="printBtn" title="Imprimer le tableau">
                         <i data-fa="print" style="width:18px;height:18px;"></i>
                         <span>Imprimer</span>
@@ -542,6 +575,10 @@
                 </div>
                 <div class="header-divider"></div>
                 <div class="action-buttons no-print">
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/Plein écran (F)" aria-label="Mode TNI/Plein écran">
+                        <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
+                        <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
+                    </button>
                     <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
                         <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
                         <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
@@ -578,12 +615,12 @@
                 </div>
 
                 <div class="panel-section" id="advancedSection">
-                    <div class="panel-section-title toggle-header" id="advancedToggle">
+                    <button type="button" class="panel-section-title toggle-header" id="advancedToggle" aria-expanded="true" aria-controls="advancedContent" style="width:100%; border:none; background:none; text-align:left; font:inherit; color:inherit; cursor:pointer; padding:0; display:flex; align-items:center;">
                         <i data-fa="sliders-up" style="width:14px;height:14px;"></i>
                         Options avancées
                         <i data-fa="chevron-down" class="toggle-icon" style="margin-left:auto; width:14px;height:14px;"></i>
-                    </div>
-                    <div class="settings-panel toggle-content">
+                    </button>
+                    <div class="settings-panel toggle-content" id="advancedContent">
                         <div class="input-group">
                             <label for="titleInput">Titre de l'épreuve</label>
                             <input type="text" id="titleInput" placeholder="Ex: Mathématiques 5H">
@@ -658,12 +695,20 @@
         window.fa?.createIcons?.();
 
         function toggleAdvanced() {
-            document.getElementById('advancedSection').classList.toggle('collapsed');
+            const sec = document.getElementById('advancedSection');
+            const isCollapsed = sec.classList.toggle('collapsed');
+            const toggleBtn = document.getElementById('advancedToggle');
+            if (toggleBtn) {
+                toggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
+            }
         }
 
         // Auto-collapse on small screens
         if (window.innerWidth < 900) {
-            document.getElementById('advancedSection').classList.add('collapsed');
+            const sec = document.getElementById('advancedSection');
+            sec.classList.add('collapsed');
+            const toggleBtn = document.getElementById('advancedToggle');
+            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
         }
 
         // (ID theme-toggle-btn, icon-sun, icon-moon attendus)
@@ -675,39 +720,112 @@
 
         function savePreferences() {
             const prefs = {
+                title: document.getElementById('titleInput').value,
                 totalPoints: document.getElementById('totalPoints').value,
                 pointsFor4: document.getElementById('pointsFor4').value,
                 increment: document.getElementById('increment').value,
                 rounding: document.getElementById('rounding').value,
                 showMistakes: document.getElementById('showMistakes').checked
             };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+            } catch (e) { }
+        }
+
+        function loadFromUrlParams() {
+            try {
+                const searchStr = window.location.search || window.location.hash.replace(/^#/, '');
+                if (!searchStr) return false;
+                const params = new URLSearchParams(searchStr);
+                let found = false;
+                if (params.has('total')) {
+                    document.getElementById('totalPoints').value = params.get('total');
+                    found = true;
+                }
+                if (params.has('p4') || params.has('pointsFor4')) {
+                    document.getElementById('pointsFor4').value = params.get('p4') || params.get('pointsFor4');
+                    found = true;
+                }
+                if (params.has('step') || params.has('increment')) {
+                    document.getElementById('increment').value = params.get('step') || params.get('increment');
+                    found = true;
+                }
+                if (params.has('round') || params.has('rounding')) {
+                    document.getElementById('rounding').value = params.get('round') || params.get('rounding');
+                    found = true;
+                }
+                if (params.has('title')) {
+                    document.getElementById('titleInput').value = params.get('title');
+                    found = true;
+                }
+                if (params.has('mistakes')) {
+                    const m = params.get('mistakes');
+                    document.getElementById('showMistakes').checked = m === '1' || m === 'true';
+                    found = true;
+                }
+                return found;
+            } catch (e) {
+                return false;
+            }
         }
 
         function loadPreferences() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
+            if (loadFromUrlParams()) return;
             try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
                 const p = JSON.parse(saved);
+                if (p.title !== undefined) document.getElementById('titleInput').value = p.title;
                 if (p.totalPoints) document.getElementById('totalPoints').value = p.totalPoints;
-                if (p.pointsFor4) document.getElementById('pointsFor4').value = p.pointsFor4;
+                if (p.pointsFor4 !== undefined) document.getElementById('pointsFor4').value = p.pointsFor4;
                 if (p.increment) document.getElementById('increment').value = p.increment;
                 if (p.rounding) document.getElementById('rounding').value = p.rounding;
                 if (p.showMistakes !== undefined) document.getElementById('showMistakes').checked = p.showMistakes;
-            } catch (e) { console.error("Erreur de chargement des préférences", e); }
+            } catch (e) { }
         }
 
         // ==========================================
         // GÉNÉRATION DES DONNÉES (pure, sans DOM)
         // ==========================================
+        function roundGrade(rawGrade, round) {
+            if (!round || round <= 0) {
+                return Math.min(6, Math.max(1, Math.round(rawGrade * 10) / 10));
+            }
+            // Anti-float precision epsilon (1e-9) to avoid IEEE-754 half-down truncation (e.g. 5.05 / 0.1 -> 50.49999999999999)
+            const quotient = Math.round((rawGrade + 1e-9) / round);
+            let rounded = quotient * round;
+            if (round === 0.25 || round === 0.75) {
+                rounded = Math.round(rounded * 100) / 100;
+            } else if (round === 1) {
+                rounded = Math.round(rounded);
+            } else {
+                rounded = Math.round(rounded * 10) / 10;
+            }
+            return Math.min(6, Math.max(1, rounded));
+        }
+
+        function generatePointsList(total, step) {
+            const list = [];
+            if (total <= 0) return [0];
+            const cleanTotal = Math.round(total * 100) / 100;
+            list.push(cleanTotal);
+
+            const maxMultiple = Math.floor((cleanTotal - 1e-9) / step) * step;
+            for (let p = maxMultiple; p >= -1e-9; p -= step) {
+                const roundedP = Math.round(p * 100) / 100;
+                if (Math.abs(roundedP - cleanTotal) > 1e-4) {
+                    list.push(Math.max(0, roundedP));
+                }
+            }
+            return list;
+        }
+
         function generateData(total, pointsFor4, step, round) {
             const data = [];
-            const totalSteps = Math.floor(total / step);
+            const pointsList = generatePointsList(total, step);
             const passGrade = 4;
 
-            for (let i = totalSteps; i >= 0; i--) {
-                const points = Math.round(i * step * 100) / 100;
-
+            for (const points of pointsList) {
                 let rawGrade;
                 if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < total) {
                     if (points <= pointsFor4) {
@@ -719,12 +837,7 @@
                     rawGrade = (5 * points / total) + 1;
                 }
 
-                let roundedGrade = Math.round(rawGrade / round) * round;
-                roundedGrade = Math.round(roundedGrade * 10) / 10;
-
-                if (roundedGrade > 6) roundedGrade = 6;
-                if (roundedGrade < 1) roundedGrade = 1;
-
+                const roundedGrade = roundGrade(rawGrade, round);
                 data.push({ points, grade: roundedGrade, isPassing: roundedGrade >= passGrade });
             }
             return data;
@@ -745,17 +858,19 @@
             // Mise à jour des libellés
             document.getElementById('displayTitle').textContent = (title || 'Barème') + ' / ' + totalPoints + ' pts';
 
+            const isDoubleBareme = Boolean(pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints);
             let formulaText;
-            if (pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints) {
+            if (isDoubleBareme) {
                 formulaText = `Double barème (Note 4 à ${pointsFor4} pts)`;
+                document.getElementById('printPass').textContent = `Suffisance: ${pointsFor4} pts`;
             } else {
                 formulaText = 'Note = 5 * (Pts / ' + totalPoints + ') + 1';
+                document.getElementById('printPass').textContent = 'Suffisance: 4.0 (standard)';
             }
             document.getElementById('displayFormula').textContent = formulaText;
 
             document.getElementById('printTitleDisplay').textContent = title || 'Barème de notation';
             document.getElementById('printTotal').textContent = 'Total: ' + totalPoints + ' pts';
-            document.getElementById('printPass').textContent = pointsFor4 ? `Suffisance: ${pointsFor4} pts` : 'Suffisance: 4';
             document.getElementById('printFormula').textContent = 'Formule: ' + formulaText;
 
             // Génération + rendu
@@ -1088,7 +1203,7 @@
             const restore = () => {
                 document.body.classList.remove('printing');
                 document.documentElement.style.removeProperty('--print-zoom');
-                calculate();
+                updateAll();
                 window.removeEventListener('afterprint', restore);
             };
             window.addEventListener('afterprint', restore);
@@ -1098,10 +1213,7 @@
         }
 
         // ==========================================
-        // INITIALISATION
-        // ==========================================
-        // ==========================================
-        // LIAISON DES ÉVÉNEMENTS (addEventListener)
+        // INITIALISATION & ÉVÉNEMENTS
         // ==========================================
         document.getElementById('exportImageBtn').addEventListener('click', exportImage);
         document.getElementById('copyTableBtn').addEventListener('click', copyTable);
@@ -1113,6 +1225,77 @@
         document.getElementById('increment').addEventListener('change', updateAll);
         document.getElementById('rounding').addEventListener('change', updateAll);
         document.getElementById('showMistakes').addEventListener('change', updateAll);
+
+        // Partage d'URL
+        function getShareUrl() {
+            const total = document.getElementById('totalPoints').value;
+            const p4 = document.getElementById('pointsFor4').value;
+            const step = document.getElementById('increment').value;
+            const round = document.getElementById('rounding').value;
+            const title = document.getElementById('titleInput').value;
+            const mistakes = document.getElementById('showMistakes').checked;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('total', total);
+            if (p4) url.searchParams.set('p4', p4);
+            else url.searchParams.delete('p4');
+            url.searchParams.set('step', step);
+            url.searchParams.set('round', round);
+            if (title) url.searchParams.set('title', title);
+            else url.searchParams.delete('title');
+            if (mistakes) url.searchParams.set('mistakes', '1');
+            else url.searchParams.delete('mistakes');
+
+            return url.toString();
+        }
+
+        document.getElementById('shareBtn')?.addEventListener('click', async () => {
+            const shareUrl = getShareUrl();
+            try {
+                if (navigator.clipboard?.writeText) {
+                    await navigator.clipboard.writeText(shareUrl);
+                    if (typeof showToast === 'function') {
+                        showToast('Lien de partage copié dans le presse-papiers !', 'success');
+                    }
+                } else {
+                    prompt('Copiez ce lien pour partager ce barème :', shareUrl);
+                }
+            } catch (err) {
+                prompt('Copiez ce lien pour partager ce barème :', shareUrl);
+            }
+        });
+
+        // Mode TNI / Plein écran
+        const projBtn = document.getElementById('projection-toggle-btn');
+        function setProjectionMode(active) {
+            const isProj = document.body.classList.toggle('projection', active);
+            const iconExpand = document.getElementById('icon-proj-expand');
+            const iconCompress = document.getElementById('icon-proj-compress');
+            if (iconExpand && iconCompress) {
+                iconExpand.style.display = isProj ? 'none' : 'inline-block';
+                iconCompress.style.display = isProj ? 'inline-block' : 'none';
+            }
+            if (projBtn) {
+                projBtn.setAttribute('title', isProj ? 'Quitter le mode TNI (Échap)' : 'Mode TNI/Plein écran (F)');
+                projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI' : 'Mode TNI/Plein écran');
+            }
+            if (window.fa?.createIcons) window.fa.createIcons();
+        }
+
+        if (projBtn) {
+            projBtn.addEventListener('click', () => {
+                setProjectionMode(!document.body.classList.contains('projection'));
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                setProjectionMode(false);
+            } else if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+                e.preventDefault();
+                setProjectionMode(!document.body.classList.contains('projection'));
+            }
+        });
 
         window.__onResetApp = function() {
             try {
@@ -1129,6 +1312,28 @@
                 showToast("Barème réinitialisé", "info");
             }
         };
+
+        // Exports pour les tests unitaires et intégration
+        if (typeof window !== 'undefined') {
+            window.generateData = generateData;
+            window.roundGrade = roundGrade;
+            window.generatePointsList = generatePointsList;
+            window.updateAll = updateAll;
+            window.getShareUrl = getShareUrl;
+            window.loadFromUrlParams = loadFromUrlParams;
+            window.setProjectionMode = setProjectionMode;
+        }
+
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                generateData,
+                roundGrade,
+                generatePointsList,
+                updateAll,
+                getShareUrl,
+                loadFromUrlParams
+            };
+        }
 
         loadPreferences();
         updateAll();

@@ -799,6 +799,24 @@
         body.dark footer a { color: #2dd4bf !important; }
         body.dark footer a:hover { color: #5eead4 !important; }
 
+        .capacity-warning-banner {
+            display: none;
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-md);
+            padding: 0.65rem 1rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            text-align: left;
+            line-height: 1.4;
+        }
+        body.dark .capacity-warning-banner {
+            background: #450a0a;
+            color: #fca5a5;
+            border-color: #7f1d1d;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -1023,6 +1041,10 @@
                         <i data-fa="download" style="width:16px;height:16px;"></i>
                         <span>Télécharger PNG</span>
                     </button>
+                    <button class="btn btn-secondary" id="downloadSvgBtn" title="Télécharger le QR code en format vectoriel SVG">
+                        <i data-fa="download" style="width:16px;height:16px;"></i>
+                        <span>SVG</span>
+                    </button>
                     <button class="btn btn-primary" id="printActionBtn">
                         <i data-fa="print" style="width:16px;height:16px;"></i>
                         <span>Imprimer A4</span>
@@ -1096,6 +1118,12 @@
             ecc: 'M',
             size: 600
         };
+
+        function getQRious() {
+            return (typeof QRious !== 'undefined' ? QRious : null) ||
+                   (typeof window !== 'undefined' && window.QRious ? window.QRious : null) ||
+                   (typeof globalThis !== 'undefined' && globalThis.QRious ? globalThis.QRious : null);
+        }
 
         let qrInstance = null;
 
@@ -1204,6 +1232,64 @@
         });
 
         // ==========================================
+        // HELPERS ENCODAGE & PROTOCOLES
+        // ==========================================
+        /**
+         * Pré-encode les chaînes UTF-8 en pseudo-chaîne binaire ISO-8859-1
+         * pour que le QR code émette les octets UTF-8 requis pour les accents,
+         * ligatures et émojis (résout le mojibake QRious).
+         */
+        function toUtf8ByteString(str) {
+            if (!str) return '';
+            try {
+                return unescape(encodeURIComponent(str));
+            } catch (e) {
+                return str;
+            }
+        }
+
+        /**
+         * Échappe les caractères réservés (\, ;, ,, :, ") selon la spécification
+         * MECARD/Wi-Fi QR Code standard.
+         */
+        function escapeWifiField(str) {
+            if (!str) return '';
+            return str.replace(/([\\;,:"])/g, '\\$1');
+        }
+
+        /**
+         * Distingue proprement une URL/nom de domaine d'un texte simple avec ponctuation
+         * (évite de préfixer 'https://' à 'Réponse: 3.5 cm').
+         */
+        function formatBatchValue(value) {
+            if (!value) return '';
+            const trimmed = value.trim();
+            if (/^https?:\/\//i.test(trimmed) || /^mailto:/i.test(trimmed) || /^tel:/i.test(trimmed)) {
+                return trimmed;
+            }
+            if (/^(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:[/?#]|$)/i.test(trimmed)) {
+                return 'https://' + trimmed;
+            }
+            return trimmed;
+        }
+
+        /**
+         * Calcule la taille en octets UTF-8 d'une chaîne
+         */
+        function getUtf8ByteLength(str) {
+            if (!str) return 0;
+            return new TextEncoder().encode(str).length;
+        }
+
+        // Capacités maximales théoriques en octets binaires pour QR Code (Version 40)
+        const QR_MAX_BYTE_CAPACITY = {
+            L: 2953,
+            M: 2331,
+            Q: 1663,
+            H: 1273
+        };
+
+        // ==========================================
         // GÉNÉRATION ET MISE À JOUR DU QR CODE
         // ==========================================
         function getQRValue() {
@@ -1220,7 +1306,11 @@
                 const ssid = (inputWifiSsid ? inputWifiSsid.value.trim() : '') || 'WiFi_Classe';
                 const pass = inputWifiPass ? inputWifiPass.value : '';
                 const type = selectWifiType ? selectWifiType.value : 'WPA';
-                val = `WIFI:S:${ssid};T:${type};P:${pass};;`;
+                if (type === 'nopass') {
+                    val = `WIFI:S:${escapeWifiField(ssid)};T:nopass;;`;
+                } else {
+                    val = `WIFI:S:${escapeWifiField(ssid)};T:${type};P:${escapeWifiField(pass)};;`;
+                }
             }
             if (!val || val === 'null' || val === 'undefined') {
                 val = 'https://ednum.org';
@@ -1233,11 +1323,15 @@
                 return inputUrl.value.trim() || 'https://ednum.org';
             } else if (state.type === 'text') {
                 const val = (inputText.value.trim() || 'Exemple de texte').replace(/\s+/g, ' ');
-                return val.length > 60 ? val.substring(0, 57) + '...' : val;
+                return val.length > 80 ? val.substring(0, 77) + '...' : val;
             } else if (state.type === 'wifi') {
                 const ssid = inputWifiSsid.value.trim() || 'WiFi_Classe';
                 const pass = inputWifiPass.value;
-                return pass ? `Wi-Fi : ${ssid} | Clé : ${pass}` : `Wi-Fi : ${ssid} (Réseau ouvert)`;
+                const type = selectWifiType ? selectWifiType.value : 'WPA';
+                if (type === 'nopass') {
+                    return `Wi-Fi : ${ssid} (Réseau ouvert)`;
+                }
+                return pass ? `Wi-Fi : ${ssid} | Clé : ${pass}` : `Wi-Fi : ${ssid}`;
             }
             return '';
         }
@@ -1262,11 +1356,35 @@
                 displaySubtext.textContent = subtext;
                 displaySubtext.classList.toggle('hidden', !state.showSubtext || !subtext);
 
+                // Contrôle de dépassement de capacité
+                const byteLen = getUtf8ByteLength(value);
+                const maxCap = QR_MAX_BYTE_CAPACITY[state.ecc] || 2000;
+                let capWarningEl = document.getElementById('qrCapacityWarning');
+                if (!capWarningEl) {
+                    capWarningEl = document.createElement('div');
+                    capWarningEl.id = 'qrCapacityWarning';
+                    capWarningEl.className = 'capacity-warning-banner';
+                    if (singlePreviewContainer) {
+                        singlePreviewContainer.insertBefore(capWarningEl, singlePreviewContainer.firstChild);
+                    }
+                }
+                if (capWarningEl) {
+                    if (byteLen > maxCap) {
+                        capWarningEl.textContent = `⚠️ Texte très long (${byteLen} octets / max conseillé ${maxCap} en niveau ${state.ecc}). Réduisez le texte ou choisissez le niveau ECC L.`;
+                        capWarningEl.style.display = 'block';
+                    } else {
+                        capWarningEl.style.display = 'none';
+                    }
+                }
+
+                const qrByteValue = toUtf8ByteString(value);
+                const QRLib = getQRious();
+                if (!QRLib) return;
                 if (!qrInstance) {
-                    qrInstance = new QRious({
+                    qrInstance = new QRLib({
                         element: qrCanvas,
                         size: 260,
-                        value: value,
+                        value: qrByteValue,
                         level: state.ecc,
                         foreground: state.color,
                         background: '#ffffff',
@@ -1274,7 +1392,7 @@
                     });
                 } else {
                     qrInstance.set({
-                        value: value,
+                        value: qrByteValue,
                         level: state.ecc,
                         foreground: state.color,
                         background: '#ffffff',
@@ -1312,9 +1430,7 @@
                     value = parts.slice(1).join('|').trim();
                 }
 
-                if (!/^https?:\/\//i.test(value) && value.includes('.')) {
-                    value = 'https://' + value;
-                }
+                value = formatBatchValue(value);
 
                 const card = document.createElement('div');
                 card.className = 'batch-card';
@@ -1325,21 +1441,24 @@
                 card.appendChild(cardTitle);
 
                 const canvas = document.createElement('canvas');
-                new QRious({
-                    element: canvas,
-                    size: 150,
-                    value: value,
-                    level: state.ecc,
-                    foreground: state.color,
-                    background: '#ffffff',
-                    padding: 8
-                });
+                const QRLib = getQRious();
+                if (QRLib) {
+                    new QRLib({
+                        element: canvas,
+                        size: 150,
+                        value: toUtf8ByteString(value),
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        padding: 8
+                    });
+                }
                 card.appendChild(canvas);
 
                 if (state.showSubtext) {
                     const cardSub = document.createElement('div');
                     cardSub.className = 'batch-card-subtext';
-                    cardSub.textContent = value.length > 35 ? value.substring(0, 32) + '...' : value;
+                    cardSub.textContent = value.length > 50 ? value.substring(0, 47) + '...' : value;
                     card.appendChild(cardSub);
                 }
 
@@ -1428,9 +1547,7 @@
                     title = parts[0].trim();
                     value = parts.slice(1).join('|').trim();
                 }
-                if (!/^https?:\/\//i.test(value) && value.includes('.')) {
-                    value = 'https://' + value;
-                }
+                value = formatBatchValue(value);
                 return { title, value };
             });
 
@@ -1486,15 +1603,18 @@
 
                 // QR Code
                 const itemCanvas = document.createElement('canvas');
-                new QRious({
-                    element: itemCanvas,
-                    size: 260,
-                    value: item.value,
-                    level: state.ecc,
-                    foreground: state.color,
-                    background: '#ffffff',
-                    padding: 12
-                });
+                const QRLib = getQRious();
+                if (QRLib) {
+                    new QRLib({
+                        element: itemCanvas,
+                        size: 260,
+                        value: toUtf8ByteString(item.value),
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        padding: 12
+                    });
+                }
                 ctx.drawImage(itemCanvas, x + (cardWidth - 260) / 2, y + 60);
 
                 // Subtext
@@ -1503,7 +1623,7 @@
                     ctx.font = '13px JetBrains Mono, monospace';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    const sub = item.value.length > 36 ? item.value.substring(0, 33) + '...' : item.value;
+                    const sub = item.value.length > 50 ? item.value.substring(0, 47) + '...' : item.value;
                     ctx.fillText(sub, x + cardWidth / 2, y + 365);
                 }
             });
@@ -1589,16 +1709,18 @@
         function createExportCanvas() {
             const size = state.size || 600;
             const tempCanvas = document.createElement('canvas');
-            
-            new QRious({
-                element: tempCanvas,
-                size: size,
-                value: getQRValue(),
-                level: state.ecc,
-                foreground: state.color,
-                background: '#ffffff',
-                padding: Math.round(size * 0.05)
-            });
+            const QRLib = getQRious();
+            if (QRLib) {
+                new QRLib({
+                    element: tempCanvas,
+                    size: size,
+                    value: toUtf8ByteString(getQRValue()),
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: Math.round(size * 0.05)
+                });
+            }
 
             // Check title and subtext
             const hasRawTitle = Boolean(state.title && state.title.trim().length > 0);
@@ -1656,10 +1778,14 @@
             // Draw Subtext
             if (hasSubtext) {
                 ctx.fillStyle = '#475569';
-                ctx.font = `${Math.round(size * 0.038)}px JetBrains Mono, monospace`;
+                let subFontSize = Math.round(size * 0.038);
+                if (subtext.length > 55) {
+                    subFontSize = Math.max(12, Math.round(size * (55 / subtext.length) * 0.038));
+                }
+                ctx.font = `${subFontSize}px JetBrains Mono, monospace`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                const displaySub = subtext.length > 55 ? subtext.substring(0, 52) + '...' : subtext;
+                const displaySub = subtext.length > 95 ? subtext.substring(0, 92) + '...' : subtext;
                 ctx.fillText(displaySub, composite.width / 2, currentY + (subtextHeight / 2));
             }
 
@@ -1687,15 +1813,18 @@
                 const qrWrap = document.createElement('div');
                 qrWrap.className = 'print-single-qr';
                 const printCanvas = document.createElement('canvas');
-                new QRious({
-                    element: printCanvas,
-                    size: 540,
-                    value: getQRValue(),
-                    level: state.ecc,
-                    foreground: state.color,
-                    background: '#ffffff',
-                    padding: 16
-                });
+                const QRLib = getQRious();
+                if (QRLib) {
+                    new QRLib({
+                        element: printCanvas,
+                        size: 540,
+                        value: toUtf8ByteString(getQRValue()),
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        padding: 16
+                    });
+                }
                 qrWrap.appendChild(printCanvas);
                 singleWrap.appendChild(qrWrap);
 
@@ -1721,9 +1850,7 @@
                         title = parts[0].trim();
                         value = parts.slice(1).join('|').trim();
                     }
-                    if (!/^https?:\/\//i.test(value) && value.includes('.')) {
-                        value = 'https://' + value;
-                    }
+                    value = formatBatchValue(value);
 
                     const card = document.createElement('div');
                     card.className = 'print-batch-card';
@@ -1733,15 +1860,18 @@
                     card.appendChild(h3);
 
                     const canvas = document.createElement('canvas');
-                    new QRious({
-                        element: canvas,
-                        size: 220,
-                        value: value,
-                        level: state.ecc,
-                        foreground: state.color,
-                        background: '#ffffff',
-                        padding: 10
-                    });
+                    const QRLib = getQRious();
+                    if (QRLib) {
+                        new QRLib({
+                            element: canvas,
+                            size: 220,
+                            value: toUtf8ByteString(value),
+                            level: state.ecc,
+                            foreground: state.color,
+                            background: '#ffffff',
+                            padding: 10
+                        });
+                    }
                     card.appendChild(canvas);
 
                     if (state.showSubtext) {
@@ -1832,7 +1962,7 @@
             selectRenderSize.value = String(state.size);
             customColorInput.value = state.color;
 
-            document.querySelectorAll('.color-swatch').forEach(sw => {
+            document.querySelectorAll('.color-chip').forEach(sw => {
                 sw.classList.toggle('active', sw.dataset.color === '#000000');
             });
             customColorInput.classList.remove('active');
@@ -1856,6 +1986,133 @@
         document.getElementById('copyImgBtn')?.addEventListener('click', copyQRImage);
         document.getElementById('downloadImgBtn')?.addEventListener('click', downloadQRImage);
         document.getElementById('printActionBtn')?.addEventListener('click', handlePrint);
+
+        // ==========================================
+        // EXPORT SVG VECTORIEL PUR
+        // ==========================================
+        function generateSvgFromQR(value, ecc, foreground = '#000000', background = '#ffffff') {
+            const QRLib = getQRious();
+            if (!QRLib) {
+                return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <rect width="100%" height="100%" fill="${background}"/>
+  <text x="150" y="150" text-anchor="middle" fill="${foreground}">QR Code</text>
+</svg>`;
+            }
+            const canvas = document.createElement('canvas');
+            const size = 300;
+            const padding = 12;
+            new QRLib({
+                element: canvas,
+                size: size,
+                value: toUtf8ByteString(value),
+                level: ecc || 'M',
+                foreground: foreground,
+                background: background,
+                padding: padding
+            });
+
+            const ctx = canvas.getContext ? canvas.getContext('2d') : null;
+            if (!ctx || !ctx.getImageData) {
+                return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <rect width="100%" height="100%" fill="${background}"/>
+  <text x="150" y="150" text-anchor="middle" fill="${foreground}">QR Code</text>
+</svg>`;
+            }
+
+            const imgData = ctx.getImageData(0, 0, size, size);
+            const data = imgData.data;
+
+            let firstX = -1, firstY = -1;
+            for (let y = 0; y < size && firstY === -1; y++) {
+                for (let x = 0; x < size; x++) {
+                    const idx = (y * size + x) * 4;
+                    if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                        firstX = x;
+                        firstY = y;
+                        break;
+                    }
+                }
+            }
+
+            if (firstX === -1) {
+                return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="${background}"/></svg>`;
+            }
+
+            let finderWidth = 0;
+            for (let x = firstX; x < size; x++) {
+                const idx = (firstY * size + x) * 4;
+                if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                    finderWidth++;
+                } else {
+                    break;
+                }
+            }
+            const moduleSize = Math.max(1, finderWidth / 7);
+
+            let lastX = firstX, lastY = firstY;
+            for (let y = size - 1; y >= 0 && lastY === firstY; y--) {
+                for (let x = size - 1; x >= 0; x--) {
+                    const idx = (y * size + x) * 4;
+                    if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                        lastX = Math.max(lastX, x);
+                        lastY = Math.max(lastY, y);
+                    }
+                }
+            }
+
+            const gridCols = Math.round((lastX - firstX + 1) / moduleSize);
+            const gridRows = Math.round((lastY - firstY + 1) / moduleSize);
+
+            const rects = [];
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const sampleX = Math.round(firstX + (c + 0.5) * moduleSize);
+                    const sampleY = Math.round(firstY + (r + 0.5) * moduleSize);
+                    const idx = (sampleY * size + sampleX) * 4;
+                    if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                        rects.push(`<rect x="${c + 1}" y="${r + 1}" width="1" height="1" fill="${foreground}"/>`);
+                    }
+                }
+            }
+
+            const totalGrid = gridCols + 2;
+            return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalGrid} ${totalGrid}" shape-rendering="crispEdges">
+  <rect width="100%" height="100%" fill="${background}"/>
+  ${rects.join('\n  ')}
+</svg>`;
+        }
+
+        function downloadSvg() {
+            try {
+                const qrValue = getQRValue();
+                const svgContent = generateSvgFromQR(qrValue, state.ecc, state.color, '#ffffff');
+                const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                let rawTitle = state.title || 'qrcode';
+                const cleanTitle = rawTitle.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9_-]/gi, '_');
+                a.download = `${cleanTitle}.svg`;
+                a.href = url;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                if (typeof showToast === 'function') {
+                    showToast('QR code vectoriel (SVG) téléchargé !', 'success');
+                }
+            } catch (err) {
+                console.error('SVG download error:', err);
+                if (typeof showToast === 'function') {
+                    showToast('Erreur lors du téléchargement SVG', 'error');
+                }
+            }
+        }
+
+        document.getElementById('downloadSvgBtn')?.addEventListener('click', downloadSvg);
 
         // ==========================================
         // PERSISTANCE D'ÉTAT
@@ -1912,10 +2169,37 @@
                 document.querySelectorAll('.color-chip').forEach(chip => {
                     chip.classList.toggle('active', chip.dataset.color === state.color);
                 });
-            } catch (e) {
-                console.error('Load state error:', e);
-            }
+            } catch (e) { }
             updateQR();
+        }
+
+        // Exports pour les tests unitaires et intégration
+        if (typeof window !== 'undefined') {
+            window.toUtf8ByteString = toUtf8ByteString;
+            window.escapeWifiField = escapeWifiField;
+            window.formatBatchValue = formatBatchValue;
+            window.getUtf8ByteLength = getUtf8ByteLength;
+            window.getQRValue = getQRValue;
+            window.getSubtextDisplay = getSubtextDisplay;
+            window.generateSvgFromQR = generateSvgFromQR;
+            window.resetAll = resetAll;
+            window.state = state;
+            window.updateQR = updateQR;
+        }
+
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                toUtf8ByteString,
+                escapeWifiField,
+                formatBatchValue,
+                getUtf8ByteLength,
+                getQRValue,
+                getSubtextDisplay,
+                generateSvgFromQR,
+                resetAll,
+                state,
+                updateQR
+            };
         }
 
         // Initial launch
