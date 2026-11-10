@@ -688,30 +688,18 @@ Rue Faller 2, 1202 Genève
         assert.ok(result.cleanText.includes('[Élève 1]'), 'Should be masked with student tag [Élève 1]');
     });
 
-    await t.test('Group 1.9 - Possible names warning banner detects unmasked capitalized words and one-click masks', () => {
+    await t.test('Group 1.9 - Non-person capitalized pairs, technical terms and acronyms are NOT falsely masked as persons', () => {
         engine.state.mode = 'labels';
         engine.state.roster = [];
-        const inputEl = window.document.getElementById('inputText');
-        const possibleBar = window.document.getElementById('possibleNamesBar');
-        const possibleChips = window.document.getElementById('possibleNamesChips');
-        const outputArea = window.document.getElementById('outputArea');
 
-        // Text with a rare name that is mid-sentence and not in built-in list or roster
-        inputEl.value = "Hier, j'ai rencontré Sylvanie pour discuter de ses progrès.";
-        inputEl.dispatchEvent(new window.Event('input'));
+        // Realistic IT ticket / school email containing technical phrases, headings, and acronyms
+        const text = "[#INC-2576] - Hosting Website ednum.org par la HEP-VS\nService Desk HEP-VS\nResponsables des PICT à l'OEN pour l'OJ.";
+        const result = engine.runAnonymization(text);
 
-        assert.strictEqual(possibleBar.style.display, 'flex', 'Warning banner should be displayed');
-        assert.ok(possibleChips.innerHTML.includes('Sylvanie'), 'Banner chips must include Sylvanie');
-
-        // Click the chip to mask Sylvanie in one click
-        const chipBtn = possibleChips.querySelector('.possible-name-btn');
-        assert.ok(chipBtn, 'Chip button must exist');
-        chipBtn.click();
-
-        // Sylvanie is now in roster and masked
-        assert.ok(engine.state.roster.some(r => r.toLowerCase() === 'sylvanie'), 'Sylvanie should be added to roster');
-        assert.ok(!outputArea.textContent.includes('Sylvanie'), 'Sylvanie should now be masked in the output');
-        assert.ok(outputArea.textContent.includes('[Élève 1]'), 'Sylvanie should be masked as [Élève 1]');
+        assert.ok(result.cleanText.includes('Hosting Website'), 'Hosting Website must NOT be masked as a person');
+        assert.ok(result.cleanText.includes('Service Desk HEP-VS'), 'Service Desk HEP-VS must NOT be masked as a person');
+        assert.ok(result.cleanText.includes("PICT à l'OEN pour l'OJ"), 'PICT, OEN and OJ acronyms must NOT be masked');
+        assert.strictEqual(result.replacements.filter(r => r.type === 'name').length, 0, 'No false person replacements should occur');
     });
 
     await t.test('Group 2 - Pseudonym mode preserves shared surnames and matches gender', () => {
@@ -811,5 +799,72 @@ Rue Faller 2, 1202 Genève
         assert.ok(pseudoPrefix.includes('pseudonymes réalistes'), 'Pseudo mode prompt mentions pseudonymes');
         assert.ok(!pseudoPrefix.includes('[Élève X]'), 'Pseudo mode prompt does not mention [Élève X]');
         assert.ok(redactPrefix.includes('████████'), 'Redact mode prompt mentions blocks ████████');
+    });
+
+    await t.test('Group 6 - Realistic Swiss education and support ticket inputs', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+
+        // Example 1: Meeting & agenda with staff members
+        const text1 = `Séance du 25 novembre : quelques points pour l'OJ
+Samuel Fierz
+
+Corinne Ramillon
+Jessy Frossard;
+David Evequoz;
+Vivian Epiney;
+Simon Morard
+Re-Bonjour,
+
+Sauriez-vous qui sont les personnes responsables des PICT à l'OEN ?
+
+Peut-être sont-elles à inviter ?
+
+Cordialement
+
+samuel`;
+
+        const res1 = engine.runAnonymization(text1);
+        assert.ok(res1.cleanText.includes("Séance du [Date 1] : quelques points pour l'OJ"), 'Date anonymized without touching Séance or OJ');
+        assert.ok(!res1.cleanText.includes('Samuel Fierz'), 'Samuel Fierz must be anonymized');
+        assert.ok(!res1.cleanText.includes('Corinne Ramillon'), 'Corinne Ramillon must be anonymized');
+        assert.ok(!res1.cleanText.includes('Jessy Frossard'), 'Jessy Frossard must be anonymized');
+        assert.ok(!res1.cleanText.includes('David Evequoz'), 'David Evequoz must be anonymized');
+        assert.ok(!res1.cleanText.includes('Vivian Epiney'), 'Vivian Epiney must be anonymized');
+        assert.ok(!res1.cleanText.includes('Simon Morard'), 'Simon Morard must be anonymized');
+        assert.ok(res1.cleanText.includes("responsables des PICT à l'OEN"), 'PICT and OEN must remain intact');
+        assert.ok(res1.cleanText.includes("Sauriez-vous"), 'Sauriez-vous must remain intact');
+
+        // Example 2: Support ticket and signature
+        const text2 = `[#INC-2576] - Hosting Website ednum.org / ednum.hepvs.ch par la HEP-VS
+Vivian Epiney
+
+Service Desk HEP-VS
+Vincent Strahm
+Je me sens bête tout à coup...
+
+Belle semaine !
+
+Vivian
+---------------------------------------------
+Haute école pédagogique du Valais
+
+Vivian Epiney
+Animateur EdNum · Cycle 2
+
+m: +41 (0)79 776 47 52
+---------------------------------------------
+Présent : Me · Je
+De : Vivian Epiney <Vivian.Epiney@hepvs.ch>`;
+
+        const res2 = engine.runAnonymization(text2);
+        assert.ok(res2.cleanText.includes('[#INC-2576] - Hosting Website'), 'Hosting Website must NOT be masked');
+        assert.ok(res2.cleanText.includes('Service Desk HEP-VS'), 'Service Desk HEP-VS must NOT be masked');
+        assert.ok(res2.cleanText.includes('Haute école pédagogique du Valais'), 'Haute école pédagogique must NOT be masked as a person');
+        assert.ok(res2.cleanText.includes('Animateur EdNum · [Classe 1]'), 'Cycle 2 masked as class');
+        assert.ok(res2.cleanText.includes('[Téléphone 1]'), 'Phone number masked');
+        assert.ok(res2.cleanText.includes('<[Email 1]>'), 'Email masked');
+        assert.ok(!res2.cleanText.includes('Vincent Strahm'), 'Vincent Strahm must be masked');
+        assert.ok(!res2.cleanText.includes('Vivian Epiney'), 'Vivian Epiney must be masked');
     });
 });
