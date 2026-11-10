@@ -418,13 +418,13 @@ Favre\tArthur`;
         const result = engine.runAnonymization(text);
 
         assert.ok(!result.cleanText.includes('[Date de naissance]'), 'Must not contain [Date de naissance]');
-        assert.ok(result.cleanText.includes('[Date]'), 'Must contain [Date]');
+        assert.ok(/\[Date(?:\s+\d+)?\]/.test(result.cleanText), 'Must contain [Date] or [Date X]');
         assert.ok(!result.cleanText.includes('14.05.2013'), 'Original date 14.05.2013 should be redacted');
         assert.ok(!result.cleanText.includes('24 octobre'), 'Original date 24 octobre should be redacted');
         assert.ok(!result.cleanText.includes('12/11/2025'), 'Original date 12/11/2025 should be redacted');
         assert.ok(!result.cleanText.includes('5. Mai 2012'), 'German date 5. Mai 2012 should be redacted');
         assert.ok(!result.cleanText.includes('3 maggio 2014'), 'Italian date 3 maggio 2014 should be redacted');
-        assert.ok(result.cleanText.includes('[Âge]'), 'Age should be labeled [Âge]');
+        assert.ok(/\[Âge(?:\s+\d+)?\]/.test(result.cleanText), 'Age should be labeled [Âge] or [Âge X]');
     });
 
     await t.test('Common names: Recognizes Lionel and single common names', () => {
@@ -587,5 +587,229 @@ Rue Faller 2, 1202 Genève
         // 5. Short dates properly handled
         assert.ok(!result.cleanText.includes('24.11'), 'Date 24.11 anonymized');
         assert.ok(!result.cleanText.includes('1.12'), 'Date 1.12 anonymized');
+    });
+
+    // =========================================================================
+    // REGRESSION TESTS FOR REALISTIC DATA ENGINE HARDENING
+    // =========================================================================
+
+    await t.test('Group 1.1 - Heuristic pair & propagation: Non-dictionary names don\'t leak (Kilian Moix)', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Kilian a perturbé la séance. Ensuite Kilian Moix est sorti de la classe.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('Kilian'), 'Kilian should be completely masked');
+        assert.ok(!result.cleanText.includes('Moix'), 'Moix should be completely masked');
+        assert.ok(result.cleanText.includes('Ensuite'), 'Sentence connector Ensuite must NOT be swallowed');
+        assert.strictEqual(
+            result.cleanText,
+            "[Personne 1] a perturbé la séance. Ensuite [Personne 1] est sorti de la classe.",
+            "Both instances of Kilian must be mapped to the same Person tag"
+        );
+    });
+
+    await t.test('Group 1.2 - URLs and social handles don\'t leak surnames or birth years', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Profil élève: https://instagram.com/lucas.dupont et compte @lucas_dupont2013 à surveiller.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('lucas.dupont'), 'URL payload must not leak student identity');
+        assert.ok(!result.cleanText.includes('lucas_dupont2013'), 'Social handle must not leak username/year');
+        assert.ok(!result.cleanText.includes('2013'), 'Birth year in handle must not leak');
+        assert.ok(result.cleanText.includes('[Lien 1]'), 'URL should be masked as [Lien 1]');
+        assert.ok(result.cleanText.includes('[Identifiant 1]'), 'Handle should be masked as [Identifiant 1]');
+    });
+
+    await t.test('Group 1.3 - Year-only and Month+Year dates are masked', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Élève 1: Né en 2013. Élève 2: né en mai 2014 dans le canton de Vaud.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('2013'), 'Birth year 2013 must be masked');
+        assert.ok(!result.cleanText.includes('mai 2014'), 'Month and year mai 2014 must be masked');
+        assert.ok(result.cleanText.includes('[Date 1]'), 'First date tag present');
+        assert.ok(result.cleanText.includes('[Date 2]'), 'Second date tag present');
+    });
+
+    await t.test('Group 1.4 - Ages written out in words are detected and masked', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "L'enfant a douze ans et son frère est âgé de huit ans et demi.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('douze ans'), 'Age written in words (douze ans) must be masked');
+        assert.ok(!result.cleanText.includes('huit ans'), 'Age written in words (huit ans) must be masked');
+        assert.ok(result.cleanText.includes('[Âge 1]'), 'First age tag present');
+        assert.ok(result.cleanText.includes('[Âge 2]'), 'Second age tag present');
+    });
+
+    await t.test('Group 1.5 - Phone number with (+41) country code is recognized', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Numéro d'urgence des parents: (+41) 79 123 45 67.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('79 123 45 67'), 'Phone number must be masked');
+        assert.ok(result.cleanText.includes('[Téléphone 1]'), 'Tag [Téléphone 1] must be present');
+    });
+
+    await t.test('Group 1.6 - Lowercase street type followed by "de" is matched', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Adresse du domicile: route de Bramois 12.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('route de Bramois 12'), 'Street address must be masked');
+        assert.ok(result.cleanText.includes('[Adresse 1]'), 'Address tag must be present');
+    });
+
+    await t.test('Group 1.7 - Class 9CO and school pattern "école primaire de Vétroz" are matched', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Affecté en 9CO à l'école primaire de Vétroz pour l'année scolaire.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('9CO'), 'Class 9CO must be masked');
+        assert.ok(!result.cleanText.includes('école primaire de Vétroz'), 'School name must be masked');
+        assert.ok(result.cleanText.includes('[Classe 1]'), 'First school_class tag present');
+        assert.ok(result.cleanText.includes('[Classe 2]'), 'Second school_class tag present');
+    });
+
+    await t.test('Group 1.8 - Accent-insensitive roster matching (Chloe matches Chloé Martin)', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = ['Chloé Martin'];
+        const text = "Chloe a terminé ses devoirs à temps.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('Chloe'), 'Chloe without accent must be matched to roster student');
+        assert.ok(result.cleanText.includes('[Élève 1]'), 'Should be masked with student tag [Élève 1]');
+    });
+
+    await t.test('Group 1.9 - Possible names warning banner detects unmasked capitalized words and one-click masks', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const inputEl = window.document.getElementById('inputText');
+        const possibleBar = window.document.getElementById('possibleNamesBar');
+        const possibleChips = window.document.getElementById('possibleNamesChips');
+        const outputArea = window.document.getElementById('outputArea');
+
+        // Text with a rare name that is mid-sentence and not in built-in list or roster
+        inputEl.value = "Hier, j'ai rencontré Sylvanie pour discuter de ses progrès.";
+        inputEl.dispatchEvent(new window.Event('input'));
+
+        assert.strictEqual(possibleBar.style.display, 'flex', 'Warning banner should be displayed');
+        assert.ok(possibleChips.innerHTML.includes('Sylvanie'), 'Banner chips must include Sylvanie');
+
+        // Click the chip to mask Sylvanie in one click
+        const chipBtn = possibleChips.querySelector('.possible-name-btn');
+        assert.ok(chipBtn, 'Chip button must exist');
+        chipBtn.click();
+
+        // Sylvanie is now in roster and masked
+        assert.ok(engine.state.roster.some(r => r.toLowerCase() === 'sylvanie'), 'Sylvanie should be added to roster');
+        assert.ok(!outputArea.textContent.includes('Sylvanie'), 'Sylvanie should now be masked in the output');
+        assert.ok(outputArea.textContent.includes('[Élève 1]'), 'Sylvanie should be masked as [Élève 1]');
+    });
+
+    await t.test('Group 2 - Pseudonym mode preserves shared surnames and matches gender', () => {
+        engine.state.mode = 'pseudo';
+        engine.state.roster = [];
+        const text = "Lucas Dupont et Emma Rey parlent avec Sophie Dupont. Mme Sophie Dupont confirme.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(!result.cleanText.includes('Lucas Dupont'), 'Original name Lucas Dupont must be replaced');
+        assert.ok(!result.cleanText.includes('Sophie Dupont'), 'Original name Sophie Dupont must be replaced');
+        assert.ok(!result.cleanText.includes('Emma Rey'), 'Original name Emma Rey must be replaced');
+
+        // Extract pseudonyms assigned to Lucas Dupont and Sophie Dupont
+        const mLucas = result.replacements.find(r => r.original === 'Lucas Dupont');
+        const mSophie = result.replacements.find(r => r.original === 'Sophie Dupont');
+        const mEmma = result.replacements.find(r => r.original === 'Emma Rey');
+
+        assert.ok(mLucas && mSophie && mEmma, 'All full names should be matched as replacements');
+
+        const [lucasFirst, lucasLast] = mLucas.replacementText.split(/\s+/);
+        const [sophieFirst, sophieLast] = mSophie.replacementText.split(/\s+/);
+
+        // Family consistency: Lucas and Sophie share the same surname Dupont -> must receive the SAME pseudo surname
+        assert.strictEqual(lucasLast, sophieLast, 'Shared surname Dupont must result in consistent pseudo surname for both family members');
+
+        // Gender consistency: Sophie must receive a female first name (e.g. Camille, Éléonore, Clara, Sophie...)
+        const femaleNames = ['Camille', 'Éléonore', 'Clara', 'Sophie', 'Inès', 'Juliette', 'Charlotte', 'Alice', 'Mathilde', 'Noémie', 'Romane', 'Justine', 'Emma', 'Chloé', 'Léa', 'Sarah', 'Louise', 'Manon'];
+        assert.ok(femaleNames.includes(sophieFirst), `Sophie must receive a female pseudonym first name (got ${sophieFirst})`);
+
+        // Mme Sophie Dupont must keep Mme and not have a male first name
+        assert.ok(result.cleanText.includes(`Mme ${sophieFirst} ${sophieLast}`), 'Mme Sophie Dupont must become Mme [FemaleFirstName] [Surname]');
+    });
+
+    await t.test('Group 3 - Numbered tags and fresh correspondence table on every run', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+
+        // First run with 2 distinct dates, 2 addresses, 2 classes
+        const text1 = "Élève né le 14.05.2013 à Rue des Châteaux 14 en classe 7H. Déménagé le 20.09.2024 à Avenue de la Gare 5 en classe 8H.";
+        const res1 = engine.runAnonymization(text1);
+
+        assert.ok(res1.cleanText.includes('[Date 1]'), 'Date 1 present');
+        assert.ok(res1.cleanText.includes('[Date 2]'), 'Date 2 present');
+        assert.ok(res1.cleanText.includes('[Adresse 1]'), 'Adresse 1 present');
+        assert.ok(res1.cleanText.includes('[Adresse 2]'), 'Adresse 2 present');
+        assert.ok(res1.cleanText.includes('[Classe 1]'), 'Classe 1 present');
+        assert.ok(res1.cleanText.includes('[Classe 2]'), 'Classe 2 present');
+
+        // AI reply referencing both numbered dates and addresses
+        const aiReply = "L'enfant est né le [Date 1] ([Adresse 1], [Classe 1]) et réside désormais à [Adresse 2] ([Classe 2]) depuis le [Date 2].";
+        const restored = engine.reverseAnonymization(aiReply);
+
+        assert.ok(restored.includes('14.05.2013'), 'First date restored at [Date 1]');
+        assert.ok(restored.includes('Rue des Châteaux 14'), 'First address restored at [Adresse 1]');
+        assert.ok(restored.includes('20.09.2024'), 'Second date restored at [Date 2]');
+        assert.ok(restored.includes('Avenue de la Gare 5'), 'Second address restored at [Adresse 2]');
+
+        // Second run with completely new text: correspondence table must be rebuilt, no stale tags
+        const text2 = "Nouvel élève à Chemin Neuf 1.";
+        const res2 = engine.runAnonymization(text2);
+        assert.strictEqual(engine.state.reverseMap.get('[Date 1]'), undefined, 'Old tags from run 1 must not persist in run 2');
+        assert.ok(res2.cleanText.includes('[Adresse 1]'), 'Run 2 starts counting anew at [Adresse 1]');
+    });
+
+    await t.test('Group 4.1 - Sentence starter "Cependant" is not swallowed with following name', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Cependant Martin travaille consciencieusement.";
+        const result = engine.runAnonymization(text);
+
+        assert.ok(result.cleanText.includes('Cependant [Personne 1] travaille'), 'Word Cependant must remain intact and Martin must be masked');
+        assert.ok(!result.cleanText.includes('[Personne 2] travaille'), 'Cependant must not be swallowed into a Person tag');
+    });
+
+    await t.test('Group 4.2 - Common nouns (une rose, une pierre) are not masked as person names', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = [];
+        const text = "Pierre a ramassé une pierre et Rose a cueilli une rose. J'ai aussi acheté du jade.";
+        const result = engine.runAnonymization(text);
+
+        // Capitalized Pierre and Rose as persons are masked
+        assert.ok(!result.cleanText.includes('Pierre a ramassé'), 'Capitalized Pierre must be masked');
+        assert.ok(!result.cleanText.includes('Rose a cueilli'), 'Capitalized Rose must be masked');
+
+        // Common nouns after articles must NOT be masked
+        assert.ok(result.cleanText.includes('une pierre'), 'une pierre must remain intact as common noun');
+        assert.ok(result.cleanText.includes('une rose'), 'une rose must remain intact as common noun');
+        assert.ok(result.cleanText.includes('du jade'), 'du jade must remain intact as common noun');
+    });
+
+    await t.test('Group 5 - Dynamic prompt prefix matches active mode', () => {
+        const labelsPrefix = engine.getAiPromptPrefix('labels');
+        const pseudoPrefix = engine.getAiPromptPrefix('pseudo');
+        const redactPrefix = engine.getAiPromptPrefix('redact');
+
+        assert.ok(labelsPrefix.includes('[Élève X]'), 'Labels mode prompt mentions [Élève X]');
+        assert.ok(pseudoPrefix.includes('pseudonymes réalistes'), 'Pseudo mode prompt mentions pseudonymes');
+        assert.ok(!pseudoPrefix.includes('[Élève X]'), 'Pseudo mode prompt does not mention [Élève X]');
+        assert.ok(redactPrefix.includes('████████'), 'Redact mode prompt mentions blocks ████████');
     });
 });

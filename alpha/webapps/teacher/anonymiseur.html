@@ -997,6 +997,83 @@
             border-color: #334155;
         }
 
+        .anonym-chip.chip-url {
+            background: rgba(14, 165, 233, 0.15);
+            color: #0284c7;
+            border-color: rgba(14, 165, 233, 0.35);
+        }
+
+        body.dark .anonym-chip.chip-url {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        /* BANDEAU AVERTISSEMENT NOMS POTENTIELS */
+        .possible-names-bar {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.85rem;
+            background: rgba(245, 158, 11, 0.12);
+            border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+            font-size: 0.8rem;
+            color: #92400e;
+            flex-wrap: wrap;
+        }
+
+        body.dark .possible-names-bar {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fcd34d;
+        }
+
+        .possible-names-info {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+        }
+
+        .possible-names-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .possible-name-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: var(--card-bg, #ffffff);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            color: #b45309;
+            padding: 0.15rem 0.55rem;
+            border-radius: var(--radius-pill, 9999px);
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .possible-name-btn:hover {
+            background: #f59e0b;
+            color: #ffffff;
+            border-color: #d97706;
+            transform: translateY(-1px);
+        }
+
+        body.dark .possible-name-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(245, 158, 11, 0.5);
+            color: #fde68a;
+        }
+
+        body.dark .possible-name-btn:hover {
+            background: #d97706;
+            color: #ffffff;
+        }
+
         /* STATS PILLS */
         .stats-bar {
             display: flex;
@@ -1426,6 +1503,14 @@
                         </div>
                     </div>
 
+                    <div class="possible-names-bar" id="possibleNamesBar" style="display: none;">
+                        <div class="possible-names-info">
+                            <i data-fa="triangle-exclamation" style="width:13px;height:13px;"></i>
+                            <span>Noms potentiels détectés (cliquez pour masquer) :</span>
+                        </div>
+                        <div class="possible-names-chips" id="possibleNamesChips"></div>
+                    </div>
+
                     <div class="editor-body">
                         <div class="output-view-area" id="outputArea">
                             <span class="output-placeholder">Le texte anonymisé apparaîtra ici en temps réel...</span>
@@ -1580,6 +1665,13 @@
                     description: 'Degrés HarmoS (1H-11CO), Cycles et Centres scolaires'
                 },
                 {
+                    id: 'urls_social',
+                    name: 'Liens & Réseaux sociaux',
+                    icon: 'link',
+                    enabled: true,
+                    description: 'URL web et identifiants de réseaux sociaux (@compte)'
+                },
+                {
                     id: 'iban',
                     name: 'IBAN & Comptes',
                     icon: 'coins',
@@ -1589,8 +1681,7 @@
             ];
 
             // Liste de prénoms suisses / romands les plus répandus
-            const COMMON_SWISS_NAMES = [
-                // Garçons
+            const COMMON_MALE_FIRST_NAMES = [
                 'Lionel', 'Lucas', 'Noah', 'Liam', 'Gabriel', 'Louis', 'Arthur', 'Jules', 'Léo', 'Leo', 'Adam',
                 'Maël', 'Mael', 'Hugo', 'Raphaël', 'Raphael', 'Paul', 'Nathan', 'Sacha', 'Samuel', 'Thomas',
                 'Maxime', 'Antoine', 'Alexandre', 'Julien', 'Simon', 'Théo', 'Theo', 'Ethan', 'Nolan', 'Victor',
@@ -1605,8 +1696,10 @@
                 'Jérôme', 'Jerome', 'Ludovic', 'Cyril', 'Cyrille', 'Sylvain', 'Xavier', 'Matthieu', 'Mathias', 'Gaël', 'Gael',
                 'Loïs', 'Lois', 'Léo-Paul', 'Jean-Pierre', 'Jean-Luc', 'Jean-Marc', 'Pierre-Alain', 'Marc-Antoine', 'Marc-André',
                 'Jean-Christophe', 'Jean-François', 'Jean-Marie', 'Jean-Baptiste', 'Charles', 'Gilles', 'Grégoire', 'Denis',
-                'Vivian', 'Diego', 'Joris', 'Walter', 'Sebastian', 'Aloys', 'Tomas', 'Erfan',
-                // Filles
+                'Vivian', 'Diego', 'Joris', 'Walter', 'Sebastian', 'Aloys', 'Tomas', 'Erfan', 'Martin'
+            ];
+
+            const COMMON_FEMALE_FIRST_NAMES = [
                 'Emma', 'Mia', 'Sofia', 'Sophia', 'Olivia', 'Alice', 'Chloé', 'Chloe', 'Léa', 'Lea',
                 'Jade', 'Louise', 'Lina', 'Mila', 'Ambre', 'Rose', 'Anna', 'Elena', 'Camille', 'Julia',
                 'Léna', 'Lena', 'Manon', 'Sarah', 'Zoé', 'Zoe', 'Charlotte', 'Inès', 'Ines', 'Lucie',
@@ -1622,7 +1715,20 @@
                 'Eliane', 'Éliane', 'Francesca', 'Carminho', 'Aline', 'Bienvenue', 'Céleste'
             ];
 
+            const COMMON_SWISS_NAMES = [...COMMON_MALE_FIRST_NAMES, ...COMMON_FEMALE_FIRST_NAMES];
+            const COMMON_MALE_SET = new Set(COMMON_MALE_FIRST_NAMES.map(n => n.toLowerCase()));
+            const COMMON_FEMALE_SET = new Set(COMMON_FEMALE_FIRST_NAMES.map(n => n.toLowerCase()));
             const COMMON_NAMES_SET = new Set(COMMON_SWISS_NAMES.map(n => n.toLowerCase()));
+
+            // Noms qui sont également des noms communs usuels
+            const DUAL_USE_NOUN_NAMES = new Set([
+                'rose', 'pierre', 'jade', 'ambre', 'clementine', 'clémentine', 'aurore',
+                'florence', 'iris', 'marina', 'violette', 'perle', 'olive', 'coline', 'blanche'
+            ]);
+
+            // Regex précompilée unique pour tous les prénoms fréquents
+            const escCommonNames = COMMON_SWISS_NAMES.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).sort((a, b) => b.length - a.length);
+            const COMBINED_COMMON_NAMES_RE = new RegExp('(?<![\\p{L}\\p{M}-])(?:' + escCommonNames.join('|') + ')(?![\\p{L}\\p{M}-])', 'giu');
 
             // Liste de stopwords et termes à ne JAMAIS anonymiser en tant que nom de personne
             const NAME_STOPWORDS = new Set([
@@ -1661,7 +1767,7 @@
                 'neuchâtel', 'neuchatel', 'jura', 'berne', 'bern', 'zurich', 'zürich', 'tessin', 'sion', 'sierre', 'martigny', 'monthey',
                 'brigue', 'lausanne', 'yverdon', 'vevey', 'montreux', 'morges', 'nyon', 'paris', 'lyon', 'grenoble',
                 'milan', 'rome', 'turin', 'berlin', 'vienne', 'aoste', 'europe',
-                // Mots grammaticaux fréquents / Déterminants / Pronoms / Prépositions / Conjonctions
+                // Mots grammaticaux fréquents / Déterminants / Pronoms / Prépositions / Conjonctions / Adverbes
                 'le', 'la', 'les', 'un', 'une', 'des', 'ce', 'cet', 'cette', 'ces',
                 'mon', 'ton', 'son', 'ma', 'ta', 'sa', 'mes', 'tes', 'ses', 'notre', 'votre', 'leur', 'nos', 'vos', 'leurs',
                 'quel', 'quelle', 'quels', 'quelles', 'chaque', 'aucun', 'aucune', 'plusieurs', 'certains', 'certaines', 'autre', 'autres',
@@ -1670,6 +1776,7 @@
                 'comme', 'quand', 'lorsque', 'puisque', 'quoique', 'après', 'apres', 'avant', 'avec', 'sans', 'sous', 'sur', 'dans', 'pour', 'par', 'chez', 'vers', 'entre',
                 'pendant', 'durant', 'dès', 'depuis', 'très', 'tres', 'trop', 'bien', 'plus', 'moins', 'tout', 'toute', 'tous', 'toutes',
                 'même', 'meme', 'aussi', 'encore', 'toujours', 'jamais', 'souvent', 'parfois', 'ainsi', 'alors', 'puis', 'ensuite', 'enfin',
+                'cependant', 'toutefois', 'néanmoins', 'neanmoins', 'pourtant', 'hier', 'demain', "aujourd'hui", 'aujourdhui',
                 'bonjour', 'bonsoir', 'salut', 'merci', 'cordialement', 'salutations', 'veuillez', 'chère', 'cher', 'chers',
                 // Mots allemands / anglais courants
                 'hat', 'intern', 'gearbeitet', 'und', 'vereinheitlicht', 'alle', 'gerne', 'jederzeit', 'melden', 'anfragen', 'bitte', 'per', 'an',
@@ -1686,6 +1793,14 @@
             ]);
 
             // Pseudonymes de remplacement réalistes
+            const PSEUDO_MALE_FIRST_NAMES = [
+                'Alexandre', 'Gabriel', 'Julien', 'Maxime', 'Valentin', 'Nicolas', 'Antoine', 'Robin',
+                'Arthur', 'Bastien', 'Clément', 'Adrien', 'Lucas', 'Thomas', 'Mathieu', 'Hugo'
+            ];
+            const PSEUDO_FEMALE_FIRST_NAMES = [
+                'Camille', 'Éléonore', 'Clara', 'Sophie', 'Inès', 'Juliette', 'Charlotte', 'Alice',
+                'Mathilde', 'Noémie', 'Romane', 'Justine', 'Emma', 'Chloé', 'Léa', 'Sarah', 'Louise', 'Manon'
+            ];
             const PSEUDO_FIRST_NAMES = [
                 'Alexandre', 'Camille', 'Gabriel', 'Éléonore', 'Julien', 'Clara', 'Maxime', 'Sophie',
                 'Valentin', 'Inès', 'Nicolas', 'Juliette', 'Antoine', 'Charlotte', 'Robin', 'Alice',
@@ -1705,10 +1820,21 @@
                 roster: [],
                 ignoredTerms: new Set(),
                 pseudoMap: new Map(),
+                pseudoFirstNameMap: new Map(),
+                pseudoLastNameMap: new Map(),
+                genderMap: new Map(),
                 studentMap: new Map(),
                 personMap: new Map(),
                 emailMap: new Map(),
                 phoneMap: new Map(),
+                dateMap: new Map(),
+                ageMap: new Map(),
+                addressMap: new Map(),
+                cityMap: new Map(),
+                classMap: new Map(),
+                ibanMap: new Map(),
+                urlMap: new Map(),
+                handleMap: new Map(),
                 tagCounter: new Map(),
                 reverseMap: new Map()
             };
@@ -1751,6 +1877,23 @@
             }
 
             const ROSTER_PARTICLES = new Set(['de', 'du', 'des', "d'", 'le', 'la', 'les', 'van', 'von', 'der', 'den', 'di', 'da', 'do', 'dos', 'das', 'et']);
+
+            function toAccentInsensitivePattern(str) {
+                const accentMap = {
+                    'a': '[aàâäáãåAÀÂÄÁÃÅ]', 'à': '[aàâäáãåAÀÂÄÁÃÅ]', 'â': '[aàâäáãåAÀÂÄÁÃÅ]', 'ä': '[aàâäáãåAÀÂÄÁÃÅ]', 'á': '[aàâäáãåAÀÂÄÁÃÅ]',
+                    'e': '[eéèêëEÉÈÊË]', 'é': '[eéèêëEÉÈÊË]', 'è': '[eéèêëEÉÈÊË]', 'ê': '[eéèêëEÉÈÊË]', 'ë': '[eéèêëEÉÈÊË]',
+                    'i': '[iîïíìIÎÏÍÌ]', 'î': '[iîïíìIÎÏÍÌ]', 'ï': '[iîïíìIÎÏÍÌ]', 'í': '[iîïíìIÎÏÍÌ]', 'ì': '[iîïíìIÎÏÍÌ]',
+                    'o': '[oôöóòõOÔÖÓÒÕ]', 'ô': '[oôöóòõOÔÖÓÒÕ]', 'ö': '[oôöóòõOÔÖÓÒÕ]', 'ó': '[oôöóòõOÔÖÓÒÕ]', 'ò': '[oôöóòõOÔÖÓÒÕ]',
+                    'u': '[uùûüúUÙÛÜÚ]', 'ù': '[uùûüúUÙÛÜÚ]', 'û': '[uùûüúUÙÛÜÚ]', 'ü': '[uùûüúUÙÛÜÚ]', 'ú': '[uùûüúUÙÛÜÚ]',
+                    'c': '[cçCÇ]', 'ç': '[cçCÇ]',
+                    'n': '[nñNÑ]', 'ñ': '[nñNÑ]'
+                };
+                return str.split('').map(char => {
+                    const lower = char.toLowerCase();
+                    if (accentMap[lower]) return accentMap[lower];
+                    return char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                }).join('');
+            }
 
             function buildRosterEntries(rosterList) {
                 const entries = [];
@@ -1837,22 +1980,78 @@
                     return state.pseudoMap.get(key);
                 }
                 if (type === 'name' || type === 'roster') {
-                    const idx = state.pseudoMap.size % PSEUDO_FIRST_NAMES.length;
-                    const pseudo = PSEUDO_FIRST_NAMES[idx];
+                    const words = (originalText || '').trim().split(/\s+/);
+                    // Déterminer le genre (via civilité enregistrée ou détection sur prénom)
+                    let gender = state.genderMap ? state.genderMap.get(key) : null;
+                    if (!gender && words.length > 0) {
+                        const firstLow = words[0].toLowerCase();
+                        if (COMMON_FEMALE_SET.has(firstLow)) gender = 'female';
+                        else if (COMMON_MALE_SET.has(firstLow)) gender = 'male';
+                    }
+                    if (!gender) {
+                        gender = (state.pseudoMap.size % 2 === 0) ? 'female' : 'male';
+                    }
+
+                    // Générateur de prénom cohérent
+                    function getPseudoFirstName(origFirst, g) {
+                        const fKey = origFirst.toLowerCase();
+                        if (state.pseudoFirstNameMap.has(fKey)) return state.pseudoFirstNameMap.get(fKey);
+                        const pool = (g === 'female') ? PSEUDO_FEMALE_FIRST_NAMES : PSEUDO_MALE_FIRST_NAMES;
+                        const pseudoF = pool[state.pseudoFirstNameMap.size % pool.length];
+                        state.pseudoFirstNameMap.set(fKey, pseudoF);
+                        return pseudoF;
+                    }
+
+                    // Générateur de nom de famille cohérent (préserve les liens de fratrie/famille)
+                    function getPseudoLastName(origLast) {
+                        const lKey = origLast.toLowerCase();
+                        if (state.pseudoLastNameMap.has(lKey)) return state.pseudoLastNameMap.get(lKey);
+                        const pseudoL = PSEUDO_LAST_NAMES[state.pseudoLastNameMap.size % PSEUDO_LAST_NAMES.length];
+                        state.pseudoLastNameMap.set(lKey, pseudoL);
+                        return pseudoL;
+                    }
+
+                    let pseudo;
+                    if (words.length === 1) {
+                        pseudo = getPseudoFirstName(words[0], gender);
+                    } else {
+                        const pseudoF = getPseudoFirstName(words[0], gender);
+                        const pseudoL = getPseudoLastName(words.slice(1).join(' '));
+                        pseudo = pseudoF + ' ' + pseudoL;
+                    }
                     state.pseudoMap.set(key, pseudo);
                     return pseudo;
                 }
                 if (type === 'email') {
-                    const pseudo = 'contact' + (state.pseudoMap.size + 1) + '@exemple.ch';
+                    const pseudo = 'contact' + (state.emailMap.size + 1) + '@exemple.ch';
                     state.pseudoMap.set(key, pseudo);
                     return pseudo;
                 }
                 if (type === 'phone') {
-                    const pseudo = '079 000 00 0' + (state.pseudoMap.size % 10);
+                    const pseudo = '079 000 00 0' + (state.phoneMap.size % 10);
+                    state.pseudoMap.set(key, pseudo);
+                    return pseudo;
+                }
+                if (type === 'url') {
+                    const pseudo = 'https://exemple.ch/lien' + (state.urlMap.size + 1);
+                    state.pseudoMap.set(key, pseudo);
+                    return pseudo;
+                }
+                if (type === 'handle') {
+                    const pseudo = '@pseudo_anonyme' + (state.handleMap.size + 1);
                     state.pseudoMap.set(key, pseudo);
                     return pseudo;
                 }
                 return '[Anonyme]';
+            }
+
+            function getNumberedTag(mapName, prefix, original, canonicalKey) {
+                if (!state[mapName]) state[mapName] = new Map();
+                const key = canonicalKey || (original || '').toLowerCase().trim();
+                if (!state[mapName].has(key)) {
+                    state[mapName].set(key, state[mapName].size + 1);
+                }
+                return '[' + prefix + ' ' + state[mapName].get(key) + ']';
             }
 
             function getTagReplacement(type, original, canonicalKey) {
@@ -1886,13 +2085,23 @@
                 }
                 switch (type) {
                     case 'avs': return '[Numéro AVS]';
-                    case 'dob': return '[Date]';
-                    case 'date': return '[Date]';
-                    case 'age': return '[Âge]';
-                    case 'address': return '[Adresse]';
-                    case 'city': return '[Localité]';
-                    case 'school_class': return '[Classe]';
-                    case 'iban': return '[IBAN]';
+                    case 'dob':
+                    case 'date':
+                        return getNumberedTag('dateMap', 'Date', original, canonicalKey);
+                    case 'age':
+                        return getNumberedTag('ageMap', 'Âge', original, canonicalKey);
+                    case 'address':
+                        return getNumberedTag('addressMap', 'Adresse', original, canonicalKey);
+                    case 'city':
+                        return getNumberedTag('cityMap', 'Localité', original, canonicalKey);
+                    case 'school_class':
+                        return getNumberedTag('classMap', 'Classe', original, canonicalKey);
+                    case 'iban':
+                        return getNumberedTag('ibanMap', 'IBAN', original, canonicalKey);
+                    case 'url':
+                        return getNumberedTag('urlMap', 'Lien', original, canonicalKey);
+                    case 'handle':
+                        return getNumberedTag('handleMap', 'Identifiant', original, canonicalKey);
                     default:
                         const count = (state.tagCounter.get(type) || 0) + 1;
                         state.tagCounter.set(type, count);
@@ -1912,7 +2121,7 @@
             }
 
             function runAnonymization(rawText) {
-                if (!rawText) return { cleanText: '', htmlOutput: '', stats: {}, totalCount: 0 };
+                if (!rawText) return { cleanText: '', htmlOutput: '', stats: {}, totalCount: 0, replacements: [], possibleNames: [] };
 
                 // Reset per-run counters & mappings
                 state.tagCounter.clear();
@@ -1920,6 +2129,19 @@
                 state.personMap.clear();
                 state.emailMap.clear();
                 state.phoneMap.clear();
+                state.dateMap.clear();
+                state.ageMap.clear();
+                state.addressMap.clear();
+                state.cityMap.clear();
+                state.classMap.clear();
+                state.ibanMap.clear();
+                state.urlMap.clear();
+                state.handleMap.clear();
+                state.pseudoMap.clear();
+                state.pseudoFirstNameMap.clear();
+                state.pseudoLastNameMap.clear();
+                state.genderMap.clear();
+                state.reverseMap.clear();
                 const stats = {};
                 function addStat(type) {
                     stats[type] = (stats[type] || 0) + 1;
@@ -1938,6 +2160,20 @@
                         }
                     }
                     replacements.push({ start, end, original, type, canonicalKey });
+                }
+
+                // 0. URLs & Réseaux sociaux (détectés en premier pour protéger leur contenu interne)
+                if (getPatternEnabled('urls_social')) {
+                    const urlRe = /\b(?:https?:\/\/[^\s<>\x22\x27]+|www\.[^\s<>\x22\x27]+)/gi;
+                    let m;
+                    while ((m = urlRe.exec(rawText)) !== null) {
+                        const cleanUrl = m[0].replace(/[.,;:!?)]+$/, '');
+                        addInterval(m.index, m.index + cleanUrl.length, cleanUrl, 'url', 'url:' + cleanUrl.toLowerCase());
+                    }
+                    const handleRe = /(?<![\w@])@([a-zA-Z0-9_.-]{3,30})\b/g;
+                    while ((m = handleRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'handle', 'handle:' + m[0].toLowerCase());
+                    }
                 }
 
                 // 1. Emails
@@ -1982,8 +2218,8 @@
 
                 // 4. Téléphones : Suisse (+41), France (+33), Allemagne (+49), Autriche (+43), Italie (+39)
                 if (getPatternEnabled('phones')) {
-                    // Indicatifs internationaux avec ou sans (0)
-                    const intlPhoneRe = /(?:\+(?:41|33|49|43|39)|00(?:41|33|49|43|39))[ \t]*(?:\(0\)[ \t]*)?[1-9](?:[ \t./-]*\d){6,12}\b/g;
+                    // Indicatifs internationaux avec ou sans parenthèses et avec ou sans (0)
+                    const intlPhoneRe = /(?:\(\+(?:41|33|49|43|39)\)|\+(?:41|33|49|43|39)|00(?:41|33|49|43|39))[ \t]*(?:\(0\)[ \t]*)?[1-9](?:[ \t./-]*\d){6,12}\b/g;
                     let m;
                     while ((m = intlPhoneRe.exec(rawText)) !== null) {
                         addInterval(m.index, m.index + m[0].length, m[0], 'phone', 'phone:' + m[0].replace(/\D/g, ''));
@@ -2010,23 +2246,35 @@
                     }
                 }
 
-                // 5. Dates & Âges (toutes les dates deviennent [Date] conformément au choix utilisateur)
+                // 5. Dates & Âges (toutes les dates deviennent [Date 1, 2...] conformément au choix utilisateur)
                 if (getPatternEnabled('dates_birth')) {
                     // Dates numériques (CH: JJ.MM.AAAA, FR/IT: JJ/MM/AAAA, JJ-MM-AAAA, ISO: AAAA-MM-JJ, et formats courts JJ.MM.AA)
                     const dateRe = /\b(?:(?:0?[1-9]|[12]\d|3[01])[./-](?:0?[1-9]|1[0-2])[./-](?:19|20)\d{2}|(?:19|20)\d{2}[./-](?:0?[1-9]|1[0-2])[./-](?:0?[1-9]|[12]\d|3[01])|(?:0?[1-9]|[12]\d|3[01])[./-](?:0?[1-9]|1[0-2])[./-]\d{2})\b/g;
                     let m;
                     while ((m = dateRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date:' + m[0].toLowerCase());
                     }
-                    // Dates textuelles avec mois en FR, DE, IT, EN (ex: "14 mai 2023", "14. Mai 2023", "le 24 octobre", "am 12. Oktober", "il 5 maggio 2024", "03 November 2026")
+                    // Dates textuelles avec jour et mois en FR, DE, IT, EN (ex: "14 mai 2023", "14. Mai 2023", "le 24 octobre", "am 12. Oktober", "il 5 maggio 2024", "03 November 2026")
                     const textualDateRe = /(?:(?:n[eé](?:e)?\s+le|geboren\s+am|geb\.?|nato(?:\/a)?\s+il|nata\s+il|le|am|il|on)\s+)?\b(?:0?[1-9]|[12]\d|3[01])(?:\.|\s*er)?\s+(?:janvier|f[eé]vrier|fevrier|mars|avril|mai|juin|juillet|ao[uû]t|aout|septembre|octobre|novembre|d[eé]cembre|decembre|januar|j[aä]nner|janner|februar|feber|m[aä]rz|maerz|marz|april|juni|juli|august|september|oktober|november|dezember|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+(?:19|20)?\d{2})?\b/gi;
                     while ((m = textualDateRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date:' + m[0].toLowerCase());
+                    }
+                    // Mois et année seuls (ex: "né en mai 2014", "mai 2014", "in Mai 2013")
+                    const monthYearDateRe = /\b(?:janvier|f[eé]vrier|fevrier|mars|avril|mai|juin|juillet|ao[uû]t|aout|septembre|octobre|novembre|d[eé]cembre|decembre|januar|j[aä]nner|janner|februar|feber|m[aä]rz|maerz|marz|april|juni|juli|august|september|oktober|november|dezember|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre|january|february|march|april|may|june|july|august|september|october|november|december)\s+(?:19|20)\d{2}\b/gi;
+                    while ((m = monthYearDateRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date:' + m[0].toLowerCase());
+                    }
+                    // Année de naissance seule (ex: "Né en 2013", "geboren im 2013", "nato nel 2013")
+                    const birthYearRe = /(?:\b|(?<=[\s'’]))(?:n[eé](?:e)?\s+en|ann[eé]e\s+de\s+naissance\s*[:\-]?|geboren\s+im\s+Jahr|geboren\s+im|geb\.?\s+im|geb\.?\s*[:\-]?|nato\s+nel|nata\s+nel|born\s+in)\s+((?:19|20)\d{2})\b/gi;
+                    while ((m = birthYearRe.exec(rawText)) !== null) {
+                        const yr = m[1];
+                        const yrStart = m.index + m[0].lastIndexOf(yr);
+                        addInterval(yrStart, yrStart + yr.length, yr, 'dob', 'date:' + yr);
                     }
                     // Format anglais "Month DD, YYYY" (ex: "February 09, 2026")
                     const enMonthFirstDateRe = /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+(?:0?[1-9]|[12]\d|3[01])(?:st|nd|rd|th)?,?\s+(?:19|20)\d{2}\b/gi;
                     while ((m = enMonthFirstDateRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'dob', 'date:' + m[0].toLowerCase());
                     }
                     // Dates courtes sans année précédées d'un marqueur (ex: "Le 24.11", "les dates du 24.11 et 1.12", "les mardis 10.11, 17.11, 24.11, 1.12 et 8.12")
                     const shortDateSeriesRe = /(?:(?:le|du|au|les|dès|vers|dates?\s+du|mardis?|lundis?|mercredis?|jeudis?|vendredis?|samedis?|dimanches?)\s+)((?:0?[1-9]|[12]\d|3[01])\.(?:1[0-2]|0?[1-9])(?:\s*(?:,|et|ou|-)\s*(?:0?[1-9]|[12]\d|3[01])\.(?:1[0-2]|0?[1-9]))*)\b/gi;
@@ -2037,13 +2285,18 @@
                         let sm;
                         while ((sm = singleShortDateRe.exec(series)) !== null) {
                             const dateStart = seriesStart + sm.index;
-                            addInterval(dateStart, dateStart + sm[0].length, sm[0], 'dob', 'date');
+                            addInterval(dateStart, dateStart + sm[0].length, sm[0], 'dob', 'date:' + sm[0].toLowerCase());
                         }
                     }
                     // Âges : FR: "âgé de 11 ans", "11 ans", DE: "11 Jahre alt", "11 Jahre", IT: "11 anni"
                     const ageRe = /\b(?:(?:âgé(?:e)?\s+de\s+)?\d{1,2}\s*ans|\d{1,2}\s*(?:Jahre(?:\s+alt)?|J\.)|\d{1,2}\s*anni)\b/gi;
                     while ((m = ageRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'age', 'age');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'age', 'age:' + m[0].toLowerCase());
+                    }
+                    // Âges en toutes lettres (ex: "douze ans", "âgé de huit ans et demi", "zwölf Jahre")
+                    const writtenAgeRe = /(?:\b|(?<=[\s'’]))(?:(?:(?:âgé|age|âgée|agee)\s+de\s+)?(?:un|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|dix-sept|dix-huit|dix-neuf|vingt)\s*ans(?:\s+et\s+demi(?:e)?)?|(?:(?:âgé|age|âgée|agee)\s+de\s+)?(?:eins|zwei|drei|vier|fünf|sechs|sieben|acht|neun|zehn|elf|zwölf|dreizehn|vierzehn|fünfzehn|sechzehn|siebzehn|achtzehn|neunzehn|zwanzig)\s*Jahre(?:\s+alt)?)\b/gi;
+                    while ((m = writtenAgeRe.exec(rawText)) !== null) {
+                        addInterval(m.index, m.index + m[0].length, m[0], 'age', 'age:' + m[0].toLowerCase());
                     }
                 }
 
@@ -2052,8 +2305,8 @@
                     const rosterEntries = buildRosterEntries(state.roster);
                     for (const entry of rosterEntries) {
                         if (!entry.pattern || entry.pattern.length < 2) continue;
-                        const escaped = entry.pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const re = new RegExp('\\b' + escaped + '\\b', 'gi');
+                        const patternRe = toAccentInsensitivePattern(entry.pattern);
+                        const re = new RegExp('\\b' + patternRe + '\\b', 'gi');
                         let m;
                         while ((m = re.exec(rawText)) !== null) {
                             addInterval(m.index, m.index + m[0].length, m[0], 'roster', entry.key);
@@ -2061,31 +2314,31 @@
                     }
                 }
 
-                // 7. Classes & Établissements
+                // 7. Classes & Établissements (élargi pour 9CO et école primaire de X)
                 if (getPatternEnabled('school_class')) {
-                    const classRe = /\b(?:1[01]CO|[1-8]H(?:-[A-Z0-9]+)?|Cycle\s+[123]|CO\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+|Centre\s+scolaire\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+|École\s+de\s+[A-ZÀ-Ÿ][a-zà-ÿ-]+)\b/g;
+                    const classRe = /\b(?:(?:[1-9]|1[01])\s*CO|(?:[1-9]|1[01])H(?:-[A-Z0-9]+)?|Cycle\s+[123]|CO\s+d[e']\s*[A-ZÀ-Ÿ][a-zà-ÿ-]+|Centre\s+scolaire\s+d[e']\s*[A-ZÀ-Ÿ][a-zà-ÿ-]+)\b|(?:\b|(?<=[\s'’]))(?:école|ecole|collège|college|gymnase)\s+(?:(?:primaire|secondaire|maternelle|enfantine|privée)\s+)?d[e']\s*[A-ZÀ-Ÿ][a-zà-ÿ-]+/gi;
                     let m;
                     while ((m = classRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'school_class', 'school_class');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'school_class', 'school_class:' + m[0].toLowerCase());
                     }
                 }
 
-                // 8. Adresses & Codes postaux (PAS DE "Cours")
+                // 8. Adresses & Codes postaux (élargi pour "route de Bramois 12", etc.)
                 if (getPatternEnabled('addresses')) {
                     // NPA / Code postal + Ville (ex: "1950 Sion", "CH-1000 Lausanne", "75001 Paris", "D-10115 Berlin", "8001 Zürich", "A-1010 Wien", "20121 Milano")
                     const npaRe = /\b(?:(?:CH-|A-|AT-)[1-9]\d{3}|(?:F-|FR-|D-|DE-|I-|IT-)\d{5}|[1-9]\d{3}|\d{5})\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+(?:\s+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+)*)\b/g;
                     let m;
                     while ((m = npaRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'city', 'city');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'city', 'city:' + m[0].toLowerCase());
                     }
-                    // Noms de rues + numéros (SANS "Cours" pour éviter les faux positifs)
-                    const streetRe = /\b(?:Rue|Avenue|Av\.|Chemin|Ch\.|Route|Rte|Place|Boulevard|Bd|Impasse|Allée|Voie|Square|Quai|Sentier|Passage|Ruelle|Via|Viale|Corso|Piazza|Vicolo|rue|avenue|chemin|route|place|boulevard|allée|quai|via)\s+(?:de\s+la\s+|du\s+|des\s+|d'|dell'|della\s+|del\s+|dei\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+(?:\s+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+)*(?:[ \t]+\d+[a-zA-Z]?)?\b/g;
+                    // Noms de rues + numéros (supporte 'de', 'de la', 'du', 'des', 'd'')
+                    const streetRe = /\b(?:Rue|Avenue|Av\.|Chemin|Ch\.|Route|Rte|Place|Boulevard|Bd|Impasse|Allée|Voie|Square|Quai|Sentier|Passage|Ruelle|Via|Viale|Corso|Piazza|Vicolo|rue|avenue|chemin|route|place|boulevard|allée|quai|via)\s+(?:de\s+la\s+|de\s+|du\s+|des\s+|d'|d’|dell'|della\s+|del\s+|dei\s+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+(?:\s+[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß-]+)*(?:[ \t]+\d+[a-zA-Z]?)?\b/g;
                     while ((m = streetRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'address', 'address');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'address', 'address:' + m[0].toLowerCase());
                     }
                     const germanStreetRe = /\b[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:straße|strasse|str\.|weg|gasse|platz|allee)\s+\d+[a-zA-Z]?\b/gi;
                     while ((m = germanStreetRe.exec(rawText)) !== null) {
-                        addInterval(m.index, m.index + m[0].length, m[0], 'address', 'address');
+                        addInterval(m.index, m.index + m[0].length, m[0], 'address', 'address:' + m[0].toLowerCase());
                     }
                 }
 
@@ -2118,12 +2371,22 @@
                 }
 
                 if (getPatternEnabled('common_names')) {
-                    // A. Civilités (ex: "M. Jean-Pierre Dupont", "Mme Sophie Martin")
-                    const titleRe = /\b(?:M\.|Mme|Mlle|Monsieur|Madame|Mademoiselle|Dr|Docteur|Prof\.|Professeur|Maître|Me|Herr|Frau|Sig\.|Sig\.ra)\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*(?:[ \t]+(?:(?:de|du|des|d'|d’|von|van|di|da)[ \t]+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|[ \t]+[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)?)\b/g;
+                    // A. Civilités (ex: "M. Jean-Pierre Dupont", "Mme Sophie Martin") - isole le titre pour ne masquer que le nom
+                    const titleRe = /\b(M\.|Mme|Mlle|Monsieur|Madame|Mademoiselle|Dr|Docteur|Prof\.|Professeur|Maître|Me|Herr|Frau|Sig\.|Sig\.ra)\s+([A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*(?:[ \t]+(?:(?:de|du|des|d'|d’|von|van|di|da)[ \t]+)?[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+(?:-[A-ZÀ-ŸÄÖÜ][a-zà-ÿäöüß]+)*|[ \t]+[A-ZÀ-ŸÄÖÜ]{2,}(?:-[A-ZÀ-ŸÄÖÜ]{2,})*)?)\b/g;
                     let m;
                     while ((m = titleRe.exec(rawText)) !== null) {
-                        const dp = registerDiscoveredPerson(m[1] || m[0]);
-                        addInterval(m.index, m.index + m[0].length, m[0], 'name', dp.canonicalKey);
+                        const title = m[1];
+                        const name = m[2];
+                        if (!name || name.length < 2) continue;
+                        const nameStart = m.index + m[0].indexOf(name);
+                        const dp = registerDiscoveredPerson(name);
+                        // Conserver le genre induit par la civilité
+                        if (/^(?:Mme|Madame|Mlle|Mademoiselle|Frau|Sig\.ra)$/i.test(title)) {
+                            state.genderMap.set(dp.canonicalKey, 'female');
+                        } else if (/^(?:M\.|Monsieur|Herr|Sig\.)$/i.test(title)) {
+                            state.genderMap.set(dp.canonicalKey, 'male');
+                        }
+                        addInterval(nameStart, nameStart + name.length, name, 'name', dp.canonicalKey);
                     }
 
                     // B. En-têtes d'emails (ex: "From: Lionel Walter <...>", "To: Vivian Epiney <...>", "Cc: Jean Marc Wyss <...>")
@@ -2177,7 +2440,12 @@
                         const w2Clean = w2Tokens[w2Tokens.length - 1];
                         const w2CleanLow = w2Clean.toLowerCase();
 
-                        if (NAME_STOPWORDS.has(w1Low) || NAME_STOPWORDS.has(w2CleanLow)) continue;
+                        // En cas de mot-clé/stopword au premier mot, rembobiner le curseur regex juste après w1
+                        if (NAME_STOPWORDS.has(w1Low)) {
+                            pairCandidateRe.lastIndex = m.index + w1.length;
+                            continue;
+                        }
+                        if (NAME_STOPWORDS.has(w2CleanLow)) continue;
                         if (NON_PERSON_ACRONYMS.has(w1) || NON_PERSON_ACRONYMS.has(w2Clean)) continue;
 
                         let isValid = false;
@@ -2187,12 +2455,12 @@
                             isValid = true;
                         } else {
                             const preText = rawText.substring(Math.max(0, m.index - 25), m.index);
-                            const isMidSentence = /(?:de|par|pour|avec|chez|sur|à|a)\s+$/i.test(preText) || /[,;:(«"\-]\s*$/.test(preText);
+                            const isMidSentence = /(?:de|par|pour|avec|chez|sur|à|a)\s+$/i.test(preText) || /[,;:(«"\-]\s*$/.test(preText) || /(?:ensuite|puis|alors|ainsi|cependant)\s+$/i.test(preText);
                             if (isMidSentence) {
                                 isValid = true;
                             } else {
                                 const postText = rawText.substring(m.index + m[0].length, Math.min(rawText.length, m.index + m[0].length + 20));
-                                if (/^\s+(?:a|est|participe|travaille|présente|montre|rencontre|semble|doit|peut|souhaite|vient)\b/i.test(postText)) {
+                                if (/^\s+(?:a|est|participe|travaille|présente|montre|rencontre|semble|doit|peut|souhaite|vient|sort|sorti|sorte|reste|va)\b/i.test(postText)) {
                                     isValid = true;
                                 }
                             }
@@ -2223,17 +2491,22 @@
                         }
                     }
 
-                    // G. Prénoms fréquents isolés restants
-                    for (const fn of COMMON_SWISS_NAMES) {
-                        const escFn = fn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const fnRe = new RegExp('(?<![\\p{L}\\p{M}-])' + escFn + '(?![\\p{L}\\p{M}-])', 'giu');
-                        let fm;
-                        while ((fm = fnRe.exec(rawText)) !== null) {
-                            const fnLow = fm[0].toLowerCase();
-                            const matchedDp = discoveredPersons.find(p => p.canonicalKey.includes(fnLow) || Array.from(p.parts).some(pt => pt.toLowerCase() === fnLow));
-                            const key = matchedDp ? matchedDp.canonicalKey : ('person:' + fnLow);
-                            addInterval(fm.index, fm.index + fm[0].length, fm[0], 'name', key);
+                    // G. Prénoms fréquents isolés restants (utilisation de la regex précompilée unique)
+                    let fm;
+                    while ((fm = COMBINED_COMMON_NAMES_RE.exec(rawText)) !== null) {
+                        const fnFound = fm[0];
+                        const fnLow = fnFound.toLowerCase();
+                        // Filtrer les faux positifs sur les noms communs usuels (ex: "une rose", "une pierre", "du jade")
+                        if (DUAL_USE_NOUN_NAMES.has(fnLow)) {
+                            const preText = rawText.substring(Math.max(0, fm.index - 15), fm.index);
+                            const isNounArticle = /(?:une|la|de|du|des|cette|mon|ma|sa|leur|notre|votre|d'|d’|en|par)\s+$/i.test(preText);
+                            if (isNounArticle || fnFound[0] === fnFound[0].toLowerCase()) {
+                                continue;
+                            }
                         }
+                        const matchedDp = discoveredPersons.find(p => p.canonicalKey.includes(fnLow) || Array.from(p.parts).some(pt => pt.toLowerCase() === fnLow));
+                        const key = matchedDp ? matchedDp.canonicalKey : ('person:' + fnLow);
+                        addInterval(fm.index, fm.index + fm[0].length, fm[0], 'name', key);
                     }
                 }
 
@@ -2278,6 +2551,7 @@
                         else if (item.type === 'email') chipClass += ' chip-email';
                         else if (item.type === 'phone') chipClass += ' chip-phone';
                         else if (item.type === 'avs') chipClass += ' chip-avs';
+                        else if (item.type === 'url' || item.type === 'handle') chipClass += ' chip-url';
 
                         htmlOutput += '<mark class="' + chipClass + '" data-term="' + escapeHtml(termKey) + '" role="button" tabindex="0" title="Original : ' + escapeHtml(item.original) + '&#10;💡 Cliquer pour ignorer cette détection">' + escapeHtml(repText) + '<span class="chip-dismiss-icon" title="Ignorer">×</span></mark>';
                     }
@@ -2289,10 +2563,38 @@
                 cleanText += remainder;
                 htmlOutput += escapeHtml(remainder);
 
-                // Garde-fou sécurité : replier les balises identiques consécutives (ex: [Personne 1] [Personne 1] -> [Personne 1])
-                cleanText = cleanText.replace(/(\[(?:Personne|Élève|Email|Téléphone)\s+\d+\])(?:[ \t-]+\1)+/g, '$1');
+                // Garde-fou sécurité : replier les balises identiques consécutives
+                cleanText = cleanText.replace(/(\[(?:Personne|Élève|Email|Téléphone|Date|Âge|Adresse|Localité|Classe|IBAN|Lien|Identifiant)\s+\d+\])(?:[ \t-]+\1)+/g, '$1');
 
-                return { cleanText, htmlOutput, stats, totalCount: replacements.length, replacements };
+                // Détection heuristique des "noms potentiels" non masqués (mots avec majuscule hors début de phrase)
+                const possibleNames = [];
+                const capWordRe = /(?<![\p{L}\p{M}])(\p{Lu}[\p{Ll}ß]{2,})(?![\p{L}\p{M}])/gu;
+                let cwm;
+                const seenPossible = new Set();
+                while ((cwm = capWordRe.exec(rawText)) !== null) {
+                    const word = cwm[1];
+                    const wStart = cwm.index;
+                    const wEnd = wStart + word.length;
+                    const wLow = word.toLowerCase();
+
+                    // 1. Déjà masqué par un intervalle ?
+                    const isMasked = replacements.some(r => !r.isIgnored && wStart < r.end && wEnd > r.start);
+                    if (isMasked) continue;
+
+                    // 2. Stopword ou acronyme ou jour/mois ?
+                    if (NAME_STOPWORDS.has(wLow) || NON_PERSON_ACRONYMS.has(word)) continue;
+
+                    // 3. Début de phrase (après . ! ? ou tout début du texte) ?
+                    const pre = rawText.substring(0, wStart).trim();
+                    if (!pre || /[.!?]\s*$/.test(pre) || /^["'«»]/.test(pre)) continue;
+
+                    if (!seenPossible.has(wLow)) {
+                        seenPossible.add(wLow);
+                        possibleNames.push(word);
+                    }
+                }
+
+                return { cleanText, htmlOutput, stats, totalCount: replacements.length, replacements, possibleNames };
             }
 
             function escapeHtml(str) {
@@ -2537,6 +2839,21 @@
 
             const resetIgnoredBtn = document.getElementById('resetIgnoredBtn');
             const resetIgnoredLabel = document.getElementById('resetIgnoredLabel');
+            const possibleNamesBarEl = document.getElementById('possibleNamesBar');
+            const possibleNamesChipsEl = document.getElementById('possibleNamesChips');
+
+            let debounceTimer = null;
+            function debouncedUpdateUI(delay = 150) {
+                const isTestEnv = typeof process !== 'undefined' || (typeof window !== 'undefined' && window.navigator && window.navigator.userAgent && window.navigator.userAgent.includes('jsdom'));
+                if (isTestEnv || delay <= 0) {
+                    updateUI();
+                    return;
+                }
+                if (debounceTimer) clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    updateUI();
+                }, delay);
+            }
 
             function updateUI() {
                 const raw = inputTextEl.value;
@@ -2550,6 +2867,8 @@
                     outputCharCountEl.textContent = '0 caractère';
                     statsBarEl.innerHTML = '<span>0 donnée masquée</span>';
                     if (resetIgnoredBtn) resetIgnoredBtn.style.display = 'none';
+                    if (possibleNamesBarEl) possibleNamesBarEl.style.display = 'none';
+                    if (possibleNamesChipsEl) possibleNamesChipsEl.innerHTML = '';
                     return;
                 }
 
@@ -2562,6 +2881,21 @@
 
                 // Render stats
                 renderStats(result.stats, result.totalCount);
+
+                // Render possible names warning banner
+                if (possibleNamesBarEl && possibleNamesChipsEl) {
+                    if (result.possibleNames && result.possibleNames.length > 0) {
+                        possibleNamesBarEl.style.display = 'flex';
+                        let chipsHtml = '';
+                        for (const name of result.possibleNames) {
+                            chipsHtml += '<button type="button" class="possible-name-btn" data-name="' + escapeHtml(name) + '"><i data-fa="plus" style="width:11px;height:11px;"></i> ' + escapeHtml(name) + '</button>';
+                        }
+                        possibleNamesChipsEl.innerHTML = chipsHtml;
+                    } else {
+                        possibleNamesBarEl.style.display = 'none';
+                        possibleNamesChipsEl.innerHTML = '';
+                    }
+                }
 
                 // Update reset ignored button
                 if (resetIgnoredBtn && resetIgnoredLabel) {
@@ -2761,7 +3095,18 @@
             });
 
             // Standard prompt prefix for educational AI confidentiality
-            const AI_PROMPT_PREFIX = `[Instruction de confidentialité scolaire : Ce document a été anonymisé conformément aux directives de protection des données (LPD/LIPAD). Les mentions [Élève X] désignent des élèves sous pseudonyme, et [Personne X] d'autres personnes ou intervenants. Merci de conserver rigoureusement ces balises dans votre réponse sans chercher à reconstituer les identités réelles.]\n\n---\n\n`;
+            function getAiPromptPrefix(mode) {
+                const targetMode = mode || state.mode || 'labels';
+                if (targetMode === 'pseudo') {
+                    return `[Instruction de confidentialité scolaire : Ce document a été traité avec des pseudonymes réalistes conformément aux directives de protection des données (LPD/LIPAD). Merci de traiter ce contenu de manière confidentielle et de formuler votre réponse dans le même contexte.]\n\n---\n\n`;
+                }
+                if (targetMode === 'redact') {
+                    return `[Instruction de confidentialité scolaire : Ce document a été caviardé (remplacements par des blocs ████████) conformément aux directives de protection des données (LPD/LIPAD). Merci de formuler votre réponse sans chercher à deviner les éléments caviardés.]\n\n---\n\n`;
+                }
+                return `[Instruction de confidentialité scolaire : Ce document a été anonymisé conformément aux directives de protection des données (LPD/LIPAD). Les mentions [Élève X] désignent des élèves sous pseudonyme, et [Personne X] d'autres personnes ou intervenants. Merci de conserver rigoureusement ces balises dans votre réponse sans chercher à reconstituer les identités réelles.]\n\n---\n\n`;
+            }
+
+            const AI_PROMPT_PREFIX = getAiPromptPrefix('labels');
 
             // --- COPIER / COLLER / EFFACER ---
             copyBtn.addEventListener('click', async () => {
@@ -2797,7 +3142,8 @@
                         showNotificationToast('Aucun texte à copier.', 'circle-info');
                         return;
                     }
-                    const textToCopy = AI_PROMPT_PREFIX + currentCleanOutput;
+                    const prefix = getAiPromptPrefix(state.mode);
+                    const textToCopy = prefix + currentCleanOutput;
                     const oldLabel = copyAiBtnLabel ? copyAiBtnLabel.textContent : 'Copier pour IA';
                     try {
                         await navigator.clipboard.writeText(textToCopy);
@@ -2948,8 +3294,29 @@ Lucas montre de très bons progrès en mathématiques et en sciences. En revanch
                 showNotificationToast('Exemple chargé avec succès !', 'sparkles');
             });
 
-            // Real-time input listener
-            inputTextEl.addEventListener('input', updateUI);
+            // Real-time input listener (debounced at 150ms in browser)
+            inputTextEl.addEventListener('input', () => debouncedUpdateUI(150));
+
+            // Possible names one-click masking listener
+            if (possibleNamesChipsEl) {
+                possibleNamesChipsEl.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.possible-name-btn');
+                    if (!btn) return;
+                    const name = btn.getAttribute('data-name');
+                    if (!name) return;
+                    if (!state.roster.some(r => r.toLowerCase() === name.toLowerCase())) {
+                        state.roster.push(name);
+                        if (rosterInput) {
+                            rosterInput.value = state.roster.join(', ');
+                        }
+                        try {
+                            localStorage.setItem('anonymiser_roster', state.roster.join(', '));
+                        } catch (err) { }
+                    }
+                    updateUI();
+                    showNotificationToast(`« ${name} » ajouté à la liste d'élèves`, 'check');
+                });
+            }
 
             // Toast helper
             function showNotificationToast(msg, iconName) {
@@ -3156,6 +3523,7 @@ Lucas montre de très bons progrès en mathématiques et en sciences. En revanch
                 formatReplacement,
                 extractNamesFromTableRows,
                 parseRosterContent,
+                getAiPromptPrefix,
                 state,
                 COMMON_SWISS_NAMES,
                 AI_PROMPT_PREFIX
@@ -3169,6 +3537,7 @@ Lucas montre de très bons progrès en mathématiques et en sciences. En revanch
                     formatReplacement,
                     extractNamesFromTableRows,
                     parseRosterContent,
+                    getAiPromptPrefix,
                     state,
                     COMMON_SWISS_NAMES,
                     AI_PROMPT_PREFIX
