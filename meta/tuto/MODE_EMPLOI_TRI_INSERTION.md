@@ -1,6 +1,6 @@
 # 🃏 Mode d'emploi : Une chose après l'autre — Tri par insertion
 
-**Une chose après l'autre** est une simulation interactive du **tri par insertion** (*Insertion Sort*) spécialement conçue pour les élèves de **10CO (Cycle 3)**, en lien direct avec l'activité 1C du moyen d'enseignement romand **Connected 4** (*Concours d'algorithmes*, pages 12-13).
+**Une chose après l'autre** est une simulation interactive du **tri par insertion** (*Insertion Sort*) spécialement conçue pour les élèves de **10CO (Cycle 3)**, en lien direct avec l'activité 1C du moyen d'enseignement **Connected 4** (*Concours d'algorithmes*, pages 12-13).
 
 ---
 
@@ -48,7 +48,7 @@ Pour ancrer l'activité dans le quotidien des élèves suisses romands, le jeu u
 ## 📊 Paramètres et statistiques
 
 - **Nombre de cartes :**
-  - **8 cartes :** Configuration officielle du manuel *Connected 4* (moyenne théorique d'environ 14 comparaisons).
+  - **8 cartes :** Configuration du manuel *Connected 4* (moyenne théorique d'environ 14 comparaisons).
   - **5 cartes :** Format rapide pour découvrir la logique (~6 comparaisons).
   - **12 cartes :** Défi avancé pour constater l'augmentation non linéaire du temps de tri (~33 comparaisons).
 - **Compteurs en temps réel :**
