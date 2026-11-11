@@ -247,4 +247,111 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
     await t.test('Fonction window.__onResetApp présente pour réinitialisation globale', () => {
         assert.strictEqual(typeof window.__onResetApp, 'function', 'window.__onResetApp doit être une fonction');
     });
+
+    await t.test('Distinction linguistique -ent : verbe 3e pers. pluriel vs nom/adjectif/adverbe', () => {
+        const engine = window.SimDyslexieEngine;
+        assert.ok(engine, 'SimDyslexieEngine doit être exporté');
+
+        // Cas 1 : Verbe 3e personne du pluriel précédé de ils/elles -> 'ent' muet (3 lettres)
+        const silentVerb = engine.findSilentLetters('parlent', 'ils');
+        assert.ok(silentVerb.has(4) && silentVerb.has(5) && silentVerb.has(6), 'Pour "ils parlent", e, n et t doivent être muets');
+
+        // Cas 2 : Nom ou adjectif précédé d'un déterminant -> seul 't' est muet
+        const silentNoun = engine.findSilentLetters('président', 'le');
+        assert.strictEqual(silentNoun.has(8), true, 'Pour "le président", seul le t final doit être muet');
+        assert.strictEqual(silentNoun.has(7), false, 'Pour "le président", le n ne doit pas être muet');
+        assert.strictEqual(silentNoun.has(6), false, 'Pour "le président", le e ne doit pas être muet');
+
+        // Cas 3 : Adjectif précédé d'une copule (est, sont) -> seul 't' est muet
+        const silentAdj = engine.findSilentLetters('violent', 'est');
+        assert.strictEqual(silentAdj.has(6), true, 'Pour "est violent", seul le t final doit être muet');
+        assert.strictEqual(silentAdj.has(5), false, 'Pour "est violent", le n ne doit pas être muet');
+
+        // Cas 4 : Mots de la liste courante (souvent, enfant, content)
+        const silentAdv = engine.findSilentLetters('souvent');
+        assert.strictEqual(silentAdv.has(6), true, 'Pour "souvent", t final est muet');
+        assert.strictEqual(silentAdv.has(5), false, 'Pour "souvent", n n\'est pas muet');
+    });
+
+    await t.test('Distinction phonétique -er : /e/ fermé vs /ɛʁ/ ouvert', () => {
+        const engine = window.SimDyslexieEngine;
+
+        // "manger" : infinitif régulier -> fermé /e/ (graph-e-closed)
+        const gManger = engine.findGraphemes('manger');
+        const matchManger = gManger.find(m => m.className === 'graph-e-closed' && m.start === 4);
+        assert.ok(matchManger, 'Pour "manger", le "er" final doit être graph-e-closed');
+
+        // "mer", "hiver", "fer", "cher" : /ɛʁ/ ouvert -> graph-e-open pour le e, pas graph-e-closed
+        const gMer = engine.findGraphemes('mer');
+        const matchMerClosed = gMer.find(m => m.className === 'graph-e-closed');
+        assert.strictEqual(matchMerClosed, undefined, 'Pour "mer", le "er" ne doit PAS être graph-e-closed');
+        const matchMerOpen = gMer.find(m => m.className === 'graph-e-open');
+        assert.ok(matchMerOpen, 'Pour "mer", le "e" doit être graph-e-open');
+
+        const gHiver = engine.findGraphemes('hiver');
+        const matchHiverClosed = gHiver.find(m => m.className === 'graph-e-closed');
+        assert.strictEqual(matchHiverClosed, undefined, 'Pour "hiver", le "er" ne doit PAS être graph-e-closed');
+    });
+
+    await t.test('Support des ligatures œ et æ (U+0153, U+0152, U+00E6, U+00C6)', () => {
+        const engine = window.SimDyslexieEngine;
+
+        const tokens = engine.tokenize('Un cœur pur et des sœurs ex-æquo');
+        const coeurToken = tokens.find(t => t.original.includes('cœur'));
+        assert.ok(coeurToken, '"cœur" doit être tokenisé comme un mot entier');
+        assert.strictEqual(coeurToken.isWord, true, '"cœur" doit être reconnu comme isWord');
+
+        // Grapheme oeu / œu reconnu
+        const gCoeur = engine.findGraphemes('cœur');
+        const matchOeu = gCoeur.find(m => m.className === 'graph-eu');
+        assert.ok(matchOeu, '"œu" dans "cœur" doit être reconnu comme graph-eu');
+    });
+
+    await t.test('Neutralisation XSS et échappement HTML strict dans l\'affichage', () => {
+        const engine = window.SimDyslexieEngine;
+
+        const maliciousInput = 'Consigne : x < 5 et y > 10 avec <script>alert(1)</script>';
+        engine.state.accommodations.graphemes = true;
+        engine.state.accommodations.silentLetters = true;
+
+        const tokens = engine.tokenize(maliciousInput);
+        const rendered = tokens.map((t, idx) => {
+            const prev = engine.getPrevWord(tokens, idx);
+            return engine.formatTokenText(t.original, t.isWord, prev);
+        }).join('');
+
+        assert.ok(!rendered.includes('<script>'), 'Aucune balise script ne doit être injectée');
+        assert.ok(!rendered.includes('</script>'), 'Aucune balise fermante script ne doit être injectée');
+        assert.ok(rendered.includes('&lt;'), 'Le chevron ouvrant doit être échappé');
+        assert.ok(rendered.includes('&gt;'), 'Le chevron fermant doit être échappé');
+        assert.ok(rendered.includes('&lt;scrip'), 'Le début de balise doit être échappé en entités');
+        assert.ok(rendered.includes('&lt;/scrip'), 'La fin de balise doit être échappée en entités');
+    });
+
+    await t.test('Ancrage de la première lettre conservé lors des mutations offset', () => {
+        const engine = window.SimDyslexieEngine;
+        engine.state.mixingStyle = 'offset';
+        engine.state.severity = 1.0;
+
+        // Tester 100 mutations pour vérifier qu'aucune ne déplace la lettre initiale
+        for (let i = 0; i < 100; i++) {
+            const mutated = engine.mutateToken('Ligne');
+            assert.strictEqual(mutated[0], 'L', `La première lettre "L" de "Ligne" doit toujours être conservée (obtenu: ${mutated})`);
+        }
+    });
+
+    await t.test('Curseur de sévérité relance la simulation après un passage à 0', () => {
+        const inputSeverity = window.document.getElementById('inputSeverity');
+        assert.ok(inputSeverity, 'Le curseur de sévérité doit exister');
+
+        // Passage à 0
+        inputSeverity.value = '0';
+        inputSeverity.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(window.SimDyslexieEngine.state.severity, 0);
+
+        // Passage à 0.7
+        inputSeverity.value = '0.7';
+        inputSeverity.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(window.SimDyslexieEngine.state.severity, 0.7);
+    });
 });

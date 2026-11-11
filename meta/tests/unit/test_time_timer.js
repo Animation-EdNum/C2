@@ -132,4 +132,120 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         const transform = rainbowCloud.getAttribute('transform');
         assert.ok(transform.includes('translate('), 'Cloud should have updated transform at 20 min');
     });
+
+    await t.test('1. Real-clock absolute timing recalculates remaining seconds without drift on time jump', () => {
+        const engine = window.TimeTimerEngine;
+        assert.ok(engine, 'TimeTimerEngine should be exported on window');
+
+        // Configure timer to 10 minutes (600s)
+        engine.setTimeMinutes(10, false);
+        engine.startTimer(false);
+
+        let state = engine.getState();
+        assert.strictEqual(state.isRunning, true);
+        assert.ok(state.targetEndTime > Date.now(), 'targetEndTime should be set in future');
+
+        // Simulate a 120-second wall clock jump (e.g. background tab or lag)
+        const originalNow = window.Date.now;
+        try {
+            window.Date.now = () => state.targetEndTime - (480 * 1000); // 480s remaining
+            engine.tick();
+            state = engine.getState();
+            assert.strictEqual(state.remainingSeconds, 480, 'Remaining seconds must be exactly 480s (8 min) after time jump');
+        } finally {
+            window.Date.now = originalNow;
+            engine.stopTimer();
+        }
+    });
+
+    await t.test('2. Synchronous ending trigger at 00:00 without 1-second lag', () => {
+        const engine = window.TimeTimerEngine;
+        engine.setTimeMinutes(1, false);
+        engine.startTimer(false);
+
+        const celebration = window.document.getElementById('celebrationOverlay');
+        assert.ok(celebration.classList.contains('hidden'), 'Celebration should be hidden initially');
+
+        // Simulate reaching targetEndTime
+        const state = engine.getState();
+        const originalNow = window.Date.now;
+        try {
+            window.Date.now = () => state.targetEndTime + 10; // 0s remaining
+            engine.tick();
+
+            const finalState = engine.getState();
+            assert.strictEqual(finalState.remainingSeconds, 0, 'Remaining seconds should be 0');
+            assert.strictEqual(finalState.isRunning, false, 'Timer must stop synchronously on reaching 0');
+            assert.ok(!celebration.classList.contains('hidden'), 'Celebration modal must be displayed immediately');
+        } finally {
+            window.Date.now = originalNow;
+            engine.stopTimer();
+        }
+    });
+
+    await t.test('3. Keyboard modifiers (Ctrl+R, Ctrl+F, Alt, Meta) do NOT trigger timer actions', () => {
+        const engine = window.TimeTimerEngine;
+        engine.setTimeMinutes(10, false);
+        engine.adjustSeconds(120); // 12 min (720s)
+
+        let state = engine.getState();
+        assert.strictEqual(state.remainingSeconds, 720);
+
+        // Press Ctrl+R (should NOT reset timer to 10 min)
+        const ctrlREvent = new window.KeyboardEvent('keydown', { key: 'r', ctrlKey: true, bubbles: true });
+        window.dispatchEvent(ctrlREvent);
+        assert.strictEqual(engine.getState().remainingSeconds, 720, 'Ctrl+R must not trigger reset');
+
+        // Press Ctrl+Space (should NOT toggle timer)
+        const ctrlSpaceEvent = new window.KeyboardEvent('keydown', { code: 'Space', ctrlKey: true, bubbles: true });
+        window.dispatchEvent(ctrlSpaceEvent);
+        assert.strictEqual(engine.getState().isRunning, false, 'Ctrl+Space must not start timer');
+
+        // Press plain 'r' (should reset timer to 10 min baseline)
+        const plainREvent = new window.KeyboardEvent('keydown', { key: 'r', ctrlKey: false, metaKey: false, altKey: false, bubbles: true });
+        window.dispatchEvent(plainREvent);
+        assert.strictEqual(engine.getState().remainingSeconds, 600, 'Plain r should reset timer to base duration');
+    });
+
+    await t.test('4. Delta adjustments (+1 min, +5 min) do NOT alter the baseline reset duration', () => {
+        const engine = window.TimeTimerEngine;
+        engine.setTimeMinutes(5, false); // Base = 300s
+
+        assert.strictEqual(engine.getState().remainingSeconds, 300);
+        assert.strictEqual(engine.getState().baseTotalSeconds, 300);
+
+        // Click +1 min button
+        const btnAdd1 = window.document.getElementById('btnAdd1');
+        btnAdd1.click();
+        assert.strictEqual(engine.getState().remainingSeconds, 360, 'Remaining seconds should now be 360s (6 min)');
+
+        // Click Reset
+        const btnReset = window.document.getElementById('btnReset');
+        btnReset.click();
+        assert.strictEqual(engine.getState().remainingSeconds, 300, 'Reset must restore the initial 5 min (300s) baseline');
+    });
+
+    await t.test('5. Preset buttons (1, 2, 3, 60 min) reset to exact duration even if clicked while running', () => {
+        const engine = window.TimeTimerEngine;
+        const chip1 = window.document.querySelector('.preset-chip[data-min="1"]');
+        const chip60 = window.document.querySelector('.preset-chip[data-min="60"]');
+
+        assert.ok(chip1, '1 min preset chip should exist in DOM');
+        assert.ok(chip60, '60 min preset chip should exist in DOM');
+
+        // Start timer at 10 min
+        engine.setTimeMinutes(10, false);
+        engine.startTimer(false);
+        assert.strictEqual(engine.getState().isRunning, true);
+
+        // Click 1 min preset chip
+        chip1.click();
+        assert.strictEqual(engine.getState().totalSeconds, 60, 'totalSeconds should be exactly 60s');
+        assert.strictEqual(engine.getState().remainingSeconds, 60, 'remainingSeconds should be exactly 60s without premature tick decrement');
+
+        // Click 60 min preset chip
+        chip60.click();
+        assert.strictEqual(engine.getState().totalSeconds, 3600, 'totalSeconds should be exactly 3600s');
+        assert.strictEqual(engine.getState().remainingSeconds, 3600, 'remainingSeconds should be exactly 3600s');
+    });
 });

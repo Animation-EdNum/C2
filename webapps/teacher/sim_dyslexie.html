@@ -593,14 +593,14 @@
         }
 
         .silent-letter {
-            color: #94a3b8 !important;
-            opacity: 0.65;
+            color: #64748b !important;
+            opacity: 0.85;
             transition: color 0.2s, opacity 0.2s;
         }
 
         body.dark .silent-letter {
-            color: #64748b !important;
-            opacity: 0.65;
+            color: #94a3b8 !important;
+            opacity: 0.85;
         }
 
         .comp-pastel {
@@ -631,7 +631,12 @@
 
         /* CERAS GRAPHÈMES (SONS-COULEURS - RÉFÉRENTIEL api.ceras.ch) */
         .graph-o {
-            color: #ca8a04 !important;
+            color: #a16207 !important;
+            font-weight: 700;
+        }
+
+        body.dark .graph-o {
+            color: #facc15 !important;
             font-weight: 700;
         }
 
@@ -1620,8 +1625,21 @@
                 padding: 1.5cm !important;
                 width: 100% !important;
                 background: white !important;
+                color: black !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
+            }
+
+            body.dark .worksheet-card {
+                background: white !important;
+                color: black !important;
+                border: none !important;
+            }
+
+            body.dark .worksheet-card.comp-pastel,
+            .worksheet-card.comp-pastel {
+                background: #FAF7EE !important;
+                color: #1e293b !important;
             }
 
             .worksheet-header {
@@ -2532,8 +2550,27 @@
 
         // --- LOGIC ---
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getPrevWord(tokens, currentIndex) {
+            for (let k = currentIndex - 1; k >= 0; k--) {
+                if (tokens[k].isWord) {
+                    return tokens[k].original.toLowerCase();
+                }
+            }
+            return '';
+        }
+
         function tokenize(text) {
-            const regex = /([a-zA-ZÀ-ÿ]+)|([^a-zA-ZÀ-ÿ]+)/g;
+            const regex = /([a-zA-ZÀ-ÿœŒæÆ]+)|([^a-zA-ZÀ-ÿœŒæÆ]+)/g;
             const tokens = [];
             let match;
             let idx = 0;
@@ -2541,7 +2578,7 @@
                 const t = match[0];
                 tokens.push({
                     original: t,
-                    isWord: /^[a-zA-ZÀ-ÿ]+$/.test(t),
+                    isWord: /^[a-zA-ZÀ-ÿœŒæÆ]+$/.test(t),
                     id: idx++
                 });
             }
@@ -2549,7 +2586,7 @@
         }
 
         function mutateToken(token) {
-            if (!/^[a-zA-ZÀ-ÿ]+$/.test(token)) return token;
+            if (!/^[a-zA-ZÀ-ÿœŒæÆ]+$/.test(token)) return token;
 
             let chars = token.split('');
             const len = chars.length;
@@ -2579,10 +2616,11 @@
             }
 
             if (state.mixingStyle === 'offset' || state.mixingStyle === 'all') {
-                if (len > 1 && Math.random() < state.severity * 0.5) {
+                if (len > 3 && Math.random() < state.severity * 0.5) {
                     const numSwaps = Math.max(1, Math.floor(len * state.severity * 0.4));
                     for (let s = 0; s < numSwaps; s++) {
-                        const idx = Math.floor(Math.random() * (len - 1));
+                        // Preserves index 0 so the first letter remains anchored
+                        const idx = Math.floor(Math.random() * (len - 2)) + 1;
                         const temp = chars[idx];
                         chars[idx] = chars[idx + 1];
                         chars[idx + 1] = temp;
@@ -2592,6 +2630,14 @@
 
             return chars.join('');
         }
+
+        // Common French words ending in -er pronounced with open /ɛʁ/ instead of closed /e/
+        const OPEN_ER_WORDS = new Set([
+            'mer', 'mers', 'fer', 'fers', 'ver', 'vers', 'hier', 'hiver', 'chou-fleur',
+            'cher', 'chers', 'chère', 'chères', 'fier', 'fiers', 'super', 'hyper',
+            'enfer', 'cancer', 'cancers', 'leader', 'bunker', 'master', 'scooter', 'starter',
+            'éclair', 'cuiller'
+        ]);
 
         // --- CERAS GRAPHÈMES (SONS-COULEURS - api.ceras.ch) ---
         function findGraphemes(word) {
@@ -2635,9 +2681,13 @@
                 tryMatch(/es$/gi, 'graph-e-closed');
             }
 
-            // 4. Terminaisons de mots : _et (violet), _er (bleu foncé), _ez (bleu foncé)
+            // 4. Terminaisons de mots : _et (violet), _er (bleu foncé si fermé /e/, violet si ouvert /ɛʁ/), _ez (bleu foncé)
             tryMatch(/et$/gi, 'graph-e-open');
-            tryMatch(/er$/gi, 'graph-e-closed');
+            if (!OPEN_ER_WORDS.has(word.toLowerCase())) {
+                tryMatch(/er$/gi, 'graph-e-closed');
+            } else {
+                tryMatch(/e(?=rs?$)/gi, 'graph-e-open');
+            }
             tryMatch(/ez$/gi, 'graph-e-closed');
 
             // 5. Diphtongues et graphèmes doubles
@@ -2664,7 +2714,7 @@
         }
 
         // --- SONS & LETTRES MUETTES DU FRANÇAIS ---
-        function findSilentLetters(word) {
+        function findSilentLetters(word, prevWord = '') {
             const w = word.toLowerCase();
             const len = w.length;
             const silent = new Set();
@@ -2775,17 +2825,33 @@
 
             // 4. Verbal ending '-ent' (3e pers. pluriel : jouent, parlent, dorment, étaient, doivent...)
             // vs nouns/adjectives/adverbs in -ent / -ment (moment, souvent, enfant, dent, vent, etc.)
-            const isNotVerbEnt = /^(souvent|moment|patient|content|lent|vent|dent|cent|enfant|client|parent|serpent|argent|agent|absent|récent|présent|accident|talent|élément|torrent|comment|vraiment|autrement|seulement|bâtiment|vêtement|mouvement|document|instrument|sentiment|gouvernement)$/.test(w) || /ement$/.test(w);
-
             if (w.endsWith('ent') && len >= 4) {
-                if (!isNotVerbEnt) {
+                const prev = (prevWord || '').toLowerCase();
+                const isPrecededBySubjectPlural = /^(ils|elles)$/.test(prev);
+                const isPrecededByDeterminer = /^(le|la|l|un|une|des|ce|cet|cette|ces|mon|ton|son|mes|tes|ses|notre|votre|leur|leurs|chaque|aucun|plusieurs|quelques|du|au|aux)$/.test(prev);
+                const isPrecededByCopula = /^(est|sont|était|étaient|semble|semblent|paraît|paraissent|devient|deviennent)$/.test(prev);
+
+                const explicitNounAdj = /^(souvent|moment|patient|content|lent|vent|dent|cent|enfant|client|parent|serpent|argent|agent|absent|récent|présent|accident|talent|élément|torrent|comment|vraiment|autrement|seulement|bâtiment|vêtement|mouvement|document|instrument|sentiment|gouvernement|président|violent|excellent|urgent|intelligent|prudent|différent|compétent|transparent|continent|incident|ingrédient|équivalent|évident|permanent|département|complément|appartement|événement|médicament)$/.test(w) || /ement$/.test(w);
+
+                let isVerb = false;
+                if (isPrecededBySubjectPlural) {
+                    isVerb = true;
+                } else if (isPrecededByDeterminer || isPrecededByCopula) {
+                    isVerb = false;
+                } else if (explicitNounAdj) {
+                    isVerb = false;
+                } else {
+                    isVerb = true;
+                }
+
+                if (isVerb) {
                     // Verb 3rd plural: 'ent' is completely silent
                     silent.add(len - 3);
                     silent.add(len - 2);
                     silent.add(len - 1);
                     return silent;
                 } else {
-                    // Noun/adv: only final 't' is silent, 'en' is nasal
+                    // Noun/adj/adv: only final 't' is silent, 'en' is nasal
                     silent.add(len - 1);
                     return silent;
                 }
@@ -2843,9 +2909,9 @@
             return silent;
         }
 
-        function formatTokenText(tokenText, isWord) {
+        function formatTokenText(tokenText, isWord, prevWord = '') {
             if (!isWord) {
-                return tokenText;
+                return escapeHtml(tokenText);
             }
 
             const useSyllables = state.accommodations.syllables;
@@ -2853,11 +2919,11 @@
             const useSilent = state.accommodations.silentLetters;
 
             if (!useSyllables && !useGraphemes && !useSilent) {
-                return tokenText;
+                return escapeHtml(tokenText);
             }
 
             const graphemeMatches = useGraphemes ? findGraphemes(tokenText) : [];
-            const rawSilent = useSilent ? findSilentLetters(tokenText) : new Set();
+            const rawSilent = useSilent ? findSilentLetters(tokenText, prevWord) : new Set();
 
             // Collision prevention: pronounced graphemes are never silent letters
             graphemeMatches.forEach(m => {
@@ -2875,7 +2941,7 @@
                     const gm = graphemeMatches.find(m => m.start === charIdx);
                     if (gm && gm.end <= offset + len) {
                         const gLen = gm.end - gm.start;
-                        res += `<span class="${gm.className}">${text.slice(i, i + gLen)}</span>`;
+                        res += `<span class="${gm.className}">${escapeHtml(text.slice(i, i + gLen))}</span>`;
                         i += gLen;
                         continue;
                     }
@@ -2885,11 +2951,11 @@
                         while (i + sLen < len && rawSilent.has(offset + i + sLen)) {
                             sLen++;
                         }
-                        res += `<span class="silent-letter">${text.slice(i, i + sLen)}</span>`;
+                        res += `<span class="silent-letter">${escapeHtml(text.slice(i, i + sLen))}</span>`;
                         i += sLen;
                         continue;
                     }
-                    res += text[i];
+                    res += escapeHtml(text[i]);
                     i++;
                 }
                 return res;
@@ -2932,15 +2998,19 @@
             applyAccommodationClasses(els.dyslexicOutput);
 
             if (els.dyslexicOutput.children.length !== state.baseTokens.length) {
-                els.dyslexicOutput.innerHTML = state.baseTokens.map(t => `<span id="tok-${t.id}">${formatTokenText(t.original, t.isWord)}</span>`).join('');
+                els.dyslexicOutput.innerHTML = state.baseTokens.map((t, idx) => {
+                    const prev = getPrevWord(state.baseTokens, idx);
+                    return `<span id="tok-${t.id}">${formatTokenText(t.original, t.isWord, prev)}</span>`;
+                }).join('');
             }
 
-            state.baseTokens.forEach((t) => {
+            state.baseTokens.forEach((t, idx) => {
                 const span = document.getElementById(`tok-${t.id}`);
                 if (!span) return;
 
+                const prev = getPrevWord(state.baseTokens, idx);
                 const mutatedText = t.isWord ? mutateToken(t.original) : t.original;
-                const formattedHtml = formatTokenText(mutatedText, t.isWord);
+                const formattedHtml = formatTokenText(mutatedText, t.isWord, prev);
 
                 if (span.innerHTML !== formattedHtml) {
                     span.innerHTML = formattedHtml;
@@ -2970,7 +3040,10 @@
             }
 
             const tokens = tokenize(state.text);
-            const renderedHtml = tokens.map(t => formatTokenText(t.original, t.isWord)).join('');
+            const renderedHtml = tokens.map((t, idx) => {
+                const prev = getPrevWord(tokens, idx);
+                return formatTokenText(t.original, t.isWord, prev);
+            }).join('');
 
             els.adapterWorksheetText.innerHTML = renderedHtml;
         }
@@ -3165,7 +3238,10 @@
             els.inputSeverity.addEventListener('input', (e) => {
                 state.severity = parseFloat(e.target.value);
                 if (els.valSeverity) els.valSeverity.textContent = Math.round(state.severity * 100) + '%';
-                if (state.activeTab === 'simulation') renderOutput();
+                if (state.activeTab === 'simulation') {
+                    startMutationInterval();
+                    renderOutput();
+                }
             });
         }
 
@@ -3390,13 +3466,13 @@
                 return `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${xmlEscape(text)}</w:t></w:r>`;
             }
 
-            function formatTokenDocxRuns(tokenText, isWord) {
+            function formatTokenDocxRuns(tokenText, isWord, prevWord = '') {
                 if (!isWord || (!isSyllables && !isGraphemes && !isSilent)) {
                     return formatRunXml(tokenText);
                 }
 
                 const graphemeMatches = isGraphemes ? findGraphemes(tokenText) : [];
-                const rawSilent = isSilent ? findSilentLetters(tokenText) : new Set();
+                const rawSilent = isSilent ? findSilentLetters(tokenText, prevWord) : new Set();
 
                 graphemeMatches.forEach(m => {
                     for (let k = m.start; k < m.end; k++) {
@@ -3471,8 +3547,9 @@
                 }
                 const tokens = tokenize(pText);
                 let pRunsXml = '';
-                tokens.forEach(t => {
-                    pRunsXml += formatTokenDocxRuns(t.original, t.isWord);
+                tokens.forEach((t, idx) => {
+                    const prev = getPrevWord(tokens, idx);
+                    pRunsXml += formatTokenDocxRuns(t.original, t.isWord, prev);
                 });
                 paragraphsXml += `<w:p><w:pPr>${pastelShd}${pPrSpacing}</w:pPr>${pRunsXml}</w:p>`;
             });
@@ -3817,6 +3894,35 @@
                 showToast("Profil d'aménagement chargé depuis le lien !", "info");
             }
             window.fa?.createIcons?.(document.body);
+        }
+
+        // Export for headless automated tests
+        if (typeof window !== 'undefined') {
+            window.SimDyslexieEngine = {
+                state,
+                tokenize,
+                mutateToken,
+                findGraphemes,
+                findSilentLetters,
+                formatTokenText,
+                getPrevWord,
+                startMutationInterval,
+                renderOutput,
+                renderAdapter,
+                updateText,
+                OPEN_ER_WORDS
+            };
+        }
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                tokenize,
+                mutateToken,
+                findGraphemes,
+                findSilentLetters,
+                formatTokenText,
+                getPrevWord,
+                OPEN_ER_WORDS
+            };
         }
 
         document.addEventListener('DOMContentLoaded', init);

@@ -1081,12 +1081,16 @@
             <div class="presets-section">
                 <span class="presets-label">Préréglages rapides (1 clic)</span>
                 <div class="presets-grid" id="presetsGrid">
+                    <button class="preset-chip" data-min="1">1 min</button>
+                    <button class="preset-chip" data-min="2">2 min</button>
+                    <button class="preset-chip" data-min="3">3 min</button>
                     <button class="preset-chip popular" data-min="5">5 min</button>
                     <button class="preset-chip popular" data-min="10">10 min</button>
                     <button class="preset-chip popular" data-min="15">15 min</button>
                     <button class="preset-chip popular" data-min="20">20 min</button>
                     <button class="preset-chip popular" data-min="30">30 min</button>
                     <button class="preset-chip popular" data-min="45">45 min</button>
+                    <button class="preset-chip" data-min="60">60 min</button>
                 </div>
             </div>
 
@@ -1363,12 +1367,35 @@
             const RADIUS = 210;
 
             let totalSeconds = 600;      // Current set duration in seconds (default 10 min)
+            let baseTotalSeconds = 600;  // Original baseline duration for reset
             let remainingSeconds = 600;  // Remaining seconds
+            let targetEndTime = null;    // Absolute target end time for real-clock precision
             let timerId = null;          // setInterval ID
             let isRunning = false;
             let warningFired = false;
             let isDragging = false;
             let lastTickSecond = -1;
+            let wakeLock = null;
+
+            async function requestWakeLock() {
+                try {
+                    if (typeof navigator !== 'undefined' && 'wakeLock' in navigator && !wakeLock) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        wakeLock.addEventListener('release', () => {
+                            wakeLock = null;
+                        });
+                    }
+                } catch (e) { }
+            }
+
+            function releaseWakeLock() {
+                if (wakeLock) {
+                    try {
+                        wakeLock.release().catch(() => { });
+                    } catch (e) { }
+                    wakeLock = null;
+                }
+            }
 
             // IndexedDB & Audio State (Web Audio API & HTML5 Audio)
             const IDB_NAME = 'c2_timer_db';
@@ -2305,26 +2332,29 @@
                 renderDisk();
             }
 
-            // Timer Tick Loop
+            // Timer Tick Loop anchored on real absolute clock (targetEndTime)
             function tick() {
-                if (remainingSeconds > 0) {
-                    remainingSeconds--;
+                if (!isRunning || !targetEndTime) return;
+                const now = Date.now();
+                const diffMs = targetEndTime - now;
+                const prevSecs = remainingSeconds;
+                remainingSeconds = Math.max(0, Math.ceil(diffMs / 1000));
 
-                    // Ticking sound
-                    if (settings.ticking) {
-                        playTickSound();
-                    }
+                // Ticking sound
+                if (settings.ticking && remainingSeconds > 0 && remainingSeconds !== prevSecs) {
+                    playTickSound();
+                }
 
-                    // Discrete warning sound before the end
-                    const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
-                    if (settings.warningSoundEnabled && remainingSeconds === warnSecs && !warningFired && warnSecs < totalSeconds) {
-                        warningFired = true;
-                        playWarningSound();
-                    }
+                // Discrete warning sound before the end
+                const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
+                if (settings.warningSoundEnabled && remainingSeconds <= warnSecs && !warningFired && warnSecs < totalSeconds) {
+                    warningFired = true;
+                    playWarningSound();
+                }
 
-                    updateUI();
-                } else {
-                    // Time is up!
+                updateUI();
+
+                if (remainingSeconds <= 0) {
                     stopTimer();
                     updateUI();
                     playEndSound();
@@ -2334,22 +2364,25 @@
 
             function startTimer(playSound = true) {
                 if (remainingSeconds <= 0) {
-                    remainingSeconds = totalSeconds || 600;
+                    remainingSeconds = baseTotalSeconds || totalSeconds || 600;
+                    totalSeconds = baseTotalSeconds || remainingSeconds;
                 }
                 if (!isRunning) {
                     stopAllTestSounds();
                     isRunning = true;
+                    targetEndTime = Date.now() + remainingSeconds * 1000;
                     const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                     warningFired = (remainingSeconds <= warnSecs);
                     if (playSound) {
                         playStartSound();
                     }
+                    requestWakeLock();
                     if (timerStatusDots) {
                         timerStatusDots.classList.remove('running');
                         void timerStatusDots.offsetWidth; // trigger reflow for clean 1-sec sync
                         timerStatusDots.classList.add('running');
                     }
-                    timerId = setInterval(tick, 1000);
+                    timerId = setInterval(tick, 250);
                     updateUI();
                 }
             }
@@ -2361,8 +2394,14 @@
                 }
                 if (isRunning) {
                     isRunning = false;
+                    if (targetEndTime) {
+                        const diffMs = targetEndTime - Date.now();
+                        remainingSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+                    }
+                    targetEndTime = null;
                     clearInterval(timerId);
                     timerId = null;
+                    releaseWakeLock();
                     updateUI();
                 }
             }
@@ -2403,16 +2442,19 @@
 
             function setTimeMinutes(mins, autoStart = false, shouldAnimate = false) {
                 mins = Math.max(1, Math.min(60, mins));
+                stopTimer(); // Ensure previous interval is stopped immediately so no tick mutates seconds
                 const prevSeconds = remainingSeconds;
-                totalSeconds = mins * 60;
+                baseTotalSeconds = mins * 60;
+                totalSeconds = baseTotalSeconds;
                 remainingSeconds = totalSeconds;
+                targetEndTime = null;
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 warningFired = (remainingSeconds <= warnSecs);
                 settings.lastMinutes = mins;
                 saveSettings();
 
                 if (shouldAnimate && typeof requestAnimationFrame === 'function') {
-                    const fromSecs = (isRunning || prevSeconds === 0) ? 0 : Math.min(prevSeconds, totalSeconds);
+                    const fromSecs = (prevSeconds === 0) ? 0 : Math.min(prevSeconds, totalSeconds);
                     if (autoStart) {
                         playStartSound();
                     }
@@ -2421,7 +2463,6 @@
                         if (autoStart) {
                             startTimer(false);
                         } else {
-                            stopTimer();
                             updateUI();
                         }
                     });
@@ -2429,7 +2470,6 @@
                     if (autoStart) {
                         startTimer();
                     } else {
-                        stopTimer();
                         updateUI();
                     }
                 }
@@ -2437,15 +2477,26 @@
 
             function adjustSeconds(deltaSec) {
                 remainingSeconds = Math.max(0, Math.min(3600, remainingSeconds + deltaSec));
-                totalSeconds = Math.max(totalSeconds, remainingSeconds);
+                totalSeconds = Math.max(baseTotalSeconds, remainingSeconds);
+                if (isRunning) {
+                    targetEndTime = Date.now() + remainingSeconds * 1000;
+                }
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 warningFired = (remainingSeconds <= warnSecs);
                 updateUI();
+                if (remainingSeconds <= 0 && isRunning) {
+                    stopTimer();
+                    updateUI();
+                    playEndSound();
+                    showCelebration();
+                }
             }
 
             function resetTimer() {
                 stopTimer();
-                remainingSeconds = totalSeconds;
+                totalSeconds = baseTotalSeconds;
+                remainingSeconds = baseTotalSeconds;
+                targetEndTime = null;
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 warningFired = (remainingSeconds <= warnSecs);
                 updateUI();
@@ -2568,8 +2619,11 @@
 
             // Keyboard Shortcuts
             window.addEventListener('keydown', (e) => {
-                // Do not intercept when typing in any input or textarea
-                if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+                // Ignore key combinations with Ctrl, Meta, Alt to avoid hijacking browser shortcuts (Ctrl+R, Ctrl+F, etc.)
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+                // Do not intercept when typing in any input, textarea or select
+                if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
 
                 if (e.code === 'Space') {
                     e.preventDefault();
@@ -2588,6 +2642,14 @@
                     } else if (document.body.classList.contains('projection')) {
                         setProjectionMode(false);
                     }
+                }
+            });
+
+            // Resynchronize immediately when tab returns to foreground
+            document.addEventListener('visibilitychange', () => {
+                if (isRunning && !document.hidden && targetEndTime) {
+                    tick();
+                    requestWakeLock();
                 }
             });
 
@@ -2941,6 +3003,28 @@
             buildClockDial();
             setTimeMinutes(settings.lastMinutes || 10, false);
             updateUI();
+
+            // Export engine for unit tests (Node.js / JSDOM)
+            const TimeTimerEngine = {
+                startTimer,
+                stopTimer,
+                toggleTimer,
+                resetTimer,
+                adjustSeconds,
+                setTimeMinutes,
+                tick,
+                getState: () => ({
+                    isRunning,
+                    remainingSeconds,
+                    totalSeconds,
+                    baseTotalSeconds,
+                    targetEndTime
+                })
+            };
+            window.TimeTimerEngine = TimeTimerEngine;
+            if (typeof module !== 'undefined' && module.exports) {
+                module.exports = TimeTimerEngine;
+            }
         })();
     </script>
 </body>
