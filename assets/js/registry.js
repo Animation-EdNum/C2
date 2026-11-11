@@ -1739,6 +1739,8 @@ window.REGISTRY = [
   },
   {
     "id": "ext-classroomscreen",
+    "isAlpha": true,
+    "isHidden": true,
     "href": "https://classroomscreen.com/",
     "target": "_blank",
     "rel": "noopener noreferrer",
@@ -1777,6 +1779,8 @@ window.REGISTRY = [
   },
   {
     "id": "ext-canva",
+    "isAlpha": true,
+    "isHidden": true,
     "href": "https://www.canva.com/",
     "target": "_blank",
     "rel": "noopener noreferrer",

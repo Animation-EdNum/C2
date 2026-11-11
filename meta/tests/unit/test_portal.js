@@ -370,7 +370,7 @@ test('loadRegistry', async (t) => {
         assert.strictEqual(extDicoApi.href, 'https://dicoapi.ch/');
         assert.strictEqual(JSON.stringify(extDicoApi).includes('ß'), false, 'ext-dicoapi must strictly use ss and no ß');
 
-        const hiddenIds = ['ext-vikidia', 'ext-monkeytype', 'ext-autodraw', 'ext-geogebra-students', 'ext-ledicodesecoles', 'ext-dicoapi'];
+        const hiddenIds = ['ext-vikidia', 'ext-monkeytype', 'ext-autodraw', 'ext-geogebra-students', 'ext-ledicodesecoles', 'ext-dicoapi', 'ext-classroomscreen', 'ext-canva'];
         for (const hId of hiddenIds) {
             const item = registry.find(a => a.id === hId);
             assert.ok(item, `${hId} should exist in registry`);
