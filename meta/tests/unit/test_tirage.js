@@ -1,9 +1,12 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 const test = require('node:test');
 const assert = require('node:assert');
 const { JSDOM } = require('jsdom');
 const fs = require('fs');
 const path = require('path');
 const XLSX = require('../../../assets/js/vendor/xlsx.full.min.js');
+const RosterImport = require('../../../assets/js/roster-import.js');
 
 const htmlPath = path.resolve(__dirname, '../../../webapps/teacher/tirage.html');
 const htmlSrc = fs.readFileSync(htmlPath, 'utf-8');
@@ -15,13 +18,14 @@ function setupDOM() {
     });
 
     dom.window.XLSX = XLSX;
+    dom.window.RosterImport = RosterImport;
     dom.window.URL.createObjectURL = () => 'blob:mock-download-url';
     dom.window.URL.revokeObjectURL = () => {};
 
     return new Promise(resolve => {
         setTimeout(() => {
             resolve(dom.window);
-        }, 100);
+        }, 80);
     });
 }
 
@@ -33,6 +37,15 @@ test('tirage.html - roster import and export features', async (t) => {
         window = await setupDOM();
         engine = window.TirageEngine;
         assert.ok(engine, 'TirageEngine should be exposed on window');
+    });
+
+    t.afterEach(() => {
+        if (engine && engine.getRollTimer()) {
+            clearInterval(engine.getRollTimer());
+        }
+        if (window) {
+            window.close();
+        }
     });
 
     await t.test('DOM elements for class roster import and export exist', () => {
@@ -158,5 +171,114 @@ MARTIN;Noah;7H-B`;
         assert.ok(!window.document.body.classList.contains('projection'), 'Body should no longer have .projection class');
         assert.strictEqual(iconExpand.style.display, 'inline-block', 'Expand icon should be shown in normal mode');
         assert.strictEqual(iconCompress.style.display, 'none', 'Compress icon should be hidden in normal mode');
+    });
+
+    await t.test('Accessibility live-announce zone exists and announces draw winners', () => {
+        const liveAnnounce = window.document.getElementById('drawnNumberLiveAnnounce');
+        assert.ok(liveAnnounce, '#drawnNumberLiveAnnounce must exist');
+        assert.strictEqual(liveAnnounce.getAttribute('aria-live'), 'polite', 'Must have aria-live="polite"');
+        assert.ok(liveAnnounce.classList.contains('sr-only'), 'Must have sr-only class');
+
+        engine.state.mode = 'names';
+        engine.state.availableParticipants = ['Camille'];
+        engine.finalizeDraw();
+
+        assert.strictEqual(liveAnnounce.textContent, 'Tiré au sort : Camille');
+    });
+
+    await t.test('Reset during roulette cancels rollTimer immediately and leaves no ghost winner', async () => {
+        engine.state.mode = 'names';
+        engine.state.availableParticipants = ['Alice', 'Bob', 'Charlie'];
+        engine.state.allParticipants = ['Alice', 'Bob', 'Charlie'];
+        engine.state.drawnParticipants = [];
+
+        engine.triggerRoulette();
+        assert.strictEqual(engine.isDrawing(), true, 'Should be in drawing state');
+        assert.ok(engine.getRollTimer(), 'rollTimer should be active during roulette');
+
+        // Immediately soft-reset
+        engine.softReset();
+        assert.strictEqual(engine.isDrawing(), false, 'isDrawing should be false after softReset');
+        assert.strictEqual(engine.getRollTimer(), null, 'rollTimer should be cleared (null)');
+        assert.strictEqual(engine.state.drawnParticipants.length, 0, 'No participant should have been drawn');
+
+        // Wait to ensure timer does not trigger after duration
+        await new Promise(r => setTimeout(r, 1300));
+        assert.strictEqual(engine.state.drawnParticipants.length, 0, 'Still no ghost winner drawn after timer duration');
+        assert.deepStrictEqual(Array.from(engine.state.availableParticipants), ['Alice', 'Bob', 'Charlie']);
+    });
+
+    await t.test('Editing namesInput synchronizes availableParticipants without losing drawn state', () => {
+        const namesInput = window.document.getElementById('namesList');
+        engine.state.mode = 'names';
+        engine.state.allParticipants = ['Alice', 'Bob', 'Charlie'];
+        engine.state.availableParticipants = ['Bob', 'Charlie'];
+        engine.state.drawnParticipants = ['Alice'];
+
+        // Teacher edits list: removes Alice, adds David
+        namesInput.value = 'Bob\nCharlie\nDavid';
+        namesInput.dispatchEvent(new window.Event('input'));
+
+        assert.deepStrictEqual(Array.from(engine.state.allParticipants), ['Bob', 'Charlie', 'David']);
+        assert.deepStrictEqual(Array.from(engine.state.drawnParticipants), [], 'Alice was removed so she should not be in drawnParticipants');
+        assert.deepStrictEqual(Array.from(engine.state.availableParticipants), ['Bob', 'Charlie', 'David']);
+
+        // Teacher now draws Bob
+        engine.state.drawnParticipants = ['Bob'];
+        engine.state.availableParticipants = ['Charlie', 'David'];
+
+        // Teacher edits list to keep Bob and add Eva
+        namesInput.value = 'Bob\nCharlie\nDavid\nEva';
+        namesInput.dispatchEvent(new window.Event('input'));
+
+        assert.deepStrictEqual(Array.from(engine.state.drawnParticipants), ['Bob'], 'Bob was drawn and remains drawn');
+        assert.deepStrictEqual(Array.from(engine.state.availableParticipants), ['Charlie', 'David', 'Eva'], 'Available must contain Charlie, David, and new Eva');
+    });
+
+    await t.test('Mixed separators (newlines and commas) are parsed correctly', () => {
+        const namesInput = window.document.getElementById('namesList');
+        engine.state.mode = 'names';
+        namesInput.value = 'Alice, Bob\nCharlie; Diana, Emma';
+
+        engine.initializeDraw();
+        assert.deepStrictEqual(Array.from(engine.state.allParticipants), ['Alice', 'Bob', 'Charlie', 'Diana', 'Emma']);
+    });
+
+    await t.test('prefers-reduced-motion triggers immediate draw without delay', () => {
+        window.matchMedia = (query) => ({
+            matches: query.includes('prefers-reduced-motion'),
+            media: query,
+            addListener: () => {},
+            removeListener: () => {}
+        });
+
+        engine.state.mode = 'names';
+        engine.state.availableParticipants = ['QuickWinner'];
+        engine.state.allParticipants = ['QuickWinner'];
+        engine.state.drawnParticipants = [];
+
+        engine.triggerRoulette();
+
+        // Should finalize immediately without waiting 1200ms
+        assert.strictEqual(engine.isDrawing(), false, 'isDrawing must be false immediately with reduced motion');
+        assert.strictEqual(engine.getRollTimer(), null, 'rollTimer should not be set');
+        assert.strictEqual(engine.state.drawnParticipants.length, 1, 'Winner should be drawn immediately');
+        assert.strictEqual(engine.state.drawnParticipants[0], 'QuickWinner');
+    });
+
+    await t.test('Confetti is launched on winner draw', () => {
+        let confettiFired = false;
+        window.launchConfetti = () => {
+            confettiFired = true;
+        };
+
+        engine.state.mode = 'names';
+        engine.state.availableParticipants = ['LuckyStudent'];
+        engine.state.allParticipants = ['LuckyStudent'];
+        engine.state.drawnParticipants = [];
+
+        engine.finalizeDraw();
+
+        assert.strictEqual(confettiFired, true, 'launchConfetti should be called on winner draw');
     });
 });

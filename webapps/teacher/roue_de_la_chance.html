@@ -921,7 +921,8 @@
                     </svg>
 
                     <!-- Main Canvas -->
-                    <canvas id="wheelCanvas" width="500" height="500"></canvas>
+                    <canvas id="wheelCanvas" width="500" height="500" role="img" aria-label="Roue de la chance interactive"></canvas>
+                    <div id="wheelLiveAnnounce" class="sr-only" aria-live="polite"></div>
 
                     <!-- Center Click Hub -->
                     <div class="wheel-center-hub" id="centerSpinBtn" title="Tourner la roue (ou appuyez sur Espace)">
@@ -1109,6 +1110,7 @@
     <script src="../../assets/js/pwa.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/roster-import.js"></script>
     <script src="../../assets/js/url-params.js"></script>
 
     <script>
@@ -1300,7 +1302,7 @@
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    if (parsed && Array.isArray(parsed.activeItems) && parsed.activeItems.length > 0) {
+                    if (parsed && ((Array.isArray(parsed.activeItems) && parsed.activeItems.length > 0) || (Array.isArray(parsed.originalItems) && parsed.originalItems.length >= 2))) {
                         state = Object.assign(state, parsed);
                     }
                 }
@@ -1437,6 +1439,8 @@
             isSpinning = true;
             spinBtn.disabled = true;
             centerSpinBtn.style.pointerEvents = 'none';
+            if (resetWheelBtn) resetWheelBtn.disabled = true;
+            if (editWheelBtn) editWheelBtn.disabled = true;
 
             // Pick random target slice
             const count = state.activeItems.length;
@@ -1459,7 +1463,8 @@
             startAngle = currentAngle % (2 * Math.PI);
             targetAngle = startAngle + fullSpins + normalizedRemainder;
             spinStartTime = performance.now();
-            spinDuration = 4200 + Math.random() * 600;
+            const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            spinDuration = prefersReducedMotion ? 120 : (4200 + Math.random() * 600);
 
             lastTickSegment = -1;
             requestAnimationFrame(updateSpin);
@@ -1507,6 +1512,8 @@
                 isSpinning = false;
                 spinBtn.disabled = false;
                 centerSpinBtn.style.pointerEvents = 'auto';
+                if (resetWheelBtn) resetWheelBtn.disabled = false;
+                if (editWheelBtn) editWheelBtn.disabled = false;
 
                 // Determine exact winner
                 const sliceAngle = (2 * Math.PI) / count;
@@ -1531,7 +1538,9 @@
             if (typeof playSound === 'function') {
                 playSound('win');
             }
-            if (typeof window.confetti === 'function') {
+            if (typeof launchConfetti === 'function') {
+                launchConfetti();
+            } else if (typeof window.confetti === 'function') {
                 window.confetti({
                     particleCount: 75,
                     spread: 70,
@@ -1539,9 +1548,18 @@
                 });
             }
 
-            // Auto-remove option logic
+            // Accessible screen reader announcement
+            const liveAnnounce = document.getElementById('wheelLiveAnnounce');
+            if (liveAnnounce) {
+                liveAnnounce.textContent = `Résultat : ${winner}`;
+            }
+
+            // Auto-remove option logic: single occurrence removal
             if (state.autoRemove) {
-                state.activeItems = state.activeItems.filter(item => item !== winner);
+                const remIdx = state.activeItems.indexOf(winner);
+                if (remIdx !== -1) {
+                    state.activeItems.splice(remIdx, 1);
+                }
                 modalRemoveBtn.style.display = 'none';
             } else {
                 modalRemoveBtn.style.display = 'inline-flex';
@@ -1696,23 +1714,22 @@
 
         // Keyboard Shortcut: Space or Enter to spin
         document.addEventListener('keydown', (e) => {
-            if ((e.code === 'Space' || e.key === 'Enter') && !isSpinning && setupView.classList.contains('hidden')) {
-                if (document.activeElement && (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT')) {
-                    return;
-                }
-                if (winnerModal.classList.contains('active')) {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (winnerModal && winnerModal.classList.contains('active')) {
+                if (e.key === 'Escape') {
                     winnerModal.classList.remove('active');
-                    spinWheel();
-                    e.preventDefault();
+                }
+                return;
+            }
+            if ((e.code === 'Space' || e.key === 'Enter') && !isSpinning && setupView.classList.contains('hidden')) {
+                if (document.activeElement && (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'BUTTON')) {
                     return;
                 }
                 e.preventDefault();
                 spinWheel();
             }
-            if (e.key === 'Escape') {
-                if (winnerModal.classList.contains('active')) {
-                    winnerModal.classList.remove('active');
-                }
+            if (e.key === 'Escape' && winnerModal && winnerModal.classList.contains('active')) {
+                winnerModal.classList.remove('active');
             }
         });
 
@@ -1723,7 +1740,9 @@
         });
 
         // Edit View Toggles
-        editWheelBtn.addEventListener('click', () => setView('setup'));
+        editWheelBtn.addEventListener('click', () => {
+            if (!isSpinning) setView('setup');
+        });
         cancelSetupBtn.addEventListener('click', () => setView('play'));
 
         // Save and Load Personal Custom List
@@ -1734,7 +1753,7 @@
 
         // Save Custom Choices
         saveAndStartBtn.addEventListener('click', () => {
-            const raw = choicesInput.value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            const raw = (window.RosterImport ? window.RosterImport.parseNamesList(choicesInput.value) : choicesInput.value.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean));
             if (raw.length < 2) {
                 if (typeof showToast === 'function') showToast('Veuillez entrer au moins 2 éléments', 'error');
                 return;
@@ -1799,7 +1818,7 @@
 
         // Reset Wheel to original full items
         function resetWheel() {
-            isSpinning = false;
+            if (isSpinning) return;
             if (winnerModal) winnerModal.classList.remove('active');
             if (state.originalItems && state.originalItems.length >= 2) {
                 state.activeItems = [...state.originalItems];
@@ -1818,7 +1837,9 @@
             if (typeof showToast === 'function') showToast('Roue réinitialisée avec tous les choix', 'success');
         }
 
-        resetWheelBtn.addEventListener('click', resetWheel);
+        resetWheelBtn.addEventListener('click', () => {
+            if (!isSpinning) resetWheel();
+        });
 
         // Share Button
         shareBtn.addEventListener('click', copyShareLink);
@@ -1835,7 +1856,10 @@
 
         modalRemoveBtn.addEventListener('click', () => {
             if (lastWinnerItem) {
-                state.activeItems = state.activeItems.filter(item => item !== lastWinnerItem);
+                const remIdx = state.activeItems.indexOf(lastWinnerItem);
+                if (remIdx !== -1) {
+                    state.activeItems.splice(remIdx, 1);
+                }
                 saveState();
                 updateUI();
                 renderWheel();
@@ -1903,6 +1927,33 @@
             if (typeof playSound === 'function') playSound('click');
             if (typeof showToast === 'function') showToast('Roue réinitialisée', 'info');
         };
+
+        // Export for headless testing
+        if (typeof window !== 'undefined') {
+            window.RoueEngine = {
+                state,
+                spinWheel,
+                resetWheel,
+                onWheelWinner,
+                updateUI,
+                renderWheel,
+                loadState,
+                saveState,
+                isSpinning: () => isSpinning
+            };
+        }
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = {
+                state,
+                spinWheel,
+                resetWheel,
+                onWheelWinner,
+                updateUI,
+                renderWheel,
+                loadState,
+                saveState
+            };
+        }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

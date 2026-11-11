@@ -30,6 +30,8 @@
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../assets/js/fa-subset.js"></script>
     <script src="../../assets/js/vendor/xlsx.full.min.js"></script>
+    <script src="../../assets/js/roster-import.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
@@ -682,6 +684,7 @@
                     <!-- Result Area -->
                     <div class="result-stage">
                         <div class="result-number" id="drawnNumber">?</div>
+                        <div id="drawnNumberLiveAnnounce" class="sr-only" aria-live="polite"></div>
                         <div id="finishedMsg" class="hidden" style="margin-top: 1rem; font-size: 0.9rem; font-weight: 800; color: var(--success);">Tirage terminé !</div>
                     </div>
 
@@ -762,6 +765,7 @@
             drawHistory: []
         };
         let isDrawing = false;
+        let rollTimer = null;
 
 
         // ==========================================
@@ -842,6 +846,14 @@
             return null;
         }
 
+        function parseNamesList(raw) {
+            if (typeof RosterImport !== 'undefined' && RosterImport.parseNamesList) {
+                return RosterImport.parseNamesList(raw);
+            }
+            if (!raw) return [];
+            return raw.split(/[\r\n,;]+/).map(n => n.trim()).filter(Boolean);
+        }
+
         function copyShareLink() {
             let list = [];
             if (state.mode === 'number') {
@@ -853,11 +865,7 @@
                 list = Array.from({ length: max }, (_, i) => String(i + 1));
             } else {
                 const raw = namesInput.value.trim();
-                if (raw.includes('\n')) {
-                    list = raw.split(/\r?\n/).map(n => n.trim()).filter(Boolean);
-                } else {
-                    list = raw.split(/[,;]+/).map(n => n.trim()).filter(Boolean);
-                }
+                list = parseNamesList(raw);
                 if (list.length === 0 && state.allParticipants.length > 0) {
                     list = [...state.allParticipants];
                 }
@@ -917,11 +925,7 @@
                 list = Array.from({ length: max }, (_, i) => String(i + 1));
             } else {
                 const raw = namesInput.value.trim();
-                if (raw.includes('\n')) {
-                    list = raw.split(/\r?\n/).map(n => n.trim()).filter(Boolean);
-                } else {
-                    list = raw.split(/[,;]+/).map(n => n.trim()).filter(Boolean);
-                }
+                list = parseNamesList(raw);
                 if (list.length < 2) return showToast('Entrez au moins 2 noms', 'error');
             }
 
@@ -941,21 +945,40 @@
             if (isDrawing || state.availableParticipants.length === 0) return;
             isDrawing = true; drawBtn.disabled = true;
 
+            const prefersReducedMotion = typeof window !== 'undefined' &&
+                window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (prefersReducedMotion) {
+                finalizeDraw();
+                return;
+            }
+
             let elapsed = 0; const duration = 1200; const interval = 60;
             drawnNumber.classList.add('rolling');
 
-            const timer = setInterval(() => {
+            rollTimer = setInterval(() => {
                 elapsed += interval;
                 drawnNumber.textContent = state.availableParticipants[Math.floor(Math.random() * state.availableParticipants.length)];
-                playSound('tick');
+                if (typeof playSound === 'function') playSound('tick');
                 if (elapsed >= duration) {
-                    clearInterval(timer);
+                    clearInterval(rollTimer);
+                    rollTimer = null;
                     finalizeDraw();
                 }
             }, interval);
         }
 
         function finalizeDraw() {
+            if (rollTimer) {
+                clearInterval(rollTimer);
+                rollTimer = null;
+            }
+            if (state.availableParticipants.length === 0) {
+                isDrawing = false;
+                drawBtn.disabled = true;
+                return;
+            }
             const randomIndex = Math.floor(Math.random() * state.availableParticipants.length);
             const winner = state.availableParticipants[randomIndex];
 
@@ -969,13 +992,26 @@
             drawnNumber.classList.add('pulse');
             setTimeout(() => drawnNumber.classList.remove('pulse'), 600);
 
-            playSound('ding');
+            const liveAnnounce = document.getElementById('drawnNumberLiveAnnounce');
+            if (liveAnnounce) {
+                liveAnnounce.textContent = `Tiré au sort : ${winner}`;
+            }
+
+            if (typeof launchConfetti === 'function') {
+                launchConfetti();
+            }
+
+            if (typeof playSound === 'function') playSound('ding');
             isDrawing = false;
             saveState();
             updateUI();
         }
 
         function softReset() {
+            if (rollTimer) {
+                clearInterval(rollTimer);
+                rollTimer = null;
+            }
             isDrawing = false;
             drawBtn.disabled = false;
             state.absentParticipants = [];
@@ -1088,6 +1124,9 @@
         }
 
         function extractNamesFromTableRows(rows) {
+            if (typeof RosterImport !== 'undefined' && RosterImport.extractNamesFromTableRows) {
+                return RosterImport.extractNamesFromTableRows(rows);
+            }
             if (!rows || !rows.length) return [];
 
             const HEADER_NAME_FULL_REGEX = /^(?:nom\s*(?:et|\/|&)?\s*pr[eé]nom|pr[eé]nom\s*(?:et|\/|&)?\s*nom|nom\s+complet|identit[eé]|élève|eleve|student|pupil)$/i;
@@ -1163,6 +1202,9 @@
         }
 
         function parseRosterContent(input) {
+            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
+                return RosterImport.parseRosterContent(input);
+            }
             if (!input) return [];
 
             // 1. Array of rows (e.g. from SheetJS sheet_to_json)
@@ -1294,11 +1336,7 @@
             let names = [];
             const raw = namesInput.value.trim();
             if (raw) {
-                if (raw.includes('\n')) {
-                    names = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-                } else {
-                    names = raw.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
-                }
+                names = parseNamesList(raw);
             } else if (state.mode === 'names' && state.allParticipants.length > 0) {
                 names = [...state.allParticipants];
             }
@@ -1347,13 +1385,12 @@
             namesInput.addEventListener('input', () => {
                 if (state.mode === 'names') {
                     const raw = namesInput.value.trim();
-                    let list = [];
-                    if (raw.includes('\n')) {
-                        list = raw.split(/\r?\n/).map(n => n.trim()).filter(Boolean);
-                    } else {
-                        list = raw.split(/[,;]+/).map(n => n.trim()).filter(Boolean);
-                    }
-                    state.allParticipants = list;
+                    const newList = parseNamesList(raw);
+                    state.allParticipants = [...newList];
+                    state.drawnParticipants = state.drawnParticipants.filter(p => newList.includes(p));
+                    state.absentParticipants = state.absentParticipants.filter(p => newList.includes(p));
+                    const unavailable = new Set([...state.drawnParticipants, ...state.absentParticipants]);
+                    state.availableParticipants = state.allParticipants.filter(p => !unavailable.has(p));
                     saveState();
                 }
             });
@@ -1378,7 +1415,7 @@
         initBtn.addEventListener('click', initializeDraw);
         drawBtn.addEventListener('click', triggerRoulette);
         resetDrawBtn.addEventListener('click', softReset);
-        backToSetupBtn.addEventListener('click', () => setView('setup'));
+        backToSetupBtn.addEventListener('click', () => { if (rollTimer) { clearInterval(rollTimer); rollTimer = null; } isDrawing = false; setView('setup'); });
         const shareBtn = document.getElementById('shareBtn');
         if (shareBtn) shareBtn.addEventListener('click', copyShareLink);
         
@@ -1389,7 +1426,12 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !isDrawing && !drawBtn.disabled && document.activeElement.tagName !== 'TEXTAREA') {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const tag = document.activeElement ? document.activeElement.tagName : '';
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+            if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+            if ((e.key === 'Enter' || e.key === ' ' || e.code === 'Space') && !isDrawing && !drawBtn.disabled) {
+                e.preventDefault();
                 triggerRoulette();
             }
         });
@@ -1429,6 +1471,7 @@
         });
 
         window.__onResetApp = function() {
+            if (rollTimer) { clearInterval(rollTimer); rollTimer = null; }
             try {
                 localStorage.removeItem(STATE_KEY);
             } catch (e) {}
@@ -1462,11 +1505,19 @@
             state,
             parseRosterContent,
             extractNamesFromTableRows,
+            parseNamesList,
             processUploadedNamesFile,
             exportNamesList,
             initializeDraw,
-            triggerRoulette
+            triggerRoulette,
+            finalizeDraw,
+            softReset,
+            isDrawing: () => isDrawing,
+            getRollTimer: () => rollTimer
         };
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = window.TirageEngine;
+        }
 
         loadState();
     </script>

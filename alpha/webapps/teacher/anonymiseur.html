@@ -31,6 +31,7 @@
     <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../../assets/js/fa-subset.js"></script>
     <script src="../../../assets/js/vendor/xlsx.full.min.js"></script>
+    <script src="../../../assets/js/roster-import.js"></script>
     <link rel="stylesheet" href="../../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../../assets/css/base.css">
     <link rel="stylesheet" href="../../../assets/css/components.css">
@@ -2532,6 +2533,9 @@
             }
 
             function extractNamesFromTableRows(rows) {
+                if (typeof RosterImport !== 'undefined' && RosterImport.extractNamesFromTableRows) {
+                    return RosterImport.extractNamesFromTableRows(rows);
+                }
                 if (!rows || !rows.length) return [];
 
                 const HEADER_NAME_FULL_REGEX = /^(?:nom\s*(?:et|\/|&)?\s*pr[eé]nom|pr[eé]nom\s*(?:et|\/|&)?\s*nom|nom\s+complet|identit[eé]|élève|eleve|student|pupil)$/i;
@@ -2607,6 +2611,9 @@
             }
 
             function parseRosterContent(input) {
+                if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
+                    return RosterImport.parseRosterContent(input);
+                }
                 if (!input) return [];
 
                 // 1. Array of rows (e.g. from SheetJS sheet_to_json)
