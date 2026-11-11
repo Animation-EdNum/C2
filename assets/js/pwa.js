@@ -121,41 +121,53 @@
         }
 
         navigator.serviceWorker.register(rootPath + 'sw.js').then((registration) => {
+            function trackWorker(worker) {
+                if (!worker) return;
+                worker.addEventListener('statechange', () => {
+                    if (worker.state === 'installed') {
+                        promptOrAutoUpdate(worker);
+                    }
+                });
+            }
+
             // 1. Un worker est DÉJÀ en attente (waiting) depuis une visite précédente
-            if (registration.waiting && navigator.serviceWorker.controller) {
+            if (registration.waiting) {
                 promptOrAutoUpdate(registration.waiting);
             }
 
-            // 2. Détection d'un nouveau worker en cours d'installation
-            registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                if (!newWorker) {
-                    return;
-                }
+            // 2. Un worker est déjà en cours d'installation au moment de l'enregistrement
+            if (registration.installing) {
+                trackWorker(registration.installing);
+            }
 
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        promptOrAutoUpdate(newWorker);
-                    }
-                });
+            // 3. Détection d'un nouveau worker en cours d'installation
+            registration.addEventListener('updatefound', () => {
+                trackWorker(registration.installing);
             });
 
-            // 3. Vérifications proactives lors du retour sur l'onglet
+            // 4. Vérifications proactives lors du retour sur l'onglet
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') {
+                    justLoaded = true; // Réactiver la période de grâce lors du retour sur l'onglet
                     registration.update().then(() => {
-                        if (registration.waiting && navigator.serviceWorker.controller) {
+                        if (registration.waiting) {
                             promptOrAutoUpdate(registration.waiting);
+                        }
+                        if (registration.installing) {
+                            trackWorker(registration.installing);
                         }
                     }).catch(() => {});
                 }
             });
 
-            // 4. Vérification périodique toutes les 30 minutes
+            // 5. Vérification périodique toutes les 30 minutes
             const intervalId = setInterval(() => {
                 registration.update().then(() => {
-                    if (registration.waiting && navigator.serviceWorker.controller) {
+                    if (registration.waiting) {
                         promptOrAutoUpdate(registration.waiting);
+                    }
+                    if (registration.installing) {
+                        trackWorker(registration.installing);
                     }
                 }).catch(() => {});
             }, 30 * 60 * 1000);
@@ -163,8 +175,15 @@
                 intervalId.unref();
             }
 
-            // 5. Forcer une vérification réseau immédiate à chaque chargement de page
-            registration.update().catch(() => {});
+            // 6. Forcer une vérification réseau immédiate à chaque chargement de page
+            registration.update().then(() => {
+                if (registration.waiting) {
+                    promptOrAutoUpdate(registration.waiting);
+                }
+                if (registration.installing) {
+                    trackWorker(registration.installing);
+                }
+            }).catch(() => {});
 
         }).catch(() => {
             // Échec silencieux

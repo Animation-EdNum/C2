@@ -196,6 +196,52 @@ test('pwa.js - Service Worker Registration and Crawler Bypass', async (t) => {
         }
     });
 
+    await t.test('automatically tracks worker that was already installing before registration resolved', async () => {
+        let skipWaitingCalled = false;
+        let statechangeCb = null;
+
+        const mockInstallingWorker = {
+            state: 'installing',
+            addEventListener: (evt, cb) => {
+                if (evt === 'statechange') statechangeCb = cb;
+            },
+            postMessage: (msg) => {
+                if (msg === 'skipWaiting') skipWaitingCalled = true;
+            }
+        };
+
+        const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+            runScripts: 'dangerously',
+            url: 'http://localhost/index.html'
+        });
+        const window = dom.window;
+
+        window.navigator.serviceWorker = {
+            controller: { state: 'activated' },
+            addEventListener: () => {},
+            register: () => Promise.resolve({
+                waiting: null,
+                installing: mockInstallingWorker,
+                addEventListener: () => {},
+                update: () => Promise.resolve()
+            })
+        };
+
+        try {
+            window.eval(pwaSrc);
+            window.dispatchEvent(new window.Event('load'));
+            await new Promise(r => setTimeout(r, 10));
+
+            assert.ok(statechangeCb, 'statechange listener should be attached directly to already installing worker');
+            mockInstallingWorker.state = 'installed';
+            statechangeCb();
+
+            assert.strictEqual(skipWaitingCalled, true, 'skipWaiting should be sent to worker that was already installing');
+        } finally {
+            dom.window.close();
+        }
+    });
+
     await t.test('controllerchange triggers window.location.reload when controller existed', async () => {
         let reloadCalled = false;
         let controllerChangeCb = null;
