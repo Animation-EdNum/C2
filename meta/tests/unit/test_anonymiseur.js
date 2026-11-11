@@ -166,18 +166,18 @@ test('anonymiseur.html - engine & rules', async (t) => {
 
     await t.test('Multi-part student names: first names, middle names and last names all map to the same [Élève X]', () => {
         engine.state.roster = [
-            'Moulin Sophie Leny',
-            'Naibi Erfan',
-            'Nichini Valentin'
+            'Dubois Sophie Leny',
+            'Bernard Arthur',
+            'Moret Valentin'
         ];
         engine.state.mode = 'labels';
-        const text = "Sophie, Moulin, Leny, Erfan et Valentin";
+        const text = "Sophie, Dubois, Leny, Arthur et Valentin";
         const result = engine.runAnonymization(text);
 
         assert.strictEqual(
             result.cleanText,
             "[Élève 1], [Élève 1], [Élève 1], [Élève 2] et [Élève 3]",
-            "Sophie, Moulin and Leny must all resolve to [Élève 1], Erfan to [Élève 2], and Valentin to [Élève 3]"
+            "Sophie, Dubois and Leny must all resolve to [Élève 1], Arthur to [Élève 2], and Valentin to [Élève 3]"
         );
     });
 
@@ -284,23 +284,23 @@ Favre\tArthur`;
         const XLSX = require('../../../assets/js/vendor/xlsx.full.min.js');
         const parseRoster = engine.parseRosterContent;
 
-        // Mock exact ENT export from user's screenshot
+        // Mock ENT export table structure with synthetic test names
         const ws_data = [
             ['ECOLE PRIMAIRE'],
-            ['LISTE DE CLASSE', '', '', '', 'Sierre, EP Muraz'],
+            ['LISTE DE CLASSE', '', '', '', 'Centre scolaire de Démo'],
             ['Année :', '2026-2027'],
             ['Titulaire :', 'Maitre XY'],
             ['2ème enseignant :', 'Maitre XZ'],
-            ['Classe :', 'MUR fd : M. XY / Mmme ZX'],
+            ['Classe :', 'DEMO 7H : M. XY / Mme ZX'],
             ['Effectif :', '8 filles, 12 garçons'],
             [],
             ['', 'Degré', 'Identifiant ISM', 'Nom et prénom', 'Date de naissance'],
-            ['', 7, 'Nicolas', 'Ancora Alexandre', '[Anonyme]'],
-            ['', 7, 'Juliette', 'Boichat Camille Aline Bienvenue', '[Anonyme]'],
-            ['', 7, 'Antoine', 'Boichat Gabriel Aloys Céleste', '[Anonyme]'],
-            ['', 7, 'Charlotte', 'Cardoso Ramalhete Tomas', '[Anonyme]'],
-            ['', 7, 'Robin', 'Ciccorelli Francesca', '[Anonyme]'],
-            ['', 7, 'Alice', 'da Silva Ramos Carminho', '[Anonyme]']
+            ['', 7, 'Nicolas', 'Dupont Alexandre', '[Anonyme]'],
+            ['', 7, 'Juliette', 'Dubois Camille Aline Bienvenue', '[Anonyme]'],
+            ['', 7, 'Antoine', 'Martin Gabriel Aloys Céleste', '[Anonyme]'],
+            ['', 7, 'Charlotte', 'Moret Thomas Lucas', '[Anonyme]'],
+            ['', 7, 'Robin', 'Rey Francesca', '[Anonyme]'],
+            ['', 7, 'Alice', 'Favre Emma', '[Anonyme]']
         ];
 
         const wb = XLSX.utils.book_new();
@@ -311,12 +311,12 @@ Favre\tArthur`;
         const imported = parseRoster(buffer);
         assert.ok(Array.isArray(imported), 'Imported roster must be an array');
         assert.strictEqual(imported.length, 6, 'Should extract exactly the 6 students from the ENT table');
-        assert.strictEqual(imported[0], 'Ancora Alexandre');
-        assert.strictEqual(imported[1], 'Boichat Camille Aline Bienvenue');
-        assert.strictEqual(imported[2], 'Boichat Gabriel Aloys Céleste');
-        assert.strictEqual(imported[3], 'Cardoso Ramalhete Tomas');
-        assert.strictEqual(imported[4], 'Ciccorelli Francesca');
-        assert.strictEqual(imported[5], 'da Silva Ramos Carminho');
+        assert.strictEqual(imported[0], 'Dupont Alexandre');
+        assert.strictEqual(imported[1], 'Dubois Camille Aline Bienvenue');
+        assert.strictEqual(imported[2], 'Martin Gabriel Aloys Céleste');
+        assert.strictEqual(imported[3], 'Moret Thomas Lucas');
+        assert.strictEqual(imported[4], 'Rey Francesca');
+        assert.strictEqual(imported[5], 'Favre Emma');
     });
 
     await t.test('CSV key option is removed from DOM', () => {
@@ -532,48 +532,48 @@ Favre\tArthur`;
     await t.test('Real-world email exchange: Consistent identity mapping, no false positive street, dot after phone preserved', () => {
         engine.state.mode = 'labels';
         engine.state.roster = [];
-        const sampleEmail = `Cours Wikimedia pour Bibliothécaires
-Vivian Epiney
+        const sampleEmail = `Cours Informatique pour Bibliothécaires
+Alexandre Martin
 
-Jean Marc Wyss
+Jean Marc Dubois
 Hello Jean-Marc,
 
-Pourrais-tu stp répondre à la question de Lionel Walter sur les supports GLAM ?
+Pourrais-tu stp répondre à la question de Nicolas Blanc sur les supports de cours ?
 
 Merci et belle fin de journée !
 
-Vivian Epiney
-Wikimedia CH
-From: Lionel Walter <lionel.walter@arbim.ch>
+Alexandre Martin
+Association CH
+From: Nicolas Blanc <nicolas.blanc@exemple.ch>
 Sent: 03 November 2026 12:07
-To: Vivian Epiney <vivian.epiney@wikimedia.ch>
-Cc: Jean Marc Wyss <jean.marc.wyss@wikimedia.ch>
-Subject: Re: Cours Wikimedia pour Bibliothécaires
+To: Alexandre Martin <alexandre.martin@association.ch>
+Cc: Jean Marc Dubois <jean.marc.dubois@association.ch>
+Subject: Re: Cours Informatique pour Bibliothécaires
  
-Salut Vivian,
+Salut Alexandre,
 
 C'est comme tu veux. Le 24.11, ce sera le début de l'introduction à openrefine.
 
 Uploading Image Collections to Wikimedia Commons with OpenRefine
-Joris Burla, Head Collection Documentation, Museum Rietberg
+Julien Rey, Responsable Documentation, Musée cantonal
 
-Voici les coordonnées de Eliane Blumer : blumer.eliane@hispeed.ch, 079 728 47 41. Elle était là en 2024.
+Voici les coordonnées de Élise Mercier : elise.mercier@testmail.ch, 079 123 45 67. Elle était là en 2024.
 
 Les mardis 10.11, 17.11, 24.11, 1.12 et 8.12 à Yverdon.
 
 --
-Lionel Walter
-arbim IT
+Nicolas Blanc
+Support Informatique
 Rue Faller 2, 1202 Genève
-+41 76 499 12 32`;
++41 76 000 11 22`;
 
         const result = engine.runAnonymization(sampleEmail);
 
-        // 1. Cours Wikimedia must NOT be detected as a street address
-        assert.ok(!result.cleanText.includes('[Adresse] pour'), 'Cours Wikimedia should not be converted to [Adresse]');
-        assert.ok(result.cleanText.includes('Cours Wikimedia pour Bibliothécaires'), 'Title intact');
+        // 1. Cours Informatique must NOT be detected as a street address
+        assert.ok(!result.cleanText.includes('[Adresse] pour'), 'Cours Informatique should not be converted to [Adresse]');
+        assert.ok(result.cleanText.includes('Cours Informatique pour Bibliothécaires'), 'Title intact');
 
-        // 2. Identity unification: "Vivian Epiney" and "Vivian" share the same Person tag
+        // 2. Identity unification: "Alexandre Martin" and "Alexandre" share the same Person tag
         assert.ok(!/\[Personne \d+\]-[Personne \d+]/.test(result.cleanText), 'Compound names should not be split into two separate tags');
         assert.ok(!/\[Personne (\d+)\][ \t]+\[Personne \1\]/.test(result.cleanText), 'No consecutive duplicate person tags');
 
@@ -582,7 +582,7 @@ Rue Faller 2, 1202 Genève
 
         // 4. Non-person entities remain intact
         assert.ok(result.cleanText.includes('Wikimedia Commons'), 'Wikimedia Commons preserved');
-        assert.ok(result.cleanText.includes('arbim IT'), 'arbim IT preserved');
+        assert.ok(result.cleanText.includes('Support Informatique'), 'Support Informatique preserved');
 
         // 5. Short dates properly handled
         assert.ok(!result.cleanText.includes('24.11'), 'Date 24.11 anonymized');
@@ -593,14 +593,14 @@ Rue Faller 2, 1202 Genève
     // REGRESSION TESTS FOR REALISTIC DATA ENGINE HARDENING
     // =========================================================================
 
-    await t.test('Group 1.1 - Heuristic pair & propagation: Non-dictionary names don\'t leak (Kilian Moix)', () => {
+    await t.test('Group 1.1 - Heuristic pair & propagation: Non-dictionary names don\'t leak (Kilian Voirol)', () => {
         engine.state.mode = 'labels';
         engine.state.roster = [];
-        const text = "Kilian a perturbé la séance. Ensuite Kilian Moix est sorti de la classe.";
+        const text = "Kilian a perturbé la séance. Ensuite Kilian Voirol est sorti de la classe.";
         const result = engine.runAnonymization(text);
 
         assert.ok(!result.cleanText.includes('Kilian'), 'Kilian should be completely masked');
-        assert.ok(!result.cleanText.includes('Moix'), 'Moix should be completely masked');
+        assert.ok(!result.cleanText.includes('Voirol'), 'Voirol should be completely masked');
         assert.ok(result.cleanText.includes('Ensuite'), 'Sentence connector Ensuite must NOT be swallowed');
         assert.strictEqual(
             result.cleanText,
@@ -807,13 +807,13 @@ Rue Faller 2, 1202 Genève
 
         // Example 1: Meeting & agenda with staff members
         const text1 = `Séance du 25 novembre : quelques points pour l'OJ
-Samuel Fierz
+Alexandre Perrin
 
-Corinne Ramillon
-Jessy Frossard;
-David Evequoz;
-Vivian Epiney;
-Simon Morard
+Corinne Dupuis
+Julie Favre;
+David Bonvin;
+Simon Fournier;
+Romain Rey
 Re-Bonjour,
 
 Sauriez-vous qui sont les personnes responsables des PICT à l'OEN ?
@@ -822,49 +822,49 @@ Peut-être sont-elles à inviter ?
 
 Cordialement
 
-samuel`;
+alexandre`;
 
         const res1 = engine.runAnonymization(text1);
         assert.ok(res1.cleanText.includes("Séance du [Date 1] : quelques points pour l'OJ"), 'Date anonymized without touching Séance or OJ');
-        assert.ok(!res1.cleanText.includes('Samuel Fierz'), 'Samuel Fierz must be anonymized');
-        assert.ok(!res1.cleanText.includes('Corinne Ramillon'), 'Corinne Ramillon must be anonymized');
-        assert.ok(!res1.cleanText.includes('Jessy Frossard'), 'Jessy Frossard must be anonymized');
-        assert.ok(!res1.cleanText.includes('David Evequoz'), 'David Evequoz must be anonymized');
-        assert.ok(!res1.cleanText.includes('Vivian Epiney'), 'Vivian Epiney must be anonymized');
-        assert.ok(!res1.cleanText.includes('Simon Morard'), 'Simon Morard must be anonymized');
+        assert.ok(!res1.cleanText.includes('Alexandre Perrin'), 'Alexandre Perrin must be anonymized');
+        assert.ok(!res1.cleanText.includes('Corinne Dupuis'), 'Corinne Dupuis must be anonymized');
+        assert.ok(!res1.cleanText.includes('Julie Favre'), 'Julie Favre must be anonymized');
+        assert.ok(!res1.cleanText.includes('David Bonvin'), 'David Bonvin must be anonymized');
+        assert.ok(!res1.cleanText.includes('Simon Fournier'), 'Simon Fournier must be anonymized');
+        assert.ok(!res1.cleanText.includes('Romain Rey'), 'Romain Rey must be anonymized');
         assert.ok(res1.cleanText.includes("responsables des PICT à l'OEN"), 'PICT and OEN must remain intact');
         assert.ok(res1.cleanText.includes("Sauriez-vous"), 'Sauriez-vous must remain intact');
 
         // Example 2: Support ticket and signature
-        const text2 = `[#INC-2576] - Hosting Website ednum.org / ednum.hepvs.ch par la HEP-VS
-Vivian Epiney
+        const text2 = `[#INC-2576] - Hosting Website ednum.org / service.ecole-test.ch par l'assistance
+Alexandre Perrin
 
-Service Desk HEP-VS
-Vincent Strahm
+Service Desk IT
+Thomas Dubois
 Je me sens bête tout à coup...
 
 Belle semaine !
 
-Vivian
+Alexandre
 ---------------------------------------------
-Haute école pédagogique du Valais
+Haute école pédagogique
 
-Vivian Epiney
+Alexandre Perrin
 Animateur EdNum · Cycle 2
 
-m: +41 (0)79 776 47 52
+m: +41 (0)79 000 11 22
 ---------------------------------------------
 Présent : Me · Je
-De : Vivian Epiney <Vivian.Epiney@hepvs.ch>`;
+De : Alexandre Perrin <alexandre.perrin@ecole-test.ch>`;
 
         const res2 = engine.runAnonymization(text2);
         assert.ok(res2.cleanText.includes('[#INC-2576] - Hosting Website'), 'Hosting Website must NOT be masked');
-        assert.ok(res2.cleanText.includes('Service Desk HEP-VS'), 'Service Desk HEP-VS must NOT be masked');
-        assert.ok(res2.cleanText.includes('Haute école pédagogique du Valais'), 'Haute école pédagogique must NOT be masked as a person');
+        assert.ok(res2.cleanText.includes('Service Desk IT'), 'Service Desk IT must NOT be masked');
+        assert.ok(res2.cleanText.includes('Haute école pédagogique'), 'Haute école pédagogique must NOT be masked as a person');
         assert.ok(res2.cleanText.includes('Animateur EdNum · [Classe 1]'), 'Cycle 2 masked as class');
         assert.ok(res2.cleanText.includes('[Téléphone 1]'), 'Phone number masked');
         assert.ok(res2.cleanText.includes('<[Email 1]>'), 'Email masked');
-        assert.ok(!res2.cleanText.includes('Vincent Strahm'), 'Vincent Strahm must be masked');
-        assert.ok(!res2.cleanText.includes('Vivian Epiney'), 'Vivian Epiney must be masked');
+        assert.ok(!res2.cleanText.includes('Thomas Dubois'), 'Thomas Dubois must be masked');
+        assert.ok(!res2.cleanText.includes('Alexandre Perrin'), 'Alexandre Perrin must be masked');
     });
 });
