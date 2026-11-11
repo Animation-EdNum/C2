@@ -169,6 +169,7 @@ We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no n
     *   Scores and Gamification: `assets/js/scores.js` (ScoreManager).
     *   Sounds (Web Audio API): `assets/js/audio.js` (no external .mp3 files).
     *   Toasts & Particles: `assets/js/toast.js` and `assets/js/confetti.js`.
+    *   Class Roster Importer: `assets/js/roster-import.js` (Swiss ENT/ISM, Excel, CSV, TSV).
 *   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, a Node.js script (`meta/scripts/generate_fa_subset.js`) parses the HTML and dynamically generates `assets/js/fa-subset.js` (under 20kb!).
 
 ### 🤝 How to contribute?

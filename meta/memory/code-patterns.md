@@ -103,6 +103,39 @@ This document records code conventions, reusable hooks, and established project 
   - After inserting `<i data-fa="name"></i>` into the DOM, invoke `window.fa?.createIcons?.(parentElement);`.
 - **Hot-Loop DOM Query Pre-Caching:** In performance-critical loops (e.g. grid drawing or recurrent difficulty validation), avoid repeated `document.querySelector` or `getElementById` calls. Pre-cache target elements into a `Map` or local dictionary before the loop executes.
 - **Event Binding:** Never use inline `onclick="..."` attributes in HTML. Always bind via `addEventListener` or event delegation using `e.target.closest()`.
+- **Keyboard Shortcut Safety:** Interactive keydown listeners must guard against modifier collisions and form input typing:
+  ```javascript
+  document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const tag = document.activeElement ? document.activeElement.tagName : '';
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
+      if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+      // Trigger action
+  });
+  ```
+- **Roster & Participant List Parsing (`roster-import.js`):**
+  ```javascript
+  // Parse binary or structured spreadsheet/text formats (XLSX, XLS, CSV, TSV, TXT, HTML table)
+  const students = RosterImport.parseRosterContent(fileBufferOrText);
+  // Parse user-typed list with mixed delimiters (newlines, commas, semicolons)
+  const list = RosterImport.parseNamesList(textAreaValue);
+  ```
+- **Respect for Reduced Motion (`prefers-reduced-motion`):**
+  Check at runtime before initiating long spins, delays, or roulette intervals:
+  ```javascript
+  const prefersReducedMotion = typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+      finalizeActionDirectly();
+      return;
+  }
+  ```
+- **Live Screen-Reader Announcements (`aria-live="polite"`):**
+  Provide invisible announcement zones for screen readers on dynamic canvas or randomized tools:
+  ```html
+  <div id="resultLiveAnnounce" class="sr-only" aria-live="polite"></div>
+  ```
 
 ## 4. Testing & Playwright Idioms
 - **IIFE Encapsulation in `page.evaluate()`:** Always wrap Playwright evaluated snippets in IIFEs to prevent polluting the global window scope across test steps:

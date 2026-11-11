@@ -7,6 +7,7 @@ This document records the architectural choices, library selections, and the rat
 - **Synchronous Script Data Loading over `fetch()`:** Static application registries (`registry.js`) and subsets are loaded synchronously via `<script>` tags rather than asynchronous `fetch()` to eliminate CORS blocking when opened directly from the filesystem (`file://`).
 - **Zero-CDN Local Asset Centralization:** All fonts, icons, styles, and audio reside strictly in `/assets/`. Third-party CDNs are forbidden to ensure 100% offline availability in isolated school environments.
 - **Vendored Offline Parsing Libraries (`assets/js/vendor/`):** When complex document parsing is required client-side (e.g. SheetJS for Swiss ENT class roster spreadsheets in Tirage au sort), dependencies are vendored locally in `assets/js/vendor/` to retain 100% offline-first autonomy without third-party network requests.
+- **Shared Class Roster Importer Module (`assets/js/roster-import.js`):** Extracted unified parser for Swiss ENT / ISM exports, Excel (`.xlsx`/`.xls`), CSV, TSV, HTML tables, and plain text across `tirage.html`, `anonymiseur.html`, and `roue_de_la_chance.html`. Eliminates 250+ lines of duplicated parsing logic.
 
 ## 2. PWA & Offline Strategy
 - **Stale-While-Revalidate Service Worker (`sw.js`):** Assets load instantaneously from the local cache while the worker checks for updates in the background. Immediate updates notify the user via a lightweight toast (`skipWaiting`).
@@ -18,6 +19,8 @@ This document records the architectural choices, library selections, and the rat
 - **4-Layer CSS Cascade for First Contentful Paint (FCP):** Rather than bundling or minifying CSS into a single monolithic file, stylesheets are split into `tokens.css` → `base.css` → `components.css` → `utilities.css` and loaded in parallel. Application-specific stylesheets (`assets/css/<app>.css`) load last to provide clean, isolated overrides.
 - **Glassmorphism Design Language:** Semi-transparent surfaces with backdrop-filter blur and subtle borders provide a modern, tactile feel without heavy graphics or frameworks.
 - **Custom FontAwesome 7 Pro Subset:** Instead of loading multi-megabyte icon libraries, an automated generator (`meta/scripts/generate_fa_subset.js`) compiles an exact subset into `assets/js/fa-subset.js`.
+- **Universal Reduced Motion Policy (`prefers-reduced-motion: reduce`):** Global CSS reset in `base.css` and runtime checks in interactive drawing/spinning tools (`tirage.html`, `roue_de_la_chance.html`, `sim_dyslexie.html`) guaranteeing photosensitivity comfort (WCAG 2.3.3) by collapsing multi-second animations to instantaneous outcomes.
+- **Screen Reader Live Announcements (`aria-live="polite"`):** Dynamic lottery and wheel results update an off-screen `.sr-only` live container, ensuring instant auditory feedback for assistive tech without visually altering the layout.
 
 ## 4. Navigation & Layout Decisions
 - **Top-Tabs over Bottom Navigation:** Primary navigation strictly uses top tabs (`.tabs`). Bottom tab bars were deprecated to avoid conflicts with system navigation gestures on iOS and Android tablets.
@@ -35,6 +38,8 @@ This document records the architectural choices, library selections, and the rat
 - **Action-Oriented Button Paradigm:** Toggle buttons display the glyph and tooltip representing the *target action* resulting from a click, rather than the current system state.
 - **Universal Application Reset Lifecycle (`window.__onResetApp`):** Standardized `#reset-cache-btn` in `theme.js` clears storage/caches and triggers `window.__onResetApp()` if defined, allowing complex apps to cleanly reset their in-memory models without a full browser reload.
 - **Hot-Loop DOM Query Avoidance:** In tight animation, drawing, or validation loops (e.g. Automate grid drawing, score difficulty validation), DOM lookups are pre-cached in `Map` instances or memoized to avoid layout thrashing and maintain 60 FPS on low-power classroom devices.
+- **Drift-Free Wall-Clock Timing (`targetEndTime`):** Time-critical applications (`time_timer.html`) calculate remaining duration against `Date.now()` and realign on `visibilitychange`, eliminating browser tab background throttling drift.
+- **Keyboard Shortcut Isolation:** Interactive accelerators (e.g. Space or Enter to spin/draw) must strictly ignore execution when `ctrlKey`, `metaKey`, or `altKey` is pressed, or when focus is inside form controls (`INPUT`, `TEXTAREA`, `SELECT`, `BUTTON`), preventing unintended actions during navigation or browser refreshes.
 
 ## 6. Security & Vulnerability Remediation (VICE / CodeQL)
 - **Safe DOM Construction over `innerHTML` Assignments:** To prevent DOM XSS vulnerabilities and resolve static analysis security alerts (Google VICE / CodeQL), direct assignments to `.innerHTML` are banned across the entire codebase (including PWA update toasts and modal dialogs). Code must use `textContent`, native DOM methods (`createElement`, `replaceChildren`), or inert `DOMParser.parseFromString(..., 'text/html')`.
