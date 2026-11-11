@@ -10,7 +10,7 @@ window.REGISTRY = [
       "#Algorithmique",
       "#Tri"
     ],
-    "ref": "DÉ>CODAGE 1-2 · Activité 3 — La machine à trier & DÉ>CODAGE 3-4 · Activité 3 — La machine à trier",
+    "ref": "DÉ>CODAGE 3-4 · Activité 3 — La machine à trier",
     "i18n": {
       "de": {
         "title": "Sortiermaschine",
@@ -19,13 +19,23 @@ window.REGISTRY = [
           "#Algorithmen",
           "#Sortieren"
         ],
-        "ref": "DÉ>CODAGE 1-2 · Aktivität 3 — Die Sortiermaschine & DÉ>CODAGE 3-4 · Aktivität 3 — Die Sortiermaschine"
+        "ref": "DÉ>CODAGE 3-4 · Aktivität 3 — Die Sortiermaschine",
+        "badges": [
+          {
+            "text": "1.-2. Primar",
+            "grey": true
+          },
+          {
+            "text": "3.-4. Primar",
+            "grey": false
+          }
+        ]
       }
     },
     "badges": [
       {
         "text": "1-2H",
-        "grey": false
+        "grey": true
       },
       {
         "text": "3-4H",
@@ -47,7 +57,7 @@ window.REGISTRY = [
       "#Algorithmique",
       "#Séquence"
     ],
-    "ref": "DÉ>CODAGE 1-2 · Activité 2 — Le jeu de la grue & DÉ>CODAGE 3-4 · Activité 2 — Le jeu de la grue",
+    "ref": "DÉ>CODAGE 3-4 · Activité 2 — Le jeu de la grue",
     "i18n": {
       "de": {
         "title": "Kranspiel",
@@ -56,7 +66,7 @@ window.REGISTRY = [
           "#Algorithmen",
           "#Sequenz"
         ],
-        "ref": "DÉ>CODAGE 1-2 · Aktivität 2 — Das Kranspiel & DÉ>CODAGE 3-4 · Aktivität 2 — Das Kranspiel",
+        "ref": "DÉ>CODAGE 3-4 · Aktivität 2 — Das Kranspiel",
         "badges": [
           {
             "text": "1.-2. Primar",

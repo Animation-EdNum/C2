@@ -55,7 +55,7 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 #### 1. Machine à trier (`webapps/machine_a_trier.html` - 1-2H & 3-4H)
 - **À quoi sert l'outil :** Initiation aux algorithmes de tri et à la classification logique d'objets selon divers critères (forme, couleur, taille, quantité) via une bande transporteuse et des bacs récepteurs. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_MACHINE_A_TRIER.md).
-- **Lien DÉ>CODAGE :** [1-2e](https://decodage.edu-vd.ch/1-2/) & [3-4e](https://decodage.edu-vd.ch/3-4/) · Tri et classification (Demi-cycles 1-2H et 3-4H). *Recommandation 1-2H : privilégier l'usage collectif débranché ou en plénum (TNI/TBI).*
+- **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · Tri et classification (Demi-cycle 3-4H).
 - **Fonctionnalités :** 2 modes (*Classique* et *Usine* avec tapis roulant interactif), 3 niveaux de difficulté (Facile, Moyen, Difficile) et rétroaction immédiate.
 - **Valeur pédagogique :** Développe la catégorisation d'éléments, la discrimination visuelle et l'assimilation des règles algorithmiques de tri sans écran individuel requis pour les plus jeunes.
 

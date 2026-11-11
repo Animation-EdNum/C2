@@ -115,6 +115,9 @@
                 'simulateur_automate.instruction_read': "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>",
 
                 // Machine à trier
+                'machine_a_trier.badge_level': '1-2H & 3-4H',
+                'machine_a_trier.badge_level_1_2h': '1-2H',
+                'machine_a_trier.badge_level_3_4h': '3-4H',
                 'machine_a_trier.toast_correct': 'Bravo !',
                 'machine_a_trier.toast_wrong': 'Oups, essaie un autre bac !',
                 'machine_a_trier.toast_fell': 'Objet tombé !',

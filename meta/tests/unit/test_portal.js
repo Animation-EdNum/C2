@@ -310,12 +310,20 @@ test('loadRegistry', async (t) => {
         const appJeuGrue = registry.find(a => a.id === 'app-jeu-grue');
 
         assert.ok(appMachineTrier, 'app-machine-trier should exist in registry');
-        assert.strictEqual(appMachineTrier.ref, 'DÉ>CODAGE 1-2 · Activité 3 — La machine à trier & DÉ>CODAGE 3-4 · Activité 3 — La machine à trier');
-        assert.strictEqual(appMachineTrier.i18n.de.ref, 'DÉ>CODAGE 1-2 · Aktivität 3 — Die Sortiermaschine & DÉ>CODAGE 3-4 · Aktivität 3 — Die Sortiermaschine');
+        assert.strictEqual(appMachineTrier.ref, 'DÉ>CODAGE 3-4 · Activité 3 — La machine à trier');
+        assert.strictEqual(appMachineTrier.i18n.de.ref, 'DÉ>CODAGE 3-4 · Aktivität 3 — Die Sortiermaschine');
+        assert.deepEqual(appMachineTrier.badges, [
+            { text: '1-2H', grey: true },
+            { text: '3-4H', grey: false }
+        ]);
+        assert.deepEqual(appMachineTrier.i18n.de.badges, [
+            { text: '1.-2. Primar', grey: true },
+            { text: '3.-4. Primar', grey: false }
+        ]);
 
         assert.ok(appJeuGrue, 'app-jeu-grue should exist in registry');
-        assert.strictEqual(appJeuGrue.ref, 'DÉ>CODAGE 1-2 · Activité 2 — Le jeu de la grue & DÉ>CODAGE 3-4 · Activité 2 — Le jeu de la grue');
-        assert.strictEqual(appJeuGrue.i18n.de.ref, 'DÉ>CODAGE 1-2 · Aktivität 2 — Das Kranspiel & DÉ>CODAGE 3-4 · Aktivität 2 — Das Kranspiel');
+        assert.strictEqual(appJeuGrue.ref, 'DÉ>CODAGE 3-4 · Activité 2 — Le jeu de la grue');
+        assert.strictEqual(appJeuGrue.i18n.de.ref, 'DÉ>CODAGE 3-4 · Aktivität 2 — Das Kranspiel');
         assert.strictEqual(appJeuGrue.dataLevel, '1-2H, 3-4H');
         assert.deepEqual(appJeuGrue.badges, [
             { text: '1-2H', grey: true },

@@ -509,6 +509,8 @@
         'machine_a_trier.title': 'Sortiermaschine',
         'machine_a_trier.desc': 'Sortiere die Objekte in den richtigen Behälter nach Form oder Farbe.',
         'machine_a_trier.badge_level': '1.-2. & 3.-4. Primar',
+        'machine_a_trier.badge_level_1_2h': '1.-2. Primar',
+        'machine_a_trier.badge_level_3_4h': '3.-4. Primar',
         'machine_a_trier.summary_how': '📖 Wie funktioniert es? (zum Öffnen klicken)',
         'machine_a_trier.rule_goal': 'Ziel: Sortiere die erscheinenden Formen in den passenden Behälter.',
         'machine_a_trier.rule_drag': 'Ziehe die Form mit der Maus oder dem Finger in den richtigen Behälter.',
