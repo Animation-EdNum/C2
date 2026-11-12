@@ -47,6 +47,12 @@ This document records the architectural choices, library selections, and the rat
 ## 7. Packaging & Distribution
 - **Standalone Static Server CLI (`bin/ednum.js`):** Distributed as `@ednum/suite-ednum`. Implements directory traversal protection (verifying canonical paths against trailing-slash root) and HSTS headers while remaining 100% dependency-free.
 
+## 9. Pedagogy & Game Mechanics
+- **Jeu de la grue Level Generation (BFS Move Solver):** To ensure curriculum-appropriate difficulty in Cycle 1 (3-4H / 6-8 years old), level generation in `webapps/jeu_de_la_grue.html` computes the minimal block moves using a lightweight Breadth-First Search (`computeMinMoves`):
+  - **Easy (Facile):** 1 block, strictly 1 move (3–6 crane instructions).
+  - **Medium (Moyen):** 2 blocks, strictly 2 moves (7–11 crane instructions). Prevents 1-move bystander trivialities and strictly filters out 3-move Tower of Hanoi temporary parking puzzles that require 12–16 instructions.
+  - **Hard (Difficile):** 3 blocks, strictly $\ge 3$ moves (12–27 crane instructions). Eliminates trivial 1-move and 2-move puzzles where 1 or 2 blocks remain untouched.
+
 ## 8. Internationalization (i18n) & Swiss Standard German (de-CH)
 - **Single Codebase Runtime Translation:** Rather than duplicating 31 HTML pages into a `/de/` folder (which would double maintenance overhead and bugfix complexity for inline scripts), the platform uses a single codebase. French remains the source markup in HTML and the natural fallback, while German is applied dynamically at runtime.
 - **Synchronous JS Dictionaries over `fetch()`:** To respect the hard requirement that pages must run locally from `file://` and under strict CSP (`default-src 'self'`), translation dictionaries are plain JavaScript files (`assets/js/i18n/de.js`) registering themselves synchronously into `window.I18N`. No asynchronous `fetch()` of JSON is permitted.
