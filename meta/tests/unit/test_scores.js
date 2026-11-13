@@ -159,4 +159,49 @@ test('scores.js - Adaptive Difficulty Popup and Switching', async (t) => {
         btnYes.click();
         assert.strictEqual(changedDiff, 'hard');
     });
+
+    await t.test('btn-reset-scores-action resets scores when confirmed', () => {
+        const window = setupDOM();
+        const ScoreManager = window.ScoreManager;
+        const document = window.document;
+
+        ScoreManager.init('jeu_de_la_grue');
+        ScoreManager.addSuccess('jeu_de_la_grue', 'easy', 0);
+        assert.strictEqual(ScoreManager.stats.jeu_de_la_grue.easy.totalSuccess, 1);
+
+        // Mock confirm -> true
+        window.confirm = () => true;
+
+        ScoreManager.showModal();
+        const resetBtn = document.getElementById('btn-reset-scores-action');
+        assert.ok(resetBtn, 'Reset scores button must exist in modal');
+
+        resetBtn.click();
+
+        assert.strictEqual(Object.keys(ScoreManager.stats).length, 0);
+        assert.strictEqual(window.localStorage.getItem('c2_stats_jeu_de_la_grue'), '{}');
+        const emptyMsg = document.querySelector('.stat-empty-state');
+        assert.ok(emptyMsg, 'Empty stats message should be shown after reset');
+    });
+
+    await t.test('btn-reset-scores-action keeps scores when cancelled', () => {
+        const window = setupDOM();
+        const ScoreManager = window.ScoreManager;
+        const document = window.document;
+
+        ScoreManager.init('jeu_de_la_grue');
+        ScoreManager.addSuccess('jeu_de_la_grue', 'easy', 0);
+        assert.strictEqual(ScoreManager.stats.jeu_de_la_grue.easy.totalSuccess, 1);
+
+        // Mock confirm -> false
+        window.confirm = () => false;
+
+        ScoreManager.showModal();
+        const resetBtn = document.getElementById('btn-reset-scores-action');
+        resetBtn.click();
+
+        assert.strictEqual(ScoreManager.stats.jeu_de_la_grue.easy.totalSuccess, 1);
+        const stored = JSON.parse(window.localStorage.getItem('c2_stats_jeu_de_la_grue'));
+        assert.strictEqual(stored.jeu_de_la_grue.easy.totalSuccess, 1);
+    });
 });
