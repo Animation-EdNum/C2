@@ -105,6 +105,9 @@ let simState = {
         };
         let drawGlobalScore = 0;
         let drawGlobalStreak = 0, drawGlobalStreakBest = 0;
+        let chalNextTimer = null;
+        let readNextTimer = null;
+        let drawNextTimer = null;
 
         let currentSpeed = 900;
 

@@ -260,6 +260,8 @@
         let gridSize = 5;
         let trainData = [], trainAnswers = [], isTrainLocked = false, isFirstAttempt = true;
         let globalCorrect = 0, globalStreak = 0, globalBest = 0;
+        let trainNextTimer = null;
+        let detectNextTimer = null;
 
         function switchTab(event, tab) {
             currentMode = tab;
@@ -284,8 +286,6 @@
         }
 
         function initTrainMode() {
-            clearTimeout(trainNextTimer);
-            trainNextTimer = null;
             clearTimeout(trainNextTimer);
             trainNextTimer = null;
             isTrainLocked = false; isFirstAttempt = true; trainData = []; trainAnswers = [];
@@ -414,7 +414,7 @@
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
                 globalCorrect++;
-                const adaptiveShown = const adaptiveShown = ScoreManager.addSuccess("train", 'grid' + gridSize, isFirstAttempt ? 0 : 1);
+                const adaptiveShown = ScoreManager.addSuccess("train", 'grid' + gridSize, isFirstAttempt ? 0 : 1);
                 globalStreak++;
                 const wasNewRecordTrain = globalStreak > globalBest;
                 if (wasNewRecordTrain) globalBest = globalStreak;
@@ -424,7 +424,6 @@
                 clearTimeout(trainNextTimer);
                 if (!adaptiveShown) {
                     trainNextTimer = setTimeout(initTrainMode, 2000);
-                }
                 }
             } else {
                 isFirstAttempt = false;
@@ -477,8 +476,6 @@
         let detectCorrect = 0, detectStreak = 0, detectBest = 0;
 
         function initDetectMode() {
-            clearTimeout(detectNextTimer);
-            detectNextTimer = null;
             clearTimeout(detectNextTimer);
             detectNextTimer = null;
             detectLocked = false;
@@ -628,7 +625,7 @@
                 const wasNewRecordDetect = detectStreak > detectBest;
                 if (wasNewRecordDetect) detectBest = detectStreak;
 
-                const adaptiveShown = const adaptiveShown = ScoreManager.addSuccess("detect", null, detectAttempts - 1);
+                const adaptiveShown = ScoreManager.addSuccess("detect", null, detectAttempts - 1);
 
                 const isExtremeDetect = (detectAttempts === 1);
                 handleStreakCelebration(detectStreak, isExtremeDetect, wasNewRecordDetect);
@@ -642,7 +639,6 @@
                 clearTimeout(detectNextTimer);
                 if (!adaptiveShown) {
                     detectNextTimer = setTimeout(initDetectMode, 2000);
-                }
                 }
             } else {
                 const urlParams = new URLSearchParams(window.location.search);
