@@ -238,4 +238,49 @@ describe('jeu_de_la_grue.html - Level Generation and Difficulty Engine', () => {
         }));
         assert.strictEqual(startLevelCalls, 1, 'startNewLevel called exactly once on dismissed');
     });
+
+    test('8. Mode Extrême (Extreme): generates 3-block levels with strictly >= 5 moves', () => {
+        const { window } = createGrueEnvironment();
+        window.setDifficulty('extreme');
+
+        for (let i = 0; i < 50; i++) {
+            window.startNewLevel();
+            const { cups, targetCups, currentDifficulty } = window.getGameState();
+
+            assert.strictEqual(currentDifficulty, 'extreme');
+            const totalStartBlocks = cups.reduce((sum, col) => sum + col.length, 0);
+            const totalTargetBlocks = targetCups.reduce((sum, col) => sum + col.length, 0);
+            assert.strictEqual(totalStartBlocks, 3, 'Extreme mode must have exactly 3 blocks');
+            assert.strictEqual(totalTargetBlocks, 3, 'Extreme mode target must have exactly 3 blocks');
+
+            const moves = window.computeMinMoves(cups, targetCups);
+            assert.ok(
+                moves >= 5,
+                `Extreme level iteration ${i} must require at least 5 moves (got ${moves}) for Tower of Hanoi staging`
+            );
+        }
+    });
+
+    test('9. Mode Extrême unlock logic and button visibility', () => {
+        const { window, document } = createGrueEnvironment();
+
+        const btnExtreme = document.getElementById('diff-extreme');
+        assert.ok(btnExtreme, 'diff-extreme button must exist in DOM');
+        assert.strictEqual(btnExtreme.style.display, 'none', 'Extreme button hidden by default');
+        assert.strictEqual(window.isExtremeUnlocked(), false, 'Extreme should be locked initially');
+
+        // Simulate unlocking via localStorage
+        window.localStorage.setItem('c2_grue_extreme_unlocked', 'true');
+        assert.strictEqual(window.isExtremeUnlocked(), true, 'Extreme should be unlocked after localStorage flag');
+
+        window.updateExtremeButtonVisibility();
+        assert.strictEqual(btnExtreme.style.display, 'inline-flex', 'Extreme button becomes visible when unlocked');
+
+        // Simulate c2_scores_reset event
+        window.dispatchEvent(new window.CustomEvent('c2_scores_reset', {
+            detail: { appId: 'jeu_de_la_grue' }
+        }));
+        assert.strictEqual(window.isExtremeUnlocked(), false, 'Extreme re-locks after scores reset');
+        assert.strictEqual(btnExtreme.style.display, 'none', 'Extreme button hidden after scores reset');
+    });
 });

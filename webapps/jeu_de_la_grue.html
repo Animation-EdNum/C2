@@ -204,6 +204,36 @@
             background: var(--card-bg);
         }
 
+        .diff-btn#diff-extreme {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .diff-btn#diff-extreme.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+        }
+
+        .diff-btn#diff-extreme:hover:not(.active) {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        body.dark .diff-btn#diff-extreme {
+            border-color: #a78bfa;
+            color: #c4b5fd;
+        }
+
+        body.dark .diff-btn#diff-extreme.active {
+            background: linear-gradient(135deg, #7c3aed, #db2777);
+            color: #fff;
+        }
+
+        body.dark .diff-btn#diff-extreme:hover:not(.active) {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
         /* ========== GAME BOARDS ========== */
         .game-boards {
             display: flex;
@@ -970,6 +1000,8 @@
                         data-i18n="jeu_de_la_grue.diff_medium">Moyen</span></button>
                 <button class="diff-btn" id="diff-hard"><i data-fa="circle" style="color: #e74c3c;"></i> <span
                         data-i18n="jeu_de_la_grue.diff_hard">Difficile</span></button>
+                <button class="diff-btn" id="diff-extreme" data-diff="extreme" style="display: none;"><i data-fa="fire" style="color: #ef4444;"></i> <span
+                        data-i18n="jeu_de_la_grue.diff_extreme">Extrême</span></button>
             </div>
 
             <div class="desktop-layout">
@@ -1100,10 +1132,33 @@
         const programStrip = document.getElementById('program-strip');
         const playBtn = document.getElementById('play-btn');
 
+        function isExtremeUnlocked() {
+            try {
+                if (localStorage.getItem('c2_grue_extreme_unlocked') === 'true') return true;
+                const hardStats = ScoreManager.stats?.jeu_de_la_grue?.hard;
+                if (hardStats && (hardStats.firstTrySuccess >= 1)) return true;
+            } catch (e) {}
+            return false;
+        }
+
+        function updateExtremeButtonVisibility() {
+            const btn = document.getElementById('diff-extreme');
+            if (!btn) return;
+            if (isExtremeUnlocked()) {
+                btn.style.display = 'inline-flex';
+            } else {
+                btn.style.display = 'none';
+                if (currentDifficulty === 'extreme') {
+                    setDifficulty('hard');
+                }
+            }
+        }
+
         function init() {
             setupEventListeners();
-            startNewLevel();
             ScoreManager.init('jeu_de_la_grue');
+            updateExtremeButtonVisibility();
+            startNewLevel();
             showGrueOnboardingHint();
         }
 
@@ -1111,6 +1166,7 @@
             document.getElementById('diff-easy').addEventListener('click', () => { setDifficulty('easy'); });
             document.getElementById('diff-medium').addEventListener('click', () => { setDifficulty('medium'); });
             document.getElementById('diff-hard').addEventListener('click', () => { setDifficulty('hard'); });
+            document.getElementById('diff-extreme')?.addEventListener('click', () => { setDifficulty('extreme'); });
 
             document.getElementById('btn-inst-left').addEventListener('click', () => { addInstruction('left'); });
             document.getElementById('btn-inst-right').addEventListener('click', () => { addInstruction('right'); });
@@ -1160,6 +1216,17 @@
                     document.getElementById('diff-medium')?.click();
                 } else if (nextDiff === 'hard' || nextDiff === '8') {
                     document.getElementById('diff-hard')?.click();
+                } else if (nextDiff === 'extreme' || nextDiff === '10') {
+                    document.getElementById('diff-extreme')?.click();
+                }
+            });
+
+            window.addEventListener('c2_scores_reset', (e) => {
+                if (!e.detail || e.detail.appId === 'jeu_de_la_grue') {
+                    try {
+                        localStorage.removeItem('c2_grue_extreme_unlocked');
+                    } catch (err) {}
+                    updateExtremeButtonVisibility();
                 }
             });
 
@@ -1255,7 +1322,8 @@
                 minMoves === 0 ||
                 (currentDifficulty === 'easy' && minMoves !== 1) ||
                 (currentDifficulty === 'medium' && minMoves !== 2) ||
-                (currentDifficulty === 'hard' && minMoves < 3)
+                (currentDifficulty === 'hard' && (minMoves < 3 || minMoves > 4)) ||
+                (currentDifficulty === 'extreme' && minMoves < 5)
             );
 
             initialCupsState = JSON.parse(JSON.stringify(cups));
@@ -1590,8 +1658,26 @@
                 if (wasNewRecord) {
                     globalBest = globalStreak;
                 }
-                handleStreakCelebration(globalStreak, false, wasNewRecord);
+                const isExtremeMode = (currentDifficulty === 'extreme');
+                handleStreakCelebration(globalStreak, isExtremeMode, wasNewRecord);
+
+                const previouslyUnlocked = isExtremeUnlocked();
                 adaptiveShown = ScoreManager.addSuccess('jeu_de_la_grue', currentDifficulty, currentMistakes);
+
+                // Déblocage du niveau Extrême si réussi au premier coup en Difficile
+                if (currentDifficulty === 'hard' && currentMistakes === 0 && !previouslyUnlocked) {
+                    try {
+                        localStorage.setItem('c2_grue_extreme_unlocked', 'true');
+                    } catch (e) {}
+                    updateExtremeButtonVisibility();
+                    if (typeof launchConfetti === 'function') {
+                        launchConfetti();
+                    }
+                    const msg = (window.I18N && typeof window.I18N.t === 'function')
+                        ? window.I18N.t('jeu_de_la_grue.extreme_unlocked', '🔥 Niveau Extrême débloqué ! Bravo pour ce sans-faute !')
+                        : '🔥 Niveau Extrême débloqué ! Bravo pour ce sans-faute !';
+                    showToast(msg, 'success');
+                }
             } else {
                 globalStreak = 0;
                 ScoreManager.addMistake('jeu_de_la_grue', currentDifficulty);
@@ -1655,6 +1741,8 @@
         window.computeMinMoves = computeMinMoves;
         window.startNewLevel = startNewLevel;
         window.setDifficulty = setDifficulty;
+        window.isExtremeUnlocked = isExtremeUnlocked;
+        window.updateExtremeButtonVisibility = updateExtremeButtonVisibility;
         window.getGameState = () => ({
             cups,
             targetCups,

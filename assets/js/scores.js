@@ -351,6 +351,9 @@ const ScoreManager = {
             this.stats = {};
             this.saveStats();
             this.renderModalContent();
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('c2_scores_reset', { detail: { appId: this.appId } }));
+            }
         }
     },
 

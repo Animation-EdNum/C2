@@ -575,6 +575,8 @@
         'jeu_de_la_grue.diff_easy': 'Einfach',
         'jeu_de_la_grue.diff_medium': 'Mittel',
         'jeu_de_la_grue.diff_hard': 'Schwierig',
+        'jeu_de_la_grue.diff_extreme': 'Extrem',
+        'jeu_de_la_grue.extreme_unlocked': '🔥 Extrem-Stufe freigeschaltet! Bravo für diesen fehlerfreien Durchgang!',
         'jeu_de_la_grue.target_title': 'Zielmuster',
         'jeu_de_la_grue.work_area_title': 'Arbeitsbereich',
         'jeu_de_la_grue.btn_left_aria': 'Nach links',

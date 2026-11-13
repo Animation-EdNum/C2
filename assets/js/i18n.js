@@ -135,6 +135,8 @@
                 'jeu_de_la_grue.toast_incorrect_layout': 'Disposition incorrecte !',
                 'jeu_de_la_grue.toast_success': 'Bien joué ! Défi réussi.',
                 'jeu_de_la_grue.onboarding_hint': 'Clique pour ajouter une commande !',
+                'jeu_de_la_grue.diff_extreme': 'Extrême',
+                'jeu_de_la_grue.extreme_unlocked': '🔥 Niveau Extrême débloqué ! Bravo pour ce sans-faute !',
 
                                 // Navigation & boutons communs
                 'common.home': "Retour à l'accueil",
