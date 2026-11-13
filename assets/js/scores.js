@@ -176,16 +176,18 @@ const ScoreManager = {
         const st = this.stats[mode][this._diffKey(difficulty)];
         st.totalAttempts++;
         st.totalSuccess++;
+        let adaptiveShown = false;
         if (mistakesMade === 0) {
             st.firstTrySuccess++;
             st.streak = (st.streak || 0) + 1;
             if (st.streak === 3) {
-                this.checkAdaptiveDifficulty(mode, difficulty);
+                adaptiveShown = this.checkAdaptiveDifficulty(mode, difficulty) === true;
             }
         } else {
             st.streak = 0;
         }
         this.saveStats();
+        return adaptiveShown;
     },
 
     addMistake(mode, difficulty) {
@@ -217,9 +219,10 @@ const ScoreManager = {
         if (nextDiff) {
             if (this.isDifficultySupported(nextDiff, mode)) {
                 const nextDiffLabel = this.DIFF_LABELS[nextDiff] || nextDiff;
-                this.showAdaptivePopup(nextDiff, nextDiffLabel, mode);
+                return this.showAdaptivePopup(nextDiff, nextDiffLabel, mode);
             }
         }
+        return false;
     },
 
     isDifficultySupported(nextDiff, mode) {
@@ -282,8 +285,10 @@ const ScoreManager = {
     showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('noNudges') === '1') {
-            return;
+            return false;
         }
+
+        this.isAdaptivePopupOpen = true;
 
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
@@ -303,8 +308,12 @@ const ScoreManager = {
             popup = document.getElementById('adaptive-difficulty-popup');
 
             document.getElementById('btn-adaptive-no').addEventListener('click', () => {
+                this.isAdaptivePopupOpen = false;
                 popup.classList.remove('active');
                 popup.setAttribute('aria-hidden', 'true');
+                window.dispatchEvent(new CustomEvent('c2_adaptive_dismissed', {
+                    detail: { difficulty: nextDiffKey, mode: mode }
+                }));
             });
         }
 
@@ -316,6 +325,7 @@ const ScoreManager = {
         btnYes.parentNode.replaceChild(newBtnYes, btnYes);
 
         newBtnYes.addEventListener('click', () => {
+            this.isAdaptivePopupOpen = false;
             popup.classList.remove('active');
             popup.setAttribute('aria-hidden', 'true');
             window.dispatchEvent(new CustomEvent('c2_change_difficulty', {
@@ -329,6 +339,8 @@ const ScoreManager = {
             popup.classList.add('active');
             popup.setAttribute('aria-hidden', 'false');
         }, 400);
+
+        return true;
     },
 
     resetScores() {

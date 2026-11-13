@@ -1078,6 +1078,7 @@
         let globalStreak = 0;
         let globalBest = 0;
         let currentMistakes = 0;
+        let winTimeout = null;
 
         const NUM_CUPS = 3;
         const MAX_STACK = 3;
@@ -1161,9 +1162,15 @@
                     document.getElementById('diff-hard')?.click();
                 }
             });
+
+            window.addEventListener('c2_adaptive_dismissed', () => {
+                startNewLevel();
+            });
         }
 
         function setDifficulty(diff) {
+            clearTimeout(winTimeout);
+            winTimeout = null;
             currentDifficulty = diff;
             document.querySelectorAll('.diff-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -1224,6 +1231,8 @@
 
         function startNewLevel() {
             clearTimeout(window.failTimeout);
+            clearTimeout(winTimeout);
+            winTimeout = null;
             isExecuting = false;
             isCooldown = false;
             playBtn.disabled = false;
@@ -1540,12 +1549,15 @@
             const isWin = JSON.stringify(cups) === JSON.stringify(targetCups) && !craneState.holding;
 
             if (isWin) {
-                updateScore(true);
+                const adaptiveShown = updateScore(true);
                 playSound('win');
                 showToast(window.I18N ? window.I18N.t('jeu_de_la_grue.toast_success', 'Bien joué ! Défi réussi.') : 'Bien joué ! Défi réussi.', 'success');
-                setTimeout(() => {
-                    startNewLevel();
-                }, 3500);
+                clearTimeout(winTimeout);
+                if (!adaptiveShown) {
+                    winTimeout = setTimeout(() => {
+                        startNewLevel();
+                    }, 3500);
+                }
             } else {
                 currentMistakes++;
                 updateScore(false);
@@ -1570,6 +1582,7 @@
         }
 
         function updateScore(correct) {
+            let adaptiveShown = false;
             if (correct) {
                 globalCorrect++;
                 globalStreak++;
@@ -1578,13 +1591,14 @@
                     globalBest = globalStreak;
                 }
                 handleStreakCelebration(globalStreak, false, wasNewRecord);
-                ScoreManager.addSuccess('jeu_de_la_grue', currentDifficulty, currentMistakes);
+                adaptiveShown = ScoreManager.addSuccess('jeu_de_la_grue', currentDifficulty, currentMistakes);
             } else {
                 globalStreak = 0;
                 ScoreManager.addMistake('jeu_de_la_grue', currentDifficulty);
             }
             document.getElementById('global-correct').textContent = globalCorrect;
             document.getElementById('global-streak').textContent = globalStreak;
+            return adaptiveShown;
         }
 
         window.addEventListener('languageChanged', () => {

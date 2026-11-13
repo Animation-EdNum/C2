@@ -209,4 +209,33 @@ describe('jeu_de_la_grue.html - Level Generation and Difficulty Engine', () => {
         assert.strictEqual(btnEasy.classList.contains('active'), false, 'Easy button is no longer active');
         assert.strictEqual(window.getGameState().currentDifficulty, 'medium', 'Game state updated to medium');
     });
+
+    test('7. Fast click on adaptive difficulty popup does not cause double level re-scramble', () => {
+        const { window, document } = createGrueEnvironment();
+
+        let startLevelCalls = 0;
+        const originalStartNewLevel = window.startNewLevel;
+        window.startNewLevel = function () {
+            startLevelCalls++;
+            return originalStartNewLevel.apply(this, arguments);
+        };
+
+        // Reset call count after initial load
+        startLevelCalls = 0;
+
+        // Simulate adaptive popup acceptance
+        window.dispatchEvent(new window.CustomEvent('c2_change_difficulty', {
+            detail: { difficulty: 'medium', mode: 'jeu_de_la_grue' }
+        }));
+
+        assert.strictEqual(startLevelCalls, 1, 'startNewLevel called exactly once on difficulty change');
+        assert.strictEqual(window.getGameState().currentDifficulty, 'medium');
+
+        // Verify that adaptive dismissed also starts a level once
+        startLevelCalls = 0;
+        window.dispatchEvent(new window.CustomEvent('c2_adaptive_dismissed', {
+            detail: { difficulty: 'medium', mode: 'jeu_de_la_grue' }
+        }));
+        assert.strictEqual(startLevelCalls, 1, 'startNewLevel called exactly once on dismissed');
+    });
 });
