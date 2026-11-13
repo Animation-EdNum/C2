@@ -48,6 +48,13 @@ This document records the architectural choices, library selections, and the rat
 - **Standalone Static Server CLI (`bin/ednum.js`):** Distributed as `@ednum/suite-ednum`. Implements directory traversal protection (verifying canonical paths against trailing-slash root) and HSTS headers while remaining 100% dependency-free.
 
 ## 9. Pedagogy & Game Mechanics
+- **Adaptive Difficulty Race Condition Prevention:** When a student masters a level (3 consecutive successes on 1st attempt), `ScoreManager.addSuccess()` displays an adaptive modal ("Niveau maîtrisé !"). To prevent auto-advance timers (`setTimeout(nextLevel, delay)`) from executing concurrently and re-scrambling the game while the modal is open or immediately after the user accepts the higher difficulty:
+  - `ScoreManager.addSuccess()` returns a boolean `adaptiveShown` indicating whether the modal was rendered.
+  - Webapps store active auto-advance timer handles in variables (`winTimer`, `readNextTimer`, etc.) and strictly clear them (`clearTimeout(timer); timer = null;`) upon difficulty change, mode switch, and new level initializations.
+  - When `adaptiveShown` is `true`, webapps skip scheduling the auto-advance timer.
+  - Webapps listen to `c2_change_difficulty` to clear timers and transition smoothly to the higher level.
+  - Webapps listen to `c2_adaptive_dismissed` to advance to the next puzzle in the *current* difficulty when the student clicks "Non, je reste ici".
+  - Audited and enforced across all active challenge apps: `jeu_de_la_grue`, `binaire_codage`, `bit_de_parite`, `binaire_message`, `compresseur_magique`, `coffre_fort`, and `simulateur_automate`.
 - **Jeu de la grue Level Generation (BFS Move Solver):** To ensure curriculum-appropriate difficulty in Cycle 1 (3-4H / 6-8 years old), level generation in `webapps/jeu_de_la_grue.html` computes the minimal block moves using a lightweight Breadth-First Search (`computeMinMoves`):
   - **Easy (Facile):** 1 block, strictly 1 move (3–6 crane instructions).
   - **Medium (Moyen):** 2 blocks, strictly 2 moves (7–11 crane instructions). Prevents 1-move bystander trivialities and strictly filters out 3-move Tower of Hanoi temporary parking puzzles that require 12–16 instructions.
