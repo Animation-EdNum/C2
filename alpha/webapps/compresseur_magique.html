@@ -446,7 +446,9 @@
 
         // Application State
         let activeTab = 'decode';
-        let difficulty = 'medium'; // 'easy' (5x5 B/N), 'medium' (8x8 B/N), 'hard' (8x8 Color)
+        let difficulty = 'medium';
+        let decodeNextTimer = null;
+        let encodeNextTimer = null; // 'easy' (5x5 B/N), 'medium' (8x8 B/N), 'hard' (8x8 Color)
 
         // Scores and Streaks
         let decodeCorrect = 0, decodeStreak = 0;
@@ -496,6 +498,11 @@
             window.addEventListener('c2_change_difficulty', (e) => {
                 const nextDiff = e.detail.difficulty;
                 changeDifficulty(nextDiff);
+            });
+
+            window.addEventListener('c2_adaptive_dismissed', () => {
+                if (activeTab === 'decode') loadDecodeChallenge();
+                else if (activeTab === 'encode') loadEncodeChallenge();
             });
 
             // Global settings dropdown toggling
@@ -549,6 +556,14 @@
 
         // DIFFICULTY SELECTION & CONFIG
         function changeDifficulty(diff) {
+            clearTimeout(decodeNextTimer);
+            clearTimeout(encodeNextTimer);
+            decodeNextTimer = null;
+            encodeNextTimer = null;
+            clearTimeout(decodeNextTimer);
+            clearTimeout(encodeNextTimer);
+            decodeNextTimer = null;
+            encodeNextTimer = null;
             difficulty = diff;
             playSound('click');
 
@@ -627,6 +642,10 @@
         // MODE 1 : DÉCOMPRESSER (DÉCODAGE) LOGIC
         // =========================================================================
         function loadDecodeChallenge() {
+            clearTimeout(decodeNextTimer);
+            decodeNextTimer = null;
+            clearTimeout(decodeNextTimer);
+            decodeNextTimer = null;
             const list = PATTERNS[difficulty];
             // Get a random pattern
             currentChallenge = list[Math.floor(Math.random() * list.length)];
@@ -766,7 +785,7 @@
                 
                 decodeCorrect++;
                 decodeStreak++;
-                ScoreManager.addSuccess('decode', difficulty, 0);
+                const adaptiveShown = const adaptiveShown = ScoreManager.addSuccess('decode', difficulty, 0);
 
                 // Célébration
                 window.handleStreakCelebration?.(decodeStreak, difficulty === 'hard', decodeStreak % 3 === 0);
@@ -775,7 +794,11 @@
                 document.getElementById('decode-streak').textContent = decodeStreak;
 
                 // Load next challenge after brief pause
-                setTimeout(loadDecodeChallenge, 2000);
+                clearTimeout(decodeNextTimer);
+                if (!adaptiveShown) {
+                    decodeNextTimer = setTimeout(loadDecodeChallenge, 2000);
+                }
+                }
             } else {
                 playSound('error');
                 showToast("❌ Oups ! Il y a des erreurs dans la grille.", 'error');
@@ -796,6 +819,10 @@
         let encodePreviewGridState = []; // Flat array for preview
 
         function loadEncodeChallenge() {
+            clearTimeout(encodeNextTimer);
+            encodeNextTimer = null;
+            clearTimeout(encodeNextTimer);
+            encodeNextTimer = null;
             const list = PATTERNS[difficulty];
             currentChallenge = list[Math.floor(Math.random() * list.length)];
 
@@ -887,14 +914,18 @@
 
                 encodeCorrect++;
                 encodeStreak++;
-                ScoreManager.addSuccess('encode', difficulty, 0);
+                const adaptiveShown = const adaptiveShown = ScoreManager.addSuccess('encode', difficulty, 0);
 
                 window.handleStreakCelebration?.(encodeStreak, difficulty === 'hard', encodeStreak % 3 === 0);
 
                 document.getElementById('encode-correct').textContent = encodeCorrect;
                 document.getElementById('encode-streak').textContent = encodeStreak;
 
-                setTimeout(loadEncodeChallenge, 2000);
+                clearTimeout(encodeNextTimer);
+                if (!adaptiveShown) {
+                    encodeNextTimer = setTimeout(loadEncodeChallenge, 2000);
+                }
+                }
             } else {
                 playSound('error');
                 showToast("❌ Code erroné ! L'aperçu ne correspond pas à l'image cible.", 'error');

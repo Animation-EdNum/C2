@@ -1682,6 +1682,10 @@ let simState = {
         }
 
         function newDrawChallenge() {
+            clearTimeout(drawNextTimer);
+            drawNextTimer = null;
+            clearTimeout(drawNextTimer);
+            drawNextTimer = null;
             if (drawState.isAnimating) return;
             drawState.locked = false;
             drawState.mistakes = 0;
@@ -1871,7 +1875,7 @@ let simState = {
 
                 drawGlobalScore++;
                 drawGlobalStreak++;
-                ScoreManager.addSuccess("draw", drawState.difficulty, drawState.mistakes || 0);
+                const adaptiveShown = ScoreManager.addSuccess("draw", drawState.difficulty, drawState.mistakes || 0);
                 updateExtremeVisibility();
 
                 document.getElementById('draw-global-score').textContent = drawGlobalScore;
@@ -1889,7 +1893,10 @@ let simState = {
                 }
 
                 document.getElementById('btn-next-draw').style.display = 'inline-flex';
-                if (isCorrect) setTimeout(() => { if (document.getElementById('btn-next-draw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
+                clearTimeout(drawNextTimer);
+                if (isCorrect && !adaptiveShown) {
+                    drawNextTimer = setTimeout(() => { if (document.getElementById('btn-next-draw').style.display !== 'none' && activeTab === 'draw') newDrawChallenge(); }, 3000);
+                }
             } else {
                 playSound('error');
                 showToast(errorMsg, 'error');
@@ -1942,6 +1949,10 @@ let simState = {
         window.newReadChallenge = newReadChallenge;
 
         function newReadChallenge() {
+            clearTimeout(readNextTimer);
+            readNextTimer = null;
+            clearTimeout(readNextTimer);
+            readNextTimer = null;
             if (readState.isAnimating) return;
             readState.locked = false;
             readState.mistakes = 0; // Reset mistakes for the new challenge
@@ -1991,7 +2002,7 @@ let simState = {
                 simState.consecutiveMistakes = 0;
                 readGlobalScore++;
                 readGlobalStreak++;
-                ScoreManager.addSuccess('read', readState.difficulty, 0);
+                const adaptiveShown = ScoreManager.addSuccess('read', readState.difficulty, 0);
                 updateExtremeVisibility();
 
                 // Déblocages
@@ -2055,12 +2066,19 @@ let simState = {
 
             if (isCorrect) {
                 document.getElementById('btn-next-read').style.display = 'inline-flex';
-                setTimeout(() => { if (document.getElementById('btn-next-read').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
+                clearTimeout(readNextTimer);
+                if (!adaptiveShown) {
+                    readNextTimer = setTimeout(() => { if (document.getElementById('btn-next-read').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
+                }
             }
             readState.isAnimating = false;
         }
 
         function newChallenge() {
+            clearTimeout(chalNextTimer);
+            chalNextTimer = null;
+            clearTimeout(chalNextTimer);
+            chalNextTimer = null;
             if (chalState.isAnimating) return;
             chalState.mistakes = 0;
             chalState.locked = false; document.getElementById('btn-next-challenge').style.display = 'none';
@@ -2158,7 +2176,7 @@ let simState = {
                     globalScore++;
                     globalStreak++;
                     if (globalStreak > globalStreakBest) globalStreakBest = globalStreak;
-                    ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
+                    const adaptiveShown = ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
                     updateExtremeVisibility();
 
                     document.getElementById('global-score').textContent = globalScore;
@@ -2179,9 +2197,8 @@ let simState = {
 
                     if (f1Streak >= 3) unlockSkin('f1');
 
+                    playSound('win');
                     showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_chal_success', `Bravo ! Pilotage réussi !`) : `Bravo ! Pilotage réussi !`, 'success');
-                    el.classList.add('correct');
-                    const target = document.getElementById('chal-target');
                     if (target) target.classList.add('pulse');
                 } else {
                     playSound('error');
@@ -2197,7 +2214,10 @@ let simState = {
                     showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_chal_fail', 'Faux. Clique sur la proposition en vert pour voir la solution.') : 'Faux. Clique sur la proposition en vert pour voir la solution.', 'error');
                 }
                 document.getElementById('btn-next-challenge').style.display = 'inline-flex';
-                if (option.isCorrect) setTimeout(() => { if (document.getElementById('btn-next-challenge').style.display !== 'none' && activeTab === 'challenge') newChallenge(); }, 3000);
+                clearTimeout(chalNextTimer);
+                if (option.isCorrect && !adaptiveShown) {
+                    chalNextTimer = setTimeout(() => { if (document.getElementById('btn-next-challenge').style.display !== 'none' && activeTab === 'challenge') newChallenge(); }, 3000);
+                }
             } else if (option.isCorrect) {
                 playSound('success');
                 const target = document.getElementById('chal-target');

@@ -212,6 +212,8 @@
         let vaultState = [0, 0, 0, 0, 0, 0, 0, 0];
         let decBinLocked = false;
         let binDecLocked = false;
+        let decBinNextTimer = null;
+        let binDecNextTimer = null;
         let currentDecNumber = null;
         let currentBinString = null;
         let globalCorrect = 0;
@@ -314,6 +316,14 @@
         }
 
         function setDifficulty(lvl) {
+            clearTimeout(decBinNextTimer);
+            clearTimeout(binDecNextTimer);
+            decBinNextTimer = null;
+            binDecNextTimer = null;
+            clearTimeout(decBinNextTimer);
+            clearTimeout(binDecNextTimer);
+            decBinNextTimer = null;
+            binDecNextTimer = null;
             const targetBits = lvl === 'easy' ? 4 : (lvl === 'medium' ? 6 : 8);
             if (targetBits === currentBits && (currentDecNumber !== null || currentBinString !== null)) return; // Prevent changing if already at this difficulty
             document.querySelectorAll('.diff-btn').forEach(b => {
@@ -446,6 +456,10 @@
         }
 
         function newDecToBin() {
+            clearTimeout(decBinNextTimer);
+            decBinNextTimer = null;
+            clearTimeout(decBinNextTimer);
+            decBinNextTimer = null;
             const max = Math.pow(2, currentBits) - 1;
             let newNumber = currentDecNumber;
             while (newNumber === currentDecNumber) {
@@ -490,7 +504,7 @@
                 playSound('success');
                 const isExtreme = (currentBits === 8 && decBinMistakes === 0);
                 updateGlobalScore(true, isExtreme);
-                ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
+                const adaptiveShown = ScoreManager.addSuccess("dec_to_bin", currentBits, decBinMistakes);
 
                 fb.className = 'vault-feedback success';
                 const unlockedMsg = window.I18N ? window.I18N.t('binaire_codage.congrats', 'DÉVERROUILLÉ !') : 'DÉVERROUILLÉ !';
@@ -515,7 +529,10 @@
                 }
 
                 decBinLocked = true;
-                setTimeout(newDecToBin, 3000);
+                clearTimeout(decBinNextTimer);
+                if (!adaptiveShown) {
+                    decBinNextTimer = setTimeout(newDecToBin, 3000);
+                }
             } else {
                 applyValidationCooldown('decBin-check-btn');
                 decBinMistakes++;
@@ -553,6 +570,10 @@
         }
 
         function newBinToDec() {
+            clearTimeout(binDecNextTimer);
+            binDecNextTimer = null;
+            clearTimeout(binDecNextTimer);
+            binDecNextTimer = null;
             const max = Math.pow(2, currentBits) - 1;
             let newBin = currentBinString;
             while (newBin === currentBinString) {
@@ -588,7 +609,7 @@
                 playSound('success');
                 const isExtreme = (currentBits === 8 && binDecMistakes === 0);
                 updateGlobalScore(true, isExtreme);
-                ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
+                const adaptiveShown = ScoreManager.addSuccess("bin_to_dec", currentBits, binDecMistakes);
                 const correctMsg = window.I18N ? window.I18N.t('scores.perfect', 'Exact !') : 'Exact !';
                 fb.textContent = `✅ ${correctMsg} ${explainBinary(currentBinString)}.`;
                 card.style.animation = 'none'; void card.offsetWidth; card.style.animation = 'flashSuccess 0.5s';
@@ -601,7 +622,10 @@
                 }
 
                 binDecLocked = true;
-                setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500); // Auto-focus 
+                clearTimeout(binDecNextTimer);
+                if (!adaptiveShown) {
+                    binDecNextTimer = setTimeout(() => { newBinToDec(); document.getElementById('binDec-input').focus(); }, 1500);
+                } // Auto-focus 
             } else {
                 applyValidationCooldown('binDec-check-btn');
                 binDecMistakes++;
@@ -864,6 +888,11 @@
             } else if (nextDiff === '8' || nextDiff === 'hard') {
                 document.getElementById('diff-hard')?.click();
             }
+        });
+
+        window.addEventListener('c2_adaptive_dismissed', (e) => {
+            if (e.detail?.mode === 'dec_to_bin') newDecToBin();
+            else if (e.detail?.mode === 'bin_to_dec') newBinToDec();
         });
 
         // Mode TNI/TBI / Projection

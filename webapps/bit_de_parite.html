@@ -284,6 +284,10 @@
         }
 
         function initTrainMode() {
+            clearTimeout(trainNextTimer);
+            trainNextTimer = null;
+            clearTimeout(trainNextTimer);
+            trainNextTimer = null;
             isTrainLocked = false; isFirstAttempt = true; trainData = []; trainAnswers = [];
             const totalSize = gridSize + 1;
             for (let i = 0; i < gridSize; i++) {
@@ -410,14 +414,18 @@
             if (!hasError) {
                 playSound('success'); isTrainLocked = true;
                 globalCorrect++;
-                ScoreManager.addSuccess("train", 'grid' + gridSize, isFirstAttempt ? 0 : 1);
+                const adaptiveShown = const adaptiveShown = ScoreManager.addSuccess("train", 'grid' + gridSize, isFirstAttempt ? 0 : 1);
                 globalStreak++;
                 const wasNewRecordTrain = globalStreak > globalBest;
                 if (wasNewRecordTrain) globalBest = globalStreak;
                 const isExtremeTrain = (gridSize === 6 && isFirstAttempt);
                 handleStreakCelebration(globalStreak, isExtremeTrain, wasNewRecordTrain);
                 showToast(window.I18N ? window.I18N.t('bit_de_parite.correct_toast', "✅ Parfait ! Tout est pair.") : "✅ Parfait ! Tout est pair.", 'success');
-                setTimeout(initTrainMode, 2000);
+                clearTimeout(trainNextTimer);
+                if (!adaptiveShown) {
+                    trainNextTimer = setTimeout(initTrainMode, 2000);
+                }
+                }
             } else {
                 isFirstAttempt = false;
                 playSound('error');
@@ -469,6 +477,10 @@
         let detectCorrect = 0, detectStreak = 0, detectBest = 0;
 
         function initDetectMode() {
+            clearTimeout(detectNextTimer);
+            detectNextTimer = null;
+            clearTimeout(detectNextTimer);
+            detectNextTimer = null;
             detectLocked = false;
             detectAttempts = 0;
             detectHintsEnabled = false;
@@ -616,7 +628,7 @@
                 const wasNewRecordDetect = detectStreak > detectBest;
                 if (wasNewRecordDetect) detectBest = detectStreak;
 
-                ScoreManager.addSuccess("detect", null, detectAttempts - 1);
+                const adaptiveShown = const adaptiveShown = ScoreManager.addSuccess("detect", null, detectAttempts - 1);
 
                 const isExtremeDetect = (detectAttempts === 1);
                 handleStreakCelebration(detectStreak, isExtremeDetect, wasNewRecordDetect);
@@ -627,7 +639,11 @@
                 }
 
                 updateDetectScoreDisplay();
-                setTimeout(initDetectMode, 2000);
+                clearTimeout(detectNextTimer);
+                if (!adaptiveShown) {
+                    detectNextTimer = setTimeout(initDetectMode, 2000);
+                }
+                }
             } else {
                 const urlParams = new URLSearchParams(window.location.search);
                 const isStrict = urlParams.get('strictMode') === '1';
@@ -731,6 +747,11 @@
             } else if (nextDiff === 'grid6' || nextDiff === 'hard') {
                 document.getElementById('diff-hard')?.click();
             }
+        });
+
+        window.addEventListener('c2_adaptive_dismissed', () => {
+            if (currentMode === 'train') initTrainMode();
+            else initDetectMode();
         });
 
         // Mode TNI/TBI / Projection

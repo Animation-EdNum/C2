@@ -86,6 +86,13 @@
             }
         });
 
+        window.addEventListener('c2_adaptive_dismissed', (e) => {
+            const mode = e.detail?.mode;
+            if (mode === 'read') newReadChallenge();
+            else if (mode === 'chal') newChallenge();
+            else if (mode === 'draw') newDrawChallenge();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             

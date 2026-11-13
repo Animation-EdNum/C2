@@ -265,7 +265,9 @@
         const wordLists = (window.I18N && window.I18N.locale === 'de') ? wordListsDe : wordListsFr;
 
         let difficulty = 'easy';
-        let encodeWord = ''; let encodeIndex = 0; let encodeBits = [0, 0, 0, 0, 0];
+        let encodeWord = '';
+        let encodeNextLetterTimer = null;
+        let encodeNextWordTimer = null; let encodeIndex = 0; let encodeBits = [0, 0, 0, 0, 0];
         let encodeLocked = false; let globalCorrect = 0; let globalStreak = 0; let globalBest = 0;
         let encodeMistakes = 0;
         let encodeLetterMistakes = 0;
@@ -686,6 +688,10 @@
         }
 
         function newEncode() {
+            clearTimeout(encodeNextLetterTimer);
+            clearTimeout(encodeNextWordTimer);
+            encodeNextLetterTimer = null;
+            encodeNextWordTimer = null;
             encodeWord = pickRandom(wordLists[difficulty]);
             encodeIndex = 0; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
             encodeMistakes = 0;
@@ -768,7 +774,7 @@
                 hideAlpha(); encodeLocked = true;
 
                 globalCorrect++;
-                ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
+                const adaptiveShown = ScoreManager.addSuccess("encode", difficulty, encodeMistakes);
                 const currentMistakes = encodeMistakes;
                 encodeMistakes = 0;
                 globalStreak++;
@@ -800,7 +806,10 @@
 
                     if (encodeIndex >= encodeWord.length) {
                         document.getElementById('encode-check').disabled = true;
-                        setTimeout(newEncode, 2000);
+                        clearTimeout(encodeNextWordTimer);
+                        if (!adaptiveShown) {
+                            encodeNextWordTimer = setTimeout(newEncode, 2000);
+                        }
                     } else {
                         document.getElementById('encode-values-row').style.display = 'none';
                         document.getElementById('live-calc').style.display = 'none';
@@ -878,6 +887,10 @@
         } else if (nextDiff === 'hard') {
             document.getElementById('diff-hard')?.click();
         }
+    });
+
+    window.addEventListener('c2_adaptive_dismissed', () => {
+        newEncode();
     });
 </script>
     <script src="../assets/js/url-params.js"></script>

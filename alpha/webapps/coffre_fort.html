@@ -1007,6 +1007,10 @@
         document.getElementById('tab-scenarios').addEventListener('click', () => setMode('scenarios'));
 
         function setDifficulty(diff) {
+            clearTimeout(sortWinTimer);
+            sortWinTimer = null;
+            clearTimeout(sortWinTimer);
+            sortWinTimer = null;
             currentDifficulty = diff;
             document.querySelectorAll('#mode-sort .difficulty-bar .diff-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('diff-' + diff).classList.add('active');
@@ -1041,6 +1045,10 @@
         // MODE 1: DRAG & DROP TRI LOGIC
         // ==========================================
         function initSortMode() {
+            clearTimeout(sortWinTimer);
+            sortWinTimer = null;
+            clearTimeout(sortWinTimer);
+            sortWinTimer = null;
             // Reset dropzones
             elContentsPrivate.innerHTML = '';
             elContentsPublic.innerHTML = '';
@@ -1282,9 +1290,15 @@
                     // Crache du feu uniquement à la fin, quand tout est correctement placé !
                     launchFire();
                     showToast('🎉 Extraordinaire ! Toutes les données ont été classées !', 'success');
-                    setTimeout(() => {
-                        initSortMode();
-                    }, 1500);
+                    clearTimeout(sortWinTimer);
+                    if (!ScoreManager.isAdaptivePopupOpen) {
+                        sortWinTimer = clearTimeout(sortWinTimer);
+                    if (!ScoreManager.isAdaptivePopupOpen) {
+                        sortWinTimer = setTimeout(() => {
+                            initSortMode();
+                        }, 1500);
+                    }
+                    }
                 }
             } else {
                 // Mistake
@@ -1507,6 +1521,9 @@
                     document.getElementById('sc-diff-hard')?.click();
                 }
             }
+        });
+        window.addEventListener('c2_adaptive_dismissed', () => {
+            if (currentMode === 'sort') initSortMode();
         });
     </script>
     <script src="../../assets/js/url-params.js"></script>
