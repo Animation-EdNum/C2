@@ -534,7 +534,7 @@ const ScoreManager = {
 
             const subP = document.createElement('p');
             subP.className = 'stat-empty-subtitle';
-            subP.textContent = t('scores.no_data_sub', 'Résous des exercices dans l\'application pour voir tes réussites et ta progression s\'afficher ici !');
+            subP.textContent = t('scores.no_data_sub', 'Résous des défis dans l\'application pour voir tes réussites et ta progression s\'afficher ici !');
 
             emptyContainer.appendChild(iconDiv);
             emptyContainer.appendChild(titleP);

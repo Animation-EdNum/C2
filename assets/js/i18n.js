@@ -133,7 +133,7 @@
                 'jeu_de_la_grue.toast_column_full': 'Colonne pleine !',
                 'jeu_de_la_grue.toast_not_dropped': 'Objet non posé !',
                 'jeu_de_la_grue.toast_incorrect_layout': 'Disposition incorrecte !',
-                'jeu_de_la_grue.toast_success': 'Bien joué ! Exercice réussi.',
+                'jeu_de_la_grue.toast_success': 'Bien joué ! Défi réussi.',
                 'jeu_de_la_grue.onboarding_hint': 'Clique pour ajouter une commande !',
 
                                 // Navigation & boutons communs
