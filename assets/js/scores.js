@@ -54,10 +54,10 @@ const ScoreManager = {
     },
 
     SUPPORTED_DIFF_IDS: {
-        'easy': ['diff-easy', 'read-diff-easy'],
-        'medium': ['diff-medium', 'read-diff-medium'],
-        'hard': ['diff-hard', 'read-diff-hard'],
-        'extreme': ['diff-extreme', 'read-diff-extreme'],
+        'easy': ['diff-easy', 'read-diff-easy', 'draw-diff-easy', 'diff-btn-easy', 'sc-diff-easy'],
+        'medium': ['diff-medium', 'read-diff-medium', 'draw-diff-medium', 'diff-btn-medium', 'sc-diff-medium'],
+        'hard': ['diff-hard', 'read-diff-hard', 'draw-diff-hard', 'diff-btn-hard', 'sc-diff-hard'],
+        'extreme': ['diff-extreme', 'read-diff-extreme', 'draw-diff-extreme', 'diff-btn-extreme'],
         '4': ['diff-easy'],
         '6': ['diff-medium'],
         '8': ['diff-hard'],
@@ -210,33 +210,73 @@ const ScoreManager = {
             'grid6': 'grid7'
         };
         const diffStr = String(difficulty);
-        if (upgrades[diffStr]) {
-            const nextDiff = upgrades[diffStr];
-            if (this.isDifficultySupported(nextDiff)) {
+        let nextDiff = upgrades[diffStr];
+        if (mode === 'sort' && diffStr === 'easy') {
+            nextDiff = 'hard';
+        }
+        if (nextDiff) {
+            if (this.isDifficultySupported(nextDiff, mode)) {
                 const nextDiffLabel = this.DIFF_LABELS[nextDiff] || nextDiff;
                 this.showAdaptivePopup(nextDiff, nextDiffLabel, mode);
             }
         }
     },
 
-    isDifficultySupported(nextDiff) {
-        if (this._supportedDiffCache[nextDiff] !== undefined) {
-            return this._supportedDiffCache[nextDiff];
+    isDifficultySupported(nextDiff, mode) {
+        const cacheKey = mode ? `${mode}_${nextDiff}` : nextDiff;
+        if (this._supportedDiffCache[cacheKey] !== undefined) {
+            return this._supportedDiffCache[cacheKey];
         }
         if (document.querySelector(`[data-diff="${nextDiff}"]`)) {
-            this._supportedDiffCache[nextDiff] = true;
+            this._supportedDiffCache[cacheKey] = true;
             return true;
         }
-        if (this.SUPPORTED_DIFF_IDS[nextDiff]) {
-            for (const id of this.SUPPORTED_DIFF_IDS[nextDiff]) {
+        if (mode) {
+            const modeSpecificIds = [`${mode}-diff-${nextDiff}`, `${mode}-${nextDiff}`];
+            for (const id of modeSpecificIds) {
                 if (document.getElementById(id)) {
-                    this._supportedDiffCache[nextDiff] = true;
+                    this._supportedDiffCache[cacheKey] = true;
                     return true;
                 }
             }
         }
-        this._supportedDiffCache[nextDiff] = false;
+        if (this.SUPPORTED_DIFF_IDS[nextDiff]) {
+            for (const id of this.SUPPORTED_DIFF_IDS[nextDiff]) {
+                if (document.getElementById(id)) {
+                    this._supportedDiffCache[cacheKey] = true;
+                    return true;
+                }
+            }
+        }
+        this._supportedDiffCache[cacheKey] = false;
         return false;
+    },
+
+    _applyDifficultyFallback(nextDiffKey, mode) {
+        const candidateIds = [];
+        if (mode) {
+            candidateIds.push(`${mode}-diff-${nextDiffKey}`);
+            candidateIds.push(`${mode}-${nextDiffKey}`);
+        }
+        if (this.SUPPORTED_DIFF_IDS[nextDiffKey]) {
+            candidateIds.push(...this.SUPPORTED_DIFF_IDS[nextDiffKey]);
+        }
+        candidateIds.push(`diff-${nextDiffKey}`, `diff-btn-${nextDiffKey}`);
+
+        for (const id of candidateIds) {
+            const el = document.getElementById(id);
+            if (el && typeof el.click === 'function') {
+                if (!el.classList.contains('active')) {
+                    el.click();
+                    return;
+                }
+            }
+        }
+
+        const dataEl = document.querySelector(`[data-diff="${nextDiffKey}"]`);
+        if (dataEl && typeof dataEl.click === 'function' && !dataEl.classList.contains('active')) {
+            dataEl.click();
+        }
     },
 
     showAdaptivePopup(nextDiffKey, nextDiffLabel, mode) {
@@ -281,6 +321,7 @@ const ScoreManager = {
             window.dispatchEvent(new CustomEvent('c2_change_difficulty', {
                 detail: { difficulty: nextDiffKey, mode: mode }
             }));
+            this._applyDifficultyFallback(nextDiffKey, mode);
         });
 
         // Small delay to allow potential confettis or other animations to be seen before modal

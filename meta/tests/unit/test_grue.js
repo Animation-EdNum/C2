@@ -190,4 +190,23 @@ describe('jeu_de_la_grue.html - Level Generation and Difficulty Engine', () => {
         const mainBoardBlocksHard = document.querySelectorAll('#main-board .cube');
         assert.strictEqual(mainBoardBlocksHard.length, 3, 'Main board should render 3 cubes in hard mode');
     });
+
+    test('6. c2_change_difficulty event switches difficulty and updates UI', () => {
+        const { window, document } = createGrueEnvironment();
+
+        const btnEasy = document.getElementById('diff-easy');
+        const btnMedium = document.getElementById('diff-medium');
+
+        assert.ok(btnEasy.classList.contains('active'), 'Starts at easy');
+        assert.strictEqual(window.getGameState().currentDifficulty, 'easy');
+
+        // Simulate adaptive difficulty acceptance event
+        window.dispatchEvent(new window.CustomEvent('c2_change_difficulty', {
+            detail: { difficulty: 'medium', mode: 'jeu_de_la_grue' }
+        }));
+
+        assert.ok(btnMedium.classList.contains('active'), 'Medium button is now active after event');
+        assert.strictEqual(btnEasy.classList.contains('active'), false, 'Easy button is no longer active');
+        assert.strictEqual(window.getGameState().currentDifficulty, 'medium', 'Game state updated to medium');
+    });
 });
