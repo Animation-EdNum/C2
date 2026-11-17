@@ -489,4 +489,37 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
             checkShowDigits.dispatchEvent(new window.Event('change'));
         }
     });
+
+    await t.test('12. Layout zones and Mode TBI requirements', () => {
+        const layoutContainer = window.document.querySelector('.timer-layout-container');
+        const visualZone = window.document.querySelector('.timer-visual-zone');
+        const commandsZone = window.document.querySelector('.timer-commands-zone');
+        const presetsSection = window.document.querySelector('.presets-section');
+        const controlsBar = window.document.querySelector('.controls-bar');
+        const btnSub1 = window.document.getElementById('btnSub1');
+        const mainPlayBtn = window.document.getElementById('mainPlayBtn');
+        const btnAdd1 = window.document.getElementById('btnAdd1');
+        const btnAdd5 = window.document.getElementById('btnAdd5');
+        const btnReset = window.document.getElementById('btnReset');
+        const projBtn = window.document.getElementById('projection-toggle-btn');
+
+        assert.ok(layoutContainer, '.timer-layout-container must exist');
+        assert.ok(visualZone, '.timer-visual-zone must exist');
+        assert.ok(commandsZone, '.timer-commands-zone must exist');
+        assert.ok(presetsSection, '.presets-section must exist');
+        assert.ok(controlsBar, '.controls-bar must exist');
+        assert.ok(btnSub1, '#btnSub1 (-1 min) must exist');
+        assert.ok(mainPlayBtn, '#mainPlayBtn must exist');
+        assert.ok(btnAdd1, '#btnAdd1 (+1 min) must exist');
+        assert.ok(btnAdd5, '#btnAdd5 (+5 min) must exist');
+        assert.ok(btnReset, '#btnReset must exist');
+
+        // Toggle projection mode
+        projBtn.click();
+        assert.ok(window.document.body.classList.contains('projection'), 'Body should have projection class');
+
+        // Toggle back to normal
+        projBtn.click();
+        assert.ok(!window.document.body.classList.contains('projection'), 'Body should exit projection class');
+    });
 });
