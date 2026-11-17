@@ -202,4 +202,32 @@ describe('bareme.html - mathematical engine & DOM interactions', () => {
         window.setProjectionMode(false);
         assert.strictEqual(document.body.classList.contains('projection'), false);
     });
+
+    test('13. 10 points scale renders with extra columns (>= 3 groups) to eliminate vertical scrollbars', () => {
+        const { window, document } = createEnv();
+        const container = document.getElementById('tableContainer');
+
+        // Test fallback for 10 points (21 items with step 0.5)
+        const groupsFallback = window.getOptimalScreenGroups(21, false);
+        assert.ok(groupsFallback >= 3, `10 points scale with 21 items should yield >= 3 columns in fallback, got ${groupsFallback}`);
+
+        // Test with simulated container dimensions
+        Object.defineProperty(container, 'clientHeight', { value: 380, configurable: true });
+        Object.defineProperty(container, 'clientWidth', { value: 850, configurable: true });
+
+        const groupsMeasured = window.getOptimalScreenGroups(21, false);
+        assert.ok(groupsMeasured >= 3, `10 points scale in an 850x380 container should yield >= 3 columns, got ${groupsMeasured}`);
+
+        // Update settings to 10 points and re-render table
+        document.getElementById('totalPoints').value = '10';
+        document.getElementById('increment').value = '0.5';
+        window.updateAll();
+
+        const renderedCols = document.querySelectorAll('#tableHead th.col-end').length;
+        assert.ok(renderedCols >= 3, `Rendered table for 10 pts must have at least 3 column groups, got ${renderedCols}`);
+
+        // Verify each column has at most 7 or 8 rows instead of 11 rows
+        const renderedRows = document.querySelectorAll('#tableBody tr').length;
+        assert.ok(renderedRows <= 7, `Rendered table for 21 items across >= 3 groups must have <= 7 rows, got ${renderedRows}`);
+    });
 });
