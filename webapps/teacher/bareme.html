@@ -87,11 +87,20 @@
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             color: var(--text-main);
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             transition: background 0.3s;
+        }
+
+        @media (min-width: 900px) {
+            body {
+                height: 100vh;
+                max-height: 100vh;
+                overflow: hidden;
+                padding: 16px 20px;
+            }
         }
 
         .app-shell {
@@ -107,6 +116,16 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        @media (min-width: 900px) {
+            .app-shell {
+                max-width: min(1500px, 98vw);
+                height: 100%;
+                max-height: calc(100vh - 32px);
+            }
         }
 
         /* HEADER */
@@ -118,6 +137,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 1.5rem;
+            flex-shrink: 0;
         }
 
         .header-title-wrapper {
@@ -155,11 +175,20 @@
             display: grid;
             grid-template-columns: 1fr;
             flex: 1;
+            min-height: 0;
         }
 
         @media (min-width: 900px) {
             .app-main {
                 grid-template-columns: 320px 1fr;
+                height: 100%;
+                min-height: 0;
+                overflow: hidden;
+            }
+
+            .config-panel {
+                height: 100%;
+                overflow-y: auto;
             }
         }
 
@@ -300,16 +329,20 @@
             padding: 1.25rem 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1rem;
             overflow: hidden;
+            flex: 1;
+            min-height: 0;
+            height: 100%;
         }
 
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            padding-bottom: 1rem;
+            padding-bottom: 0.75rem;
             border-bottom: 2px solid var(--border);
+            flex-shrink: 0;
         }
 
         .results-title-group h2 {
@@ -338,18 +371,27 @@
 
         .table-container {
             flex: 1;
+            min-height: 0;
+            height: 100%;
             overflow-x: auto;
             overflow-y: auto;
-            max-height: 48vh;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
             background: var(--glass-bg);
+            display: flex;
+            flex-direction: column;
         }
 
         table {
             width: 100%;
+            height: 100%;
+            min-height: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
+        }
+
+        tbody {
+            height: 100%;
         }
 
         th {
@@ -404,24 +446,95 @@
 
         /* PRINT UI */
         .print-only { display: none; }
+
+        @page {
+            size: A4 portrait;
+            margin: 8mm 10mm;
+        }
+
         @media print {
-            body { touch-action: manipulation; background: white !important; padding: 0; font-family: 'Outfit', sans-serif; zoom: var(--print-zoom, 1); }
+            html, body {
+                height: auto !important;
+                overflow: visible !important;
+                background: white !important;
+                font-family: 'Outfit', sans-serif;
+            }
+            body {
+                touch-action: manipulation;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
             .no-print { display: none !important; }
-            .app-shell { border: none; box-shadow: none; background: white; backdrop-filter: none; max-width: 100%; display: block; border-radius: 0; }
+            .app-shell {
+                border: none !important;
+                box-shadow: none !important;
+                background: white !important;
+                backdrop-filter: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                display: block !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
             .print-only { display: block !important; }
-            .results-panel { padding: 0; }
-            .table-container { border: none; overflow: visible; max-height: none; }
-            table { border: 2px solid black; font-size: 10px; }
-            th { background: #f0f0f0 !important; color: black !important; border: 1px solid #999; font-size: 10px; padding: 4px 2px; }
-            td { border: 1px solid #ccc; color: black !important; padding: 3px 2px; text-align: center; }
-            .col-end { border-right: 2px solid black; font-weight: bold; }
-            .passing-row { background: #f0fdf4 !important; } /* Light green background for passing grades */
-            .failing-row { background: #fef2f2 !important; } /* Light red background for failing grades */
-            .demarcation-bottom { border-bottom: 3px double #000 !important; }
+            .results-panel { padding: 0 !important; overflow: visible !important; }
+            .table-container { border: none !important; overflow: visible !important; max-height: none !important; height: auto !important; }
+            table {
+                border: 1.5px solid black !important;
+                font-size: var(--print-font-size, 8.5pt) !important;
+                width: 100% !important;
+                height: auto !important;
+                border-collapse: collapse !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            th {
+                background: #f0f0f0 !important;
+                color: black !important;
+                border: 1px solid #777 !important;
+                font-size: var(--print-font-size, 8.5pt) !important;
+                padding: var(--print-padding, 2px 2px) !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.03em !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            td {
+                border: 1px solid #bbb !important;
+                color: black !important;
+                font-size: var(--print-font-size, 8.5pt) !important;
+                padding: var(--print-padding, 2px 2px) !important;
+                text-align: center !important;
+                line-height: 1.15 !important;
+            }
+            .col-end { border-right: 2px solid black !important; font-weight: bold; }
+            .passing-row {
+                background: #f0fdf4 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .failing-row {
+                background: #fef2f2 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .demarcation-bottom { border-bottom: 2.5px double #000 !important; }
             
-            .print-header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid black; padding-bottom: 10px; }
-            .print-header h2 { font-size: 1.5rem; text-transform: uppercase; margin-bottom: 5px; }
-            .print-meta { display: flex; justify-content: center; gap: 2rem; font-size: 0.9rem; font-weight: bold; color: #333; }
+            .print-header {
+                text-align: center;
+                margin-bottom: 6px;
+                border-bottom: 1.5px solid black;
+                padding-bottom: 4px;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .print-header h2 { font-size: 1.25rem; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.03em; }
+            .print-meta { display: flex; justify-content: center; gap: 1.5rem; font-size: 0.8rem; font-weight: bold; color: #222; }
         }
 
         @media (max-width: 600px) {
@@ -496,6 +609,7 @@
             text-align: center;
             font-size: 0.75rem;
             color: var(--text-muted);
+            flex-shrink: 0;
         }
 
         footer a { color: var(--primary); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
@@ -505,31 +619,115 @@
 
         /* ========== PROJECTION / TNI MODE ========== */
         body.projection {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            overflow: hidden !important;
             font-size: 16px;
         }
+
+        body.projection .app-shell {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            border-radius: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: var(--glass-bg);
+        }
+
+        body.projection header {
+            padding: 0.5rem 1.25rem !important;
+            flex-shrink: 0;
+            gap: 1rem;
+        }
+
+        body.projection .header-back-btn,
+        body.projection .header-icon,
+        body.projection .header-actions {
+            display: none !important;
+        }
+
         body.projection .config-panel,
         body.projection footer {
             display: none !important;
         }
+
         body.projection .app-main {
-            grid-template-columns: 1fr;
-            max-width: 100%;
+            grid-template-columns: 1fr !important;
+            width: 100% !important;
+            flex: 1 !important;
+            min-height: 0 !important;
+            height: calc(100vh - 54px) !important;
+            overflow: hidden !important;
         }
-        body.projection .app-shell {
-            max-width: 100%;
-            padding: 0.5rem 1rem;
+
+        body.projection .results-panel {
+            padding: 0.5rem 1.25rem 0.75rem 1.25rem !important;
+            height: 100% !important;
+            width: 100% !important;
+            gap: 0.5rem !important;
+            overflow: hidden !important;
         }
-        body.projection .grade-table th,
-        body.projection .grade-table td {
-            padding: 8px 12px;
-            font-size: 1.15rem;
-        }
+
         body.projection .results-header {
-            padding-bottom: 0.75rem;
-            margin-bottom: 1rem;
+            padding-bottom: 0.35rem !important;
+            margin-bottom: 0 !important;
+            flex-shrink: 0;
         }
+
         body.projection .results-header h2 {
-            font-size: 1.5rem;
+            font-size: 0.95rem !important;
+        }
+
+        body.projection .active-title {
+            font-size: 1.4rem !important;
+        }
+
+        body.projection .formula-badge {
+            font-size: 0.8rem !important;
+            padding: 4px 10px !important;
+        }
+
+        body.projection .table-container {
+            flex: 1 !important;
+            min-height: 0 !important;
+            height: 100% !important;
+            max-height: none !important;
+            border-radius: var(--radius-md) !important;
+            overflow: auto !important;
+        }
+
+        body.projection table {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 100% !important;
+        }
+
+        body.projection th {
+            padding: 8px 6px !important;
+            font-size: clamp(0.9rem, 1.3vw, 1.25rem) !important;
+            font-weight: 800 !important;
+        }
+
+        body.projection td {
+            padding: 6px 6px !important;
+            font-size: clamp(1rem, 1.6vw, 1.5rem) !important;
+            font-weight: 600;
+        }
+
+        body.projection .grade {
+            font-size: clamp(1.1rem, 1.9vw, 1.8rem) !important;
+            font-weight: 900;
+        }
+
+        body.projection .mistake {
+            font-size: clamp(0.85rem, 1.3vw, 1.25rem) !important;
         }
 
         .hidden { display: none !important; }
@@ -665,7 +863,7 @@
                 </div>
 
                 <div class="table-container" id="tableContainer">
-                    <table id="gradeTable">
+                    <table id="gradeTable" class="grade-table">
                         <thead id="tableHead"></thead>
                         <tbody id="tableBody"></tbody>
                     </table>
@@ -881,6 +1079,39 @@
         }
 
         // ==========================================
+        // CALCUL DES GROUPES DE COLONNES (ÉCRAN)
+        // ==========================================
+        function getOptimalScreenGroups(dataLength, showMistakes) {
+            const isProjection = document.body.classList.contains('projection');
+            const container = document.getElementById('tableContainer');
+            const availH = container ? container.clientHeight : 0;
+            const availW = container ? container.clientWidth : 0;
+
+            // Si les dimensions réelles du conteneur sont mesurables dans le DOM
+            if (availH > 150 && availW > 200) {
+                const headerH = 40;
+                const bodyH = availH - headerH;
+                const rowH = isProjection ? 44 : 30;
+                const maxRowsFit = Math.max(4, Math.floor(bodyH / rowH));
+                const neededGroups = Math.ceil(dataLength / maxRowsFit);
+
+                const minGroupW = showMistakes ? (isProjection ? 160 : 130) : (isProjection ? 120 : 90);
+                const maxGroupsFit = Math.max(2, Math.floor(availW / minGroupW));
+
+                return Math.max(2, Math.min(neededGroups, maxGroupsFit));
+            }
+
+            // Fallback (ex: JSDOM, exécution hors navigateur, ou avant layout)
+            if (isProjection) {
+                const maxGroups = showMistakes ? 4 : 5;
+                return Math.max(2, Math.min(maxGroups, Math.ceil(dataLength / 18)));
+            } else {
+                const maxGroups = showMistakes ? 5 : 6;
+                return Math.max(2, Math.min(maxGroups, Math.ceil(dataLength / 22)));
+            }
+        }
+
+        // ==========================================
         // RENDU DU TABLEAU
         //   forceGroups : nombre de colonnes imposé
         //                 (utilisé par handlePrint)
@@ -895,9 +1126,7 @@
             if (forceGroups) {
                 groupsPerRow = forceGroups;
             } else {
-                groupsPerRow = 2;
-                if (data.length > 20) groupsPerRow = 3;
-                if (data.length > 45 && !showMistakes) groupsPerRow = 4;
+                groupsPerRow = getOptimalScreenGroups(data.length, showMistakes);
             }
 
             const rowsCount = Math.ceil(data.length / groupsPerRow);
@@ -1173,43 +1402,54 @@
             // 2. Générer les données
             const data = generateData(totalPoints, pointsFor4, increment, rounding);
 
-            // 3. Sauvegarder les données de calcul pour réinitialiser fidèlement après impression
-            // (évite toute affectation innerHTML lors de la restauration)
-
-            // 4. Calculer le nombre optimal de groupes de colonnes
-            //    pour tenir en ≤ 65 lignes sur une page A4 portrait
-            //    (police 7.5 px, padding 1.5 px → ~3.5 mm/ligne → ~65 lignes max)
-            const maxRows = 65;
-            const maxGroups = showMistakes ? 5 : 6;
-            const groups = Math.max(2, Math.min(maxGroups, Math.ceil(data.length / maxRows)));
+            // 3. Calculer le nombre optimal de groupes de colonnes pour tenir TOUJOURS sur 1 page A4
+            // On vise un maximum de ~30 lignes par colonne pour que tout tienne confortablement
+            const maxGroups = showMistakes ? 6 : 7;
+            let groups = Math.max(2, Math.min(maxGroups, Math.ceil(data.length / 30)));
             const actualRows = Math.ceil(data.length / groups);
 
-            // 5. Facteur de zoom de sécurité si ça dépasse quand même
-            let zoom = 1;
-            if (actualRows > maxRows) {
-                zoom = maxRows / actualRows;
-                zoom = Math.max(0.45, zoom);           // plancher 45 %
-                zoom = Math.round(zoom * 100) / 100;   // arrondir
+            // Ajustement dynamique de la taille de police et du padding selon le nombre réel de lignes
+            let printFontSize = '8.5pt';
+            let printPadding = '2px 2px';
+
+            if (actualRows <= 22) {
+                printFontSize = '9.5pt';
+                printPadding = '3.5px 2px';
+            } else if (actualRows <= 32) {
+                printFontSize = '8.5pt';
+                printPadding = '2px 2px';
+            } else if (actualRows <= 44) {
+                printFontSize = '7.5pt';
+                printPadding = '1.5px 1.5px';
+            } else {
+                printFontSize = '6.8pt';
+                printPadding = '1px 1px';
             }
 
-            // 6. Re-rendre le tableau avec le bon nombre de colonnes
+            // 4. Re-rendre le tableau avec le nombre de colonnes adapté à l'impression
             renderTable(data, totalPoints, showMistakes, groups);
 
-            // 7. Appliquer les classes/variables CSS pour l'impression
-            document.documentElement.style.setProperty('--print-zoom', zoom);
+            // 5. Appliquer les variables CSS d'impression
+            document.documentElement.style.setProperty('--print-font-size', printFontSize);
+            document.documentElement.style.setProperty('--print-padding', printPadding);
             document.body.classList.add('printing');
 
-            // 8. Restaurer après impression
+            // 6. Restaurer après impression
             const restore = () => {
                 document.body.classList.remove('printing');
+                document.documentElement.style.removeProperty('--print-font-size');
+                document.documentElement.style.removeProperty('--print-padding');
                 document.documentElement.style.removeProperty('--print-zoom');
                 updateAll();
                 window.removeEventListener('afterprint', restore);
             };
             window.addEventListener('afterprint', restore);
 
-            // 9. Petit délai pour laisser le DOM se mettre à jour, puis imprimer
-            setTimeout(() => { window.focus(); window.print(); }, 120);
+            // 7. Petit délai pour laisser le DOM se mettre à jour, puis imprimer
+            setTimeout(() => {
+                if (typeof window.focus === 'function') window.focus();
+                if (typeof window.print === 'function') window.print();
+            }, 120);
         }
 
         // ==========================================
@@ -1280,6 +1520,7 @@
                 projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI' : 'Mode TNI/Plein écran');
             }
             if (window.fa?.createIcons) window.fa.createIcons();
+            updateAll();
         }
 
         if (projBtn) {
@@ -1295,6 +1536,15 @@
                 e.preventDefault();
                 setProjectionMode(!document.body.classList.contains('projection'));
             }
+        });
+
+        // Redimensionnement automatique de la grille pour toujours éviter l'ascenseur
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                updateAll();
+            }, 100);
         });
 
         window.__onResetApp = function() {
@@ -1322,6 +1572,7 @@
             window.getShareUrl = getShareUrl;
             window.loadFromUrlParams = loadFromUrlParams;
             window.setProjectionMode = setProjectionMode;
+            window.getOptimalScreenGroups = getOptimalScreenGroups;
         }
 
         if (typeof module !== 'undefined' && module.exports) {
@@ -1331,7 +1582,9 @@
                 generatePointsList,
                 updateAll,
                 getShareUrl,
-                loadFromUrlParams
+                loadFromUrlParams,
+                setProjectionMode,
+                getOptimalScreenGroups
             };
         }
 

@@ -142,4 +142,64 @@ describe('bareme.html - mathematical engine & DOM interactions', () => {
         assert.ok(shareUrl.includes('round=0.25'), 'URL must include round=0.25');
         assert.ok(shareUrl.includes('mistakes=1'), 'URL must include mistakes=1');
     });
+
+    test('10. getOptimalScreenGroups dynamically increases column groups to maximize preview and avoid scrollbars', () => {
+        const { window } = createEnv();
+        assert.strictEqual(typeof window.getOptimalScreenGroups, 'function', 'getOptimalScreenGroups must be defined');
+
+        // Normal fallback cases
+        const groupsSmall = window.getOptimalScreenGroups(20, false);
+        const groupsMed = window.getOptimalScreenGroups(60, false);
+        const groupsLarge = window.getOptimalScreenGroups(100, false);
+
+        assert.ok(groupsSmall >= 2, 'Small scale has at least 2 column groups');
+        assert.ok(groupsMed >= 3, 'Medium scale (60 items) has at least 3 column groups');
+        assert.ok(groupsLarge >= 4, 'Large scale (100 items) has at least 4 column groups');
+    });
+
+    test('11. Print handler ensures multi-column layout and print variables for single-page A4 print', () => {
+        const { window, document } = createEnv();
+        // Set up a 50-point scale with step 0.5 (101 items)
+        document.getElementById('totalPoints').value = '50';
+        document.getElementById('increment').value = '0.5';
+        window.updateAll();
+
+        const printBtn = document.getElementById('printBtn');
+        printBtn.click();
+
+        // Check that printing layout was applied
+        assert.strictEqual(document.body.classList.contains('printing'), true);
+        const printFontSize = document.documentElement.style.getPropertyValue('--print-font-size');
+        const printPadding = document.documentElement.style.getPropertyValue('--print-padding');
+        assert.ok(printFontSize, '--print-font-size must be set during print');
+        assert.ok(printPadding, '--print-padding must be set during print');
+
+        // Check that table has multiple columns rendered (not just 2)
+        const cols = document.querySelectorAll('#tableHead th.col-end').length;
+        assert.ok(cols >= 4, `101 items must render across at least 4 column groups during print, got ${cols}`);
+
+        // Cleanup afterprint
+        window.dispatchEvent(new window.Event('afterprint'));
+        assert.strictEqual(document.body.classList.contains('printing'), false);
+    });
+
+    test('12. Grade table is contained within main-content with correct classes and projection styling support', () => {
+        const { window, document } = createEnv();
+        const main = document.getElementById('main-content');
+        const container = document.getElementById('tableContainer');
+        const table = document.getElementById('gradeTable');
+
+        assert.ok(main, '#main-content must exist');
+        assert.ok(container, '#tableContainer must exist inside DOM');
+        assert.ok(table, '#gradeTable must exist inside DOM');
+        assert.ok(main.contains(container), '#tableContainer must be inside #main-content');
+        assert.ok(container.contains(table), '#gradeTable must be inside #tableContainer');
+        assert.ok(table.classList.contains('grade-table'), '#gradeTable must have .grade-table class');
+
+        // Toggle projection mode
+        window.setProjectionMode(true);
+        assert.strictEqual(document.body.classList.contains('projection'), true);
+        window.setProjectionMode(false);
+        assert.strictEqual(document.body.classList.contains('projection'), false);
+    });
 });
