@@ -1439,14 +1439,6 @@
                                 </div>
                             </div>
 
-                            <div id="compensationDisplayModeRow" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                <label for="compensationDisplayModeSelect" style="font-size: 0.88rem; color: var(--text-secondary);">Affichage :</label>
-                                <select id="compensationDisplayModeSelect" class="custom-select" style="padding: 4px 10px; font-size: 0.85rem; width: auto; flex: 1; min-width: 170px;">
-                                    <option value="both" selected>Temps numérique et barre</option>
-                                    <option value="bar">Barre uniquement (sans chiffres)</option>
-                                </select>
-                            </div>
-
                             <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i data-fa="circle-info" style="width:13px;height:13px; flex-shrink: 0;"></i>
                                 <span id="compensationPreviewText">Pour 10 min : +3 min 20 s = 13 min 20 s total</span>
@@ -1559,7 +1551,6 @@
             const compensationRatioSelect = document.getElementById('compensationRatioSelect');
             const compensationFixedRow = document.getElementById('compensationFixedRow');
             const compensationFixedMinutesInput = document.getElementById('compensationFixedMinutesInput');
-            const compensationDisplayModeSelect = document.getElementById('compensationDisplayModeSelect');
             const compensationPreviewText = document.getElementById('compensationPreviewText');
             const customAudioFileInput = document.getElementById('customAudioFileInput');
             const removeCustomSoundBtn = document.getElementById('removeCustomSoundBtn');
@@ -2239,8 +2230,7 @@
                 compensationEnabled: false,
                 compensationMode: 'ratio',
                 compensationRatio: 0.3333333333333333,
-                compensationFixedMins: 5,
-                compensationDisplayMode: 'both'
+                compensationFixedMins: 5
             };
 
             function getCompensationSeconds(baseSecs) {
@@ -2287,7 +2277,8 @@
 
                 compensationDisplay.style.display = 'block';
 
-                const isBarOnly = settings.compensationDisplayMode === 'bar';
+                // L'option principale "afficher le temps numérique" (settings.showDigits) contrôle également l'affichage numérique du tiers-temps
+                const isBarOnly = !settings.showDigits;
                 compensationDisplay.classList.toggle('bar-only', isBarOnly);
                 if (compensationDigits) {
                     compensationDigits.style.display = isBarOnly ? 'none' : '';
@@ -2352,9 +2343,6 @@
                         if (parsed.compensationFixedMins !== undefined) {
                             parsed.compensationFixedMins = parseInt(parsed.compensationFixedMins, 10) || 5;
                         }
-                        if (parsed.compensationDisplayMode !== undefined) {
-                            settings.compensationDisplayMode = parsed.compensationDisplayMode;
-                        }
                         settings = Object.assign(settings, parsed);
                     }
                 } catch (e) { }
@@ -2418,9 +2406,6 @@
                 }
                 if (compensationFixedMinutesInput) {
                     compensationFixedMinutesInput.value = settings.compensationFixedMins || 5;
-                }
-                if (compensationDisplayModeSelect) {
-                    compensationDisplayModeSelect.value = settings.compensationDisplayMode || 'both';
                 }
 
                 updateActivityUI();
@@ -3207,6 +3192,7 @@
             checkShowDigits.addEventListener('change', () => {
                 settings.showDigits = checkShowDigits.checked;
                 digitalDisplay.style.display = settings.showDigits ? 'flex' : 'none';
+                updateCompensationUI();
                 saveSettings();
             });
 
@@ -3342,14 +3328,6 @@
                     saveSettings();
                     updateCompensationPreview();
                     updateUI();
-                });
-            }
-
-            if (compensationDisplayModeSelect) {
-                compensationDisplayModeSelect.addEventListener('change', () => {
-                    settings.compensationDisplayMode = compensationDisplayModeSelect.value;
-                    saveSettings();
-                    updateCompensationUI();
                 });
             }
 
@@ -3499,8 +3477,7 @@
                     compensationEnabled: false,
                     compensationMode: 'ratio',
                     compensationRatio: 0.3333333333333333,
-                    compensationFixedMins: 5,
-                    compensationDisplayMode: 'both'
+                    compensationFixedMins: 5
                 };
 
                 activityTitleInput.value = '';
@@ -3534,12 +3511,11 @@
                 hideCelebration,
                 getCompensationSeconds,
                 getSettings: () => settings,
-                setCompensation: (enabled, mode, ratio, fixedMins, displayMode) => {
+                setCompensation: (enabled, mode, ratio, fixedMins) => {
                     if (enabled !== undefined) settings.compensationEnabled = !!enabled;
                     if (mode !== undefined) settings.compensationMode = mode;
                     if (ratio !== undefined) settings.compensationRatio = ratio;
                     if (fixedMins !== undefined) settings.compensationFixedMins = fixedMins;
-                    if (displayMode !== undefined) settings.compensationDisplayMode = displayMode;
                     compensationTotalSeconds = getCompensationSeconds(totalSeconds);
                     compensationRemainingSeconds = compensationTotalSeconds;
                     saveSettings();

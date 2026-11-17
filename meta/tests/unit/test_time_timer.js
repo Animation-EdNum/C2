@@ -288,7 +288,6 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         const compensationModeSelect = window.document.getElementById('compensationModeSelect');
         const compensationRatioSelect = window.document.getElementById('compensationRatioSelect');
         const compensationFixedMinutesInput = window.document.getElementById('compensationFixedMinutesInput');
-        const compensationDisplayModeSelect = window.document.getElementById('compensationDisplayModeSelect');
         const compensationPreviewText = window.document.getElementById('compensationPreviewText');
 
         assert.ok(compensationDisk, '#compensationDisk path should exist in SVG clock dial');
@@ -299,7 +298,6 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         assert.ok(compensationModeSelect, '#compensationModeSelect should exist');
         assert.ok(compensationRatioSelect, '#compensationRatioSelect should exist');
         assert.ok(compensationFixedMinutesInput, '#compensationFixedMinutesInput should exist');
-        assert.ok(compensationDisplayModeSelect, '#compensationDisplayModeSelect should exist');
         assert.ok(compensationPreviewText, '#compensationPreviewText should exist');
     });
 
@@ -441,14 +439,15 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         }
     });
 
-    await t.test('11. Compensation sub-option: toggle between digital readout + bar vs bar-only', () => {
+    await t.test('11. Main option "Afficher le temps numérique" controls both main and compensation digital readout', () => {
         const engine = window.TimeTimerEngine;
         const compensationDisplay = window.document.getElementById('compensationDisplay');
         const compensationDigits = window.document.getElementById('compensationDigits');
-        const compensationDisplayModeSelect = window.document.getElementById('compensationDisplayModeSelect');
+        const checkShowDigits = window.document.getElementById('checkShowDigits');
+        const digitalDisplay = window.document.getElementById('digitalDisplay');
 
         engine.setTimeMinutes(1, false);
-        engine.setCompensation(true, 'ratio', 1 / 3, 5, 'both');
+        engine.setCompensation(true, 'ratio', 1 / 3, 5);
         engine.startTimer(false);
 
         const state = engine.getState();
@@ -458,22 +457,27 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
             window.Date.now = () => state.compensationTargetEndTime - (10 * 1000);
             engine.tick();
 
-            // In 'both' mode: digits are visible and class bar-only is not present
+            // When checkShowDigits is checked: both main and compensation digits are visible
+            checkShowDigits.checked = true;
+            checkShowDigits.dispatchEvent(new window.Event('change'));
+
             assert.strictEqual(compensationDisplay.style.display, 'block');
+            assert.strictEqual(digitalDisplay.style.display, 'flex');
             assert.strictEqual(compensationDigits.style.display, '');
             assert.strictEqual(compensationDisplay.classList.contains('bar-only'), false);
             assert.strictEqual(compensationDigits.textContent, '00:10');
 
-            // Switch to 'bar' mode via select dropdown
-            compensationDisplayModeSelect.value = 'bar';
-            compensationDisplayModeSelect.dispatchEvent(new window.Event('change'));
+            // When checkShowDigits is unchecked: compensation digits are hidden and only bar is displayed
+            checkShowDigits.checked = false;
+            checkShowDigits.dispatchEvent(new window.Event('change'));
 
+            assert.strictEqual(digitalDisplay.style.display, 'none');
             assert.strictEqual(compensationDisplay.classList.contains('bar-only'), true);
             assert.strictEqual(compensationDigits.style.display, 'none');
 
-            // Switch back to 'both'
-            compensationDisplayModeSelect.value = 'both';
-            compensationDisplayModeSelect.dispatchEvent(new window.Event('change'));
+            // Turn checkShowDigits back on
+            checkShowDigits.checked = true;
+            checkShowDigits.dispatchEvent(new window.Event('change'));
 
             assert.strictEqual(compensationDisplay.classList.contains('bar-only'), false);
             assert.strictEqual(compensationDigits.style.display, '');
@@ -481,6 +485,8 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
             window.Date.now = originalNow;
             engine.stopTimer();
             engine.setCompensation(false);
+            checkShowDigits.checked = false;
+            checkShowDigits.dispatchEvent(new window.Event('change'));
         }
     });
 });
