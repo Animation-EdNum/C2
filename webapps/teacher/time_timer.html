@@ -376,6 +376,123 @@
             transition: color 0.2s;
         }
 
+        /* COMPENSATION TIMER (MCD / TIERS-TEMPS) */
+        .compensation-display {
+            width: 100%;
+            max-width: 420px;
+            margin: 0.15rem auto 0.35rem;
+            padding: 8px 14px;
+            background: rgba(59, 130, 246, 0.09);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        body.dark .compensation-display {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(96, 165, 250, 0.35);
+        }
+
+        .compensation-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .compensation-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .compensation-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2563eb;
+            letter-spacing: 0.02em;
+        }
+
+        body.dark .compensation-badge {
+            color: #93c5fd;
+        }
+
+        .compensation-digits {
+            font-family: 'Outfit', monospace;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1d4ed8;
+            letter-spacing: -0.02em;
+        }
+
+        body.dark .compensation-digits {
+            color: #bfdbfe;
+        }
+
+        .compensation-bar-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .compensation-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 999px;
+            transition: width 0.25s linear;
+        }
+
+        .compensation-display.active-ongoing {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.45);
+            animation: compPulse 2s infinite ease-in-out;
+        }
+
+        .compensation-display.active-ongoing .compensation-badge {
+            color: #d97706;
+        }
+
+        body.dark .compensation-display.active-ongoing .compensation-badge {
+            color: #fbbf24;
+        }
+
+        .compensation-display.active-ongoing .compensation-digits {
+            color: #b45309;
+        }
+
+        body.dark .compensation-display.active-ongoing .compensation-digits {
+            color: #fde68a;
+        }
+
+        .compensation-display.active-ongoing .compensation-bar-fill {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        @keyframes compPulse {
+            0%, 100% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15); }
+            50% { box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35); }
+        }
+
+        body.projection .compensation-display {
+            max-width: 520px;
+            padding: 10px 18px;
+        }
+
+        body.projection .compensation-digits {
+            font-size: 1.6rem;
+        }
+
+        body.projection .compensation-badge {
+            font-size: 1rem;
+        }
+
         /* 1-CLICK PRESETS */
         .presets-section {
             width: 100%;
@@ -1008,6 +1125,9 @@
                     <circle id="clockOuterRing" cx="250" cy="250" r="235" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="6"/>
                     <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2"/>
 
+                    <!-- Compensation Timer Disk (rendered behind/underneath main timer disk) -->
+                    <path id="compensationDisk" d="" fill="rgba(59, 130, 246, 0.45)" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4" style="display:none;"></path>
+
                     <!-- Colored Timer Disk/Arc (Standard solid color) -->
                     <path id="timerDisk" d="" fill="var(--timer-disk-color)" filter="url(#diskGlow)"></path>
 
@@ -1070,6 +1190,22 @@
                 <span class="pulse-dot"></span>
                 <span class="pulse-dot"></span>
                 <span class="pulse-dot"></span>
+            </div>
+
+            <!-- COMPENSATION TIMER READOUT (TIERS-TEMPS / MCD) -->
+            <div class="compensation-display" id="compensationDisplay" style="display: none;" role="region" aria-label="Minuteur de compensation des désavantages">
+                <div class="compensation-content">
+                    <div class="compensation-top-row">
+                        <span class="compensation-badge">
+                            <i data-fa="universal-access" style="width:14px;height:14px;"></i>
+                            <span id="compensationStatusLabel">Temps adapté (MCD)</span>
+                        </span>
+                        <span class="compensation-digits" id="compensationDigits">13:20</span>
+                    </div>
+                    <div class="compensation-bar-track">
+                        <div class="compensation-bar-fill" id="compensationBarFill" style="width: 100%;"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- DIGITAL READOUT (OPTIONAL/CONFIGURABLE) -->
@@ -1204,10 +1340,6 @@
 
                     <!-- Option: Checkboxes -->
                     <div class="option-group" style="justify-content: center; gap: 8px; grid-column: 1 / -1;">
-                        <label class="custom-checkbox-row" id="rainbowCloudOptionRow">
-                            <input type="checkbox" id="checkRainbowCloud" checked>
-                            <span>Mascotte nuage souriant (mode arc-en-ciel) ☁️</span>
-                        </label>
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkAutoStart" checked>
                             <span>Démarrer immédiatement au clic d'un préréglage</span>
@@ -1247,10 +1379,54 @@
                                 </button>
                             </div>
                         </div>
-                        <label class="custom-checkbox-row">
-                            <input type="checkbox" id="checkTicking">
-                            <span>Tic-tac sonore chaque seconde</span>
-                        </label>
+                    </div>
+
+                    <!-- Option: Compensation Timer (MCD / Tiers-temps) -->
+                    <div class="option-group" style="grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; width: 100%;">
+                            <label for="checkCompensation" class="option-label" style="margin-bottom: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                                <i data-fa="universal-access" style="width:16px;height:16px; color: #3b82f6;"></i>
+                                <span>Mesure de compensation des désavantages (tiers-temps)</span>
+                            </label>
+                            <label class="custom-checkbox-row" style="margin: 0; padding: 4px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                <input type="checkbox" id="checkCompensation">
+                                <span style="font-size: 0.9rem;">Activer</span>
+                            </label>
+                        </div>
+
+                        <div id="compensationSettingsBlock" style="display: none; margin-top: 0.75rem; padding: 12px 14px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-md); gap: 10px; flex-direction: column; width: 100%; box-sizing: border-box;">
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <label for="compensationModeSelect" style="font-size: 0.88rem; font-weight: 600; color: var(--text-main);">Mode :</label>
+                                <select id="compensationModeSelect" class="custom-select" style="padding: 4px 10px; font-size: 0.85rem; width: auto; flex: 1; min-width: 170px;">
+                                    <option value="ratio" selected>Proportion du temps (+1/3, +1/2…)</option>
+                                    <option value="fixed">Durée fixe supplémentaire (+X min)</option>
+                                </select>
+                            </div>
+
+                            <div id="compensationRatioRow" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <label for="compensationRatioSelect" style="font-size: 0.88rem; color: var(--text-secondary);">Temps supplémentaire :</label>
+                                <select id="compensationRatioSelect" class="custom-select" style="padding: 4px 10px; font-size: 0.85rem; width: auto; flex: 1; min-width: 170px;">
+                                    <option value="0.25">+1/4 du temps (+25%)</option>
+                                    <option value="0.3333333333333333" selected>+1/3 du temps (+33.3% - Tiers-temps standard)</option>
+                                    <option value="0.5">+1/2 du temps (+50%)</option>
+                                    <option value="0.6666666666666666">+2/3 du temps (+66.7%)</option>
+                                    <option value="1">+100% (Temps doublé)</option>
+                                </select>
+                            </div>
+
+                            <div id="compensationFixedRow" style="display: none; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <label for="compensationFixedMinutesInput" style="font-size: 0.88rem; color: var(--text-secondary);">Minutes fixes en plus :</label>
+                                <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                    <input type="number" id="compensationFixedMinutesInput" class="custom-select" min="1" max="60" value="5" style="width: 70px; padding: 4px 8px; text-align: center; font-size: 0.9rem;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">min</span>
+                                </div>
+                            </div>
+
+                            <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                                <i data-fa="circle-info" style="width:13px;height:13px; flex-shrink: 0;"></i>
+                                <span id="compensationPreviewText">Pour 10 min : +3 min 20 s = 13 min 20 s total</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1309,9 +1485,13 @@
             // DOM Elements
             const timerDisk = document.getElementById('timerDisk');
             const timerDiskClipPath = document.getElementById('timerDiskClipPath');
+            const compensationDisk = document.getElementById('compensationDisk');
+            const compensationDisplay = document.getElementById('compensationDisplay');
+            const compensationDigits = document.getElementById('compensationDigits');
+            const compensationBarFill = document.getElementById('compensationBarFill');
+            const compensationStatusLabel = document.getElementById('compensationStatusLabel');
             const rainbowGroup = document.getElementById('rainbowGroup');
             const rainbowCloud = document.getElementById('rainbowCloud');
-            const checkRainbowCloud = document.getElementById('checkRainbowCloud');
             const donutHole = document.getElementById('donutHole');
             const dragHandle = document.getElementById('dragHandle');
             const tickMarksGroup = document.getElementById('tickMarksGroup');
@@ -1347,7 +1527,14 @@
             const warningToneSelect = document.getElementById('warningToneSelect');
             const warningTimeSelect = document.getElementById('warningTimeSelect');
             const testWarningSoundBtn = document.getElementById('testWarningSoundBtn');
-            const checkTicking = document.getElementById('checkTicking');
+            const checkCompensation = document.getElementById('checkCompensation');
+            const compensationSettingsBlock = document.getElementById('compensationSettingsBlock');
+            const compensationModeSelect = document.getElementById('compensationModeSelect');
+            const compensationRatioRow = document.getElementById('compensationRatioRow');
+            const compensationRatioSelect = document.getElementById('compensationRatioSelect');
+            const compensationFixedRow = document.getElementById('compensationFixedRow');
+            const compensationFixedMinutesInput = document.getElementById('compensationFixedMinutesInput');
+            const compensationPreviewText = document.getElementById('compensationPreviewText');
             const customAudioFileInput = document.getElementById('customAudioFileInput');
             const removeCustomSoundBtn = document.getElementById('removeCustomSoundBtn');
             const customSoundFileName = document.getElementById('customSoundFileName');
@@ -1370,12 +1557,15 @@
             let baseTotalSeconds = 600;  // Original baseline duration for reset
             let remainingSeconds = 600;  // Remaining seconds
             let targetEndTime = null;    // Absolute target end time for real-clock precision
+            let compensationTotalSeconds = 800;     // Total seconds with compensation (default 10 min + 1/3 = 800s)
+            let compensationRemainingSeconds = 800; // Remaining seconds for compensation
+            let compensationTargetEndTime = null;   // Absolute end time for compensation timer
             let timerId = null;          // setInterval ID
             let isRunning = false;
             let warningFired = false;
             let isDragging = false;
-            let lastTickSecond = -1;
             let wakeLock = null;
+            let celebrationAutoCloseTimeout = null; // Auto-close modal after 1 minute
 
             async function requestWakeLock() {
                 try {
@@ -1532,11 +1722,19 @@
             }
 
             function getAudioContext() {
+                const AudioCtxClass = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
+                if (!AudioCtxClass) return null;
                 if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    try {
+                        audioCtx = new AudioCtxClass();
+                    } catch (e) {
+                        return null;
+                    }
                 }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    try {
+                        audioCtx.resume().catch(() => {});
+                    } catch (_) {}
                 }
                 return audioCtx;
             }
@@ -1627,6 +1825,7 @@
                 if (isMuted) return;
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     // Harmonious pentatonic chime (F4, A4, C5, E5, A5)
                     const notes = [349.23, 440.00, 523.25, 659.25, 880.00];
@@ -1662,6 +1861,7 @@
                 if (isMuted) return;
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     // Bell with slight frequency beating (784Hz + 788Hz)
                     [784, 788, 1568].forEach((freq, i) => {
@@ -1695,6 +1895,7 @@
                 if (isMuted) return;
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     // Ding (E5) then Dong (C5)
                     [[659.25, 0], [523.25, 0.4]].forEach(([freq, delay]) => {
@@ -1729,6 +1930,7 @@
                 if (isMuted) return;
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     [0, 0.18, 0.36].forEach(delay => {
                         const osc = ctx.createOscillator();
@@ -1763,6 +1965,7 @@
                 }
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     const tone = settings.warningSoundType || 'discrete';
 
@@ -1841,6 +2044,7 @@
                 if (isMuted) return;
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -1859,6 +2063,7 @@
                 if (isMuted || settings.startSound === false) return;
                 try {
                     const ctx = getAudioContext();
+                    if (!ctx) return;
                     const now = ctx.currentTime;
                     // Gentle rising chime (C5 523Hz -> G5 784Hz)
                     const osc = ctx.createOscillator();
@@ -2003,11 +2208,80 @@
                 warningSoundEnabled: true,
                 warningSoundType: 'discrete',
                 warningSeconds: 60,
-                ticking: false,
                 lastMinutes: 10,
                 activityTitle: '',
-                rainbowCloud: true
+                compensationEnabled: false,
+                compensationMode: 'ratio',
+                compensationRatio: 0.3333333333333333,
+                compensationFixedMins: 5
             };
+
+            function getCompensationSeconds(baseSecs) {
+                if (!settings.compensationEnabled) return baseSecs;
+                if (settings.compensationMode === 'fixed') {
+                    const extraMins = parseInt(settings.compensationFixedMins, 10) || 5;
+                    return baseSecs + extraMins * 60;
+                }
+                const ratio = parseFloat(settings.compensationRatio) || (1 / 3);
+                const extraSecs = Math.round(baseSecs * ratio);
+                return baseSecs + extraSecs;
+            }
+
+            function updateCompensationPreview() {
+                if (!compensationPreviewText) return;
+                const baseMins = Math.max(1, Math.round(totalSeconds / 60) || 10);
+                const baseSecs = baseMins * 60;
+                const compSecs = getCompensationSeconds(baseSecs);
+                const extraSecs = compSecs - baseSecs;
+                const extraM = Math.floor(extraSecs / 60);
+                const extraS = extraSecs % 60;
+                const extraStr = extraS > 0 ? `+${extraM} min ${extraS} s` : `+${extraM} min`;
+
+                const totM = Math.floor(compSecs / 60);
+                const totS = compSecs % 60;
+                const totStr = totS > 0 ? `${totM} min ${totS} s` : `${totM} min`;
+
+                compensationPreviewText.textContent = `Pour ${baseMins} min : ${extraStr} = ${totStr} total`;
+            }
+
+            function updateCompensationUI() {
+                if (!compensationDisplay) return;
+                if (!settings.compensationEnabled) {
+                    compensationDisplay.style.display = 'none';
+                    if (compensationDisk) compensationDisk.style.display = 'none';
+                    return;
+                }
+
+                compensationDisplay.style.display = 'block';
+
+                const mins = Math.floor(compensationRemainingSeconds / 60);
+                const secs = compensationRemainingSeconds % 60;
+                if (compensationDigits) {
+                    compensationDigits.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                }
+
+                if (compensationBarFill && compensationTotalSeconds > 0) {
+                    const pct = Math.max(0, Math.min(100, (compensationRemainingSeconds / compensationTotalSeconds) * 100));
+                    compensationBarFill.style.width = `${pct.toFixed(1)}%`;
+                }
+
+                if (remainingSeconds <= 0 && compensationRemainingSeconds > 0) {
+                    compensationDisplay.classList.add('active-ongoing');
+                    if (compensationStatusLabel) {
+                        compensationStatusLabel.textContent = 'Tiers-temps en cours';
+                    }
+                } else if (compensationRemainingSeconds <= 0) {
+                    compensationDisplay.classList.remove('active-ongoing');
+                    if (compensationStatusLabel) {
+                        compensationStatusLabel.textContent = 'Tiers-temps terminé';
+                    }
+                } else {
+                    compensationDisplay.classList.remove('active-ongoing');
+                    if (compensationStatusLabel) {
+                        compensationStatusLabel.textContent = 'Temps adapté (MCD)';
+                    }
+                }
+            }
 
             function loadSettings() {
                 try {
@@ -2026,8 +2300,17 @@
                         if (parsed.showPulseDots === undefined) {
                             parsed.showPulseDots = true;
                         }
-                        if (parsed.rainbowCloud === undefined) {
-                            parsed.rainbowCloud = true;
+                        if (parsed.compensationEnabled !== undefined) {
+                            parsed.compensationEnabled = !!parsed.compensationEnabled;
+                        }
+                        if (parsed.compensationMode !== undefined) {
+                            settings.compensationMode = parsed.compensationMode;
+                        }
+                        if (parsed.compensationRatio !== undefined) {
+                            parsed.compensationRatio = Number(parsed.compensationRatio) || 0.3333333333333333;
+                        }
+                        if (parsed.compensationFixedMins !== undefined) {
+                            parsed.compensationFixedMins = parseInt(parsed.compensationFixedMins, 10) || 5;
                         }
                         settings = Object.assign(settings, parsed);
                     }
@@ -2046,9 +2329,6 @@
                 if (customColorInput) {
                     customColorInput.value = (settings.color && settings.color.startsWith('#')) ? settings.color : '#ef4444';
                     customColorInput.classList.toggle('active', !matchedSwatch && !isRainbow);
-                }
-                if (checkRainbowCloud) {
-                    checkRainbowCloud.checked = settings.rainbowCloud !== false;
                 }
                 diskStyleSelect.value = settings.style;
                 directionSelect.value = settings.direction;
@@ -2074,8 +2354,32 @@
                 if (testWarningSoundBtn) {
                     testWarningSoundBtn.disabled = !checkWarningSound.checked;
                 }
-                checkTicking.checked = settings.ticking;
+
+                if (checkCompensation) {
+                    checkCompensation.checked = settings.compensationEnabled === true;
+                }
+                if (compensationSettingsBlock) {
+                    compensationSettingsBlock.style.display = settings.compensationEnabled ? 'flex' : 'none';
+                }
+                if (compensationModeSelect) {
+                    compensationModeSelect.value = settings.compensationMode || 'ratio';
+                }
+                if (compensationRatioRow) {
+                    compensationRatioRow.style.display = (settings.compensationMode === 'fixed') ? 'none' : 'flex';
+                }
+                if (compensationFixedRow) {
+                    compensationFixedRow.style.display = (settings.compensationMode === 'fixed') ? 'flex' : 'none';
+                }
+                if (compensationRatioSelect) {
+                    compensationRatioSelect.value = String(settings.compensationRatio || 0.3333333333333333);
+                }
+                if (compensationFixedMinutesInput) {
+                    compensationFixedMinutesInput.value = settings.compensationFixedMins || 5;
+                }
+
                 updateActivityUI();
+                updateCompensationPreview();
+                updateCompensationUI();
 
                 donutHole.style.display = settings.style === 'ring' ? 'block' : 'none';
                 digitalDisplay.style.display = settings.showDigits ? 'flex' : 'none';
@@ -2169,6 +2473,42 @@
                 }
             }
 
+            // Helper to generate SVG pie wedge path from seconds
+            function getWedgePath(secs) {
+                const fraction = Math.max(0, Math.min(1, secs / 3600));
+                const angleDeg = fraction * 360;
+                if (fraction <= 0) return '';
+                if (fraction >= 0.9999) {
+                    return `
+                        M ${CX} ${CY - RADIUS}
+                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY + RADIUS}
+                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY - RADIUS}
+                        Z
+                    `;
+                }
+                const isCounterClockwise = settings.direction === 'counter-clockwise';
+                const angleRad = (angleDeg * Math.PI) / 180;
+                const topX = CX;
+                const topY = CY - RADIUS;
+                let endX, endY, sweepFlag;
+                if (isCounterClockwise) {
+                    endX = CX - RADIUS * Math.sin(angleRad);
+                    endY = CY - RADIUS * Math.cos(angleRad);
+                    sweepFlag = 0;
+                } else {
+                    endX = CX + RADIUS * Math.sin(angleRad);
+                    endY = CY - RADIUS * Math.cos(angleRad);
+                    sweepFlag = 1;
+                }
+                const largeArcFlag = angleDeg > 180 ? 1 : 0;
+                return `
+                    M ${CX} ${CY}
+                    L ${topX} ${topY}
+                    A ${RADIUS} ${RADIUS} 0 ${largeArcFlag} ${sweepFlag} ${endX.toFixed(2)} ${endY.toFixed(2)}
+                    Z
+                `;
+            }
+
             // Draw Disk (Colored wedge)
             function renderDisk(overrideSecs) {
                 const secs = (overrideSecs !== undefined) ? overrideSecs : remainingSeconds;
@@ -2176,6 +2516,19 @@
                 const angleDeg = fraction * 360;
                 const isRainbow = settings.color === 'rainbow';
 
+                // 1. Render Compensation Disk underneath if enabled
+                if (compensationDisk) {
+                    if (settings.compensationEnabled && compensationRemainingSeconds > 0) {
+                        const compPath = getWedgePath(compensationRemainingSeconds);
+                        compensationDisk.setAttribute('d', compPath);
+                        compensationDisk.style.display = compPath ? 'block' : 'none';
+                    } else {
+                        compensationDisk.setAttribute('d', '');
+                        compensationDisk.style.display = 'none';
+                    }
+                }
+
+                // 2. Render Main Disk
                 if (fraction <= 0) {
                     timerDisk.setAttribute('d', '');
                     if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', '');
@@ -2185,28 +2538,20 @@
                     return;
                 }
 
+                const pathData = getWedgePath(secs);
+
                 if (fraction >= 0.9999) {
                     // Full circle: SVG arc doesn't render well when start == end, draw 2 half arcs
-                    const d = `
-                        M ${CX} ${CY - RADIUS}
-                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY + RADIUS}
-                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY - RADIUS}
-                        Z
-                    `;
                     if (isRainbow) {
                         timerDisk.setAttribute('d', '');
-                        if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', d);
+                        if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', pathData);
                         if (rainbowGroup) rainbowGroup.style.display = 'block';
                         if (rainbowCloud) {
-                            if (settings.rainbowCloud !== false) {
-                                rainbowCloud.setAttribute('transform', `translate(${CX}, ${CY - 128}) rotate(-90)`);
-                                rainbowCloud.style.display = 'block';
-                            } else {
-                                rainbowCloud.style.display = 'none';
-                            }
+                            rainbowCloud.setAttribute('transform', `translate(${CX}, ${CY - 128}) rotate(-90)`);
+                            rainbowCloud.style.display = 'block';
                         }
                     } else {
-                        timerDisk.setAttribute('d', d);
+                        timerDisk.setAttribute('d', pathData);
                         if (timerDiskClipPath) timerDiskClipPath.setAttribute('d', '');
                         if (rainbowGroup) rainbowGroup.style.display = 'none';
                         if (rainbowCloud) rainbowCloud.style.display = 'none';
@@ -2217,37 +2562,17 @@
 
                 const isCounterClockwise = settings.direction === 'counter-clockwise';
                 const angleRad = (angleDeg * Math.PI) / 180;
-
-                // 12 o'clock coordinate
-                const topX = CX;
-                const topY = CY - RADIUS;
-
-                // End of arc coordinate & arm rotation angle
                 let endX, endY, armAngleDeg;
-                let sweepFlag;
 
                 if (isCounterClockwise) {
-                    // Counter-clockwise from 12 o'clock
                     endX = CX - RADIUS * Math.sin(angleRad);
                     endY = CY - RADIUS * Math.cos(angleRad);
-                    sweepFlag = 0; // Sweep counter-clockwise
                     armAngleDeg = -90 - angleDeg;
                 } else {
-                    // Clockwise from 12 o'clock
                     endX = CX + RADIUS * Math.sin(angleRad);
                     endY = CY - RADIUS * Math.cos(angleRad);
-                    sweepFlag = 1; // Sweep clockwise
                     armAngleDeg = -90 + angleDeg;
                 }
-
-                const largeArcFlag = angleDeg > 180 ? 1 : 0;
-
-                const pathData = `
-                    M ${CX} ${CY}
-                    L ${topX} ${topY}
-                    A ${RADIUS} ${RADIUS} 0 ${largeArcFlag} ${sweepFlag} ${endX.toFixed(2)} ${endY.toFixed(2)}
-                    Z
-                `;
 
                 if (isRainbow) {
                     timerDisk.setAttribute('d', '');
@@ -2255,16 +2580,12 @@
                     if (rainbowGroup) rainbowGroup.style.display = 'block';
 
                     if (rainbowCloud) {
-                        if (settings.rainbowCloud !== false) {
-                            const cloudR = 128;
-                            const armRad = (armAngleDeg * Math.PI) / 180;
-                            const cloudX = CX + cloudR * Math.cos(armRad);
-                            const cloudY = CY + cloudR * Math.sin(armRad);
-                            rainbowCloud.setAttribute('transform', `translate(${cloudX.toFixed(2)}, ${cloudY.toFixed(2)}) rotate(${armAngleDeg.toFixed(2)})`);
-                            rainbowCloud.style.display = 'block';
-                        } else {
-                            rainbowCloud.style.display = 'none';
-                        }
+                        const cloudR = 128;
+                        const armRad = (armAngleDeg * Math.PI) / 180;
+                        const cloudX = CX + cloudR * Math.cos(armRad);
+                        const cloudY = CY + cloudR * Math.sin(armRad);
+                        rainbowCloud.setAttribute('transform', `translate(${cloudX.toFixed(2)}, ${cloudY.toFixed(2)}) rotate(${armAngleDeg.toFixed(2)})`);
+                        rainbowCloud.style.display = 'block';
                     }
                 } else {
                     timerDisk.setAttribute('d', pathData);
@@ -2288,6 +2609,10 @@
                 const iconPlay = document.getElementById('iconPlay');
                 const iconPause = document.getElementById('iconPause');
 
+                const isFullyEnded = settings.compensationEnabled
+                    ? (remainingSeconds === 0 && compensationRemainingSeconds === 0)
+                    : (remainingSeconds === 0);
+
                 if (isRunning) {
                     mainPlayBtn.classList.remove('paused');
                     mainPlayBtn.classList.add('running');
@@ -2297,14 +2622,14 @@
                 } else {
                     mainPlayBtn.classList.add('paused');
                     mainPlayBtn.classList.remove('running');
-                    playBtnText.textContent = (remainingSeconds === 0) ? 'Relancer' : (remainingSeconds < totalSeconds ? 'Reprendre' : 'Démarrer');
+                    playBtnText.textContent = isFullyEnded ? 'Relancer' : (remainingSeconds < totalSeconds ? 'Reprendre' : 'Démarrer');
                     if (iconPlay) iconPlay.style.display = 'inline-block';
                     if (iconPause) iconPause.style.display = 'none';
                 }
 
                 // Minimalist 3-dot status indicator
                 if (timerStatusDots) {
-                    if (remainingSeconds === 0) {
+                    if (isFullyEnded) {
                         timerStatusDots.className = 'timer-status-dots ended';
                     } else if (isRunning) {
                         timerStatusDots.className = 'timer-status-dots running';
@@ -2330,47 +2655,82 @@
                 window.fa?.createIcons?.();
                 updateAudioIcon();
                 renderDisk();
+                updateCompensationUI();
             }
 
             // Timer Tick Loop anchored on real absolute clock (targetEndTime)
             function tick() {
-                if (!isRunning || !targetEndTime) return;
+                if (!isRunning) return;
                 const now = Date.now();
-                const diffMs = targetEndTime - now;
                 const prevSecs = remainingSeconds;
-                remainingSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+                const prevCompSecs = compensationRemainingSeconds;
 
-                // Ticking sound
-                if (settings.ticking && remainingSeconds > 0 && remainingSeconds !== prevSecs) {
-                    playTickSound();
+                if (targetEndTime && remainingSeconds > 0) {
+                    const diffMs = targetEndTime - now;
+                    remainingSeconds = Math.max(0, Math.ceil(diffMs / 1000));
                 }
 
-                // Discrete warning sound before the end
+                if (settings.compensationEnabled && compensationTargetEndTime && compensationRemainingSeconds > 0) {
+                    const compDiffMs = compensationTargetEndTime - now;
+                    compensationRemainingSeconds = Math.max(0, Math.ceil(compDiffMs / 1000));
+                }
+
+                // Discrete warning sound before the end of main timer
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 if (settings.warningSoundEnabled && remainingSeconds <= warnSecs && !warningFired && warnSecs < totalSeconds) {
                     warningFired = true;
                     playWarningSound();
                 }
 
-                updateUI();
-
-                if (remainingSeconds <= 0) {
-                    stopTimer();
-                    updateUI();
+                // Check main timer finish
+                if (prevSecs > 0 && remainingSeconds <= 0) {
                     playEndSound();
                     showCelebration();
+                    if (typeof showToast === 'function' && settings.compensationEnabled && compensationRemainingSeconds > 0) {
+                        showToast("Temps principal écoulé — Mesure de compensation en cours", "info");
+                    }
+                }
+
+                updateUI();
+
+                const isFullyEnded = settings.compensationEnabled
+                    ? (remainingSeconds <= 0 && compensationRemainingSeconds <= 0)
+                    : (remainingSeconds <= 0);
+
+                if (isFullyEnded) {
+                    stopTimer();
+                    updateUI();
+                    if (settings.compensationEnabled && prevCompSecs > 0) {
+                        playEndSound();
+                        if (typeof showToast === 'function') {
+                            showToast("Temps de compensation terminé !", "success");
+                        }
+                    }
                 }
             }
 
             function startTimer(playSound = true) {
-                if (remainingSeconds <= 0) {
+                const isFullyEnded = settings.compensationEnabled
+                    ? (remainingSeconds <= 0 && compensationRemainingSeconds <= 0)
+                    : (remainingSeconds <= 0);
+
+                if (isFullyEnded) {
                     remainingSeconds = baseTotalSeconds || totalSeconds || 600;
                     totalSeconds = baseTotalSeconds || remainingSeconds;
+                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                    compensationRemainingSeconds = compensationTotalSeconds;
                 }
+
                 if (!isRunning) {
                     stopAllTestSounds();
                     isRunning = true;
                     targetEndTime = Date.now() + remainingSeconds * 1000;
+                    if (settings.compensationEnabled) {
+                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
+                    } else {
+                        compensationTargetEndTime = null;
+                    }
+
                     const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                     warningFired = (remainingSeconds <= warnSecs);
                     if (playSound) {
@@ -2394,11 +2754,17 @@
                 }
                 if (isRunning) {
                     isRunning = false;
+                    const now = Date.now();
                     if (targetEndTime) {
-                        const diffMs = targetEndTime - Date.now();
+                        const diffMs = targetEndTime - now;
                         remainingSeconds = Math.max(0, Math.ceil(diffMs / 1000));
                     }
+                    if (settings.compensationEnabled && compensationTargetEndTime) {
+                        const compDiffMs = compensationTargetEndTime - now;
+                        compensationRemainingSeconds = Math.max(0, Math.ceil(compDiffMs / 1000));
+                    }
                     targetEndTime = null;
+                    compensationTargetEndTime = null;
                     clearInterval(timerId);
                     timerId = null;
                     releaseWakeLock();
@@ -2447,11 +2813,15 @@
                 baseTotalSeconds = mins * 60;
                 totalSeconds = baseTotalSeconds;
                 remainingSeconds = totalSeconds;
+                compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                compensationRemainingSeconds = compensationTotalSeconds;
                 targetEndTime = null;
+                compensationTargetEndTime = null;
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 warningFired = (remainingSeconds <= warnSecs);
                 settings.lastMinutes = mins;
                 saveSettings();
+                updateCompensationPreview();
 
                 if (shouldAnimate && typeof requestAnimationFrame === 'function') {
                     const fromSecs = (prevSeconds === 0) ? 0 : Math.min(prevSeconds, totalSeconds);
@@ -2478,13 +2848,34 @@
             function adjustSeconds(deltaSec) {
                 remainingSeconds = Math.max(0, Math.min(3600, remainingSeconds + deltaSec));
                 totalSeconds = Math.max(baseTotalSeconds, remainingSeconds);
+
+                if (settings.compensationEnabled) {
+                    let compDelta;
+                    if (settings.compensationMode === 'fixed') {
+                        compDelta = deltaSec;
+                    } else {
+                        const ratio = parseFloat(settings.compensationRatio) || (1 / 3);
+                        compDelta = Math.round(deltaSec * (1 + ratio));
+                    }
+                    compensationRemainingSeconds = Math.max(0, compensationRemainingSeconds + compDelta);
+                    compensationTotalSeconds = Math.max(compensationTotalSeconds, compensationRemainingSeconds);
+                }
+
                 if (isRunning) {
                     targetEndTime = Date.now() + remainingSeconds * 1000;
+                    if (settings.compensationEnabled) {
+                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
+                    }
                 }
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 warningFired = (remainingSeconds <= warnSecs);
                 updateUI();
-                if (remainingSeconds <= 0 && isRunning) {
+
+                const isFullyEnded = settings.compensationEnabled
+                    ? (remainingSeconds <= 0 && compensationRemainingSeconds <= 0)
+                    : (remainingSeconds <= 0);
+
+                if (isFullyEnded && isRunning) {
                     stopTimer();
                     updateUI();
                     playEndSound();
@@ -2496,9 +2887,13 @@
                 stopTimer();
                 totalSeconds = baseTotalSeconds;
                 remainingSeconds = baseTotalSeconds;
+                compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                compensationRemainingSeconds = compensationTotalSeconds;
                 targetEndTime = null;
+                compensationTargetEndTime = null;
                 const warnSecs = parseInt(settings.warningSeconds, 10) || 60;
                 warningFired = (remainingSeconds <= warnSecs);
+                hideCelebration();
                 updateUI();
             }
 
@@ -2521,9 +2916,21 @@
                 }
                 celebrationOverlay.classList.remove('hidden');
                 window.fa?.createIcons?.();
+
+                // Auto-close overlay after 1 minute if teacher hasn't closed it
+                if (celebrationAutoCloseTimeout) {
+                    clearTimeout(celebrationAutoCloseTimeout);
+                }
+                celebrationAutoCloseTimeout = setTimeout(() => {
+                    hideCelebration();
+                }, 60000);
             }
 
             function hideCelebration() {
+                if (celebrationAutoCloseTimeout) {
+                    clearTimeout(celebrationAutoCloseTimeout);
+                    celebrationAutoCloseTimeout = null;
+                }
                 celebrationOverlay.classList.add('hidden');
             }
 
@@ -2726,13 +3133,6 @@
                 });
             }
 
-            if (checkRainbowCloud) {
-                checkRainbowCloud.addEventListener('change', () => {
-                    settings.rainbowCloud = checkRainbowCloud.checked;
-                    saveSettings();
-                    renderDisk();
-                });
-            }
 
             diskStyleSelect.addEventListener('change', () => {
                 settings.style = diskStyleSelect.value;
@@ -2834,10 +3234,70 @@
                 });
             }
 
-            checkTicking.addEventListener('change', () => {
-                settings.ticking = checkTicking.checked;
-                saveSettings();
-            });
+            if (checkCompensation) {
+                checkCompensation.addEventListener('change', () => {
+                    settings.compensationEnabled = checkCompensation.checked;
+                    if (compensationSettingsBlock) {
+                        compensationSettingsBlock.style.display = settings.compensationEnabled ? 'flex' : 'none';
+                    }
+                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                    compensationRemainingSeconds = compensationTotalSeconds;
+                    if (isRunning) {
+                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
+                    }
+                    saveSettings();
+                    updateCompensationPreview();
+                    updateUI();
+                });
+            }
+
+            if (compensationModeSelect) {
+                compensationModeSelect.addEventListener('change', () => {
+                    settings.compensationMode = compensationModeSelect.value;
+                    if (compensationRatioRow) {
+                        compensationRatioRow.style.display = (settings.compensationMode === 'fixed') ? 'none' : 'flex';
+                    }
+                    if (compensationFixedRow) {
+                        compensationFixedRow.style.display = (settings.compensationMode === 'fixed') ? 'flex' : 'none';
+                    }
+                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                    compensationRemainingSeconds = compensationTotalSeconds;
+                    if (isRunning) {
+                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
+                    }
+                    saveSettings();
+                    updateCompensationPreview();
+                    updateUI();
+                });
+            }
+
+            if (compensationRatioSelect) {
+                compensationRatioSelect.addEventListener('change', () => {
+                    settings.compensationRatio = parseFloat(compensationRatioSelect.value) || (1 / 3);
+                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                    compensationRemainingSeconds = compensationTotalSeconds;
+                    if (isRunning) {
+                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
+                    }
+                    saveSettings();
+                    updateCompensationPreview();
+                    updateUI();
+                });
+            }
+
+            if (compensationFixedMinutesInput) {
+                compensationFixedMinutesInput.addEventListener('input', () => {
+                    settings.compensationFixedMins = parseInt(compensationFixedMinutesInput.value, 10) || 5;
+                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                    compensationRemainingSeconds = compensationTotalSeconds;
+                    if (isRunning) {
+                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
+                    }
+                    saveSettings();
+                    updateCompensationPreview();
+                    updateUI();
+                });
+            }
 
             // Custom Audio File Upload Handlers
             if (customAudioFileInput) {
@@ -2980,10 +3440,12 @@
                     warningSoundEnabled: true,
                     warningSoundType: 'discrete',
                     warningSeconds: 60,
-                    ticking: false,
                     lastMinutes: 10,
                     activityTitle: '',
-                    rainbowCloud: true
+                    compensationEnabled: false,
+                    compensationMode: 'ratio',
+                    compensationRatio: 0.3333333333333333,
+                    compensationFixedMins: 5
                 };
 
                 activityTitleInput.value = '';
@@ -3013,12 +3475,30 @@
                 adjustSeconds,
                 setTimeMinutes,
                 tick,
+                showCelebration,
+                hideCelebration,
+                getCompensationSeconds,
+                getSettings: () => settings,
+                setCompensation: (enabled, mode, ratio, fixedMins) => {
+                    if (enabled !== undefined) settings.compensationEnabled = !!enabled;
+                    if (mode !== undefined) settings.compensationMode = mode;
+                    if (ratio !== undefined) settings.compensationRatio = ratio;
+                    if (fixedMins !== undefined) settings.compensationFixedMins = fixedMins;
+                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                    compensationRemainingSeconds = compensationTotalSeconds;
+                    saveSettings();
+                    updateCompensationPreview();
+                    updateUI();
+                },
                 getState: () => ({
                     isRunning,
                     remainingSeconds,
                     totalSeconds,
                     baseTotalSeconds,
-                    targetEndTime
+                    targetEndTime,
+                    compensationRemainingSeconds,
+                    compensationTotalSeconds,
+                    compensationTargetEndTime
                 })
             };
             window.TimeTimerEngine = TimeTimerEngine;
