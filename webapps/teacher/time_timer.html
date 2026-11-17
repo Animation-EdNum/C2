@@ -475,6 +475,19 @@
             background: linear-gradient(90deg, #f59e0b, #fbbf24);
         }
 
+        .compensation-display.bar-only .compensation-digits {
+            display: none !important;
+        }
+
+        .compensation-display.bar-only .compensation-top-row {
+            justify-content: center;
+        }
+
+        .compensation-display.bar-only .compensation-bar-track {
+            height: 9px;
+            margin-top: 3px;
+        }
+
         @keyframes compPulse {
             0%, 100% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15); }
             50% { box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35); }
@@ -491,6 +504,10 @@
 
         body.projection .compensation-badge {
             font-size: 1rem;
+        }
+
+        body.projection .compensation-display.bar-only .compensation-bar-track {
+            height: 12px;
         }
 
         /* 1-CLICK PRESETS */
@@ -1422,6 +1439,14 @@
                                 </div>
                             </div>
 
+                            <div id="compensationDisplayModeRow" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <label for="compensationDisplayModeSelect" style="font-size: 0.88rem; color: var(--text-secondary);">Affichage :</label>
+                                <select id="compensationDisplayModeSelect" class="custom-select" style="padding: 4px 10px; font-size: 0.85rem; width: auto; flex: 1; min-width: 170px;">
+                                    <option value="both" selected>Temps numérique et barre</option>
+                                    <option value="bar">Barre uniquement (sans chiffres)</option>
+                                </select>
+                            </div>
+
                             <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i data-fa="circle-info" style="width:13px;height:13px; flex-shrink: 0;"></i>
                                 <span id="compensationPreviewText">Pour 10 min : +3 min 20 s = 13 min 20 s total</span>
@@ -1534,6 +1559,7 @@
             const compensationRatioSelect = document.getElementById('compensationRatioSelect');
             const compensationFixedRow = document.getElementById('compensationFixedRow');
             const compensationFixedMinutesInput = document.getElementById('compensationFixedMinutesInput');
+            const compensationDisplayModeSelect = document.getElementById('compensationDisplayModeSelect');
             const compensationPreviewText = document.getElementById('compensationPreviewText');
             const customAudioFileInput = document.getElementById('customAudioFileInput');
             const removeCustomSoundBtn = document.getElementById('removeCustomSoundBtn');
@@ -2213,7 +2239,8 @@
                 compensationEnabled: false,
                 compensationMode: 'ratio',
                 compensationRatio: 0.3333333333333333,
-                compensationFixedMins: 5
+                compensationFixedMins: 5,
+                compensationDisplayMode: 'both'
             };
 
             function getCompensationSeconds(baseSecs) {
@@ -2252,16 +2279,29 @@
                     return;
                 }
 
+                // Le bandeau compensation sous le minuteur ne s'affiche que quand le temps normal est terminé !
+                if (remainingSeconds > 0) {
+                    compensationDisplay.style.display = 'none';
+                    return;
+                }
+
                 compensationDisplay.style.display = 'block';
+
+                const isBarOnly = settings.compensationDisplayMode === 'bar';
+                compensationDisplay.classList.toggle('bar-only', isBarOnly);
+                if (compensationDigits) {
+                    compensationDigits.style.display = isBarOnly ? 'none' : '';
+                }
 
                 const mins = Math.floor(compensationRemainingSeconds / 60);
                 const secs = compensationRemainingSeconds % 60;
-                if (compensationDigits) {
+                if (compensationDigits && !isBarOnly) {
                     compensationDigits.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
                 }
 
-                if (compensationBarFill && compensationTotalSeconds > 0) {
-                    const pct = Math.max(0, Math.min(100, (compensationRemainingSeconds / compensationTotalSeconds) * 100));
+                const extraTotalSeconds = Math.max(1, compensationTotalSeconds - totalSeconds);
+                if (compensationBarFill) {
+                    const pct = Math.max(0, Math.min(100, (compensationRemainingSeconds / extraTotalSeconds) * 100));
                     compensationBarFill.style.width = `${pct.toFixed(1)}%`;
                 }
 
@@ -2311,6 +2351,9 @@
                         }
                         if (parsed.compensationFixedMins !== undefined) {
                             parsed.compensationFixedMins = parseInt(parsed.compensationFixedMins, 10) || 5;
+                        }
+                        if (parsed.compensationDisplayMode !== undefined) {
+                            settings.compensationDisplayMode = parsed.compensationDisplayMode;
                         }
                         settings = Object.assign(settings, parsed);
                     }
@@ -2375,6 +2418,9 @@
                 }
                 if (compensationFixedMinutesInput) {
                     compensationFixedMinutesInput.value = settings.compensationFixedMins || 5;
+                }
+                if (compensationDisplayModeSelect) {
+                    compensationDisplayModeSelect.value = settings.compensationDisplayMode || 'both';
                 }
 
                 updateActivityUI();
@@ -3299,6 +3345,14 @@
                 });
             }
 
+            if (compensationDisplayModeSelect) {
+                compensationDisplayModeSelect.addEventListener('change', () => {
+                    settings.compensationDisplayMode = compensationDisplayModeSelect.value;
+                    saveSettings();
+                    updateCompensationUI();
+                });
+            }
+
             // Custom Audio File Upload Handlers
             if (customAudioFileInput) {
                 customAudioFileInput.addEventListener('change', async (e) => {
@@ -3445,7 +3499,8 @@
                     compensationEnabled: false,
                     compensationMode: 'ratio',
                     compensationRatio: 0.3333333333333333,
-                    compensationFixedMins: 5
+                    compensationFixedMins: 5,
+                    compensationDisplayMode: 'both'
                 };
 
                 activityTitleInput.value = '';
@@ -3479,11 +3534,12 @@
                 hideCelebration,
                 getCompensationSeconds,
                 getSettings: () => settings,
-                setCompensation: (enabled, mode, ratio, fixedMins) => {
+                setCompensation: (enabled, mode, ratio, fixedMins, displayMode) => {
                     if (enabled !== undefined) settings.compensationEnabled = !!enabled;
                     if (mode !== undefined) settings.compensationMode = mode;
                     if (ratio !== undefined) settings.compensationRatio = ratio;
                     if (fixedMins !== undefined) settings.compensationFixedMins = fixedMins;
+                    if (displayMode !== undefined) settings.compensationDisplayMode = displayMode;
                     compensationTotalSeconds = getCompensationSeconds(totalSeconds);
                     compensationRemainingSeconds = compensationTotalSeconds;
                     saveSettings();

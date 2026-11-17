@@ -288,6 +288,7 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         const compensationModeSelect = window.document.getElementById('compensationModeSelect');
         const compensationRatioSelect = window.document.getElementById('compensationRatioSelect');
         const compensationFixedMinutesInput = window.document.getElementById('compensationFixedMinutesInput');
+        const compensationDisplayModeSelect = window.document.getElementById('compensationDisplayModeSelect');
         const compensationPreviewText = window.document.getElementById('compensationPreviewText');
 
         assert.ok(compensationDisk, '#compensationDisk path should exist in SVG clock dial');
@@ -298,6 +299,7 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         assert.ok(compensationModeSelect, '#compensationModeSelect should exist');
         assert.ok(compensationRatioSelect, '#compensationRatioSelect should exist');
         assert.ok(compensationFixedMinutesInput, '#compensationFixedMinutesInput should exist');
+        assert.ok(compensationDisplayModeSelect, '#compensationDisplayModeSelect should exist');
         assert.ok(compensationPreviewText, '#compensationPreviewText should exist');
     });
 
@@ -353,10 +355,11 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         assert.strictEqual(engine.getCompensationSeconds(600), 600);
     });
 
-    await t.test('9. Toggling checkCompensation displays UI panel and SVG compensation disk', () => {
+    await t.test('9. Toggling checkCompensation displays SVG disk, and compensationDisplay appears only when normal time ends', () => {
         const checkCompensation = window.document.getElementById('checkCompensation');
         const compensationDisplay = window.document.getElementById('compensationDisplay');
         const compensationDisk = window.document.getElementById('compensationDisk');
+        const engine = window.TimeTimerEngine;
 
         // Initially disabled
         assert.strictEqual(compensationDisplay.style.display, 'none');
@@ -366,13 +369,24 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         checkCompensation.checked = true;
         checkCompensation.dispatchEvent(new window.Event('change'));
 
-        assert.strictEqual(compensationDisplay.style.display, 'block', 'compensationDisplay should be visible');
-        assert.strictEqual(compensationDisk.style.display, 'block', 'compensationDisk SVG wedge should be visible');
+        // While normal time is running (remainingSeconds > 0), compensationDisplay must stay hidden!
+        assert.strictEqual(compensationDisplay.style.display, 'none', 'compensationDisplay must NOT be displayed while normal time is running');
+        assert.strictEqual(compensationDisk.style.display, 'block', 'compensationDisk SVG wedge should be visible on clock dial');
         assert.ok(compensationDisk.getAttribute('d').includes('M 250 250'), 'compensationDisk should have valid SVG arc path');
 
-        // Digits reflect 10 min + 1/3 = 13:20
-        const compensationDigits = window.document.getElementById('compensationDigits');
-        assert.strictEqual(compensationDigits.textContent, '13:20');
+        // When main timer reaches 0, compensationDisplay becomes visible
+        engine.setTimeMinutes(1, false);
+        engine.startTimer(false);
+        const state = engine.getState();
+        const originalNow = window.Date.now;
+        try {
+            window.Date.now = () => state.compensationTargetEndTime - (10 * 1000);
+            engine.tick();
+            assert.strictEqual(compensationDisplay.style.display, 'block', 'compensationDisplay should become visible once normal time has ended');
+        } finally {
+            window.Date.now = originalNow;
+            engine.stopTimer();
+        }
 
         // Uncheck the box
         checkCompensation.checked = false;
@@ -384,12 +398,14 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
 
     await t.test('10. Compensation timer continues running when main timer reaches 0', () => {
         const engine = window.TimeTimerEngine;
+        const compensationDisplay = window.document.getElementById('compensationDisplay');
         engine.setTimeMinutes(1, false); // 1 min (60s)
         engine.setCompensation(true, 'ratio', 1 / 3, 5); // +20s = 80s
 
         let state = engine.getState();
         assert.strictEqual(state.remainingSeconds, 60);
         assert.strictEqual(state.compensationRemainingSeconds, 80);
+        assert.strictEqual(compensationDisplay.style.display, 'none', 'compensationDisplay hidden during normal time');
 
         engine.startTimer(false);
         state = engine.getState();
@@ -405,6 +421,7 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
             assert.strictEqual(intermediateState.remainingSeconds, 0, 'Main timer must be at 0');
             assert.strictEqual(intermediateState.compensationRemainingSeconds, 10, 'Compensation timer must have 10s remaining');
             assert.strictEqual(intermediateState.isRunning, true, 'Timer must still be running for compensation');
+            assert.strictEqual(compensationDisplay.style.display, 'block', 'compensationDisplay must be visible during compensation period');
 
             const compensationStatusLabel = window.document.getElementById('compensationStatusLabel');
             assert.strictEqual(compensationStatusLabel.textContent, 'Tiers-temps en cours');
@@ -421,6 +438,49 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         } finally {
             window.Date.now = originalNow;
             engine.stopTimer();
+        }
+    });
+
+    await t.test('11. Compensation sub-option: toggle between digital readout + bar vs bar-only', () => {
+        const engine = window.TimeTimerEngine;
+        const compensationDisplay = window.document.getElementById('compensationDisplay');
+        const compensationDigits = window.document.getElementById('compensationDigits');
+        const compensationDisplayModeSelect = window.document.getElementById('compensationDisplayModeSelect');
+
+        engine.setTimeMinutes(1, false);
+        engine.setCompensation(true, 'ratio', 1 / 3, 5, 'both');
+        engine.startTimer(false);
+
+        const state = engine.getState();
+        const originalNow = window.Date.now;
+        try {
+            // Set clock into compensation period (main timer finished, 10s left on compensation)
+            window.Date.now = () => state.compensationTargetEndTime - (10 * 1000);
+            engine.tick();
+
+            // In 'both' mode: digits are visible and class bar-only is not present
+            assert.strictEqual(compensationDisplay.style.display, 'block');
+            assert.strictEqual(compensationDigits.style.display, '');
+            assert.strictEqual(compensationDisplay.classList.contains('bar-only'), false);
+            assert.strictEqual(compensationDigits.textContent, '00:10');
+
+            // Switch to 'bar' mode via select dropdown
+            compensationDisplayModeSelect.value = 'bar';
+            compensationDisplayModeSelect.dispatchEvent(new window.Event('change'));
+
+            assert.strictEqual(compensationDisplay.classList.contains('bar-only'), true);
+            assert.strictEqual(compensationDigits.style.display, 'none');
+
+            // Switch back to 'both'
+            compensationDisplayModeSelect.value = 'both';
+            compensationDisplayModeSelect.dispatchEvent(new window.Event('change'));
+
+            assert.strictEqual(compensationDisplay.classList.contains('bar-only'), false);
+            assert.strictEqual(compensationDigits.style.display, '');
+        } finally {
+            window.Date.now = originalNow;
+            engine.stopTimer();
+            engine.setCompensation(false);
         }
     });
 });
