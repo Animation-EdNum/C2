@@ -60,6 +60,34 @@ test('Simulateur de téléchargement - Fichier et Structure', async (t) => {
         assert.ok(!/Débit/i.test(viewDefi.textContent), 'Le Défi des 4 médias ne doit pas afficher de référence au débit');
         window.close();
     });
+
+    await t.test('Header buttons : TNI/TBI et Thème conformes, aucun bouton son ni bouton aide séparé', () => {
+        assert.ok(html.includes('id="projection-toggle-btn"'), 'Le bouton projection-toggle-btn doit exister');
+        assert.ok(html.includes('id="icon-proj-expand"'), 'L icône expand doit exister');
+        assert.ok(html.includes('id="icon-proj-compress"'), 'L icône compress doit exister');
+        assert.ok(html.includes('id="theme-toggle-btn"'), 'Le bouton theme-toggle-btn doit exister pour theme.js');
+        assert.ok(html.includes('id="icon-sun"'), 'L icône sun doit exister');
+        assert.ok(html.includes('id="icon-moon"'), 'L icône moon doit exister');
+        assert.ok(!html.includes('id="audio-toggle-btn"'), 'Le bouton son doit avoir été retiré');
+        assert.ok(!html.includes('id="helpToggleBtn"'), 'Le bouton consigne dans le header doit avoir été retiré');
+    });
+
+    await t.test('Consigne accordéon intégrée exclusivement dans le Défi des 4 médias', () => {
+        const window = setupDOM();
+        const viewDefi = window.document.getElementById('viewDefi');
+        const viewLab = window.document.getElementById('viewLab');
+        const consigneInDefi = viewDefi.querySelector('#consigneBox');
+        const consigneInLab = viewLab.querySelector('#consigneBox');
+
+        assert.ok(consigneInDefi, 'La consigne consigneBox doit être située dans viewDefi');
+        assert.strictEqual(consigneInDefi.tagName.toLowerCase(), 'details', 'La consigne doit être un élément details');
+        assert.ok(!consigneInLab, 'La consigne ne doit pas être présente dans le Laboratoire');
+        window.close();
+    });
+
+    await t.test('La jauge de progression est fine (10px)', () => {
+        assert.match(html, /\.progress-track\s*\{[^}]*height:\s*10px;/i);
+    });
 });
 
 test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t) => {
@@ -170,5 +198,27 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         // Annuler tout
         btnLabLaunchAll.click();
         assert.ok(!btnPoemes.classList.contains('btn-cancel'), 'Le téléchargement doit être arrêté après ré-appui');
+    });
+
+    await t.test('Le bouton TBI bascule le mode TBI sans déclencher le fullscreen navigateur', () => {
+        const localWin = setupDOM();
+        const doc = localWin.document;
+        const projBtn = doc.getElementById('projection-toggle-btn');
+        assert.ok(projBtn, 'Le bouton projection-toggle-btn doit être cliquable');
+
+        projBtn.click();
+        assert.ok(doc.body.classList.contains('mode-tbi'), 'Le body doit avoir la classe mode-tbi après le clic');
+
+        const iconExpand = doc.getElementById('icon-proj-expand');
+        const iconCompress = doc.getElementById('icon-proj-compress');
+        assert.strictEqual(iconExpand.style.display, 'none');
+        assert.strictEqual(iconCompress.style.display, 'inline-block');
+
+        // Deuxième clic pour désactiver
+        projBtn.click();
+        assert.ok(!doc.body.classList.contains('mode-tbi'), 'Le mode-tbi doit être désactivé');
+        assert.strictEqual(iconExpand.style.display, 'inline-block');
+        assert.strictEqual(iconCompress.style.display, 'none');
+        localWin.close();
     });
 });

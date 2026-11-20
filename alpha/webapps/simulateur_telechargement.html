@@ -80,8 +80,9 @@
                 radial-gradient(circle at 15% 85%, rgba(14, 165, 233, 0.14) 0%, transparent 40%),
                 linear-gradient(135deg, #f1f5f9 0%, #eef2ff 35%, #fdf4ff 70%, #f0fdf4 100%);
             background-attachment: fixed;
-            padding: 0;
+            padding: 24px 16px 32px;
             margin: 0;
+            box-sizing: border-box;
         }
 
         body.dark {
@@ -115,16 +116,17 @@
 
         .container {
             max-width: 1050px;
-            width: calc(100% - 2rem);
-            margin: 1.25rem auto 2.5rem;
-            padding: 1.25rem 1.5rem 2rem;
-            background: rgba(255, 255, 255, 0.90);
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.75rem 2rem 2.25rem;
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(226, 232, 240, 0.9);
             border-radius: var(--radius-2xl);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
-            flex: 1;
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.08), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+            flex: 1 0 auto;
+            box-sizing: border-box;
         }
 
         body.dark .container {
@@ -132,7 +134,7 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-color: rgba(51, 65, 85, 0.8);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 10px 20px -5px rgba(0, 0, 0, 0.3);
         }
 
         /* En-tête standard C2 */
@@ -272,26 +274,47 @@
             box-shadow: 0 2px 8px rgba(165, 42, 35, 0.3);
         }
 
-        /* Consignes déroulantes */
-        .consigne-box {
+        /* Consignes déroulantes intégrées au Défi */
+        .instructions {
             background: var(--bg);
             border: 1px solid var(--border);
             border-left: 4px solid var(--primary);
             border-radius: var(--radius-lg);
-            padding: 1rem 1.25rem;
+            padding: 0.85rem 1.25rem;
             margin-bottom: 1.25rem;
             font-size: 0.92rem;
-            line-height: 1.5;
-            display: none;
-            animation: fadeIn 0.3s ease-out;
+            line-height: 1.6;
         }
 
-        .consigne-box.open {
-            display: block;
+        .instructions summary {
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+            outline: none;
         }
 
-        .consigne-box p {
+        .instructions summary strong {
+            color: var(--primary);
+        }
+
+        .instructions[open] summary {
+            margin-bottom: 0.6rem;
+        }
+
+        .instructions p {
             margin: 0.35rem 0;
+            color: var(--text-main);
+        }
+
+        body.dark .instructions {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: var(--border);
+            border-left-color: var(--primary);
+        }
+
+        body.dark .instructions summary {
+            color: var(--text-main);
         }
 
         /* Barre de commandes principale du Défi */
@@ -455,7 +478,7 @@
         }
 
         .progress-track {
-            height: 24px;
+            height: 10px;
             background: rgba(0, 0, 0, 0.06);
             border-radius: var(--radius-pill);
             overflow: hidden;
@@ -957,9 +980,14 @@
         }
 
         /* Mode TBI Projection */
+        body.mode-tbi {
+            padding: 10px;
+        }
+
         body.mode-tbi .container {
             max-width: 1400px;
             padding: 1rem 1.5rem;
+            margin: 0 auto;
         }
 
         body.mode-tbi .canal-card {
@@ -968,7 +996,7 @@
         }
 
         body.mode-tbi .progress-track {
-            height: 34px;
+            height: 14px;
         }
 
         body.mode-tbi .progress-info {
@@ -989,6 +1017,72 @@
         body.mode-tbi .canal-play-btn svg {
             width: 22px;
             height: 22px;
+        }
+
+        /* Lisibilité du footer sur fond dégradé clair et sombre */
+        .container + footer.no-print,
+        .container ~ footer.no-print,
+        footer.no-print {
+            margin-top: auto;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            background: transparent !important;
+            border-top: 1px solid rgba(226, 232, 240, 0.6);
+            box-sizing: border-box;
+        }
+
+        .container + footer.no-print p,
+        .container ~ footer.no-print p,
+        footer.no-print p {
+            color: #475569 !important;
+            text-shadow: none !important;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .container + footer.no-print a,
+        .container ~ footer.no-print a,
+        footer.no-print a {
+            color: #0f172a !important;
+            text-shadow: none !important;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.15s ease;
+        }
+
+        .container + footer.no-print a:hover,
+        .container ~ footer.no-print a:hover,
+        footer.no-print a:hover {
+            color: var(--primary, #a52a23) !important;
+            opacity: 1 !important;
+        }
+
+        body.dark .container + footer.no-print,
+        body.dark .container ~ footer.no-print,
+        body.dark footer.no-print {
+            border-top-color: rgba(51, 65, 85, 0.6);
+        }
+
+        body.dark .container + footer.no-print p,
+        body.dark .container ~ footer.no-print p,
+        body.dark footer.no-print p {
+            color: #94a3b8 !important;
+            text-shadow: none !important;
+        }
+
+        body.dark .container + footer.no-print a,
+        body.dark .container ~ footer.no-print a,
+        body.dark footer.no-print a {
+            color: #93c5fd !important;
+            text-shadow: none !important;
+        }
+
+        body.dark .container + footer.no-print a:hover,
+        body.dark .container ~ footer.no-print a:hover,
+        body.dark footer.no-print a:hover {
+            color: #bfdbfe !important;
         }
 
         @keyframes fadeIn {
@@ -1042,32 +1136,16 @@
             </div>
 
             <div class="action-buttons">
-                <button type="button" class="icon-action-btn" id="helpToggleBtn" title="Consignes & Aide" aria-label="Consignes">
-                    <i data-fa="eye"></i>
+                <button type="button" class="icon-action-btn theme-toggle" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+                    <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                    <i data-fa="moon" id="icon-moon"></i>
                 </button>
-                <button type="button" class="icon-action-btn" id="tbiToggleBtn" title="Mode Plein écran / TBI" aria-label="Mode TBI">
-                    <i data-fa="desktop"></i>
-                </button>
-                <button type="button" class="icon-action-btn" id="audio-toggle-btn" title="Activer / Couper le son" aria-label="Son">
-                    <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
-                    <i data-fa="volume-xmark" id="icon-vol-off"></i>
-                </button>
-                <button type="button" class="icon-action-btn theme-toggle" id="theme-btn" title="Changer de thème" aria-label="Thème">
-                    <i data-fa="moon"></i>
+                <button type="button" class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+                    <i data-fa="expand" id="icon-proj-expand"></i>
+                    <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
                 </button>
             </div>
         </header>
-
-        <!-- Consigne déroulante -->
-        <section class="consigne-box" id="consigneBox" aria-label="Consigne de l'activité">
-            <h2 style="font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--primary);">
-                📖 Consigne de l'activité (Activité 3 · La taille des fichiers)
-            </h2>
-            <p>1. Clique sur les boutons <strong>« Démarrer le téléchargement »</strong> à gauche pour chaque canal (1 à 4) ou sur <strong>« Tout lancer »</strong>.</p>
-            <p>2. Observe la vitesse et le temps que met chaque fichier à se télécharger sur la jauge.</p>
-            <p>3. <strong>Émets ton hypothèse :</strong> clique directement sur <strong>📄 Texte</strong>, <strong>🖼️ Image</strong>, <strong>🎵 Audio</strong> ou <strong>🎬 Vidéo</strong> dès que tu penses avoir reconnu le média. La validation est immédiate !</p>
-            <p>4. Découvre ton score final et clique sur les fiches des médias pour explorer leurs caractéristiques.</p>
-        </section>
 
         <!-- Onglets Navigation -->
         <nav class="tabs-nav" role="tablist">
@@ -1085,6 +1163,17 @@
              VUE 1 : DÉFI DES 4 MÉDIAS
              ========================================== -->
         <div id="viewDefi" role="tabpanel" aria-labelledby="tabDefiBtn">
+            <!-- Consigne déroulante intégrée au Défi -->
+            <details class="instructions" id="consigneBox">
+                <summary><strong>📖 Consigne de l'activité (cliquer pour ouvrir/masquer)</strong></summary>
+                <div class="instructions-content" style="margin-top: 0.6rem;">
+                    <p>1. Clique sur les boutons <strong>« Démarrer le téléchargement »</strong> à gauche pour chaque canal (1 à 4) ou sur <strong>« Tout lancer »</strong>.</p>
+                    <p>2. Observe la vitesse et le temps d'avancement des Ko pour chaque fichier sur sa jauge.</p>
+                    <p>3. <strong>Émets ton hypothèse :</strong> clique directement sur <strong>📄 Texte</strong>, <strong>🖼️ Image</strong>, <strong>🎵 Audio</strong> ou <strong>🎬 Vidéo</strong> dès que tu penses avoir reconnu le média. La validation est immédiate !</p>
+                    <p>4. Découvre ton score final et clique sur les fiches des médias ci-dessous pour explorer leurs caractéristiques.</p>
+                </div>
+            </details>
+
             <!-- Barre de commandes -->
             <div class="command-bar">
                 <div class="command-group">
@@ -1241,12 +1330,12 @@
     </div>
 
     <!-- Pied de page officiel -->
-    <footer class="no-print" style="margin-top:auto;padding:1.5rem 1rem;text-align:center;font-size:0.9rem;color:var(--text-light);border-top:1px solid var(--border);">
+    <footer class="no-print">
         <p>
             <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/"
                 target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
             <br>
-            <span style="font-size: 0.9em; opacity: 0.85;">
+            <span style="font-size: 0.9em;">
                 <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
                 (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
                 · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
@@ -1278,7 +1367,6 @@
     <!-- Scripts de la suite C2 -->
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/toast.js"></script>
-    <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/confetti.js"></script>
     <script src="../../assets/js/pwa.js"></script>
 
@@ -2177,21 +2265,32 @@
                 });
             });
 
-            // Consignes déroulantes
-            const helpBtn = document.getElementById('helpToggleBtn');
-            const consigneBox = document.getElementById('consigneBox');
-            helpBtn.addEventListener('click', () => {
-                consigneBox.classList.toggle('open');
-            });
+            // Mode TBI Projection (sans plein écran navigateur)
+            const projBtn = document.getElementById('projection-toggle-btn');
+            function setProjectionMode(active) {
+                document.body.classList.toggle('mode-tbi', active);
+                const iconExpand = document.getElementById('icon-proj-expand');
+                const iconCompress = document.getElementById('icon-proj-compress');
+                if (iconExpand && iconCompress) {
+                    iconExpand.style.display = active ? 'none' : 'inline-block';
+                    iconCompress.style.display = active ? 'inline-block' : 'none';
+                }
+                if (projBtn) {
+                    projBtn.setAttribute('title', active ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+                    projBtn.setAttribute('aria-label', active ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
+                }
+            }
 
-            // Mode TBI Projection
-            const tbiBtn = document.getElementById('tbiToggleBtn');
-            tbiBtn.addEventListener('click', () => {
-                document.body.classList.toggle('mode-tbi');
-                if (document.fullscreenElement) {
-                    document.exitFullscreen().catch(() => {});
-                } else {
-                    document.documentElement.requestFullscreen().catch(() => {});
+            if (projBtn) {
+                projBtn.addEventListener('click', () => {
+                    const isTbi = document.body.classList.contains('mode-tbi');
+                    setProjectionMode(!isTbi);
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.body.classList.contains('mode-tbi')) {
+                    setProjectionMode(false);
                 }
             });
 
