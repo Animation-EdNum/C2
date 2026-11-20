@@ -42,10 +42,16 @@ test('Simulateur de téléchargement - Fichier et Structure', async (t) => {
         assert.match(html, /id="viewLab"/i);
     });
 
-    await t.test('Contient la modale descriptive des médias', () => {
-        assert.match(html, /id="mediaModal"/i);
-        assert.match(html, /id="modalTitle"/i);
-        assert.match(html, /id="modalIllustration"/i);
+    await t.test('Le background utilise un dégradé moderne de style Tailwind CSS', () => {
+        assert.match(html, /linear-gradient\(135deg, #f1f5f9 0%, #eef2ff 35%, #fdf4ff 70%, #f0fdf4 100%\)/i);
+    });
+
+    await t.test('Les lettres A, B, C, D ne figurent plus sur les cartes de référence', () => {
+        assert.ok(!html.includes('media-badge-letter'), 'Aucun badge lettre ne doit exister');
+    });
+
+    await t.test('Le bouton Mélanger a été supprimé au profit d un mélange par défaut', () => {
+        assert.ok(!html.includes('id="btnShuffle"'), 'Le bouton btnShuffle ne doit pas exister');
     });
 });
 
@@ -120,13 +126,35 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.ok(!simBtn.classList.contains('btn-cancel'), 'Le bouton doit repasser en mode normal après annulation');
     });
 
-    await t.test('La sélection d une prédiction par l élève met à jour son choix', () => {
+    await t.test('Le clic sur un média valide immédiatement l hypothèse de l élève', () => {
         const doc = window.document;
         const card1 = doc.getElementById('canalCard-1');
         const btnTexte = card1.querySelector('[data-guess="texte"]');
         assert.ok(btnTexte, 'Bouton Texte doit exister sur le canal 1');
         btnTexte.click();
 
-        assert.ok(btnTexte.classList.contains('selected-text'), 'Le bouton doit avoir la classe active sélectionnée');
+        // Le canal doit être révélé immédiatement
+        assert.ok(card1.classList.contains('revealed'), 'Le canal doit avoir la classe revealed immédiatement');
+        assert.ok(btnTexte.disabled, 'Les boutons de prédiction doivent être désactivés après validation');
+        const isCorrectOrWrong = btnTexte.classList.contains('guess-btn-correct') || btnTexte.classList.contains('guess-btn-wrong');
+        assert.ok(isCorrectOrWrong, 'Le bouton cliqué doit afficher le style correct ou erroné');
+
+        const pill = doc.getElementById('revealedPill-1');
+        assert.ok(pill && pill.style.display !== 'none', 'La pastille de verdict doit être visible');
+    });
+
+    await t.test('Le bouton Tout lancer du laboratoire démarre tous les téléchargements', () => {
+        const doc = window.document;
+        const btnLabLaunchAll = doc.getElementById('btnLabLaunchAll');
+        assert.ok(btnLabLaunchAll, 'Le bouton Tout lancer du laboratoire doit exister');
+        btnLabLaunchAll.click();
+
+        // Vérifier qu'au moins un bouton est passé en mode Annuler
+        const btnPoemes = doc.getElementById('simBtn-poemes');
+        assert.ok(btnPoemes.classList.contains('btn-cancel'), 'Le téléchargement du poème doit être démarré');
+
+        // Annuler tout
+        btnLabLaunchAll.click();
+        assert.ok(!btnPoemes.classList.contains('btn-cancel'), 'Le téléchargement doit être arrêté après ré-appui');
     });
 });
