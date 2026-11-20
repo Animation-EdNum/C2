@@ -34,61 +34,150 @@
     <link rel="stylesheet" href="../../assets/css/components.css">
     <link rel="stylesheet" href="../../assets/css/utilities.css">
 
+    <!-- Icon FontAwesome subset -->
+    <script src="../../assets/js/fa-subset.js"></script>
+
     <style>
         :root {
+            --primary: #a52a23;
+            --primary-hover: #cc362d;
+            --primary-light: rgba(165, 42, 35, 0.1);
+            --secondary: #475569;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --card-border: #e2e8f0;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
             --color-text: #2563eb;
             --color-image: #16a34a;
             --color-audio: #ea580c;
             --color-video: #9333ea;
 
-            --bg-text: rgba(37, 99, 235, 0.12);
-            --bg-image: rgba(22, 163, 74, 0.12);
-            --bg-audio: rgba(234, 88, 12, 0.12);
-            --bg-video: rgba(147, 51, 234, 0.12);
+            --bg-text: rgba(37, 99, 235, 0.1);
+            --bg-image: rgba(22, 163, 74, 0.1);
+            --bg-audio: rgba(234, 88, 12, 0.1);
+            --bg-video: rgba(147, 51, 234, 0.1);
+        }
+
+        body.dark {
+            --primary: #cc362d;
+            --primary-hover: #da5c55;
+            --primary-light: rgba(204, 54, 45, 0.2);
+            --secondary: #94a3b8;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.88);
+            --card-border: #334155;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-light: #94a3b8;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+            --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.25);
         }
 
         body {
+            touch-action: manipulation;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
+            line-height: 1.5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(165, 42, 35, 0.05) 0%, transparent 60%),
+                radial-gradient(var(--border) 1px, transparent 1px);
+            background-size: 100% 100%, 32px 32px;
+            background-position: top center, 0 0;
+            background-attachment: fixed;
+            padding: 0;
+            margin: 0;
         }
 
-        .app-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 1rem 1.25rem 3rem;
-            width: 100%;
+        svg {
+            display: inline-block;
+            vertical-align: middle;
+            fill: currentColor;
+        }
+
+        .container {
+            max-width: 1050px;
+            width: calc(100% - 2rem);
+            margin: 1.25rem auto 2.5rem;
+            padding: 1.25rem 1.5rem 2rem;
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--card-shadow);
             flex: 1;
         }
 
-        /* En-tête */
+        /* En-tête standard C2 */
         .app-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0.75rem 1rem;
-            background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            border: var(--glass-border);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.25rem;
-            gap: 1rem;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 0.75rem 0 1.25rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.25rem;
         }
 
-        .header-left {
+        .header-title-wrapper {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            min-width: 0;
         }
 
-        .header-title-group h1 {
+        .header-back-btn,
+        .icon-action-btn {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .header-back-btn:hover,
+        .icon-action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .header-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .app-header h1 {
             font-size: 1.35rem;
-            font-weight: 700;
+            font-weight: 800;
             margin: 0;
             display: flex;
             align-items: center;
@@ -96,31 +185,25 @@
             flex-wrap: wrap;
         }
 
-        .header-actions {
+        .action-buttons {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .icon-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            width: 40px;
-            height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-main);
-            transition: all 0.2s ease;
+        .action-buttons svg {
+            width: 18px;
+            height: 18px;
         }
 
-        .icon-btn:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-1px);
+        .header-back-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .header-icon svg {
+            width: 20px;
+            height: 20px;
         }
 
         /* Onglets de navigation */
@@ -128,18 +211,17 @@
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1.25rem;
-            background: var(--card-bg);
+            background: var(--bg);
             padding: 0.35rem;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
-            box-shadow: var(--card-shadow);
         }
 
         .tab-btn {
             flex: 1;
             padding: 0.75rem 1rem;
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
             border: none;
             background: transparent;
             color: var(--text-light);
@@ -150,6 +232,11 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+        }
+
+        .tab-btn svg {
+            width: 18px;
+            height: 18px;
         }
 
         .tab-btn:hover {
@@ -163,20 +250,19 @@
 
         .tab-btn.active {
             background: var(--primary);
-            color: white;
+            color: white !important;
             box-shadow: 0 2px 8px rgba(165, 42, 35, 0.3);
         }
 
         /* Consignes déroulantes */
         .consigne-box {
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-left: 4px solid var(--primary);
             border-radius: var(--radius-lg);
             padding: 1rem 1.25rem;
             margin-bottom: 1.25rem;
-            box-shadow: var(--card-shadow);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             line-height: 1.5;
             display: none;
             animation: fadeIn 0.3s ease-out;
@@ -195,7 +281,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 0.75rem 1rem;
@@ -214,16 +300,21 @@
         .btn-action {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
             padding: 0.5rem 1rem;
             border-radius: var(--radius-md);
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             border: 1px solid var(--border);
             background: var(--card-bg);
             color: var(--text-main);
             transition: all 0.2s ease;
+        }
+
+        .btn-action svg {
+            width: 16px;
+            height: 16px;
         }
 
         .btn-action:hover {
@@ -240,15 +331,16 @@
 
         .btn-action.btn-primary:hover {
             background: var(--primary-hover);
+            color: white;
         }
 
         .game-status-hint {
             font-size: 0.88rem;
             color: var(--text-light);
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Grille des canaux */
+        /* Grille des 4 canaux */
         .canals-container {
             display: flex;
             flex-direction: column;
@@ -257,11 +349,10 @@
         }
 
         .canal-card {
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-xl);
             padding: 1rem 1.25rem;
-            box-shadow: var(--card-shadow);
             display: grid;
             grid-template-columns: auto auto 1fr auto auto;
             align-items: center;
@@ -271,17 +362,17 @@
         }
 
         .canal-card:hover {
-            box-shadow: var(--card-shadow-hover);
-            border-color: rgba(165, 42, 35, 0.3);
+            border-color: rgba(165, 42, 35, 0.4);
+            box-shadow: var(--card-shadow);
         }
 
         .canal-number {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: var(--radius-full);
-            background: var(--badge-prof-bg);
-            color: var(--badge-prof-text);
-            font-weight: 700;
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-weight: 800;
             font-size: 1.15rem;
             display: flex;
             align-items: center;
@@ -311,6 +402,11 @@
             flex-shrink: 0;
         }
 
+        .canal-play-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .canal-play-btn:hover:not(:disabled) {
             background: var(--primary);
             color: white;
@@ -336,7 +432,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.82rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-light);
         }
 
@@ -387,6 +483,7 @@
             align-items: center;
             gap: 0.35rem;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
 
         .guess-btn {
@@ -394,18 +491,20 @@
             background: var(--card-bg);
             border-radius: var(--radius-md);
             padding: 0.35rem 0.65rem;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.82rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.15s ease;
             color: var(--text-main);
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
+            font-family: inherit;
         }
 
         .guess-btn:hover {
             border-color: var(--primary);
+            transform: translateY(-1px);
         }
 
         .guess-btn.selected-text {
@@ -437,7 +536,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            min-width: 130px;
+            min-width: 140px;
             justify-content: flex-end;
             flex-shrink: 0;
         }
@@ -449,13 +548,14 @@
             border: 1px solid var(--border);
             background: var(--card-bg);
             color: var(--text-light);
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.15rem;
+            font-weight: 800;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-family: inherit;
         }
 
         .btn-reveal.active {
@@ -479,27 +579,33 @@
             display: none;
             align-items: center;
             gap: 0.4rem;
-            padding: 0.35rem 0.75rem;
+            padding: 0.4rem 0.8rem;
             border-radius: var(--radius-pill);
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.88rem;
+            font-weight: 800;
             color: white;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .verdict-icon {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             margin-left: 0.2rem;
         }
 
         /* Cartes Médias de Référence */
         .media-cards-title {
             font-size: 1.05rem;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .media-cards-title svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
         }
 
         .media-cards-grid {
@@ -510,11 +616,10 @@
         }
 
         .media-reference-card {
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 1rem;
-            box-shadow: var(--card-shadow);
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
@@ -527,7 +632,8 @@
 
         .media-reference-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--card-shadow-hover);
+            box-shadow: var(--card-shadow);
+            border-color: var(--border);
         }
 
         .media-reference-card.card-text { border-top-color: var(--color-text); }
@@ -546,7 +652,7 @@
             height: 28px;
             border-radius: var(--radius-full);
             color: white;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.9rem;
             display: flex;
             align-items: center;
@@ -560,7 +666,7 @@
 
         .media-card-title {
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 800;
             margin: 0;
             display: flex;
             align-items: center;
@@ -578,7 +684,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.82rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-top: 0.3rem;
             padding-top: 0.4rem;
             border-top: 1px dashed var(--border);
@@ -594,11 +700,10 @@
         }
 
         .lab-controls-panel {
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-xl);
             padding: 1.25rem;
-            box-shadow: var(--card-shadow);
         }
 
         .lab-speeds-grid {
@@ -609,7 +714,7 @@
         }
 
         .speed-choice-btn {
-            background: var(--bg);
+            background: var(--card-bg);
             border: 2px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 0.75rem 1rem;
@@ -618,7 +723,8 @@
             transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.25rem;
+            font-family: inherit;
         }
 
         .speed-choice-btn:hover {
@@ -628,32 +734,27 @@
 
         .speed-choice-btn.active {
             border-color: var(--primary);
-            background: rgba(165, 42, 35, 0.08);
+            background: var(--primary-light);
             box-shadow: 0 0 0 1px var(--primary);
         }
 
-        body.dark .speed-choice-btn.active {
-            background: rgba(165, 42, 35, 0.2);
-        }
-
         .speed-btn-name {
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
+            color: var(--text-main);
         }
 
         .speed-btn-rate {
             font-size: 0.82rem;
             color: var(--text-light);
+            font-weight: 600;
         }
 
         /* Grille des 9 objets Fiche 2 */
         .objects-category-title {
             font-size: 1.05rem;
-            font-weight: 700;
-            margin: 1rem 0 0.5rem;
+            font-weight: 800;
+            margin: 1.25rem 0 0.6rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -666,11 +767,10 @@
         }
 
         .object-card {
-            background: var(--card-bg);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 1rem;
-            box-shadow: var(--card-shadow);
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -678,7 +778,8 @@
         }
 
         .object-card:hover {
-            box-shadow: var(--card-shadow-hover);
+            box-shadow: var(--card-shadow);
+            border-color: rgba(165, 42, 35, 0.3);
         }
 
         .object-card-header {
@@ -690,16 +791,17 @@
 
         .object-title {
             font-size: 0.95rem;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .object-size-badge {
             font-size: 0.82rem;
-            font-weight: 700;
-            padding: 0.2rem 0.5rem;
+            font-weight: 800;
+            padding: 0.2rem 0.55rem;
             border-radius: var(--radius-pill);
-            background: var(--badge-prof-bg);
-            color: var(--badge-prof-text);
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
             white-space: nowrap;
         }
 
@@ -707,15 +809,16 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg);
+            background: var(--card-bg);
             padding: 0.5rem 0.75rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
             font-size: 0.85rem;
+            font-weight: 600;
         }
 
         .object-eta-time {
-            font-weight: 700;
+            font-weight: 800;
             color: var(--primary);
         }
 
@@ -725,15 +828,21 @@
             justify-content: center;
             gap: 0.4rem;
             width: 100%;
-            padding: 0.45rem;
+            padding: 0.5rem;
             border-radius: var(--radius-md);
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             border: 1px solid var(--border);
             background: var(--card-bg);
             color: var(--text-main);
             cursor: pointer;
             transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .object-sim-btn svg {
+            width: 15px;
+            height: 15px;
         }
 
         .object-sim-btn:hover {
@@ -792,6 +901,11 @@
             transition: all 0.2s;
         }
 
+        .modal-close-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .modal-close-btn:hover {
             background: var(--primary);
             color: white;
@@ -816,9 +930,9 @@
         }
 
         /* Mode TBI Projection */
-        body.mode-tbi .app-header {
-            padding: 0.5rem 1rem;
-            margin-bottom: 0.75rem;
+        body.mode-tbi .container {
+            max-width: 1400px;
+            padding: 1rem 1.5rem;
         }
 
         body.mode-tbi .canal-card {
@@ -843,7 +957,11 @@
         body.mode-tbi .canal-play-btn {
             width: 50px;
             height: 50px;
-            font-size: 1.25rem;
+        }
+
+        body.mode-tbi .canal-play-btn svg {
+            width: 22px;
+            height: 22px;
         }
 
         @keyframes fadeIn {
@@ -877,14 +995,17 @@
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
-    <div class="app-container" id="main-content">
-        <!-- En-tête -->
+    <div class="container" id="main-content">
+        <!-- En-tête standard C2 -->
         <header class="app-header">
-            <div class="header-left">
-                <a href="../../index.html" class="icon-btn" id="backBtn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
                     <i data-fa="arrow-left"></i>
                 </a>
-                <div class="header-title-group">
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="download"></i>
+                </div>
+                <div>
                     <h1>
                         Simulateur de téléchargement
                         <span class="badge-alpha">Alpha</span>
@@ -893,18 +1014,18 @@
                 </div>
             </div>
 
-            <div class="header-actions">
-                <button type="button" class="icon-btn" id="helpToggleBtn" title="Consignes & Aide" aria-label="Consignes">
+            <div class="action-buttons">
+                <button type="button" class="icon-action-btn" id="helpToggleBtn" title="Consignes & Aide" aria-label="Consignes">
                     <i data-fa="eye"></i>
                 </button>
-                <button type="button" class="icon-btn" id="tbiToggleBtn" title="Mode Plein écran / TBI" aria-label="Mode TBI">
+                <button type="button" class="icon-action-btn" id="tbiToggleBtn" title="Mode Plein écran / TBI" aria-label="Mode TBI">
                     <i data-fa="desktop"></i>
                 </button>
-                <button type="button" class="icon-btn" id="audio-toggle-btn" title="Activer / Couper le son" aria-label="Son">
-                    <i data-fa="volume-high" id="icon-vol-on"></i>
-                    <i data-fa="volume-xmark" id="icon-vol-off" style="display:none;"></i>
+                <button type="button" class="icon-action-btn" id="audio-toggle-btn" title="Activer / Couper le son" aria-label="Son">
+                    <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                    <i data-fa="volume-xmark" id="icon-vol-off"></i>
                 </button>
-                <button type="button" class="icon-btn theme-toggle" id="theme-btn" title="Changer de thème" aria-label="Thème">
+                <button type="button" class="icon-action-btn theme-toggle" id="theme-btn" title="Changer de thème" aria-label="Thème">
                     <i data-fa="moon"></i>
                 </button>
             </div>
@@ -1108,7 +1229,7 @@
             <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Fermer">
                 <i data-fa="xmark"></i>
             </button>
-            <h2 id="modalTitle" style="font-size: 1.25rem; font-weight: 700; margin: 0 0 0.25rem;">Titre</h2>
+            <h2 id="modalTitle" style="font-size: 1.25rem; font-weight: 800; margin: 0 0 0.25rem;">Titre</h2>
             <div id="modalSubtitle" style="color: var(--text-light); font-size: 0.9rem; font-style: italic;">Sous-titre</div>
 
             <div class="modal-illustration" id="modalIllustration"></div>
@@ -1125,7 +1246,6 @@
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/confetti.js"></script>
-    <script src="../../assets/js/fa-subset.js"></script>
     <script src="../../assets/js/pwa.js"></script>
 
     <script>
@@ -1336,6 +1456,7 @@
         ---------------------------------------------------- */
         function initCanalsUI() {
             const container = document.getElementById('canalsContainer');
+            if (!container) return;
             container.innerHTML = '';
 
             state.canals.forEach(c => {
@@ -1358,7 +1479,7 @@
                         </div>
                     </div>
                     <div class="guess-block" id="guessBlock-${c.id}">
-                        <span style="font-size:0.8rem;font-weight:600;margin-right:0.2rem;color:var(--text-light);">Je pense que c'est :</span>
+                        <span style="font-size:0.82rem;font-weight:700;margin-right:0.2rem;color:var(--text-light);">Je pense que c'est :</span>
                         <button type="button" class="guess-btn" data-guess="texte" title="Texte">📄 Texte</button>
                         <button type="button" class="guess-btn" data-guess="image" title="Image">🖼️ Image</button>
                         <button type="button" class="guess-btn" data-guess="audio" title="Audio">🎵 Audio</button>
@@ -1392,7 +1513,7 @@
                 });
             });
 
-            if (window.renderIcons) window.renderIcons();
+            window.fa?.createIcons?.();
         }
 
         // Sélection de la prédiction de l'élève
@@ -1404,6 +1525,7 @@
             if (typeof playSound === 'function') playSound('click');
 
             const card = document.getElementById(`canalCard-${canalId}`);
+            if (!card) return;
             const buttons = card.querySelectorAll('.guess-btn');
             buttons.forEach(b => {
                 const type = b.getAttribute('data-guess');
@@ -1413,7 +1535,6 @@
                 }
             });
 
-            // Met à jour le message d'aide
             updateStatusHint();
         }
 
@@ -1436,7 +1557,7 @@
             const playBtn = document.getElementById(`playBtn-${canal.id}`);
             if (playBtn) {
                 playBtn.innerHTML = '<i data-fa="pause"></i>';
-                if (window.renderIcons) window.renderIcons();
+                window.fa?.createIcons?.();
             }
 
             const media = MEDIAS_CONFIG[canal.mediaKey];
@@ -1469,7 +1590,7 @@
             const playBtn = document.getElementById(`playBtn-${canal.id}`);
             if (playBtn) {
                 playBtn.innerHTML = '<i data-fa="play"></i>';
-                if (window.renderIcons) window.renderIcons();
+                window.fa?.createIcons?.();
             }
         }
 
@@ -1483,7 +1604,7 @@
             if (playBtn) {
                 playBtn.innerHTML = '<i data-fa="check"></i>';
                 playBtn.disabled = true;
-                if (window.renderIcons) window.renderIcons();
+                window.fa?.createIcons?.();
             }
 
             const revealBtn = document.getElementById(`revealBtn-${canal.id}`);
@@ -1512,12 +1633,11 @@
             const canal = state.canals.find(c => c.id === canalId);
             if (!canal || canal.isRevealed) return;
 
-            // On permet la révélation quand le téléchargement est fini ou pour l'enseignant
             canal.isRevealed = true;
             const media = MEDIAS_CONFIG[canal.mediaKey];
 
             const card = document.getElementById(`canalCard-${canalId}`);
-            card.classList.add('revealed');
+            if (card) card.classList.add('revealed');
 
             // Colore le numéro
             const num = document.getElementById(`canalNum-${canalId}`);
@@ -1555,7 +1675,6 @@
                 pill.addEventListener('click', () => openMediaModal(canal.mediaKey));
             }
 
-            // Vérifier si tous les canaux sont révélés
             checkAllRevealed();
         }
 
@@ -1599,7 +1718,7 @@
                 });
                 document.getElementById('btnLaunchAll').innerHTML = '<i data-fa="pause"></i> Tout suspendre';
             }
-            if (window.renderIcons) window.renderIcons();
+            window.fa?.createIcons?.();
         }
 
         // Mélanger l'ordre des médias
@@ -1627,7 +1746,7 @@
             document.getElementById('btnLaunchAll').innerHTML = '<i data-fa="play"></i> Tout lancer';
             const hint = document.getElementById('gameStatusHint');
             if (hint) hint.textContent = 'Prêt ! Lance les téléchargements pour tester les 4 fichiers.';
-            if (window.renderIcons) window.renderIcons();
+            window.fa?.createIcons?.();
         }
 
         /* ----------------------------------------------------
@@ -1654,6 +1773,8 @@
             const gridKo = document.getElementById('gridKo');
             const gridMo = document.getElementById('gridMo');
             const gridGo = document.getElementById('gridGo');
+
+            if (!gridKo || !gridMo || !gridGo) return;
 
             gridKo.innerHTML = '';
             gridMo.innerHTML = '';
@@ -1685,13 +1806,12 @@
                 const targetGrid = obj.category === 'ko' ? gridKo : (obj.category === 'mo' ? gridMo : gridGo);
                 targetGrid.appendChild(card);
 
-                // Bouton simulation de téléchargement de l'objet
                 const simBtn = card.querySelector(`#simBtn-${obj.id}`);
                 simBtn.addEventListener('click', () => simulateObjectDownload(obj));
             });
 
             updateObjectCalculations();
-            if (window.renderIcons) window.renderIcons();
+            window.fa?.createIcons?.();
         }
 
         function updateObjectCalculations() {
@@ -1711,8 +1831,6 @@
             const speedInfo = NETWORK_SPEEDS[state.currentSpeed];
             const actualSeconds = obj.sizeBytes / speedInfo.bytesPerSec;
 
-            // On compresse l'affichage de la simulation pour les très gros fichiers
-            // Max 10 secondes d'animation en labo
             const animDuration = Math.min(Math.max(actualSeconds, 0.4), 8);
 
             const track = document.getElementById(`simTrack-${obj.id}`);
@@ -1751,7 +1869,6 @@
             document.getElementById('modalSubtitle').textContent = media.subtitle;
             document.getElementById('modalDescription').textContent = media.description;
 
-            // Illustration SVG dynamique
             const illu = document.getElementById('modalIllustration');
             illu.innerHTML = getSvgIllustration(mediaKey);
 
@@ -1770,6 +1887,7 @@
 
             const modal = document.getElementById('mediaModal');
             modal.classList.add('open');
+            window.fa?.createIcons?.();
         }
 
         function closeModal() {
@@ -1805,7 +1923,6 @@
                         <circle cx="100" cy="60" r="45" fill="#ea580c" opacity="0.15"/>
                         <circle cx="100" cy="60" r="30" fill="none" stroke="#ea580c" stroke-width="3"/>
                         <circle cx="100" cy="60" r="10" fill="#ea580c"/>
-                        <!-- Ondes et notes -->
                         <path d="M70 75 Q70 50 85 50 L85 75 Z" fill="#ea580c"/>
                         <path d="M125 75 Q125 40 140 40 L140 75 Z" fill="#ea580c"/>
                         <rect x="85" y="45" width="55" height="6" rx="2" fill="#ea580c"/>
@@ -1815,7 +1932,6 @@
                 return `
                     <svg viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="30" y="20" width="140" height="80" rx="6" fill="#1e1b4b" stroke="#9333ea" stroke-width="2"/>
-                        <!-- Bande de film perforée -->
                         <rect x="35" y="24" width="8" height="6" rx="1" fill="#c084fc"/>
                         <rect x="50" y="24" width="8" height="6" rx="1" fill="#c084fc"/>
                         <rect x="65" y="24" width="8" height="6" rx="1" fill="#c084fc"/>
@@ -1825,7 +1941,6 @@
                         <rect x="125" y="24" width="8" height="6" rx="1" fill="#c084fc"/>
                         <rect x="140" y="24" width="8" height="6" rx="1" fill="#c084fc"/>
                         <rect x="155" y="24" width="8" height="6" rx="1" fill="#c084fc"/>
-                        <!-- Bouton play central -->
                         <polygon points="90,45 125,65 90,85" fill="#9333ea"/>
                     </svg>
                 `;
@@ -1838,6 +1953,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             initCanalsUI();
             initLabUI();
+            window.fa?.createIcons?.();
 
             // Gestion des onglets
             const tabDefiBtn = document.getElementById('tabDefiBtn');
