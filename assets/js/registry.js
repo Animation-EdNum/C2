@@ -530,6 +530,31 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-simulateur-telechargement",
+    "href": "alpha/webapps/simulateur_telechargement.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "download",
+    "title": "Simulateur de téléchargement",
+    "desc": "Découvre la taille des fichiers et ressens le poids des données avec un simulateur interactif.",
+    "tags": [
+      "#Données",
+      "#Réseau",
+      "#Mesure",
+      "#Fichiers"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Activité 3 — La taille des fichiers",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-apprendre-pseudocode",
     "href": "alpha/webapps/apprendre_pseudocode.html",
     "isAlpha": true,

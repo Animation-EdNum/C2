@@ -411,6 +411,7 @@ test('loadRegistry', async (t) => {
             'app-detective-ia',          // 7-8H
             'app-compresseur-magique',   // 7-8H
             'app-dresseur-neurones',     // 7-8H
+            'app-simulateur-telechargement', // 7-8H
             'app-apprendre-pseudocode',  // 9CO
             'app-tri-insertion'          // 10CO
         ];

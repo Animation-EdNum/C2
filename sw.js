@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-03983c1f';
+const CACHE_NAME = 'ednum-026b22d8';
 const ASSETS = [
     './',
     './index.html',
@@ -17,6 +17,7 @@ const ASSETS = [
     './alpha/webapps/dresseur_neurones.html',
     './alpha/webapps/machine_a_chiffrer.html',
     './alpha/webapps/reseau_de_tri.html',
+    './alpha/webapps/simulateur_telechargement.html',
     './alpha/webapps/teacher/anonymiseur.html',
     './alpha/webapps/tri_insertion.html',
     './assets/apple-touch-icon.png',
