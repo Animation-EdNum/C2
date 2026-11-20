@@ -53,6 +53,13 @@ test('Simulateur de téléchargement - Fichier et Structure', async (t) => {
     await t.test('Le bouton Mélanger a été supprimé au profit d un mélange par défaut', () => {
         assert.ok(!html.includes('id="btnShuffle"'), 'Le bouton btnShuffle ne doit pas exister');
     });
+
+    await t.test('Le Défi des 4 médias ne contient aucune mention de Débit', () => {
+        const window = setupDOM();
+        const viewDefi = window.document.getElementById('viewDefi');
+        assert.ok(!/Débit/i.test(viewDefi.textContent), 'Le Défi des 4 médias ne doit pas afficher de référence au débit');
+        window.close();
+    });
 });
 
 test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t) => {
@@ -141,6 +148,13 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
 
         const pill = doc.getElementById('revealedPill-1');
         assert.ok(pill && pill.style.display !== 'none', 'La pastille de verdict doit être visible');
+    });
+
+    await t.test('Le label de progression affiche les Ko téléchargés sur la taille totale', () => {
+        const doc = window.document;
+        const sizeLabel1 = doc.getElementById('sizeLabel-1');
+        assert.ok(sizeLabel1, 'sizeLabel-1 doit exister');
+        assert.match(sizeLabel1.textContent, /^0 Ko \/ .* Ko/);
     });
 
     await t.test('Le bouton Tout lancer du laboratoire démarre tous les téléchargements', () => {
