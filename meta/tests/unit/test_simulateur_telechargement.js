@@ -106,6 +106,20 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.ok(etaRoman.textContent.length > 0);
     });
 
+    await t.test('Le bouton de simulation démarre puis peut annuler en temps réel', () => {
+        const doc = window.document;
+        const simBtn = doc.getElementById('simBtn-poemes');
+        assert.ok(simBtn, 'Bouton de simulation du poème doit exister');
+        simBtn.click();
+
+        assert.ok(simBtn.classList.contains('btn-cancel'), 'Le bouton doit passer en mode Annuler');
+        assert.match(simBtn.textContent, /Annuler/i);
+
+        // Annuler le téléchargement
+        simBtn.click();
+        assert.ok(!simBtn.classList.contains('btn-cancel'), 'Le bouton doit repasser en mode normal après annulation');
+    });
+
     await t.test('La sélection d une prédiction par l élève met à jour son choix', () => {
         const doc = window.document;
         const card1 = doc.getElementById('canalCard-1');
