@@ -68,8 +68,15 @@ test('Simulateur de téléchargement - Fichier et Structure', async (t) => {
         assert.ok(html.includes('id="theme-toggle-btn"'), 'Le bouton theme-toggle-btn doit exister pour theme.js');
         assert.ok(html.includes('id="icon-sun"'), 'L icône sun doit exister');
         assert.ok(html.includes('id="icon-moon"'), 'L icône moon doit exister');
+        assert.ok(html.includes('id="reset-cache-btn"'), 'Le bouton reset-cache-btn doit exister comme sur time_timer et qrcode');
         assert.ok(!html.includes('id="audio-toggle-btn"'), 'Le bouton son doit avoir été retiré');
         assert.ok(!html.includes('id="helpToggleBtn"'), 'Le bouton consigne dans le header doit avoir été retiré');
+    });
+
+    await t.test('Respecte les éléments visuels standard : canvas confettis, balise main et onglets .tabs', () => {
+        assert.ok(html.includes('id="confetti-canvas"'), 'Le canvas de confettis doit exister pour les célébrations');
+        assert.ok(html.includes('<main>'), 'La balise sémantique main doit envelopper le contenu');
+        assert.ok(html.includes('class="tabs"'), 'Les onglets doivent utiliser la classe standard .tabs');
     });
 
     await t.test('Consigne accordéon intégrée exclusivement dans le Défi des 4 médias', () => {

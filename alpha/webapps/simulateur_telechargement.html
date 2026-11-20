@@ -42,6 +42,8 @@
             --primary: #a52a23;
             --primary-hover: #cc362d;
             --primary-light: rgba(165, 42, 35, 0.1);
+            --accent: #a52a23;
+            --accent-hover: #cc362d;
             --secondary: #475569;
             --bg: #f8fafc;
             --card-bg: rgba(255, 255, 255, 0.94);
@@ -162,7 +164,7 @@
             height: 42px;
             min-width: 42px;
             min-height: 42px;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-xl, 14px);
             border: 1px solid var(--border);
             background: var(--card-bg);
             color: var(--text-main);
@@ -183,16 +185,16 @@
         }
 
         .header-icon {
-            width: 42px;
-            height: 42px;
-            min-width: 42px;
-            border-radius: var(--radius-md);
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: var(--radius-xl, 14px);
             background: var(--primary-light);
             color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
         }
 
         .app-header h1 {
@@ -222,36 +224,35 @@
         }
 
         .header-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
         }
 
-        /* Onglets de navigation */
-        .tabs-nav {
+        /* Onglets de navigation standardisés C2 */
+        .tabs {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            background: var(--bg);
-            padding: 0.35rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
-            flex: 1;
-            padding: 0.75rem 1rem;
+            padding: 10px 22px;
+            border-radius: var(--radius-lg, 12px);
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-light);
             font-size: 0.95rem;
             font-weight: 700;
-            border: none;
-            background: transparent;
-            color: var(--text-light);
-            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
+            transition: all 0.2s var(--spring-easing, ease);
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 8px;
+            min-height: 44px;
+            font-family: inherit;
         }
 
         .tab-btn svg {
@@ -261,17 +262,36 @@
 
         .tab-btn:hover {
             color: var(--text-main);
-            background: rgba(0, 0, 0, 0.04);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:active {
+            transform: scale(0.97);
+        }
+
+        body.dark .tab-btn {
+            background: rgba(15, 23, 42, 0.7);
+            border-color: var(--border);
+            color: var(--text-light);
         }
 
         body.dark .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-hover);
+            color: var(--text-main);
         }
 
         .tab-btn.active {
             background: var(--primary);
             color: white !important;
-            box-shadow: 0 2px 8px rgba(165, 42, 35, 0.3);
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(165, 42, 35, 0.3);
+        }
+
+        body.dark .tab-btn.active {
+            background: var(--primary);
+            color: white !important;
+            border-color: var(--primary);
         }
 
         /* Consignes déroulantes intégrées au Défi */
@@ -1115,6 +1135,7 @@
 </head>
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
 
     <div class="container" id="main-content">
         <!-- En-tête standard C2 -->
@@ -1144,20 +1165,24 @@
                     <i data-fa="expand" id="icon-proj-expand"></i>
                     <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
                 </button>
+                <button type="button" class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+                    <i data-fa="arrows-rotate"></i>
+                </button>
             </div>
         </header>
 
-        <!-- Onglets Navigation -->
-        <nav class="tabs-nav" role="tablist">
-            <button type="button" class="tab-btn active" id="tabDefiBtn" role="tab" aria-selected="true" aria-controls="viewDefi">
-                <i data-fa="shuffle"></i>
-                Défi des 4 médias
-            </button>
-            <button type="button" class="tab-btn" id="tabLabBtn" role="tab" aria-selected="false" aria-controls="viewLab">
-                <i data-fa="wifi"></i>
-                Laboratoire de débits
-            </button>
-        </nav>
+        <main>
+            <!-- Onglets Navigation standard C2 -->
+            <div class="tabs" role="tablist" aria-label="Modes du simulateur">
+                <button type="button" class="tab-btn active" id="tabDefiBtn" role="tab" aria-selected="true" aria-controls="viewDefi">
+                    <i data-fa="shuffle"></i>
+                    <span>Défi des 4 médias</span>
+                </button>
+                <button type="button" class="tab-btn" id="tabLabBtn" role="tab" aria-selected="false" aria-controls="viewLab">
+                    <i data-fa="wifi"></i>
+                    <span>Laboratoire de débits</span>
+                </button>
+            </div>
 
         <!-- ==========================================
              VUE 1 : DÉFI DES 4 MÉDIAS
@@ -1327,6 +1352,7 @@
                 </div>
             </div>
         </div>
+        </main>
     </div>
 
     <!-- Pied de page officiel -->
@@ -2293,6 +2319,15 @@
                     setProjectionMode(false);
                 }
             });
+
+            // Réinitialisation globale de l'application via le bouton standard C2
+            window.__onResetApp = function () {
+                resetCanals();
+                cancelAllLabObjects();
+                if (typeof showToast === 'function') {
+                    showToast('Simulation réinitialisée', 'info');
+                }
+            };
 
             // Fermeture de la modale
             document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
