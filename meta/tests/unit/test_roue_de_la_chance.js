@@ -32,52 +32,34 @@ test('roue_de_la_chance.html - presets, number generator & personal list', async
         assert.strictEqual(backBtn.getAttribute('href'), '../../index.html#teachers', 'Back button should link to teacher space');
     });
 
-    await t.test('metiers preset has Distribution du matériel (2) and no Facteur·trice', () => {
-        const scriptMatch = htmlContent.match(/metiers:\s*\[([\s\S]*?)\]/);
-        assert.ok(scriptMatch, 'Should find metiers in script');
-        const metiers = eval(`[${scriptMatch[1]}]`);
+    await t.test('oui_non preset contains Oui and Non and button loads them', () => {
+        const scriptMatch = htmlContent.match(/oui_non:\s*\[([\s\S]*?)\]/);
+        assert.ok(scriptMatch, 'Should find oui_non in script');
+        const ouiNon = eval(`[${scriptMatch[1]}]`);
 
-        assert.ok(!metiers.includes('Facteur·trice'), 'Facteur·trice must be removed');
-        const idxMat1 = metiers.indexOf('Distribution du matériel');
-        const idxMat2 = metiers.indexOf('Distribution du matériel (2)');
-        assert.ok(idxMat1 !== -1, 'Distribution du matériel must be present');
-        assert.ok(idxMat2 !== -1, 'Distribution du matériel (2) must be present');
-        assert.strictEqual(idxMat2, idxMat1 + 1, 'Distribution du matériel (2) must be right after Distribution du matériel');
+        assert.deepStrictEqual(ouiNon, ['Oui', 'Non'], 'Should contain exactly Oui and Non');
+
+        const btn = window.document.querySelector('[data-preset="oui_non"]');
+        assert.ok(btn, 'Preset button for oui_non should exist');
+        btn.click();
+        const choicesInput = window.document.getElementById('choicesInput');
+        assert.strictEqual(choicesInput.value, 'Oui\nNon', 'choicesInput should be set to Oui and Non');
     });
 
-    await t.test('privileges preset contains the curated 10 privileges', () => {
-        const scriptMatch = htmlContent.match(/privileges:\s*\[([\s\S]*?)\]/);
-        assert.ok(scriptMatch, 'Should find privileges in script');
-        const privileges = eval(`[${scriptMatch[1]}]`);
+    await t.test('alphabet preset contains 26 letters from A to Z and button loads them', () => {
+        const scriptMatch = htmlContent.match(/alphabet:\s*\[([\s\S]*?)\]/);
+        assert.ok(scriptMatch, 'Should find alphabet in script');
+        const alphabet = eval(`[${scriptMatch[1]}]`);
 
-        const expected = [
-            "Travailler au bureau de la maîtresse",
-            "Choisir un jeu à la gym",
-            "Travailler à côté d'un copain ou d'une copine",
-            "Avoir 15 minutes de plus de récréation (à l'intérieur)",
-            "Emprunter un jeu de la classe pour la maison",
-            "Choisir d'écouter une musique en classe",
-            "Choisir sa place pour la journée",
-            "Premier ou première au rang",
-            "5 minutes de temps libre bonus",
-            "Écrire au stylo de son choix"
-        ];
+        assert.strictEqual(alphabet.length, 26, 'Should contain 26 letters');
+        assert.strictEqual(alphabet[0], 'A', 'First letter should be A');
+        assert.strictEqual(alphabet[25], 'Z', 'Last letter should be Z');
 
-        assert.strictEqual(privileges.length, 10, 'Should have exactly 10 privileges');
-        for (const item of expected) {
-            assert.ok(privileges.includes(item), `Privileges should include "${item}"`);
-        }
-    });
-
-    await t.test('questions_ednum preset has curated 10 questions', () => {
-        const scriptMatch = htmlContent.match(/questions_ednum:\s*\[([\s\S]*?)\]/);
-        assert.ok(scriptMatch, 'Should find questions_ednum in script');
-        const questions = eval(`[${scriptMatch[1]}]`);
-
-        assert.strictEqual(questions.length, 10, 'Should have 10 educational questions');
-        assert.ok(questions.some(q => q.includes('donnée personnelle')), 'Should have personal data question');
-        assert.ok(questions.some(q => q.includes('cadenas dans le navigateur')), 'Should have lock/security question');
-        assert.ok(questions.some(q => q.includes('fausse information') || q.includes('fake news')), 'Should have fake news question');
+        const btn = window.document.querySelector('[data-preset="alphabet"]');
+        assert.ok(btn, 'Preset button for alphabet should exist');
+        btn.click();
+        const choicesInput = window.document.getElementById('choicesInput');
+        assert.strictEqual(choicesInput.value, alphabet.join('\n'), 'choicesInput should be set to full alphabet');
     });
 
     await t.test('setup-card has widened max-width for single-line display on large screens', () => {
