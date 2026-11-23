@@ -103,3 +103,4 @@
 - **[2026-11-23]** [UX/Jeu de la grue] Relocated program-strip-wrapper below instructions-group with bounded max-height to eliminate scrolling.
 - **[2026-11-23]** [Feature/Alpha] Created Simulateur Réseau & DNS webapp (7-8H) with packet tracer, DNS cache, and missions mode.
 - **[2026-11-23]** [Portal/UX] Polished segmented control toggle, eliminated all hidden-app grid holes, and enforced action-verb descriptions.
+- **[2026-11-23]** [App/Simulateur Réseau] Overhauled CSS architecture: fixed dropdown leakage, cable conduits, and zone overlap.
