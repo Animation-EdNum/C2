@@ -2,7 +2,7 @@
 
 La **Machine à chiffrer** initie les élèves aux principes fondamentaux de la **cryptographie et de la sécurité des communications** à travers cinq chiffres et outils historiques interactifs : César, Vigenère, Atbash, Morse et un laboratoire d'interception Hacker.
 
-Alignement : Cycle 2 et Cycle 3 (sécurité, cryptographie, algorithmes et histoire de l'information).
+**Lien PER :** **EN 22 · Science informatique - Cryptage et décryptage** (7-8H / Cycle 2 & Cycle 3).
 
 ---
 

@@ -50,7 +50,9 @@ C2/
 │   ├── binaire_codage.html
 │   ├── bit_de_parite.html
 │   ├── routage_reseau.html
-│   └── generateur_mot_de_passe.html
+│   ├── generateur_mot_de_passe.html
+│   ├── machine_a_chiffrer.html
+│   └── simulateur_telechargement.html
 │
 ├── alpha/webapps/          # Applications expérimentales en avant-première
 │   ├── apprendre_pseudocode.html
@@ -59,7 +61,6 @@ C2/
 │   ├── detective_ia.html
 │   ├── dresseur_neurones.html
 │   ├── jeu_de_la_grue.html
-│   ├── machine_a_chiffrer.html
 │   ├── machine_a_trier.html
 │   ├── reseau_de_tri.html
 │   └── teacher/            # Outils enseignants alpha (sim_dyslexie)

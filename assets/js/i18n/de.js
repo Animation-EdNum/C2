@@ -275,6 +275,8 @@
         'calculatrice_binaire.binary': 'Binär (8 Bits) :',
         'calculatrice_binaire.toast_copied': 'In die Zwischenablage kopiert!',
         'calculatrice_binaire.toast_max_val': 'Der Maximalwert für ein Byte (8 Bits) ist 255.',
+        'machine_a_chiffrer.badge_level': '7.-8. Primar',
+        'simulateur_telechargement.badge_level': '7.-8. Primar',
 
         // --- WEITERE STANDARD-APPS (PHASE 1 STRINGS) ---
         // binaire_message

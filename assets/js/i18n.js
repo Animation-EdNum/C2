@@ -120,6 +120,8 @@
                 'calculatrice_binaire.badge_level': '7H-11CO',
                 'calculatrice_binaire.binary_input_label': 'Binaire (base 2) :',
                 'calculatrice_binaire.toast_max_val': 'La valeur maximale pour un octet (8 bits) est 255.',
+                'machine_a_chiffrer.badge_level': '7-8H',
+                'simulateur_telechargement.badge_level': '7-8H',
 
                 // Machine à trier
                 'machine_a_trier.badge_level': '1-2H & 3-4H',

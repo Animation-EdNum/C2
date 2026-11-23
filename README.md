@@ -122,6 +122,16 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Fonctionnalités :** Tableau interactif sur 8 bits ordonné selon les 3 rangées pédagogiques (Bits, Puissances de 2 de $2^7$ à $2^0$, Valeurs de position de 128 à 1), bascule directe des bits ou des valeurs au clic, synchronisation bidirectionnelle instantanée avec le champ décimal (0 à 255), calcul explicatif de la somme décomposée en direct, affichage binaire formaté par demi-octets (nibbles) avec bouton de copie, et bouton de remise à zéro rapide.
 - **Valeur pédagogique :** Démystifie le fonctionnement interne des ordinateurs en visualisant le lien direct entre l'état binaire (0/1), la valeur pondérée de chaque rang et la somme décimale totale. Idéal pour l'expérimentation libre, la vérification de calculs ou l'introduction au système binaire en classe.
 
+#### 12. Machine à chiffrer (`webapps/machine_a_chiffrer.html` - 7-8H)
+- **À quoi sert l'outil :** Outil interactif d'initiation à la cryptographie pour chiffrer et déchiffrer des messages secrets grâce à 5 modes d'exploration : Code César (avec roue cryptographique animée), Code Vigenère (chiffrement polyalphabétique avec mot-clé), Atbash (inversion miroir de l'alphabet), Code Morse (signaux textuels et bips sonores en Web Audio API) et Mode Hacker (interception de messages secrets et analyse fréquentielle des lettres de la langue française). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_MACHINE_A_CHIFFRER.md).
+- **Lien PER & Lehrplan 21 :** Cycle 2 (7-8H) · **EN 22 · Science informatique - Cryptage et décryptage** (Connected 1 · 1.2 / Décodages 7-8).
+- **Valeur pédagogique :** Démystifie la cryptographie classique, illustre le passage de l'information sous formes codées et développe l'esprit d'analyse par l'étude des fréquences et des clés de décalage.
+
+#### 13. Simulateur de téléchargement (`webapps/simulateur_telechargement.html` - 7-8H)
+- **À quoi sert l'outil :** Simulation visuelle interactive pour appréhender concrètement la taille des fichiers numériques et le débit des réseaux à travers deux modes : *Défi des 4 médias* (estimer et ordonner la vitesse de téléchargement d'un texte, d'une image, d'un fichier audio et d'une vidéo sans voir leur débit) et *Laboratoire* (manipulation libre de 9 objets numériques concrets sur 4 technologies de connexion : Modem 56k, 3G, 4G et Fibre optique).
+- **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 3 — La taille des fichiers** (Demi-cycle 7-8H).
+- **Valeur pédagogique :** Fait ressentir physiquement le « poids » des données numériques, ancre la compréhension des unités de mesure (octet, Ko, Mo, Go) et sensibilise aux réalités physiques de l'infrastructure réseau.
+
 #### 🌐 Ressources externes partenaires
 - **Totem** ([Ouvrir Totem](https://guillaumetschupp.com/outils/totem/app.html) - 7H-10CO) : Un faux test de personnalité ludique et surprenant pour aiguiser l'esprit critique des élèves face aux pièges ordinaires du web et à la collecte de données (bilingue FR/DE, 100% exécuté localement dans le navigateur).
 
@@ -152,7 +162,6 @@ Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration 
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
 - 🔒 **Coffre-fort numérique** (`alpha/webapps/coffre_fort.html`, 3-6H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
 - 🔀 **Réseau de tri** (`alpha/webapps/reseau_de_tri.html`, 5-6H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
-- 🔐 **Machine à chiffrer (César, Vigenère, Morse)** (`alpha/webapps/machine_a_chiffrer.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_MACHINE_A_CHIFFRER.md)
 - ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COMPRESSEUR_MAGIQUE.md)
 - 🧠 **Dresseur de neurones & Détective IA** (`alpha/webapps/dresseur_de_neurones.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
 - 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)

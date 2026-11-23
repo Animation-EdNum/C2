@@ -432,8 +432,7 @@ window.REGISTRY = [
   },
   {
     "id": "app-machine-chiffrer",
-    "href": "alpha/webapps/machine_a_chiffrer.html",
-    "isAlpha": true,
+    "href": "webapps/machine_a_chiffrer.html",
     "dataLevel": "7-8H",
     "icon": "dt-key",
     "title": "Machine à chiffrer",
@@ -442,7 +441,19 @@ window.REGISTRY = [
       "#Cryptographie",
       "#Sécurité"
     ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
+    "ref": "EN 22 · Science informatique - Cryptage et décryptage",
+    "i18n": {
+      "de": {
+        "title": "Chiffriermaschine",
+        "desc": "Verschlüssle und entschlüssle Botschaften mit Cäsar-, Vigenère- und Morse-Code.",
+        "tags": [
+          "#Kryptografie",
+          "#Sicherheit",
+          "#Verschlüsselung"
+        ],
+        "ref": "Connected 1 · 1.2 | Geheime Botschaften"
+      }
+    },
     "badges": [
       {
         "text": "7-8H",
@@ -527,8 +538,7 @@ window.REGISTRY = [
   },
   {
     "id": "app-simulateur-telechargement",
-    "href": "alpha/webapps/simulateur_telechargement.html",
-    "isAlpha": true,
+    "href": "webapps/simulateur_telechargement.html",
     "dataLevel": "7-8H",
     "icon": "download",
     "title": "Simulateur de téléchargement",
@@ -540,6 +550,19 @@ window.REGISTRY = [
       "#Fichiers"
     ],
     "ref": "DÉ>CODAGE 7-8 · Activité 3 — La taille des fichiers",
+    "i18n": {
+      "de": {
+        "title": "Download-Simulator",
+        "desc": "Erforsche Dateigrössen und spüre das Gewicht digitaler Daten mit einer interaktiven Simulation.",
+        "tags": [
+          "#Daten",
+          "#Netzwerk",
+          "#Dateien",
+          "#Messung"
+        ],
+        "ref": "Connected 1 · 1.2 | Dateigrösse"
+      }
+    },
     "badges": [
       {
         "text": "7-8H",

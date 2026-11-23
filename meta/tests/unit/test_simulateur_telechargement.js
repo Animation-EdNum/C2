@@ -7,13 +7,13 @@ const fs = require('fs');
 const path = require('path');
 const { JSDOM } = require('jsdom');
 
-const filePath = path.resolve(__dirname, '../../../alpha/webapps/simulateur_telechargement.html');
+const filePath = path.resolve(__dirname, '../../../webapps/simulateur_telechargement.html');
 
 function setupDOM() {
     const html = fs.readFileSync(filePath, 'utf8');
     const dom = new JSDOM(html, {
         runScripts: 'dangerously',
-        url: 'http://localhost/alpha/webapps/simulateur_telechargement.html'
+        url: 'http://localhost/webapps/simulateur_telechargement.html'
     });
     dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
     return dom.window;
@@ -23,9 +23,9 @@ test('Simulateur de téléchargement - Fichier et Structure', async (t) => {
     assert.ok(fs.existsSync(filePath), 'Le fichier simulateur_telechargement.html doit exister');
     const html = fs.readFileSync(filePath, 'utf8');
 
-    await t.test('Contient les métadonnées et le badge Alpha 7-8H', () => {
+    await t.test('Contient les métadonnées et le badge 7-8H (production)', () => {
         assert.match(html, /<title>.*Simulateur de téléchargement.*<\/title>/i);
-        assert.match(html, /class="badge-alpha"/i);
+        assert.ok(!html.includes('badge-alpha'), 'Ne doit plus avoir le badge Alpha en production');
         assert.match(html, /class="badge-level"/i);
         assert.match(html, /7-8H/);
     });
