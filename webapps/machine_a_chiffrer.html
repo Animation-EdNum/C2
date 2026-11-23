@@ -393,55 +393,6 @@
         }
 
 
-        .crack-container {
-            margin-top: 15px;
-            width: 100%;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .crack-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: transform 0.2s, background 0.2s;
-            align-self: center;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .crack-btn:hover {
-            transform: scale(1.05);
-            background: var(--accent-dark);
-        }
-
-        .crack-btn:active {
-            transform: scale(0.95);
-        }
-
-        .crack-results {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            max-height: 200px;
-            overflow-y: auto;
-            background: var(--card-bg);
-            border: 2px solid var(--input-border);
-            border-radius: var(--radius-md);
-            padding: 10px;
-            font-family: monospace;
-            font-size: 14px;
-            color: var(--text-main);
-        }
 
         .dynamic-explanation {
             background: var(--badge-bg);
@@ -467,22 +418,6 @@
             flex-shrink: 0;
         }
 
-        .crack-item {
-            display: flex;
-            gap: 10px;
-            padding: 4px;
-            border-bottom: 1px solid var(--input-border);
-        }
-
-        .crack-item:last-child {
-            border-bottom: none;
-        }
-
-        .crack-shift {
-            font-weight: bold;
-            color: var(--accent);
-            min-width: 40px;
-        }
 
         /* Histogram styles */
         .histogram-container {
@@ -683,11 +618,6 @@
                         </div>
                     </div>
 
-                    <div class="crack-container" id="crack-container">
-                        <button class="crack-btn" id="btn-crack"><i data-fa="lock-open"></i> Craquer le code (Brute
-                            Force)</button>
-                        <div class="crack-results" id="crack-results"></div>
-                    </div>
                 </div>
 
                 <div class="textarea-container">
@@ -745,7 +675,6 @@
             document.getElementById('btn-copy-clear').addEventListener('click', () => copyText('input-clear'));
             document.getElementById('btn-clear-clear').addEventListener('click', () => clearText('input-clear'));
             document.getElementById('btn-intercept-hacker').addEventListener('click', generateInterceptedMessage);
-            document.getElementById('btn-crack').addEventListener('click', crackCode);
             document.getElementById('btn-copy-cipher').addEventListener('click', () => copyText('input-cipher'));
             document.getElementById('btn-clear-cipher').addEventListener('click', () => clearText('input-cipher'));
 
@@ -778,7 +707,6 @@
             offsetSlider.value = "3";
             offsetVal.textContent = "3";
             updateCipher();
-            toggleCrackVisibility();
             if (explanationText) {
                 explanationText.textContent = EXPLANATIONS['cesar'];
             }
@@ -848,7 +776,6 @@
 
             playSound('click');
             updateCipher();
-            toggleCrackVisibility();
         }
 
 
@@ -995,47 +922,6 @@
         }
 
 
-        function crackCode() {
-            const cipherText = normalizeText(inputCipher.value);
-            if (!cipherText) {
-                showToast("Rien à craquer !", 'error');
-                return;
-            }
-
-            const resultsContainer = document.getElementById('crack-results');
-            resultsContainer.innerHTML = '';
-            resultsContainer.style.display = 'flex';
-
-            for (let shift = 1; shift < 26; shift++) {
-                let decrypted = processCesar(cipherText, shift, true);
-
-                let item = document.createElement('div');
-                item.className = 'crack-item';
-
-                let shiftSpan = document.createElement('span');
-                shiftSpan.className = 'crack-shift';
-                shiftSpan.textContent = `+${shift}:`;
-
-                let textSpan = document.createElement('span');
-                textSpan.textContent = decrypted;
-
-                item.appendChild(shiftSpan);
-                item.appendChild(textSpan);
-                resultsContainer.appendChild(item);
-            }
-            playSound('success');
-            resultsContainer.scrollTop = 0;
-        }
-
-        function toggleCrackVisibility() {
-            const crackContainer = document.getElementById('crack-container');
-            if (currentMode === 'cesar') {
-                crackContainer.style.display = 'flex';
-                document.getElementById('crack-results').style.display = 'none';
-            } else {
-                crackContainer.style.display = 'none';
-            }
-        }
 
         const histBarCache = {};
 

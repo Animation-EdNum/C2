@@ -50,6 +50,11 @@ test('Machine à chiffrer - Fichier et Structure (Production)', async (t) => {
         assert.match(html, /id="input-clear"/i);
         assert.match(html, /id="input-cipher"/i);
     });
+
+    await t.test('Le bouton redondant Craquer le code a été supprimé du mode César', () => {
+        assert.ok(!html.includes('btn-crack'), 'btn-crack ne doit plus exister');
+        assert.ok(!html.includes('crack-container'), 'crack-container ne doit plus exister');
+    });
 });
 
 test('Machine à chiffrer - Logique cryptographique & Interactivité (JSDOM)', async (t) => {

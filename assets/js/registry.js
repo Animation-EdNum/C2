@@ -436,20 +436,23 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-key",
     "title": "Machine à chiffrer",
-    "desc": "Code et décode des messages avec le chiffre de César.",
+    "desc": "Chiffre, déchiffre et analyse des messages secrets (César, Vigenère, Morse, Atbash et Hacker).",
     "tags": [
       "#Cryptographie",
-      "#Sécurité"
+      "#Sécurité",
+      "#Secret",
+      "#Code"
     ],
     "ref": "EN 22 · Science informatique - Cryptage et décryptage",
     "i18n": {
       "de": {
         "title": "Chiffriermaschine",
-        "desc": "Verschlüssle und entschlüssle Botschaften mit Cäsar-, Vigenère- und Morse-Code.",
+        "desc": "Verschlüssle, entschlüssle und analysiere Botschaften (Cäsar, Vigenère, Atbash, Morse und Hacker).",
         "tags": [
           "#Kryptografie",
           "#Sicherheit",
-          "#Verschlüsselung"
+          "#Geheimnis",
+          "#Code"
         ],
         "ref": "Connected 1 · 1.2 | Geheime Botschaften"
       }

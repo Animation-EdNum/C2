@@ -61,7 +61,7 @@ Le chiffre de César ayant la faiblesse d'utiliser un décalage fixe, Vigenère 
 Cet onglet transforme l'élève en détective cryptographique :
 1. Cliquez sur **« Intercepter un message »** pour charger un texte chiffré mystère sans connaître la clé.
 2. **Analyse fréquentielle :** L'outil trace un histogramme des lettres les plus fréquentes du message intercepté et le compare à la distribution naturelle de la langue française (où la lettre **E** est largement prédominante avec ~15% des occurrences).
-3. **Craquer le code (Brute Force) :** Cliquez sur le bouton **« Craquer le code »** pour voir l'ordinateur tester instantanément toutes les 25 clés possibles jusqu'à trouver un français cohérent.
+3. **Cryptanalyse & Décalage (Brute-force) :** Déplacez la molette de décalage pour aligner le pic de l'histogramme avec la lettre **E** (la plus fréquente en français) ou testez les décalages possibles jusqu'à faire apparaître le texte en clair.
 
 ---
 
