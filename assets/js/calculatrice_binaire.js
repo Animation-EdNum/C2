@@ -1,0 +1,387 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+
+(function () {
+    'use strict';
+
+    const POWERS = [128, 64, 32, 16, 8, 4, 2, 1];
+    let calcState = [0, 0, 0, 0, 0, 0, 0, 0]; // Index 0 = MSB (128), Index 7 = LSB (1)
+
+    // DOM cache
+    let cachedBits = [];
+    let cachedBoxes = [];
+
+    function init() {
+        buildTable();
+        bindEvents();
+        updateUI();
+    }
+
+    function buildTable() {
+        const table = document.getElementById('calc-table');
+        if (!table) {
+            return;
+        }
+
+        const trPow = document.createElement('tr');
+        const thPow = document.createElement('th');
+        thPow.setAttribute('data-i18n', 'calculatrice_binaire.powers_of_two');
+        thPow.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.powers_of_two', 'Puissances') : 'Puissances';
+        trPow.appendChild(thPow);
+
+        const trVals = document.createElement('tr');
+        const thVals = document.createElement('th');
+        thVals.setAttribute('data-i18n', 'calculatrice_binaire.decimal_values');
+        thVals.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.decimal_values', 'Valeurs') : 'Valeurs';
+        trVals.appendChild(thVals);
+
+        const trBits = document.createElement('tr');
+        const thBits = document.createElement('th');
+        thBits.setAttribute('data-i18n', 'calculatrice_binaire.binary_bits');
+        thBits.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.binary_bits', 'Bits') : 'Bits';
+        trBits.appendChild(thBits);
+
+        cachedBits = [];
+        cachedBoxes = [];
+
+        for (let i = 0; i < 8; i++) {
+            const exp = 7 - i;
+            const val = POWERS[i];
+
+            // 1. Puissance de 2 (2^exp)
+            const tdPow = document.createElement('td');
+            tdPow.className = 'calc-power-cell';
+            const baseText = document.createTextNode('2');
+            const sup = document.createElement('sup');
+            sup.textContent = String(exp);
+            tdPow.appendChild(baseText);
+            tdPow.appendChild(sup);
+            trPow.appendChild(tdPow);
+
+            // 2. Boîte valeur décimale
+            const tdVal = document.createElement('td');
+            const divVal = document.createElement('div');
+            divVal.className = 'calc-box';
+            divVal.id = `calc-box-${i}`;
+            divVal.setAttribute('role', 'button');
+            divVal.setAttribute('tabindex', '0');
+            divVal.setAttribute('aria-label', `Valeur ${val}, bit ${exp}`);
+            divVal.textContent = String(val);
+            tdVal.appendChild(divVal);
+            trVals.appendChild(tdVal);
+
+            // 3. Bouton bit
+            const tdBit = document.createElement('td');
+            const btnBit = document.createElement('button');
+            btnBit.type = 'button';
+            btnBit.className = 'calc-bit';
+            btnBit.id = `calc-bit-${i}`;
+            btnBit.setAttribute('aria-label', `Basculer bit ${exp} (valeur ${val})`);
+            btnBit.textContent = '0';
+            tdBit.appendChild(btnBit);
+            trBits.appendChild(tdBit);
+
+            cachedBoxes[i] = divVal;
+            cachedBits[i] = btnBit;
+        }
+
+        table.replaceChildren(trPow, trVals, trBits);
+    }
+
+    function toggleBit(index) {
+        if (index < 0 || index >= 8) {
+            return;
+        }
+        calcState[index] = calcState[index] === 1 ? 0 : 1;
+        if (typeof window.playSound === 'function') {
+            window.playSound('click');
+        }
+        updateUI();
+    }
+
+    function setDecimalValue(num) {
+        let val = parseInt(num, 10);
+        if (isNaN(val)) {
+            val = 0;
+        }
+        if (val < 0) {
+            val = 0;
+        }
+        if (val > 255) {
+            val = 255;
+        }
+
+        for (let i = 0; i < 8; i++) {
+            calcState[i] = (val & (1 << (7 - i))) !== 0 ? 1 : 0;
+        }
+        updateUI(false);
+    }
+
+    function resetCalc() {
+        calcState = [0, 0, 0, 0, 0, 0, 0, 0];
+        if (typeof window.playSound === 'function') {
+            window.playSound('click');
+        }
+        updateUI();
+    }
+
+    function setAllOnes() {
+        calcState = [1, 1, 1, 1, 1, 1, 1, 1];
+        if (typeof window.playSound === 'function') {
+            window.playSound('click');
+        }
+        updateUI();
+    }
+
+    function invertBits() {
+        for (let i = 0; i < 8; i++) {
+            calcState[i] = calcState[i] === 1 ? 0 : 1;
+        }
+        if (typeof window.playSound === 'function') {
+            window.playSound('click');
+        }
+        updateUI();
+    }
+
+    function calculateSum() {
+        let sum = 0;
+        for (let i = 0; i < 8; i++) {
+            if (calcState[i] === 1) {
+                sum += POWERS[i];
+            }
+        }
+        return sum;
+    }
+
+    function updateUI(updateInput = true) {
+        const sum = calculateSum();
+        const activeParts = [];
+
+        // Mise à jour visuelle des bits et des boîtes
+        for (let i = 0; i < 8; i++) {
+            const isSet = calcState[i] === 1;
+            const bitEl = cachedBits[i];
+            const boxEl = cachedBoxes[i];
+
+            if (bitEl) {
+                bitEl.textContent = isSet ? '1' : '0';
+                if (isSet) {
+                    bitEl.classList.add('active');
+                } else {
+                    bitEl.classList.remove('active');
+                }
+            }
+            if (boxEl) {
+                if (isSet) {
+                    boxEl.classList.add('selected');
+                } else {
+                    boxEl.classList.remove('selected');
+                }
+            }
+
+            if (isSet) {
+                activeParts.push(POWERS[i]);
+            }
+        }
+
+        // Zone de résultat / addition décomposée
+        const resultArea = document.getElementById('calc-result-area');
+        if (resultArea) {
+            if (activeParts.length === 0) {
+                const msgSpan = document.createElement('span');
+                msgSpan.style.color = 'var(--text-muted, #94a3b8)';
+                msgSpan.setAttribute('data-i18n', 'calculatrice_binaire.click_bits');
+                msgSpan.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.click_bits', 'Clique sur les bits pour calculer') : 'Clique sur les bits pour calculer';
+                resultArea.replaceChildren(msgSpan);
+            } else {
+                const opDiv = document.createElement('div');
+                opDiv.className = 'calc-operation';
+                opDiv.textContent = activeParts.join(' + ') + ' = ';
+
+                const sumSpan = document.createElement('span');
+                sumSpan.className = 'calc-sum';
+                sumSpan.textContent = String(sum);
+
+                opDiv.appendChild(sumSpan);
+                resultArea.replaceChildren(opDiv);
+            }
+        }
+
+        // Saisie décimale synchronisée
+        const decInput = document.getElementById('dec-input');
+        if (decInput && updateInput) {
+            decInput.value = String(sum);
+        }
+
+        // Représentations binaire et hexadécimale
+        const rawBin = calcState.join('');
+        const binNibbles = `${rawBin.slice(0, 4)} ${rawBin.slice(4)}`;
+        const binDisplay = document.getElementById('rep-bin-val');
+        if (binDisplay) {
+            binDisplay.textContent = binNibbles;
+        }
+
+        const hexVal = '0x' + sum.toString(16).toUpperCase().padStart(2, '0');
+        const hexDisplay = document.getElementById('rep-hex-val');
+        if (hexDisplay) {
+            hexDisplay.textContent = hexVal;
+        }
+
+        const decDisplay = document.getElementById('rep-dec-val');
+        if (decDisplay) {
+            decDisplay.textContent = String(sum);
+        }
+    }
+
+    async function copyToClipboard(text, successMessage) {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast(successMessage, 'success');
+            }
+        } catch (e) {
+            if (typeof window.showToast === 'function') {
+                window.showToast(String(text), 'info');
+            }
+        }
+    }
+
+    function bindEvents() {
+        const table = document.getElementById('calc-table');
+        if (table) {
+            table.addEventListener('click', (e) => {
+                const target = e.target;
+                if (!target) {
+                    return;
+                }
+                const btn = target.closest('.calc-bit');
+                if (btn && btn.id) {
+                    const match = btn.id.match(/^calc-bit-(\d+)$/);
+                    if (match) {
+                        toggleBit(parseInt(match[1], 10));
+                        return;
+                    }
+                }
+                const box = target.closest('.calc-box');
+                if (box && box.id) {
+                    const match = box.id.match(/^calc-box-(\d+)$/);
+                    if (match) {
+                        toggleBit(parseInt(match[1], 10));
+                        return;
+                    }
+                }
+            });
+
+            table.addEventListener('keydown', (e) => {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    const target = e.target;
+                    if (!target) {
+                        return;
+                    }
+                    if (target.classList.contains('calc-bit') || target.classList.contains('calc-box')) {
+                        e.preventDefault();
+                        const match = target.id.match(/\d+$/);
+                        if (match) {
+                            toggleBit(parseInt(match[0], 10));
+                        }
+                    }
+                }
+            });
+        }
+
+        // Input décimal
+        const decInput = document.getElementById('dec-input');
+        if (decInput) {
+            decInput.addEventListener('input', () => {
+                setDecimalValue(decInput.value);
+            });
+            decInput.addEventListener('change', () => {
+                let v = parseInt(decInput.value, 10);
+                if (isNaN(v) || v < 0) {
+                    v = 0;
+                }
+                if (v > 255) {
+                    v = 255;
+                }
+                decInput.value = String(v);
+                setDecimalValue(v);
+            });
+        }
+
+        // Actions rapides
+        const resetBtn = document.getElementById('reset-calc-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetCalc);
+        }
+
+        const setAllBtn = document.getElementById('set-all-btn');
+        if (setAllBtn) {
+            setAllBtn.addEventListener('click', setAllOnes);
+        }
+
+        const invertBtn = document.getElementById('invert-bits-btn');
+        if (invertBtn) {
+            invertBtn.addEventListener('click', invertBits);
+        }
+
+        // Boutons de copie
+        const copyBinBtn = document.getElementById('btn-copy-bin');
+        if (copyBinBtn) {
+            copyBinBtn.addEventListener('click', () => {
+                const msg = window.I18N ? window.I18N.t('calculatrice_binaire.toast_copied', 'Copié dans le presse-papier !') : 'Copié dans le presse-papier !';
+                copyToClipboard(calcState.join(''), msg);
+            });
+        }
+
+        const copyDecBtn = document.getElementById('btn-copy-dec');
+        if (copyDecBtn) {
+            copyDecBtn.addEventListener('click', () => {
+                const msg = window.I18N ? window.I18N.t('calculatrice_binaire.toast_copied', 'Copié dans le presse-papier !') : 'Copié dans le presse-papier !';
+                copyToClipboard(String(calculateSum()), msg);
+            });
+        }
+
+        const copyHexBtn = document.getElementById('btn-copy-hex');
+        if (copyHexBtn) {
+            copyHexBtn.addEventListener('click', () => {
+                const msg = window.I18N ? window.I18N.t('calculatrice_binaire.toast_copied', 'Copié dans le presse-papier !') : 'Copié dans le presse-papier !';
+                const hexVal = '0x' + calculateSum().toString(16).toUpperCase().padStart(2, '0');
+                copyToClipboard(hexVal, msg);
+            });
+        }
+    }
+
+    // Expose API for external scripts & tests
+    window.CalculatriceBinaire = {
+        init,
+        toggleBit,
+        setDecimalValue,
+        resetCalc,
+        setAllOnes,
+        invertBits,
+        calculateSum,
+        getState: () => [...calcState]
+    };
+
+    // Universal app reset hook for Suite EdNum theme.js
+    window.__onResetApp = function () {
+        resetCalc();
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();

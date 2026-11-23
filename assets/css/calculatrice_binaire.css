@@ -1,0 +1,566 @@
+/* SPDX-License-Identifier: AGPL-3.0-only
+ * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+
+body > header,
+body > .container {
+    animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+}
+
+:root {
+    --bg-gradient-start: #6366f1;
+    --bg-gradient-end: #4338ca;
+    --card-bg: rgba(249, 250, 252, 0.9);
+    --card-border: #e0e7ff;
+    --container-bg: rgba(255, 255, 255, 0.92);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(99, 102, 241, 0.18);
+    --text-main: #1e1b4b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --accent: #6366f1;
+    --accent-dark: #4f46e5;
+    --badge-bg: #eef2ff;
+    --badge-color: #4338ca;
+    --input-border: #c7d2fe;
+    --success: #166534;
+    --error: #b91c1c;
+    --shadow-color: rgba(0, 0, 0, 0.22);
+    --card-shadow: rgba(99, 102, 241, 0.12);
+}
+
+body.dark {
+    --bg-gradient-start: #1e1b4b;
+    --bg-gradient-end: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.8);
+    --card-border: #334155;
+    --container-bg: rgba(15, 23, 42, 0.88);
+    --glass-bg: rgba(15, 23, 42, 0.75);
+    --glass-border: rgba(99, 102, 241, 0.25);
+    --text-main: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #818cf8;
+    --accent-dark: #6366f1;
+    --badge-bg: rgba(99, 102, 241, 0.22);
+    --badge-color: #c7d2fe;
+    --input-border: #3730a3;
+    --success: #34d399;
+    --error: #f87171;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --card-shadow: rgba(0, 0, 0, 0.35);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    touch-action: manipulation;
+    font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text-main);
+}
+
+/* Conteneur principal standard Suite EdNum */
+.container {
+    max-width: var(--container-max-width, 920px);
+    width: 100%;
+    margin: 0 auto;
+    background: var(--container-bg);
+    padding: 24px 28px 30px;
+    border-radius: var(--radius-2xl, 24px);
+    box-shadow: 0 20px 60px var(--shadow-color);
+    backdrop-filter: var(--glass-blur, blur(16px));
+    -webkit-backdrop-filter: var(--glass-blur, blur(16px));
+    border: var(--glass-border);
+}
+
+/* Carte centrale de calcul */
+.calc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl, 16px);
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 4px 18px var(--card-shadow);
+    margin-bottom: 1.5rem;
+}
+
+.calc-instruction {
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+/* Tableau de l'octet */
+.calc-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+}
+
+.calc-table {
+    margin: 0 auto;
+    border-spacing: clamp(4px, 1.2vw, 10px);
+    border-collapse: separate;
+}
+
+.calc-table th {
+    white-space: nowrap;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: right;
+    padding-right: 12px;
+}
+
+.calc-table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+}
+
+/* Cellules bits & boîtes de valeurs */
+.calc-bit,
+.calc-box {
+    width: clamp(34px, 5.5vw, 54px);
+    height: clamp(44px, 6vw, 58px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md, 10px);
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.calc-bit {
+    border: 2px solid var(--input-border, #cbd5e1);
+    background: var(--card-bg, #f8fafc);
+    color: var(--text-muted, #64748b);
+    font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+}
+
+.calc-bit:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.calc-box {
+    border: 2px solid var(--input-border, #e2e8f0);
+    background: var(--badge-bg, rgba(99, 102, 241, 0.08));
+    color: var(--badge-color, #4338ca);
+    font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+}
+
+.calc-box:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* État actif */
+.calc-bit.active {
+    background: var(--accent);
+    color: #ffffff !important;
+    border-color: var(--accent-dark);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    transform: scale(1.06) translateY(-3px);
+}
+
+.calc-box.selected {
+    background: var(--accent);
+    color: #ffffff !important;
+    border-color: var(--accent-dark);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+    transform: scale(1.06) translateY(-3px);
+}
+
+/* Puissances de 2 */
+.calc-power-cell {
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    color: var(--text-muted, #64748b);
+    font-weight: 600;
+}
+
+/* Zone d'affichage du résultat dynamique */
+.calc-result-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 54px;
+    padding: 10px 16px;
+    margin-bottom: 1.5rem;
+    background: var(--badge-bg);
+    border: 2px dashed var(--input-border);
+    border-radius: var(--radius-lg, 12px);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    text-align: center;
+}
+
+.calc-operation {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.calc-term {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.calc-op {
+    color: var(--text-muted, #64748b);
+    font-weight: 600;
+}
+
+.calc-sum {
+    display: inline-block;
+    color: #10b981;
+    font-size: 1.45rem;
+    font-weight: 900;
+    margin-left: 6px;
+    text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Grille de saisie & représentations */
+.calc-conversions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.calc-card-sub {
+    background: var(--container-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg, 12px);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.calc-card-sub label,
+.calc-card-sub .sub-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.decimal-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.decimal-input-group input[type="number"] {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: var(--radius-md, 8px);
+    border: 2px solid var(--input-border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+    background: var(--card-bg);
+    color: var(--text-main);
+    transition: all 0.2s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.decimal-input-group input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    outline: none;
+}
+
+.rep-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.rep-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.rep-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.rep-value-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rep-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent);
+    background: var(--badge-bg);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm, 6px);
+    letter-spacing: 1px;
+}
+
+.bin-nibbles {
+    letter-spacing: 2px;
+}
+
+/* Actions rapides */
+.calc-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.calc-actions .btn {
+    padding: 10px 18px;
+    border-radius: var(--radius-pill, 30px);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 2px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-main);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.calc-actions .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.calc-actions .btn:active {
+    transform: translateY(0);
+}
+
+/* Mode sombre */
+body.dark .calc-card,
+body.dark .calc-card-sub {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+}
+
+body.dark .calc-bit {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+body.dark .calc-bit:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+body.dark .calc-box {
+    background: var(--badge-bg);
+    border-color: var(--card-border);
+    color: var(--badge-color);
+}
+
+body.dark .calc-bit.active {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(129, 140, 248, 0.4);
+}
+
+body.dark .calc-box.selected {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(129, 140, 248, 0.35);
+}
+
+body.dark .calc-result-area {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: #334155;
+}
+
+body.dark .calc-actions .btn {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    color: var(--text-main);
+}
+
+body.dark .decimal-input-group input[type="number"] {
+    background: #0f172a !important;
+    border-color: #334155;
+    color: #f8fafc !important;
+}
+
+body.dark .decimal-input-group input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25);
+}
+
+body.dark .rep-row {
+    border-bottom-color: #334155;
+}
+
+body.dark .rep-val {
+    background: rgba(99, 102, 241, 0.25);
+    color: #e2e8f0;
+}
+
+/* Mode Projection TBI */
+body.projection .container {
+    max-width: 95vw;
+    box-shadow: none;
+    border-width: 2px;
+}
+
+body.projection .calc-bit,
+body.projection .calc-box {
+    transform: none !important;
+    font-size: 1.35rem;
+}
+
+body.projection .calc-bit.active,
+body.projection .calc-box.selected {
+    border-width: 3px;
+    box-shadow: none;
+}
+
+body.projection .calc-operation {
+    font-size: 1.5rem;
+}
+
+body.projection .calc-sum {
+    font-size: 1.85rem;
+}
+
+body.projection footer {
+    display: none !important;
+}
+
+/* Responsive mobile */
+@media (max-width: 768px) {
+    body {
+        padding: 8px 8px 16px;
+    }
+
+    .container {
+        padding: 16px 14px 22px;
+        border-radius: var(--radius-xl);
+    }
+
+    .calc-card {
+        padding: 1.25rem 0.75rem;
+        border-radius: var(--radius-lg);
+    }
+
+    .calc-conversions-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .calc-table-wrapper {
+        justify-content: flex-start;
+        padding-bottom: 8px;
+    }
+
+    .calc-table {
+        border-spacing: 4px;
+        margin: 0 auto;
+    }
+
+    .calc-table th {
+        font-size: 0.72rem;
+        padding-right: 4px;
+    }
+
+    .calc-bit,
+    .calc-box {
+        width: 34px;
+        height: 44px;
+        font-size: 1.15rem;
+    }
+
+    .calc-box {
+        font-size: 0.82rem;
+    }
+
+    .calc-actions button {
+        flex: 1 1 calc(50% - 10px);
+        min-height: 42px;
+    }
+
+    .btn-copy-dec,
+    .btn-copy-bin,
+    .btn-copy-hex,
+    .decimal-input-group .btn,
+    .rep-value-group .btn {
+        min-height: 38px;
+        min-width: 38px;
+    }
+}
+
+@media (max-width: 390px) {
+    .calc-table {
+        border-spacing: 2px;
+    }
+
+    .calc-bit,
+    .calc-box {
+        width: 30px;
+        height: 42px;
+        font-size: 1.05rem;
+    }
+
+    .calc-box {
+        font-size: 0.75rem;
+    }
+
+    .calc-table th {
+        font-size: 0.68rem;
+        padding-right: 2px;
+    }
+}

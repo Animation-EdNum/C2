@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>🧮 Calculatrice binaire</title>
+    <meta property="og:title" content="Calculatrice binaire">
+    <meta property="og:description"
+        content="Convertis et explore les nombres en binaire et décimal sur un octet (8 bits).">
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/tokens.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/utilities.css">
+    <link rel="stylesheet" href="../assets/css/calculatrice_binaire.css">
+    <script src="../assets/js/i18n.js"></script>
+    <script src="../assets/js/i18n/de.js"></script>
+    <script src="../assets/js/audio.js"></script>
+    <script src="../assets/js/toast.js"></script>
+    <script src="../assets/js/fa-subset.js"></script>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link" data-i18n="common.skip_link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil" data-i18n-attr="title:common.back_home;aria-label:common.back_home">
+                    <i data-fa="arrow-left"></i>
+                </a>
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="calculator"></i>
+                </div>
+                <div>
+                    <h1>
+                        <span data-i18n="calculatrice_binaire.title">Calculatrice binaire</span>
+                        <span class="badge-level" data-i18n="calculatrice_binaire.badge_level">7H-11CO</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn"
+                        data-i18n-attr="aria-label:common.options">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="btn-toggle-projection" aria-label="Mode TBI / Projection"
+                            data-i18n-attr="aria-label:common.tbi_mode">
+                            <i data-fa="expand" id="icon-expand"></i>
+                            <i data-fa="compress" id="icon-compress" style="display:none;"></i>
+                            <span data-i18n="common.tbi_mode">Mode TBI</span>
+                        </button>
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son"
+                            data-i18n-attr="aria-label:common.audio_toggle">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText" data-i18n="common.audio_on">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème"
+                            data-i18n-attr="aria-label:common.theme_toggle">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText" data-i18n="common.theme_dark">Sombre</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application"
+                            data-i18n-attr="aria-label:common.reset">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText" data-i18n="common.reset">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="calc-card">
+                <p class="calc-instruction" data-i18n="calculatrice_binaire.instruction">
+                    Clique sur les bits ou sur leurs valeurs pour décomposer un octet (8 bits) entre 0 et 255.
+                </p>
+
+                <!-- Tableau de l'octet (8 bits) -->
+                <div class="calc-table-wrapper">
+                    <table class="calc-table" id="calc-table" aria-label="Tableau binaire 8 bits">
+                        <!-- Généré dynamiquement en JS -->
+                    </table>
+                </div>
+
+                <!-- Zone de décomposition dynamique de l'addition -->
+                <div class="calc-result-area" id="calc-result-area" aria-live="polite">
+                    <span style="color: var(--text-muted, #94a3b8);" data-i18n="calculatrice_binaire.click_bits">Clique
+                        sur les bits pour calculer</span>
+                </div>
+
+                <!-- Panneau de conversion décimale et représentations -->
+                <div class="calc-conversions-grid">
+                    <!-- Saisie décimale -->
+                    <div class="calc-card-sub">
+                        <label for="dec-input" data-i18n="calculatrice_binaire.decimal_input_label">Valeur décimale (0 à
+                            255) :</label>
+                        <div class="decimal-input-group">
+                            <input type="number" id="dec-input" min="0" max="255" value="0" step="1" inputmode="numeric"
+                                aria-label="Valeur décimale de 0 à 255"
+                                data-i18n-attr="aria-label:calculatrice_binaire.decimal_input_label">
+                            <button class="btn btn-outline btn-small" id="btn-copy-dec"
+                                title="Copier la valeur décimale"
+                                data-i18n-attr="title:calculatrice_binaire.copy_dec_title">
+                                <i data-fa="copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Représentations binaire & hexadécimale -->
+                    <div class="calc-card-sub">
+                        <div class="sub-title" data-i18n="calculatrice_binaire.representations">Représentations :</div>
+                        <div class="rep-row">
+                            <span class="rep-label" data-i18n="calculatrice_binaire.binary">Binaire (base 2) :</span>
+                            <div class="rep-value-group">
+                                <span class="rep-val bin-nibbles" id="rep-bin-val">0000 0000</span>
+                                <button class="btn btn-outline btn-small" id="btn-copy-bin"
+                                    title="Copier la valeur binaire"
+                                    data-i18n-attr="title:calculatrice_binaire.copy_bin_title">
+                                    <i data-fa="copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rep-row">
+                            <span class="rep-label" data-i18n="calculatrice_binaire.hexadecimal">Hexadécimal (base 16)
+                                :</span>
+                            <div class="rep-value-group">
+                                <span class="rep-val" id="rep-hex-val">0x00</span>
+                                <button class="btn btn-outline btn-small" id="btn-copy-hex"
+                                    title="Copier la valeur hexadécimale"
+                                    data-i18n-attr="title:calculatrice_binaire.copy_hex_title">
+                                    <i data-fa="copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions rapides -->
+                <div class="calc-actions">
+                    <button class="btn" id="reset-calc-btn">
+                        <i data-fa="arrows-rotate"></i>
+                        <span data-i18n="common.reset">Remise à zéro</span>
+                    </button>
+                    <button class="btn" id="set-all-btn">
+                        <span data-i18n="calculatrice_binaire.btn_all_ones">Tout activer (255)</span>
+                    </button>
+                    <button class="btn" id="invert-bits-btn">
+                        <span data-i18n="calculatrice_binaire.btn_invert">Inverser (NON)</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Standard Flat Legal Footer -->
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements"
+                data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"
+                    data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+
+    <script src="../assets/js/theme.js"></script>
+    <script src="../assets/js/pwa.js"></script>
+    <script src="../assets/js/calculatrice_binaire.js"></script>
+    <script>
+        window.fa?.createIcons?.();
+
+        // TBI projection mode toggle
+        const projBtn = document.getElementById('btn-toggle-projection');
+        if (projBtn) {
+            projBtn.addEventListener('click', () => {
+                document.body.classList.toggle('projection');
+                const isProj = document.body.classList.contains('projection');
+                const expIcon = document.getElementById('icon-expand');
+                const compIcon = document.getElementById('icon-compress');
+                if (expIcon && compIcon) {
+                    expIcon.style.display = isProj ? 'none' : '';
+                    compIcon.style.display = isProj ? '' : 'none';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
