@@ -100,3 +100,4 @@
 - **[2026-11-23]** [Portal/UX] Redesigned view switcher into refined segmented control, packed grid with zero empty holes, and aligned descriptions to action verbs.
 - **[2026-11-23]** [Audit/Quality] Completed comprehensive suite audit, restored missing icons (lightbulb, universal-access), and updated SW cache.
 - **[2026-11-23]** [A11y/Tablet] Added benevolent physical keyboard notice for touch/tablet devices on Tape-Texte.
+- **[2026-11-23]** [UX/Jeu de la grue] Relocated program-strip-wrapper below instructions-group with bounded max-height to eliminate scrolling.
