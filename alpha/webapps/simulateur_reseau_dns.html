@@ -33,17 +33,38 @@
     <link rel="stylesheet" href="../../assets/css/components.css">
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <style>
-        body>header,
-        body>.container {
+        body > header,
+        body > .container {
             animation: fadeInCascade 0.5s var(--spring-easing) forwards;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1400px);
+            width: 100%;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 28px 32px;
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
         }
 
         :root {
             --bg-gradient-start: #0284c7;
             --bg-gradient-end: #0f172a;
-            --card-bg: rgba(255, 255, 255, 0.94);
-            --card-border: #bae6fd;
-            --container-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: #e2e8f0;
+            --container-bg: rgba(255, 255, 255, 0.93);
             --text-main: #0f172a;
             --text-secondary: #475569;
             --text-muted: #64748b;
@@ -57,7 +78,8 @@
             --dns-purple: #7c3aed;
             --web-green: #059669;
             --lan-blue: #2563eb;
-            --card-shadow: rgba(2, 132, 199, 0.15);
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --shadow-color: rgba(0, 0, 0, 0.25);
         }
 
         body.dark {
@@ -65,7 +87,7 @@
             --bg-gradient-end: #020617;
             --card-bg: rgba(30, 41, 59, 0.92);
             --card-border: #334155;
-            --container-bg: rgba(15, 23, 42, 0.95);
+            --container-bg: rgba(15, 23, 42, 0.92);
             --text-main: #f8fafc;
             --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
@@ -74,14 +96,15 @@
             --badge-bg: rgba(56, 189, 248, 0.15);
             --badge-color: #38bdf8;
             --card-shadow: rgba(0, 0, 0, 0.4);
+            --shadow-color: rgba(0, 0, 0, 0.5);
         }
 
         .app-shell {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
+            margin-top: 1rem;
         }
 
         /* --- MODE SWITCHER & OBJECTIVE --- */
@@ -183,7 +206,7 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-xl);
-            padding: 1rem;
+            padding: 1rem 1.25rem;
             box-shadow: 0 6px 18px var(--card-shadow);
             display: flex;
             flex-direction: column;
@@ -193,7 +216,7 @@
         .browser-chrome {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
@@ -214,23 +237,30 @@
 
         .url-bar-container {
             flex: 1;
-            min-width: 240px;
+            min-width: 260px;
             display: flex;
             align-items: center;
             background: rgba(100, 116, 139, 0.08);
-            border: 1px solid var(--card-border);
+            border: 1.5px solid var(--card-border);
             border-radius: 999px;
-            padding: 4px 12px;
-            gap: 8px;
+            padding: 5px 14px;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .url-bar-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+            background: var(--card-bg);
         }
 
         .url-protocol {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--success);
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         .url-input {
@@ -238,18 +268,19 @@
             border: none;
             background: transparent;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             color: var(--text-main);
             outline: none;
             padding: 4px 0;
+            font-weight: 600;
         }
 
         .quick-sites {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
         }
 
@@ -258,8 +289,8 @@
             background: var(--card-bg);
             color: var(--text-secondary);
             border-radius: 999px;
-            padding: 2px 10px;
-            font-size: 0.78rem;
+            padding: 3px 12px;
+            font-size: 0.80rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.15s;
@@ -275,16 +306,16 @@
             border: none;
             background: var(--accent);
             color: #fff;
-            padding: 8px 18px;
+            padding: 9px 22px;
             border-radius: 999px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+            box-shadow: 0 3px 10px rgba(2, 132, 199, 0.35);
         }
 
         .btn-launch:hover:not(:disabled) {
@@ -301,15 +332,15 @@
         .network-stage {
             position: relative;
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-2xl);
+            padding: 65px 24px 30px 24px;
             min-height: 440px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
             overflow: hidden;
-            box-shadow: 0 6px 18px var(--card-shadow);
+            box-shadow: 0 10px 30px var(--card-shadow);
         }
 
         /* Network Zone Dividers */
@@ -322,75 +353,114 @@
         }
 
         .zone-lan {
-            background: rgba(37, 99, 235, 0.02);
-            border-right: 2px dashed rgba(100, 116, 139, 0.25);
+            background: rgba(37, 99, 235, 0.025);
+            border-right: 2px dashed rgba(37, 99, 235, 0.2);
             position: relative;
         }
 
         .zone-wan {
-            background: rgba(16, 185, 129, 0.02);
+            background: rgba(16, 185, 129, 0.025);
             position: relative;
         }
 
         .zone-label {
             position: absolute;
-            top: 10px;
-            padding: 4px 10px;
-            font-size: 0.72rem;
+            top: 16px;
+            padding: 6px 16px;
+            font-size: 0.82rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-radius: 6px;
-            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .zone-lan .zone-label { left: 14px; background: rgba(37, 99, 235, 0.08); color: var(--lan-blue); }
-        .zone-wan .zone-label { right: 14px; background: rgba(16, 185, 129, 0.08); color: var(--web-green); }
+        .zone-lan .zone-label {
+            left: 20px;
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--lan-blue);
+            border: 1px solid rgba(37, 99, 235, 0.25);
+        }
+
+        .zone-wan .zone-label {
+            right: 20px;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--web-green);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
 
         /* SVG Wire Layer */
         .network-svg {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
             z-index: 1;
         }
 
+        .wire-bg {
+            fill: none;
+            stroke: #cbd5e1;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        body.dark .wire-bg {
+            stroke: #334155;
+        }
+
         .wire-path {
             fill: none;
-            stroke: rgba(148, 163, 184, 0.5);
             stroke-width: 4;
             stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s, stroke-width 0.3s;
+        }
+
+        .wire-lan {
+            stroke: #3b82f6;
+        }
+
+        .wire-dns {
+            stroke: #8b5cf6;
+        }
+
+        .wire-web {
+            stroke: #10b981;
         }
 
         .wire-path.active {
-            stroke: var(--accent);
-            stroke-dasharray: 8 6;
-            animation: dashMove 1s linear infinite;
+            stroke-width: 6;
+            stroke-dasharray: 12 8;
+            animation: wireFlow 0.8s linear infinite;
+            filter: drop-shadow(0 0 6px currentColor);
         }
 
-        @keyframes dashMove {
-            to { stroke-dashoffset: -28; }
+        @keyframes wireFlow {
+            from { stroke-dashoffset: 20; }
+            to { stroke-dashoffset: 0; }
         }
 
         /* Moving Packet */
         .packet-token {
             position: absolute;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 0.9rem;
-            box-shadow: 0 0 15px currentColor;
+            font-size: 0.95rem;
+            box-shadow: 0 0 16px currentColor;
             z-index: 10;
             transform: translate(-50%, -50%);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
+            pointer-events: none;
         }
 
         .packet-token.visible { opacity: 1; }
@@ -405,30 +475,30 @@
             z-index: 2;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            height: 100%;
+            gap: 2.2rem;
             align-items: center;
+            margin: auto 0;
         }
 
         .station-card {
             background: var(--card-bg);
             border: 2px solid var(--card-border);
-            border-radius: var(--radius-xl);
-            padding: 1.1rem;
+            border-radius: var(--radius-2xl);
+            padding: 1.25rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
         .station-card.active-node {
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2), 0 6px 16px var(--card-shadow);
-            transform: translateY(-3px);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.25), 0 8px 24px var(--card-shadow);
+            transform: translateY(-4px);
         }
 
         .station-card.dns-down {
@@ -436,16 +506,36 @@
             background: rgba(220, 38, 38, 0.06);
         }
 
+        .port-indicator {
+            position: absolute;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #94a3b8;
+            border: 3px solid var(--card-bg);
+            transform: translateY(-50%);
+            box-shadow: 0 0 6px rgba(0,0,0,0.15);
+            z-index: 3;
+            transition: all 0.2s;
+        }
+        .port-left { left: -7px; }
+        .port-right { right: -7px; }
+        .station-card.active-node .port-indicator {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
         .station-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
         .station-client .station-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
@@ -454,23 +544,23 @@
         .station-web .station-icon { background: linear-gradient(135deg, #10b981, #047857); }
 
         .station-name {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-main);
         }
 
         .station-role {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
-            line-height: 1.2;
+            line-height: 1.25;
         }
 
         .ip-badge {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            padding: 3px 8px;
+            padding: 3px 9px;
             border-radius: 6px;
             background: rgba(100, 116, 139, 0.1);
             color: var(--text-secondary);
@@ -479,17 +569,17 @@
         }
 
         .station-detail-btn {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 700;
             border: none;
             background: transparent;
             color: var(--accent);
             cursor: pointer;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         .station-detail-btn:hover {
@@ -501,26 +591,27 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-xl);
-            padding: 1rem 1.25rem;
+            padding: 1.1rem 1.4rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
-            box-shadow: 0 4px 12px var(--card-shadow);
+            gap: 14px;
+            box-shadow: 0 4px 14px var(--card-shadow);
         }
 
         .step-text-zone {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             flex: 1;
-            min-width: 260px;
+            min-width: 280px;
         }
 
         .step-number-badge {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
             border-radius: 50%;
             background: var(--accent);
             color: #fff;
@@ -529,7 +620,7 @@
             justify-content: center;
             font-weight: 800;
             font-size: 1.1rem;
-            flex-shrink: 0;
+            box-shadow: 0 3px 8px rgba(2, 132, 199, 0.35);
         }
 
         .step-message {
@@ -539,123 +630,169 @@
             line-height: 1.4;
         }
 
-        .step-action-controls {
+        .step-controls {
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .step-btn {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            border-radius: var(--radius-lg);
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+
+        .step-btn:hover:not(:disabled) {
+            background: var(--badge-bg);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .step-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .step-btn.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+        }
+
+        .step-btn.primary:hover:not(:disabled) {
+            background: var(--accent-dark);
+            color: #fff;
+        }
+
+        /* --- MODAL DIALOGS --- */
+        .site-preview-modal,
+        .sim-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .site-preview-modal.visible,
+        .sim-modal-overlay.visible {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .site-preview-card,
+        .sim-modal-card {
+            background: var(--container-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-2xl);
+            padding: 24px;
+            max-width: 560px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .preview-header,
+        .sim-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .sim-btn {
             border: 1px solid var(--card-border);
             background: var(--card-bg);
             color: var(--text-main);
-            padding: 8px 14px;
-            border-radius: var(--radius-lg);
-            font-weight: 700;
+            border-radius: var(--radius-md);
+            padding: 6px 12px;
             font-size: 0.85rem;
+            font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
 
-        .sim-btn:hover:not(:disabled) {
-            background: rgba(100, 116, 139, 0.08);
+        .sim-btn:hover {
             border-color: var(--accent);
+            color: var(--accent);
         }
 
-        .sim-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .sim-btn.primary {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-        }
-
-        .sim-btn.primary:hover:not(:disabled) {
-            background: var(--accent-dark);
-        }
-
-        /* --- RESULTS VIEW / SITE PREVIEW --- */
-        .site-preview-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            z-index: 1000;
-        }
-
-        .site-preview-modal.visible {
-            display: flex;
-        }
-
-        .site-preview-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-2xl);
-            max-width: 540px;
-            width: 100%;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            animation: zoomIn 0.3s ease;
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .preview-header {
+        .sim-modal-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 8px;
         }
 
-        .preview-content {
-            border: 2px dashed var(--card-border);
-            border-radius: var(--radius-lg);
-            padding: 1.25rem;
-            background: rgba(100, 116, 139, 0.04);
-            text-align: center;
+        .sim-btn-close {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
         }
 
-        .preview-site-logo {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        /* --- DNS TABLE MODAL --- */
-        .dns-table {
+        .cache-table, .dns-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.85rem;
-            margin-top: 8px;
         }
 
+        .cache-table th, .cache-table td,
         .dns-table th, .dns-table td {
-            padding: 6px 10px;
-            border: 1px solid var(--card-border);
+            padding: 8px 12px;
             text-align: left;
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .dns-table th {
-            background: rgba(100, 116, 139, 0.08);
-            font-weight: 700;
+        .cache-table th, .dns-table th {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
         }
 
-        /* Responsive tweaks */
-        @media (max-width: 900px) {
+        .browser-preview-frame {
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            background: #fff;
+            color: #0f172a;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 992px) {
             .stations-layer {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem;
@@ -666,11 +803,14 @@
             }
             .zone-lan {
                 border-right: none;
-                border-bottom: 2px dashed rgba(100, 116, 139, 0.25);
+                border-bottom: 2px dashed rgba(37, 99, 235, 0.2);
+            }
+            .network-stage {
+                min-height: 580px;
             }
         }
 
-        @media (max-width: 580px) {
+        @media (max-width: 640px) {
             .stations-layer {
                 grid-template-columns: 1fr;
             }
@@ -678,28 +818,36 @@
                 min-height: auto;
             }
         }
-    </style>
+</style>
 </head>
 
 <body>
     <div class="container">
+        
         <header class="app-header">
-            <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
-                aria-label="Retour à l'accueil">
-                <i data-fa="arrow-left"></i>
-            </a>
-            <h1>
-                <span data-i18n="simulateur_reseau_dns.title">Simulateur Réseau &amp; DNS</span>
-                <span class="badge-level alpha" data-i18n="common.badge_alpha">Alpha</span>
-                <span class="badge-level" data-i18n="simulateur_reseau_dns.badge_level">7-8H</span>
-            </h1>
-            <div class="header-actions">
-                <div class="dropdown">
-                    <button class="icon-action-btn" id="options-toggle-btn" title="Options" aria-label="Options"
-                        data-action="toggle-dropdown">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
+                    <i data-fa="arrow-left"></i>
+                </a>
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="server"></i>
+                </div>
+                <div>
+                    <h1>
+                        <span data-i18n="simulateur_reseau_dns.title">Simulateur Réseau &amp; DNS</span>
+                        <span class="badge-level alpha" data-i18n="common.badge_alpha">Alpha</span>
+                        <span class="badge-level" data-i18n="simulateur_reseau_dns.badge_level">7-8H</span>
+                    </h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn"
+                        data-i18n-attr="title:common.options,aria-label:common.options">
                         <i data-fa="gear"></i>
                     </button>
-                    <div class="dropdown-menu" id="options-menu">
+                    <div class="settings-dropdown-content" id="options-menu">
                         <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
                             <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
                             <i data-fa="volume-xmark" id="icon-vol-off"></i>
@@ -720,6 +868,7 @@
                 </div>
             </div>
         </header>
+
 
         <div class="app-shell">
             <!-- TOP BAR: MODE & CONTROLS -->
@@ -794,11 +943,16 @@
                     <div class="zone-wan"><span class="zone-label" data-i18n="simulateur_reseau_dns.zone_wan">Internet (Réseau Mondial)</span></div>
                 </div>
 
+                
                 <!-- SVG Wires -->
                 <svg class="network-svg" id="networkSvg">
-                    <path id="wireClientRouter" class="wire-path" d="" />
-                    <path id="wireRouterDns" class="wire-path" d="" />
-                    <path id="wireRouterWeb" class="wire-path" d="" />
+                    <path id="bgWireClientRouter" class="wire-bg" />
+                    <path id="bgWireRouterDns" class="wire-bg" />
+                    <path id="bgWireRouterWeb" class="wire-bg" />
+
+                    <path id="wireClientRouter" class="wire-path wire-lan" />
+                    <path id="wireRouterDns" class="wire-path wire-dns" />
+                    <path id="wireRouterWeb" class="wire-path wire-web" />
                 </svg>
 
                 <!-- Moving Packet -->
@@ -810,6 +964,7 @@
                 <div class="stations-layer">
                     <!-- 1. Client -->
                     <div class="station-card station-client" id="nodeClient">
+                        <div class="port-indicator port-right" title="Port Ethernet"></div>
                         <div class="station-icon"><i data-fa="desktop"></i></div>
                         <div class="station-name" data-i18n="simulateur_reseau_dns.node_pc">Mon Ordinateur</div>
                         <div class="station-role" data-i18n="simulateur_reseau_dns.role_pc">Client (Navigateur Web)</div>
@@ -821,6 +976,8 @@
 
                     <!-- 2. Box Router -->
                     <div class="station-card station-router" id="nodeRouter">
+                        <div class="port-indicator port-left" title="Port LAN"></div>
+                        <div class="port-indicator port-right" title="Port WAN"></div>
                         <div class="station-icon"><i data-fa="wifi"></i></div>
                         <div class="station-name" data-i18n="simulateur_reseau_dns.node_router">Box Wi-Fi / Routeur</div>
                         <div class="station-role" data-i18n="simulateur_reseau_dns.role_router">Passerelle Internet (NAT)</div>
@@ -830,6 +987,7 @@
 
                     <!-- 3. DNS Server -->
                     <div class="station-card station-dns" id="nodeDns">
+                        <div class="port-indicator port-left" title="Port DNS (53)"></div>
                         <div class="station-icon"><i data-fa="server"></i></div>
                         <div class="station-name" data-i18n="simulateur_reseau_dns.node_dns">Serveur DNS</div>
                         <div class="station-role" data-i18n="simulateur_reseau_dns.role_dns">L'Annuaire du Web</div>
@@ -841,6 +999,7 @@
 
                     <!-- 4. Web Server -->
                     <div class="station-card station-web" id="nodeWeb">
+                        <div class="port-indicator port-left" title="Port Web (80/443)"></div>
                         <div class="station-icon"><i data-fa="globe"></i></div>
                         <div class="station-name" id="webServerName" data-i18n="simulateur_reseau_dns.node_web">Serveur Web</div>
                         <div class="station-role" data-i18n="simulateur_reseau_dns.role_web">Hébergeur du site</div>
@@ -848,6 +1007,7 @@
                         <span style="font-size:0.75rem; color:var(--success); font-weight:700;" id="webServerStatus">Port 443 (HTTPS)</span>
                     </div>
                 </div>
+
             </div>
 
             <!-- STEP EXPLANATION & CONTROLS -->
@@ -1097,30 +1257,62 @@
                 }
             }
 
+            
             // --- DRAW SVG WIRES ---
             function updateWires() {
-                const stageRect = document.getElementById('networkStage').getBoundingClientRect();
-                const getCenter = (el) => {
+                const stageEl = document.getElementById('networkStage');
+                if (!stageEl) return;
+                const stageRect = stageEl.getBoundingClientRect();
+
+                const getPort = (el, side) => {
                     const r = el.getBoundingClientRect();
                     return {
-                        x: r.left + r.width / 2 - stageRect.left,
+                        x: (side === 'left' ? r.left : r.right) - stageRect.left,
                         y: r.top + r.height / 2 - stageRect.top
                     };
                 };
 
-                const pClient = getCenter(nodeClient);
-                const pRouter = getCenter(nodeRouter);
-                const pDns = getCenter(nodeDns);
-                const pWeb = getCenter(nodeWeb);
+                const pClientOut = getPort(nodeClient, 'right');
+                const pRouterIn = getPort(nodeRouter, 'left');
+                const pRouterOut = getPort(nodeRouter, 'right');
+                const pDnsIn = getPort(nodeDns, 'left');
+                const pWebIn = getPort(nodeWeb, 'left');
 
-                wireClientRouter.setAttribute('d', `M ${pClient.x} ${pClient.y} L ${pRouter.x} ${pRouter.y}`);
-                wireRouterDns.setAttribute('d', `M ${pRouter.x} ${pRouter.y} L ${pDns.x} ${pDns.y}`);
-                wireRouterWeb.setAttribute('d', `M ${pRouter.x} ${pRouter.y} L ${pWeb.x} ${pWeb.y}`);
+                // 1. LAN Cable: Client -> Router (Straight)
+                const dLan = `M ${pClientOut.x} ${pClientOut.y} L ${pRouterIn.x} ${pRouterIn.y}`;
+                const bgLan = document.getElementById('bgWireClientRouter');
+                if (bgLan) bgLan.setAttribute('d', dLan);
+                wireClientRouter.setAttribute('d', dLan);
+
+                // 2. DNS Cable: Router -> DNS Server
+                const dDns = `M ${pRouterOut.x} ${pRouterOut.y} L ${pDnsIn.x} ${pDnsIn.y}`;
+                const bgDns = document.getElementById('bgWireRouterDns');
+                if (bgDns) bgDns.setAttribute('d', dDns);
+                wireRouterDns.setAttribute('d', dDns);
+
+                // 3. Web Cable: Router -> Web Server (Curving smoothly under DNS Server)
+                const underY = Math.max(pRouterOut.y, pWebIn.y) + 85;
+                const dWeb = `M ${pRouterOut.x} ${pRouterOut.y} C ${pRouterOut.x + 60} ${underY}, ${pWebIn.x - 60} ${underY}, ${pWebIn.x} ${pWebIn.y}`;
+                const bgWeb = document.getElementById('bgWireRouterWeb');
+                if (bgWeb) bgWeb.setAttribute('d', dWeb);
+                wireRouterWeb.setAttribute('d', dWeb);
             }
 
             window.addEventListener('resize', updateWires);
+            window.addEventListener('load', () => setTimeout(updateWires, 100));
 
-            // --- POSITION PACKET ---
+            // Options menu click toggle
+            const optBtn = document.getElementById('options-menu-btn');
+            const optMenu = document.getElementById('options-menu');
+            if (optBtn && optMenu) {
+                optBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    optMenu.classList.toggle('show');
+                });
+                document.addEventListener('click', () => optMenu.classList.remove('show'));
+            }
+
+            // --- POSITION & ANIMATE PACKET ALONG SVG WIRE ---
             function placePacketAtNode(nodeEl, packetType) {
                 const stageRect = document.getElementById('networkStage').getBoundingClientRect();
                 const r = nodeEl.getBoundingClientRect();
@@ -1133,38 +1325,34 @@
             }
 
             function animatePacket(fromNode, toNode, packetType, duration, onComplete) {
-                const stageRect = document.getElementById('networkStage').getBoundingClientRect();
-                const rFrom = fromNode.getBoundingClientRect();
-                const rTo = toNode.getBoundingClientRect();
-
-                const fromX = rFrom.left + rFrom.width / 2 - stageRect.left;
-                const fromY = rFrom.top + rFrom.height / 2 - stageRect.top;
-                const toX = rTo.left + rTo.width / 2 - stageRect.left;
-                const toY = rTo.top + rTo.height / 2 - stageRect.top;
-
-                packetToken.className = `packet-token visible ${packetType}`;
-                packetToken.style.transition = 'none';
-                packetToken.style.left = `${fromX}px`;
-                packetToken.style.top = `${fromY}px`;
-
-                // Highlight active wire
+                updateWires();
                 const activeWire = (fromNode === nodeClient || toNode === nodeClient) ? wireClientRouter :
                     (fromNode === nodeDns || toNode === nodeDns) ? wireRouterDns : wireRouterWeb;
+
+                const isReverse = (toNode === nodeClient || (toNode === nodeRouter && fromNode !== nodeClient));
+                const totalLength = activeWire.getTotalLength();
+
+                packetToken.className = `packet-token visible ${packetType}`;
                 activeWire.classList.add('active');
 
-                // Trigger smooth move
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        packetToken.style.transition = `all ${duration / 1000}s ease-in-out`;
-                        packetToken.style.left = `${toX}px`;
-                        packetToken.style.top = `${toY}px`;
-                    });
-                });
+                const startTime = performance.now();
+                function step(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const t = isReverse ? (1 - progress) : progress;
+                    const point = activeWire.getPointAtLength(t * totalLength);
 
-                setTimeout(() => {
-                    activeWire.classList.remove('active');
-                    if (onComplete) onComplete();
-                }, duration);
+                    packetToken.style.left = `${point.x}px`;
+                    packetToken.style.top = `${point.y}px`;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        activeWire.classList.remove('active');
+                        if (onComplete) onComplete();
+                    }
+                }
+                requestAnimationFrame(step);
             }
 
             // --- DNS FAIL TOGGLE ---
