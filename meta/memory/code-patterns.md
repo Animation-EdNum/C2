@@ -73,6 +73,7 @@ This document records code conventions, reusable hooks, and established project 
 - **Custom Tooltips:** Never use native `title` on interactive buttons. Use `data-tooltip="Texte"` with CSS-animated tooltips.
 - **TBI Projection Mode:** Classroom whiteboard mode toggles `.tbi-projection` on the root container, hiding configuration panels and enforcing container overflow safeguards (`overflow: hidden` / `overflow-y: auto`) to prevent viewport clipping.
 - **Compact Cards for External Links:** Render external links in portals using `.card.card-compact` inside `.grid.grid-compact`, displaying title, badges, and external icon arrow without descriptions or tags.
+- **Portal View Mode Switcher CSS:** Under `.grid.compact-view`, card tags (`.tags`) and curriculum references (`.card-ref`) are hidden (`display: none`), cards use horizontal header layout, and padding is reduced to save vertical space.
 - **Portal Badge Classification (`PROF_BADGES` in `portal.js`):** Thematic, discipline, and pedagogical tool badges (*Évaluation*, *Gestion de classe*, *Animation*, *Outil*, *Exercices*, etc.) must be registered in `PROF_BADGES` to receive `.badge.prof` (high-contrast off-white pill with slate text). School grade levels (e.g. *3-4H*, *7-8H*) default to `.badge` (rose/red pill).
 - **Mobile Header Responsiveness:** Enforce two-line layout and hide `.badge-level` on mobile screens (`@media (max-width: 640px) { .badge-level { display: none; } }`) to prevent header overflow and ensure touch actions stay accessible.
 
@@ -136,6 +137,10 @@ This document records code conventions, reusable hooks, and established project 
   ```html
   <div id="resultLiveAnnounce" class="sr-only" aria-live="polite"></div>
   ```
+- **Portal Search Preservation in Compact View:**
+  When filtering portal cards, concatenate `(card.innerText || "") + " " + (card.textContent || "")` so visually hidden tags/references (`display: none`) remain fully queryable.
+- **Bidirectional Numeric & Bit Input Clamping:**
+  Live validation on decimal input clamping to $[0, 255]$ with toast feedback, and editable binary input syncing with bit toggles.
 
 ## 4. Testing & Playwright Idioms
 - **IIFE Encapsulation in `page.evaluate()`:** Always wrap Playwright evaluated snippets in IIFEs to prevent polluting the global window scope across test steps:

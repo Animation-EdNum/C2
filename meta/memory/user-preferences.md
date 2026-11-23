@@ -4,6 +4,7 @@ This document defines how the human user prefers code delivered, reviewed, and f
 
 ## 1. Communication & Mindset
 - **Language & Tone:** Concise, actionable summaries in French using GitHub-flavored Markdown. Avoid verbose meta-commentary or re-stating obvious code diffs.
+- **Event Log Brevity:** The event log (`meta/memory/event-log.md`) must strictly contain only major milestones, formatted as single-line entries (max 1 line per milestone). Never write verbose commit-level changelogs or multi-line descriptions.
 - **Proactivity:** Execute straightforward, approved tasks directly without pausing for trivial permissions.
 - **Documentation Integrity:** Always preserve existing comments, pedagogical rationale, and AGPL-3.0 attribution headers.
 

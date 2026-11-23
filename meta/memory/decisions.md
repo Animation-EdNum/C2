@@ -32,6 +32,8 @@ This document records the architectural choices, library selections, and the rat
 - **Mobile Header Optimization:** On narrow viewports (≤ 640px), header grade badges (`.badge-level`) are hidden and navigation links are shortened (e.g. "Élèves", "Enseignant·e·s") with two-line layout support to keep action headers compact and avoid clipping.
 - **Pedagogical Grade Progression Ordering:** Webapps are ordered strictly by ascending target grades (1-4H, 3-4H, 3-6H, 3-8H, 5-6H, 5-8H, 7-8H, 9-11CO) across `registry.js` and portal views, providing an intuitive curriculum-aligned sequence for pupils and teachers.
 - **Bilingual External Resource Cards (`students_external`):** External educational links (e.g. Totem) are rendered as compact cards with cycle badges, hidden critical-thinking search tags, and localized URLs (`?lang=fr` / `#de`) without embedding third-party trackers.
+- **Portal View Mode Switcher (Detailed vs. Compact):** User-selectable segmented toggle in the portal section header persisting via `localStorage` (`c2_portal_view_mode`), preserving full search indexing across hidden tags/refs and collapsing to icons on narrow viewports (≤ 580px).
+- **Dedicated Standalone Utility Webapps:** Single-concept tools (e.g. `calculatrice_binaire.html` for 8-bit octet conversions, `generateur_mot_de_passe.html`) are built as dedicated standalone webapps with bidirectional sync and live input clamping, keeping base challenge apps distraction-free.
 
 ## 5. Gamification & State Management
 - **Decoupled Score Management (`scores.js`):** Adaptive difficulty and statistics are centralized in `ScoreManager`. Total attempts are calculated as `totalSuccess + mistakes` with self-healing migration to keep metrics consistent across app restarts.
@@ -46,19 +48,6 @@ This document records the architectural choices, library selections, and the rat
 
 ## 7. Packaging & Distribution
 - **Standalone Static Server CLI (`bin/ednum.js`):** Distributed as `@ednum/suite-ednum`. Implements directory traversal protection (verifying canonical paths against trailing-slash root) and HSTS headers while remaining 100% dependency-free.
-
-## 9. Pedagogy & Game Mechanics
-- **Adaptive Difficulty Race Condition Prevention:** When a student masters a level (3 consecutive successes on 1st attempt), `ScoreManager.addSuccess()` displays an adaptive modal ("Niveau maîtrisé !"). To prevent auto-advance timers (`setTimeout(nextLevel, delay)`) from executing concurrently and re-scrambling the game while the modal is open or immediately after the user accepts the higher difficulty:
-  - `ScoreManager.addSuccess()` returns a boolean `adaptiveShown` indicating whether the modal was rendered.
-  - Webapps store active auto-advance timer handles in variables (`winTimer`, `readNextTimer`, etc.) and strictly clear them (`clearTimeout(timer); timer = null;`) upon difficulty change, mode switch, and new level initializations.
-  - When `adaptiveShown` is `true`, webapps skip scheduling the auto-advance timer.
-  - Webapps listen to `c2_change_difficulty` to clear timers and transition smoothly to the higher level.
-  - Webapps listen to `c2_adaptive_dismissed` to advance to the next puzzle in the *current* difficulty when the student clicks "Non, je reste ici".
-  - Audited and enforced across all active challenge apps: `jeu_de_la_grue`, `binaire_codage`, `bit_de_parite`, `binaire_message`, `compresseur_magique`, `coffre_fort`, and `simulateur_automate`.
-- **Jeu de la grue Level Generation (BFS Move Solver):** To ensure curriculum-appropriate difficulty in Cycle 1 (3-4H / 6-8 years old), level generation in `webapps/jeu_de_la_grue.html` computes the minimal block moves using a lightweight Breadth-First Search (`computeMinMoves`):
-  - **Easy (Facile):** 1 block, strictly 1 move (3–6 crane instructions).
-  - **Medium (Moyen):** 2 blocks, strictly 2 moves (7–11 crane instructions). Prevents 1-move bystander trivialities and strictly filters out 3-move Tower of Hanoi temporary parking puzzles that require 12–16 instructions.
-  - **Hard (Difficile):** 3 blocks, strictly $\ge 3$ moves (12–27 crane instructions). Eliminates trivial 1-move and 2-move puzzles where 1 or 2 blocks remain untouched.
 
 ## 8. Internationalization (i18n) & Swiss Standard German (de-CH)
 - **Single Codebase Runtime Translation:** Rather than duplicating 31 HTML pages into a `/de/` folder (which would double maintenance overhead and bugfix complexity for inline scripts), the platform uses a single codebase. French remains the source markup in HTML and the natural fallback, while German is applied dynamically at runtime.
@@ -79,3 +68,16 @@ This document records the architectural choices, library selections, and the rat
   - `data-i18n-html="key"`: Replaces `innerHTML` for trusted simple formatting strings.
   - `data-i18n-attr="attr1:key1;attr2:key2"`: Translates attributes (`title`, `aria-label`, `placeholder`, `data-tooltip`).
 - **Dynamic Language Switcher (Staged Rollout):** Standardized `FR`/`DE` toggle inserted in action headers or settings dropdowns. Hidden from the general public by default while translation expansion is in progress (can be activated for development/testing via `?show_lang=1` or `localStorage.getItem('show_lang_btn') === '1'`). Switching sets `localStorage` and reloads the page with `?lang=` to guarantee clean state reset. Portal and share links carry `?lang=de` when German is active.
+
+## 9. Pedagogy & Game Mechanics
+- **Adaptive Difficulty Race Condition Prevention:** When a student masters a level (3 consecutive successes on 1st attempt), `ScoreManager.addSuccess()` displays an adaptive modal ("Niveau maîtrisé !"). To prevent auto-advance timers (`setTimeout(nextLevel, delay)`) from executing concurrently and re-scrambling the game while the modal is open or immediately after the user accepts the higher difficulty:
+  - `ScoreManager.addSuccess()` returns a boolean `adaptiveShown` indicating whether the modal was rendered.
+  - Webapps store active auto-advance timer handles in variables (`winTimer`, `readNextTimer`, etc.) and strictly clear them (`clearTimeout(timer); timer = null;`) upon difficulty change, mode switch, and new level initializations.
+  - When `adaptiveShown` is `true`, webapps skip scheduling the auto-advance timer.
+  - Webapps listen to `c2_change_difficulty` to clear timers and transition smoothly to the higher level.
+  - Webapps listen to `c2_adaptive_dismissed` to advance to the next puzzle in the *current* difficulty when the student clicks "Non, je reste ici".
+  - Audited and enforced across all active challenge apps: `jeu_de_la_grue`, `binaire_codage`, `bit_de_parite`, `binaire_message`, `compresseur_magique`, `coffre_fort`, and `simulateur_automate`.
+- **Jeu de la grue Level Generation (BFS Move Solver):** To ensure curriculum-appropriate difficulty in Cycle 1 (3-4H / 6-8 years old), level generation in `webapps/jeu_de_la_grue.html` computes the minimal block moves using a lightweight Breadth-First Search (`computeMinMoves`):
+  - **Easy (Facile):** 1 block, strictly 1 move (3–6 crane instructions).
+  - **Medium (Moyen):** 2 blocks, strictly 2 moves (7–11 crane instructions). Prevents 1-move bystander trivialities and strictly filters out 3-move Tower of Hanoi temporary parking puzzles that require 12–16 instructions.
+  - **Hard (Difficile):** 3 blocks, strictly $\ge 3$ moves (12–27 crane instructions). Eliminates trivial 1-move and 2-move puzzles where 1 or 2 blocks remain untouched.
