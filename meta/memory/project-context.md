@@ -9,13 +9,13 @@
 - **Portals:**
   - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
   - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
-- **Production Student Apps (`webapps/` - 11 apps, ordered by pedagogical level):**
-  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 1-4H / 1-2H & 3-4H), Simulateur Automate (3-4H, 5-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5H-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-11CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H), Calculatrice binaire (`calculatrice_binaire.html`, 7H-11CO).
+- **Production Student Apps (`webapps/` - 13 apps, ordered by pedagogical level):**
+  - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 1-4H / 1-2H & 3-4H), Simulateur Automate (3-4H, 5-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5H-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-11CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H), Machine à chiffrer (`machine_a_chiffrer.html`, 7-8H), Simulateur de téléchargement (`simulateur_telechargement.html`, 7-8H), Calculatrice binaire (`calculatrice_binaire.html`, 7H-11CO).
 - **External Student Resources (`students_external` & `students_utilities`):**
   - Production: Totem (`ext-totem`, 7H-10CO), Qwant Junior (`ext-qwantjunior`, 4H-8H), ia-pedia (`ext-iapedia`, 5H-10CO), Le Dico des Ados (`ext-ledicodesados`, 5H-10CO), Scratch (`ext-scratch`, 7H-10CO).
   - Hidden resources (revealed via "alpha" search trigger): Dico API (`ext-dicoapi`, 3H-8H, inclusive phonetic dictionary), Le Dico des Écoles (`ext-ledicodesecoles`, 3H-10CO, phonetic dictionary), Vikidia (`ext-vikidia`, 5H-8H), Monkeytype (`ext-monkeytype`, 5H-8H), AutoDraw (`ext-autodraw`, 3H-8H), GeoGebra Classique (`ext-geogebra-students`, 7H-10CO), Classroomscreen (`ext-classroomscreen`), Canva (`ext-canva`).
-- **Alpha Student Apps (`alpha/webapps/` - 8 apps, ordered by pedagogical level):**
-  - Coffre-fort (3-6H), Réseau de tri (5-6H), Machine à chiffrer (7-8H), Détective IA (7-8H), Compresseur magique (7-8H), Dresseur de neurones (7-8H), Pseudo-code (`apprendre_pseudocode`, 9CO), Une chose après l'autre (`tri_insertion`, 10CO).
+- **Alpha Student Apps (`alpha/webapps/` - 5 apps, ordered by pedagogical level):**
+  - Coffre-fort (`coffre_fort.html`, 3-6H), Réseau de tri (`reseau_de_tri.html`, 5-6H), Compresseur magique (`compresseur_magique.html`, 7-8H), Dresseur de neurones (`dresseur_neurones.html`, 7-8H), Pseudo-code (`apprendre_pseudocode.html`, 9CO).
 - **Teacher Tools (`webapps/teacher/` - 6 production, 1 alpha):**
   - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`), Roue de la chance (`roue_de_la_chance.html`), Adaptateur & Simulateur DYS (`sim_dyslexie.html`).
   - Alpha: Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`).

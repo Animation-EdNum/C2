@@ -163,9 +163,8 @@ Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration 
 - 🔒 **Coffre-fort numérique** (`alpha/webapps/coffre_fort.html`, 3-6H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
 - 🔀 **Réseau de tri** (`alpha/webapps/reseau_de_tri.html`, 5-6H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
 - ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COMPRESSEUR_MAGIQUE.md)
-- 🧠 **Dresseur de neurones & Détective IA** (`alpha/webapps/dresseur_de_neurones.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
+- 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
 - 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
-- 🃏 **Une chose après l'autre (Tri par insertion)** (`alpha/webapps/tri_insertion.html`, 10CO) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_TRI_INSERTION.md)
 - 🛡️ **Anonymiseur de textes** (`alpha/webapps/teacher/anonymiseur.html`, Enseignant) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_ANONYMISEUR.md)
 
 

@@ -1,12 +1,12 @@
-# 🧠 Mode d'emploi : Intelligence Artificielle & Neurones
+# 🧠 Mode d'emploi : Dresseur de neurones (IA & Biais algorithmique)
 
-Les applications **Dresseur de neurones** et **Détective IA** initient les élèves du Cycle 2 et du Cycle 3 au fonctionnement fondamental de l'intelligence artificielle et de l'apprentissage automatique (*Machine Learning*). Elles démontrent visuellement qu'une IA ne pense pas, mais qu'elle apprend à partir d'exemples et peut hériter de **biais algorithmiques** si son entraînement est incomplet ou trompeur.
+L'application **Dresseur de neurones** initie les élèves du Cycle 2 et du Cycle 3 au fonctionnement fondamental de l'intelligence artificielle et de l'apprentissage automatique (*Machine Learning*). Elle démontre visuellement qu'une IA ne pense pas, mais qu'elle apprend à partir d'exemples et peut hériter de **biais algorithmiques** si son entraînement est incomplet ou trompeur.
 
 Alignement : Cycle 2 et Cycle 3 (Éducation numérique, algorithmes d'apprentissage, pensée critique face aux IA).
 
 ---
 
-## Pourquoi ces outils ?
+## Pourquoi cet outil ?
 
 - **Démystifier le fonctionnement d'une IA :** Comprendre qu'un modèle informatique n'a pas de conscience ; il extrait des régularités statistiques (critères discriminants) à partir d'une base de données d'apprentissage.
 - **Le cycle de l'apprentissage supervisé :** Expérimenter concrètement les trois étapes fondamentales :
@@ -17,7 +17,7 @@ Alignement : Cycle 2 et Cycle 3 (Éducation numérique, algorithmes d'apprentiss
 
 ---
 
-## 1. Dresseur de neurones (`dresseur_neurones.html`)
+## Fonctionnement de l'application (`dresseur_neurones.html`)
 
 Cette application place l'élève dans le rôle d'un ingénieur entraînant un robot trieur pour une usine agroalimentaire.
 
@@ -42,28 +42,8 @@ Cette application place l'élève dans le rôle d'un ingénieur entraînant un r
 
 ---
 
-## 2. Détective IA (`detective_ia.html`)
+## Raccourcis & Gamification
 
-Cette application explore les **arbres de décision**, l'une des structures algorithmiques les plus transparentes et interprétables du machine learning.
-
-### Configuration du jeu de données :
-1. **Choix du thème :** 🐾 **Animaux**, 🍎 **Fruits** ou 🚗 **Véhicules**.
-2. **Choix de la difficulté :**
-   - 🟢 **Facile :** 4 éléments avec des attributs très distincts.
-   - 🟡 **Moyen :** 6 éléments avec des questions plus fines.
-   - 🔴 **Difficile :** 8 éléments avec critères croisés.
-
-### Les 3 modes d'enquête (onglets) :
-| Mode | Ce que fait l'élève | Objectif pédagogique |
-|---|---|---|
-| 🧭 **Mode Guidé** | Répond à des questions successives (ex. *« A-t-il des poils ? »*, *« Vole-t-il ? »*) pour progresser dans l'arbre. | Comprendre comment un arbre divise récursivement un groupe d'éléments en sous-groupes homogènes. |
-| 🛠️ **Mode Libre** | Choisit lui-même les meilleures questions pour construire l'arbre de classification le plus court possible. | Découvrir la notion de *gain d'information* : poser la question qui sépare le groupe équitablement. |
-| 🎯 **Mode Défi** | Analyse un arbre déjà construit pour identifier des erreurs de classification ou deviner l'objet secret. | Développer l'esprit critique et l'audit de modèles automatisés. |
-
----
-
-## 3. Raccourcis & Gamification
-
-- **Statistiques :** Bouton camembert en bas de carte pour suivre le taux de précision et le nombre de défis résolus.
+- **Statistiques :** Bouton camembert en bas de carte pour suivre le taux de précision et le nombre de prédictions correctes.
 - **Série 🔥 & Confettis :** Valorisation des déductions correctes et de la justesse des modèles.
 - **Menu Options ⚙ :** Thème sombre, réglage audio et réinitialisation de session.

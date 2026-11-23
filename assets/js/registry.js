@@ -465,30 +465,6 @@ window.REGISTRY = [
     "inC1": false
   },
   {
-    "id": "app-detective-ia",
-    "href": "alpha/webapps/detective_ia.html",
-    "isAlpha": true,
-    "dataLevel": "7-8H",
-    "icon": "dt-magnifying-glass",
-    "title": "Détective IA",
-    "desc": "Entraîne une IA à classer des objets ou résous des énigmes avec des arbres de décision.",
-    "tags": [
-      "#Intelligence Artificielle",
-      "#Classification",
-      "#Arbre de décision"
-    ],
-    "ref": "DÉ>CODAGE 7-8 · Alpha",
-    "badges": [
-      {
-        "text": "7-8H",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
     "id": "app-compresseur-magique",
     "href": "alpha/webapps/compresseur_magique.html",
     "isAlpha": true,
@@ -627,30 +603,6 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "9CO",
-        "grey": false
-      }
-    ],
-    "category": "students_activities",
-    "inIndex": true,
-    "inC1": false
-  },
-  {
-    "id": "app-tri-insertion",
-    "href": "alpha/webapps/tri_insertion.html",
-    "isAlpha": true,
-    "dataLevel": "10CO",
-    "icon": "cards",
-    "title": "Une chose après l'autre",
-    "desc": "Trie les cartes de Jass en suivant l'organigramme du tri par insertion.",
-    "tags": [
-      "#Algorithmique",
-      "#Tri",
-      "#Cartes"
-    ],
-    "ref": "Connected 4 · 1C | Une chose après l'autre",
-    "badges": [
-      {
-        "text": "10CO",
         "grey": false
       }
     ],

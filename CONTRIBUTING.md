@@ -58,12 +58,9 @@ C2/
 │   ├── apprendre_pseudocode.html
 │   ├── coffre_fort.html
 │   ├── compresseur_magique.html
-│   ├── detective_ia.html
 │   ├── dresseur_neurones.html
-│   ├── jeu_de_la_grue.html
-│   ├── machine_a_trier.html
 │   ├── reseau_de_tri.html
-│   └── teacher/            # Outils enseignants alpha (sim_dyslexie)
+│   └── teacher/            # Outils enseignants alpha (anonymiseur)
 │
 ├── webapps/teacher/        # Outils enseignant·e·s stables
 │   ├── bareme.html
