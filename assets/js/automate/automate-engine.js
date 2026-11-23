@@ -512,6 +512,15 @@ let simState = {
                 }
             }
 
+            if (window.treasureBubbleState && !window.treasureBubbleState.hasPlaced && exploreState.targetRow === null) {
+                window.treasureBubbleState.exploreMoves = (window.treasureBubbleState.exploreMoves || 0) + 1;
+                if (window.treasureBubbleState.exploreMoves >= 3 && !window.treasureBubbleState.active) {
+                    if (typeof window.triggerTreasureBubble === 'function') {
+                        window.triggerTreasureBubble('explore');
+                    }
+                }
+            }
+
             exploreState.running = false; 
         }
         function removeSpecificCmd(index) {
@@ -1157,6 +1166,15 @@ let simState = {
             toggleCmdButtons(false);
             if (addedItem) {
                 clearProgram();
+            }
+
+            if (window.treasureBubbleState && !window.treasureBubbleState.hasPlaced && simState.targetRow === null && !simState.stopped) {
+                window.treasureBubbleState.simRuns = (window.treasureBubbleState.simRuns || 0) + 1;
+                if (!window.treasureBubbleState.active) {
+                    if (typeof window.triggerTreasureBubble === 'function') {
+                        window.triggerTreasureBubble('simulator');
+                    }
+                }
             }
         }
 

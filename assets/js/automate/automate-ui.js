@@ -1,7 +1,16 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
 
-window.treasureBubbleState = { active: false, timer: null, removeTimer: null, hasPlaced: false, text: 'Clique-moi pour ajouter un trésor et des obstacles', wrapper: null, textDiv: null };
+window.treasureBubbleState = {
+    active: false,
+    timer: null,
+    removeTimer: null,
+    hasPlaced: false,
+    exploreMoves: 0,
+    simRuns: 0,
+    wrapper: null,
+    textDiv: null
+};
 
 function clearTreasureBubble() {
     if (window.treasureBubbleState.timer) {
@@ -19,82 +28,87 @@ function clearTreasureBubble() {
     }
     window.treasureBubbleState.active = false;
 }
+window.clearTreasureBubble = clearTreasureBubble;
 
 function handleTreasureBubbleClick(e) {
     e.stopPropagation();
-    window.treasureBubbleState.text = "Clique sur le bouton ci-dessous";
-    if (window.treasureBubbleState.removeTimer) {
-        clearTimeout(window.treasureBubbleState.removeTimer);
-    }
-
-    if (window.treasureBubbleState.textDiv) {
-        window.treasureBubbleState.textDiv.textContent = window.treasureBubbleState.text;
-    }
-
-    window.treasureBubbleState.removeTimer = setTimeout(() => {
+    const currentTab = typeof activeTab !== 'undefined' ? activeTab : (window.activeTab || 'explore');
+    const targetTab = currentTab === 'simulator' ? 'simulator' : 'explore';
+    const btnId = targetTab === 'explore' ? 'btn-explore-place-elements' : 'btn-place-elements';
+    const btn = document.getElementById(btnId);
+    if (btn) {
+        btn.click();
+    } else {
         clearTreasureBubble();
-    }, 5000);
+    }
 }
 
 function triggerTreasureBubble(tab) {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('noNudges') === '1') {
+        return;
+    }
     if (window.treasureBubbleState.hasPlaced) {
         return;
     }
-    if (activeTab !== 'explore' && activeTab !== 'simulator') {
+    const globalTab = typeof activeTab !== 'undefined' ? activeTab : (window.activeTab || 'explore');
+    const currentTab = tab || globalTab;
+    if (currentTab !== 'explore' && currentTab !== 'simulator') {
+        return;
+    }
+    if (currentTab !== globalTab) {
+        return;
+    }
+    const currentTarget = (currentTab === 'explore' ? (window.exploreState && window.exploreState.targetRow) : (window.simState && window.simState.targetRow));
+    if (currentTarget !== null && currentTarget !== undefined) {
         return;
     }
 
-    window.treasureBubbleState.active = true;
-    window.treasureBubbleState.text = 'Clique-moi pour ajouter un trésor et des obstacles';
-
-    const btnId = tab === 'explore' ? 'btn-explore-place-elements' : 'btn-place-elements';
+    const btnId = currentTab === 'explore' ? 'btn-explore-place-elements' : 'btn-place-elements';
     const btn = document.getElementById(btnId);
 
     if (btn) {
         btn.style.position = 'relative';
-        if (window.treasureBubbleState.wrapper) {
-            window.treasureBubbleState.wrapper.remove();
-            window.treasureBubbleState.wrapper = null;
-            window.treasureBubbleState.textDiv = null;
-        }
+        clearTreasureBubble();
+
+        window.treasureBubbleState.active = true;
 
         const wrapper = document.createElement('div');
         wrapper.className = 'treasure-speech-bubble-wrapper';
-        wrapper.style.position = 'absolute';
-        wrapper.style.top = '0';
-        wrapper.style.left = '50%';
-        wrapper.style.width = '0';
-        wrapper.style.height = '0';
-        wrapper.style.overflow = 'visible';
-        wrapper.style.zIndex = '1000';
 
         const bubble = document.createElement('div');
         bubble.className = 'treasure-speech-bubble';
-        bubble.style.position = 'absolute';
-        bubble.style.bottom = 'calc(100% + 10px)';
-        bubble.style.left = '50%';
-        bubble.style.transform = 'translate(-50%, 0)';
         bubble.onclick = handleTreasureBubbleClick;
 
         const textDiv = document.createElement('div');
         textDiv.className = 'treasure-speech-bubble-text';
-        textDiv.textContent = window.treasureBubbleState.text;
 
+        const icon = document.createElement('i');
+        icon.setAttribute('data-fa', 'trophy-star');
+        icon.style.marginRight = '6px';
+        icon.style.color = '#f59e0b';
+
+        const span = document.createElement('span');
+        const bubbleMsg = window.I18N ? window.I18N.t('simulateur_automate.bubble_treasure', 'Ajoute un trésor et des obstacles !') : 'Ajoute un trésor et des obstacles !';
+        span.textContent = bubbleMsg;
+
+        textDiv.appendChild(icon);
+        textDiv.appendChild(span);
         bubble.appendChild(textDiv);
         wrapper.appendChild(bubble);
         btn.appendChild(wrapper);
 
+        window.fa?.createIcons?.(textDiv);
+
         window.treasureBubbleState.wrapper = wrapper;
         window.treasureBubbleState.textDiv = textDiv;
 
-        if (window.treasureBubbleState.removeTimer) {
-            clearTimeout(window.treasureBubbleState.removeTimer);
-        }
         window.treasureBubbleState.removeTimer = setTimeout(() => {
             clearTreasureBubble();
-        }, 5000);
+        }, 7000);
     }
 }
+window.triggerTreasureBubble = triggerTreasureBubble;
 
 let commandsVisible = true;
 window.commandsVisible = commandsVisible;
@@ -801,14 +815,7 @@ document.getElementById('btn-explore-reset').addEventListener('click', () => {
 document.getElementById('btn-explore-place-elements').addEventListener('click', () => {
     if (window.treasureBubbleState) {
         window.treasureBubbleState.hasPlaced = true;
-        if (window.treasureBubbleState.timer) clearTimeout(window.treasureBubbleState.timer);
-        if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
-        if (window.treasureBubbleState.wrapper) {
-            window.treasureBubbleState.wrapper.remove();
-            window.treasureBubbleState.wrapper = null;
-            window.treasureBubbleState.textDiv = null;
-        }
-        window.treasureBubbleState.active = false;
+        clearTreasureBubble();
     }
     placeRandomExploreTarget();
     randomizeExploreWalls();
@@ -845,14 +852,7 @@ if (btnClearEnd) {
 document.getElementById('btn-place-elements').addEventListener('click', () => {
     if (window.treasureBubbleState) {
         window.treasureBubbleState.hasPlaced = true;
-        if (window.treasureBubbleState.timer) clearTimeout(window.treasureBubbleState.timer);
-        if (window.treasureBubbleState.removeTimer) clearTimeout(window.treasureBubbleState.removeTimer);
-        if (window.treasureBubbleState.wrapper) {
-            window.treasureBubbleState.wrapper.remove();
-            window.treasureBubbleState.wrapper = null;
-            window.treasureBubbleState.textDiv = null;
-        }
-        window.treasureBubbleState.active = false;
+        clearTreasureBubble();
     }
     placeRandomSimTarget();
     randomizeSimWalls();

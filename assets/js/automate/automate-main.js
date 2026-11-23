@@ -201,6 +201,16 @@
             // 4. Reconstruire les grilles et vider les tracés
             if (typeof rebuildAllGrids === 'function') rebuildAllGrids();
 
+            // 4b. Réinitialiser l'état du nudge trésor
+            if (typeof clearTreasureBubble === 'function') {
+                clearTreasureBubble();
+            }
+            if (window.treasureBubbleState) {
+                window.treasureBubbleState.hasPlaced = false;
+                window.treasureBubbleState.exploreMoves = 0;
+                window.treasureBubbleState.simRuns = 0;
+            }
+
             // 5. Fermer les panneaux et le menu déroulant
             const dropdownContent = document.querySelector('.settings-dropdown-content.show');
             if (dropdownContent) dropdownContent.classList.remove('show');

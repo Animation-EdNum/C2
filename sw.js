@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-19c9ac00';
+const CACHE_NAME = 'ednum-16f174c5';
 const ASSETS = [
     './',
     './index.html',
@@ -27,6 +27,7 @@ const ASSETS = [
     './assets/css/binaire_message.css',
     './assets/css/binaire_studio.css',
     './assets/css/bit_de_parite.css',
+    './assets/css/calculatrice_binaire.css',
     './assets/css/components.css',
     './assets/css/compresseur_magique.css',
     './assets/css/generateur_mot_de_passe.css',
@@ -47,6 +48,7 @@ const ASSETS = [
     './assets/js/automate/automate-main.js',
     './assets/js/automate/automate-skins.js',
     './assets/js/automate/automate-ui.js',
+    './assets/js/calculatrice_binaire.js',
     './assets/js/confetti.js',
     './assets/js/fa-subset.js',
     './assets/js/generateur_mot_de_passe.js',
@@ -71,6 +73,7 @@ const ASSETS = [
     './webapps/binaire_message.html',
     './webapps/binaire_studio.html',
     './webapps/bit_de_parite.html',
+    './webapps/calculatrice_binaire.html',
     './webapps/dactylo.html',
     './webapps/generateur_mot_de_passe.html',
     './webapps/jeu_de_la_grue.html',

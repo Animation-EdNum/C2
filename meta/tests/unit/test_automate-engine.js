@@ -4,19 +4,50 @@ const { JSDOM } = require('jsdom');
 const fs = require('fs');
 
 const automateEngineSrc = fs.readFileSync('assets/js/automate/automate-engine.js', 'utf-8');
+const automateUiSrc = fs.readFileSync('assets/js/automate/automate-ui.js', 'utf-8');
 
-function setupDOM() {
-    const dom = new JSDOM(`<!DOCTYPE html><html><body></body></html>`, { runScripts: "dangerously" });
+const treasureBubbleCode = automateUiSrc.substring(
+    automateUiSrc.indexOf('window.treasureBubbleState ='),
+    automateUiSrc.indexOf('window.triggerTreasureBubble = triggerTreasureBubble;') + 'window.triggerTreasureBubble = triggerTreasureBubble;'.length
+);
+
+function setupDOM(url = "http://localhost/") {
+    const dom = new JSDOM(`<!DOCTYPE html><html><body>
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-explore"></button>
+            <button class="tab-btn" id="tab-simulator"></button>
+        </div>
+        <div id="view-explore" class="view active">
+            <div id="explore-grid" class="bot-grid"></div>
+            <button class="icon-action-btn" id="btn-explore-place-elements"></button>
+            <button id="explore-pad-fwd"></button>
+        </div>
+        <div id="view-simulator" class="view">
+            <div id="sim-grid" class="bot-grid"></div>
+            <button class="icon-action-btn" id="btn-place-elements"></button>
+            <button id="pad-fwd"></button>
+            <button id="pad-go"></button>
+        </div>
+    </body></html>`, { runScripts: "dangerously", url });
     const window = dom.window;
+
+    window.activeTab = 'explore';
+    window.activeSkin = 'default';
+    window.activeMat = 'none';
+    window.MAT_CONFIG = {};
+    window.currentSpeed = 400;
+    window.showToast = () => {};
+    window.unlockSkin = () => {};
+    window.playSound = () => {};
 
     // Evaluate automate-engine.js into the jsdom window environment
     window.eval(automateEngineSrc);
+    // Evaluate treasure bubble logic
+    window.eval(treasureBubbleCode);
 
     // Override setTimeout to run callbacks synchronously for testing timer logic without actually waiting
     const originalSetTimeout = window.setTimeout;
     window.setTimeout = (cb, delay) => {
-        // Just record what was called, or execute it immediately for some tests,
-        // but here we just pass it to original to let tests handle timing manually
         return originalSetTimeout(cb, delay);
     };
 
@@ -112,5 +143,96 @@ test('handleSpeechBubbleClick', async (t) => {
         window.handleSpeechBubbleClick(mockEvent);
 
         assert.ok(stopPropagationCalled, 'stopPropagation should be called');
+    });
+});
+
+test('treasureBubbleState and nudge triggers', async (t) => {
+    await t.test('triggerTreasureBubble creates bubble above button and handles click', () => {
+        const window = setupDOM();
+        const document = window.document;
+
+        assert.strictEqual(window.treasureBubbleState.active, false);
+
+        window.triggerTreasureBubble('explore');
+
+        assert.strictEqual(window.treasureBubbleState.active, true);
+        const bubble = document.querySelector('.treasure-speech-bubble');
+        assert.ok(bubble, 'Speech bubble should be inserted into DOM');
+        const text = document.querySelector('.treasure-speech-bubble-text');
+        assert.ok(text.textContent.includes('trésor'), 'Text should mention trésor');
+
+        // Clicking the bubble should trigger click on the button
+        let buttonClicked = false;
+        document.getElementById('btn-explore-place-elements').addEventListener('click', () => {
+            buttonClicked = true;
+        });
+
+        bubble.click();
+        assert.strictEqual(buttonClicked, true, 'Clicking bubble should trigger the button click');
+    });
+
+    await t.test('triggerTreasureBubble is prevented when noNudges=1', () => {
+        const window = setupDOM("http://localhost/?noNudges=1");
+
+        window.triggerTreasureBubble('explore');
+        assert.strictEqual(window.treasureBubbleState.active, false);
+        assert.strictEqual(window.document.querySelectorAll('.treasure-speech-bubble').length, 0);
+    });
+
+    await t.test('exploration triggers treasure bubble after 3 moves when targetRow is null', async () => {
+        const window = setupDOM();
+        window.exploreState = {
+            robotRow: 2, robotCol: 2, robotDir: 0,
+            targetRow: null, targetCol: null,
+            running: false, obstacles: [], failed: false
+        };
+        window.activeTab = 'explore';
+        window.treasureBubbleState.hasPlaced = false;
+        window.treasureBubbleState.exploreMoves = 0;
+
+        // Mock sleep and moveRobot
+        window.sleep = () => Promise.resolve();
+        window.moveRobot = (state) => ({ robotRow: state.robotRow, robotCol: state.robotCol, robotDir: state.robotDir, blocked: false });
+        window.renderRobot = () => {};
+        window.playSound = () => {};
+        window.TrailManager = { states: {}, captureInitialState: () => {}, addSegment: () => {} };
+
+        await window.runSingleCommandExploration('forward');
+        assert.strictEqual(window.treasureBubbleState.exploreMoves, 1);
+        assert.strictEqual(window.treasureBubbleState.active, false);
+
+        await window.runSingleCommandExploration('forward');
+        assert.strictEqual(window.treasureBubbleState.exploreMoves, 2);
+        assert.strictEqual(window.treasureBubbleState.active, false);
+
+        await window.runSingleCommandExploration('forward');
+        assert.strictEqual(window.treasureBubbleState.exploreMoves, 3);
+        assert.strictEqual(window.treasureBubbleState.active, true);
+    });
+
+    await t.test('simulator triggers treasure bubble after program run when targetRow is null', async () => {
+        const window = setupDOM();
+        window.simState.program = ['forward'];
+        window.simState.targetRow = null;
+        window.simState.targetCol = null;
+        window.simState.running = false;
+        window.simState.stopped = false;
+        window.simState.failed = false;
+        window.activeTab = 'simulator';
+        window.treasureBubbleState.hasPlaced = false;
+        window.treasureBubbleState.simRuns = 0;
+
+        // Mock sleep and moveRobot
+        window.sleep = () => Promise.resolve();
+        window.moveRobot = (state) => ({ robotRow: state.robotRow, robotCol: state.robotCol, robotDir: state.robotDir, blocked: false });
+        window.renderRobot = () => {};
+        window.renderProgramStep = () => {};
+        window.playSound = () => {};
+        window.toggleCmdButtons = () => {};
+        window.TrailManager = { states: {}, clear: () => {}, captureInitialState: () => {}, addSegment: () => {} };
+
+        await window.runProgram();
+        assert.strictEqual(window.treasureBubbleState.simRuns, 1);
+        assert.strictEqual(window.treasureBubbleState.active, true);
     });
 });
