@@ -240,6 +240,7 @@ test('i18n.js - Dictionary completeness audit', () => {
         'url_params.share_title',
         'portal.title',
         'binaire_codage.title',
+        'calculatrice_binaire.title',
         'cgu.page_title',
         'mentions.page_title',
         'confidentialite.page_title',

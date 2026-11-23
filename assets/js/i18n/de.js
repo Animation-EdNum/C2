@@ -211,6 +211,7 @@
         'portal.filter_5_6h': '5.-6. Primar',
         'portal.filter_7_8h': '7.-8. Primar',
         'portal.filter_9_10co': '9.-11. OS',
+        'portal.filter_9_11co': '9.-11. OS',
         'portal.filter_all': 'Alle',
         'portal.section_students_apps': 'Apps für die informatische Bildung',
         'portal.section_students_sites': 'Nützliche Websites & Externe Ressourcen',
@@ -258,6 +259,23 @@
         'binaire_codage.help_hint': 'Tipp: Addiere die Werte der Schalter, die auf 1 stehen.',
         'binaire_codage.streak_badge': 'Serie: {streak}',
         'scores.streak_label': 'Serie 🔥',
+
+        // --- CALCULATRICE BINAIRE (CALCULATRICE_BINAIRE.HTML) ---
+        'calculatrice_binaire.title': 'Binärrechner',
+        'calculatrice_binaire.desc': 'Interaktiver 8-Bit-Rechner zur Umrechnung zwischen Binär-, Dezimal- und Hexadezimalwerten.',
+        'calculatrice_binaire.badge_level': '7. Primar - 11. OS',
+        'calculatrice_binaire.instruction': 'Klicke auf die Schalter oder ändere die Dezimalzahl (0 bis 255):',
+        'calculatrice_binaire.powers_of_two': 'Zweierpotenzen',
+        'calculatrice_binaire.decimal_values': 'Werte',
+        'calculatrice_binaire.binary_bits': 'Bits',
+        'calculatrice_binaire.click_bits': 'Klicke auf die Bits zum Berechnen',
+        'calculatrice_binaire.btn_all_ones': 'Alles auf 1 (255)',
+        'calculatrice_binaire.btn_invert': 'Invertieren',
+        'calculatrice_binaire.decimal_input_label': 'Dezimalzahl (0 - 255) :',
+        'calculatrice_binaire.representations': 'Andere Darstellungen',
+        'calculatrice_binaire.binary': 'Binär (8 Bits) :',
+        'calculatrice_binaire.hexadecimal': 'Hexadezimal :',
+        'calculatrice_binaire.toast_copied': 'In die Zwischenablage kopiert!',
 
         // --- WEITERE STANDARD-APPS (PHASE 1 STRINGS) ---
         // binaire_message
@@ -363,7 +381,7 @@
         'bit_de_parite.error_toast': 'Achtung, es gibt noch Fehler!',
         'bit_de_parite.found_error_toast': 'Bravo! Du hast den Fehler gefunden!',
         'generateur_mot_de_passe.title': 'Passwort-Generator',
-        'generateur_mot_de_passe.badge_level': '5.-10. OS',
+        'generateur_mot_de_passe.badge_level': '5. Primar - 11. OS',
         'generateur_mot_de_passe.tab_create': 'Passwort erstellen',
         'generateur_mot_de_passe.tab_test': 'Passwort testen',
         'generateur_mot_de_passe.tab_tips': 'Tipps & Sicherheit',
@@ -468,6 +486,7 @@
         'simulateur_automate.show_cmds': 'Befehle anzeigen',
         'simulateur_automate.clear_reached_title': 'Erreichte Elemente löschen',
         'simulateur_automate.tooltip_treasure_obstacles': 'Schatz & Hindernisse',
+        'simulateur_automate.bubble_treasure': 'Füge einen Schatz und Hindernisse hinzu!',
         'simulateur_automate.tooltip_edit_mode': 'Tastatur-Bearbeitungsmodus',
         'simulateur_automate.tooltip_random_pos': 'Zufällige Position',
         'simulateur_automate.tooltip_clear_grid': 'Raster leeren',
@@ -678,6 +697,7 @@
         'dactylo.avg_accuracy': 'Durchschnittliche Genauigkeit',
 
         'dactylo.keyboard_hint': 'Tippe auf deiner physischen Tastatur. Bei Fehlern leuchtet die gesuchte Taste auf.',
+        'dactylo.mobile_notice': 'Tape-Texte erfordert eine physische Tastatur (Computer oder Tablet/Smartphone mit angeschlossener Tastatur).',
         'dactylo.btn_scores': 'Meine Rekorde',
         'dactylo.results_title': 'Ergebnis',
         'dactylo.btn_retry': 'Nochmals',
