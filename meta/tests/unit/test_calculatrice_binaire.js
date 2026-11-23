@@ -14,14 +14,10 @@ function setupDOM() {
         <div id="calc-result-area"></div>
         <input type="number" id="dec-input" value="0">
         <span id="rep-bin-val"></span>
-        <span id="rep-hex-val"></span>
         <span id="rep-dec-val"></span>
         <button id="reset-calc-btn"></button>
-        <button id="set-all-btn"></button>
-        <button id="invert-bits-btn"></button>
         <button id="btn-copy-bin"></button>
         <button id="btn-copy-dec"></button>
-        <button id="btn-copy-hex"></button>
     </body></html>`, { runScripts: "dangerously" });
 
     const window = dom.window;
@@ -33,7 +29,7 @@ function setupDOM() {
 }
 
 test('Calculatrice binaire - initial state and DOM structure', async (t) => {
-    await t.test('initializes with 8 bits set to 0 and sum = 0', () => {
+    await t.test('initializes with 8 bits set to 0 and sum = 0 with row order: bits, powers, values', () => {
         const window = setupDOM();
         const api = window.CalculatriceBinaire;
 
@@ -42,18 +38,17 @@ test('Calculatrice binaire - initial state and DOM structure', async (t) => {
         assert.strictEqual(api.calculateSum(), 0);
 
         const table = window.document.getElementById('calc-table');
-        assert.strictEqual(table.querySelectorAll('tr').length, 3, 'Table should have 3 rows (powers, values, bits)');
-        assert.strictEqual(table.querySelectorAll('.calc-bit').length, 8, 'Table should contain 8 bit buttons');
-        assert.strictEqual(table.querySelectorAll('.calc-box').length, 8, 'Table should contain 8 decimal boxes');
+        const rows = table.querySelectorAll('tr');
+        assert.strictEqual(rows.length, 3, 'Table should have 3 rows (bits, powers, values)');
+        assert.strictEqual(rows[0].querySelectorAll('.calc-bit').length, 8, 'Row 0 must contain 8 bit buttons');
+        assert.strictEqual(rows[1].querySelectorAll('.calc-power-cell').length, 8, 'Row 1 must contain 8 power cells');
+        assert.strictEqual(rows[2].querySelectorAll('.calc-box').length, 8, 'Row 2 must contain 8 decimal boxes');
 
         const decInput = window.document.getElementById('dec-input');
         assert.strictEqual(decInput.value, '0');
 
         const binVal = window.document.getElementById('rep-bin-val');
         assert.strictEqual(binVal.textContent, '0000 0000');
-
-        const hexVal = window.document.getElementById('rep-hex-val');
-        assert.strictEqual(hexVal.textContent, '0x00');
     });
 });
 
@@ -84,9 +79,6 @@ test('Calculatrice binaire - toggling bits and operations', async (t) => {
         const binVal = window.document.getElementById('rep-bin-val');
         assert.strictEqual(binVal.textContent, '1000 0001');
 
-        const hexVal = window.document.getElementById('rep-hex-val');
-        assert.strictEqual(hexVal.textContent, '0x81');
-
         const resultArea = window.document.getElementById('calc-result-area');
         assert.ok(resultArea.textContent.includes('128 + 1 = 129'));
 
@@ -111,9 +103,6 @@ test('Calculatrice binaire - setDecimalValue and clamping', async (t) => {
 
         const binVal = window.document.getElementById('rep-bin-val');
         assert.strictEqual(binVal.textContent, '0010 1010');
-
-        const hexVal = window.document.getElementById('rep-hex-val');
-        assert.strictEqual(hexVal.textContent, '0x2A');
     });
 
     await t.test('clamps negative numbers to 0 and > 255 to 255', () => {
@@ -131,25 +120,17 @@ test('Calculatrice binaire - setDecimalValue and clamping', async (t) => {
 });
 
 test('Calculatrice binaire - quick actions and app reset', async (t) => {
-    await t.test('setAllOnes, invertBits and resetCalc', () => {
+    await t.test('resetCalc resets all bits and sum to 0', () => {
         const window = setupDOM();
         const api = window.CalculatriceBinaire;
 
-        api.setAllOnes();
-        assert.strictEqual(api.calculateSum(), 255);
-        assert.deepEqual(Array.from(api.getState()), [1, 1, 1, 1, 1, 1, 1, 1]);
-
-        api.invertBits();
-        assert.strictEqual(api.calculateSum(), 0);
-        assert.deepEqual(Array.from(api.getState()), [0, 0, 0, 0, 0, 0, 0, 0]);
-
-        // Invert from 0 gives 255
-        api.invertBits();
+        api.setDecimalValue(255);
         assert.strictEqual(api.calculateSum(), 255);
 
         // Reset gives 0
         api.resetCalc();
         assert.strictEqual(api.calculateSum(), 0);
+        assert.deepEqual(Array.from(api.getState()), [0, 0, 0, 0, 0, 0, 0, 0]);
     });
 
     await t.test('window.__onResetApp hook resets calculator state', () => {

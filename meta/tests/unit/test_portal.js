@@ -401,7 +401,7 @@ test('loadRegistry', async (t) => {
             'app-automate',              // 3-4H, 5-8H (3-8H)
             'app-pixel',                 // 5-6H
             'app-reseau-tri',            // 5-6H
-            'app-dactylo',               // 5-8H, 9-11CO
+            'app-dactylo',               // 5H-11CO
             'app-mot-de-passe',          // 5H-11CO
             'app-binaire',               // 7-8H
             'app-mots',                  // 7-8H

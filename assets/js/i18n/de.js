@@ -262,19 +262,16 @@
 
         // --- CALCULATRICE BINAIRE (CALCULATRICE_BINAIRE.HTML) ---
         'calculatrice_binaire.title': 'Binärrechner',
-        'calculatrice_binaire.desc': 'Interaktiver 8-Bit-Rechner zur Umrechnung zwischen Binär-, Dezimal- und Hexadezimalwerten.',
+        'calculatrice_binaire.desc': 'Interaktiver 8-Bit-Rechner zur Umrechnung zwischen Binär- und Dezimalwerten.',
         'calculatrice_binaire.badge_level': '7. Primar - 11. OS',
         'calculatrice_binaire.instruction': 'Klicke auf die Schalter oder ändere die Dezimalzahl (0 bis 255):',
         'calculatrice_binaire.powers_of_two': 'Zweierpotenzen',
         'calculatrice_binaire.decimal_values': 'Werte',
         'calculatrice_binaire.binary_bits': 'Bits',
         'calculatrice_binaire.click_bits': 'Klicke auf die Bits zum Berechnen',
-        'calculatrice_binaire.btn_all_ones': 'Alles auf 1 (255)',
-        'calculatrice_binaire.btn_invert': 'Invertieren',
         'calculatrice_binaire.decimal_input_label': 'Dezimalzahl (0 - 255) :',
-        'calculatrice_binaire.representations': 'Andere Darstellungen',
+        'calculatrice_binaire.representations': 'Darstellung',
         'calculatrice_binaire.binary': 'Binär (8 Bits) :',
-        'calculatrice_binaire.hexadecimal': 'Hexadezimal :',
         'calculatrice_binaire.toast_copied': 'In die Zwischenablage kopiert!',
 
         // --- WEITERE STANDARD-APPS (PHASE 1 STRINGS) ---

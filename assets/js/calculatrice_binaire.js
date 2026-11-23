@@ -23,6 +23,12 @@
             return;
         }
 
+        const trBits = document.createElement('tr');
+        const thBits = document.createElement('th');
+        thBits.setAttribute('data-i18n', 'calculatrice_binaire.binary_bits');
+        thBits.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.binary_bits', 'Bits') : 'Bits';
+        trBits.appendChild(thBits);
+
         const trPow = document.createElement('tr');
         const thPow = document.createElement('th');
         thPow.setAttribute('data-i18n', 'calculatrice_binaire.powers_of_two');
@@ -35,12 +41,6 @@
         thVals.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.decimal_values', 'Valeurs') : 'Valeurs';
         trVals.appendChild(thVals);
 
-        const trBits = document.createElement('tr');
-        const thBits = document.createElement('th');
-        thBits.setAttribute('data-i18n', 'calculatrice_binaire.binary_bits');
-        thBits.textContent = window.I18N ? window.I18N.t('calculatrice_binaire.binary_bits', 'Bits') : 'Bits';
-        trBits.appendChild(thBits);
-
         cachedBits = [];
         cachedBoxes = [];
 
@@ -48,7 +48,18 @@
             const exp = 7 - i;
             const val = POWERS[i];
 
-            // 1. Puissance de 2 (2^exp)
+            // 1. Bouton bit
+            const tdBit = document.createElement('td');
+            const btnBit = document.createElement('button');
+            btnBit.type = 'button';
+            btnBit.className = 'calc-bit';
+            btnBit.id = `calc-bit-${i}`;
+            btnBit.setAttribute('aria-label', `Basculer bit ${exp} (valeur ${val})`);
+            btnBit.textContent = '0';
+            tdBit.appendChild(btnBit);
+            trBits.appendChild(tdBit);
+
+            // 2. Puissance de 2 (2^exp)
             const tdPow = document.createElement('td');
             tdPow.className = 'calc-power-cell';
             const baseText = document.createTextNode('2');
@@ -58,7 +69,7 @@
             tdPow.appendChild(sup);
             trPow.appendChild(tdPow);
 
-            // 2. Boîte valeur décimale
+            // 3. Boîte valeur décimale
             const tdVal = document.createElement('td');
             const divVal = document.createElement('div');
             divVal.className = 'calc-box';
@@ -70,22 +81,11 @@
             tdVal.appendChild(divVal);
             trVals.appendChild(tdVal);
 
-            // 3. Bouton bit
-            const tdBit = document.createElement('td');
-            const btnBit = document.createElement('button');
-            btnBit.type = 'button';
-            btnBit.className = 'calc-bit';
-            btnBit.id = `calc-bit-${i}`;
-            btnBit.setAttribute('aria-label', `Basculer bit ${exp} (valeur ${val})`);
-            btnBit.textContent = '0';
-            tdBit.appendChild(btnBit);
-            trBits.appendChild(tdBit);
-
             cachedBoxes[i] = divVal;
             cachedBits[i] = btnBit;
         }
 
-        table.replaceChildren(trPow, trVals, trBits);
+        table.replaceChildren(trBits, trPow, trVals);
     }
 
     function toggleBit(index) {
@@ -213,18 +213,12 @@
             decInput.value = String(sum);
         }
 
-        // Représentations binaire et hexadécimale
+        // Représentation binaire
         const rawBin = calcState.join('');
         const binNibbles = `${rawBin.slice(0, 4)} ${rawBin.slice(4)}`;
         const binDisplay = document.getElementById('rep-bin-val');
         if (binDisplay) {
             binDisplay.textContent = binNibbles;
-        }
-
-        const hexVal = '0x' + sum.toString(16).toUpperCase().padStart(2, '0');
-        const hexDisplay = document.getElementById('rep-hex-val');
-        if (hexDisplay) {
-            hexDisplay.textContent = hexVal;
         }
 
         const decDisplay = document.getElementById('rep-dec-val');
@@ -325,16 +319,6 @@
             resetBtn.addEventListener('click', resetCalc);
         }
 
-        const setAllBtn = document.getElementById('set-all-btn');
-        if (setAllBtn) {
-            setAllBtn.addEventListener('click', setAllOnes);
-        }
-
-        const invertBtn = document.getElementById('invert-bits-btn');
-        if (invertBtn) {
-            invertBtn.addEventListener('click', invertBits);
-        }
-
         // Boutons de copie
         const copyBinBtn = document.getElementById('btn-copy-bin');
         if (copyBinBtn) {
@@ -349,15 +333,6 @@
             copyDecBtn.addEventListener('click', () => {
                 const msg = window.I18N ? window.I18N.t('calculatrice_binaire.toast_copied', 'Copié dans le presse-papier !') : 'Copié dans le presse-papier !';
                 copyToClipboard(String(calculateSum()), msg);
-            });
-        }
-
-        const copyHexBtn = document.getElementById('btn-copy-hex');
-        if (copyHexBtn) {
-            copyHexBtn.addEventListener('click', () => {
-                const msg = window.I18N ? window.I18N.t('calculatrice_binaire.toast_copied', 'Copié dans le presse-papier !') : 'Copié dans le presse-papier !';
-                const hexVal = '0x' + calculateSum().toString(16).toUpperCase().padStart(2, '0');
-                copyToClipboard(hexVal, msg);
             });
         }
     }

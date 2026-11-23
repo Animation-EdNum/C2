@@ -221,7 +221,7 @@ window.REGISTRY = [
   {
     "id": "app-dactylo",
     "href": "webapps/dactylo.html",
-    "dataLevel": "5-8H, 9-10CO",
+    "dataLevel": "5H-11CO",
     "icon": "keyboard",
     "title": "Tape-Texte",
     "desc": "Entraîne-toi à la saisie de texte rapide et précise sur le clavier QWERTZ suisse romand.",
@@ -231,7 +231,7 @@ window.REGISTRY = [
       "#Touche",
       "#Frappe"
     ],
-    "ref": "EN 23 · Usages — Saisie d'un texte",
+    "ref": "EN 23+33 · Usages — Saisie d'un texte",
     "i18n": {
       "de": {
         "title": "Tastatur-Training",
@@ -246,11 +246,7 @@ window.REGISTRY = [
     },
     "badges": [
       {
-        "text": "5-8H",
-        "grey": false
-      },
-      {
-        "text": "9-11CO",
+        "text": "5H-11CO",
         "grey": false
       }
     ],
@@ -270,7 +266,7 @@ window.REGISTRY = [
       "#Protection",
       "#Mot de passe"
     ],
-    "ref": "EN 23 · Usages — Processus d'identification personnelle",
+    "ref": "EN 23+33 · Usages — Processus d'identification personnelle",
     "i18n": {
       "de": {
         "title": "Passwort-Generator",
@@ -560,18 +556,18 @@ window.REGISTRY = [
     "dataLevel": "7H-11CO",
     "icon": "calculator",
     "title": "Calculatrice binaire",
-    "desc": "Convertis et décompose facilement un octet (8 bits) entre binaire, décimal et hexadécimal.",
+    "desc": "Convertis et décompose facilement un octet (8 bits) entre binaire et décimal.",
     "tags": [
       "#Binaire",
       "#Calculatrice",
       "#Octet",
       "#Maths"
     ],
-    "ref": "DÉ>CODAGE 7-8 · Activité 2 — Codages en folie",
+    "ref": "EN 22+32 · Science informatique — Codage en système binaire",
     "i18n": {
       "de": {
         "title": "Binärrechner",
-        "desc": "Rechne ein Byte (8 Bits) interaktiv zwischen Binär-, Dezimal- und Hexadezimalwerten um.",
+        "desc": "Rechne ein Byte (8 Bits) interaktiv zwischen Binär- und Dezimalwerten um.",
         "tags": [
           "#Binär",
           "#Rechner",
