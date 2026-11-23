@@ -35,18 +35,20 @@ Sous le tableau, une zone d'explication affiche en temps réel le détail du cal
   `32 + 8 + 2 = 42`
 - Si aucun bit n'est actif, un message pédagogique invite à cliquer sur les cases pour commencer à explorer.
 
-### 3. Saisie décimale et conversion immédiate
+### 3. Saisie décimale (0 à 255)
 
-Le champ **« Valeur décimale (0 à 255) »** permet de taper directement n'importe quel nombre entre 0 et 255 :
-- Les bits du tableau se mettent à jour instantanément pour afficher la représentation binaire minimale.
-- La touche d'incrémentation/décrémentation ou la saisie au clavier est vérifiée et protégée contre les valeurs hors limites.
+Le champ **« Valeur décimale (0 à 255) : »** permet de taper directement n'importe quel nombre entre 0 et 255 :
+- Les bits du tableau se mettent à jour instantanément pour afficher la décomposition binaire correspondante.
+- La saisie est strictement limitée à 255 : si un élève essaie de saisir une valeur supérieure (par exemple 256 ou plus), elle est immédiatement plafonnée à 255 avec une notification d'avertissement.
 - Un bouton de copie rapide permet de transférer la valeur décimale dans le presse-papier.
 
-### 4. Affichage binaire groupé
+### 4. Saisie et édition binaire à la main
 
-Dans la zone **« Représentations »** :
-- Le nombre binaire est affiché avec un espace séparateur entre les deux demi-octets (quartets / nibbles, ex. `0010 1010`) pour faciliter la lecture visuelle.
-- Un bouton de copie permet de copier directement la chaîne binaire (8 chiffres).
+Le champ **« Binaire (base 2) : »** permet également d'éditer la valeur binaire directement à la main :
+- L'élève peut saisir librement des chiffres binaires (`0` et `1`) pour expérimenter (les caractères invalides sont automatiquement filtrés).
+- Le tableau interactif et la valeur décimale se synchronisent en temps réel à chaque chiffre saisi.
+- Au terme de la saisie (ou à la perte du focus), la valeur est joliment formatée sur 8 bits avec un espace séparateur entre les deux demi-octets (quartets / nibbles, ex. `0010 1010`).
+- Un bouton de copie permet de copier directement la chaîne binaire (8 chiffres) dans le presse-papier.
 
 ### 5. Actions rapides
 

@@ -99,7 +99,9 @@
         updateUI();
     }
 
-    function setDecimalValue(num) {
+    function setDecimalValue(num, options = {}) {
+        const fromDecInput = typeof options === 'boolean' ? !options : (options.fromDecInput === true);
+        const fromBinInput = typeof options === 'object' && options.fromBinInput === true;
         let val = parseInt(num, 10);
         if (isNaN(val)) {
             val = 0;
@@ -114,7 +116,22 @@
         for (let i = 0; i < 8; i++) {
             calcState[i] = (val & (1 << (7 - i))) !== 0 ? 1 : 0;
         }
-        updateUI(false);
+        updateUI({ fromDecInput, fromBinInput });
+    }
+
+    function setBinaryValue(str, options = {}) {
+        const fromBinInput = options.fromBinInput === true;
+        const fromDecInput = options.fromDecInput === true;
+        const clean = String(str || '').replace(/[^01]/g, '').slice(0, 8);
+        if (clean.length === 0) {
+            calcState = [0, 0, 0, 0, 0, 0, 0, 0];
+        } else {
+            const padded = clean.padStart(8, '0');
+            for (let i = 0; i < 8; i++) {
+                calcState[i] = padded[i] === '1' ? 1 : 0;
+            }
+        }
+        updateUI({ fromBinInput, fromDecInput });
     }
 
     function resetCalc() {
@@ -153,7 +170,16 @@
         return sum;
     }
 
-    function updateUI(updateInput = true) {
+    function updateUI(options = {}) {
+        let fromDecInput = false;
+        let fromBinInput = false;
+        if (typeof options === 'boolean') {
+            fromDecInput = !options;
+        } else if (options && typeof options === 'object') {
+            fromDecInput = options.fromDecInput === true;
+            fromBinInput = options.fromBinInput === true;
+        }
+
         const sum = calculateSum();
         const activeParts = [];
 
@@ -209,13 +235,19 @@
 
         // Saisie décimale synchronisée
         const decInput = document.getElementById('dec-input');
-        if (decInput && updateInput) {
+        if (decInput && !fromDecInput) {
             decInput.value = String(sum);
         }
 
-        // Représentation binaire
+        // Représentation binaire (champ texte ou affichage)
         const rawBin = calcState.join('');
         const binNibbles = `${rawBin.slice(0, 4)} ${rawBin.slice(4)}`;
+
+        const binInput = document.getElementById('bin-input');
+        if (binInput && !fromBinInput) {
+            binInput.value = binNibbles;
+        }
+
         const binDisplay = document.getElementById('rep-bin-val');
         if (binDisplay) {
             binDisplay.textContent = binNibbles;
@@ -294,12 +326,45 @@
             });
         }
 
-        // Input décimal
+        // Input décimal (strictement borné à [0, 255])
         const decInput = document.getElementById('dec-input');
         if (decInput) {
-            decInput.addEventListener('input', () => {
-                setDecimalValue(decInput.value);
+            decInput.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey || e.altKey) {
+                    return;
+                }
+                if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                    e.preventDefault();
+                }
+                if (e.key === 'Enter') {
+                    decInput.blur();
+                }
             });
+
+            decInput.addEventListener('focus', () => {
+                decInput.select();
+            });
+
+            decInput.addEventListener('input', () => {
+                if (decInput.value === '') {
+                    setDecimalValue(0, { fromDecInput: true });
+                    return;
+                }
+                let val = parseInt(decInput.value, 10);
+                if (isNaN(val) || val < 0) {
+                    val = 0;
+                    decInput.value = '0';
+                } else if (val > 255) {
+                    val = 255;
+                    decInput.value = '255';
+                    if (typeof window.showToast === 'function') {
+                        const msg = window.I18N ? window.I18N.t('calculatrice_binaire.toast_max_val', 'La valeur maximale pour un octet (8 bits) est 255.') : 'La valeur maximale pour un octet (8 bits) est 255.';
+                        window.showToast(msg, 'warn');
+                    }
+                }
+                setDecimalValue(val, { fromDecInput: true });
+            });
+
             decInput.addEventListener('change', () => {
                 let v = parseInt(decInput.value, 10);
                 if (isNaN(v) || v < 0) {
@@ -310,6 +375,49 @@
                 }
                 decInput.value = String(v);
                 setDecimalValue(v);
+            });
+
+            decInput.addEventListener('blur', () => {
+                if (decInput.value === '') {
+                    decInput.value = '0';
+                    setDecimalValue(0);
+                }
+            });
+        }
+
+        // Input binaire (éditable à la main)
+        const binInput = document.getElementById('bin-input');
+        if (binInput) {
+            binInput.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey || e.altKey) {
+                    return;
+                }
+                const allowedKeys = ['0', '1', ' ', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End', 'Enter'];
+                if (!allowedKeys.includes(e.key)) {
+                    e.preventDefault();
+                    return;
+                }
+                if (e.key === 'Enter') {
+                    binInput.blur();
+                }
+            });
+
+            binInput.addEventListener('focus', () => {
+                binInput.select();
+            });
+
+            binInput.addEventListener('input', () => {
+                const raw = binInput.value;
+                const filtered = raw.replace(/[^01 ]/g, '');
+                if (raw !== filtered) {
+                    binInput.value = filtered;
+                }
+                setBinaryValue(filtered, { fromBinInput: true });
+            });
+
+            binInput.addEventListener('blur', () => {
+                const rawBin = calcState.join('');
+                binInput.value = `${rawBin.slice(0, 4)} ${rawBin.slice(4)}`;
             });
         }
 
@@ -342,6 +450,7 @@
         init,
         toggleBit,
         setDecimalValue,
+        setBinaryValue,
         resetCalc,
         setAllOnes,
         invertBits,

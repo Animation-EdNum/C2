@@ -118,6 +118,8 @@
                 'dactylo.badge_level': '5H-11CO',
                 'generateur_mot_de_passe.badge_level': '5H-11CO',
                 'calculatrice_binaire.badge_level': '7H-11CO',
+                'calculatrice_binaire.binary_input_label': 'Binaire (base 2) :',
+                'calculatrice_binaire.toast_max_val': 'La valeur maximale pour un octet (8 bits) est 255.',
 
                 // Machine à trier
                 'machine_a_trier.badge_level': '1-2H & 3-4H',

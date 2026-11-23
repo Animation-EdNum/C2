@@ -13,6 +13,7 @@ function setupDOM() {
         <table id="calc-table"></table>
         <div id="calc-result-area"></div>
         <input type="number" id="dec-input" value="0">
+        <input type="text" id="bin-input" value="0000 0000">
         <span id="rep-bin-val"></span>
         <span id="rep-dec-val"></span>
         <button id="reset-calc-btn"></button>
@@ -116,6 +117,63 @@ test('Calculatrice binaire - setDecimalValue and clamping', async (t) => {
         api.setDecimalValue(999);
         assert.strictEqual(api.calculateSum(), 255);
         assert.deepEqual(Array.from(api.getState()), [1, 1, 1, 1, 1, 1, 1, 1]);
+    });
+
+    await t.test('decInput input event clamps value > 255 directly in DOM (e.g. 256 becomes 255)', () => {
+        const window = setupDOM();
+        const decInput = window.document.getElementById('dec-input');
+        const api = window.CalculatriceBinaire;
+
+        // Simulate typing 256
+        decInput.value = '256';
+        decInput.dispatchEvent(new window.Event('input'));
+
+        assert.strictEqual(decInput.value, '255', 'Input value must be clamped to 255 in the DOM');
+        assert.strictEqual(api.calculateSum(), 255);
+        assert.deepEqual(Array.from(api.getState()), [1, 1, 1, 1, 1, 1, 1, 1]);
+
+        // Simulate typing 9999
+        decInput.value = '9999';
+        decInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(decInput.value, '255', 'Input value must stay 255');
+    });
+});
+
+test('Calculatrice binaire - manual binary input editing', async (t) => {
+    await t.test('setBinaryValue sets arbitrary bit string and updates sum and decInput', () => {
+        const window = setupDOM();
+        const api = window.CalculatriceBinaire;
+        const decInput = window.document.getElementById('dec-input');
+        const binInput = window.document.getElementById('bin-input');
+
+        api.setBinaryValue('1010');
+        assert.strictEqual(api.calculateSum(), 10);
+        assert.strictEqual(decInput.value, '10');
+        assert.strictEqual(binInput.value, '0000 1010');
+
+        api.setBinaryValue('0010 1010');
+        assert.strictEqual(api.calculateSum(), 42);
+        assert.strictEqual(decInput.value, '42');
+        assert.strictEqual(binInput.value, '0010 1010');
+    });
+
+    await t.test('typing into bin-input dynamically updates state and decimal value', () => {
+        const window = setupDOM();
+        const api = window.CalculatriceBinaire;
+        const decInput = window.document.getElementById('dec-input');
+        const binInput = window.document.getElementById('bin-input');
+
+        // User types '101' into binary field
+        binInput.value = '101';
+        binInput.dispatchEvent(new window.Event('input'));
+
+        assert.strictEqual(api.calculateSum(), 5);
+        assert.strictEqual(decInput.value, '5');
+        assert.deepEqual(Array.from(api.getState()), [0, 0, 0, 0, 0, 1, 0, 1]);
+
+        // On blur, binInput formats to full 8 bits with nibble space
+        binInput.dispatchEvent(new window.Event('blur'));
+        assert.strictEqual(binInput.value, '0000 0101');
     });
 });
 

@@ -270,9 +270,11 @@
         'calculatrice_binaire.binary_bits': 'Bits',
         'calculatrice_binaire.click_bits': 'Klicke auf die Bits zum Berechnen',
         'calculatrice_binaire.decimal_input_label': 'Dezimalzahl (0 - 255) :',
+        'calculatrice_binaire.binary_input_label': 'Binär (Basis 2) :',
         'calculatrice_binaire.representations': 'Darstellung',
         'calculatrice_binaire.binary': 'Binär (8 Bits) :',
         'calculatrice_binaire.toast_copied': 'In die Zwischenablage kopiert!',
+        'calculatrice_binaire.toast_max_val': 'Der Maximalwert für ein Byte (8 Bits) ist 255.',
 
         // --- WEITERE STANDARD-APPS (PHASE 1 STRINGS) ---
         // binaire_message
