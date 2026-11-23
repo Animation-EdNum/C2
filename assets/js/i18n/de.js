@@ -436,6 +436,8 @@
         'routage_reseau.blocked_toast': 'Pfad unvollständig oder blockiert!',
         'simulateur_automate.title': 'Simulator Automat',
         'simulateur_automate.badge_level': '3.-8. Primar',
+        'simulateur_automate.badge_level_3_4h': '3.-4. Primar',
+        'simulateur_automate.badge_level_5_8h': '5.-8. Primar',
         'simulateur_automate.mats_title': 'Matten',
         'simulateur_automate.hide_grid': 'Gitter ausblenden',
         'simulateur_automate.no_mat': 'Keine Matte',
@@ -674,7 +676,7 @@
         // Tape-Texte
         'dactylo.title': 'Tape-Texte',
         'dactylo.desc': 'Schweizer Tastaturtraining',
-        'dactylo.badge_level': '5.-8. Primar & OS',
+        'dactylo.badge_level': '5. Primar - 11. OS',
         'dactylo.level_label': 'Niveau:',
         'dactylo.stats_speed': 'Geschwindigkeit',
         'dactylo.stats_accuracy': 'Genauigkeit',

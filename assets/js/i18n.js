@@ -113,6 +113,11 @@
                 'simulateur_automate.speed_fast': 'Rapide',
                 'simulateur_automate.speed_slow': 'Lent',
                 'simulateur_automate.instruction_read': "Où va s'arrêter l'automate ? <strong>Clique sur la case finale.</strong>",
+                'simulateur_automate.badge_level_3_4h': '3-4H',
+                'simulateur_automate.badge_level_5_8h': '5-8H',
+                'dactylo.badge_level': '5H-11CO',
+                'generateur_mot_de_passe.badge_level': '5H-11CO',
+                'calculatrice_binaire.badge_level': '7H-11CO',
 
                 // Machine à trier
                 'machine_a_trier.badge_level': '1-2H & 3-4H',

@@ -79,13 +79,13 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Fonctionnalités :** 3 modes : *Décoder* (dessiner d'après le code), *Encoder* (trouver le code d'une image) et *Éditeur Libre*. Propose un suivi des scores sur les modes *Décoder* et *Encoder*, un basculement instantané entre le mode Noir & Blanc (1 bit) et le mode Couleurs (2 bits : noir `00`, vert `01`, bleu `10`, jaune `11`), export PNG et partage par URL.
 - **Valeur pédagogique :** Matérialise le concept abstrait de "numérisation". Comprendre que l'information visuelle (pixels) se traduit en séquences binaires de 0 et de 1.
 
-#### 5. Tape-Texte (`webapps/dactylo.html` - 5-8H, 9-11CO)
+#### 5. Tape-Texte (`webapps/dactylo.html` - 5H-11CO)
 - **À quoi sert l'outil :** Entraînement progressif à la frappe rapide et fluide sur clavier physique avec disposition suisse romande et suisse allemande (QWERTZ). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_DACTYLO.md).
 - **Lien PER & Lehrplan 21 :** Cycle 2 & Cycle 3 (dès 5H jusqu'au secondaire I / 11CO).
 - **Fonctionnalités :** 10 niveaux pédagogiques progressifs adaptés à la Suisse (phrases types, cédilles et accents, caractères spéciaux `LEVELS_DE` en allemand), clavier virtuel d'aide visuelle en cas d'erreur, analyse en temps réel (précision %, vitesse MPM/WPM, touches à travailler) et bilan élève exportable en PNG.
 - **Valeur pédagogique :** Développe les automatismes moteurs de saisie sans regarder le clavier, renforce l'autonomie sur ordinateur de classe et prépare aux exigences des cycles 2 et 3.
 
-#### 6. Générateur de mots de passe (`webapps/generateur_mot_de_passe.html` - 5H-10CO)
+#### 6. Générateur de mots de passe (`webapps/generateur_mot_de_passe.html` - 5H-11CO)
 ![Générateur de mots de passe](meta/screenshots/generateur_mot_de_passe.png)
 - **À quoi sert l'outil :** Création et audit interactif de mots de passe robustes (briques de construction, mot de passe magique, détection de motifs, estimation du temps de craquage et 4 règles d'or de cybersécurité). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_GENERATEUR_MOT_DE_PASSE.md).
 - **Contexte & Utilisation :** Outil pratique pour aider les élèves (dès 5-6H) à concevoir et mémoriser un mot de passe sécurisé pour se connecter à leur environnement numérique de travail ([edu.vs.ch](https://edu.vs.ch)).
