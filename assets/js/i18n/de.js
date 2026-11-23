@@ -706,6 +706,9 @@
 
         'dactylo.keyboard_hint': 'Tippe auf deiner physischen Tastatur. Bei Fehlern leuchtet die gesuchte Taste auf.',
         'dactylo.mobile_notice': 'Tape-Texte erfordert eine physische Tastatur (Computer oder Tablet/Smartphone mit angeschlossener Tastatur).',
+        'dactylo.mobile_notice_title': 'Tipp für Tablets:',
+        'dactylo.mobile_notice_body': 'Tape-Texte ist für das Zehnfingersystem gedacht. Auf dem Tablet verdeckt die Bildschirmtastatur die Fingerführung. Schliesse bitte eine <strong>externe Tastatur</strong> an oder nutze einen <strong>Computer</strong>, um optimal zu üben.',
+        'dactylo.mobile_notice_dismiss': 'Ich habe eine Tastatur',
         'dactylo.btn_scores': 'Meine Rekorde',
         'dactylo.results_title': 'Ergebnis',
         'dactylo.btn_retry': 'Nochmals',

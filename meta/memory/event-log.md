@@ -99,3 +99,4 @@
 - **[2026-11-23]** [App/Machine à chiffrer] Removed redundant crack button from César mode and enriched portal description across all modes.
 - **[2026-11-23]** [Portal/UX] Redesigned view switcher into refined segmented control, packed grid with zero empty holes, and aligned descriptions to action verbs.
 - **[2026-11-23]** [Audit/Quality] Completed comprehensive suite audit, restored missing icons (lightbulb, universal-access), and updated SW cache.
+- **[2026-11-23]** [A11y/Tablet] Added benevolent physical keyboard notice for touch/tablet devices on Tape-Texte.

@@ -204,5 +204,44 @@ test('dactylo.html - Visual keyboard guidance & non-clickable keys', async (t) =
         btnToggleKeyboard.click();
         assert.strictEqual(keyboardSection.classList.contains('visible'), false, 'Keyboard should be hidden after second click');
     });
+
+    await t.test('mobileKeyboardNotice exists and has required elements', () => {
+        const noticeEl = window.document.getElementById('mobileKeyboardNotice');
+        const dismissBtn = window.document.getElementById('btnDismissTouchNotice');
+        assert.ok(noticeEl, 'mobileKeyboardNotice must exist in DOM');
+        assert.ok(dismissBtn, 'btnDismissTouchNotice must exist in DOM');
+    });
+
+    await t.test('touch device displays benevolent notice and dismiss button hides it', () => {
+        const noticeEl = window.document.getElementById('mobileKeyboardNotice');
+        const dismissBtn = window.document.getElementById('btnDismissTouchNotice');
+
+        // Mock touch screen
+        Object.defineProperty(window.navigator, 'maxTouchPoints', { value: 5, configurable: true });
+        window.sessionStorage.removeItem('dactylo_touch_notice_dismissed');
+
+        // Call initTouchNotice
+        window.DactyloEngine.initTouchNotice();
+        assert.strictEqual(noticeEl.classList.contains('visible'), true, 'Notice must be visible on touch device');
+
+        // Click dismiss button
+        dismissBtn.click();
+        assert.strictEqual(noticeEl.classList.contains('visible'), false, 'Notice must not have visible class after dismiss');
+        assert.strictEqual(noticeEl.classList.contains('dismissed'), true, 'Notice must have dismissed class');
+        assert.strictEqual(window.sessionStorage.getItem('dactylo_touch_notice_dismissed'), 'true', 'Must persist in sessionStorage');
+    });
+
+    await t.test('typing on physical keyboard auto-dismisses the notice', () => {
+        const noticeEl = window.document.getElementById('mobileKeyboardNotice');
+        Object.defineProperty(window.navigator, 'maxTouchPoints', { value: 5, configurable: true });
+        window.sessionStorage.removeItem('dactylo_touch_notice_dismissed');
+        window.DactyloEngine.initTouchNotice();
+        assert.strictEqual(noticeEl.classList.contains('visible'), true);
+
+        // Press a key
+        window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+        assert.strictEqual(noticeEl.classList.contains('visible'), false, 'Typing on physical keyboard must auto-dismiss touch notice');
+        assert.strictEqual(window.sessionStorage.getItem('dactylo_touch_notice_dismissed'), 'true');
+    });
 });
 

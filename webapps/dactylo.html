@@ -1037,31 +1037,129 @@
         .mobile-keyboard-notice {
             display: none;
             align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
+            gap: 12px;
+            padding: 10px 16px;
             margin: 0 1rem 12px;
             border-radius: var(--radius-lg, 12px);
-            background: rgba(2, 132, 199, 0.1);
-            border: 1px solid rgba(2, 132, 199, 0.25);
-            color: var(--primary, #0284c7);
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #92400e;
             font-size: 0.85rem;
-            font-weight: 600;
             line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.06);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .mobile-keyboard-notice.visible {
+            display: flex;
+        }
+
+        .mobile-keyboard-notice.dismissed {
+            display: none !important;
         }
 
         body.dark .mobile-keyboard-notice {
-            background: rgba(56, 189, 248, 0.1);
-            border-color: rgba(56, 189, 248, 0.25);
-            color: #38bdf8;
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(251, 191, 36, 0.35);
+            color: #fde68a;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .notice-icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        body.dark .notice-icon-box {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .notice-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .notice-title {
+            font-weight: 700;
+            color: #b45309;
+            font-size: 0.9rem;
+        }
+
+        body.dark .notice-title {
+            color: #fef3c7;
+        }
+
+        .notice-body {
+            font-weight: 500;
+        }
+
+        .notice-body strong {
+            font-weight: 700;
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: rgba(245, 158, 11, 0.5);
+        }
+
+        .notice-dismiss-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(245, 158, 11, 0.15);
+            color: #92400e;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .notice-dismiss-btn:hover {
+            background: rgba(245, 158, 11, 0.25);
+            border-color: rgba(245, 158, 11, 0.5);
+            transform: translateY(-1px);
+        }
+
+        body.dark .notice-dismiss-btn {
+            background: rgba(251, 191, 36, 0.2);
+            border-color: rgba(251, 191, 36, 0.4);
+            color: #fde68a;
+        }
+
+        body.dark .notice-dismiss-btn:hover {
+            background: rgba(251, 191, 36, 0.3);
+            border-color: rgba(251, 191, 36, 0.6);
+        }
+
+        @media (max-width: 640px) {
+            .mobile-keyboard-notice {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .notice-dismiss-btn {
+                margin-left: auto;
+            }
         }
 
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem 0.5rem 1.5rem;
-            }
-
-            .mobile-keyboard-notice {
-                display: flex;
             }
 
             .app-shell {
@@ -1445,10 +1543,18 @@
             <div class="progress-bar-fill" id="progressBar"></div>
         </div>
 
-        <!-- MOBILE KEYBOARD NOTICE -->
-        <div class="mobile-keyboard-notice no-print" id="mobileKeyboardNotice">
-            <i data-fa="circle-info" style="flex-shrink:0;"></i>
-            <span data-i18n="dactylo.mobile_notice">Tape-Texte nécessite un clavier physique (ordinateur ou tablette/smartphone avec clavier connecté).</span>
+        <!-- MOBILE & TABLET KEYBOARD NOTICE -->
+        <div class="mobile-keyboard-notice no-print" id="mobileKeyboardNotice" role="region" aria-label="Conseil d'utilisation sur tablette">
+            <div class="notice-icon-box">
+                <i data-fa="keyboard"></i>
+            </div>
+            <div class="notice-content">
+                <strong class="notice-title" data-i18n="dactylo.mobile_notice_title">Conseil pour tablette :</strong>
+                <span class="notice-body" data-i18n-html="dactylo.mobile_notice_body">Tape-Texte est conçu pour l'apprentissage du clavier à dix doigts. Le clavier tactile à l'écran masque le guide des mains. Pour un confort optimal, utilise un <strong>clavier physique</strong> ou un <strong>ordinateur</strong>.</span>
+            </div>
+            <button type="button" class="notice-dismiss-btn" id="btnDismissTouchNotice" title="J'ai un clavier / Fermer" aria-label="Fermer ce message" data-i18n-attr="title:dactylo.mobile_notice_dismiss;aria-label:dactylo.mobile_notice_dismiss">
+                <span data-i18n="dactylo.mobile_notice_dismiss">J'ai un clavier</span> <i data-fa="xmark"></i>
+            </button>
         </div>
 
         <!-- MAIN GAME VIEW -->
@@ -2714,6 +2820,15 @@
                     e.preventDefault();
                 }
 
+                // Auto-dissimuler discrètement le bandeau dès qu'une touche physique est frappée
+                if (mobileNoticeEl && mobileNoticeEl.classList.contains('visible')) {
+                    mobileNoticeEl.classList.remove('visible');
+                    mobileNoticeEl.classList.add('dismissed');
+                    try {
+                        sessionStorage.setItem('dactylo_touch_notice_dismissed', 'true');
+                    } catch (err) {}
+                }
+
                 handleKeyInput(e.key);
             });
 
@@ -3109,6 +3224,47 @@
                 });
             }
 
+            // --- DÉTECTION ET BANDEAU TACTILE / TABLETTE ---
+            const mobileNoticeEl = document.getElementById('mobileKeyboardNotice');
+            const btnDismissTouchNotice = document.getElementById('btnDismissTouchNotice');
+
+            function isTouchScreenDevice() {
+                const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+                const hasTouch = (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || ('ontouchstart' in window);
+                const isIPad = /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                return !!(isCoarse || hasTouch || isIPad);
+            }
+
+            function initTouchNotice() {
+                if (!mobileNoticeEl) return;
+                let dismissed = false;
+                try {
+                    dismissed = sessionStorage.getItem('dactylo_touch_notice_dismissed') === 'true';
+                } catch (e) {}
+
+                if (isTouchScreenDevice() && !dismissed) {
+                    mobileNoticeEl.classList.add('visible');
+                } else {
+                    mobileNoticeEl.classList.remove('visible');
+                }
+
+                if (btnDismissTouchNotice) {
+                    btnDismissTouchNotice.addEventListener('click', () => {
+                        mobileNoticeEl.classList.remove('visible');
+                        mobileNoticeEl.classList.add('dismissed');
+                        try {
+                            sessionStorage.setItem('dactylo_touch_notice_dismissed', 'true');
+                        } catch (e) {}
+                    });
+                }
+            }
+
+            window.DactyloEngine = {
+                isTouchScreenDevice,
+                initTouchNotice,
+                getMobileNoticeEl: () => mobileNoticeEl
+            };
+
             // --- ÉCOUTEUR RÉACTIF DU CHANGEMENT DE LANGUE ---
             window.addEventListener('languageChanged', () => {
                 LEVELS = getActiveLevels();
@@ -3118,6 +3274,7 @@
             });
 
             // --- DÉMARRAGE ---
+            initTouchNotice();
             buildKeyboard();
             initLevelSelect();
             loadLevel(0);
