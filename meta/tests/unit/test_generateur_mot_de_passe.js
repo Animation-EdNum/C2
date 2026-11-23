@@ -127,9 +127,9 @@ test('generateur_mot_de_passe.js - generatePedagogicalPassword', async (t) => {
         assert.strictEqual(specInput.value, '@');
     });
 
-    await t.test('HTML badge indicates 5H-10CO', () => {
+    await t.test('HTML badge indicates 5H-11CO', () => {
         const badge = window.document.querySelector('.badge-level');
-        assert.strictEqual(badge.textContent.trim(), '5H-10CO');
+        assert.strictEqual(badge.textContent.trim(), '5H-11CO');
     });
 });
 

@@ -261,7 +261,7 @@ window.REGISTRY = [
   {
     "id": "app-mot-de-passe",
     "href": "webapps/generateur_mot_de_passe.html",
-    "dataLevel": "5H-10CO",
+    "dataLevel": "5H-11CO",
     "icon": "dt-key",
     "title": "Générateur de mots de passe",
     "desc": "Apprends à créer des mots de passe robustes et teste leur sécurité.",
@@ -285,7 +285,7 @@ window.REGISTRY = [
     },
     "badges": [
       {
-        "text": "5H-10CO",
+        "text": "5H-11CO",
         "grey": false
       }
     ],
@@ -547,6 +547,43 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-calculatrice-binaire",
+    "href": "webapps/calculatrice_binaire.html",
+    "dataLevel": "7H-11CO",
+    "icon": "calculator",
+    "title": "Calculatrice binaire",
+    "desc": "Convertis et décompose facilement un octet (8 bits) entre binaire, décimal et hexadécimal.",
+    "tags": [
+      "#Binaire",
+      "#Calculatrice",
+      "#Octet",
+      "#Maths"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Activité 2 — Codages en folie",
+    "i18n": {
+      "de": {
+        "title": "Binärrechner",
+        "desc": "Rechne ein Byte (8 Bits) interaktiv zwischen Binär-, Dezimal- und Hexadezimalwerten um.",
+        "tags": [
+          "#Binär",
+          "#Rechner",
+          "#Byte",
+          "#Mathematik"
+        ],
+        "ref": "Connected 1 · 1.2 | Zahlen in Binär"
+      }
+    },
+    "badges": [
+      {
+        "text": "7H-11CO",
         "grey": false
       }
     ],

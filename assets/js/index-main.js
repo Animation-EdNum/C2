@@ -257,8 +257,10 @@ function matchDegree(dataLevel, filter, card) {
 
         if (s === f) return true;
 
-        if (f === '9-10 CO' || f === '9-10CO') {
-            if (s.includes('10CO') || s.includes('10 CO') || s.includes('9CO') || s.includes('CYCLE 3') || s.includes('ZYKLUS 3') || s.includes('9.-10. OS') || s.includes('9.-11. OS') || s.includes('10. OS')) return true;
+        if (f === '9-11 CO' || f === '9-11CO' || f === '9-10 CO' || f === '9-10CO') {
+            if (s.includes('11CO') || s.includes('11 CO') || s.includes('10CO') || s.includes('10 CO') || s.includes('9CO') || s.includes('CYCLE 3') || s.includes('ZYKLUS 3') || s.includes('9.-10. OS') || s.includes('9.-11. OS') || s.includes('10. OS') || s.includes('11. OS')) {
+                return true;
+            }
             return false;
         }
 
@@ -384,13 +386,13 @@ function initPortalIndex() {
     const filter34H = document.getElementById('filter-3-4H');
     const filter56H = document.getElementById('filter-5-6H');
     const filter78H = document.getElementById('filter-7-8H');
-    const filter910CO = document.getElementById('filter-9-10CO');
+    const filter911CO = document.getElementById('filter-9-11CO') || document.getElementById('filter-9-10CO');
 
     if (filterAll) filterAll.addEventListener('click', () => filterApps('all'));
     if (filter34H) filter34H.addEventListener('click', () => filterApps('3-4H'));
     if (filter56H) filter56H.addEventListener('click', () => filterApps('5-6H'));
     if (filter78H) filter78H.addEventListener('click', () => filterApps('7-8H'));
-    if (filter910CO) filter910CO.addEventListener('click', () => filterApps('9-10 CO'));
+    if (filter911CO) filter911CO.addEventListener('click', () => filterApps('9-11 CO'));
 
     // Search bar toggle & controls
     const searchWrapper = document.getElementById('header-search-wrapper') || document.querySelector('.search-bar');

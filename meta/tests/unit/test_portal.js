@@ -341,9 +341,9 @@ test('loadRegistry', async (t) => {
         ]);
 
         assert.ok(appMotDePasse, 'app-mot-de-passe should exist in registry');
-        assert.strictEqual(appMotDePasse.dataLevel, '5H-10CO');
+        assert.strictEqual(appMotDePasse.dataLevel, '5H-11CO');
         assert.deepEqual(appMotDePasse.badges, [
-            { text: '5H-10CO', grey: false }
+            { text: '5H-11CO', grey: false }
         ]);
 
         const extTotem = registry.find(a => a.id === 'ext-totem');
@@ -402,7 +402,7 @@ test('loadRegistry', async (t) => {
             'app-pixel',                 // 5-6H
             'app-reseau-tri',            // 5-6H
             'app-dactylo',               // 5-8H, 9-11CO
-            'app-mot-de-passe',          // 5H-10CO
+            'app-mot-de-passe',          // 5H-11CO
             'app-binaire',               // 7-8H
             'app-mots',                  // 7-8H
             'app-routage',               // 7-8H
@@ -412,6 +412,7 @@ test('loadRegistry', async (t) => {
             'app-compresseur-magique',   // 7-8H
             'app-dresseur-neurones',     // 7-8H
             'app-simulateur-telechargement', // 7-8H
+            'app-calculatrice-binaire',   // 7H-11CO
             'app-apprendre-pseudocode',  // 9CO
             'app-tri-insertion'          // 10CO
         ];
