@@ -1,10 +1,6 @@
 import re
 from playwright.sync_api import Page, expect
 
-def test_machine_a_chiffrer_has_correct_title(page: Page):
-    page.goto("http://localhost:8000/alpha/webapps/machine_a_chiffrer.html")
-    expect(page).to_have_title(re.compile("Machine à chiffrer"))
-
 def test_reseau_de_tri_has_correct_title(page: Page):
     page.goto("http://localhost:8000/alpha/webapps/reseau_de_tri.html")
     expect(page).to_have_title(re.compile("Réseau de tri"))
@@ -16,10 +12,3 @@ def test_coffre_fort_has_correct_title(page: Page):
 def test_compresseur_magique_has_correct_title(page: Page):
     page.goto("http://localhost:8000/alpha/webapps/compresseur_magique.html")
     expect(page).to_have_title(re.compile("Compresseur magique"))
-
-def test_simulateur_telechargement_has_correct_title(page: Page):
-    page.goto("http://localhost:8000/alpha/webapps/simulateur_telechargement.html")
-    expect(page).to_have_title(re.compile("Simulateur de téléchargement"))
-
-
-

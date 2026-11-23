@@ -33,6 +33,18 @@ def test_machine_a_trier_has_correct_title(page: Page):
     page.goto("http://localhost:8000/webapps/machine_a_trier.html")
     expect(page).to_have_title(re.compile("Machine à trier"))
 
+def test_machine_a_chiffrer_has_correct_title(page: Page):
+    page.goto("http://localhost:8000/webapps/machine_a_chiffrer.html")
+    expect(page).to_have_title(re.compile("Machine à chiffrer"))
+
+def test_simulateur_telechargement_has_correct_title(page: Page):
+    page.goto("http://localhost:8000/webapps/simulateur_telechargement.html")
+    expect(page).to_have_title(re.compile("Simulateur de téléchargement"))
+
+def test_calculatrice_binaire_has_correct_title(page: Page):
+    page.goto("http://localhost:8000/webapps/calculatrice_binaire.html")
+    expect(page).to_have_title(re.compile("Calculatrice binaire"))
+
 def test_dactylo_features(page: Page):
     page.goto("http://localhost:8000/webapps/dactylo.html")
     expect(page).to_have_title(re.compile("Tape-Texte"))
