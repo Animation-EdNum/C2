@@ -97,3 +97,4 @@
 - **[2026-11-23]** [Release] Promoted Machine à chiffrer (EN 22) and Simulateur de téléchargement to production, and cleaned up deprecated alpha apps.
 - **[2026-11-23]** [Portal] Implemented detailed/compact view switcher with persistence, restored Jeu de la grue, and unified badge layout.
 - **[2026-11-23]** [App/Machine à chiffrer] Removed redundant crack button from César mode and enriched portal description across all modes.
+- **[2026-11-23]** [Portal/UX] Redesigned view switcher into refined segmented control, packed grid with zero empty holes, and aligned descriptions to action verbs.

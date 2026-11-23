@@ -164,11 +164,14 @@ function executeFilters() {
             if (isAlphaApp) {
                 card.style.display = '';
                 card.classList.remove('filter-hidden');
+                card.classList.add('search-revealed');
             } else {
                 card.style.display = 'none';
                 card.classList.add('filter-hidden');
+                card.classList.remove('search-revealed');
             }
         } else {
+            card.classList.remove('search-revealed');
             if (isAlphaApp) {
                 card.style.display = 'none';
                 card.classList.add('filter-hidden');

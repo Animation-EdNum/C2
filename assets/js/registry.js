@@ -127,7 +127,7 @@ window.REGISTRY = [
     "dataLevel": "3-4H",
     "icon": "dt-robot-astromech",
     "title": "Simulateur d'automate",
-    "desc": "Jeu pour guider un automate (de type Blue-Bot) et relever des défis.",
+    "desc": "Guide un automate (de type Blue-Bot) et relève des défis de programmation.",
     "tags": [
       "#Programmation",
       "#Débogage",
@@ -166,7 +166,7 @@ window.REGISTRY = [
     "dataLevel": "5-6H",
     "icon": "dt-grid",
     "title": "Pixel Studio",
-    "desc": "Studio pour dessiner des images avec le langage des ordinateurs.",
+    "desc": "Dessine des images pixel par pixel avec le langage des ordinateurs.",
     "tags": [
       "#Création",
       "#Code",
@@ -295,7 +295,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-binary",
     "title": "Codage binaire",
-    "desc": "Outil pour comprendre comment comptent les ordinateurs.",
+    "desc": "Comprends comment les ordinateurs comptent avec des 0 et des 1.",
     "tags": [
       "#Débogage",
       "#Binaire",
@@ -330,7 +330,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-user-secret",
     "title": "Mots secrets",
-    "desc": "Jeu pour créer et déchiffrer des messages secrets.",
+    "desc": "Crée et déchiffre des messages secrets codés en binaire.",
     "tags": [
       "#Secret",
       "#Code",
@@ -365,7 +365,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-chart-network",
     "title": "Routage réseau",
-    "desc": "Activité pour découvrir comment les informations voyagent sur Internet.",
+    "desc": "Découvre comment les paquets d'informations voyagent sur Internet.",
     "tags": [
       "#Internet",
       "#Défi"
@@ -399,7 +399,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-shield-check",
     "title": "Bit de parité",
-    "desc": "Outil pour trouver les erreurs dans les messages des ordinateurs.",
+    "desc": "Trouve et corrige les erreurs de transmission dans les données des ordinateurs.",
     "tags": [
       "#Internet",
       "#Maths",
@@ -620,7 +620,7 @@ window.REGISTRY = [
     "dataLevel": null,
     "icon": "dt-dice",
     "title": "Tirage au sort",
-    "desc": "Outil pour choisir au hasard un élève de la classe.",
+    "desc": "Tire au sort un élève ou forme des groupes équitables pour la classe.",
     "tags": [
       "#Outil",
       "#Gestion",
@@ -764,7 +764,7 @@ window.REGISTRY = [
     "dataLevel": null,
     "icon": "dt-chart-simple",
     "title": "Générateur de barèmes",
-    "desc": "Utilitaire pour créer et imprimer des barèmes de notes.",
+    "desc": "Calcule, personnalise et imprime des barèmes d'évaluation pour la classe.",
     "tags": [
       "#Outil",
       "#Classe",
@@ -933,7 +933,7 @@ window.REGISTRY = [
     "icon": "book",
     "iconStyle": null,
     "title": "Le Dico des Écoles",
-    "desc": "Trouver l'orthographe d'un mot en l'écrivant comme on l'entend.",
+    "desc": "Trouve l'orthographe d'un mot en l'écrivant phonétiquement.",
     "tags": [
       "#Recherche",
       "#Orthographe",
@@ -980,7 +980,7 @@ window.REGISTRY = [
     "icon": "books",
     "iconStyle": null,
     "title": "Dico API",
-    "desc": "Dictionnaire inclusif et illustré avec recherche phonétique.",
+    "desc": "Consulte un dictionnaire inclusif et illustré avec recherche phonétique.",
     "tags": [
       "#Recherche",
       "#Dictionnaire",
@@ -1025,7 +1025,7 @@ window.REGISTRY = [
     "icon": "globe",
     "iconStyle": null,
     "title": "Qwant Junior",
-    "desc": "Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.",
+    "desc": "Recherche sur le web en toute sécurité avec un moteur respectueux de ta vie privée.",
     "tags": [
       "#Recherche",
       "#Moteur",
@@ -1065,7 +1065,7 @@ window.REGISTRY = [
     "icon": "globe",
     "iconStyle": null,
     "title": "Vikidia",
-    "desc": "Une encyclopédie en ligne libre et participative pour les jeunes lecteurs.",
+    "desc": "Découvre une encyclopédie libre écrite par et pour les jeunes.",
     "tags": [
       "#Recherche",
       "#Information"
@@ -1141,7 +1141,7 @@ window.REGISTRY = [
     "icon": "dt-brain-circuit",
     "iconStyle": null,
     "title": "ia-pedia",
-    "desc": "Simplifie les articles de Wikipédia à ton niveau et répond à tes questions.",
+    "desc": "Explore et simplifie les articles de Wikipédia adaptés à ton niveau.",
     "tags": [
       "#Wikipédia",
       "#Recherche",
@@ -1179,7 +1179,7 @@ window.REGISTRY = [
     "icon": "book",
     "iconStyle": null,
     "title": "Le Dico des Ados",
-    "desc": "Un dictionnaire libre et collaboratif pour chercher et enrichir des définitions.",
+    "desc": "Cherche des définitions claires et enrichis ce dictionnaire collaboratif.",
     "tags": [
       "#Recherche",
       "#Français"
@@ -1215,7 +1215,7 @@ window.REGISTRY = [
     "icon": "block-quote",
     "iconStyle": null,
     "title": "Scratch",
-    "desc": "Une plateforme pour créer des histoires interactives, des jeux et des animations.",
+    "desc": "Crée des histoires interactives, des jeux et des animations avec des blocs de code.",
     "tags": [
       "#Code",
       "#Création"
@@ -1252,7 +1252,7 @@ window.REGISTRY = [
     "icon": "sparkles",
     "iconStyle": null,
     "title": "Totem",
-    "desc": "Un test ludique pour aiguiser son esprit critique face aux pièges du web.",
+    "desc": "Aiguise ton esprit critique et déjoue les pièges du web avec ce test interactif.",
     "tags": [
       "#EspritCritique",
       "#ÉducationAuxMédias",
@@ -1756,7 +1756,7 @@ window.REGISTRY = [
     "icon": "compass",
     "iconStyle": null,
     "title": "GeoGebra Classique",
-    "desc": "Pour dessiner et tracer des figures géométriques.",
+    "desc": "Trace et explore des figures géométriques interactives.",
     "tags": [
       "#Maths",
       "#Géométrie",
