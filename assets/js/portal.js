@@ -124,7 +124,7 @@ function renderIndexCard(app) {
         classes.push('teacher');
     }
 
-    const displayStyle = (localized.id === 'app-reseau-tri' || localized.id === 'app-jeu-grue') ? 'display: none;' : '';
+    const displayStyle = (localized.id === 'app-reseau-tri') ? 'display: none;' : '';
     const iconStyle = localized.iconStyle === null ? '' : (localized.iconStyle || 'width:32px;height:32px;flex-shrink:0;');
 
     return `

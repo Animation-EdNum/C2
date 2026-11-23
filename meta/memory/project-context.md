@@ -7,7 +7,7 @@
 
 ## 2. Application Portfolio (25 Webapps & 2 Portals)
 - **Portals:**
-  - `index.html`: Main portal with smart sticky header, on-demand search toggle, and student/teacher spaces.
+  - `index.html`: Main portal with smart sticky header, on-demand search toggle, detailed/compact view switcher, and student/teacher spaces.
   - `indexC1.html`: Simplified Cycle 1 portal for young learners (4-7 years old).
 - **Production Student Apps (`webapps/` - 13 apps, ordered by pedagogical level):**
   - Machine à trier (`machine_a_trier.html`, 1-4H), Jeu de la grue (`jeu_de_la_grue.html`, 1-4H / 1-2H & 3-4H), Simulateur Automate (3-4H, 5-8H), Pixel Studio (`binaire_studio`, 5-6H), Tape-Texte (`dactylo.html`, 5H-11CO), Générateur de Mot de passe (`generateur_mot_de_passe`, 5H-11CO), Codage binaire (7-8H), Mots secrets (`binaire_message`, 7-8H), Routage Réseau (7-8H), Bit de Parité (7-8H), Machine à chiffrer (`machine_a_chiffrer.html`, 7-8H), Simulateur de téléchargement (`simulateur_telechargement.html`, 7-8H), Calculatrice binaire (`calculatrice_binaire.html`, 7H-11CO).
@@ -32,4 +32,4 @@
 - **Active Focus:** Teacher Suite Hardening across all 6 production applications and 1 alpha tool, PII anonymizer engine, shared architecture (`roster-import.js`), and strict offline reliability.
 - **Teacher Suite Hardening (Phases 1-6 Complete):** All 6 teacher webapps and 1 alpha tool audited and corrected in JSDOM: Barème (preserved quarter-grades, anti-float rounding, afterprint fix), QR code (UTF-8 encoding, MECARD Wi-Fi escaping), Time Timer (absolute wall-clock timing, zero-delay end bell, shortcut isolation), DYS simulator (contextual `-ent` & `-er` phonetics, WCAG AA projector contrast, HTML token sanitization), Roue de la chance (persistent empty rounds, single-occurrence duplicate removal, spin lock), Tirage au sort (interval cleanup on reset/navigation, live roster resync, mixed separator parsing), and Anonymiseur de textes (Swiss AVS, French NIR, Italian CF, reverse anonymization, interactive chips).
 - **Shared Architecture & Accessibility:** Extracted `assets/js/roster-import.js` (AGPL-3.0, Swiss ENT/ISM, Excel, CSV, TSV) eliminating 250+ lines of duplicated parsing logic. Enforced `prefers-reduced-motion` in CSS and JS engines, and added live a11y announcements (`aria-live="polite"`). Total unit tests: 338 passing across all suites.
-- **Offline Reliability:** Service Worker cache manifest synced (`ednum-ed26bbda`, 80 offline assets). All regulatory footers and universal app resets (`window.__onResetApp`) active.
+- **Offline Reliability:** Service Worker cache manifest synced (`ednum-7087bd8e`, 82 offline assets). All regulatory footers and universal app resets (`window.__onResetApp`) active. 419 unit tests passing.

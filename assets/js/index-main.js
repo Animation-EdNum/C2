@@ -173,7 +173,7 @@ function executeFilters() {
                 card.style.display = 'none';
                 card.classList.add('filter-hidden');
             } else {
-                const rawText = card.innerText || card.textContent || "";
+                const rawText = (card.innerText || "") + " " + (card.textContent || "");
                 const textContent = rawText.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
                 const level = card.getAttribute('data-level');
 
@@ -381,6 +381,44 @@ function initPortalIndex() {
         });
     }
 
+    // View mode toggle (detailed / compact)
+    function initViewModeToggle() {
+        const detailedBtn = document.getElementById('btn-view-detailed');
+        const compactBtn = document.getElementById('btn-view-compact');
+        const grid = document.getElementById('grid-students-activities');
+        if (!detailedBtn || !compactBtn || !grid) return;
+
+        function applyViewMode(mode, save = true) {
+            if (mode === 'compact') {
+                grid.classList.add('compact-view');
+                compactBtn.classList.add('active');
+                compactBtn.setAttribute('aria-pressed', 'true');
+                detailedBtn.classList.remove('active');
+                detailedBtn.setAttribute('aria-pressed', 'false');
+            } else {
+                grid.classList.remove('compact-view');
+                detailedBtn.classList.add('active');
+                detailedBtn.setAttribute('aria-pressed', 'true');
+                compactBtn.classList.remove('active');
+                compactBtn.setAttribute('aria-pressed', 'false');
+            }
+            if (save) {
+                try {
+                    localStorage.setItem('c2_portal_view_mode', mode);
+                } catch (e) { }
+            }
+        }
+
+        detailedBtn.addEventListener('click', () => applyViewMode('detailed'));
+        compactBtn.addEventListener('click', () => applyViewMode('compact'));
+
+        let savedMode = 'detailed';
+        try {
+            savedMode = localStorage.getItem('c2_portal_view_mode') || 'detailed';
+        } catch (e) { }
+        applyViewMode(savedMode, false);
+    }
+
     // Event listeners for filters
     const filterAll = document.getElementById('filter-all');
     const filter34H = document.getElementById('filter-3-4H');
@@ -489,6 +527,9 @@ function initPortalIndex() {
             }
         }
     });
+
+    // Mode d'affichage (vue détaillée / vue compacte)
+    initViewModeToggle();
 
     // Render portal activities and icons
     if (typeof window.renderPortal === 'function') {

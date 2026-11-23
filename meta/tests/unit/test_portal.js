@@ -106,7 +106,7 @@ test('renderIndexCard', async (t) => {
         html = window.renderIndexCard({ href: '#', title: 'Test', id: 'app-jeu-grue' });
         tempDiv.innerHTML = html;
         aElement = tempDiv.querySelector('a');
-        assert.strictEqual(aElement.style.display, 'none', 'Should hide app-jeu-grue');
+        assert.strictEqual(aElement.style.display, '', 'Should NOT hide app-jeu-grue');
     });
 
     await t.test('populates link attributes correctly', () => {
@@ -801,5 +801,39 @@ test('index-main.js - header logo click switches space', async (t) => {
     assert.strictEqual(studentsBtn.classList.contains('active'), true, 'Students link should be active');
     assert.strictEqual(teachersBtn.classList.contains('active'), false, 'Teachers link should not be active');
     assert.strictEqual(teachersBtn.textContent, 'Espace enseignant·e·s');
+});
+
+test('index-main.js - view mode switcher toggles detailed and compact view with localStorage', async (t) => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><body>
+        <button id="btn-view-detailed" class="view-mode-btn active" data-view="detailed"></button>
+        <button id="btn-view-compact" class="view-mode-btn" data-view="compact"></button>
+        <div id="grid-students-activities" class="grid searchable-grid"></div>
+    </body></html>`, { runScripts: "dangerously", url: "http://localhost/" });
+    const window = dom.window;
+    window.eval(indexMainSrc);
+    window.initPortalIndex();
+
+    const detailedBtn = window.document.getElementById('btn-view-detailed');
+    const compactBtn = window.document.getElementById('btn-view-compact');
+    const grid = window.document.getElementById('grid-students-activities');
+
+    // Default mode: detailed
+    assert.strictEqual(grid.classList.contains('compact-view'), false);
+    assert.strictEqual(detailedBtn.classList.contains('active'), true);
+    assert.strictEqual(compactBtn.classList.contains('active'), false);
+
+    // Click compact
+    compactBtn.click();
+    assert.strictEqual(grid.classList.contains('compact-view'), true);
+    assert.strictEqual(compactBtn.classList.contains('active'), true);
+    assert.strictEqual(detailedBtn.classList.contains('active'), false);
+    assert.strictEqual(window.localStorage.getItem('c2_portal_view_mode'), 'compact');
+
+    // Click detailed
+    detailedBtn.click();
+    assert.strictEqual(grid.classList.contains('compact-view'), false);
+    assert.strictEqual(detailedBtn.classList.contains('active'), true);
+    assert.strictEqual(compactBtn.classList.contains('active'), false);
+    assert.strictEqual(window.localStorage.getItem('c2_portal_view_mode'), 'detailed');
 });
 

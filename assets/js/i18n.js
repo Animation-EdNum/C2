@@ -150,6 +150,11 @@
                                 // Navigation & boutons communs
                 'common.home': "Retour à l'accueil",
                 'common.restart': "Recommencer",
+                'portal.view_mode_aria': "Mode d'affichage",
+                'portal.view_detailed': 'Vue détaillée',
+                'portal.view_detailed_title': 'Afficher la vue détaillée',
+                'portal.view_compact': 'Vue compacte',
+                'portal.view_compact_title': 'Afficher la vue compacte',
                 'dactylo.toggle_keyboard_title': "Afficher ou masquer l'aide clavier",
                 // Adaptateur DYS
                 'sim_dyslexie.results_title': 'Adaptateur de texte pour fiches DYS',
