@@ -29,7 +29,7 @@
 - **Attribution & Licensing:** AGPL-3.0. Every app features the standardized attribution footer linking to AP EdNum, HEP-VS and `merci.html`.
 
 ## 4. Current Status & Active Focus
-- **Active Focus:** Portal ergonomics & layout clarity, curriculum alignment (PER Cycle 1-3 up to 11CO), standalone utilities, responsive smartphone UX, and offline PWA reliability.
-- **Production Portfolio:** 13 production student webapps (including recently promoted Machine à chiffrer, Simulateur de téléchargement, and Calculatrice binaire), 6 production teacher webapps, and 5 alpha apps.
-- **Portal & Accessibility:** Segmented detailed/compact view mode switcher (`c2_portal_view_mode`), persistent view preference, full search indexing across tags/references, and mobile responsive collapse. Restored Jeu de la grue on portal.
-- **Offline Reliability:** Service Worker cache manifest synced (`ednum-7087bd8e`, 82 offline assets). All 419 unit tests and 16 Playwright E2E tests passing.
+- **Active Focus:** Suite-wide comprehensive audit, multi-device classroom UX (TBI, tablets, mobile, desktop), offline PWA reliability, and icon/registry compliance.
+- **Production Portfolio:** 13 production student webapps (including Machine à chiffrer, Simulateur de téléchargement, Calculatrice binaire), 6 production teacher webapps, and 5 alpha apps.
+- **Portal & Accessibility:** Segmented detailed/compact view mode switcher (`c2_portal_view_mode`), persistent view preference, action-oriented descriptions, zero grid holes, and responsive multi-screen layout.
+- **Offline Reliability:** Service Worker cache manifest synced (`ednum-4fafad6f`, 82 offline assets). All 420 unit tests passing. Icon subset updated to 219 icons (including restored `lightbulb` and `universal-access`).
