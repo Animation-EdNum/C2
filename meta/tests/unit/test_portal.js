@@ -408,6 +408,7 @@ test('loadRegistry', async (t) => {
             'app-routage',               // 7-8H
             'app-parite',                // 7-8H
             'app-machine-chiffrer',      // 7-8H
+            'app-simulateur-reseau-dns', // 7-8H
             'app-compresseur-magique',   // 7-8H
             'app-dresseur-neurones',     // 7-8H
             'app-simulateur-telechargement', // 7-8H

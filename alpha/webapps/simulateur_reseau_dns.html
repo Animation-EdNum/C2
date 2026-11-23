@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>🌐 Simulateur Réseau &amp; DNS</title>
+    <meta property="og:title" content="Simulateur Réseau &amp; DNS">
+    <meta property="og:description"
+        content="Découvre le cheminement d'une requête sur Internet, de ton ordinateur jusqu'au serveur Web en passant par la box et le serveur DNS.">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <style>
+        body>header,
+        body>.container {
+            animation: fadeInCascade 0.5s var(--spring-easing) forwards;
+        }
+
+        :root {
+            --bg-gradient-start: #0284c7;
+            --bg-gradient-end: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --card-border: #bae6fd;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --accent-dark: #0369a1;
+            --badge-bg: #e0f2fe;
+            --badge-color: #0369a1;
+            --success: #16a34a;
+            --warning: #d97706;
+            --error: #dc2626;
+            --dns-purple: #7c3aed;
+            --web-green: #059669;
+            --lan-blue: #2563eb;
+            --card-shadow: rgba(2, 132, 199, 0.15);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #020617;
+            --card-bg: rgba(30, 41, 59, 0.92);
+            --card-border: #334155;
+            --container-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-dark: #0284c7;
+            --badge-bg: rgba(56, 189, 248, 0.15);
+            --badge-color: #38bdf8;
+            --card-shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        .app-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* --- MODE SWITCHER & OBJECTIVE --- */
+        .top-bar-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .segmented-mode {
+            display: inline-flex;
+            background: rgba(100, 116, 139, 0.12);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            gap: 4px;
+        }
+
+        .mode-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: calc(var(--radius-lg) - 2px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mode-btn.active {
+            background: var(--card-bg);
+            color: var(--accent);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .sim-speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .sim-speed-btn {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            border-radius: var(--radius-md);
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sim-speed-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        /* --- CHALLENGE BANNER --- */
+        .challenge-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            border-radius: var(--radius-lg);
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #b45309;
+            font-weight: 600;
+            gap: 12px;
+        }
+
+        body.dark .challenge-banner {
+            color: #fde68a;
+            background: rgba(245, 158, 11, 0.18);
+        }
+
+        .challenge-banner.visible {
+            display: flex;
+        }
+
+        /* --- BROWSER MOCKUP (CLIENT ENTRY) --- */
+        .browser-mockup {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 1rem;
+            box-shadow: 0 6px 18px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .browser-chrome {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .url-bar-container {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            align-items: center;
+            background: rgba(100, 116, 139, 0.08);
+            border: 1px solid var(--card-border);
+            border-radius: 999px;
+            padding: 4px 12px;
+            gap: 8px;
+        }
+
+        .url-protocol {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .url-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            outline: none;
+            padding: 4px 0;
+        }
+
+        .quick-sites {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .quick-site-chip {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .quick-site-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .btn-launch {
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-launch:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-launch:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- NETWORK STAGE (INTERACTIVE MAP) --- */
+        .network-stage {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            min-height: 440px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            box-shadow: 0 6px 18px var(--card-shadow);
+        }
+
+        /* Network Zone Dividers */
+        .stage-zones {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            pointer-events: none;
+        }
+
+        .zone-lan {
+            background: rgba(37, 99, 235, 0.02);
+            border-right: 2px dashed rgba(100, 116, 139, 0.25);
+            position: relative;
+        }
+
+        .zone-wan {
+            background: rgba(16, 185, 129, 0.02);
+            position: relative;
+        }
+
+        .zone-label {
+            position: absolute;
+            top: 10px;
+            padding: 4px 10px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-radius: 6px;
+            color: var(--text-muted);
+        }
+
+        .zone-lan .zone-label { left: 14px; background: rgba(37, 99, 235, 0.08); color: var(--lan-blue); }
+        .zone-wan .zone-label { right: 14px; background: rgba(16, 185, 129, 0.08); color: var(--web-green); }
+
+        /* SVG Wire Layer */
+        .network-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .wire-path {
+            fill: none;
+            stroke: rgba(148, 163, 184, 0.5);
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .wire-path.active {
+            stroke: var(--accent);
+            stroke-dasharray: 8 6;
+            animation: dashMove 1s linear infinite;
+        }
+
+        @keyframes dashMove {
+            to { stroke-dashoffset: -28; }
+        }
+
+        /* Moving Packet */
+        .packet-token {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px currentColor;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .packet-token.visible { opacity: 1; }
+        .packet-token.dns-req { background: var(--dns-purple); color: #fff; }
+        .packet-token.dns-res { background: #3b82f6; color: #fff; }
+        .packet-token.web-req { background: var(--warning); color: #fff; }
+        .packet-token.web-res { background: var(--web-green); color: #fff; }
+
+        /* Stations Grid */
+        .stations-layer {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            height: 100%;
+            align-items: center;
+        }
+
+        .station-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .station-card.active-node {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2), 0 6px 16px var(--card-shadow);
+            transform: translateY(-3px);
+        }
+
+        .station-card.dns-down {
+            border-color: var(--error);
+            background: rgba(220, 38, 38, 0.06);
+        }
+
+        .station-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .station-client .station-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .station-router .station-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .station-dns .station-icon { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .station-web .station-icon { background: linear-gradient(135deg, #10b981, #047857); }
+
+        .station-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .station-role {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        .ip-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            word-break: break-all;
+        }
+
+        .station-detail-btn {
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .station-detail-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* --- STEP BANNER & CONTROLS --- */
+        .step-info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .step-text-zone {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .step-number-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .step-message {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .step-action-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sim-btn {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .sim-btn:hover:not(:disabled) {
+            background: rgba(100, 116, 139, 0.08);
+            border-color: var(--accent);
+        }
+
+        .sim-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .sim-btn.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .sim-btn.primary:hover:not(:disabled) {
+            background: var(--accent-dark);
+        }
+
+        /* --- RESULTS VIEW / SITE PREVIEW --- */
+        .site-preview-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 1000;
+        }
+
+        .site-preview-modal.visible {
+            display: flex;
+        }
+
+        .site-preview-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-2xl);
+            max-width: 540px;
+            width: 100%;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-content {
+            border: 2px dashed var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            background: rgba(100, 116, 139, 0.04);
+            text-align: center;
+        }
+
+        .preview-site-logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- DNS TABLE MODAL --- */
+        .dns-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .dns-table th, .dns-table td {
+            padding: 6px 10px;
+            border: 1px solid var(--card-border);
+            text-align: left;
+        }
+
+        .dns-table th {
+            background: rgba(100, 116, 139, 0.08);
+            font-weight: 700;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 900px) {
+            .stations-layer {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            .stage-zones {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            .zone-lan {
+                border-right: none;
+                border-bottom: 2px dashed rgba(100, 116, 139, 0.25);
+            }
+        }
+
+        @media (max-width: 580px) {
+            .stations-layer {
+                grid-template-columns: 1fr;
+            }
+            .network-stage {
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="app-header">
+            <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                aria-label="Retour à l'accueil">
+                <i data-fa="arrow-left"></i>
+            </a>
+            <h1>
+                <span data-i18n="simulateur_reseau_dns.title">Simulateur Réseau &amp; DNS</span>
+                <span class="badge-level alpha" data-i18n="common.badge_alpha">Alpha</span>
+                <span class="badge-level" data-i18n="simulateur_reseau_dns.badge_level">7-8H</span>
+            </h1>
+            <div class="header-actions">
+                <div class="dropdown">
+                    <button class="icon-action-btn" id="options-toggle-btn" title="Options" aria-label="Options"
+                        data-action="toggle-dropdown">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="dropdown-menu" id="options-menu">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-sim-btn" aria-label="Réinitialiser le simulateur">
+                            <i data-fa="rotate-left"></i>
+                            <span data-i18n="simulateur_reseau_dns.btn_reset">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-shell">
+            <!-- TOP BAR: MODE & CONTROLS -->
+            <div class="top-bar-controls">
+                <div class="segmented-mode" role="tablist">
+                    <button type="button" class="mode-btn active" id="tabModeFree" role="tab" aria-selected="true"
+                        data-i18n="simulateur_reseau_dns.mode_free">
+                        <i data-fa="play"></i> <span>Simulation Libre</span>
+                    </button>
+                    <button type="button" class="mode-btn" id="tabModeMissions" role="tab" aria-selected="false"
+                        data-i18n="simulateur_reseau_dns.mode_missions">
+                        <i data-fa="trophy-star"></i> <span>Missions &amp; Défis</span>
+                    </button>
+                </div>
+
+                <div class="sim-speed-control">
+                    <span data-i18n="simulateur_reseau_dns.label_speed">Vitesse :</span>
+                    <button type="button" class="sim-speed-btn" data-speed="slow" data-i18n="simulateur_reseau_dns.speed_slow">Lente</button>
+                    <button type="button" class="sim-speed-btn active" data-speed="normal" data-i18n="simulateur_reseau_dns.speed_normal">Normale</button>
+                    <button type="button" class="sim-speed-btn" data-speed="fast" data-i18n="simulateur_reseau_dns.speed_fast">Rapide</button>
+                </div>
+            </div>
+
+            <!-- CHALLENGE BANNER (ACTIVE IN MISSIONS MODE) -->
+            <div class="challenge-banner" id="challengeBanner">
+                <div>
+                    <strong id="missionTitle">Mission 1 : Trouver la bonne adresse IP</strong>
+                    <div id="missionDesc" style="font-size:0.85rem; font-weight:normal; margin-top:2px;">
+                        Visite le site officiel de l'école valaisanne (ecole-vs.ch) pour récupérer son adresse IP.
+                    </div>
+                </div>
+                <div style="font-size:1.1rem; font-weight:800; white-space:nowrap;" id="missionScore">⭐ 0 / 4</div>
+            </div>
+
+            <!-- BROWSER MOCKUP -->
+            <div class="browser-mockup">
+                <div class="browser-chrome">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+
+                    <div class="url-bar-container">
+                        <span class="url-protocol"><i data-fa="lock"></i> https://</span>
+                        <input type="text" id="urlInput" class="url-input" value="hepvs.ch"
+                            placeholder="ex: wikipedia.org, hepvs.ch, rts.ch" spellcheck="false" autocomplete="off"
+                            aria-label="Adresse Web ou IP">
+                    </div>
+
+                    <button type="button" class="btn-launch" id="btnLaunchReq">
+                        <i data-fa="paper-plane"></i> <span data-i18n="simulateur_reseau_dns.btn_send">Envoyer</span>
+                    </button>
+                </div>
+
+                <div class="quick-sites">
+                    <span data-i18n="simulateur_reseau_dns.quick_label">Exemples rapides :</span>
+                    <button type="button" class="quick-site-chip" data-site="hepvs.ch">hepvs.ch</button>
+                    <button type="button" class="quick-site-chip" data-site="wikipedia.org">wikipedia.org</button>
+                    <button type="button" class="quick-site-chip" data-site="rts.ch">rts.ch</button>
+                    <button type="button" class="quick-site-chip" data-site="ecole-vs.ch">ecole-vs.ch</button>
+                    <button type="button" class="quick-site-chip" style="color:var(--error);" id="btnToggleDnsFail">
+                        <i data-fa="triangle-exclamation"></i> <span id="dnsFailText">Panne DNS : OFF</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NETWORK STAGE -->
+            <div class="network-stage" id="networkStage">
+                <div class="stage-zones">
+                    <div class="zone-lan"><span class="zone-label" data-i18n="simulateur_reseau_dns.zone_lan">Réseau Local (Maison / Classe)</span></div>
+                    <div class="zone-wan"><span class="zone-label" data-i18n="simulateur_reseau_dns.zone_wan">Internet (Réseau Mondial)</span></div>
+                </div>
+
+                <!-- SVG Wires -->
+                <svg class="network-svg" id="networkSvg">
+                    <path id="wireClientRouter" class="wire-path" d="" />
+                    <path id="wireRouterDns" class="wire-path" d="" />
+                    <path id="wireRouterWeb" class="wire-path" d="" />
+                </svg>
+
+                <!-- Moving Packet -->
+                <div class="packet-token" id="packetToken">
+                    <i data-fa="box" id="packetIcon"></i>
+                </div>
+
+                <!-- 4 Interactive Stations -->
+                <div class="stations-layer">
+                    <!-- 1. Client -->
+                    <div class="station-card station-client" id="nodeClient">
+                        <div class="station-icon"><i data-fa="desktop"></i></div>
+                        <div class="station-name" data-i18n="simulateur_reseau_dns.node_pc">Mon Ordinateur</div>
+                        <div class="station-role" data-i18n="simulateur_reseau_dns.role_pc">Client (Navigateur Web)</div>
+                        <span class="ip-badge">IP: 192.168.1.42</span>
+                        <button type="button" class="station-detail-btn" id="btnViewCache">
+                            <i data-fa="circle-info"></i> <span id="cacheCountText">Cache DNS (0)</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. Box Router -->
+                    <div class="station-card station-router" id="nodeRouter">
+                        <div class="station-icon"><i data-fa="wifi"></i></div>
+                        <div class="station-name" data-i18n="simulateur_reseau_dns.node_router">Box Wi-Fi / Routeur</div>
+                        <div class="station-role" data-i18n="simulateur_reseau_dns.role_router">Passerelle Internet (NAT)</div>
+                        <span class="ip-badge">LAN: 192.168.1.1</span>
+                        <span class="ip-badge" style="border-color:var(--web-green);">WAN: 85.218.42.10</span>
+                    </div>
+
+                    <!-- 3. DNS Server -->
+                    <div class="station-card station-dns" id="nodeDns">
+                        <div class="station-icon"><i data-fa="server"></i></div>
+                        <div class="station-name" data-i18n="simulateur_reseau_dns.node_dns">Serveur DNS</div>
+                        <div class="station-role" data-i18n="simulateur_reseau_dns.role_dns">L'Annuaire du Web</div>
+                        <span class="ip-badge">IP: 8.8.8.8</span>
+                        <button type="button" class="station-detail-btn" id="btnViewDnsTable">
+                            <i data-fa="magnifying-glass"></i> <span data-i18n="simulateur_reseau_dns.btn_view_directory">Voir l'annuaire</span>
+                        </button>
+                    </div>
+
+                    <!-- 4. Web Server -->
+                    <div class="station-card station-web" id="nodeWeb">
+                        <div class="station-icon"><i data-fa="globe"></i></div>
+                        <div class="station-name" id="webServerName" data-i18n="simulateur_reseau_dns.node_web">Serveur Web</div>
+                        <div class="station-role" data-i18n="simulateur_reseau_dns.role_web">Hébergeur du site</div>
+                        <span class="ip-badge" id="webServerIp">IP: 193.134.12.5</span>
+                        <span style="font-size:0.75rem; color:var(--success); font-weight:700;" id="webServerStatus">Port 443 (HTTPS)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP EXPLANATION & CONTROLS -->
+            <div class="step-info-card">
+                <div class="step-text-zone">
+                    <div class="step-number-badge" id="stepBadge">1</div>
+                    <div class="step-message" id="stepMessage" data-i18n="simulateur_reseau_dns.welcome_msg">
+                        Prêt ! Choisis un site ou tape un nom de domaine, puis clique sur « Envoyer » pour observer le voyage de ta requête.
+                    </div>
+                </div>
+
+                <div class="step-action-controls">
+                    <button type="button" class="sim-btn" id="btnPrevStep" disabled title="Étape précédente">
+                        <i data-fa="arrow-left"></i>
+                    </button>
+                    <button type="button" class="sim-btn primary" id="btnNextStep" disabled title="Étape suivante">
+                        <span data-i18n="simulateur_reseau_dns.btn_step">Pas à pas</span> <i data-fa="forward-step"></i>
+                    </button>
+                    <button type="button" class="sim-btn" id="btnAutoPlay" title="Lecture automatique">
+                        <i data-fa="play" id="playIcon"></i> <span id="playText" data-i18n="simulateur_reseau_dns.btn_auto">Auto</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SITE PREVIEW MODAL -->
+        <div class="site-preview-modal" id="sitePreviewModal" role="dialog" aria-modal="true">
+            <div class="site-preview-card">
+                <div class="preview-header">
+                    <h3 id="modalSiteTitle" style="margin:0; font-size:1.1rem;">Page chargée !</h3>
+                    <button type="button" class="sim-btn" id="btnClosePreview" aria-label="Fermer">
+                        <i data-fa="xmark"></i>
+                    </button>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-site-logo" id="modalSiteLogo">🎓</div>
+                    <h4 id="modalSiteHeadline" style="margin:0 0 0.5rem;">Haute École Pédagogique du Valais</h4>
+                    <p id="modalSiteDesc" style="font-size:0.85rem; color:var(--text-secondary); margin:0;">
+                        Connexion sécurisée établie avec succès via l'adresse IP <strong>193.134.12.5</strong>.
+                    </p>
+                </div>
+                <div style="display:flex; justify-content:flex-end;">
+                    <button type="button" class="sim-btn primary" id="btnConfirmSite">Génial !</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIRECTORY MODAL -->
+        <div class="site-preview-modal" id="dnsDirectoryModal" role="dialog" aria-modal="true">
+            <div class="site-preview-card">
+                <div class="preview-header">
+                    <h3 style="margin:0; font-size:1.1rem;" data-i18n="simulateur_reseau_dns.dns_modal_title">Annuaire du Serveur DNS (8.8.8.8)</h3>
+                    <button type="button" class="sim-btn" id="btnCloseDnsDirectory" aria-label="Fermer">
+                        <i data-fa="xmark"></i>
+                    </button>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;" data-i18n="simulateur_reseau_dns.dns_modal_desc">
+                    Comme un carnet d'adresses téléphonique, le DNS associe chaque nom de domaine à son adresse IP unique.
+                </p>
+                <table class="dns-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="simulateur_reseau_dns.col_domain">Nom de domaine</th>
+                            <th data-i18n="simulateur_reseau_dns.col_ip">Adresse IP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dnsTableBody">
+                        <tr><td>hepvs.ch</td><td><code>193.134.12.5</code></td></tr>
+                        <tr><td>wikipedia.org</td><td><code>91.198.174.192</code></td></tr>
+                        <tr><td>rts.ch</td><td><code>194.230.79.10</code></td></tr>
+                        <tr><td>ecole-vs.ch</td><td><code>195.141.65.120</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CACHE MODAL -->
+        <div class="site-preview-modal" id="cacheModal" role="dialog" aria-modal="true">
+            <div class="site-preview-card">
+                <div class="preview-header">
+                    <h3 style="margin:0; font-size:1.1rem;" data-i18n="simulateur_reseau_dns.cache_modal_title">Mémoire Cache DNS de l'ordinateur</h3>
+                    <button type="button" class="sim-btn" id="btnCloseCacheModal" aria-label="Fermer">
+                        <i data-fa="xmark"></i>
+                    </button>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;" data-i18n="simulateur_reseau_dns.cache_modal_desc">
+                    L'ordinateur retient les adresses déjà résolues pour éviter d'interroger le serveur DNS à chaque clic !
+                </p>
+                <table class="dns-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="simulateur_reseau_dns.col_domain">Nom de domaine</th>
+                            <th data-i18n="simulateur_reseau_dns.col_ip">Adresse IP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cacheTableBody">
+                        <tr><td colspan="2" style="text-align:center; color:var(--text-muted);">Cache vide</td></tr>
+                    </tbody>
+                </table>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <button type="button" class="sim-btn" id="btnClearCache" style="color:var(--error);">
+                        <i data-fa="trash-can"></i> <span data-i18n="simulateur_reseau_dns.btn_clear_cache">Vider le cache</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="app-footer no-print">
+            <p>
+                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                    href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                    data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+                <br>
+                <span style="font-size: 0.9em; opacity: 0.85;">
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                            data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                    · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                    · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                    · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="../../assets/js/fa-subset.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/i18n.js"></script>
+    <script>
+        (function () {
+            'use strict';
+
+            // --- DNS DATABASE & WEBSITES ---
+            const DNS_DATABASE = {
+                'hepvs.ch': { ip: '193.134.12.5', name: 'Haute École Pédagogique du Valais', logo: '🎓', headline: 'HEP-VS · Formation & Pédagogie', desc: 'Portail académique pour la formation des enseignantes et enseignants.' },
+                'wikipedia.org': { ip: '91.198.174.192', name: 'Wikipédia', logo: '📚', headline: 'Wikipédia, l\'encyclopédie libre', desc: 'Des millions d\'articles collaboratifs accessibles à tous.' },
+                'rts.ch': { ip: '194.230.79.10', name: 'Radio Télévision Suisse', logo: '📻', headline: 'RTS · Actualités & Médias', desc: 'L\'information suisse et internationale en continu.' },
+                'ecole-vs.ch': { ip: '195.141.65.120', name: 'Écoles Valaisannes', logo: '🏫', headline: 'Plateforme Scolaire Valaisanne', desc: 'Espace numérique officiel pour les classes du Valais.' }
+            };
+
+            // Local DNS Cache on student's PC
+            let localDnsCache = {};
+            let isDnsFailed = false;
+
+            // Simulation state
+            let currentMode = 'free'; // 'free' or 'missions'
+            let simSpeed = 1000; // ms per stage (normal)
+            let isSimRunning = false;
+            let currentStepIdx = 0;
+            let activeSteps = [];
+            let autoPlayTimer = null;
+
+            // Missions progression
+            let currentMission = 0;
+            const MISSIONS = [
+                {
+                    title: 'Mission 1 : Résolution de nom DNS',
+                    desc: 'Tape ou choisis "hepvs.ch" et envoie la requête pour observer comment le DNS convertit le nom en IP.',
+                    targetSite: 'hepvs.ch',
+                    check: (result) => result.success && result.domain === 'hepvs.ch' && result.resolvedViaDns
+                },
+                {
+                    title: 'Mission 2 : La magie du Cache DNS',
+                    desc: 'Renvoie une 2e requête pour "hepvs.ch" : observe que le voyage vers le serveur DNS est évité grâce au cache local !',
+                    targetSite: 'hepvs.ch',
+                    check: (result) => result.success && result.domain === 'hepvs.ch' && result.usedCache
+                },
+                {
+                    title: 'Mission 3 : Panne de Serveur DNS !',
+                    desc: 'Le serveur DNS est en panne (bouton rouge). Essaie de charger "rts.ch" en tapant directement son IP : 194.230.79.10 !',
+                    targetSite: '194.230.79.10',
+                    prepare: () => { setDnsFail(true); },
+                    check: (result) => result.success && result.directIp === '194.230.79.10'
+                },
+                {
+                    title: 'Mission 4 : Visite sécurisée de Wikipédia',
+                    desc: 'Rétablis le DNS (panne OFF) et charge "wikipedia.org" pour obtenir les 4 étoiles de maîtrise du réseau !',
+                    targetSite: 'wikipedia.org',
+                    prepare: () => { setDnsFail(false); },
+                    check: (result) => result.success && result.domain === 'wikipedia.org'
+                }
+            ];
+
+            // DOM Elements
+            const urlInput = document.getElementById('urlInput');
+            const btnLaunchReq = document.getElementById('btnLaunchReq');
+            const stepBadge = document.getElementById('stepBadge');
+            const stepMessage = document.getElementById('stepMessage');
+            const btnPrevStep = document.getElementById('btnPrevStep');
+            const btnNextStep = document.getElementById('btnNextStep');
+            const btnAutoPlay = document.getElementById('btnAutoPlay');
+            const playIcon = document.getElementById('playIcon');
+            const playText = document.getElementById('playText');
+            const packetToken = document.getElementById('packetToken');
+            const packetIcon = document.getElementById('packetIcon');
+
+            const nodeClient = document.getElementById('nodeClient');
+            const nodeRouter = document.getElementById('nodeRouter');
+            const nodeDns = document.getElementById('nodeDns');
+            const nodeWeb = document.getElementById('nodeWeb');
+            const webServerName = document.getElementById('webServerName');
+            const webServerIp = document.getElementById('webServerIp');
+
+            const wireClientRouter = document.getElementById('wireClientRouter');
+            const wireRouterDns = document.getElementById('wireRouterDns');
+            const wireRouterWeb = document.getElementById('wireRouterWeb');
+
+            const btnToggleDnsFail = document.getElementById('btnToggleDnsFail');
+            const dnsFailText = document.getElementById('dnsFailText');
+            const cacheCountText = document.getElementById('cacheCountText');
+
+            const sitePreviewModal = document.getElementById('sitePreviewModal');
+            const modalSiteTitle = document.getElementById('modalSiteTitle');
+            const modalSiteLogo = document.getElementById('modalSiteLogo');
+            const modalSiteHeadline = document.getElementById('modalSiteHeadline');
+            const modalSiteDesc = document.getElementById('modalSiteDesc');
+            const btnClosePreview = document.getElementById('btnClosePreview');
+            const btnConfirmSite = document.getElementById('btnConfirmSite');
+
+            const dnsDirectoryModal = document.getElementById('dnsDirectoryModal');
+            const btnViewDnsTable = document.getElementById('btnViewDnsTable');
+            const btnCloseDnsDirectory = document.getElementById('btnCloseDnsDirectory');
+
+            const cacheModal = document.getElementById('cacheModal');
+            const btnViewCache = document.getElementById('btnViewCache');
+            const btnCloseCacheModal = document.getElementById('btnCloseCacheModal');
+            const btnClearCache = document.getElementById('btnClearCache');
+            const cacheTableBody = document.getElementById('cacheTableBody');
+
+            const tabModeFree = document.getElementById('tabModeFree');
+            const tabModeMissions = document.getElementById('tabModeMissions');
+            const challengeBanner = document.getElementById('challengeBanner');
+            const missionTitle = document.getElementById('missionTitle');
+            const missionDesc = document.getElementById('missionDesc');
+            const missionScore = document.getElementById('missionScore');
+
+            // Audio helper
+            function playBeep(type) {
+                if (typeof window.playSound === 'function') {
+                    window.playSound(type);
+                }
+            }
+
+            // --- DRAW SVG WIRES ---
+            function updateWires() {
+                const stageRect = document.getElementById('networkStage').getBoundingClientRect();
+                const getCenter = (el) => {
+                    const r = el.getBoundingClientRect();
+                    return {
+                        x: r.left + r.width / 2 - stageRect.left,
+                        y: r.top + r.height / 2 - stageRect.top
+                    };
+                };
+
+                const pClient = getCenter(nodeClient);
+                const pRouter = getCenter(nodeRouter);
+                const pDns = getCenter(nodeDns);
+                const pWeb = getCenter(nodeWeb);
+
+                wireClientRouter.setAttribute('d', `M ${pClient.x} ${pClient.y} L ${pRouter.x} ${pRouter.y}`);
+                wireRouterDns.setAttribute('d', `M ${pRouter.x} ${pRouter.y} L ${pDns.x} ${pDns.y}`);
+                wireRouterWeb.setAttribute('d', `M ${pRouter.x} ${pRouter.y} L ${pWeb.x} ${pWeb.y}`);
+            }
+
+            window.addEventListener('resize', updateWires);
+
+            // --- POSITION PACKET ---
+            function placePacketAtNode(nodeEl, packetType) {
+                const stageRect = document.getElementById('networkStage').getBoundingClientRect();
+                const r = nodeEl.getBoundingClientRect();
+                const x = r.left + r.width / 2 - stageRect.left;
+                const y = r.top + r.height / 2 - stageRect.top;
+
+                packetToken.className = `packet-token visible ${packetType}`;
+                packetToken.style.left = `${x}px`;
+                packetToken.style.top = `${y}px`;
+            }
+
+            function animatePacket(fromNode, toNode, packetType, duration, onComplete) {
+                const stageRect = document.getElementById('networkStage').getBoundingClientRect();
+                const rFrom = fromNode.getBoundingClientRect();
+                const rTo = toNode.getBoundingClientRect();
+
+                const fromX = rFrom.left + rFrom.width / 2 - stageRect.left;
+                const fromY = rFrom.top + rFrom.height / 2 - stageRect.top;
+                const toX = rTo.left + rTo.width / 2 - stageRect.left;
+                const toY = rTo.top + rTo.height / 2 - stageRect.top;
+
+                packetToken.className = `packet-token visible ${packetType}`;
+                packetToken.style.transition = 'none';
+                packetToken.style.left = `${fromX}px`;
+                packetToken.style.top = `${fromY}px`;
+
+                // Highlight active wire
+                const activeWire = (fromNode === nodeClient || toNode === nodeClient) ? wireClientRouter :
+                    (fromNode === nodeDns || toNode === nodeDns) ? wireRouterDns : wireRouterWeb;
+                activeWire.classList.add('active');
+
+                // Trigger smooth move
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        packetToken.style.transition = `all ${duration / 1000}s ease-in-out`;
+                        packetToken.style.left = `${toX}px`;
+                        packetToken.style.top = `${toY}px`;
+                    });
+                });
+
+                setTimeout(() => {
+                    activeWire.classList.remove('active');
+                    if (onComplete) onComplete();
+                }, duration);
+            }
+
+            // --- DNS FAIL TOGGLE ---
+            function setDnsFail(failed) {
+                isDnsFailed = failed;
+                if (isDnsFailed) {
+                    nodeDns.classList.add('dns-down');
+                    dnsFailText.textContent = 'Panne DNS : ACTIVE ⚠️';
+                    btnToggleDnsFail.style.background = 'rgba(220, 38, 38, 0.15)';
+                    btnToggleDnsFail.style.borderColor = 'var(--error)';
+                } else {
+                    nodeDns.classList.remove('dns-down');
+                    dnsFailText.textContent = 'Panne DNS : OFF';
+                    btnToggleDnsFail.style.background = '';
+                    btnToggleDnsFail.style.borderColor = '';
+                }
+            }
+
+            btnToggleDnsFail.addEventListener('click', () => {
+                setDnsFail(!isDnsFailed);
+            });
+
+            // --- SIMULATION STEP GENERATOR ---
+            function buildSimulationSteps(rawInput) {
+                const input = rawInput.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+                const steps = [];
+
+                // Check if user entered a direct IP
+                const isDirectIp = /^(\d{1,3}\.){3}\d{1,3}$/.test(input);
+                let matchedDomain = null;
+                let targetIp = null;
+                let targetSite = null;
+
+                if (isDirectIp) {
+                    targetIp = input;
+                    for (const [dom, data] of Object.entries(DNS_DATABASE)) {
+                        if (data.ip === targetIp) {
+                            matchedDomain = dom;
+                            targetSite = data;
+                            break;
+                        }
+                    }
+                    if (!targetSite) {
+                        targetSite = { ip: targetIp, name: `Serveur ${targetIp}`, logo: '🌐', headline: `Site Web à l'adresse ${targetIp}`, desc: 'Connexion directe sans passer par le DNS.' };
+                    }
+                } else {
+                    matchedDomain = input;
+                    targetSite = DNS_DATABASE[input];
+                    if (targetSite) {
+                        targetIp = targetSite.ip;
+                    }
+                }
+
+                // CASE 1: Direct IP entered (bypasses DNS entirely)
+                if (isDirectIp) {
+                    steps.push({
+                        badge: '1',
+                        msg: `Connexion directe par IP (${targetIp}) : Pas besoin du serveur DNS ! L'ordinateur contacte directement la Box.`,
+                        action: (cb) => {
+                            setActiveNode(nodeClient);
+                            animatePacket(nodeClient, nodeRouter, 'web-req', simSpeed, cb);
+                        }
+                    });
+                    steps.push({
+                        badge: '2',
+                        msg: `La Box achemine la requête HTTP vers le serveur Web public (${targetIp})...`,
+                        action: (cb) => {
+                            setActiveNode(nodeRouter);
+                            animatePacket(nodeRouter, nodeWeb, 'web-req', simSpeed, cb);
+                        }
+                    });
+                    steps.push({
+                        badge: '3',
+                        msg: `Le serveur Web répond avec le contenu de la page ! Le paquet revient vers la Box.`,
+                        action: (cb) => {
+                            setActiveNode(nodeWeb);
+                            animatePacket(nodeWeb, nodeRouter, 'web-res', simSpeed, cb);
+                        }
+                    });
+                    steps.push({
+                        badge: '4',
+                        msg: `Page reçue avec succès sur ton ordinateur !`,
+                        action: (cb) => {
+                            setActiveNode(nodeClient);
+                            animatePacket(nodeRouter, nodeClient, 'web-res', simSpeed, () => {
+                                showSiteModal(targetSite);
+                                cb();
+                            });
+                        },
+                        result: { success: true, directIp: targetIp, domain: matchedDomain }
+                    });
+                    return { steps, site: targetSite };
+                }
+
+                // CASE 2: Domain lookup
+                if (!targetSite) {
+                    // Unknown domain
+                    steps.push({
+                        badge: '1',
+                        msg: `Recherche DNS : L'ordinateur demande l'IP de "${input}" au serveur DNS via la Box...`,
+                        action: (cb) => {
+                            setActiveNode(nodeClient);
+                            animatePacket(nodeClient, nodeRouter, 'dns-req', simSpeed / 2, () => {
+                                animatePacket(nodeRouter, nodeDns, 'dns-req', simSpeed / 2, cb);
+                            });
+                        }
+                    });
+                    steps.push({
+                        badge: '2',
+                        msg: `Erreur DNS : Le nom de domaine "${input}" est introuvable dans l'annuaire DNS !`,
+                        action: (cb) => {
+                            setActiveNode(nodeDns);
+                            playBeep('error');
+                            cb();
+                        },
+                        result: { success: false, error: 'DNS_NOT_FOUND', domain: input }
+                    });
+                    return { steps, site: null };
+                }
+
+                // Check local cache
+                const inCache = !!localDnsCache[matchedDomain];
+
+                if (inCache) {
+                    // Cached: No DNS round-trip needed!
+                    steps.push({
+                        badge: '⚡',
+                        msg: `Magie du Cache DNS ! L'ordinateur connaît déjà l'IP de ${matchedDomain} (${targetIp}). L'étape DNS est sautée !`,
+                        action: (cb) => {
+                            setActiveNode(nodeClient);
+                            placePacketAtNode(nodeClient, 'dns-res');
+                            playBeep('success');
+                            cb();
+                        }
+                    });
+                } else if (isDnsFailed) {
+                    // DNS is down!
+                    steps.push({
+                        badge: '1',
+                        msg: `L'ordinateur envoie la requête DNS pour ${matchedDomain} vers la Box...`,
+                        action: (cb) => {
+                            setActiveNode(nodeClient);
+                            animatePacket(nodeClient, nodeRouter, 'dns-req', simSpeed, cb);
+                        }
+                    });
+                    steps.push({
+                        badge: '⚠️',
+                        msg: `Panne Réseau : Le serveur DNS (8.8.8.8) ne répond pas ! Impossible d'obtenir l'adresse IP. Astuce : utilise directement l'adresse IP !`,
+                        action: (cb) => {
+                            setActiveNode(nodeDns);
+                            playBeep('error');
+                            cb();
+                        },
+                        result: { success: false, error: 'DNS_SERVER_DOWN', domain: matchedDomain }
+                    });
+                    return { steps, site: targetSite };
+                } else {
+                    // Standard DNS resolution
+                    steps.push({
+                        badge: '1',
+                        msg: `Étape 1/4 (Requête DNS) : L'ordinateur demande l'adresse IP de "${matchedDomain}" au serveur DNS...`,
+                        action: (cb) => {
+                            setActiveNode(nodeClient);
+                            animatePacket(nodeClient, nodeRouter, 'dns-req', simSpeed / 2, () => {
+                                animatePacket(nodeRouter, nodeDns, 'dns-req', simSpeed / 2, cb);
+                            });
+                        }
+                    });
+                    steps.push({
+                        badge: '2',
+                        msg: `Étape 2/4 (Réponse DNS) : Le serveur DNS trouve "${matchedDomain}" ➔ IP ${targetIp}. La réponse revient à l'ordinateur !`,
+                        action: (cb) => {
+                            setActiveNode(nodeDns);
+                            animatePacket(nodeDns, nodeRouter, 'dns-res', simSpeed / 2, () => {
+                                animatePacket(nodeRouter, nodeClient, 'dns-res', simSpeed / 2, () => {
+                                    // Save in cache
+                                    localDnsCache[matchedDomain] = targetIp;
+                                    updateCacheUI();
+                                    cb();
+                                });
+                            });
+                        }
+                    });
+                }
+
+                // HTTP / Web request
+                steps.push({
+                    badge: inCache ? '1' : '3',
+                    msg: `Étape Web (Requête HTTP) : Muni de l'adresse IP (${targetIp}), l'ordinateur demande la page au Serveur Web...`,
+                    action: (cb) => {
+                        setActiveNode(nodeRouter);
+                        webServerName.textContent = targetSite.name;
+                        webServerIp.textContent = `IP: ${targetIp}`;
+                        animatePacket(nodeClient, nodeRouter, 'web-req', simSpeed / 2, () => {
+                            animatePacket(nodeRouter, nodeWeb, 'web-req', simSpeed / 2, cb);
+                        });
+                    }
+                });
+
+                steps.push({
+                    badge: inCache ? '2' : '4',
+                    msg: `Étape Web (Réponse HTTP 200 OK) : Le Serveur Web renvoie la page demandée. La page s'affiche dans ton navigateur !`,
+                    action: (cb) => {
+                        setActiveNode(nodeWeb);
+                        animatePacket(nodeWeb, nodeRouter, 'web-res', simSpeed / 2, () => {
+                            animatePacket(nodeRouter, nodeClient, 'web-res', simSpeed / 2, () => {
+                                showSiteModal(targetSite);
+                                cb();
+                            });
+                        });
+                    },
+                    result: { success: true, domain: matchedDomain, ip: targetIp, usedCache: inCache, resolvedViaDns: !inCache }
+                });
+
+                return { steps, site: targetSite };
+            }
+
+            function setActiveNode(nodeEl) {
+                [nodeClient, nodeRouter, nodeDns, nodeWeb].forEach(n => n.classList.remove('active-node'));
+                if (nodeEl) nodeEl.classList.add('active-node');
+            }
+
+            // --- SITE PREVIEW MODAL ---
+            function showSiteModal(site) {
+                modalSiteTitle.textContent = `Connexion établie : ${site.name}`;
+                modalSiteLogo.textContent = site.logo || '🌐';
+                modalSiteHeadline.textContent = site.headline || site.name;
+                modalSiteDesc.innerHTML = `${site.desc}<br><br><span style="font-family:monospace; color:var(--success); font-weight:700;">➔ IP de connexion : ${site.ip}</span>`;
+                sitePreviewModal.classList.add('visible');
+                playBeep('success');
+
+                if (window.confetti && typeof window.confetti.fire === 'function') {
+                    window.confetti.fire({ particleCount: 35, spread: 60 });
+                }
+            }
+
+            btnClosePreview.addEventListener('click', () => { sitePreviewModal.classList.remove('visible'); });
+            btnConfirmSite.addEventListener('click', () => { sitePreviewModal.classList.remove('visible'); });
+
+            // --- CACHE & DNS UI ---
+            function updateCacheUI() {
+                const count = Object.keys(localDnsCache).length;
+                cacheCountText.textContent = `Cache DNS (${count})`;
+                cacheTableBody.innerHTML = '';
+                if (count === 0) {
+                    cacheTableBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">Cache vide</td></tr>';
+                    return;
+                }
+                for (const [dom, ip] of Object.entries(localDnsCache)) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td><strong>${dom}</strong></td><td><code>${ip}</code></td>`;
+                    cacheTableBody.appendChild(row);
+                }
+            }
+
+            btnViewCache.addEventListener('click', () => {
+                updateCacheUI();
+                cacheModal.classList.add('visible');
+            });
+            btnCloseCacheModal.addEventListener('click', () => { cacheModal.classList.remove('visible'); });
+            btnClearCache.addEventListener('click', () => {
+                localDnsCache = {};
+                updateCacheUI();
+                cacheModal.classList.remove('visible');
+                playBeep('click');
+            });
+
+            btnViewDnsTable.addEventListener('click', () => { dnsDirectoryModal.classList.add('visible'); });
+            btnCloseDnsDirectory.addEventListener('click', () => { dnsDirectoryModal.classList.remove('visible'); });
+
+            // --- QUICK CHIPS ---
+            document.querySelectorAll('.quick-site-chip[data-site]').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    urlInput.value = chip.getAttribute('data-site');
+                    startSimulation();
+                });
+            });
+
+            // --- SIMULATION EXECUTION ---
+            function startSimulation() {
+                if (isSimRunning) return;
+                const { steps } = buildSimulationSteps(urlInput.value);
+                activeSteps = steps;
+                currentStepIdx = 0;
+                btnLaunchReq.disabled = true;
+                btnPrevStep.disabled = true;
+                btnNextStep.disabled = false;
+                runStep(0);
+            }
+
+            btnLaunchReq.addEventListener('click', startSimulation);
+            urlInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') startSimulation();
+            });
+
+            function runStep(idx) {
+                if (idx < 0 || idx >= activeSteps.length) {
+                    finishSimulation();
+                    return;
+                }
+
+                currentStepIdx = idx;
+                const step = activeSteps[idx];
+                stepBadge.textContent = step.badge;
+                stepMessage.innerHTML = step.msg;
+                btnPrevStep.disabled = idx === 0;
+                btnNextStep.disabled = idx === activeSteps.length - 1;
+
+                isSimRunning = true;
+                step.action(() => {
+                    isSimRunning = false;
+                    if (step.result) {
+                        checkMissionResult(step.result);
+                    }
+                    if (autoPlayTimer) {
+                        autoPlayTimer = setTimeout(() => {
+                            if (currentStepIdx < activeSteps.length - 1) {
+                                runStep(currentStepIdx + 1);
+                            } else {
+                                finishSimulation();
+                            }
+                        }, 500);
+                    }
+                });
+            }
+
+            function finishSimulation() {
+                isSimRunning = false;
+                clearTimeout(autoPlayTimer);
+                autoPlayTimer = null;
+                playIcon.setAttribute('data-fa', 'play');
+                playText.textContent = 'Auto';
+                window.fa?.createIcons?.();
+                btnLaunchReq.disabled = false;
+                btnNextStep.disabled = true;
+                setActiveNode(null);
+            }
+
+            btnNextStep.addEventListener('click', () => {
+                if (currentStepIdx < activeSteps.length - 1 && !isSimRunning) {
+                    runStep(currentStepIdx + 1);
+                }
+            });
+
+            btnPrevStep.addEventListener('click', () => {
+                if (currentStepIdx > 0 && !isSimRunning) {
+                    runStep(currentStepIdx - 1);
+                }
+            });
+
+            btnAutoPlay.addEventListener('click', () => {
+                if (autoPlayTimer) {
+                    clearTimeout(autoPlayTimer);
+                    autoPlayTimer = null;
+                    playIcon.setAttribute('data-fa', 'play');
+                    playText.textContent = 'Auto';
+                    window.fa?.createIcons?.();
+                } else {
+                    playIcon.setAttribute('data-fa', 'pause');
+                    playText.textContent = 'Pause';
+                    window.fa?.createIcons?.();
+                    if (!activeSteps.length || currentStepIdx >= activeSteps.length - 1) {
+                        startSimulation();
+                    }
+                    autoPlayTimer = setTimeout(() => {
+                        if (currentStepIdx < activeSteps.length - 1) {
+                            runStep(currentStepIdx + 1);
+                        }
+                    }, simSpeed);
+                }
+            });
+
+            // --- SPEED CONTROLS ---
+            document.querySelectorAll('.sim-speed-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.sim-speed-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const speed = btn.getAttribute('data-speed');
+                    simSpeed = speed === 'slow' ? 1800 : speed === 'fast' ? 500 : 1000;
+                });
+            });
+
+            // --- MISSIONS & CHALLENGES ---
+            function loadMission(idx) {
+                currentMission = idx;
+                const m = MISSIONS[idx];
+                missionTitle.textContent = m.title;
+                missionDesc.textContent = m.desc;
+                missionScore.textContent = `⭐ ${idx} / ${MISSIONS.length}`;
+                if (m.prepare) m.prepare();
+                if (m.targetSite) urlInput.value = m.targetSite;
+            }
+
+            function checkMissionResult(result) {
+                if (currentMode !== 'missions') return;
+                const m = MISSIONS[currentMission];
+                if (m && m.check(result)) {
+                    playBeep('success');
+                    if (currentMission < MISSIONS.length - 1) {
+                        setTimeout(() => {
+                            loadMission(currentMission + 1);
+                        }, 1200);
+                    } else {
+                        missionScore.textContent = `⭐ 4 / 4 ! Félicitations !`;
+                        if (window.confetti && typeof window.confetti.fire === 'function') {
+                            window.confetti.fire({ particleCount: 80, spread: 80 });
+                        }
+                    }
+                }
+            }
+
+            tabModeFree.addEventListener('click', () => {
+                currentMode = 'free';
+                tabModeFree.classList.add('active');
+                tabModeMissions.classList.remove('active');
+                challengeBanner.classList.remove('visible');
+            });
+
+            tabModeMissions.addEventListener('click', () => {
+                currentMode = 'missions';
+                tabModeMissions.classList.add('active');
+                tabModeFree.classList.remove('active');
+                challengeBanner.classList.add('visible');
+                loadMission(0);
+            });
+
+            // Reset simulator
+            document.getElementById('reset-sim-btn').addEventListener('click', () => {
+                localDnsCache = {};
+                setDnsFail(false);
+                updateCacheUI();
+                urlInput.value = 'hepvs.ch';
+                packetToken.className = 'packet-token';
+                setActiveNode(null);
+                finishSimulation();
+                stepBadge.textContent = '1';
+                stepMessage.textContent = 'Simulateur réinitialisé. Prêt pour un nouveau voyage !';
+            });
+
+            // Initialize wires
+            setTimeout(updateWires, 100);
+            window.fa?.createIcons?.();
+
+            // Export test engine
+            window.SimulateurReseauEngine = {
+                buildSimulationSteps,
+                getDnsDatabase: () => DNS_DATABASE,
+                getLocalCache: () => localDnsCache,
+                setLocalCache: (c) => { localDnsCache = c; updateCacheUI(); },
+                setDnsFail,
+                loadMission,
+                getMissions: () => MISSIONS
+            };
+        })();
+    </script>
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/pwa.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
+</body>
+
+</html>

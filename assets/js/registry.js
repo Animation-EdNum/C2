@@ -127,7 +127,7 @@ window.REGISTRY = [
     "dataLevel": "3-4H",
     "icon": "dt-robot-astromech",
     "title": "Simulateur d'automate",
-    "desc": "Jeu pour guider un automate (de type Blue-Bot) et relever des défis.",
+    "desc": "Guide un automate (de type Blue-Bot) et relève des défis de programmation.",
     "tags": [
       "#Programmation",
       "#Débogage",
@@ -166,7 +166,7 @@ window.REGISTRY = [
     "dataLevel": "5-6H",
     "icon": "dt-grid",
     "title": "Pixel Studio",
-    "desc": "Studio pour dessiner des images avec le langage des ordinateurs.",
+    "desc": "Dessine des images pixel par pixel avec le langage des ordinateurs.",
     "tags": [
       "#Création",
       "#Code",
@@ -295,7 +295,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-binary",
     "title": "Codage binaire",
-    "desc": "Outil pour comprendre comment comptent les ordinateurs.",
+    "desc": "Comprends comment comptent les ordinateurs en manipulant les cartes binaires.",
     "tags": [
       "#Débogage",
       "#Binaire",
@@ -330,7 +330,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-user-secret",
     "title": "Mots secrets",
-    "desc": "Jeu pour créer et déchiffrer des messages secrets.",
+    "desc": "Crée et déchiffre des messages secrets avec le code binaire.",
     "tags": [
       "#Secret",
       "#Code",
@@ -365,7 +365,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-chart-network",
     "title": "Routage réseau",
-    "desc": "Activité pour découvrir comment les informations voyagent sur Internet.",
+    "desc": "Découvre comment les informations voyagent sur Internet étape par étape.",
     "tags": [
       "#Internet",
       "#Défi"
@@ -399,7 +399,7 @@ window.REGISTRY = [
     "dataLevel": "7-8H",
     "icon": "dt-shield-check",
     "title": "Bit de parité",
-    "desc": "Outil pour trouver les erreurs dans les messages des ordinateurs.",
+    "desc": "Trouve et corrige les erreurs dans les messages des ordinateurs avec le bit magique.",
     "tags": [
       "#Internet",
       "#Maths",
@@ -455,6 +455,48 @@ window.REGISTRY = [
           "#Code"
         ],
         "ref": "Connected 1 · 1.2 | Geheime Botschaften"
+      }
+    },
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-simulateur-reseau-dns",
+    "href": "alpha/webapps/simulateur_reseau_dns.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "dt-chart-network",
+    "title": "Simulateur Réseau & DNS",
+    "desc": "Visualise le cheminement d'une requête web, de ton ordinateur au serveur DNS et web.",
+    "tags": [
+      "#Réseau",
+      "#Internet",
+      "#DNS"
+    ],
+    "ref": "DÉ>CODAGE 7-8 · Internet & Réseaux",
+    "i18n": {
+      "de": {
+        "title": "Netzwerk- & DNS-Simulator",
+        "desc": "Verfolge den Weg einer Web-Anfrage von deinem Computer über den DNS-Server bis zum Webserver.",
+        "tags": [
+          "#Netzwerk",
+          "#Internet",
+          "#DNS"
+        ],
+        "ref": "DÉ>CODAGE 7-8 · Internet & Netzwerke",
+        "badges": [
+          {
+            "text": "7.-8. Primar",
+            "grey": false
+          }
+        ]
       }
     },
     "badges": [
@@ -620,7 +662,7 @@ window.REGISTRY = [
     "dataLevel": null,
     "icon": "dt-dice",
     "title": "Tirage au sort",
-    "desc": "Outil pour choisir au hasard un élève de la classe.",
+    "desc": "Tire au sort un élève ou forme des équipes aléatoires pour la classe.",
     "tags": [
       "#Outil",
       "#Gestion",
