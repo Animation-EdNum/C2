@@ -160,13 +160,13 @@ Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, régla
 Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration CERAS, syllabes bicolores, lettres muettes grisées, polices adaptées comme OpenDyslexic ou Century Gothic, profils enregistrables, export Word .docx et impression A4) et simulateur de sensibilisation cognitive aux difficultés de lecture. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md).
 
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
-- 🔒 **Coffre-fort numérique** (`alpha/webapps/coffre_fort.html`, 3-6H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COFFRE_FORT.md)
-- 🔀 **Réseau de tri** (`alpha/webapps/reseau_de_tri.html`, 5-6H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_RESEAU_DE_TRI.md)
-- ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COMPRESSEUR_MAGIQUE.md)
-- 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
-- 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
-- 🌐 **Simulateur Réseau & DNS** (`alpha/webapps/simulateur_reseau_dns.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_RESEAU_DNS.md)
-- 🛡️ **Anonymiseur de textes** (`alpha/webapps/teacher/anonymiseur.html`, Enseignant) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_ANONYMISEUR.md)
+- 🔒 **Coffre-fort numérique** (`alpha/webapps/coffre_fort.html`, 3-6H)
+- 🔀 **Réseau de tri** (`alpha/webapps/reseau_de_tri.html`, 5-6H)
+- ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H)
+- 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H)
+- 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO)
+- 🌐 **Simulateur Réseau & DNS** (`alpha/webapps/simulateur_reseau_dns.html`, 7-8H)
+- 🛡️ **Anonymiseur de textes** (`alpha/webapps/teacher/anonymiseur.html`, Enseignant)
 
 
 ---

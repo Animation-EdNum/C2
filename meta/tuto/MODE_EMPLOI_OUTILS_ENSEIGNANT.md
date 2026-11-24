@@ -16,7 +16,6 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 | 🎡 **Roue de la chance** | Roue interactive personnalisable, métiers, privilèges, tirage 1 à N et mode TBI | [Ouvrir le guide](MODE_EMPLOI_ROUE_DE_LA_CHANCE.md) |
 | 📱 **Créateur de QR Codes** | Générateur rapide de QR codes (liens, textes, Wi-Fi, planches imprimables, TBI) | [Ouvrir le guide](MODE_EMPLOI_QRCODE.md) |
 | 👓 **Adaptateur & Simulateur DYS** | Aménagements de texte (Zorzi, CERAS, sons, lettres muettes grisées), édition directe, profils élèves, export Word (.docx) et sensibilisation sans neuromythe | [Ouvrir le guide](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
-| 🛡️ **Anonymiseur de texte** | Anonymisation, pseudonymisation et protection des données élèves pour l'IA | [Ouvrir le guide](MODE_EMPLOI_ANONYMISEUR.md) |
 
 ---
 
@@ -77,18 +76,6 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 - Export direct au format Word (.docx) modifiable et impression propre au format A4.
 - Simulateur d'effort de décodage et scénario de sensibilisation sans neuromythe pour parents et élèves.
 - 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md)
-
----
-
-### 🛡️ Anonymiseur de texte
-
-*Protégez les données personnelles de vos élèves avant d'utiliser une IA.*
-
-- 3 modes de traitement : étiquettes numérotées (`[Élève 1]`), pseudonymes cohérents ou caviardage textuel.
-- 9 filtres de détection automatique (prénoms fréquents, emails, téléphones, dates, AVS suisse, adresses, etc.).
-- Importation rapide de liste de classe (fichiers ENT XLS, XLSX, CSV) avec reconnaissance des noms et prénoms.
-- Action « Copier pour IA » (Ctrl+Shift+I) intégrant un prompt pédagogique contextualisé.
-- 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_ANONYMISEUR.md)
 
 ---
 

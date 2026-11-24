@@ -106,3 +106,4 @@
 - **[2026-11-23]** [App/Simulateur Réseau] Overhauled CSS architecture: fixed dropdown leakage, cable conduits, and zone overlap.
 - **[2026-11-24]** [Cleanup] Removed legacy audit markdown files from repository.
 - **[2026-11-24]** [Docs] Audited and synchronized all user guides in meta/tuto with latest features and added missing app guides.
+- **[2026-11-24]** [Docs] Pruned obsolete tutorial files for non-production webapps from meta/tuto.
