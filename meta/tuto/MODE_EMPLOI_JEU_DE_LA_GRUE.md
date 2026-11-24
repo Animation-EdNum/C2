@@ -45,7 +45,9 @@ La grue répond à **3 ordres élémentaires** en ligne, identifiés par couleur
 ## 3. Construire et exécuter
 
 1. **Ajouter un ordre :** Cliquez sur un bouton (`⬅️`, `✊`, `➡️`) ou utilisez les touches du clavier (`←`, `Espace`, `→`).
-2. **Modifier la séquence :**
+2. **Bande de programme ergonomique :**
+   - La bande de code est disposée directement **sous les boutons de commande**, permettant d'enchaîner la saisie sans déplacement visuel inutile.
+   - Sa hauteur maximale bornée avec défilement horizontal fluide évite d'avoir à faire défiler l'écran verticalement lorsque les consignes ou les programmes s'allongent.
    - Cliquez directement sur une commande dans la bande de programme pour la supprimer.
    - **« Effacer »** (ou `Retour arrière`) pour retirer la dernière instruction.
    - **« Tout vider »** pour réinitialiser la bande de code.

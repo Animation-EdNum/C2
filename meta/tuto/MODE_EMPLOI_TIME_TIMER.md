@@ -37,10 +37,11 @@ Ouvrez le panneau **Options** pour adapter l'affichage à vos préférences :
 
 | Option | Choix possibles | Utilité en classe |
 |---|---|---|
-| **Couleur du disque** | Rouge vif, Bleu ciel, Vert menthe, Ambre, Violet, Rose | Varier les activités ou attribuer un code couleur par atelier. |
+| **Couleur du disque** | Rouge vif, Bleu ciel, Vert menthe, Ambre, Violet, Rose, **Arc-en-ciel (Rainbow)** | Varier les activités ou attribuer un code couleur par atelier. Le mode arc-en-ciel affiche des anneaux multicolores et une mascotte nuage souriant animée qui glisse le long du disque. |
 | **Style du cadran** | Disque plein ou Anneau moderne | Le disque plein reproduit le style circulaire classique. |
 | **Sens du décompte** | Anti-horaire (authentique) ou Sens des aiguilles | Le sens anti-horaire est la norme pédagogique recommandée (le disque diminue vers midi). |
 | **Temps numérique** | Affiché ou Masqué | Masquez les chiffres pour les plus jeunes ou pour éviter toute fixation sur les secondes. |
+| **Minuteur de compensation (Tiers-temps / MCD)** | Désactivé, Ratio (+25%, +33%) ou Durée fixe (+2 min, +5 min) | Aménagement pour élèves à besoins particuliers (dyslexie, TDAH, lenteur cognitive). Un arc secondaire discret prend le relais à la fin du temps normal. |
 | **Sonnerie de fin** | Carillon zen, Cloche d'école, Ding-dong, Bips, Muet | Sons doux et mélodieux synthétisés par le navigateur, agréables pour l'ambiance de classe. |
 | **Avertissement à 1 min** | Activé / Désactivé | Deux notes douces préviennent les élèves de finaliser leur travail. |
 | **Tic-tac sonore** | Activé / Désactivé | Désactivé par défaut pour préserver le silence. |
@@ -50,6 +51,11 @@ Ouvrez le panneau **Options** pour adapter l'affichage à vos préférences :
 ## 4. Mode Projection TBI & Raccourcis clavier
 
 Cliquez sur l'icône **Tableau d'école** (mode TBI) dans la barre supérieure droite pour agrandir le cadran au maximum de l'écran : le minuteur devient alors parfaitement lisible depuis le fond de n'importe quelle salle de classe.
+
+> 💡 **Célébration & Sécurité :**
+> - Lorsque le décompte arrive à 00:00, une fenêtre festive s'affiche et se referme automatiquement après 60 secondes pour ne pas bloquer l'écran.
+> - Les raccourcis système de navigation (`Ctrl+R` pour recharger la page, `Ctrl+F` pour rechercher) sont préservés et ne déclenchent pas d'action intempestive du minuteur.
+> - Les boutons d'ajustement rapide (`+1 min`, `+5 min`) prolongent la séance sans altérer la durée de base mémorisée par le bouton **Réinitialiser (`R`)**.
 
 | Raccourci | Action |
 |---|---|

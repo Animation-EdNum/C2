@@ -11,6 +11,7 @@
 - **PER EN 23 (Usages — Saisie d'un texte) :** Développer une frappe fluide et précise au clavier d'ordinateur pour libérer l'attention cognitive de l'élève au profit de la réflexion, de l'orthographe et de la rédaction de textes.
 - **Disposition QWERTZ suisse romande :** Intègre les touches et spécificités helvétiques : touches directes d'accentuation (`é`, `è`, `à`), inversion `Z`/`Y`, cédille `ç`, chiffres accessibles avec la touche Majuscule (`Shift`), et symboles suisses (`CHF`).
 - **Guidage visuel adaptatif :** Le clavier visuel reste masqué pendant la frappe normale pour encourager l'élève à regarder son écran et mémoriser l'emplacement des touches sur son clavier physique. En cas d'erreur de frappe au clavier physique, le clavier visuel apparaît pour aider l'élève à repérer où se trouve la touche recherchée.
+- **Usage recommandé sur ordinateur ou clavier physique (alerte tactile) :** Sur iPad ou tablette sans clavier physique, l'ouverture du clavier virtuel tactile masque une large partie de l'écran et empêche l'élève d'adopter la posture ergonomique à dix doigts. L'application détecte automatiquement les appareils tactiles et affiche un bandeau bienveillant recommandant l'usage d'un ordinateur ou d'un clavier externe physique (Bluetooth ou dock).
 
 ---
 

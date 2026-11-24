@@ -10,6 +10,8 @@ L'application fonctionne **100% en local dans le navigateur** : aucun texte, nom
 
 Les modèles d'IA générative grand public peuvent mémoriser, réutiliser pour leur entraînement ou faire fuiter involontairement des données transmises dans les requêtes (*prompts*). Les informations scolaires relèvent de la sphère privée et sont strictement encadrées par la législation suisse sur la protection des données (LPD et lois cantonales).
 
+Un **bandeau rétractable d'information (« Pourquoi anonymiser ? »)** est intégré en haut de page pour sensibiliser en un clic aux enjeux légaux et éthiques de l'IA à l'école sans encombrer l'espace de travail.
+
 ### Les 3 règles d'or de l'enseignant·e pour l'IA
 
 1. **Jamais de données identifiantes :** Aucun nom de famille, prénom, date de naissance, adresse postale, numéro AVS ou coordonnée personnelle ne doit être transmis à une IA tierce.
@@ -40,7 +42,7 @@ En cliquant sur **« Filtres & Liste de classe »**, vous accédez au panneau de
 |---|---|
 | 👥 **Élèves de ma classe** | Détection prioritaire basée sur votre liste de classe (gère prénoms seuls, noms complets et inversions). |
 | 👤 **Prénoms fréquents & Civilités** | Dictionnaire de prénoms suisses romands fréquents et formules de politesse (M., Mme, Monsieur, Madame). |
-| ✉️ **Adresses email** | Tous domaines de messagerie, y compris les adresses institutionnelles (`@edu.vs.ch`, `@eduvd.ch`...). |
+| ✉️ **Adresses email** | Tous domaines de messagerie, y compris les adresses institutionnelles (`@edu.vs.ch`, `@eduvd.ch`…). |
 | 📞 **Numéros de téléphone** | Formats suisses mobiles et fixes (07x, 02x, +41) ainsi que formats internationaux. |
 | 📅 **Dates de naissance & Âges** | Formats suisses (`jj.mm.aaaa`, `jj/mm/aaaa`), mentions textuelles (*« né le 14 mai 2014 »*, *« âgé de 11 ans »*). |
 | 🪪 **Numéros AVS suisses** | Numéro de sécurité sociale officiel suisse à 13 chiffres (`756.xxxx.xxxx.xx`). |

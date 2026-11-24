@@ -128,7 +128,7 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Valeur pédagogique :** Démystifie la cryptographie classique, illustre le passage de l'information sous formes codées et développe l'esprit d'analyse par l'étude des fréquences et des clés de décalage.
 
 #### 13. Simulateur de téléchargement (`webapps/simulateur_telechargement.html` - 7-8H)
-- **À quoi sert l'outil :** Simulation visuelle interactive pour appréhender concrètement la taille des fichiers numériques et le débit des réseaux à travers deux modes : *Défi des 4 médias* (estimer et ordonner la vitesse de téléchargement d'un texte, d'une image, d'un fichier audio et d'une vidéo sans voir leur débit) et *Laboratoire* (manipulation libre de 9 objets numériques concrets sur 4 technologies de connexion : Modem 56k, 3G, 4G et Fibre optique).
+- **À quoi sert l'outil :** Simulation visuelle interactive pour appréhender concrètement la taille des fichiers numériques et le débit des réseaux à travers deux modes : *Défi des 4 médias* (estimer et ordonner la vitesse de téléchargement d'un texte, d'une image, d'un fichier audio et d'une vidéo sans voir leur débit) et *Laboratoire* (manipulation libre de 9 objets numériques concrets sur 4 technologies de connexion : Modem 56k, 3G, 4G et Fibre optique). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_TELECHARGEMENT.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 3 — La taille des fichiers** (Demi-cycle 7-8H).
 - **Valeur pédagogique :** Fait ressentir physiquement le « poids » des données numériques, ancre la compréhension des unités de mesure (octet, Ko, Mo, Go) et sensibilise aux réalités physiques de l'infrastructure réseau.
 
@@ -165,6 +165,7 @@ Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration 
 - ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_COMPRESSEUR_MAGIQUE.md)
 - 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_IA_ET_NEURONES.md)
 - 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_PSEUDOCODE.md)
+- 🌐 **Simulateur Réseau & DNS** (`alpha/webapps/simulateur_reseau_dns.html`, 7-8H) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_SIMULATEUR_RESEAU_DNS.md)
 - 🛡️ **Anonymiseur de textes** (`alpha/webapps/teacher/anonymiseur.html`, Enseignant) : [Mode d'emploi](meta/tuto/MODE_EMPLOI_ANONYMISEUR.md)
 
 

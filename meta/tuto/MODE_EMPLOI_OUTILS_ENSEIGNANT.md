@@ -10,7 +10,7 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 
 | Outil | En bref | Guide |
 |---|---|---|
-| ⏱️ **Minuteur visuel** | Minuteur visuel circulaire 0-60 min, décompte sans stress, usage 1-clic et mode TBI | [Ouvrir le guide](MODE_EMPLOI_TIME_TIMER.md) |
+| ⏱️ **Minuteur visuel** | Minuteur visuel circulaire 0-60 min, décompte sans stress, thème arc-en-ciel avec mascotte, minuteur de compensation (tiers-temps/MCD) et mode TBI | [Ouvrir le guide](MODE_EMPLOI_TIME_TIMER.md) |
 | 📊 **Générateur de Barèmes** | Table de conversion points → notes (échelle suisse 1 à 6), seuil du 4.0 ajustable, -fautes, export image PNG, copie et impression | [Ouvrir le guide](MODE_EMPLOI_BAREME.md) |
 | 🎲 **Tirage au Sort** | Désignation aléatoire équitable, modes Nombres et Noms, import ENT (XLS/CSV), export .txt, TBI et partage par lien web | [Ouvrir le guide](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
 | 🎡 **Roue de la chance** | Roue interactive personnalisable, métiers, privilèges, tirage 1 à N et mode TBI | [Ouvrir le guide](MODE_EMPLOI_ROUE_DE_LA_CHANCE.md) |
