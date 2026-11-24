@@ -14,11 +14,11 @@
 - **External Student Resources (`students_external` & `students_utilities`):**
   - Production: Totem (`ext-totem`, 7H-10CO), Qwant Junior (`ext-qwantjunior`, 4H-8H), ia-pedia (`ext-iapedia`, 5H-10CO), Le Dico des Ados (`ext-ledicodesados`, 5H-10CO), Scratch (`ext-scratch`, 7H-10CO).
   - Hidden resources (revealed via "alpha" search trigger): Dico API (`ext-dicoapi`, 3H-8H, inclusive phonetic dictionary), Le Dico des Écoles (`ext-ledicodesecoles`, 3H-10CO, phonetic dictionary), Vikidia (`ext-vikidia`, 5H-8H), Monkeytype (`ext-monkeytype`, 5H-8H), AutoDraw (`ext-autodraw`, 3H-8H), GeoGebra Classique (`ext-geogebra-students`, 7H-10CO), Classroomscreen (`ext-classroomscreen`), Canva (`ext-canva`).
-- **Alpha Student Apps (`alpha/webapps/` - 6 apps, ordered by pedagogical level):**
-  - Coffre-fort (`coffre_fort.html`, 3-6H), Réseau de tri (`reseau_de_tri.html`, 5-6H), Compresseur magique (`compresseur_magique.html`, 7-8H), Dresseur de neurones (`dresseur_neurones.html`, 7-8H), Simulateur Réseau & DNS (`simulateur_reseau_dns.html`, 7-8H), Pseudo-code (`apprendre_pseudocode.html`, 9CO).
-- **Teacher Tools (`webapps/teacher/` - 6 production, 1 alpha):**
+- **Alpha Student Apps (`alpha/webapps/` - 12 apps, ordered by pedagogical level):**
+  - Coffre-fort (`coffre_fort.html`, 3-6H), La Fabrique de Recettes (`fabrique_recette.html`, 3-5H), Réseau de tri (`reseau_de_tri.html`, 5-6H), Le Rendu de Monnaie (`rendu_monnaie.html`, 5-8H), Chasseur d'Infox (`chasseur_infox.html`, 6H-10CO), Compresseur magique (`compresseur_magique.html`, 7-8H), Dresseur de neurones (`dresseur_neurones.html`, 7-8H), Simulateur Réseau & DNS (`simulateur_reseau_dns.html`, 7-8H), Le Réseau des Villages (`reseau_villages.html`, 7-8H, 9CO), La Bulle de Filtres (`bulle_filtres.html`, 8H-11CO), Pseudo-code (`apprendre_pseudocode.html`, 9CO), L'Atelier des Portes Logiques (`portes_logiques.html`, 9-11CO).
+- **Teacher Tools (`webapps/teacher/` - 6 production, 2 alpha):**
   - Production: Générateur de Barème (`bareme.html`), Tirage au Sort (`tirage.html`), Créateur de QR codes (`qrcode.html`), Minuteur visuel (`time_timer.html`), Roue de la chance (`roue_de_la_chance.html`), Adaptateur & Simulateur DYS (`sim_dyslexie.html`).
-  - Alpha: Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`).
+  - Alpha: Anonymiseur de textes (`alpha/webapps/teacher/anonymiseur.html`), Créateur de Groupes (`alpha/webapps/teacher/createur_groupes.html`).
 
 ## 3. Core Architectural Constraints
 - **100% Offline-First (PWA):** Zero external CDN dependencies. All assets (fonts, icons, audio, scripts) are locally hosted under `assets/`.

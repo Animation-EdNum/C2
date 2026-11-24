@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créateur de Groupes & Équipes · Suite EdNum</title>
+    <meta property="og:title" content="Créateur de Groupes & Équipes · Suite EdNum">
+    <meta property="og:description"
+        content="Composition intelligente d'équipes et d'îlots de travail pour la classe avec gestion de parité, affinités et contraintes.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+
+    <!-- Zero-FOUC I18N & Core scripts in head -->
+    <script src="../../../assets/js/i18n.js"></script>
+    <script src="../../../assets/js/i18n/de.js"></script>
+    <script src="../../../assets/js/audio.js"></script>
+    <script src="../../../assets/js/fa-subset.js"></script>
+    <script src="../../../assets/js/vendor/xlsx.full.min.js"></script>
+    <script src="../../../assets/js/roster-import.js"></script>
+
+    <!-- Design System Cascade -->
+    <link rel="stylesheet" href="../../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../../assets/css/base.css">
+    <link rel="stylesheet" href="../../../assets/css/components.css">
+    <link rel="stylesheet" href="../../../assets/css/utilities.css">
+    <link rel="stylesheet" href="../../../assets/css/teacher.css">
+
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: rgba(13, 148, 136, 0.12);
+            --bg-gradient-start: #0f766e;
+            --bg-gradient-end: #064e4b;
+            --glass-bg: rgba(255, 255, 255, 0.90);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+
+            --gender-f-bg: rgba(236, 72, 153, 0.12);
+            --gender-f-text: #be185d;
+            --gender-f-border: rgba(236, 72, 153, 0.3);
+
+            --gender-m-bg: rgba(2, 132, 199, 0.12);
+            --gender-m-text: #0369a1;
+            --gender-m-border: rgba(2, 132, 199, 0.3);
+
+            --gender-u-bg: rgba(100, 116, 139, 0.12);
+            --gender-u-text: #475569;
+            --gender-u-border: rgba(100, 116, 139, 0.3);
+
+            --rule-sep-bg: rgba(239, 68, 68, 0.1);
+            --rule-sep-text: #dc2626;
+            --rule-sep-border: rgba(239, 68, 68, 0.25);
+
+            --rule-assoc-bg: rgba(16, 185, 129, 0.1);
+            --rule-assoc-text: #059669;
+            --rule-assoc-border: rgba(16, 185, 129, 0.25);
+        }
+
+        body.dark {
+            color-scheme: dark;
+            --primary: #14b8a6;
+            --primary-hover: #2dd4bf;
+            --primary-light: rgba(45, 212, 191, 0.18);
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #042f2e;
+            --glass-bg: rgba(15, 23, 42, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+
+            --gender-f-bg: rgba(244, 114, 182, 0.2);
+            --gender-f-text: #f472b6;
+            --gender-f-border: rgba(244, 114, 182, 0.35);
+
+            --gender-m-bg: rgba(56, 189, 248, 0.2);
+            --gender-m-text: #38bdf8;
+            --gender-m-border: rgba(56, 189, 248, 0.35);
+
+            --gender-u-bg: rgba(148, 163, 184, 0.2);
+            --gender-u-text: #cbd5e1;
+            --gender-u-border: rgba(148, 163, 184, 0.3);
+
+            --rule-sep-bg: rgba(239, 68, 68, 0.2);
+            --rule-sep-text: #f87171;
+            --rule-sep-border: rgba(239, 68, 68, 0.4);
+
+            --rule-assoc-bg: rgba(16, 185, 129, 0.2);
+            --rule-assoc-text: #34d399;
+            --rule-assoc-border: rgba(16, 185, 129, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: background 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 25px 50px -12px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInCascade 0.5s var(--spring-easing) forwards;
+        }
+
+        /* HEADER */
+        .app-header {
+            padding: 0.9rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 1rem;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .header-icon {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-icon svg,
+        .header-icon i {
+            width: 20px;
+            height: 20px;
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-alpha {
+            background: #f59e0b;
+            color: #78350f;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        body.dark .badge-alpha {
+            background: #b45309;
+            color: #fef3c7;
+        }
+
+        .badge-level {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(13, 148, 136, 0.25);
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .icon-action-btn {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            min-height: 38px;
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .settings-dropdown {
+            position: relative;
+        }
+
+        .settings-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 6px;
+            min-width: 175px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .settings-dropdown-content.show {
+            display: block;
+        }
+
+        .menu-item-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-align: left;
+            transition: 0.15s;
+        }
+
+        .menu-item-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        /* MAIN CONTENT WORKSPACE */
+        .app-main {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* BANNER / INTRO */
+        .tool-banner {
+            background: linear-gradient(135deg, var(--primary-light) 0%, rgba(13, 148, 136, 0.03) 100%);
+            border: 1px solid rgba(13, 148, 136, 0.25);
+            border-radius: var(--radius-xl);
+            padding: 1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .banner-text h2 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+
+        .banner-text p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .banner-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* TWO-COLUMN CONFIG SECTION */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* CARD PANELS */
+        .panel-card {
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        body.dark .panel-card {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .counter-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+        }
+
+        .count-pill {
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            background: var(--border);
+            color: var(--text-main);
+        }
+
+        .count-pill.pill-f {
+            background: var(--gender-f-bg);
+            color: var(--gender-f-text);
+            border: 1px solid var(--gender-f-border);
+        }
+
+        .count-pill.pill-m {
+            background: var(--gender-m-bg);
+            color: var(--gender-m-text);
+            border: 1px solid var(--gender-m-border);
+        }
+
+        /* DROP ZONE & INPUT BOX */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.01);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .drop-zone-icon {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .drop-zone-text {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .drop-zone-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* TEXTAREA INPUT FOR ROSTER */
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        .roster-textarea {
+            width: 100%;
+            height: 95px;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            resize: vertical;
+            transition: border 0.2s;
+        }
+
+        body.dark .roster-textarea {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .roster-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .roster-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* STUDENTS TAGS LIST */
+        .students-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .students-chips-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding: 4px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        body.dark .students-chips-wrapper {
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .student-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: var(--radius-full);
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.15s ease;
+        }
+
+        .student-chip:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .avatar-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+        }
+
+        .gender-badge {
+            cursor: pointer;
+            padding: 1px 5px;
+            border-radius: var(--radius-full);
+            font-size: 0.68rem;
+            font-weight: 800;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+
+        .gender-badge.f {
+            background: var(--gender-f-bg);
+            color: var(--gender-f-text);
+            border: 1px solid var(--gender-f-border);
+        }
+
+        .gender-badge.m {
+            background: var(--gender-m-bg);
+            color: var(--gender-m-text);
+            border: 1px solid var(--gender-m-border);
+        }
+
+        .gender-badge.u {
+            background: var(--gender-u-bg);
+            color: var(--gender-u-text);
+            border: 1px solid var(--gender-u-border);
+        }
+
+        .chip-delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1px;
+            border-radius: 50%;
+        }
+
+        .chip-delete-btn:hover {
+            color: var(--error, #ef4444);
+        }
+
+        /* CRITERIA CONTROLS */
+        .controls-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .mode-segmented-tabs {
+            display: flex;
+            background: var(--border);
+            padding: 3px;
+            border-radius: var(--radius-lg);
+            gap: 3px;
+        }
+
+        .segmented-btn {
+            flex: 1;
+            padding: 7px 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.82rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .segmented-btn.active {
+            background: var(--glass-bg);
+            color: var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .number-stepper-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stepper-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .stepper-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .stepper-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .stepper-input {
+            width: 75px;
+            height: 38px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 1.15rem;
+            text-align: center;
+            font-family: inherit;
+        }
+
+        .stepper-summary {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* TOGGLE SWITCH */
+        .toggle-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        body.dark .toggle-switch-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .switch-label-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .switch-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .switch-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* SELECT THEME */
+        .theme-select {
+            width: 100%;
+            height: 38px;
+            padding: 0 0.8rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* RULES ACCORDION */
+        .rules-accordion {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        .accordion-header {
+            padding: 0.75rem 1rem;
+            background: var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 700;
+            user-select: none;
+        }
+
+        .accordion-body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .rules-creator-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .rules-creator-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rules-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .rule-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .rule-chip.separation {
+            background: var(--rule-sep-bg);
+            color: var(--rule-sep-text);
+            border: 1px solid var(--rule-sep-border);
+        }
+
+        .rule-chip.association {
+            background: var(--rule-assoc-bg);
+            color: var(--rule-assoc-text);
+            border: 1px solid var(--rule-assoc-border);
+        }
+
+        /* BIG GENERATE BUTTON */
+        .generate-btn-wrapper {
+            margin-top: 0.5rem;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.3);
+        }
+
+        /* RESULTS SECTION */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .results-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 0.75rem 1.2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+        }
+
+        .results-toolbar-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .results-toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* TEAMS GRID */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .team-card {
+            background: var(--glass-bg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .team-card.drag-over {
+            border-color: var(--primary) !important;
+            background: var(--primary-light) !important;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .team-header {
+            padding: 0.85rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.015);
+        }
+
+        .team-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .team-color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .team-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            outline: none;
+            border-bottom: 1px dashed transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .team-title[contenteditable="true"]:hover,
+        .team-title[contenteditable="true"]:focus {
+            border-bottom-color: var(--primary);
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+        }
+
+        .team-meta-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .team-body {
+            padding: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-height: 140px;
+            flex: 1;
+        }
+
+        .team-member-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            cursor: grab;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        body.dark .team-member-item {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .team-member-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateX(2px);
+        }
+
+        .team-member-item.dragging {
+            opacity: 0.4;
+            cursor: grabbing;
+        }
+
+        .member-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            min-width: 0;
+        }
+
+        .member-drag-handle {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: grab;
+        }
+
+        .member-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .member-right {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .transfer-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 3px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .transfer-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* MODAL TRANSFER */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 380px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .modal-team-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .modal-team-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: left;
+            transition: 0.15s;
+        }
+
+        .modal-team-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* PRINT STYLING - A4 SHEET & TABLE TENTS */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: white !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+            }
+
+            .app-header,
+            .tool-banner,
+            .config-grid,
+            .no-print,
+            .results-toolbar,
+            #confetti-canvas,
+            #toast-container,
+            footer {
+                display: none !important;
+            }
+
+            .results-section {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .print-only-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #000;
+            }
+
+            .print-only-header h2 {
+                font-size: 1.5rem;
+                font-weight: 900;
+                margin-bottom: 4px;
+            }
+
+            .print-only-header p {
+                font-size: 0.9rem;
+                color: #555;
+            }
+
+            .teams-grid {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12mm !important;
+            }
+
+            .team-card {
+                border: 2px dashed #000 !important;
+                background: white !important;
+                border-radius: 8px !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                box-shadow: none !important;
+            }
+
+            .team-header {
+                background: #f1f5f9 !important;
+                border-bottom: 2px solid #000 !important;
+                padding: 10px !important;
+            }
+
+            .team-title {
+                font-size: 1.25rem !important;
+                font-weight: 900 !important;
+                color: black !important;
+            }
+
+            .team-body {
+                padding: 10px !important;
+                gap: 8px !important;
+            }
+
+            .team-member-item {
+                border: 1px solid #ccc !important;
+                background: white !important;
+                color: black !important;
+                padding: 6px 10px !important;
+                font-size: 1rem !important;
+            }
+
+            .member-drag-handle,
+            .transfer-btn {
+                display: none !important;
+            }
+
+            .print-roles-box {
+                display: block !important;
+                margin-top: 10px;
+                padding-top: 8px;
+                border-top: 1px dotted #888;
+                font-size: 0.75rem;
+                color: #333;
+            }
+
+            .print-roles-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 4px;
+                margin-top: 4px;
+            }
+        }
+
+        .print-only-header,
+        .print-roles-box {
+            display: none;
+        }
+
+        /* ACCESSIBILITY FOCUS RING */
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="main-content">
+        <!-- HEADER ENSEIGNANT STRICT -->
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
+                    aria-label="Retour à l'espace enseignant·e·s"><i data-fa="arrow-left"></i></a>
+                <div class="header-icon" aria-hidden="true"><i data-fa="users"></i></div>
+                <div>
+                    <h1>Créateur de Groupes <span class="badge-level">Outil Enseignant</span> <span
+                            class="badge-alpha">Alpha</span></h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn"><i
+                            data-fa="gear"></i></button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="theme-toggle-btn"><i data-fa="moon" id="icon-moon"></i><i
+                                data-fa="sun-bright" id="icon-sun" style="display:none;"></i><span
+                                id="themeToggleText">Sombre</span></button>
+                        <button class="menu-item-btn" id="audio-toggle-btn"><i data-fa="volume-high" id="icon-vol-on"
+                                style="display:none;"></i><i data-fa="volume-xmark" id="icon-vol-off"></i><span
+                                id="audioToggleText">Activer son</span></button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn"><i data-fa="arrows-rotate"></i><span
+                                id="resetCacheText">Réinitialiser</span></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- PRINT HEADER (visible seulement à l'impression) -->
+        <div class="print-only-header">
+            <h2>Plan d'îlots & Équipes de travail</h2>
+            <p id="printClassSubtitle">Composition de classe · Suite EdNum</p>
+        </div>
+
+        <main class="app-main">
+            <!-- BANNIÈRE PRÉSENTATION & ACTIONS RAPIDES -->
+            <section class="tool-banner no-print">
+                <div class="banner-text">
+                    <h2>Composition d'équipes et d'îlots de travail pour la classe</h2>
+                    <p>Binômes, trios ou groupes de projet créés en 1 clic : parité filles/garçons, règles d'affinités
+                        et impression d'étiquettes de table.</p>
+                </div>
+                <div class="banner-actions">
+                    <button class="btn btn-secondary btn-small" id="loadSampleBtn"
+                        title="Charger 20 élèves types avec parité et règles">
+                        <i data-fa="sparkles"></i> <span>Classe exemple</span>
+                    </button>
+                    <button class="btn btn-secondary btn-small" id="clearAllRosterBtn"
+                        title="Vider la liste actuelle des élèves">
+                        <i data-fa="trash-can"></i> <span>Vider</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- WORKSPACE CONFIGURATION : 2 COLONNES -->
+            <div class="config-grid no-print">
+                <!-- COLONNE GAUCHE : GESTION DES ÉLÈVES ET IMPORTATION -->
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <div class="panel-title-left">
+                            <i data-fa="user"></i>
+                            <span>Élèves de la classe</span>
+                        </div>
+                        <div class="counter-badges">
+                            <span class="count-pill" id="badgeTotalStudents">0 élève</span>
+                            <span class="count-pill pill-f" id="badgeGirlsCount" title="Filles">0 F</span>
+                            <span class="count-pill pill-m" id="badgeBoysCount" title="Garçons">0 G</span>
+                        </div>
+                    </div>
+
+                    <!-- DROP ZONE IMPORTATION (XLSX, XLS, CSV, TXT) -->
+                    <div class="drop-zone" id="dropZone" tabindex="0" role="button"
+                        aria-label="Glisser-déposer un fichier de classe ou cliquer pour parcourir">
+                        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.tsv,.txt" style="display: none;">
+                        <i data-fa="arrow-up-from-square" class="drop-zone-icon"></i>
+                        <span class="drop-zone-text">Glissez votre fichier Excel (.xlsx, .xls), CSV ou ISM</span>
+                        <span class="drop-zone-hint">ou cliquez pour sélectionner sur votre ordinateur (100%
+                            hors-ligne)</span>
+                    </div>
+
+                    <!-- SAISIE OU COLLER RAPIDE -->
+                    <div class="textarea-wrapper">
+                        <textarea id="rosterTextInput" class="roster-textarea"
+                            placeholder="Ou collez ici une liste de prénoms (un par ligne ou séparés par des virgules)..."
+                            aria-label="Zone de texte pour coller la liste des élèves"></textarea>
+                    </div>
+
+                    <div class="roster-actions">
+                        <button class="btn btn-secondary btn-small" id="importTextBtn">
+                            <i data-fa="plus"></i> <span>Ajouter à la classe</span>
+                        </button>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">
+                            Astuce : ajoutez <code>(F)</code> ou <code>(M)</code> après un prénom pour définir le genre.
+                        </span>
+                    </div>
+
+                    <!-- LISTE VISUELLE DES CHIPS D'ÉLÈVES -->
+                    <div class="students-list-container">
+                        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">
+                            Élèves enregistrés (<span id="chipsCountText">0</span>) — cliquez sur le badge genre pour
+                            basculer F / M :
+                        </div>
+                        <div class="students-chips-wrapper" id="studentsChipsWrapper">
+                            <!-- Chips injectés dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLONNE DROITE : CRITÈRES, NOMS ET RÈGLES -->
+                <div class="panel-card controls-column">
+                    <div class="panel-title">
+                        <div class="panel-title-left">
+                            <i data-fa="sliders"></i>
+                            <span>Paramètres de constitution</span>
+                        </div>
+                    </div>
+
+                    <!-- MODE DE RÉPARTITION -->
+                    <div class="form-row">
+                        <label class="form-label" for="modeByCountBtn">Mode de répartition</label>
+                        <div class="mode-segmented-tabs" role="tablist">
+                            <button class="segmented-btn active" id="modeByCountBtn" role="tab" aria-selected="true">
+                                <i data-fa="layer-group"></i> <span>Nombre d'équipes</span>
+                            </button>
+                            <button class="segmented-btn" id="modeBySizeBtn" role="tab" aria-selected="false">
+                                <i data-fa="user"></i> <span>Taille des équipes</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEPPER DE QUANTITÉ -->
+                    <div class="form-row">
+                        <label class="form-label" id="stepperLabel" for="stepperInput">Nombre d'équipes souhaité</label>
+                        <div class="number-stepper-box">
+                            <button class="stepper-btn" id="stepperDecBtn" aria-label="Diminuer">-</button>
+                            <input type="number" id="stepperInput" class="stepper-input" value="4" min="1" max="50">
+                            <button class="stepper-btn" id="stepperIncBtn" aria-label="Augmenter">+</button>
+                            <span class="stepper-summary" id="stepperSummaryText">Soit ~5 élèves par groupe</span>
+                        </div>
+                    </div>
+
+                    <!-- SWITCH MIXITÉ / PARITÉ -->
+                    <div class="toggle-switch-wrapper">
+                        <div class="switch-label-group">
+                            <span class="switch-title">Équilibrer filles / garçons</span>
+                            <span class="switch-desc">Répartition homogène de la mixité par équipe</span>
+                        </div>
+                        <input type="checkbox" id="balanceGenderToggle" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary);">
+                    </div>
+
+                    <!-- SÉLECTION THÈME DES NOMS D'ÉQUIPES -->
+                    <div class="form-row">
+                        <label class="form-label" for="teamNamingThemeSelect">
+                            <i data-fa="sparkles"></i> Noms thématiques des équipes
+                        </label>
+                        <select id="teamNamingThemeSelect" class="theme-select">
+                            <option value="valais_fauna">Faune alpine valaisanne (Marmottes, Bouquetins...)</option>
+                            <option value="valais_peaks">Sommets alpins valaisans (Cervin, Dent Blanche...)</option>
+                            <option value="colors">Couleurs (Rouge, Bleue, Verte, Jaune...)</option>
+                            <option value="numbers">Numérotation simple (Groupe 1, Groupe 2...)</option>
+                            <option value="islands">Îlots de classe (Îlot 1, Îlot 2...)</option>
+                        </select>
+                    </div>
+
+                    <!-- ACCORDÉON RÈGLES DE SÉPARATION ET D'ASSOCIATION -->
+                    <div class="rules-accordion">
+                        <div class="accordion-header" id="rulesAccordionHeader" role="button" aria-expanded="false">
+                            <span style="display:flex;align-items:center;gap:6px;">
+                                <i data-fa="scale-balanced"></i>
+                                <span>Règles d'association & séparation (<span id="rulesCountBadge">0</span>)</span>
+                            </span>
+                            <i data-fa="chevron-down" id="accordionArrow"></i>
+                        </div>
+                        <div class="accordion-body" id="rulesAccordionBody" style="display: none;">
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">
+                                Définissez des élèves à <strong>séparer</strong> (éviter bavardages/conflits) ou à
+                                <strong>regrouper obligatoirement</strong> (tuteur, binôme inséparable).
+                            </div>
+
+                            <div class="rules-creator-row">
+                                <select id="ruleStudentASelect" class="theme-select" style="font-size:0.8rem;">
+                                    <option value="">Sélectionner élève 1...</option>
+                                </select>
+                                <select id="ruleStudentBSelect" class="theme-select" style="font-size:0.8rem;">
+                                    <option value="">Sélectionner élève 2...</option>
+                                </select>
+                                <div style="display:flex;gap:4px;">
+                                    <button class="btn btn-secondary btn-small" id="addSeparateRuleBtn"
+                                        title="Ne jamais mettre ensemble">
+                                        <i data-fa="ban" style="color:var(--error,#ef4444);"></i> <span>Séparer</span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-small" id="addAssocRuleBtn"
+                                        title="Toujours mettre ensemble">
+                                        <i data-fa="hand-holding-heart" style="color:var(--success,#10b981);"></i>
+                                        <span>Associer</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="rules-list" id="rulesListWrapper">
+                                <!-- Chips de règles injectés dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOUTON PRINCIPAL GÉNÉRER -->
+                    <div class="generate-btn-wrapper">
+                        <button id="generateTeamsBtn" class="btn btn-primary generate-btn">
+                            <i data-fa="shuffle"></i>
+                            <span>Générer les équipes</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION RÉSULTAT : CARTES D'ÉQUIPES ET ACTIONS -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <!-- BARRE D'OUTILS ET EXPLOITATION -->
+                <div class="results-toolbar no-print">
+                    <div class="results-toolbar-title">
+                        <i data-fa="users"></i>
+                        <span id="resultsTitleText">Équipes constituées (4)</span>
+                    </div>
+                    <div class="results-toolbar-actions">
+                        <button class="btn btn-secondary btn-small" id="shuffleAgainBtn" title="Relancer le tirage avec les mêmes règles">
+                            <i data-fa="arrows-rotate"></i> <span>Mélanger à nouveau</span>
+                        </button>
+                        <button class="btn btn-secondary btn-small" id="copyClipboardBtn" title="Copier la liste texte des équipes">
+                            <i data-fa="copy"></i> <span>Copier texte</span>
+                        </button>
+                        <button class="btn btn-secondary btn-small" id="printCardsBtn" title="Imprimer les étiquettes de table (format A4)">
+                            <i data-fa="print"></i> <span>Imprimer / Étiquettes</span>
+                        </button>
+                        <button class="btn btn-secondary btn-small" id="exportCsvBtn" title="Télécharger un tableau CSV">
+                            <i data-fa="download"></i> <span>Exporter CSV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GRILLE DES ÉQUIPES -->
+                <div class="teams-grid" id="teamsGrid">
+                    <!-- Cartes d'équipes injectées dynamiquement -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL DE TRANSFERT RAPIDE SUR MOBILE / TBI -->
+    <div id="transferModal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+        aria-labelledby="transferModalTitle">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="transferModalTitle">Déplacer l'élève</h3>
+                <button class="icon-action-btn" id="closeTransferModalBtn" aria-label="Fermer"><i
+                        data-fa="xmark"></i></button>
+            </div>
+            <p id="transferStudentName" style="font-size:0.85rem;color:var(--text-secondary);"></p>
+            <div style="font-size:0.8rem;font-weight:700;margin-top:4px;">Choisir l'équipe de destination :</div>
+            <div class="modal-team-list" id="modalTeamList">
+                <!-- Boutons d'équipes injectés dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- FOOTER OFFICIEL SUITE EDNUM -->
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                        data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- SCRIPTS EN BAS DE BODY -->
+    <script src="../../../assets/js/toast.js"></script>
+    <script src="../../../assets/js/theme.js"></script>
+    <script src="../../../assets/js/confetti.js"></script>
+
+    <!-- LOGIQUE MÉTIER CRÉATEUR DE GROUPES -->
+    <script>
+        (function () {
+            'use strict';
+
+            const STORAGE_KEY = 'createur_groupes_state';
+
+            // THEMES DE NOMS D'ÉQUIPES VALAISANS & PÉDAGOGIQUES
+            const TEAM_THEMES = {
+                valais_fauna: [
+                    "Les Marmottes", "Les Bouquetins", "Les Gypaètes", "Les Lynx",
+                    "Les Chamois", "Les Loups", "Les Aigles royaux", "Les Renards",
+                    "Les Hermines", "Les Castors", "Les Grands Tétras", "Les Lièvres variables"
+                ],
+                valais_peaks: [
+                    "Le Cervin", "La Dent Blanche", "Le Grand Combin", "Le Dom",
+                    "Le Weisshorn", "Le Bietschhorn", "Le Mont Vélan", "Le Mont Collon",
+                    "Les Diablerets", "L'Allalinhorn", "Le Zinalrothorn", "La Dent d'Hérens"
+                ],
+                colors: [
+                    "Équipe Rouge", "Équipe Bleue", "Équipe Verte", "Équipe Jaune",
+                    "Équipe Orange", "Équipe Violette", "Équipe Turquoise", "Équipe Rose",
+                    "Équipe Indigo", "Équipe Dorée"
+                ],
+                numbers: [
+                    "Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4", "Groupe 5",
+                    "Groupe 6", "Groupe 7", "Groupe 8", "Groupe 9", "Groupe 10",
+                    "Groupe 11", "Groupe 12", "Groupe 13", "Groupe 14", "Groupe 15"
+                ],
+                islands: [
+                    "Îlot 1", "Îlot 2", "Îlot 3", "Îlot 4", "Îlot 5",
+                    "Îlot 6", "Îlot 7", "Îlot 8", "Îlot 9", "Îlot 10"
+                ]
+            };
+
+            const ACCENT_COLORS = [
+                "#0d9488", "#2563eb", "#d97706", "#db2777",
+                "#7c3aed", "#0891b2", "#16a34a", "#dc2626",
+                "#4f46e5", "#ca8a04", "#059669", "#9333ea"
+            ];
+
+            // ÉCHANTILLON VALAISAN RÉALISTE POUR TEST RAPIDE (20 élèves avec mixité F/M)
+            const SAMPLE_STUDENTS = [
+                { id: "s1", name: "Chloé Martin", gender: "F" },
+                { id: "s2", name: "Noah Fournier", gender: "M" },
+                { id: "s3", name: "Léa Bonvin", gender: "F" },
+                { id: "s4", name: "Lucas Rey", gender: "M" },
+                { id: "s5", name: "Emma Constantin", gender: "F" },
+                { id: "s6", name: "Liam Bagnoud", gender: "M" },
+                { id: "s7", name: "Mia Roux", gender: "F" },
+                { id: "s8", name: "Gabriel Zufferey", gender: "M" },
+                { id: "s9", name: "Zoé Favre", gender: "F" },
+                { id: "s10", name: "Thomas Clivaz", gender: "M" },
+                { id: "s11", name: "Camille Schmid", gender: "F" },
+                { id: "s12", name: "Nathan Dubuis", gender: "M" },
+                { id: "s13", name: "Sarah Imboden", gender: "F" },
+                { id: "s14", name: "Maxime Bumann", gender: "M" },
+                { id: "s15", name: "Éléonore Voirol", gender: "F" },
+                { id: "s16", name: "Julien Anthamatten", gender: "M" },
+                { id: "s17", name: "Alice Morard", gender: "F" },
+                { id: "s18", name: "Samuel Sierro", gender: "M" },
+                { id: "s19", name: "Clara Germanier", gender: "F" },
+                { id: "s20", name: "Ethan Mayor", gender: "M" }
+            ];
+
+            // ÉTAT GLOBAL DE L'APPLICATION
+            let state = {
+                students: [],          // [{ id, name, gender: 'F'|'M'|'U' }]
+                mode: 'teamsCount',    // 'teamsCount' | 'teamSize'
+                targetCount: 4,        // Nombre d'équipes ou taille selon le mode
+                balanceGender: true,
+                namingTheme: 'valais_fauna',
+                rules: [],             // [{ id, type: 'separate'|'associate', studentAId, studentBId }]
+                teams: []              // [{ id, name, color, members: [studentObj, ...] }]
+            };
+
+            let transferActiveStudentId = null;
+
+            // DOM ELEMENTS
+            const badgeTotalStudents = document.getElementById('badgeTotalStudents');
+            const badgeGirlsCount = document.getElementById('badgeGirlsCount');
+            const badgeBoysCount = document.getElementById('badgeBoysCount');
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const rosterTextInput = document.getElementById('rosterTextInput');
+            const importTextBtn = document.getElementById('importTextBtn');
+            const studentsChipsWrapper = document.getElementById('studentsChipsWrapper');
+            const chipsCountText = document.getElementById('chipsCountText');
+            const loadSampleBtn = document.getElementById('loadSampleBtn');
+            const clearAllRosterBtn = document.getElementById('clearAllRosterBtn');
+
+            const modeByCountBtn = document.getElementById('modeByCountBtn');
+            const modeBySizeBtn = document.getElementById('modeBySizeBtn');
+            const stepperLabel = document.getElementById('stepperLabel');
+            const stepperInput = document.getElementById('stepperInput');
+            const stepperDecBtn = document.getElementById('stepperDecBtn');
+            const stepperIncBtn = document.getElementById('stepperIncBtn');
+            const stepperSummaryText = document.getElementById('stepperSummaryText');
+            const balanceGenderToggle = document.getElementById('balanceGenderToggle');
+            const teamNamingThemeSelect = document.getElementById('teamNamingThemeSelect');
+
+            const rulesAccordionHeader = document.getElementById('rulesAccordionHeader');
+            const rulesAccordionBody = document.getElementById('rulesAccordionBody');
+            const rulesCountBadge = document.getElementById('rulesCountBadge');
+            const ruleStudentASelect = document.getElementById('ruleStudentASelect');
+            const ruleStudentBSelect = document.getElementById('ruleStudentBSelect');
+            const addSeparateRuleBtn = document.getElementById('addSeparateRuleBtn');
+            const addAssocRuleBtn = document.getElementById('addAssocRuleBtn');
+            const rulesListWrapper = document.getElementById('rulesListWrapper');
+
+            const generateTeamsBtn = document.getElementById('generateTeamsBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsTitleText = document.getElementById('resultsTitleText');
+            const teamsGrid = document.getElementById('teamsGrid');
+            const shuffleAgainBtn = document.getElementById('shuffleAgainBtn');
+            const copyClipboardBtn = document.getElementById('copyClipboardBtn');
+            const printCardsBtn = document.getElementById('printCardsBtn');
+            const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+            const transferModal = document.getElementById('transferModal');
+            const closeTransferModalBtn = document.getElementById('closeTransferModalBtn');
+            const transferStudentName = document.getElementById('transferStudentName');
+            const modalTeamList = document.getElementById('modalTeamList');
+
+            // ============================================================
+            // 1. GESTION DES ÉLÈVES & PARSING DU ROSTER
+            // ============================================================
+
+            function createStudent(name, gender = 'U') {
+                const cleanedName = String(name || '').trim();
+                const id = 's_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7);
+                let g = (gender || '').toUpperCase();
+                if (g !== 'F' && g !== 'M') g = 'U';
+                return { id, name: cleanedName, gender: g };
+            }
+
+            function parseGenderFromNameString(rawString) {
+                let name = String(rawString || '').trim();
+                let gender = 'U';
+
+                // Détecte les suffixes de genre (F), (M), , F, , M, [F], [M]
+                const genderRegex = /[\(\[\,\;\s]+([FfMm])[\)\]\s]*$/;
+                const match = name.match(genderRegex);
+                if (match) {
+                    const letter = match[1].toUpperCase();
+                    gender = (letter === 'F') ? 'F' : 'M';
+                    name = name.replace(genderRegex, '').trim();
+                }
+                return { name, gender };
+            }
+
+            function addStudentsToList(newItems) {
+                let countAdded = 0;
+                newItems.forEach(item => {
+                    const parsed = parseGenderFromNameString(typeof item === 'string' ? item : item.name);
+                    const finalName = parsed.name;
+                    const finalGender = (item.gender && item.gender !== 'U') ? item.gender : parsed.gender;
+
+                    if (finalName.length >= 2) {
+                        // Évite les doublons stricts exacts
+                        const exists = state.students.some(s => s.name.toLowerCase() === finalName.toLowerCase());
+                        if (!exists) {
+                            state.students.push(createStudent(finalName, finalGender));
+                            countAdded++;
+                        }
+                    }
+                });
+
+                updateRosterUI();
+                saveState();
+                return countAdded;
+            }
+
+            function removeStudent(studentId) {
+                state.students = state.students.filter(s => s.id !== studentId);
+                // Supprimer les règles associées à cet élève
+                state.rules = state.rules.filter(r => r.studentAId !== studentId && r.studentBId !== studentId);
+                // Mettre à jour les équipes existantes
+                state.teams.forEach(t => {
+                    t.members = t.members.filter(m => m.id !== studentId);
+                });
+                updateRosterUI();
+                renderTeams();
+                saveState();
+            }
+
+            function toggleStudentGender(studentId) {
+                const s = state.students.find(el => el.id === studentId);
+                if (!s) return;
+                if (s.gender === 'U') s.gender = 'F';
+                else if (s.gender === 'F') s.gender = 'M';
+                else s.gender = 'U';
+
+                // Synchroniser avec les équipes existantes
+                state.teams.forEach(t => {
+                    const m = t.members.find(mem => mem.id === studentId);
+                    if (m) m.gender = s.gender;
+                });
+
+                updateRosterUI();
+                renderTeams();
+                saveState();
+                if (typeof window.playSound === 'function') window.playSound('click');
+            }
+
+            function updateRosterUI() {
+                const total = state.students.length;
+                const girls = state.students.filter(s => s.gender === 'F').length;
+                const boys = state.students.filter(s => s.gender === 'M').length;
+
+                badgeTotalStudents.textContent = total + (total > 1 ? ' élèves' : ' élève');
+                badgeGirlsCount.textContent = girls + ' F';
+                badgeBoysCount.textContent = boys + ' G';
+                chipsCountText.textContent = total;
+
+                // Mettre à jour le résumé du stepper
+                updateStepperSummary();
+
+                // Rafraîchir les options des menus de règles
+                populateRuleSelects();
+
+                // Vider et réinjecter les chips
+                studentsChipsWrapper.replaceChildren();
+
+                if (state.students.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.style.cssText = 'color: var(--text-muted); font-size: 0.8rem; padding: 10px; text-align: center; width: 100%;';
+                    emptyMsg.textContent = "Aucun élève dans la classe. Importez un fichier ou collez une liste ci-dessus.";
+                    studentsChipsWrapper.appendChild(emptyMsg);
+                    return;
+                }
+
+                state.students.forEach(student => {
+                    const chip = document.createElement('div');
+                    chip.className = 'student-chip';
+                    chip.dataset.studentId = student.id;
+
+                    const avatar = document.createElement('div');
+                    avatar.className = 'avatar-circle';
+                    const initials = student.name.split(/\s+/).map(w => w.charAt(0)).slice(0, 2).join('');
+                    avatar.textContent = initials || '?';
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = student.name;
+
+                    const genderBadge = document.createElement('span');
+                    genderBadge.className = 'gender-badge ' + student.gender.toLowerCase();
+                    genderBadge.textContent = student.gender === 'F' ? 'F' : (student.gender === 'M' ? 'G' : '–');
+                    genderBadge.title = "Cliquer pour changer le genre (F / G / Indéfini)";
+                    genderBadge.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleStudentGender(student.id);
+                    });
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'chip-delete-btn';
+                    delBtn.setAttribute('aria-label', 'Supprimer ' + student.name);
+                    delBtn.innerHTML = '<i data-fa="xmark" style="width:12px;height:12px;"></i>';
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeStudent(student.id);
+                    });
+
+                    chip.appendChild(avatar);
+                    chip.appendChild(nameSpan);
+                    chip.appendChild(genderBadge);
+                    chip.appendChild(delBtn);
+
+                    studentsChipsWrapper.appendChild(chip);
+                });
+
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+            }
+
+            function populateRuleSelects() {
+                const prevA = ruleStudentASelect.value;
+                const prevB = ruleStudentBSelect.value;
+
+                ruleStudentASelect.replaceChildren();
+                ruleStudentBSelect.replaceChildren();
+
+                const defOptA = document.createElement('option');
+                defOptA.value = '';
+                defOptA.textContent = 'Sélectionner élève 1...';
+                ruleStudentASelect.appendChild(defOptA);
+
+                const defOptB = document.createElement('option');
+                defOptB.value = '';
+                defOptB.textContent = 'Sélectionner élève 2...';
+                ruleStudentBSelect.appendChild(defOptB);
+
+                const sorted = [...state.students].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+
+                sorted.forEach(s => {
+                    const optA = document.createElement('option');
+                    optA.value = s.id;
+                    optA.textContent = s.name + (s.gender !== 'U' ? ` (${s.gender})` : '');
+                    ruleStudentASelect.appendChild(optA);
+
+                    const optB = document.createElement('option');
+                    optB.value = s.id;
+                    optB.textContent = s.name + (s.gender !== 'U' ? ` (${s.gender})` : '');
+                    ruleStudentBSelect.appendChild(optB);
+                });
+
+                if (prevA && state.students.some(s => s.id === prevA)) ruleStudentASelect.value = prevA;
+                if (prevB && state.students.some(s => s.id === prevB)) ruleStudentBSelect.value = prevB;
+            }
+
+            // ============================================================
+            // 2. GESTION DU FICHIER & IMPORTATION
+            // ============================================================
+
+            function processUploadedFile(file) {
+                if (!file) return;
+                const fileName = file.name || '';
+                const isExcel = /\.(xlsx|xls)$/i.test(fileName);
+
+                const reader = new FileReader();
+
+                if (isExcel) {
+                    reader.onload = function (e) {
+                        try {
+                            const buffer = e.target.result;
+                            let extractedNames = [];
+                            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
+                                extractedNames = RosterImport.parseRosterContent(buffer);
+                            }
+                            if (extractedNames.length > 0) {
+                                const added = addStudentsToList(extractedNames);
+                                if (typeof showToast === 'function') {
+                                    showToast(`${added} élève(s) importé(s) depuis le tableur`, 'success');
+                                }
+                            } else {
+                                if (typeof showToast === 'function') {
+                                    showToast("Aucun prénom détecté dans le fichier", 'warn');
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Erreur lecture XLSX:', err);
+                            if (typeof showToast === 'function') showToast("Erreur lors de la lecture du fichier Excel", 'error');
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    reader.onload = function (e) {
+                        try {
+                            const text = e.target.result;
+                            let extractedNames = [];
+                            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
+                                extractedNames = RosterImport.parseRosterContent(text);
+                            } else {
+                                extractedNames = text.split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean);
+                            }
+                            if (extractedNames.length > 0) {
+                                const added = addStudentsToList(extractedNames);
+                                if (typeof showToast === 'function') {
+                                    showToast(`${added} élève(s) importé(s)`, 'success');
+                                }
+                            } else {
+                                if (typeof showToast === 'function') showToast("Aucun élève trouvé dans le fichier", 'warn');
+                            }
+                        } catch (err) {
+                            console.error('Erreur lecture texte:', err);
+                            if (typeof showToast === 'function') showToast("Erreur lors de la lecture du fichier", 'error');
+                        }
+                    };
+                    reader.readAsText(file, 'utf-8');
+                }
+            }
+
+            // Drag and drop events for file dropzone
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (file) {
+                    processUploadedFile(file);
+                    fileInput.value = '';
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                });
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (file) {
+                    processUploadedFile(file);
+                }
+            });
+
+            // Bouton Importer la saisie texte
+            importTextBtn.addEventListener('click', () => {
+                const text = rosterTextInput.value;
+                if (!text.trim()) {
+                    if (typeof showToast === 'function') showToast("Veuillez d'abord coller ou écrire des prénoms", 'warn');
+                    return;
+                }
+                const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+                let list = [];
+                lines.forEach(line => {
+                    if (/[,\;]/.test(line)) {
+                        if (/^[^\,\;]+[,\;]\s*[FfMm]$/.test(line)) {
+                            list.push(line);
+                        } else {
+                            const parts = line.split(/[,\;]+/).map(s => s.trim()).filter(Boolean);
+                            list.push(...parts);
+                        }
+                    } else {
+                        list.push(line);
+                    }
+                });
+                const added = addStudentsToList(list);
+                rosterTextInput.value = '';
+                if (typeof showToast === 'function') {
+                    showToast(`${added} élève(s) ajouté(s)`, 'success');
+                }
+                if (typeof window.playSound === 'function') window.playSound('click');
+            });
+
+            // Classe exemple rapide
+            loadSampleBtn.addEventListener('click', () => {
+                state.students = SAMPLE_STUDENTS.map(s => ({ ...s }));
+                // Ajout d'une règle d'exemple intelligente
+                state.rules = [
+                    { id: 'r1', type: 'separate', studentAId: 's2', studentBId: 's4' }, // Noah et Lucas séparés
+                    { id: 'r2', type: 'associate', studentAId: 's1', studentBId: 's9' }  // Chloé et Zoé associées
+                ];
+                updateRosterUI();
+                renderRulesList();
+                saveState();
+                if (typeof showToast === 'function') {
+                    showToast("Classe exemple de 20 élèves chargée !", 'success');
+                }
+                if (typeof window.playSound === 'function') window.playSound('success');
+            });
+
+            // Vider toute la classe
+            clearAllRosterBtn.addEventListener('click', () => {
+                if (state.students.length === 0) return;
+                state.students = [];
+                state.rules = [];
+                state.teams = [];
+                updateRosterUI();
+                renderRulesList();
+                renderTeams();
+                saveState();
+                if (typeof showToast === 'function') showToast("Liste des élèves vidée", 'info');
+                if (typeof window.playSound === 'function') window.playSound('click');
+            });
+
+            // ============================================================
+            // 3. PARAMÈTRES DE CONSTITUTION & STEPPER
+            // ============================================================
+
+            function updateStepperSummary() {
+                const total = state.students.length;
+                const val = parseInt(stepperInput.value, 10) || 1;
+
+                if (state.mode === 'teamsCount') {
+                    stepperLabel.textContent = "Nombre d'équipes souhaité";
+                    if (total === 0) {
+                        stepperSummaryText.textContent = `Soit ${val} équipes prévues`;
+                    } else {
+                        const approx = Math.max(1, Math.round(total / val));
+                        stepperSummaryText.textContent = `Soit ~${approx} élèves par équipe`;
+                    }
+                } else {
+                    stepperLabel.textContent = "Taille des équipes (élèves par groupe)";
+                    if (total === 0) {
+                        stepperSummaryText.textContent = `Équipes de ${val} élèves`;
+                    } else {
+                        const numTeams = Math.max(1, Math.round(total / val));
+                        stepperSummaryText.textContent = `Donnera ~${numTeams} équipe(s)`;
+                    }
+                }
+            }
+
+            modeByCountBtn.addEventListener('click', () => {
+                state.mode = 'teamsCount';
+                modeByCountBtn.classList.add('active');
+                modeByCountBtn.setAttribute('aria-selected', 'true');
+                modeBySizeBtn.classList.remove('active');
+                modeBySizeBtn.setAttribute('aria-selected', 'false');
+                if (stepperInput.value > 15) stepperInput.value = 4;
+                updateStepperSummary();
+                saveState();
+                if (typeof window.playSound === 'function') window.playSound('click');
+            });
+
+            modeBySizeBtn.addEventListener('click', () => {
+                state.mode = 'teamSize';
+                modeBySizeBtn.classList.add('active');
+                modeBySizeBtn.setAttribute('aria-selected', 'true');
+                modeByCountBtn.classList.remove('active');
+                modeByCountBtn.setAttribute('aria-selected', 'false');
+                stepperInput.value = 4;
+                updateStepperSummary();
+                saveState();
+                if (typeof window.playSound === 'function') window.playSound('click');
+            });
+
+            stepperIncBtn.addEventListener('click', () => {
+                let v = parseInt(stepperInput.value, 10) || 1;
+                if (v < 50) {
+                    stepperInput.value = v + 1;
+                    state.targetCount = v + 1;
+                    updateStepperSummary();
+                    saveState();
+                    if (typeof window.playSound === 'function') window.playSound('click');
+                }
+            });
+
+            stepperDecBtn.addEventListener('click', () => {
+                let v = parseInt(stepperInput.value, 10) || 1;
+                if (v > 1) {
+                    stepperInput.value = v - 1;
+                    state.targetCount = v - 1;
+                    updateStepperSummary();
+                    saveState();
+                    if (typeof window.playSound === 'function') window.playSound('click');
+                }
+            });
+
+            stepperInput.addEventListener('change', () => {
+                let v = parseInt(stepperInput.value, 10) || 1;
+                if (v < 1) v = 1;
+                if (v > 50) v = 50;
+                stepperInput.value = v;
+                state.targetCount = v;
+                updateStepperSummary();
+                saveState();
+            });
+
+            balanceGenderToggle.addEventListener('change', () => {
+                state.balanceGender = balanceGenderToggle.checked;
+                saveState();
+            });
+
+            teamNamingThemeSelect.addEventListener('change', () => {
+                state.namingTheme = teamNamingThemeSelect.value;
+                saveState();
+            });
+
+            // ============================================================
+            // 4. ACCORDÉON & RÈGLES DE SÉPARATION ET D'ASSOCIATION
+            // ============================================================
+
+            rulesAccordionHeader.addEventListener('click', () => {
+                const isExpanded = rulesAccordionBody.style.display !== 'none';
+                rulesAccordionBody.style.display = isExpanded ? 'none' : 'flex';
+                rulesAccordionHeader.setAttribute('aria-expanded', String(!isExpanded));
+                const arrow = document.getElementById('accordionArrow');
+                if (arrow) {
+                    arrow.setAttribute('data-fa', isExpanded ? 'chevron-down' : 'chevron-up');
+                    if (window.fa && typeof window.fa.createIcons === 'function') window.fa.createIcons();
+                }
+            });
+
+            function addRule(type) {
+                const idA = ruleStudentASelect.value;
+                const idB = ruleStudentBSelect.value;
+
+                if (!idA || !idB) {
+                    if (typeof showToast === 'function') showToast("Veuillez sélectionner deux élèves", 'warn');
+                    return;
+                }
+                if (idA === idB) {
+                    if (typeof showToast === 'function') showToast("Veuillez choisir deux élèves différents", 'warn');
+                    return;
+                }
+
+                // Vérifier si cette règle existe déjà
+                const exists = state.rules.some(r =>
+                    (r.studentAId === idA && r.studentBId === idB) ||
+                    (r.studentAId === idB && r.studentBId === idA)
+                );
+                if (exists) {
+                    if (typeof showToast === 'function') showToast("Une règle existe déjà pour ce binôme", 'info');
+                    return;
+                }
+
+                const newRule = {
+                    id: 'r_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 5),
+                    type,
+                    studentAId: idA,
+                    studentBId: idB
+                };
+
+                state.rules.push(newRule);
+                renderRulesList();
+                saveState();
+
+                if (typeof showToast === 'function') {
+                    showToast(type === 'separate' ? "Règle de séparation ajoutée" : "Règle d'association ajoutée", 'success');
+                }
+                if (typeof window.playSound === 'function') window.playSound('click');
+            }
+
+            addSeparateRuleBtn.addEventListener('click', () => addRule('separate'));
+            addAssocRuleBtn.addEventListener('click', () => addRule('associate'));
+
+            function removeRule(ruleId) {
+                state.rules = state.rules.filter(r => r.id !== ruleId);
+                renderRulesList();
+                saveState();
+            }
+
+            function renderRulesList() {
+                rulesCountBadge.textContent = state.rules.length;
+                rulesListWrapper.replaceChildren();
+
+                if (state.rules.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.style.cssText = 'font-size: 0.78rem; color: var(--text-muted); width: 100%;';
+                    empty.textContent = "Aucune règle définie pour l'instant.";
+                    rulesListWrapper.appendChild(empty);
+                    return;
+                }
+
+                state.rules.forEach(rule => {
+                    const studentA = state.students.find(s => s.id === rule.studentAId);
+                    const studentB = state.students.find(s => s.id === rule.studentBId);
+                    if (!studentA || !studentB) return;
+
+                    const chip = document.createElement('div');
+                    chip.className = `rule-chip ${rule.type}`;
+
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-fa', rule.type === 'separate' ? 'ban' : 'hand-holding-heart');
+                    icon.style.cssText = 'width: 11px; height: 11px;';
+
+                    const textSpan = document.createElement('span');
+                    if (rule.type === 'separate') {
+                        textSpan.textContent = `Séparer : ${studentA.name} ✕ ${studentB.name}`;
+                    } else {
+                        textSpan.textContent = `Associer : ${studentA.name} + ${studentB.name}`;
+                    }
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'chip-delete-btn';
+                    delBtn.setAttribute('aria-label', 'Supprimer cette règle');
+                    delBtn.innerHTML = '<i data-fa="xmark" style="width:11px;height:11px;"></i>';
+                    delBtn.addEventListener('click', () => removeRule(rule.id));
+
+                    chip.appendChild(icon);
+                    chip.appendChild(textSpan);
+                    chip.appendChild(delBtn);
+
+                    rulesListWrapper.appendChild(chip);
+                });
+
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+            }
+
+            // ============================================================
+            // 5. MOTEUR INTELLIGENT DE GÉNÉRATION D'ÉQUIPES
+            // ============================================================
+
+            function shuffleArray(arr) {
+                const res = [...arr];
+                for (let i = res.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [res[i], res[j]] = [res[j], res[i]];
+                }
+                return res;
+            }
+
+            function generateTeamsAlgorithm() {
+                const totalStudents = state.students.length;
+                if (totalStudents === 0) {
+                    if (typeof showToast === 'function') showToast("Veuillez d'abord ajouter des élèves dans la classe", 'warn');
+                    return false;
+                }
+
+                // 1. Calculer le nombre cible d'équipes k
+                let k = 1;
+                const target = parseInt(stepperInput.value, 10) || 1;
+                if (state.mode === 'teamsCount') {
+                    k = Math.max(1, Math.min(totalStudents, target));
+                } else {
+                    // Mode taille d'équipe
+                    const teamSize = Math.max(1, target);
+                    k = Math.max(1, Math.round(totalStudents / teamSize));
+                    if (k > totalStudents) k = totalStudents;
+                }
+
+                // 2. Fusionner les élèves ayant des règles d'association (Composantes connexes)
+                const parent = {};
+                state.students.forEach(s => { parent[s.id] = s.id; });
+                function find(i) {
+                    if (parent[i] === i) return i;
+                    return parent[i] = find(parent[i]);
+                }
+                function union(i, j) {
+                    const rootI = find(i);
+                    const rootJ = find(j);
+                    if (rootI !== rootJ) parent[rootI] = rootJ;
+                }
+
+                state.rules.filter(r => r.type === 'associate').forEach(r => {
+                    if (parent[r.studentAId] && parent[r.studentBId]) {
+                        union(r.studentAId, r.studentBId);
+                    }
+                });
+
+                // Regrouper par clusters associés
+                const clustersMap = {};
+                state.students.forEach(s => {
+                    const root = find(s.id);
+                    if (!clustersMap[root]) clustersMap[root] = [];
+                    clustersMap[root].push(s);
+                });
+                const clusters = Object.values(clustersMap);
+
+                // 3. Matrice de séparation
+                const separationMatrix = new Set();
+                state.rules.filter(r => r.type === 'separate').forEach(r => {
+                    separationMatrix.add(`${r.studentAId}|${r.studentBId}`);
+                    separationMatrix.add(`${r.studentBId}|${r.studentAId}`);
+                });
+
+                // Vérifier si une séparation est violée à l'intérieur d'un même groupe associé
+                let internalConflict = false;
+                for (const cluster of clusters) {
+                    for (let i = 0; i < cluster.length; i++) {
+                        for (let j = i + 1; j < cluster.length; j++) {
+                            if (separationMatrix.has(`${cluster[i].id}|${cluster[j].id}`)) {
+                                internalConflict = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (internalConflict) {
+                    if (typeof showToast === 'function') {
+                        showToast("Attention : une règle d'association entre en conflit direct avec une règle de séparation.", 'warn');
+                    }
+                }
+
+                // 4. Calcul des capacités idéales
+                const baseCapacity = Math.floor(totalStudents / k);
+                const extraStudents = totalStudents % k; // Les 'extraStudents' premières équipes ont baseCapacity + 1
+
+                // 5. Recherche heuristique avec plusieurs permutations aléatoires
+                const NUM_ATTEMPTS = 120;
+                let bestAssignment = null;
+                let bestScore = Infinity;
+
+                for (let attempt = 0; attempt < NUM_ATTEMPTS; attempt++) {
+                    const currentTeams = Array.from({ length: k }, () => []);
+                    let shuffledClusters = shuffleArray(clusters);
+
+                    // Si la parité de genre est requise, trier en priorité les clusters mixtes/filles/garçons
+                    if (state.balanceGender) {
+                        shuffledClusters.sort((a, b) => b.length - a.length);
+                    }
+
+                    // Distribution gloutonne avec pénalités
+                    for (const cluster of shuffledClusters) {
+                        let bestTeamIdx = 0;
+                        let bestTeamPenalty = Infinity;
+
+                        for (let t = 0; t < k; t++) {
+                            const team = currentTeams[t];
+                            let penalty = 0;
+
+                            // Pénalité de taille (dépasser la taille moyenne)
+                            const maxAllowed = (t < extraStudents) ? baseCapacity + 1 : baseCapacity;
+                            if (team.length + cluster.length > maxAllowed) {
+                                penalty += (team.length + cluster.length - maxAllowed) * 80;
+                            }
+
+                            // Pénalité de séparation (interdiction stricte)
+                            for (const member of cluster) {
+                                for (const existing of team) {
+                                    if (separationMatrix.has(`${member.id}|${existing.id}`)) {
+                                        penalty += 5000; // Forte pénalité
+                                    }
+                                }
+                            }
+
+                            // Pénalité d'équilibre de genre
+                            if (state.balanceGender) {
+                                const girlsInCluster = cluster.filter(c => c.gender === 'F').length;
+                                const boysInCluster = cluster.filter(c => c.gender === 'M').length;
+
+                                const currentGirls = team.filter(m => m.gender === 'F').length;
+                                const currentBoys = team.filter(m => m.gender === 'M').length;
+
+                                penalty += Math.abs((currentGirls + girlsInCluster) - (currentBoys + boysInCluster)) * 12;
+                            }
+
+                            if (penalty < bestTeamPenalty) {
+                                bestTeamPenalty = penalty;
+                                bestTeamIdx = t;
+                            }
+                        }
+
+                        // Assigner le cluster à la meilleure équipe
+                        currentTeams[bestTeamIdx].push(...cluster);
+                    }
+
+                    // Évaluer le score global de cette tentative
+                    let totalScore = 0;
+                    for (let t = 0; t < k; t++) {
+                        const team = currentTeams[t];
+                        // Séparations violées
+                        for (let i = 0; i < team.length; i++) {
+                            for (let j = i + 1; j < team.length; j++) {
+                                if (separationMatrix.has(`${team[i].id}|${team[j].id}`)) {
+                                    totalScore += 10000;
+                                }
+                            }
+                        }
+                        // Écart de taille
+                        const idealSize = (t < extraStudents) ? baseCapacity + 1 : baseCapacity;
+                        totalScore += Math.abs(team.length - idealSize) * 200;
+
+                        // Écart de parité
+                        if (state.balanceGender) {
+                            const gCount = team.filter(m => m.gender === 'F').length;
+                            const bCount = team.filter(m => m.gender === 'M').length;
+                            totalScore += Math.abs(gCount - bCount) * 15;
+                        }
+                    }
+
+                    if (totalScore < bestScore) {
+                        bestScore = totalScore;
+                        bestAssignment = currentTeams;
+                        if (bestScore === 0) break; // Solution parfaite trouvée
+                    }
+                }
+
+                // 6. Attribution des noms d'équipes et couleurs
+                const themeNames = TEAM_THEMES[state.namingTheme] || TEAM_THEMES.valais_fauna;
+                const newTeams = [];
+
+                for (let i = 0; i < k; i++) {
+                    const fallbackName = `Équipe ${i + 1}`;
+                    const themeName = themeNames[i % themeNames.length] || fallbackName;
+                    const color = ACCENT_COLORS[i % ACCENT_COLORS.length];
+                    const members = bestAssignment[i] || [];
+
+                    newTeams.push({
+                        id: 'team_' + (i + 1),
+                        name: themeName,
+                        color,
+                        members
+                    });
+                }
+
+                state.teams = newTeams;
+                renderTeams();
+                saveState();
+
+                // Sons et célébration
+                if (typeof window.playSound === 'function') window.playSound('success');
+                if (typeof launchConfetti === 'function') {
+                    launchConfetti();
+                } else if (typeof window.confetti === 'function') {
+                    window.confetti();
+                }
+
+                if (typeof showToast === 'function') {
+                    showToast(`${k} équipes générées avec succès !`, 'success');
+                }
+                return true;
+            }
+
+            generateTeamsBtn.addEventListener('click', generateTeamsAlgorithm);
+            shuffleAgainBtn.addEventListener('click', generateTeamsAlgorithm);
+
+            // ============================================================
+            // 6. AFFICHAGE DES ÉQUIPES & GLISSER-DÉPOSER
+            // ============================================================
+
+            function renderTeams() {
+                if (!state.teams || state.teams.length === 0) {
+                    resultsSection.style.display = 'none';
+                    return;
+                }
+
+                resultsSection.style.display = 'flex';
+                resultsTitleText.textContent = `Équipes constituées (${state.teams.length})`;
+                teamsGrid.replaceChildren();
+
+                state.teams.forEach((team, teamIndex) => {
+                    const card = document.createElement('div');
+                    card.className = 'team-card';
+                    card.dataset.teamIndex = teamIndex;
+                    card.style.borderColor = team.color + '40';
+
+                    // Drag & drop dropzone
+                    card.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        card.classList.add('drag-over');
+                    });
+                    card.addEventListener('dragleave', () => {
+                        card.classList.remove('drag-over');
+                    });
+                    card.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        card.classList.remove('drag-over');
+                        const studentId = e.dataTransfer.getData('text/plain');
+                        if (studentId) {
+                            moveStudentToTeam(studentId, teamIndex);
+                        }
+                    });
+
+                    // HEADER DE L'ÉQUIPE
+                    const header = document.createElement('div');
+                    header.className = 'team-header';
+
+                    const titleGroup = document.createElement('div');
+                    titleGroup.className = 'team-title-group';
+
+                    const dot = document.createElement('div');
+                    dot.className = 'team-color-dot';
+                    dot.style.background = team.color;
+
+                    const titleSpan = document.createElement('span');
+                    titleSpan.className = 'team-title';
+                    titleSpan.contentEditable = 'true';
+                    titleSpan.spellcheck = false;
+                    titleSpan.textContent = team.name;
+                    titleSpan.title = "Cliquer pour renommer l'équipe";
+                    titleSpan.addEventListener('blur', () => {
+                        team.name = titleSpan.textContent.trim() || `Équipe ${teamIndex + 1}`;
+                        saveState();
+                    });
+                    titleSpan.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            titleSpan.blur();
+                        }
+                    });
+
+                    titleGroup.appendChild(dot);
+                    titleGroup.appendChild(titleSpan);
+
+                    const metaGroup = document.createElement('div');
+                    metaGroup.className = 'team-meta-badges';
+
+                    const girls = team.members.filter(m => m.gender === 'F').length;
+                    const boys = team.members.filter(m => m.gender === 'M').length;
+
+                    const countBadge = document.createElement('span');
+                    countBadge.textContent = `${team.members.length} élève${team.members.length > 1 ? 's' : ''}`;
+                    metaGroup.appendChild(countBadge);
+
+                    if (girls > 0 || boys > 0) {
+                        const genderBadge = document.createElement('span');
+                        genderBadge.textContent = `· ${girls}F / ${boys}G`;
+                        metaGroup.appendChild(genderBadge);
+                    }
+
+                    header.appendChild(titleGroup);
+                    header.appendChild(metaGroup);
+
+                    // CORPS AVEC ÉLÈVES
+                    const body = document.createElement('div');
+                    body.className = 'team-body';
+
+                    if (team.members.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.style.cssText = 'color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;';
+                        empty.textContent = "Aucun élève (glissez un élève ici)";
+                        body.appendChild(empty);
+                    } else {
+                        team.members.forEach(member => {
+                            const item = document.createElement('div');
+                            item.className = 'team-member-item';
+                            item.draggable = true;
+                            item.dataset.studentId = member.id;
+
+                            item.addEventListener('dragstart', (e) => {
+                                item.classList.add('dragging');
+                                e.dataTransfer.setData('text/plain', member.id);
+                            });
+
+                            item.addEventListener('dragend', () => {
+                                item.classList.remove('dragging');
+                            });
+
+                            const left = document.createElement('div');
+                            left.className = 'member-left';
+
+                            const handle = document.createElement('span');
+                            handle.className = 'member-drag-handle';
+                            handle.innerHTML = '<i data-fa="arrows-up-down-left-right"></i>';
+
+                            const avatar = document.createElement('div');
+                            avatar.className = 'avatar-circle';
+                            avatar.style.background = team.color;
+                            const inits = member.name.split(/\s+/).map(w => w.charAt(0)).slice(0, 2).join('');
+                            avatar.textContent = inits || '?';
+
+                            const name = document.createElement('span');
+                            name.className = 'member-name';
+                            name.textContent = member.name;
+
+                            left.appendChild(handle);
+                            left.appendChild(avatar);
+                            left.appendChild(name);
+
+                            const right = document.createElement('div');
+                            right.className = 'member-right';
+
+                            if (member.gender && member.gender !== 'U') {
+                                const gb = document.createElement('span');
+                                gb.className = 'gender-badge ' + member.gender.toLowerCase();
+                                gb.textContent = member.gender === 'F' ? 'F' : 'G';
+                                right.appendChild(gb);
+                            }
+
+                            // Bouton transfert sur tablette / mobile
+                            const transBtn = document.createElement('button');
+                            transBtn.className = 'transfer-btn';
+                            transBtn.setAttribute('aria-label', `Déplacer ${member.name}`);
+                            transBtn.title = "Déplacer vers une autre équipe";
+                            transBtn.innerHTML = '<i data-fa="arrow-right-arrow-left"></i>';
+                            transBtn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                openTransferModal(member.id, member.name);
+                            });
+                            right.appendChild(transBtn);
+
+                            item.appendChild(left);
+                            item.appendChild(right);
+                            body.appendChild(item);
+                        });
+                    }
+
+                    // ZONE D'ÉTIQUETTES DE RÔLES À L'IMPRESSION
+                    const printBox = document.createElement('div');
+                    printBox.className = 'print-roles-box';
+                    printBox.innerHTML = `
+                        <strong>Rôles dans l'îlot :</strong>
+                        <div class="print-roles-grid">
+                            <span>[ ] Porte-parole</span>
+                            <span>[ ] Gardien du temps</span>
+                            <span>[ ] Secrétaire</span>
+                            <span>[ ] Matériel</span>
+                        </div>
+                    `;
+                    body.appendChild(printBox);
+
+                    card.appendChild(header);
+                    card.appendChild(body);
+                    teamsGrid.appendChild(card);
+                });
+
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+            }
+
+            function moveStudentToTeam(studentId, targetTeamIndex) {
+                let movedStudent = null;
+
+                // Trouver et retirer l'élève de son équipe actuelle
+                state.teams.forEach(t => {
+                    const idx = t.members.findIndex(m => m.id === studentId);
+                    if (idx !== -1) {
+                        movedStudent = t.members.splice(idx, 1)[0];
+                    }
+                });
+
+                // Si pas trouvé dans les équipes, chercher dans la liste de classe
+                if (!movedStudent) {
+                    movedStudent = state.students.find(s => s.id === studentId);
+                }
+
+                if (movedStudent && state.teams[targetTeamIndex]) {
+                    // Vérifier si déjà présent
+                    if (!state.teams[targetTeamIndex].members.some(m => m.id === studentId)) {
+                        state.teams[targetTeamIndex].members.push(movedStudent);
+                    }
+                    renderTeams();
+                    saveState();
+                    if (typeof window.playSound === 'function') window.playSound('click');
+                }
+            }
+
+            // ============================================================
+            // 7. MODAL DE TRANSFERT (TABLETTE / TBI)
+            // ============================================================
+
+            function openTransferModal(studentId, studentName) {
+                transferActiveStudentId = studentId;
+                transferStudentName.textContent = `Élève sélectionné(e) : ${studentName}`;
+                modalTeamList.replaceChildren();
+
+                state.teams.forEach((team, idx) => {
+                    const isCurrent = team.members.some(m => m.id === studentId);
+                    const btn = document.createElement('button');
+                    btn.className = 'modal-team-btn';
+                    btn.innerHTML = `
+                        <span style="display:flex;align-items:center;gap:8px;">
+                            <span style="width:10px;height:10px;border-radius:50%;background:${team.color};display:inline-block;"></span>
+                            ${team.name}
+                        </span>
+                        <span style="font-size:0.75rem;color:var(--text-muted);">${team.members.length} élève${team.members.length > 1 ? 's' : ''} ${isCurrent ? '(Actuelle)' : ''}</span>
+                    `;
+                    if (isCurrent) {
+                        btn.style.opacity = '0.5';
+                        btn.disabled = true;
+                    } else {
+                        btn.addEventListener('click', () => {
+                            moveStudentToTeam(studentId, idx);
+                            closeTransferModal();
+                        });
+                    }
+                    modalTeamList.appendChild(btn);
+                });
+
+                transferModal.style.display = 'flex';
+            }
+
+            function closeTransferModal() {
+                transferModal.style.display = 'none';
+                transferActiveStudentId = null;
+            }
+
+            closeTransferModalBtn.addEventListener('click', closeTransferModal);
+            transferModal.addEventListener('click', (e) => {
+                if (e.target === transferModal) closeTransferModal();
+            });
+
+            // ============================================================
+            // 8. ACTIONS D'EXPLOITATION (COPIER, IMPRIMER, CSV)
+            // ============================================================
+
+            copyClipboardBtn.addEventListener('click', () => {
+                if (!state.teams || state.teams.length === 0) return;
+
+                let text = `📋 COMPOSITION DES ÉQUIPES (${state.students.length} élèves — ${state.teams.length} équipes)\n\n`;
+
+                state.teams.forEach((team, i) => {
+                    const girls = team.members.filter(m => m.gender === 'F').length;
+                    const boys = team.members.filter(m => m.gender === 'M').length;
+                    text += `🏆 ${team.name} (${team.members.length} élèves — ${girls}F, ${boys}G) :\n`;
+                    team.members.forEach(m => {
+                        const g = (m.gender && m.gender !== 'U') ? ` (${m.gender})` : '';
+                        text += `  • ${m.name}${g}\n`;
+                    });
+                    text += `\n`;
+                });
+
+                navigator.clipboard.writeText(text).then(() => {
+                    if (typeof showToast === 'function') {
+                        showToast("Composition des équipes copiée dans le presse-papier !", 'success');
+                    }
+                    if (typeof window.playSound === 'function') window.playSound('click');
+                }).catch(() => {
+                    if (typeof showToast === 'function') showToast("Erreur lors de la copie", 'error');
+                });
+            });
+
+            printCardsBtn.addEventListener('click', () => {
+                if (typeof window.playSound === 'function') window.playSound('click');
+                window.print();
+            });
+
+            exportCsvBtn.addEventListener('click', () => {
+                if (!state.teams || state.teams.length === 0) return;
+
+                let csv = '\uFEFFÉquipe;Nom de l\'élève;Genre\r\n';
+                state.teams.forEach(team => {
+                    team.members.forEach(m => {
+                        const safeTeam = team.name.replace(/"/g, '""');
+                        const safeName = m.name.replace(/"/g, '""');
+                        csv += `"${safeTeam}";"${safeName}";"${m.gender || 'U'}"\r\n`;
+                    });
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Equipes_Classe_${new Date().toISOString().slice(0, 10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                if (typeof showToast === 'function') {
+                    showToast("Fichier CSV téléchargé avec succès !", 'success');
+                }
+            });
+
+            // ============================================================
+            // 9. PERSISTANCE & CYCLE DE VIE (window.__onResetApp)
+            // ============================================================
+
+            function saveState() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                } catch (e) {
+                    console.warn('Impossible de sauvegarder dans localStorage:', e);
+                }
+            }
+
+            function loadState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && Array.isArray(parsed.students)) {
+                            state = {
+                                students: parsed.students || [],
+                                mode: parsed.mode || 'teamsCount',
+                                targetCount: parsed.targetCount || 4,
+                                balanceGender: parsed.balanceGender !== false,
+                                namingTheme: parsed.namingTheme || 'valais_fauna',
+                                rules: parsed.rules || [],
+                                teams: parsed.teams || []
+                            };
+
+                            // Sync controls UI
+                            stepperInput.value = state.targetCount;
+                            balanceGenderToggle.checked = state.balanceGender;
+                            teamNamingThemeSelect.value = state.namingTheme;
+
+                            if (state.mode === 'teamsCount') {
+                                modeByCountBtn.classList.add('active');
+                                modeBySizeBtn.classList.remove('active');
+                            } else {
+                                modeBySizeBtn.classList.add('active');
+                                modeByCountBtn.classList.remove('active');
+                            }
+
+                            updateRosterUI();
+                            renderRulesList();
+                            renderTeams();
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Erreur lecture localStorage:', e);
+                }
+
+                // Initialisation par défaut si premier lancement
+                updateRosterUI();
+                renderRulesList();
+            }
+
+            // Universal App Reset hook for theme.js
+            window.__onResetApp = function () {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                } catch (e) { }
+
+                state.students.length = 0;
+                state.rules.length = 0;
+                state.teams.length = 0;
+                state.mode = 'teamsCount';
+                state.targetCount = 4;
+                state.balanceGender = true;
+                state.namingTheme = 'valais_fauna';
+
+                stepperInput.value = 4;
+                balanceGenderToggle.checked = true;
+                teamNamingThemeSelect.value = 'valais_fauna';
+                modeByCountBtn.classList.add('active');
+                modeBySizeBtn.classList.remove('active');
+                rosterTextInput.value = '';
+
+                updateRosterUI();
+                renderRulesList();
+                renderTeams();
+
+                if (typeof showToast === 'function') {
+                    showToast("Créateur d'équipes réinitialisé", "info");
+                }
+                if (typeof window.playSound === 'function') window.playSound('click');
+            };
+
+            // Initialiser au chargement
+            loadState();
+
+            // Exportation pour les tests unitaires
+            window.GroupCreatorEngine = {
+                get state() { return state; },
+                createStudent,
+                addStudentsToList,
+                removeStudent,
+                toggleStudentGender,
+                generateTeamsAlgorithm,
+                moveStudentToTeam,
+                TEAM_THEMES
+            };
+
+        })();
+    </script>
+</body>
+
+</html>

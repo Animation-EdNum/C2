@@ -161,6 +161,31 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-fabrique-recette",
+    "href": "alpha/webapps/fabrique_recette.html",
+    "isAlpha": true,
+    "dataLevel": "3-5H",
+    "icon": "robot",
+    "title": "La Fabrique de Recettes",
+    "desc": "Programme Chef Bot pour cuisiner des pizzas avec des séquences, des conditions et des boucles.",
+    "tags": [
+      "#Algorithmique",
+      "#Séquence",
+      "#Conditions",
+      "#Boucles"
+    ],
+    "ref": "DÉ>CODAGE 3-4 · Recettes algorithmiques",
+    "badges": [
+      {
+        "text": "3-5H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-pixel",
     "href": "webapps/binaire_studio.html",
     "dataLevel": "5-6H",
@@ -282,6 +307,56 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "5H-11CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-rendu-monnaie",
+    "href": "alpha/webapps/rendu_monnaie.html",
+    "isAlpha": true,
+    "dataLevel": "5-8H",
+    "icon": "coins",
+    "title": "Le Rendu de Monnaie",
+    "desc": "Découvre l'algorithme glouton avec la monnaie suisse et explore les pièges des systèmes fantastiques.",
+    "tags": [
+      "#Algorithmique",
+      "#Glouton",
+      "#Optimisation",
+      "#Monnaie"
+    ],
+    "ref": "DÉ>CODAGE 5-8 · Algorithmes gloutons",
+    "badges": [
+      {
+        "text": "5-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-chasseur-infox",
+    "href": "alpha/webapps/chasseur_infox.html",
+    "isAlpha": true,
+    "dataLevel": "6H-10CO",
+    "icon": "magnifying-glass",
+    "title": "Chasseur d'Infox",
+    "desc": "Inspecte de faux sites web à la loupe et démasque canulars, pièges à clics, images IA et phishing.",
+    "tags": [
+      "#ÉducationAuxMédias",
+      "#EspritCritique",
+      "#FakeNews",
+      "#Phishing"
+    ],
+    "ref": "PER Éducation numérique · Médias & Vérification",
+    "badges": [
+      {
+        "text": "6H-10CO",
         "grey": false
       }
     ],
@@ -558,6 +633,35 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-reseau-villages",
+    "href": "alpha/webapps/reseau_villages.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H, 9CO",
+    "icon": "network-wired",
+    "title": "Le Réseau des Villages",
+    "desc": "Relie des villages valaisans au coût minimal sans boucle inutile grâce à l'arbre couvrant de Kruskal.",
+    "tags": [
+      "#Graphes",
+      "#ArbreCouvrant",
+      "#Kruskal",
+      "#Optimisation"
+    ],
+    "ref": "DÉ>CODAGE 7-8 & Cycle 3 · Graphes et réseaux",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      },
+      {
+        "text": "9-11CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-simulateur-telechargement",
     "href": "webapps/simulateur_telechargement.html",
     "dataLevel": "7-8H",
@@ -632,6 +736,31 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-bulle-filtres",
+    "href": "alpha/webapps/bulle_filtres.html",
+    "isAlpha": true,
+    "dataLevel": "8H-11CO",
+    "icon": "bullseye",
+    "title": "La Bulle de Filtres",
+    "desc": "Simule l'algorithme de recommandation d'un réseau social et observe la formation d'une bulle de filtres.",
+    "tags": [
+      "#Algorithmes",
+      "#RéseauxSociaux",
+      "#BulleDeFiltres",
+      "#Polarisation"
+    ],
+    "ref": "PER Éducation numérique · Algorithmes de recommandation",
+    "badges": [
+      {
+        "text": "8H-11CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-apprendre-pseudocode",
     "href": "alpha/webapps/apprendre_pseudocode.html",
     "isAlpha": true,
@@ -648,6 +777,31 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "9CO",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "app-portes-logiques",
+    "href": "alpha/webapps/portes_logiques.html",
+    "isAlpha": true,
+    "dataLevel": "9-11CO",
+    "icon": "microchip",
+    "title": "L'Atelier des Portes Logiques",
+    "desc": "Construis des circuits booléens (ET, OU, NON, XOR) et découvre le demi-additionneur binaire.",
+    "tags": [
+      "#LogiqueBooléenne",
+      "#PortesLogiques",
+      "#Binaire",
+      "#Circuits"
+    ],
+    "ref": "Cycle 3 (9-11CO) · Systèmes numériques & Logique",
+    "badges": [
+      {
+        "text": "9-11CO",
         "grey": false
       }
     ],
@@ -887,6 +1041,33 @@ window.REGISTRY = [
     "badges": [
       {
         "text": "Protection des données",
+        "grey": false
+      }
+    ],
+    "category": "teachers_tools",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
+    "id": "tool-createur-groupes",
+    "href": "alpha/webapps/teacher/createur_groupes.html",
+    "isAlpha": true,
+    "isTeacher": true,
+    "dataLevel": null,
+    "icon": "users",
+    "title": "Créateur de Groupes",
+    "desc": "Composez instantanément des groupes et binômes équilibrés pour votre classe (parité, affinités, règles de séparation, fiches imprimables).",
+    "tags": [
+      "#Outil",
+      "#GestionDeClasse",
+      "#Groupes",
+      "#Équipes",
+      "#Différenciation"
+    ],
+    "ref": "Alpha · Outils Enseignant·e·s",
+    "badges": [
+      {
+        "text": "Gestion de classe",
         "grey": false
       }
     ],

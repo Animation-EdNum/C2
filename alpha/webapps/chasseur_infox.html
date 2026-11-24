@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>🕵️ Chasseur d'Infox - Détecteur de fausses pages web</title>
+    <meta name="description"
+        content="Détecteur de fausses pages web et d'escroqueries en ligne. Développe ton esprit critique et repère les pièges du Web (PER Éducation numérique 6H-10CO).">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS Design System -->
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+
+    <!-- Head Scripts -->
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e293b;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --accent-light: #dbeafe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --browser-bar-bg: #f1f5f9;
+            --browser-body-bg: #ffffff;
+            --clue-highlight: #f59e0b;
+        }
+
+        body.dark {
+            --bg-gradient-start: #020617;
+            --bg-gradient-end: #0f172a;
+            --container-bg: rgba(15, 23, 42, 0.94);
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-dark: #0284c7;
+            --accent-light: rgba(56, 189, 248, 0.15);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --browser-bar-bg: #1e293b;
+            --browser-body-bg: #0b1120;
+            --clue-highlight: #fbbf24;
+        }
+
+        body {
+            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1360px);
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 24px 28px;
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        /* --- DASHBOARD CONTROLS --- */
+        .detective-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 16px 0 20px;
+        }
+
+        .dashboard-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .cases-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .case-tab-btn {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: var(--radius-lg);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .case-tab-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .case-tab-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .case-status-badge {
+            font-size: 0.72rem;
+            padding: 2px 7px;
+            border-radius: var(--radius-pill);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .case-tab-btn.solved .case-status-badge {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .dashboard-tools {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: var(--radius-lg);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .tool-btn.active {
+            background: #f59e0b;
+            color: #ffffff;
+            border-color: #d97706;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+        }
+
+        /* Mission Brief Banner */
+        .case-brief-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--accent);
+            border-radius: var(--radius-xl);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brief-info {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .brief-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .brief-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 4px;
+        }
+
+        .brief-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .brief-gauge-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            min-width: 170px;
+        }
+
+        .gauge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .gauge-track {
+            width: 100%;
+            height: 10px;
+            background: rgba(100, 116, 139, 0.18);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gauge-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f59e0b, #10b981);
+            border-radius: var(--radius-pill);
+            transition: width 0.4s ease;
+        }
+
+        /* --- BROWSER SIMULATOR MOCKUP --- */
+        .browser-mockup {
+            background: var(--browser-body-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 15px 35px var(--shadow-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .browser-bar {
+            background: var(--browser-bar-bg);
+            border-bottom: 1px solid var(--card-border);
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .win-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .win-red { background: #ef4444; }
+        .win-yellow { background: #f59e0b; }
+        .win-green { background: #10b981; }
+
+        .browser-nav-btns {
+            display: flex;
+            gap: 4px;
+            color: var(--text-muted);
+        }
+
+        .b-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .b-btn:hover {
+            background: rgba(100, 116, 139, 0.15);
+        }
+
+        .url-bar {
+            flex: 1;
+            min-width: 250px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-pill);
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .url-bar:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .url-sec-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .url-sec-icon.secure { color: var(--success); }
+        .url-sec-icon.warning { color: var(--warning); }
+        .url-sec-icon.danger { color: var(--danger); }
+
+        .url-display {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .url-host {
+            font-weight: 700;
+        }
+
+        .url-path {
+            color: var(--text-muted);
+        }
+
+        /* Tab bar */
+        .browser-tab {
+            background: var(--browser-body-bg);
+            border: 1px solid var(--card-border);
+            border-bottom: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            padding: 4px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* --- WEB PAGE CONTENT AREA --- */
+        .web-viewport {
+            padding: 24px;
+            min-height: 480px;
+            background: var(--browser-body-bg);
+            color: var(--text-main);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Detective Loupe Cursor Mode */
+        body.detective-mode-on .web-viewport,
+        body.detective-mode-on .web-viewport * {
+            cursor: crosshair;
+        }
+
+        /* Interactive Clue Zones */
+        .clue-target {
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: var(--radius-md);
+            outline: 2px dashed transparent;
+            outline-offset: 4px;
+        }
+
+        body.detective-mode-on .clue-target:hover {
+            outline: 2px dashed var(--clue-highlight);
+            background: rgba(245, 158, 11, 0.08);
+            transform: scale(1.006);
+        }
+
+        /* Solved Clue */
+        .clue-target.solved {
+            outline: 2.5px solid var(--danger) !important;
+            background: rgba(220, 38, 38, 0.09) !important;
+            animation: pulse-border 2s infinite ease-in-out;
+        }
+
+        .clue-badge-flag {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            background: var(--danger);
+            color: #ffffff;
+            font-size: 0.70rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: var(--radius-pill);
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+            display: none;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .clue-target.solved .clue-badge-flag {
+            display: inline-flex;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+
+        /* --- STYLES FOR FAKE WEBSITES --- */
+        /* Site 1: Valais Info Flash (Journal satirique) */
+        .fake-news-container {
+            max-width: 820px;
+            margin: 0 auto;
+            font-family: 'Outfit', serif;
+        }
+
+        .news-header {
+            border-bottom: 3px double var(--card-border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .news-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            color: #b91c1c;
+        }
+
+        .news-meta-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--card-border);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        .news-headline {
+            font-size: 1.6rem;
+            font-weight: 800;
+            line-height: 1.25;
+            color: var(--text-main);
+            margin: 14px 0 10px;
+        }
+
+        .news-lead {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.45;
+        }
+
+        .news-illustration-box {
+            background: #f8fafc;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        body.dark .news-illustration-box {
+            background: #0f172a;
+        }
+
+        .news-caption {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.03);
+            border-top: 1px solid var(--card-border);
+        }
+
+        .news-body-text {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: var(--text-main);
+        }
+
+        /* Site 2: Faux Portail Scolaire Phishing */
+        .fake-login-container {
+            max-width: 480px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 14px;
+        }
+
+        .login-alert-banner {
+            background: #fee2e2;
+            border: 1px solid #f87171;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        body.dark .login-alert-banner {
+            background: rgba(220, 38, 38, 0.2);
+            color: #fca5a5;
+            border-color: #ef4444;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .form-input-mock {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            background: rgba(100, 116, 139, 0.05);
+            font-family: inherit;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .login-submit-btn {
+            width: 100%;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .login-footer-notes {
+            margin-top: 18px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--card-border);
+            padding-top: 10px;
+        }
+
+        /* Site 3: Buzz Mountain (Clickbait / IA) */
+        .fake-buzz-container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .buzz-header-bar {
+            background: #7c3aed;
+            color: #ffffff;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: var(--radius-md);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .buzz-title {
+            font-size: 1.7rem;
+            font-weight: 900;
+            line-height: 1.25;
+            color: #dc2626;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .sharewall-box {
+            background: #fef3c7;
+            border: 2px dashed #d97706;
+            color: #92400e;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            margin: 18px 0;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        body.dark .sharewall-box {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fde68a;
+            border-color: #f59e0b;
+        }
+
+        /* Site 4: Genius Gum Boutique (Arnaque commerciale) */
+        .fake-shop-container {
+            max-width: 840px;
+            margin: 0 auto;
+        }
+
+        .shop-banner {
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+            color: #ffffff;
+            padding: 8px 16px;
+            text-align: center;
+            font-weight: 800;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .shop-grid { grid-template-columns: 1fr; }
+        }
+
+        .product-image-box {
+            background: #fdf2f8;
+            border: 1px solid #fbcfe8;
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            text-align: center;
+        }
+
+        body.dark .product-image-box {
+            background: rgba(236, 72, 153, 0.1);
+            border-color: #be185d;
+        }
+
+        .product-details h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-top: 0;
+            color: var(--text-main);
+        }
+
+        .price-tag {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ec4899;
+            margin: 10px 0;
+        }
+
+        .order-btn-mock {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-pill);
+            font-size: 1.05rem;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+            margin-bottom: 14px;
+        }
+
+        .testimonials-grid {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            font-size: 0.82rem;
+        }
+
+        .small-print {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            line-height: 1.3;
+            margin-top: 14px;
+        }
+
+        /* --- CLUE ANALYSIS MODAL / DRAWER --- */
+        .clue-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .clue-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .clue-modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-2xl);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            transform: scale(0.92);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .clue-modal-overlay.active .clue-modal-card {
+            transform: scale(1);
+        }
+
+        .clue-modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .clue-modal-header.success-state {
+            background: rgba(22, 163, 74, 0.1);
+        }
+
+        .clue-modal-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .clue-modal-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--danger);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .clue-modal-title-wrap h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .clue-modal-close-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+        }
+
+        .clue-modal-body {
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .clue-box-section {
+            background: rgba(100, 116, 139, 0.06);
+            border-left: 4px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+
+        .clue-box-section.reflex {
+            border-left-color: var(--success);
+            background: rgba(22, 163, 74, 0.08);
+        }
+
+        .clue-box-label {
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clue-box-section:not(.reflex) .clue-box-label { color: var(--danger); }
+        .clue-box-section.reflex .clue-box-label { color: var(--success); }
+
+        .clue-box-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .clue-modal-footer {
+            padding: 14px 24px;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* --- CERTIFICATE / DIPLOMA STYLES --- */
+        .diploma-card {
+            background: #fffdf5;
+            border: 8px double #d97706;
+            border-radius: var(--radius-xl);
+            padding: 30px;
+            text-align: center;
+            color: #1e293b;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin: 10px 0;
+        }
+
+        body.dark .diploma-card {
+            background: #0f172a;
+            border-color: #f59e0b;
+            color: #f8fafc;
+        }
+
+        .diploma-seal {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 2.2rem;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+        }
+
+        .diploma-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #b45309;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        body.dark .diploma-title {
+            color: #fbbf24;
+        }
+
+        .diploma-student-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--accent);
+            border-bottom: 2px dashed #94a3b8;
+            display: inline-block;
+            padding: 2px 20px;
+            min-width: 250px;
+            margin: 14px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .dashboard-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .cases-nav {
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+            .brief-gauge-wrapper {
+                align-items: stretch;
+                width: 100%;
+            }
+            .web-viewport {
+                padding: 14px;
+            }
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container" id="main-content">
+        <!-- Application Header -->
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                    <i data-fa="arrow-left"></i>
+                </a>
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="magnifying-glass"></i>
+                </div>
+                <div>
+                    <h1>Chasseur d'Infox <span class="badge-level">6H-10CO</span> <span class="badge-alpha">Alpha</span></h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="theme-toggle-btn">
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                        <button class="menu-item-btn" id="audio-toggle-btn">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Detective Dashboard -->
+            <section class="detective-dashboard">
+                <div class="dashboard-row">
+                    <!-- Cases Navigation -->
+                    <div class="cases-nav" role="tablist" aria-label="Sélection de l'enquête">
+                        <button class="case-tab-btn active" id="tab-case-0" data-case="0" role="tab" aria-selected="true">
+                            <span>🍝 Enquête 1</span>
+                            <span class="case-status-badge" id="status-case-0">0/5</span>
+                        </button>
+                        <button class="case-tab-btn" id="tab-case-1" data-case="1" role="tab" aria-selected="false">
+                            <span>🔐 Enquête 2</span>
+                            <span class="case-status-badge" id="status-case-1">0/5</span>
+                        </button>
+                        <button class="case-tab-btn" id="tab-case-2" data-case="2" role="tab" aria-selected="false">
+                            <span>🦈 Enquête 3</span>
+                            <span class="case-status-badge" id="status-case-2">0/5</span>
+                        </button>
+                        <button class="case-tab-btn" id="tab-case-3" data-case="3" role="tab" aria-selected="false">
+                            <span>🍬 Enquête 4</span>
+                            <span class="case-status-badge" id="status-case-3">0/5</span>
+                        </button>
+                    </div>
+
+                    <!-- Detective Tools -->
+                    <div class="dashboard-tools">
+                        <button class="tool-btn active" id="toggle-detective-btn" title="Activer/Désactiver le curseur loupe">
+                            <i data-fa="magnifying-glass"></i>
+                            <span id="detectiveBtnText">Mode Loupe : ON</span>
+                        </button>
+                        <button class="tool-btn" id="open-notebook-btn" title="Voir les indices recherchés">
+                            <i data-fa="bullseye"></i>
+                            <span>Indices (<span id="clues-left-count">5</span> restants)</span>
+                        </button>
+                        <button class="tool-btn" id="open-compass-btn" title="La boussole anti-infox">
+                            <i data-fa="compass"></i>
+                            <span>Boussole 5 Réflexes</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mission Brief Card -->
+                <div class="case-brief-card" id="case-brief-box">
+                    <div class="brief-info">
+                        <div class="brief-badge">
+                            <i data-fa="bullseye"></i> <span id="brief-category">Canular &amp; Humour</span>
+                        </div>
+                        <h2 class="brief-title" id="brief-title">L'Arbre à Spaghettis récolté en Valais</h2>
+                        <p class="brief-desc" id="brief-desc">Un article sensationnel affirme qu'on récolte des spaghettis en pleine forêt valaisanne ! Trouve les 5 anomalies qui prouvent que c'est une farce.</p>
+                    </div>
+                    <div class="brief-gauge-wrapper">
+                        <div class="gauge-header">
+                            <span>Indices découverts</span>
+                            <strong id="gauge-label">0 / 5</strong>
+                        </div>
+                        <div class="gauge-track">
+                            <div class="gauge-fill" id="gauge-progress"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Realistic Browser Mockup -->
+            <section class="browser-mockup" aria-label="Simulateur de faux site web">
+                <div class="browser-bar">
+                    <div class="window-controls">
+                        <div class="win-dot win-red"></div>
+                        <div class="win-dot win-yellow"></div>
+                        <div class="win-dot win-green"></div>
+                    </div>
+                    <div class="browser-nav-btns">
+                        <button class="b-btn" title="Précédent" aria-label="Page précédente"><i data-fa="arrow-left"></i></button>
+                        <button class="b-btn" title="Suivant" aria-label="Page suivante"><i data-fa="arrow-right"></i></button>
+                        <button class="b-btn" id="browser-reload-btn" title="Actualiser" aria-label="Actualiser la fausse page"><i data-fa="arrows-rotate"></i></button>
+                    </div>
+                    <div class="browser-tab" id="browser-tab-title">
+                        <i data-fa="globe"></i> <span id="tab-name">Valais Info Express</span>
+                    </div>
+                    <!-- URL Address Bar (Interactive clue zone) -->
+                    <div class="url-bar clue-target" id="clue-url-bar" data-clue-id="url" tabindex="0" role="button" aria-label="Inspecter l'adresse URL">
+                        <div class="url-sec-icon warning" id="url-security-icon"><i data-fa="unlock"></i></div>
+                        <div class="url-display">
+                            <span class="url-host" id="url-text-host">www.nouvelles-incroyables-valais.ch.vu</span><span class="url-path" id="url-text-path">/spaghetti-tree</span>
+                        </div>
+                        <div class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> PIÈGE DÉTECTÉ</div>
+                    </div>
+                </div>
+
+                <!-- Webpage Viewport -->
+                <div class="web-viewport" id="web-viewport">
+                    <!-- Dynamic Web Content will be rendered here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Clue Details Modal -->
+    <div class="clue-modal-overlay" id="clue-modal" role="dialog" aria-modal="true" aria-labelledby="modal-clue-title">
+        <div class="clue-modal-card">
+            <div class="clue-modal-header" id="modal-header-box">
+                <div class="clue-modal-title-wrap">
+                    <div class="clue-modal-icon" id="modal-clue-icon"><i data-fa="triangle-exclamation"></i></div>
+                    <div>
+                        <h3 id="modal-clue-title">Indice Démasqué !</h3>
+                        <span style="font-size: 0.8rem; opacity: 0.8;" id="modal-clue-type">Type de manipulation</span>
+                    </div>
+                </div>
+                <button class="clue-modal-close-btn" id="modal-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+            </div>
+            <div class="clue-modal-body">
+                <div class="clue-box-section">
+                    <div class="clue-box-label"><i data-fa="triangle-exclamation"></i> Pourquoi c'est suspect ?</div>
+                    <p class="clue-box-text" id="modal-clue-why">Explication détaillée de la tromperie...</p>
+                </div>
+                <div class="clue-box-section reflex">
+                    <div class="clue-box-label"><i data-fa="circle-check"></i> Le Bon Réflexe (Éducation Numérique)</div>
+                    <p class="clue-box-text" id="modal-clue-reflex">Que faire face à ce piège dans la vie réelle...</p>
+                </div>
+            </div>
+            <div class="clue-modal-footer">
+                <button class="btn btn-primary" id="modal-confirm-btn">J'ai compris !</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detective Notebook Modal (Clues hints) -->
+    <div class="clue-modal-overlay" id="notebook-modal" role="dialog" aria-modal="true" aria-labelledby="notebook-title">
+        <div class="clue-modal-card">
+            <div class="clue-modal-header">
+                <div class="clue-modal-title-wrap">
+                    <div class="clue-modal-icon" style="background:#f59e0b;"><i data-fa="bullseye"></i></div>
+                    <div>
+                        <h3 id="notebook-title">Carnet de bord du Détective</h3>
+                        <span style="font-size: 0.8rem; opacity: 0.8;">Pistes de recherche pour cette enquête</span>
+                    </div>
+                </div>
+                <button class="clue-modal-close-btn" id="notebook-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+            </div>
+            <div class="clue-modal-body" id="notebook-clues-list">
+                <!-- Dynamically generated clues list -->
+            </div>
+            <div class="clue-modal-footer">
+                <button class="btn btn-primary" id="notebook-ok-btn">Retour à la fouille</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compass 5 Reflexes Modal -->
+    <div class="clue-modal-overlay" id="compass-modal" role="dialog" aria-modal="true" aria-labelledby="compass-title">
+        <div class="clue-modal-card" style="max-width: 680px;">
+            <div class="clue-modal-header" style="background: rgba(37, 99, 235, 0.1);">
+                <div class="clue-modal-title-wrap">
+                    <div class="clue-modal-icon" style="background:#2563eb;"><i data-fa="compass"></i></div>
+                    <div>
+                        <h3 id="compass-title">La Boussole Anti-Infox</h3>
+                        <span style="font-size: 0.8rem; opacity: 0.8;">Les 5 réflexes indispensables du Plan d'Étude Romand</span>
+                    </div>
+                </div>
+                <button class="clue-modal-close-btn" id="compass-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+            </div>
+            <div class="clue-modal-body">
+                <div class="clue-box-section reflex" style="border-left-color: #2563eb; background: rgba(37, 99, 235, 0.05);">
+                    <div class="clue-box-label" style="color: #2563eb;"><i data-fa="globe"></i> 1. Vérifie l'adresse URL &amp; l'auteur</div>
+                    <p class="clue-box-text">Regarde bien l'extension (.ch, .org vs .biz, .xyz, .vu). Qui a rédigé l'article ? Y a-t-il un responsable légal identifiable ?</p>
+                </div>
+                <div class="clue-box-section reflex" style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.05);">
+                    <div class="clue-box-label" style="color: #10b981;"><i data-fa="circle-info"></i> 2. Scrute la date et le contexte</div>
+                    <p class="clue-box-text">Est-ce un poisson d'avril (1er avril) ? S'agit-il d'un vieil événement recyclé pour créer une fausse polémique ?</p>
+                </div>
+                <div class="clue-box-section reflex" style="border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.05);">
+                    <div class="clue-box-label" style="color: #d97706;"><i data-fa="eye"></i> 3. Inspecte les images et l'IA</div>
+                    <p class="clue-box-text">Recherche les défauts physiques : membres bizarres, ombres contradictoires, flous suspects. Fais une recherche inversée d'image si possible !</p>
+                </div>
+                <div class="clue-box-section reflex" style="border-left-color: #ec4899; background: rgba(236, 72, 153, 0.05);">
+                    <div class="clue-box-label" style="color: #ec4899;"><i data-fa="triangle-exclamation"></i> 4. Méfie-toi des émotions fortes et de l'urgence</div>
+                    <p class="clue-box-text">Les escroqueries et les infox utilisent la panique ("Votre compte sera supprimé dans 1 heure !") ou la stupéfaction pour t'empêcher de réfléchir.</p>
+                </div>
+                <div class="clue-box-section reflex" style="border-left-color: #8b5cf6; background: rgba(139, 92, 246, 0.05);">
+                    <div class="clue-box-label" style="color: #7c3aed;"><i data-fa="shield-check"></i> 5. Croise les sources avec des médias fiables</div>
+                    <p class="clue-box-text">Si une information extraordinaire est vraie, elle est reprise par des rédactions professionnelles reconnues (RTS, Le Nouvelliste, Le Temps, etc.).</p>
+                </div>
+            </div>
+            <div class="clue-modal-footer">
+                <button class="btn btn-primary" id="compass-ok-btn">Fermer la boussole</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Diploma Modal -->
+    <div class="clue-modal-overlay" id="diploma-modal" role="dialog" aria-modal="true" aria-labelledby="diploma-main-title">
+        <div class="clue-modal-card" style="max-width: 720px;">
+            <div class="clue-modal-header" style="background: rgba(245, 158, 11, 0.15);">
+                <div class="clue-modal-title-wrap">
+                    <div class="clue-modal-icon" style="background: #f59e0b;"><i data-fa="medal"></i></div>
+                    <div>
+                        <h3 id="diploma-main-title">Félicitations, Enquêteur !</h3>
+                        <span style="font-size: 0.8rem; opacity: 0.8;">Tu as résolu les 4 enquêtes avec succès !</span>
+                    </div>
+                </div>
+                <button class="clue-modal-close-btn" id="diploma-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+            </div>
+            <div class="clue-modal-body">
+                <div class="diploma-card" id="printable-diploma">
+                    <div class="diploma-seal"><i data-fa="graduation-cap"></i></div>
+                    <h2 class="diploma-title">Certificat de Détective du Web</h2>
+                    <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">Ce diplôme d'esprit critique et d'éducation aux médias est décerné à :</p>
+                    <div class="diploma-student-name" id="diploma-student-display" contenteditable="true" title="Clique pour modifier ton nom">Élève Détective</div>
+                    <p style="font-size: 0.9rem; line-height: 1.5; margin: 10px 0 16px;">
+                        Pour avoir démasqué avec brio les pièges du Web : canulars humoristiques, attaques de phishing, images trompeuses générées par IA et arnaques commerciales.
+                    </p>
+                    <div style="display: flex; justify-content: space-around; font-size: 0.8rem; font-weight: 700; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                        <span>📅 Date : <span id="diploma-date-label">Aujourd'hui</span></span>
+                        <span>⭐ Niveau : 6H-10CO</span>
+                        <span>🛡️ AP EdNum · HEP-VS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="clue-modal-footer" style="justify-content: space-between;">
+                <button class="btn btn-outline" id="diploma-print-btn"><i data-fa="arrows-rotate"></i> Imprimer le Diplôme</button>
+                <button class="btn btn-primary" id="diploma-ok-btn">Génial !</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standard AP EdNum Footer -->
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        (function() {
+            // ==========================================
+            // CASES DATABASE (4 Immersive Investigations)
+            // ==========================================
+            const CASES = [
+                {
+                    id: 0,
+                    title: "L'Arbre à Spaghettis récolté en Valais",
+                    category: "Canular humoristique & Fausses nouvelles",
+                    desc: "Un article sensationnel affirme qu'on récolte des spaghettis en pleine forêt valaisanne ! Trouve les 5 indices qui prouvent que c'est une farce.",
+                    tabTitle: "Valais Info Express",
+                    urlHost: "www.nouvelles-incroyables-valais.ch.vu",
+                    urlPath: "/spaghetti-tree",
+                    urlSecStatus: "warning",
+                    clues: {
+                        url: {
+                            id: "url",
+                            title: "Adresse URL Suspecte (.ch.vu)",
+                            type: "Nom de domaine douteux",
+                            why: "L'adresse utilise une extension gratuite (.ch.vu) très souvent utilisée pour masquer de faux sites ou des blagues. Ce n'est absolument pas un vrai site de presse officiel.",
+                            reflex: "Vérifie toujours l'adresse dans la barre du navigateur. Les vrais médias ont un nom clair et un domaine officiel reconnu (comme .ch).",
+                            hint: "Regarde bien l'adresse du site dans la barre URL tout en haut !"
+                        },
+                        date: {
+                            id: "date",
+                            title: "La Date du 1er Avril",
+                            type: "Canular saisonnier",
+                            why: "L'article est daté du 1er avril 2026 ! Le 1er avril est la journée internationale des poissons d'avril et des canulars médiatiques.",
+                            reflex: "Regarde TOUJOURS la date de publication d'un article avant de le croire ou de le partager. Le 1er avril est un indice géant !",
+                            hint: "Cherche la date de publication sous le grand titre de l'article."
+                        },
+                        source: {
+                            id: "source",
+                            title: "Sources Fantômes & Témoins Anonymes",
+                            type: "Absence de source vérifiable",
+                            why: "L'article dit 'selon des témoins qui préfèrent garder l'anonymat' et cite un prétendu 'expert de l'Université des Pâtes'. Aucun institut réel ni scientifique n'est identifiable.",
+                            reflex: "Une information sans auteur vérifiable ni institution scientifique reconnue doit toujours être considérée comme douteuse.",
+                            hint: "Qui témoigne dans le texte de l'article ? Regarde comment sont présentées les sources."
+                        },
+                        image: {
+                            id: "image",
+                            title: "Photo Truquée / Invraisemblable",
+                            type: "Manipulation d'image & Bon sens",
+                            why: "Des spaghettis cuits qui pendent aux branches d'un mélèze ! Les pâtes sont fabriquées par des usines avec de la farine de blé et de l'eau, elles ne poussent jamais sur les arbres.",
+                            reflex: "Fais appel à ton bon sens et à tes connaissances scientifiques. Une plante ne produit jamais un aliment déjà cuisiné ou transformé !",
+                            hint: "Observe attentivement la photo au milieu de l'article : est-ce biologiquement possible ?"
+                        },
+                        tone: {
+                            id: "tone",
+                            title: "Titre Ultra-Sensationnaliste",
+                            type: "Sensationnalisme & Émotions",
+                            why: "Des mots entièrement en MAJUSCULES ('RÉVOLUTION MONDIALE', 'L'Italie en panique !') et des points d'exclamation partout. Le but est de créer un choc émotionnel artificiel.",
+                            reflex: "Quand un titre crie et exagère pour attirer ton clic, garde la tête froide. Les médias sérieux informent avec mesure et rigueur.",
+                            hint: "Regarde le style d'écriture du gros titre : n'en fait-il pas beaucoup trop ?"
+                        }
+                    },
+                    renderHTML: function() {
+                        return `
+                        <div class="fake-news-container">
+                            <div class="news-header">
+                                <div class="news-logo">Valais Info Express</div>
+                                <div class="news-meta-bar">
+                                    <span class="clue-target" id="clue-date" data-clue-id="date" tabindex="0" role="button" aria-label="Inspecter la date">
+                                        📅 Publié le <strong>1er avril 2026</strong> à 08h15 · Mis à jour à 09h00
+                                        <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                    </span>
+                                    <span>Édition spéciale Hérens</span>
+                                </div>
+                            </div>
+
+                            <h1 class="news-headline clue-target" id="clue-tone" data-clue-id="tone" tabindex="0" role="button" aria-label="Inspecter le titre de l'article">
+                                RÉVOLUTION MONDIALE : L'Arbre à Spaghettis produit une récolte record en Valais ! L'Italie en panique totale !!!
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </h1>
+
+                            <p class="news-lead">
+                                C'est une découverte qui bouleverse l'agriculture mondiale. Grâce à un hiver particulièrement doux, les mélèzes d'Evolène produisent directement des spaghettis numéro 5 prêts à cuire.
+                            </p>
+
+                            <div class="news-illustration-box clue-target" id="clue-image" data-clue-id="image" tabindex="0" role="button" aria-label="Inspecter la photo des spaghettis">
+                                <svg viewBox="0 0 700 320" width="100%" height="240" style="background:#e0f2fe; display:block;" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Montagnes valaisannes -->
+                                    <polygon points="50,260 220,70 380,260" fill="#94a3b8" />
+                                    <polygon points="220,70 260,120 180,120" fill="#ffffff" />
+                                    <polygon points="280,260 480,40 650,260" fill="#64748b" />
+                                    <polygon points="480,40 530,100 430,100" fill="#ffffff" />
+                                    <!-- Sol herbé -->
+                                    <rect x="0" y="240" width="700" height="80" fill="#15803d" />
+                                    <!-- Tronc de mélèze -->
+                                    <rect x="330" y="140" width="40" height="130" fill="#78350f" rx="4" />
+                                    <!-- Couronne de feuilles -->
+                                    <circle cx="350" cy="130" r="85" fill="#166534" />
+                                    <circle cx="300" cy="140" r="60" fill="#15803d" />
+                                    <circle cx="400" cy="140" r="60" fill="#15803d" />
+                                    <!-- Spaghettis jaunes suspendus -->
+                                    <g stroke="#facc15" stroke-width="4" stroke-linecap="round" fill="none">
+                                        <path d="M 280,160 Q 285,210 280,245" />
+                                        <path d="M 295,155 Q 305,215 295,255" />
+                                        <path d="M 315,165 Q 320,220 310,250" />
+                                        <path d="M 340,170 Q 345,225 340,260" />
+                                        <path d="M 360,165 Q 355,220 365,255" />
+                                        <path d="M 380,160 Q 390,215 385,248" />
+                                        <path d="M 405,155 Q 410,210 405,250" />
+                                    </g>
+                                    <text x="350" y="30" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="bold" fill="#0369a1" font-size="16">📸 Photo exclusive : Arbre à spaghetti en fleurs (Val d'Hérens)</text>
+                                </svg>
+                                <div class="news-caption">
+                                    Une paysanne cueillant avec précaution des brins de spaghetti al dente sur une branche d'arbre.
+                                </div>
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </div>
+
+                            <div class="news-body-text">
+                                <p>
+                                    Les agriculteurs locaux n'en croient pas leurs yeux. Tous les matins, il suffit de secouer les branches avec un panier pour récolter de quoi nourrir tout le village.
+                                </p>
+                                <p class="clue-target" id="clue-source" data-clue-id="source" tabindex="0" role="button" aria-label="Inspecter les sources de l'article" style="padding: 8px; border-radius: 6px;">
+                                    💬 <em>« C'est un miracle sans précédent »</em>, affirme <strong>un témoin qui préfère garder le silence</strong>, appuyé par un certain <strong>Professeur Pastabolo de l'Institut Mondial des Nouilles</strong>, dont personne n'a pu confirmer l'existence.
+                                    <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                </p>
+                                <p>
+                                    Le gouvernement italien songerait à envoyer des diplomates pour négocier cette récolte concurrente à leur production nationale.
+                                </p>
+                            </div>
+                        </div>`;
+                    }
+                },
+                {
+                    id: 1,
+                    title: "Alerte Sécurité Compte Élève (Phishing)",
+                    category: "Tentative d'hameçonnage / Escroquerie",
+                    desc: "Un courriel suspect t'envoie sur cette page demandant ton mot de passe d'urgence pour 'sauver ton compte'. Repère les 5 pièges de sécurité !",
+                    tabTitle: "Portail Numérique Écolier",
+                    urlHost: "www.ecoles-valais-login.biz",
+                    urlPath: "/recup-compte",
+                    urlSecStatus: "danger",
+                    clues: {
+                        url: {
+                            id: "url",
+                            title: "Fausse URL (.biz au lieu de .ch)",
+                            type: "Usurpation de domaine",
+                            why: "L'adresse se termine par .biz (extension commerciale bon marché). Le vrai portail des écoles valaisannes est toujours sous un domaine officiel de l'État (vs.ch ou edu.vs.ch).",
+                            reflex: "Vérifie toujours la fin du nom de domaine. Le cadenas ne suffit pas : il garantit juste le chiffrement, pas l'honnêteté du créateur du site !",
+                            hint: "Examine très attentivement l'adresse URL en haut : est-ce vraiment un domaine officiel de l'école ?"
+                        },
+                        urgency: {
+                            id: "urgency",
+                            title: "Menace & Urgence Artificielle",
+                            type: "Pression psychologique",
+                            why: "Le message te donne 52 minutes avant de tout supprimer définitivement ! Les pirates créent la panique pour te forcer à agir sans réfléchir.",
+                            reflex: "Respire un grand coup. Aucune administration scolaire ne supprime un compte d'élève en 1 heure par surprise !",
+                            hint: "Repère l'avertissement rouge : quel sentiment essaie-t-il de provoquer chez toi ?"
+                        },
+                        password: {
+                            id: "password",
+                            title: "Demande du Mot de Passe Actuel",
+                            type: "Vol d'identifiants (Hameçonnage)",
+                            why: "Le formulaire demande de taper ton mot de passe actuel et ton code secret. Une école ou un informaticien ne te demandera JAMAIS ton mot de passe !",
+                            reflex: "Règle d'or de la cybersécurité : ton mot de passe est strictement personnel. Ne le saisis jamais dans un lien reçu par e-mail ou SMS.",
+                            hint: "Regarde ce que le formulaire te demande d'écrire dans la case..."
+                        },
+                        grammar: {
+                            id: "grammar",
+                            title: "Fautes & Tournures Bizarres",
+                            type: "Traduction automatique suspecte",
+                            why: "'Cher utilisateur élève, svp veuillez proceder à la reactivation securitaire de vous...'. Les tournures robotiques et les fautes trahissent un pirate étranger utilisant un traducteur automatique.",
+                            reflex: "Les courriers officiels de ton école sont soignés et correctement écrits. Le texte maladroit est un signal d'alerte classique.",
+                            hint: "Lis attentivement le message d'introduction : la grammaire et les phrases te paraissent-elles naturelles ?"
+                        },
+                        sender: {
+                            id: "sender",
+                            title: "Faux Logo & Adresse Contact Bricolée",
+                            type: "Fausse identité officielle",
+                            why: "Le logo est flou et l'adresse de support est 'support-ecoles-urgent@gmail.com'. L'école ou l'État du Valais utilise des adresses professionnelles officielles (@admin.vs.ch).",
+                            reflex: "Regarde l'adresse de contact en bas. Les services publics n'utilisent jamais d'adresses gratuites comme @gmail.com !",
+                            hint: "Regarde le bas de la page : qui contacter ? L'adresse e-mail est-elle officielle ?"
+                        }
+                    },
+                    renderHTML: function() {
+                        return `
+                        <div class="fake-login-container">
+                            <div class="login-brand">
+                                <div style="width: 44px; height: 44px; border-radius: 8px; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                                    <i data-fa="shield-halved"></i>
+                                </div>
+                                <div>
+                                    <h3 style="margin:0; font-size:1.05rem;">Portail Numérique Écolier</h3>
+                                    <span style="font-size:0.75rem; color:var(--text-muted);">Direction Informatique Scolaire Non-Officielle</span>
+                                </div>
+                            </div>
+
+                            <div class="login-alert-banner clue-target" id="clue-urgency" data-clue-id="urgency" tabindex="0" role="button" aria-label="Inspecter la bannière d'urgence">
+                                <i data-fa="triangle-exclamation" style="font-size:1.4rem;"></i>
+                                <div>
+                                    <strong>ACTION IMMÉDIATE REQUISE :</strong><br>
+                                    Votre compte et tous vos devoirs seront <u>DÉFINITIVEMENT SUPPRIMÉS</u> dans <strong>52 minutes</strong> si vous ne validez pas vos accès !
+                                </div>
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </div>
+
+                            <p class="clue-target" id="clue-grammar" data-clue-id="grammar" tabindex="0" role="button" aria-label="Inspecter le message d'invitation" style="font-size:0.88rem; line-height:1.45; margin-bottom:14px; padding: 6px; border-radius: 6px;">
+                                <em>« Cher utilisateur élève, svp veuillez proceder à la reactivation securitaire de vous dans le but d'eviter l'annulation immediate de vos notes. »</em>
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </p>
+
+                            <form onsubmit="return false;">
+                                <div class="form-group">
+                                    <label class="form-label">Nom d'utilisateur scolaire :</label>
+                                    <input type="text" class="form-input-mock" value="eleve.martigny@edu" readonly>
+                                </div>
+
+                                <div class="form-group clue-target" id="clue-password" data-clue-id="password" tabindex="0" role="button" aria-label="Inspecter la case mot de passe" style="padding: 6px; border-radius: 6px;">
+                                    <label class="form-label" style="color:var(--danger);">⚠️ Saisissez votre mot de passe secret actuel :</label>
+                                    <input type="password" class="form-input-mock" placeholder="••••••••••••" style="border-color:var(--danger);">
+                                    <span style="font-size:0.72rem; color:var(--danger); display:block; margin-top:3px;">Indispensable pour vérifier que c'est bien vous.</span>
+                                    <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                </div>
+
+                                <button type="button" class="login-submit-btn">Sauvegarder et Valider mon Compte</button>
+                            </form>
+
+                            <div class="login-footer-notes clue-target" id="clue-sender" data-clue-id="sender" tabindex="0" role="button" aria-label="Inspecter le contact d'assistance">
+                                Assistance technique d'urgence : <strong>support-ecoles-urgent@gmail.com</strong><br>
+                                © 2026 Service Informatique Bricolé - Valais
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </div>
+                        </div>`;
+                    }
+                },
+                {
+                    id: 2,
+                    title: "Le Requin Volant du Cervin (IA & Clickbait)",
+                    category: "Désinformation, IA & Piège à clics",
+                    desc: "Un site 'buzz' prétend qu'un requin volant a été aperçu au-dessus du Cervin. Déniche les 5 éléments qui révèlent la tromperie et l'image IA !",
+                    tabTitle: "Buzz Mountain News",
+                    urlHost: "www.buzzmountain.xyz",
+                    urlPath: "/article-viral-cervin",
+                    urlSecStatus: "warning",
+                    clues: {
+                        url: {
+                            id: "url",
+                            title: "Extension Douteuse (.xyz)",
+                            type: "Site sans réputation",
+                            why: "L'extension .xyz est massivement utilisée par des fermes de contenus publicitaires éphémères et automatisées, pas par des rédactions professionnelles.",
+                            reflex: "Vérifie la notoriété du site. Un scoop mondial n'est jamais publié uniquement sur un site inconnu en .xyz !",
+                            hint: "Regarde l'adresse web tout en haut : le nom de domaine semble-t-il sérieux ?"
+                        },
+                        image: {
+                            id: "image",
+                            title: "Image Générée par Intelligence Artificielle",
+                            type: "Anomalies visuelles d'IA",
+                            why: "Le requin a 3 nageoires bizarres sur le côté, les ombres sur la neige sont incohérentes, et la roche du Cervin se fond avec le ciel violet. L'IA commet souvent des erreurs d'anatomie et de physique.",
+                            reflex: "Ouvre l'œil sur les détails d'une image choquante : regarde les membres, les reflets et les incohérences de la lumière.",
+                            hint: "Inspecte la photo du requin : combien a-t-il de nageoires ? L'ombre a-t-elle du sens ?"
+                        },
+                        clickbait: {
+                            id: "clickbait",
+                            title: "Titre Piège à Clics (Clickbait)",
+                            type: "Pêche aux clics sensationnaliste",
+                            why: "'VOUS NE DEVINEREZ JAMAIS ce que ce guide a filmé... Les experts bouche bée 😱'. Ce titre cache volontairement l'information pour te forcer à cliquer et générer de l'argent publicitaire.",
+                            reflex: "Les titres qui refusent de donner l'information et exploitent la curiosité sont souvent des appâts pour du vide ou des mensonges.",
+                            hint: "Regarde comment le titre est formulé pour susciter ta curiosité."
+                        },
+                        science: {
+                            id: "science",
+                            title: "Incohérence Biologique Totale",
+                            type: "Absurdité scientifique",
+                            why: "L'article affirme qu'une 'nouvelle espèce de requin des neiges respire l'air des glaciers'. Les requins sont des poissons marins à branchies : ils ne peuvent pas voler ni respirer dans l'air !",
+                            reflex: "Utilise tes connaissances scientifiques et ton esprit critique. Si une règle de base de la nature est violée sans explication sérieuse, c'est faux.",
+                            hint: "Lis l'explication scientifique du texte : un requin peut-il voler et respirer en montagne ?"
+                        },
+                        legal: {
+                            id: "legal",
+                            title: "Absence de Mentions Légales & Auteur Bot",
+                            type: "Site fantôme irresponsable",
+                            why: "L'article est signé 'Généré par BotNews-3000' et le bas de page indique 'Aucune mention légale'. La loi suisse oblige les sites d'information à indiquer qui est responsable.",
+                            reflex: "Cherche toujours qui a écrit l'article. S'il n'y a pas de journaliste nommé, pas d'adresse ni de mentions légales, l'info ne vaut rien.",
+                            hint: "Regarde en bas qui a écrit l'article et où sont les mentions légales."
+                        }
+                    },
+                    renderHTML: function() {
+                        return `
+                        <div class="fake-buzz-container">
+                            <div class="buzz-header-bar">
+                                <span>⚡ BUZZ MOUNTAIN TRENDING</span>
+                                <span>Partages : 142'890 🔥</span>
+                            </div>
+
+                            <h1 class="buzz-title clue-target" id="clue-clickbait" data-clue-id="clickbait" tabindex="0" role="button" aria-label="Inspecter le titre piège à clics">
+                                VOUS NE DEVINEREZ JAMAIS ce que ce guide a filmé au sommet du Cervin ! (Les scientifiques sont bouche bée 😱)
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </h1>
+
+                            <div class="news-illustration-box clue-target" id="clue-image" data-clue-id="image" tabindex="0" role="button" aria-label="Inspecter l'image du requin volant">
+                                <svg viewBox="0 0 700 320" width="100%" height="240" style="background:#581c87; display:block;" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Ciel surréaliste violet avec étoiles bizarres -->
+                                    <circle cx="80" cy="50" r="3" fill="#fde047" />
+                                    <circle cx="220" cy="30" r="4" fill="#fde047" />
+                                    <circle cx="620" cy="70" r="2" fill="#fde047" />
+                                    <!-- Montagne du Cervin biscornue -->
+                                    <polygon points="150,320 380,80 600,320" fill="#334155" />
+                                    <polygon points="380,80 430,140 330,140" fill="#ffffff" />
+                                    <!-- Ombre absurde qui part vers la droite alors que le soleil est à droite -->
+                                    <ellipse cx="440" cy="270" rx="90" ry="18" fill="rgba(0,0,0,0.5)" />
+                                    <!-- Requin volant avec 3 nageoires anormales -->
+                                    <g transform="translate(280, 100)">
+                                        <!-- Corps du requin -->
+                                        <path d="M 0,40 Q 90,10 180,40 Q 220,50 250,30 L 240,60 L 260,80 Q 210,70 180,60 Q 80,80 0,40 Z" fill="#64748b" />
+                                        <!-- Ventre blanc -->
+                                        <path d="M 30,45 Q 100,75 190,58 Q 110,65 30,45 Z" fill="#f8fafc" />
+                                        <!-- Nageoire dorsale -->
+                                        <polygon points="100,22 130,-15 150,23" fill="#475569" />
+                                        <!-- 3 nageoires pectorales bizarres générées par l'IA ! -->
+                                        <polygon points="70,55 90,95 110,60" fill="#475569" />
+                                        <polygon points="100,58 120,105 135,60" fill="#475569" />
+                                        <polygon points="125,56 140,98 155,58" fill="#475569" />
+                                        <!-- Oeil rouge menaçant -->
+                                        <circle cx="35" cy="40" r="4" fill="#ef4444" />
+                                    </g>
+                                    <text x="350" y="300" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="bold" fill="#fbcfe8" font-size="14">⚠️ Cliché capturé sans retouche : le monstre des cimes alpines</text>
+                                </svg>
+                                <div class="news-caption">
+                                    Le requin planant paisiblement au-dessus des glaciers valaisans à 4000m d'altitude.
+                                </div>
+                                <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                            </div>
+
+                            <div class="news-body-text">
+                                <p class="clue-target" id="clue-science" data-clue-id="science" tabindex="0" role="button" aria-label="Inspecter l'explication scientifique" style="padding: 6px; border-radius: 6px;">
+                                    🔬 <strong>Explication scientifique stupéfiante :</strong> D'après les experts, il s'agirait du <em>Squalus Alpinus</em>, une nouvelle espèce de requin qui <strong>ne vit pas dans l'eau mais vole grâce aux courants d'air froid</strong> et se nourrit exclusivement de neige fraîche.
+                                    <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                </p>
+
+                                <div class="sharewall-box">
+                                    <i data-fa="share-nodes"></i> ATTENTION : Partagez ce scoop à 5 amis sur les réseaux pour débloquer la vidéo secrète !
+                                </div>
+
+                                <div class="login-footer-notes clue-target" id="clue-legal" data-clue-id="legal" tabindex="0" role="button" aria-label="Inspecter les mentions légales">
+                                    Rédacteur : <strong>Générateur de Buzz BotNews-3000</strong> · Mentions légales : <strong>Aucune</strong> (Site hébergé sur une île inconnue).
+                                    <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                },
+                {
+                    id: 3,
+                    title: "Le Chewing-Gum Magique des Examens",
+                    category: "Arnaque commerciale & Pseudo-science",
+                    desc: "Une boutique en ligne vend une gomme magique qui 'donnerait 6 à tous les examens'. Repère les 5 techniques d'arnaque commerciale !",
+                    tabTitle: "Genius Gum Valais - Boutique",
+                    urlHost: "www.genius-gum-boutique.shop",
+                    urlPath: "/promo-maths",
+                    urlSecStatus: "warning",
+                    clues: {
+                        url: {
+                            id: "url",
+                            title: "Boutique Éphémère (.shop inconnu)",
+                            type: "Faux site e-commerce",
+                            why: "L'URL est hébergée sur un domaine .shop créé il y a quelques jours sans aucune adresse physique d'entreprise en Suisse.",
+                            reflex: "Avant d'acheter en ligne, cherche l'adresse postale et le numéro de registre du commerce de l'entreprise.",
+                            hint: "Regarde l'URL en haut : est-ce une enseigne connue et certifiée ?"
+                        },
+                        fake_label: {
+                            id: "fake_label",
+                            title: "Faux Label Scientifique Bidon",
+                            type: "Science inventée",
+                            why: "'Certifié par l'Institut Galactique des Neurosciences de Sion'. Cet institut n'existe nulle part ! Les arnaqueurs inventent de faux labels prestigieux pour rassurer les clients.",
+                            reflex: "Fais une recherche sur le nom du label ou de l'institut. Si aucun site officiel n'en parle, c'est une pure invention !",
+                            hint: "Regarde le macaron doré de certification : cet institut existe-t-il vraiment ?"
+                        },
+                        timer: {
+                            id: "timer",
+                            title: "Faux Compte à Rebours de Panique",
+                            type: "Pression d'achat artificielle",
+                            why: "'Plus que 03:25 minutes et 2 boîtes en stock !'. Ce chronomètre est truqué pour te stresser et t'empêcher de réfléchir ou d'en parler à tes parents.",
+                            reflex: "Ne cède jamais à la fausse précipitation. Si un site te presse d'acheter en quelques minutes, c'est presque toujours un piège.",
+                            hint: "Repère l'élément qui te met la pression avec le temps qui défile."
+                        },
+                        miracle: {
+                            id: "miracle",
+                            title: "Promesse Miracle Impossible",
+                            type: "Pseudo-science absurde",
+                            why: "'Des nanobulles quantiques qui téléchargent les tables de multiplication dans tes neurones'. Aucun chewing-gum ne peut remplacer le travail et l'apprentissage !",
+                            reflex: "Règle de base contre les arnaques : quand une promesse semble trop belle ou magique pour être vraie, c'est une escroquerie.",
+                            hint: "Lis la description du produit : son effet promis est-il réaliste ?"
+                        },
+                        hidden_fee: {
+                            id: "hidden_fee",
+                            title: "Abonnement Caché dans les Petites Lignes",
+                            type: "Dark Pattern (Piège financier)",
+                            why: "Tout en bas en petits caractères gris : 'Offre d'essai 4.90 CHF puis prélèvement de 89 CHF par mois sans remboursement possible'. L'arnaque vise la carte bancaire des parents !",
+                            reflex: "Lis TOUJOURS les petites lignes tout en bas avant de commander quoi que ce soit sur Internet.",
+                            hint: "Examine les minuscules lignes de texte gris tout en bas de la page."
+                        }
+                    },
+                    renderHTML: function() {
+                        return `
+                        <div class="fake-shop-container">
+                            <div class="shop-banner">
+                                🚀 OFFRE EXCLUSIVE VALAIS : Réussis ton année scolaire sans étudier !
+                            </div>
+
+                            <div class="shop-grid">
+                                <div class="product-image-box">
+                                    <svg viewBox="0 0 300 240" width="100%" height="200" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="50" y="30" width="200" height="150" rx="16" fill="#ec4899" />
+                                        <rect x="65" y="45" width="170" height="120" rx="10" fill="#fdf2f8" />
+                                        <circle cx="150" cy="100" r="35" fill="#8b5cf6" />
+                                        <text x="150" y="108" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="900" fill="#fff" font-size="28">🧠</text>
+                                        <text x="150" y="150" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" fill="#ec4899" font-size="16">GENIUS GUM</text>
+                                        <!-- Faux label doré -->
+                                        <g transform="translate(190, 130)">
+                                            <circle cx="20" cy="20" r="22" fill="#f59e0b" />
+                                            <text x="20" y="24" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">TOP 6/6</text>
+                                        </g>
+                                    </svg>
+                                    <div class="clue-target" id="clue-fake_label" data-clue-id="fake_label" tabindex="0" role="button" aria-label="Inspecter le faux label" style="margin-top:10px; padding:6px; border-radius:6px; background:rgba(245,158,11,0.1);">
+                                        ⭐ <strong>Certifié 100% Efficace</strong> par l'Institut Galactique des Neuro-Sciences de Sion
+                                        <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                    </div>
+                                </div>
+
+                                <div class="product-details">
+                                    <h2>GeniusGum™ - La Gomme aux Notes Parfaites</h2>
+
+                                    <div class="clue-target" id="clue-timer" data-clue-id="timer" tabindex="0" role="button" aria-label="Inspecter le compte à rebours" style="background:#fee2e2; border:1px solid #f87171; padding:8px 12px; border-radius:8px; color:#991b1b; font-weight:700; margin-bottom:12px;">
+                                        ⏱️ VITE ! Plus que <span id="shop-countdown">03:24</span> minutes et <strong>2 boîtes en stock</strong> avant rupture totale !
+                                        <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                    </div>
+
+                                    <p class="clue-target" id="clue-miracle" data-clue-id="miracle" tabindex="0" role="button" aria-label="Inspecter la promesse miraculeuse" style="font-size:0.92rem; line-height:1.45; padding:6px; border-radius:6px;">
+                                        Mâchez 1 dragée pendant la récréation : notre formule quantique secrète <strong>télécharge instantanément les tables de multiplication et les règles d'orthographe</strong> directement dans votre mémoire !
+                                        <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                    </p>
+
+                                    <div class="price-tag">
+                                        Seulement 4.90 CHF <span style="font-size:0.9rem; color:#64748b; text-decoration:line-through;">99.00 CHF</span>
+                                    </div>
+
+                                    <button class="order-btn-mock">Commander mon Pack Génie Immédiat</button>
+
+                                    <div class="testimonials-grid">
+                                        <div class="testimonial-card">
+                                            ⭐⭐⭐⭐⭐<br>
+                                            <strong>Léo, 11 ans :</strong> « J'avais 2 en maths, j'ai mâché 1 chewing-gum et j'ai eu 6 le lendemain ! »
+                                        </div>
+                                        <div class="testimonial-card">
+                                            ⭐⭐⭐⭐⭐<br>
+                                            <strong>Camille, 13 ans :</strong> « Mes profs pensent que je suis devenu un génie ! »
+                                        </div>
+                                    </div>
+
+                                    <div class="small-print clue-target" id="clue-hidden_fee" data-clue-id="hidden_fee" tabindex="0" role="button" aria-label="Inspecter les petites lignes de bas de page">
+                                        * Conditions : Offre d'essai à 4.90 CHF, entraînant automatiquement un <strong>abonnement mensuel obligatoire non-remboursable de 89.00 CHF/mois</strong> prélevé directement sur la carte de crédit.
+                                        <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                }
+            ];
+
+            // ==========================================
+            // APPLICATION STATE & PERSISTENCE
+            // ==========================================
+            const STORAGE_KEY = 'c2_chasseur_infox_state';
+
+            let state = {
+                currentCaseIdx: 0,
+                detectiveMode: true,
+                solvedClues: {
+                    0: [],
+                    1: [],
+                    2: [],
+                    3: []
+                },
+                studentName: "Élève Détective"
+            };
+
+            function loadSavedState() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && parsed.solvedClues) {
+                            state.solvedClues = parsed.solvedClues;
+                            if (parsed.studentName) state.studentName = parsed.studentName;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Erreur chargement state :", e);
+                }
+            }
+
+            function persistState() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                        solvedClues: state.solvedClues,
+                        studentName: state.studentName
+                    }));
+                } catch (e) {
+                    console.warn("Erreur sauvegarde state :", e);
+                }
+            }
+
+            // Expose reset to global theme resetCache button
+            window.__onResetApp = function() {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                } catch (e) {}
+                state.solvedClues = { 0: [], 1: [], 2: [], 3: [] };
+                state.currentCaseIdx = 0;
+                updateCaseUI();
+                if (typeof showToast === 'function') {
+                    showToast("Application réinitialisée avec succès !", "info");
+                }
+            };
+
+            // ==========================================
+            // UI CONTROLLER
+            // ==========================================
+            const webViewport = document.getElementById('web-viewport');
+            const briefTitle = document.getElementById('brief-title');
+            const briefCategory = document.getElementById('brief-category');
+            const briefDesc = document.getElementById('brief-desc');
+            const gaugeLabel = document.getElementById('gauge-label');
+            const gaugeProgress = document.getElementById('gauge-progress');
+            const cluesLeftCount = document.getElementById('clues-left-count');
+            const tabName = document.getElementById('tab-name');
+            const urlTextHost = document.getElementById('url-text-host');
+            const urlTextPath = document.getElementById('url-text-path');
+            const urlSecurityIcon = document.getElementById('url-security-icon');
+            const toggleDetectiveBtn = document.getElementById('toggle-detective-btn');
+            const detectiveBtnText = document.getElementById('detectiveBtnText');
+
+            // Modals
+            const clueModal = document.getElementById('clue-modal');
+            const modalClueTitle = document.getElementById('modal-clue-title');
+            const modalClueType = document.getElementById('modal-clue-type');
+            const modalClueWhy = document.getElementById('modal-clue-why');
+            const modalClueReflex = document.getElementById('modal-clue-reflex');
+
+            const notebookModal = document.getElementById('notebook-modal');
+            const notebookCluesList = document.getElementById('notebook-clues-list');
+
+            const compassModal = document.getElementById('compass-modal');
+            const diplomaModal = document.getElementById('diploma-modal');
+            const diplomaStudentDisplay = document.getElementById('diploma-student-display');
+            const diplomaDateLabel = document.getElementById('diploma-date-label');
+
+            function updateCaseUI() {
+                const currentCase = CASES[state.currentCaseIdx];
+                const found = state.solvedClues[state.currentCaseIdx] || [];
+                const totalClues = Object.keys(currentCase.clues).length;
+
+                // Update Dashboard Brief
+                briefTitle.textContent = currentCase.title;
+                briefCategory.textContent = currentCase.category;
+                briefDesc.textContent = currentCase.desc;
+                gaugeLabel.textContent = `${found.length} / ${totalClues}`;
+                const pct = Math.round((found.length / totalClues) * 100);
+                gaugeProgress.style.width = `${pct}%`;
+                cluesLeftCount.textContent = totalClues - found.length;
+
+                // Update Browser Mockup Header
+                tabName.textContent = currentCase.tabTitle;
+                urlTextHost.textContent = currentCase.urlHost;
+                urlTextPath.textContent = currentCase.urlPath;
+
+                urlSecurityIcon.className = 'url-sec-icon ' + currentCase.urlSecStatus;
+                urlSecurityIcon.textContent = '';
+                const secI = document.createElement('i');
+                secI.setAttribute('data-fa', currentCase.urlSecStatus === 'secure' ? 'lock' : 'unlock');
+                urlSecurityIcon.appendChild(secI);
+
+                // Render Content
+                webViewport.innerHTML = currentCase.renderHTML();
+
+                // Re-bind icon SVGs
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+
+                // Apply Solved States to Elements in Viewport & URL bar
+                applySolvedStates();
+
+                // Bind Click Handlers to Clue Targets
+                bindClueClickHandlers();
+
+                // Update Tabs Status Badges
+                for (let i = 0; i < CASES.length; i++) {
+                    const tabBtn = document.getElementById(`tab-case-${i}`);
+                    const badge = document.getElementById(`status-case-${i}`);
+                    const cFound = (state.solvedClues[i] || []).length;
+                    const cTotal = Object.keys(CASES[i].clues).length;
+
+                    if (badge) badge.textContent = `${cFound}/${cTotal}`;
+                    if (tabBtn) {
+                        tabBtn.classList.toggle('active', i === state.currentCaseIdx);
+                        tabBtn.classList.toggle('solved', cFound === cTotal);
+                    }
+                }
+
+                // Start fake shop timer if on case 3
+                if (state.currentCaseIdx === 3) {
+                    initShopTimer();
+                }
+            }
+
+            function applySolvedStates() {
+                const currentCase = CASES[state.currentCaseIdx];
+                const found = state.solvedClues[state.currentCaseIdx] || [];
+
+                // Check URL bar clue
+                const urlClueTarget = document.getElementById('clue-url-bar');
+                if (urlClueTarget) {
+                    urlClueTarget.classList.toggle('solved', found.includes('url'));
+                }
+
+                // Check other targets inside viewport
+                Object.keys(currentCase.clues).forEach(clueId => {
+                    const el = document.getElementById(`clue-${clueId}`);
+                    if (el) {
+                        el.classList.toggle('solved', found.includes(clueId));
+                    }
+                });
+            }
+
+            function bindClueClickHandlers() {
+                const currentCase = CASES[state.currentCaseIdx];
+                const targets = document.querySelectorAll('.clue-target');
+
+                targets.forEach(target => {
+                    target.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const clueId = target.getAttribute('data-clue-id');
+                        if (clueId && currentCase.clues[clueId]) {
+                            handleClueFound(clueId);
+                        }
+                    });
+
+                    // Keyboard access (Enter / Space)
+                    target.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            target.click();
+                        }
+                    });
+                });
+
+                // Neutral clicks outside clues
+                webViewport.addEventListener('click', (e) => {
+                    if (!e.target.closest('.clue-target')) {
+                        if (typeof playSound === 'function') playSound('tick');
+                    }
+                }, { once: false });
+            }
+
+            function handleClueFound(clueId) {
+                const currentCase = CASES[state.currentCaseIdx];
+                const clue = currentCase.clues[clueId];
+                if (!clue) return;
+
+                const foundList = state.solvedClues[state.currentCaseIdx] || [];
+                const isNew = !foundList.includes(clueId);
+
+                if (isNew) {
+                    foundList.push(clueId);
+                    state.solvedClues[state.currentCaseIdx] = foundList;
+                    persistState();
+
+                    // Audio & visual feedback
+                    if (typeof playSound === 'function') playSound('success');
+                    if (typeof launchConfetti === 'function') launchConfetti();
+                } else {
+                    if (typeof playSound === 'function') playSound('ding');
+                }
+
+                // Show Clue Detail Modal
+                openClueModal(clue, isNew);
+
+                // Update UI badges & progress
+                updateCaseUI();
+
+                // Check if all clues in this case are solved
+                const totalClues = Object.keys(currentCase.clues).length;
+                if (foundList.length === totalClues && isNew) {
+                    setTimeout(() => {
+                        handleCaseCompleted();
+                    }, 1200);
+                }
+            }
+
+            function openClueModal(clue, isNew) {
+                modalClueTitle.textContent = clue.title;
+                modalClueType.textContent = isNew ? "🎯 NOUVEAU PIÈGE DÉMASQUÉ !" : "✅ Indice déjà identifié";
+                modalClueWhy.textContent = clue.why;
+                modalClueReflex.textContent = clue.reflex;
+
+                clueModal.classList.add('active');
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+            }
+
+            function handleCaseCompleted() {
+                if (typeof playSound === 'function') playSound('win');
+                if (typeof launchConfetti === 'function') {
+                    launchConfetti();
+                    setTimeout(launchConfetti, 600);
+                }
+
+                if (typeof showToast === 'function') {
+                    showToast(`🏆 Enquête ${state.currentCaseIdx + 1} résolue ! Tous les indices démasqués !`, 'success', 4000);
+                }
+
+                // Check if all 4 cases are completed
+                const allDone = CASES.every(c => (state.solvedClues[c.id] || []).length === Object.keys(c.clues).length);
+                if (allDone) {
+                    setTimeout(() => {
+                        openDiplomaModal();
+                    }, 1500);
+                }
+            }
+
+            function openDiplomaModal() {
+                const now = new Date();
+                diplomaDateLabel.textContent = now.toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' });
+                diplomaStudentDisplay.textContent = state.studentName || "Élève Détective";
+                diplomaModal.classList.add('active');
+
+                if (typeof playSound === 'function') playSound('win');
+                if (typeof launchConfetti === 'function') launchConfetti();
+            }
+
+            // Notebook hints
+            function openNotebookModal() {
+                const currentCase = CASES[state.currentCaseIdx];
+                const found = state.solvedClues[state.currentCaseIdx] || [];
+
+                notebookCluesList.innerHTML = '';
+
+                Object.keys(currentCase.clues).forEach((clueId, idx) => {
+                    const clue = currentCase.clues[clueId];
+                    const isSolved = found.includes(clueId);
+
+                    const box = document.createElement('div');
+                    box.className = `clue-box-section ${isSolved ? 'reflex' : ''}`;
+                    box.style.borderLeftColor = isSolved ? 'var(--success)' : 'var(--warning)';
+
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'clue-box-label';
+                    titleEl.style.color = isSolved ? 'var(--success)' : 'var(--warning)';
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-fa', isSolved ? 'circle-check' : 'bullseye');
+                    titleEl.appendChild(icon);
+                    titleEl.appendChild(document.createTextNode(` Indice ${idx + 1} : ${isSolved ? clue.title : 'Piste à explorer...'}`));
+
+                    const textEl = document.createElement('p');
+                    textEl.className = 'clue-box-text';
+                    textEl.textContent = isSolved ? `Démasqué : ${clue.why}` : `Indication : ${clue.hint}`;
+
+                    box.appendChild(titleEl);
+                    box.appendChild(textEl);
+                    notebookCluesList.appendChild(box);
+                });
+
+                notebookModal.classList.add('active');
+                if (window.fa && typeof window.fa.createIcons === 'function') {
+                    window.fa.createIcons();
+                }
+            }
+
+            // Fake countdown timer for case 3 (shop)
+            let shopTimerInterval = null;
+            function initShopTimer() {
+                if (shopTimerInterval) clearInterval(shopTimerInterval);
+                let seconds = 205; // 03:25
+                const display = document.getElementById('shop-countdown');
+
+                shopTimerInterval = setInterval(() => {
+                    seconds--;
+                    if (seconds <= 0) seconds = 240; // loops back to show it's fake!
+                    if (display) {
+                        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+                        const s = String(seconds % 60).padStart(2, '0');
+                        display.textContent = `${m}:${s}`;
+                    }
+                }, 1000);
+            }
+
+            // ==========================================
+            // EVENT LISTENERS
+            // ==========================================
+            // Tabs navigation
+            document.querySelectorAll('.case-tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.getAttribute('data-case'), 10);
+                    if (idx !== state.currentCaseIdx) {
+                        state.currentCaseIdx = idx;
+                        if (typeof playSound === 'function') playSound('click');
+                        updateCaseUI();
+                    }
+                });
+            });
+
+            // Toggle detective mode
+            toggleDetectiveBtn.addEventListener('click', () => {
+                state.detectiveMode = !state.detectiveMode;
+                document.body.classList.toggle('detective-mode-on', state.detectiveMode);
+                toggleDetectiveBtn.classList.toggle('active', state.detectiveMode);
+                detectiveBtnText.textContent = state.detectiveMode ? "Mode Loupe : ON" : "Mode Loupe : OFF";
+                if (typeof playSound === 'function') playSound('click');
+            });
+
+            // Reload fake browser button
+            document.getElementById('browser-reload-btn').addEventListener('click', () => {
+                if (typeof playSound === 'function') playSound('click');
+                updateCaseUI();
+                if (typeof showToast === 'function') showToast("Page réactualisée !", "info", 1500);
+            });
+
+            // Modal closers
+            document.getElementById('modal-close-btn').addEventListener('click', () => clueModal.classList.remove('active'));
+            document.getElementById('modal-confirm-btn').addEventListener('click', () => clueModal.classList.remove('active'));
+
+            document.getElementById('open-notebook-btn').addEventListener('click', openNotebookModal);
+            document.getElementById('notebook-close-btn').addEventListener('click', () => notebookModal.classList.remove('active'));
+            document.getElementById('notebook-ok-btn').addEventListener('click', () => notebookModal.classList.remove('active'));
+
+            document.getElementById('open-compass-btn').addEventListener('click', () => compassModal.classList.add('active'));
+            document.getElementById('compass-close-btn').addEventListener('click', () => compassModal.classList.remove('active'));
+            document.getElementById('compass-ok-btn').addEventListener('click', () => compassModal.classList.remove('active'));
+
+            document.getElementById('diploma-close-btn').addEventListener('click', () => diplomaModal.classList.remove('active'));
+            document.getElementById('diploma-ok-btn').addEventListener('click', () => diplomaModal.classList.remove('active'));
+
+            // Print diploma
+            document.getElementById('diploma-print-btn').addEventListener('click', () => {
+                window.print();
+            });
+
+            // Student name persistence on blur
+            diplomaStudentDisplay.addEventListener('blur', () => {
+                state.studentName = diplomaStudentDisplay.textContent.trim() || "Élève Détective";
+                persistState();
+            });
+
+            // Close modals on Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    clueModal.classList.remove('active');
+                    notebookModal.classList.remove('active');
+                    compassModal.classList.remove('active');
+                    diplomaModal.classList.remove('active');
+                }
+            });
+
+            // Close modals on overlay background click
+            [clueModal, notebookModal, compassModal, diplomaModal].forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        overlay.classList.remove('active');
+                    }
+                });
+            });
+
+            // ==========================================
+            // INITIALIZATION
+            // ==========================================
+            loadSavedState();
+            document.body.classList.add('detective-mode-on');
+            updateCaseUI();
+
+            // Options menu dropdown toggle
+            const optionsBtn = document.getElementById('options-menu-btn');
+            if (optionsBtn) {
+                optionsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dropdown = optionsBtn.nextElementSibling;
+                    if (dropdown) dropdown.classList.toggle('show');
+                });
+                document.addEventListener('click', () => {
+                    const dropdown = document.querySelector('.settings-dropdown-content.show');
+                    if (dropdown) dropdown.classList.remove('show');
+                });
+            }
+
+            // Expose test engine
+            window.ChasseurInfoxEngine = {
+                getState: () => state,
+                getCases: () => CASES,
+                selectCase: (idx) => { state.currentCaseIdx = idx; updateCaseUI(); },
+                solveClue: (clueId) => handleClueFound(clueId)
+            };
+        })();
+    </script>
+
+    <!-- Bottom Scripts -->
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+</body>
+
+</html>

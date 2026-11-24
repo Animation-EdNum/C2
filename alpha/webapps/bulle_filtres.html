@@ -1,0 +1,2590 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>🫧 La Bulle de Filtres</title>
+    <meta property="og:title" content="La Bulle de Filtres">
+    <meta property="og:description"
+        content="Simulateur d'algorithme de recommandation et réseaux sociaux pour comprendre les bulles de filtres et les chambres d'écho.">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-gradient-start: #312e81;
+            --bg-gradient-end: #1e1b4b;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(99, 102, 241, 0.22);
+            --container-bg: rgba(255, 255, 255, 0.94);
+            --text-main: #1e1b4b;
+            --text-secondary: #4338ca;
+            --text-muted: #64748b;
+            --accent: #4f46e5;
+            --accent-dark: #3730a3;
+            --accent-light: #818cf8;
+            --badge-bg: #e0e7ff;
+            --badge-color: #3730a3;
+            --input-border: #a5b4fc;
+            --instructions-bg: #eef2ff;
+            --success: #166534;
+            --success-light: #dcfce7;
+            --warn: #b45309;
+            --warn-light: #fef3c7;
+            --error: #b91c1c;
+            --error-light: #fef2f2;
+            --shadow-color: rgba(49, 46, 129, 0.25);
+            --card-shadow: rgba(79, 70, 229, 0.12);
+
+            /* Couleurs thématiques des publications */
+            --theme-science: #0284c7;
+            --theme-science-bg: rgba(2, 132, 199, 0.14);
+            --theme-gaming: #7c3aed;
+            --theme-gaming-bg: rgba(124, 58, 237, 0.14);
+            --theme-sport: #059669;
+            --theme-sport-bg: rgba(5, 150, 105, 0.14);
+            --theme-animals: #d97706;
+            --theme-animals-bg: rgba(217, 119, 6, 0.14);
+            --theme-fashion: #db2777;
+            --theme-fashion-bg: rgba(219, 39, 119, 0.14);
+            --theme-conspiracy: #dc2626;
+            --theme-conspiracy-bg: rgba(220, 38, 38, 0.14);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #030712;
+            --card-bg: rgba(30, 41, 59, 0.88);
+            --card-border: rgba(99, 102, 241, 0.35);
+            --container-bg: rgba(15, 23, 42, 0.90);
+            --text-main: #f8fafc;
+            --text-secondary: #c7d2fe;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-dark: #4f46e5;
+            --accent-light: #a5b4fc;
+            --badge-bg: #312e81;
+            --badge-color: #e0e7ff;
+            --input-border: #4338ca;
+            --instructions-bg: #1e1b4b;
+            --success: #34d399;
+            --success-light: #064e3b;
+            --warn: #fbbf24;
+            --warn-light: #451a03;
+            --error: #f87171;
+            --error-light: #450a0a;
+            --shadow-color: rgba(0, 0, 0, 0.6);
+            --card-shadow: rgba(0, 0, 0, 0.45);
+
+            --theme-science: #38bdf8;
+            --theme-science-bg: rgba(56, 189, 248, 0.22);
+            --theme-gaming: #a78bfa;
+            --theme-gaming-bg: rgba(167, 139, 250, 0.22);
+            --theme-sport: #34d399;
+            --theme-sport-bg: rgba(52, 211, 153, 0.22);
+            --theme-animals: #fbbf24;
+            --theme-animals-bg: rgba(251, 191, 36, 0.22);
+            --theme-fashion: #f472b6;
+            --theme-fashion-bg: rgba(244, 114, 182, 0.22);
+            --theme-conspiracy: #f87171;
+            --theme-conspiracy-bg: rgba(248, 113, 113, 0.22);
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        body>header,
+        body>.container {
+            animation: fadeInCascade 0.6s var(--spring-easing) forwards;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            border-radius: var(--radius-2xl, 20px);
+            padding: 24px;
+            box-shadow: 0 12px 40px var(--shadow-color);
+            border: 1px solid var(--card-border);
+        }
+
+        /* --- Mode Selector Tabs --- */
+        .mode-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mode-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill, 30px);
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-tab-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .mode-tab-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 14px var(--card-shadow);
+        }
+
+        /* --- Challenge Banner --- */
+        .challenge-banner {
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            color: #ffffff;
+            border-radius: var(--radius-xl, 16px);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(67, 56, 202, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeInCascade 0.4s ease forwards;
+        }
+
+        .challenge-banner-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .challenge-banner-icon {
+            font-size: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .challenge-banner-text h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .challenge-banner-text p {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            line-height: 1.35;
+        }
+
+        .challenge-metrics {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 8px 16px;
+            border-radius: var(--radius-lg, 12px);
+        }
+
+        .challenge-metric-item {
+            text-align: center;
+        }
+
+        .challenge-metric-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.85;
+        }
+
+        .challenge-metric-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .challenge-restart-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: var(--radius-md, 8px);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .challenge-restart-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-1px);
+        }
+
+        /* --- Main Arena Grid (2 Columns) --- */
+        .arena-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 960px) {
+            .arena-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Smartphone Simulation Column --- */
+        .smartphone-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .smartphone-frame {
+            width: 100%;
+            max-width: 360px;
+            background: #000000;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 0 4px #334155;
+            position: relative;
+            user-select: none;
+        }
+
+        .smartphone-inner {
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 560px;
+            position: relative;
+        }
+
+        body.dark .smartphone-inner {
+            background: #0f172a;
+        }
+
+        /* Phone Status Bar */
+        .phone-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 18px 4px 18px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        body.dark .phone-status-bar {
+            color: #f8fafc;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .phone-notch {
+            width: 72px;
+            height: 14px;
+            background: #000000;
+            border-radius: 10px;
+        }
+
+        /* Phone App Header */
+        .phone-app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            z-index: 10;
+        }
+
+        body.dark .phone-app-header {
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .phone-logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .phone-post-count-badge {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill, 30px);
+            background: var(--instructions-bg);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Post Card Content */
+        .post-card {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #ffffff;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        body.dark .post-card {
+            background: #0f172a;
+        }
+
+        .post-author-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .post-author-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .post-author-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .post-verified-badge {
+            color: #3b82f6;
+            font-size: 0.8rem;
+        }
+
+        .post-author-handle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .post-theme-pill {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill, 30px);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Post Visual Media Box */
+        .post-media-box {
+            width: 100%;
+            height: 180px;
+            border-radius: var(--radius-lg, 12px);
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            color: #ffffff;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15), 0 4px 14px rgba(0, 0, 0, 0.12);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .post-media-icon {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            animation: bounceSubtle 3s ease-in-out infinite;
+        }
+
+        @keyframes bounceSubtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .post-media-headline {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.25;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .post-text-content {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.4;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .post-engagement-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            margin-bottom: 8px;
+        }
+
+        body.dark .post-engagement-stats {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .post-reason-box {
+            background: var(--instructions-bg);
+            border-left: 3px solid var(--accent);
+            padding: 6px 10px;
+            border-radius: 0 var(--radius-sm, 6px) var(--radius-sm, 6px) 0;
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .post-reason-box strong {
+            color: var(--accent);
+        }
+
+        /* Action Buttons */
+        .post-action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .feed-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-height: 52px;
+            border: none;
+            border-radius: var(--radius-lg, 12px);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .feed-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .feed-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .feed-btn:active {
+            transform: scale(0.95);
+        }
+
+        .feed-btn-like {
+            background: linear-gradient(135deg, #ef4444, #f43f5e);
+        }
+
+        .feed-btn-watch {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+        }
+
+        .feed-btn-pass {
+            background: linear-gradient(135deg, #475569, #64748b);
+        }
+
+        .smartphone-hint {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- Algorithm Column (The Control Room) --- */
+        .algo-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .algo-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-xl, 16px);
+            padding: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 18px var(--card-shadow);
+        }
+
+        .algo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .algo-card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+        }
+
+        .algo-live-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #dcfce7;
+            color: #166534;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill, 30px);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .algo-live-tag::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        body.dark .algo-live-tag {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        /* Row 1: Diversity & Visual Bubble side-by-side */
+        .algo-top-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 680px) {
+            .algo-top-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Diversity Meter Box */
+        .diversity-box {
+            background: var(--instructions-bg);
+            border-radius: var(--radius-lg, 12px);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid var(--card-border);
+        }
+
+        .diversity-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .diversity-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        .diversity-number {
+            font-size: 2.6rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .diversity-progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-pill, 30px);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        body.dark .diversity-progress-bar {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .diversity-progress-fill {
+            height: 100%;
+            border-radius: var(--radius-pill, 30px);
+            transition: width 0.4s var(--spring-easing), background-color 0.4s ease;
+        }
+
+        .diversity-status-pill {
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: var(--radius-md, 8px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.3;
+        }
+
+        .status-open {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid rgba(22, 101, 52, 0.2);
+        }
+
+        .status-warning {
+            background: var(--warn-light);
+            color: var(--warn);
+            border: 1px solid rgba(180, 83, 9, 0.2);
+        }
+
+        .status-echo {
+            background: var(--error-light);
+            color: var(--error);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            animation: pulseAlert 2s infinite;
+        }
+
+        @keyframes pulseAlert {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+        }
+
+        /* Visual Bubble Card */
+        .bubble-visual-box {
+            background: var(--instructions-bg);
+            border-radius: var(--radius-lg, 12px);
+            padding: 12px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .bubble-visual-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            align-self: flex-start;
+        }
+
+        .bubble-svg-wrapper {
+            width: 100%;
+            max-width: 220px;
+            height: 170px;
+            position: relative;
+        }
+
+        .bubble-legend {
+            display: flex;
+            gap: 12px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .bubble-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Row 2: Profiling Bar Gauges */
+        .profiling-section {
+            margin-bottom: 20px;
+        }
+
+        .profiling-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .profiling-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .profiling-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .theme-gauges-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .theme-gauge-row {
+            background: var(--instructions-bg);
+            border-radius: var(--radius-md, 8px);
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        body.dark .theme-gauge-row {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .theme-gauge-row:hover {
+            border-color: var(--accent);
+            transform: translateX(2px);
+        }
+
+        .theme-gauge-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.84rem;
+        }
+
+        .theme-gauge-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .theme-gauge-stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+        }
+
+        .theme-gauge-affinity {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .theme-gauge-prob {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .theme-bar-bg {
+            width: 100%;
+            height: 7px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-pill, 30px);
+            overflow: hidden;
+        }
+
+        body.dark .theme-bar-bg {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-pill, 30px);
+            transition: width 0.35s ease;
+        }
+
+        /* Prediction & Reset Row */
+        .prediction-box {
+            background: var(--instructions-bg);
+            border-radius: var(--radius-lg, 12px);
+            padding: 14px 16px;
+            border-left: 4px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .prediction-text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .prediction-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .prediction-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .prediction-explanation {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .btn-reset-algo {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: var(--radius-md, 8px);
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reset-algo:hover {
+            border-color: var(--error);
+            color: var(--error);
+            transform: translateY(-1px);
+        }
+
+        /* --- Pedagogical Panel --- */
+        .pedagogy-panel {
+            margin-top: 24px;
+            background: var(--card-bg);
+            border-radius: var(--radius-xl, 16px);
+            padding: 24px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 18px var(--card-shadow);
+        }
+
+        .pedagogy-header {
+            margin-bottom: 20px;
+        }
+
+        .pedagogy-header h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .pedagogy-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .pedagogy-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .pedagogy-card {
+            background: var(--instructions-bg);
+            border-radius: var(--radius-lg, 12px);
+            padding: 16px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pedagogy-card-icon {
+            font-size: 1.6rem;
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md, 8px);
+            background: rgba(79, 70, 229, 0.12);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+
+        .pedagogy-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .pedagogy-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .pedagogy-tips-box {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
+            border-radius: var(--radius-lg, 12px);
+            padding: 18px 20px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .pedagogy-tips-box h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pedagogy-tips-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .pedagogy-tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .pedagogy-tip-item strong {
+            color: var(--accent);
+        }
+
+        /* --- Challenge Victory / Failure Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-2xl, 20px);
+            padding: 32px 28px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--accent);
+            transform: scale(0.9);
+            transition: transform 0.3s var(--spring-easing);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 14px;
+        }
+
+        .modal-card h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .modal-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .modal-stats-summary {
+            background: var(--instructions-bg);
+            border-radius: var(--radius-lg, 12px);
+            padding: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .modal-stat-val {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .modal-stat-lbl {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn-primary {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: var(--radius-pill, 30px);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px var(--card-shadow);
+        }
+
+        .modal-btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--card-border);
+            padding: 10px 20px;
+            border-radius: var(--radius-pill, 30px);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil"><i data-fa="arrow-left"></i></a>
+                <div class="header-icon" aria-hidden="true"><i data-fa="bullseye"></i></div>
+                <div>
+                    <h1>La Bulle de Filtres <span class="badge-level">8H-11CO</span> <span class="badge-alpha">Alpha</span></h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn"><i
+                            data-fa="gear"></i></button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="theme-toggle-btn"><i data-fa="moon" id="icon-moon"></i><i
+                                data-fa="sun-bright" id="icon-sun" style="display:none;"></i><span
+                                id="themeToggleText">Sombre</span></button>
+                        <button class="menu-item-btn" id="audio-toggle-btn"><i data-fa="volume-high" id="icon-vol-on"
+                                style="display:none;"></i><i data-fa="volume-xmark" id="icon-vol-off"></i><span
+                                id="audioToggleText">Activer son</span></button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn"><i data-fa="arrows-rotate"></i><span
+                                id="resetCacheText">Réinitialiser</span></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Navigation des Modes -->
+            <nav class="mode-nav" aria-label="Modes de simulation">
+                <button class="mode-tab-btn active" id="tab-exploration">
+                    <i data-fa="magnifying-glass"></i> Mode Exploration
+                </button>
+                <button class="mode-tab-btn" id="tab-challenge">
+                    <i data-fa="trophy-star"></i> Défi : Évasion de la Bulle !
+                </button>
+                <button class="mode-tab-btn" id="tab-pedagogy">
+                    <i data-fa="lightbulb"></i> Comprendre l'Algorithme
+                </button>
+            </nav>
+
+            <!-- Bannière Défi (Affichée uniquement en Mode Défi) -->
+            <section class="challenge-banner" id="challenge-banner" style="display: none;" aria-label="Défi en cours">
+                <div class="challenge-banner-info">
+                    <div class="challenge-banner-icon">🎯</div>
+                    <div class="challenge-banner-text">
+                        <h3>Mission : Briser la Bulle de Filtres !</h3>
+                        <p>Tu es piégé·e dans une bulle monothématique à plus de 90%. Réussis à remonter la diversité au-dessus de <strong>70% en 10 actions maximum</strong> en forçant l'algorithme à te proposer d'autres thèmes !</p>
+                    </div>
+                </div>
+                <div class="challenge-metrics">
+                    <div class="challenge-metric-item">
+                        <div class="challenge-metric-label">Actions restantes</div>
+                        <div class="challenge-metric-value" id="challenge-actions-left">10</div>
+                    </div>
+                    <div class="challenge-metric-item">
+                        <div class="challenge-metric-label">Diversité</div>
+                        <div class="challenge-metric-value" id="challenge-diversity-val">15%</div>
+                    </div>
+                    <button class="challenge-restart-btn" id="challenge-restart-btn" title="Recommencer le défi">
+                        <i data-fa="arrows-rotate"></i> Relancer
+                    </button>
+                </div>
+            </section>
+
+            <!-- Arène Interactive (Smartphone à gauche, Coulisses de l'algorithme à droite) -->
+            <div class="arena-grid" id="arena-grid">
+                <!-- Colonne Smartphone -->
+                <div class="smartphone-column">
+                    <div class="smartphone-frame">
+                        <div class="smartphone-inner">
+                            <!-- Barre d'état du téléphone -->
+                            <div class="phone-status-bar">
+                                <span>09:41</span>
+                                <div class="phone-notch"></div>
+                                <span>100% 🔋</span>
+                            </div>
+
+                            <!-- En-tête de l'application YouFeed -->
+                            <div class="phone-app-header">
+                                <div class="phone-logo">
+                                    <i data-fa="fire"></i> YouFeed
+                                </div>
+                                <div class="phone-post-count-badge" id="phone-post-counter">
+                                    Post #1
+                                </div>
+                            </div>
+
+                            <!-- Carte de publication interactive -->
+                            <article class="post-card" id="post-card-container">
+                                <div>
+                                    <div class="post-author-row">
+                                        <div class="post-avatar" id="post-avatar">🔬</div>
+                                        <div class="post-author-info">
+                                            <div class="post-author-name">
+                                                <span id="post-author-name">AstroCurieux</span>
+                                                <span class="post-verified-badge" title="Compte vérifié">✓</span>
+                                            </div>
+                                            <div class="post-author-handle" id="post-author-handle">@astro_curieux</div>
+                                        </div>
+                                        <span class="post-theme-pill" id="post-theme-pill">Sciences & Espace</span>
+                                    </div>
+
+                                    <div class="post-media-box" id="post-media-box">
+                                        <div class="post-media-icon" id="post-media-icon">🌌</div>
+                                        <div class="post-media-headline" id="post-media-headline">
+                                            Nouvelle découverte spatiale
+                                        </div>
+                                    </div>
+
+                                    <p class="post-text-content" id="post-text-content">
+                                        Le télescope James Webb a capté les premières lueurs d'une galaxie formée aux origines de l'Univers !
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <div class="post-engagement-stats">
+                                        <span id="post-stat-likes">❤️ 42.1k</span>
+                                        <span id="post-stat-views">👁️ 180k</span>
+                                        <span id="post-stat-shares">↗️ 3.5k</span>
+                                    </div>
+
+                                    <div class="post-reason-box" id="post-reason-box">
+                                        <strong>Pourquoi ce post ?</strong> <span id="post-reason-text">L'algorithme teste tes centres d'intérêt au hasard.</span>
+                                    </div>
+
+                                    <div class="post-action-buttons">
+                                        <button class="feed-btn feed-btn-like" id="btn-like" title="Aimer (+3 affinité)">
+                                            <i data-fa="heart"></i>
+                                            <span>J'aime (+3)</span>
+                                        </button>
+                                        <button class="feed-btn feed-btn-watch" id="btn-watch" title="Regarder (+2 affinité)">
+                                            <i data-fa="eye"></i>
+                                            <span>Regarder (+2)</span>
+                                        </button>
+                                        <button class="feed-btn feed-btn-pass" id="btn-pass" title="Passer (-1 affinité)">
+                                            <i data-fa="forward"></i>
+                                            <span>Passer (-1)</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                    <p class="smartphone-hint">
+                        <i data-fa="circle-info"></i> Interagis avec le post pour observer la réaction immédiate de l'algorithme !
+                    </p>
+                </div>
+
+                <!-- Colonne Algorithme ("Les Coulisses") -->
+                <div class="algo-column">
+                    <section class="algo-card" aria-label="Coulisses de l'algorithme">
+                        <div class="algo-card-header">
+                            <h2><i data-fa="gear"></i> Les Coulisses de l'Algorithme</h2>
+                            <span class="algo-live-tag">Calcul en direct</span>
+                        </div>
+
+                        <!-- Ligne 1 : Jauge de Diversité + Bulle Visuelle -->
+                        <div class="algo-top-row">
+                            <!-- Boîte Taux de Diversité -->
+                            <div class="diversity-box">
+                                <div class="diversity-label-row">
+                                    <span class="diversity-title">Taux de Diversité du fil</span>
+                                </div>
+                                <div class="diversity-number" id="diversity-val-display" style="color: #10b981;">100%</div>
+                                <div class="diversity-progress-bar">
+                                    <div class="diversity-progress-fill" id="diversity-bar-fill" style="width: 100%; background: #10b981;"></div>
+                                </div>
+                                <div class="diversity-status-pill status-open" id="diversity-status-pill">
+                                    <i data-fa="globe"></i>
+                                    <span id="diversity-status-text">Bulle ouverte : Diversité maximale</span>
+                                </div>
+                            </div>
+
+                            <!-- Boîte Bulle Visuelle -->
+                            <div class="bubble-visual-box">
+                                <span class="bubble-visual-title">La Bulle Visuelle</span>
+                                <div class="bubble-svg-wrapper">
+                                    <svg viewBox="0 0 240 180" width="100%" height="100%" id="bubble-svg" aria-label="Représentation graphique de la bulle de filtres">
+                                        <!-- Cercles de l'horizon d'information -->
+                                        <circle cx="120" cy="90" r="75" fill="none" stroke="currentColor" stroke-dasharray="3,3" opacity="0.15" />
+                                        <circle cx="120" cy="90" r="50" fill="none" stroke="currentColor" stroke-dasharray="2,2" opacity="0.1" />
+
+                                        <!-- Onde d'écho (pulsation en cas de bulle fermée) -->
+                                        <circle cx="120" cy="90" r="45" id="echo-wave" fill="none" stroke="#ef4444" stroke-width="2" opacity="0" />
+
+                                        <!-- Cercle de la bulle de filtre (qui rétrécit et s'épaissit) -->
+                                        <circle cx="120" cy="90" r="70" id="filter-bubble-circle" fill="rgba(79, 70, 229, 0.08)" stroke="#6366f1" stroke-width="3" stroke-dasharray="4,2" style="transition: all 0.4s ease;" />
+
+                                        <!-- Avatar utilisateur au centre -->
+                                        <circle cx="120" cy="90" r="14" fill="#4f46e5" />
+                                        <text x="120" y="94" font-size="11" text-anchor="middle" fill="#ffffff">👤</text>
+
+                                        <!-- 6 Thèmes orbitaux (points autour du centre) -->
+                                        <!-- 1: Sciences (r=68, a=0) -> x=188, y=90 -->
+                                        <g id="node-science" class="theme-node" transform="translate(182, 90)">
+                                            <circle r="10" fill="#0284c7" />
+                                            <text y="4" font-size="9" text-anchor="middle" fill="#ffffff">🔬</text>
+                                        </g>
+                                        <!-- 2: Gaming (r=68, a=60) -> x=154, y=149 -->
+                                        <g id="node-gaming" class="theme-node" transform="translate(154, 149)">
+                                            <circle r="10" fill="#7c3aed" />
+                                            <text y="4" font-size="9" text-anchor="middle" fill="#ffffff">🎮</text>
+                                        </g>
+                                        <!-- 3: Sport (r=68, a=120) -> x=86, y=149 -->
+                                        <g id="node-sport" class="theme-node" transform="translate(86, 149)">
+                                            <circle r="10" fill="#059669" />
+                                            <text y="4" font-size="9" text-anchor="middle" fill="#ffffff">⚽</text>
+                                        </g>
+                                        <!-- 4: Animaux (r=68, a=180) -> x=52, y=90 -->
+                                        <g id="node-animals" class="theme-node" transform="translate(58, 90)">
+                                            <circle r="10" fill="#d97706" />
+                                            <text y="4" font-size="9" text-anchor="middle" fill="#ffffff">🐱</text>
+                                        </g>
+                                        <!-- 5: Mode (r=68, a=240) -> x=86, y=31 -->
+                                        <g id="node-fashion" class="theme-node" transform="translate(86, 31)">
+                                            <circle r="10" fill="#db2777" />
+                                            <text y="4" font-size="9" text-anchor="middle" fill="#ffffff">👗</text>
+                                        </g>
+                                        <!-- 6: Complot/Buzz (r=68, a=300) -> x=154, y=31 -->
+                                        <g id="node-conspiracy" class="theme-node" transform="translate(154, 31)">
+                                            <circle r="10" fill="#dc2626" />
+                                            <text y="4" font-size="9" text-anchor="middle" fill="#ffffff">🛸</text>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <div class="bubble-legend">
+                                    <div class="bubble-legend-item"><span style="color:#6366f1;">●</span> Dans la bulle</div>
+                                    <div class="bubble-legend-item"><span style="color:#94a3b8;">○</span> Invisibilisé</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ligne 2 : Profilage Invisible par Thème -->
+                        <div class="profiling-section">
+                            <div class="profiling-title-row">
+                                <span class="profiling-title">Profilage secret de l'utilisateur</span>
+                                <span class="profiling-subtitle">Affinité & probabilité d'apparition</span>
+                            </div>
+
+                            <div class="theme-gauges-list" id="theme-gauges-container">
+                                <!-- Généré dynamiquement en JS pour les 6 thèmes -->
+                            </div>
+                        </div>
+
+                        <!-- Ligne 3 : Prédiction & Contrôles -->
+                        <div class="prediction-box">
+                            <div class="prediction-text">
+                                <div class="prediction-label">Prochaine publication sélectionnée</div>
+                                <div class="prediction-value" id="next-post-prediction">
+                                    🎲 Calcul en cours…
+                                </div>
+                                <div class="prediction-explanation" id="prediction-explanation">
+                                    L'algorithme maximise tes chances de rester sur l'écran en favorisant tes thèmes les plus consultés.
+                                </div>
+                            </div>
+                            <button class="btn-reset-algo" id="btn-reset-algo">
+                                <i data-fa="arrows-rotate"></i> Réinitialiser l'algorithme
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Fiche Pédagogique (Onglet ou panneau explicatif) -->
+            <section class="pedagogy-panel" id="pedagogy-panel" style="display: none;" aria-label="Fiche pédagogique">
+                <div class="pedagogy-header">
+                    <h2><i data-fa="book-open"></i> Les Coulisses des Réseaux Sociaux : Ce qu'il faut savoir</h2>
+                    <p>Découvre pourquoi les algorithmes de recommandation (TikTok, Instagram, YouTube, X) transforment nos habitudes et comment garder ton libre arbitre.</p>
+                </div>
+
+                <div class="pedagogy-cards-grid">
+                    <div class="pedagogy-card">
+                        <div class="pedagogy-card-icon"><i data-fa="coins"></i></div>
+                        <h3>1. L'Économie de l'Attention</h3>
+                        <p>« Si c'est gratuit, tu es le produit ! » Les plateformes ne vendent rien d'autre que ton temps de cerveau disponible à des annonceurs publicitaires. Plus tu restes longtemps sur l'application, plus ils génèrent d'argent.</p>
+                    </div>
+
+                    <div class="pedagogy-card">
+                        <div class="pedagogy-card-icon"><i data-fa="bullseye"></i></div>
+                        <h3>2. La Bulle de Filtres</h3>
+                        <p>Théorisée par Eli Pariser en 2011, la bulle de filtres se forme quand l'algorithme ne te montre que ce que tu aimes déjà. Petit à petit, il élimine la contradiction et les sujets différents jusqu'à t'enfermer dans un univers sur mesure.</p>
+                    </div>
+
+                    <div class="pedagogy-card">
+                        <div class="pedagogy-card-icon"><i data-fa="rotate-right"></i></div>
+                        <h3>3. Les Chambres d'Écho</h3>
+                        <p>Quand tu n'es entouré·e que de contenus qui partagent le même point de vue, tu as l'illusion que le monde entier pense comme toi. Cela favorise le <strong>biais de confirmation</strong> et la propagation rapide des fausses informations (fake news).</p>
+                    </div>
+
+                    <div class="pedagogy-card">
+                        <div class="pedagogy-card-icon"><i data-fa="fire"></i></div>
+                        <h3>4. La Prime au Sensationnalisme</h3>
+                        <p>Les contenus qui provoquent de la colère, de la surprise ou du choc retiennent davantage l'attention. L'algorithme a donc naturellement tendance à propulser les théories farfelues et les polémiques au détriment de la nuance scientifique.</p>
+                    </div>
+                </div>
+
+                <div class="pedagogy-tips-box">
+                    <h3><i data-fa="shield-check"></i> 5 Réflexes pour Briser sa Bulle et Reprendre le Contrôle</h3>
+                    <ul class="pedagogy-tips-list">
+                        <li class="pedagogy-tip-item">
+                            <span>✅</span>
+                            <div><strong>Brouiller les pistes :</strong> Like volontairement des sujets inattendus ou contradictoires pour forcer l'algorithme à diversifier son offre.</div>
+                        </li>
+                        <li class="pedagogy-tip-item">
+                            <span>✅</span>
+                            <div><strong>Utiliser le bouton « Ne m'intéresse pas » :</strong> Signale activement les vidéos sensationnalistes ou anxiogènes au lieu de les regarder par curiosité.</div>
+                        </li>
+                        <li class="pedagogy-tip-item">
+                            <span>✅</span>
+                            <div><strong>Consulter des sources variées :</strong> Ne t'informe pas uniquement via les réseaux sociaux ; consulte la presse, des encyclopédies et des revues spécialisées.</div>
+                        </li>
+                        <li class="pedagogy-tip-item">
+                            <span>✅</span>
+                            <div><strong>Désactiver la lecture automatique :</strong> Reprends la main sur ce que tu regardes au lieu de laisser l'algorithme enchaîner les vidéos pour toi.</div>
+                        </li>
+                        <li class="pedagogy-tip-item">
+                            <span>✅</span>
+                            <div><strong>Faire des pauses conscientes :</strong> Quand tu te surprends à faire défiler l'écran machinalement (« doomscrolling »), pose le téléphone et fais autre chose !</div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modale de Fin de Défi (Victoire ou Défaite) -->
+    <div class="modal-overlay" id="challenge-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card">
+            <div class="modal-icon" id="modal-icon">🏆</div>
+            <h2 id="modal-title">Victoire ! Bulle Percée !</h2>
+            <p id="modal-message">Bravo ! En diversifiant tes réactions et en refusant le contenu monothématique, tu as réussi à rétablir une diversité supérieure à 70%.</p>
+
+            <div class="modal-stats-summary">
+                <div>
+                    <div class="modal-stat-val" id="modal-final-diversity">74%</div>
+                    <div class="modal-stat-lbl">Diversité Finale</div>
+                </div>
+                <div>
+                    <div class="modal-stat-val" id="modal-actions-taken">7 / 10</div>
+                    <div class="modal-stat-lbl">Actions Utilisées</div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-btn-primary" id="modal-btn-retry">
+                    Recommencer le Défi
+                </button>
+                <button class="modal-btn-secondary" id="modal-btn-explore">
+                    Mode Exploration Libre
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements"
+                data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"
+                    data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script>
+        /* SPDX-License-Identifier: AGPL-3.0-only
+         * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+        'use strict';
+
+        // --- Définition des 6 Thèmes ---
+        const THEMES = {
+            science: {
+                id: 'science',
+                name: 'Sciences & Espace',
+                icon: '🔬',
+                faIcon: 'flask',
+                color: '#0284c7',
+                bgColor: 'linear-gradient(135deg, #0369a1, #0284c7)'
+            },
+            gaming: {
+                id: 'gaming',
+                name: 'Jeux Vidéo & Gaming',
+                icon: '🎮',
+                faIcon: 'gamepad',
+                color: '#7c3aed',
+                bgColor: 'linear-gradient(135deg, #5b21b6, #7c3aed)'
+            },
+            sport: {
+                id: 'sport',
+                name: 'Football & Sport',
+                icon: '⚽',
+                faIcon: 'bullseye',
+                color: '#059669',
+                bgColor: 'linear-gradient(135deg, #047857, #059669)'
+            },
+            animals: {
+                id: 'animals',
+                name: 'Animaux Rigolos',
+                icon: '🐱',
+                faIcon: 'cow',
+                color: '#d97706',
+                bgColor: 'linear-gradient(135deg, #b45309, #d97706)'
+            },
+            fashion: {
+                id: 'fashion',
+                name: 'Mode & Tendances',
+                icon: '👗',
+                faIcon: 'sparkles',
+                color: '#db2777',
+                bgColor: 'linear-gradient(135deg, #be185d, #db2777)'
+            },
+            conspiracy: {
+                id: 'conspiracy',
+                name: 'Buzz & Théories',
+                icon: '🛸',
+                faIcon: 'ghost',
+                color: '#dc2626',
+                bgColor: 'linear-gradient(135deg, #b91c1c, #dc2626)'
+            }
+        };
+
+        // --- Banque de Publications ---
+        const POSTS_DATABASE = [
+            // Sciences
+            {
+                theme: 'science',
+                author: 'AstroCurieux',
+                handle: '@astro_curieux',
+                avatarEmoji: '🔭',
+                headline: 'Nouvelle galaxie observée par James Webb !',
+                text: 'Une galaxie née seulement 300 millions d\'années après le Big Bang vient d\'être photographiée avec une netteté sans précédent.',
+                likes: '54.2k',
+                views: '190k',
+                shares: '4.1k'
+            },
+            {
+                theme: 'science',
+                author: 'ScienceMinute',
+                handle: '@science_minute',
+                avatarEmoji: '⚡',
+                headline: 'Pourquoi l\'eau de mer est-elle salée ?',
+                text: 'Ce sont les roches terrestres érodées par les pluies qui transportent le sel vers les océans depuis 4 milliards d\'années !',
+                likes: '38.6k',
+                views: '142k',
+                shares: '2.8k'
+            },
+            {
+                theme: 'science',
+                author: 'RoboExplorers',
+                handle: '@robo_explorers',
+                avatarEmoji: '🤖',
+                headline: 'Le rover martien fête son 1000e jour sur Mars',
+                text: 'Toujours en parfait état de marche, le robot a analysé 45 échantillons de roches à la recherche de traces d\'eau fossile.',
+                likes: '62.0k',
+                views: '210k',
+                shares: '5.2k'
+            },
+            {
+                theme: 'science',
+                author: 'OceanSecrets',
+                handle: '@ocean_secrets',
+                avatarEmoji: '🐙',
+                headline: 'Créature bioluminescente abyssale découverte',
+                text: 'À plus de 4\'000 mètres de profondeur, des biologistes ont découvert une nouvelle espèce émettant sa propre lumière bleue.',
+                likes: '45.1k',
+                views: '168k',
+                shares: '3.9k'
+            },
+
+            // Gaming
+            {
+                theme: 'gaming',
+                author: 'PixelMaster',
+                handle: '@pixel_master',
+                avatarEmoji: '🎮',
+                headline: 'Top 5 des passages secrets dans la nouvelle màj !',
+                text: '99% des joueurs passent à côté du coffre légendaire caché derrière la cascade du monde 3.',
+                likes: '89.4k',
+                views: '320k',
+                shares: '9.2k'
+            },
+            {
+                theme: 'gaming',
+                author: 'CraftMania',
+                handle: '@craft_mania',
+                avatarEmoji: '⛏️',
+                headline: 'J\'ai recréé le Cervin bloc par bloc !',
+                text: 'Plus de 200 heures de travail acharné pour bâtir la réplique exacte de la célèbre montagne valaisanne en survie.',
+                likes: '112k',
+                views: '450k',
+                shares: '14.5k'
+            },
+            {
+                theme: 'gaming',
+                author: 'FPS_Booster',
+                handle: '@fps_booster',
+                avatarEmoji: '🕹️',
+                headline: 'Cette astuce méconnue double vos FPS sur console',
+                text: 'En modifiant simplement deux paramètres graphiques dans les options cachées, le jeu tourne à 120 FPS stables.',
+                likes: '74.2k',
+                views: '280k',
+                shares: '6.7k'
+            },
+            {
+                theme: 'gaming',
+                author: 'EsportLive',
+                handle: '@esport_live',
+                avatarEmoji: '🏆',
+                headline: 'Un joueur suisse de 15 ans qualifié pour les mondiaux',
+                text: 'Après 8 rounds intenses en finale européenne, il décroche sa place pour le tournoi international à Tokyo !',
+                likes: '96.5k',
+                views: '340k',
+                shares: '11.0k'
+            },
+
+            // Sport
+            {
+                theme: 'sport',
+                author: 'FootPassion',
+                handle: '@foot_passion',
+                avatarEmoji: '⚽',
+                headline: 'But venu d\'une autre planète à la 94e minute !',
+                text: 'Une frappe brossée en pleine lucarne opposée qui fait chavirer tout le stade dans les arrêts de jeu.',
+                likes: '98.3k',
+                views: '390k',
+                shares: '12.4k'
+            },
+            {
+                theme: 'sport',
+                author: 'SkiExtremeCH',
+                handle: '@ski_extreme_ch',
+                avatarEmoji: '⛷️',
+                headline: 'Descente vertigineuse caméra embarquée à 140 km/h',
+                text: 'Sensations fortes garanties sur la piste de Coupe du monde avec la caméra fixée sur le casque du champion.',
+                likes: '68.7k',
+                views: '240k',
+                shares: '5.6k'
+            },
+            {
+                theme: 'sport',
+                author: 'AthleSprint',
+                handle: '@athle_sprint',
+                avatarEmoji: '🏃',
+                headline: 'Record du monde junior battu au 100 mètres !',
+                text: 'Le sprinteur claque un chrono historique de 9.89s avec un départ supersonique à couper le souffle.',
+                likes: '81.0k',
+                views: '290k',
+                shares: '7.8k'
+            },
+            {
+                theme: 'sport',
+                author: 'BasketDunk',
+                handle: '@basket_dunk',
+                avatarEmoji: '🏀',
+                headline: 'Le dunk le plus spectaculaire de l\'année',
+                text: 'Saut au-dessus de deux défenseurs pour écraser le ballon dans le cercle avec une puissance incroyable.',
+                likes: '75.4k',
+                views: '260k',
+                shares: '6.3k'
+            },
+
+            // Animaux
+            {
+                theme: 'animals',
+                author: 'ChatonsRigolos',
+                handle: '@chatons_rigolos',
+                avatarEmoji: '🐱',
+                headline: 'Ce chat tente d\'attraper un oiseau sur la télé…',
+                text: 'Il saute avec une précision légendaire et atterrit les quatre fers en l\'air direct dans le panier à linge sale !',
+                likes: '145k',
+                views: '580k',
+                shares: '22.3k'
+            },
+            {
+                theme: 'animals',
+                author: 'GoodDoggo',
+                handle: '@good_doggo',
+                avatarEmoji: '🐶',
+                headline: 'Ce chien attend le facteur chaque matin pour un câlin',
+                text: 'Le facteur refuse de continuer sa tournée tant qu\'il n\'a pas eu son brossage quotidien de bisous.',
+                likes: '120k',
+                views: '490k',
+                shares: '18.1k'
+            },
+            {
+                theme: 'animals',
+                author: 'WildCuties',
+                handle: '@wild_cuties',
+                avatarEmoji: '🦦',
+                headline: 'Une loutre refuse de nager sans son doudou',
+                text: 'Pour faire la sieste sur le dos dans l\'eau, elle serre très fort sa petite peluche favorite entre ses pattes.',
+                likes: '98.0k',
+                views: '370k',
+                shares: '14.2k'
+            },
+            {
+                theme: 'animals',
+                author: 'PandaParty',
+                handle: '@panda_party',
+                avatarEmoji: '🐼',
+                headline: 'Les pandas découvrent la première neige de l\'hiver',
+                text: 'Roulades incontrôlées, glissades sur le ventre et batailles de boules de neige : ils sont redevenus des bébés !',
+                likes: '135k',
+                views: '510k',
+                shares: '19.4k'
+            },
+
+            // Mode & Tendances
+            {
+                theme: 'fashion',
+                author: 'SneakersAddict',
+                handle: '@sneakers_addict',
+                avatarEmoji: '👟',
+                headline: 'Comment customiser ses baskets blanches en 15 minutes',
+                text: 'Avec de simples feutres textiles et du ruban adhésif, transforme ta vieille paire en édition collector unique.',
+                likes: '58.2k',
+                views: '210k',
+                shares: '6.4k'
+            },
+            {
+                theme: 'fashion',
+                author: 'StreetwearVibe',
+                handle: '@streetwear_vibe',
+                avatarEmoji: '🧢',
+                headline: 'Le style baggy des années 2000 fait un retour massif',
+                text: 'Pourquoi les pantalons larges et les sweats oversized détrônent complètement la mode des vêtements serrés.',
+                likes: '49.8k',
+                views: '180k',
+                shares: '4.8k'
+            },
+            {
+                theme: 'fashion',
+                author: 'UpcyclingLab',
+                handle: '@upcycling_lab',
+                avatarEmoji: '✂️',
+                headline: 'Transformer un vieux jean déchiré en sac stylé',
+                text: 'Tuto zéro déchet étape par étape pour réutiliser ses vêtements sans machine à coudre compliquée.',
+                likes: '44.3k',
+                views: '165k',
+                shares: '5.1k'
+            },
+            {
+                theme: 'fashion',
+                author: 'ColorMagic',
+                handle: '@color_magic',
+                avatarEmoji: '🧥',
+                headline: 'Cette veste change de couleur selon la température',
+                text: 'Grâce à des pigments thermochromiques, le tissu passe du bleu au violet dès que tu sors dans le froid.',
+                likes: '66.1k',
+                views: '245k',
+                shares: '7.9k'
+            },
+
+            // Théories farfelues / Fake news / Buzz
+            {
+                theme: 'conspiracy',
+                author: 'MysteresInterdits',
+                handle: '@mysteres_interdits',
+                avatarEmoji: '👁️',
+                headline: 'CHOC : Une pyramide secrète sous la glace antarctique ?!',
+                text: 'Des images satellites montreraient une structure étrange... Ce que les gouvernements refuseraient de nous dire !',
+                likes: '185k',
+                views: '720k',
+                shares: '34.2k'
+            },
+            {
+                theme: 'conspiracy',
+                author: 'VeriteCachee',
+                handle: '@verite_cachee',
+                avatarEmoji: '🛸',
+                headline: 'Signaux extraterrestres captés par une sonde lunaire !',
+                text: 'Pourquoi la NASA aurait coupé le direct de la mission ? Analyse des supposées fréquences sonores mystérieuses.',
+                likes: '160k',
+                views: '650k',
+                shares: '29.5k'
+            },
+            {
+                theme: 'conspiracy',
+                author: 'SanteMiracle',
+                handle: '@sante_miracle',
+                avatarEmoji: '🧪',
+                headline: 'Boire ceci tous les matins guérit 100% des maladies !',
+                text: 'Le remède ancestral que les laboratoires pharmaceutiques tenteraient de censurer d\'Internet depuis 10 ans !',
+                likes: '142k',
+                views: '580k',
+                shares: '26.8k'
+            },
+            {
+                theme: 'conspiracy',
+                author: 'CodeSecret',
+                handle: '@code_secret',
+                avatarEmoji: '⚡',
+                headline: 'Ce symbole caché sur les paquets de céréales...',
+                text: 'Coïncidence graphique ou message codé d\'une société secrète ? Découvrez la troublante révélation !',
+                likes: '138k',
+                views: '540k',
+                shares: '24.1k'
+            }
+        ];
+
+        // --- État de l'Application ---
+        let currentMode = 'exploration'; // 'exploration' | 'challenge' | 'pedagogy'
+        let postCounter = 1;
+        let activePost = null;
+
+        // Affinités calculées par l'algorithme (Score d'engagement)
+        let affinities = {
+            science: 5,
+            gaming: 5,
+            sport: 5,
+            animals: 5,
+            fashion: 5,
+            conspiracy: 5
+        };
+
+        // État spécifique du Mode Défi
+        const CHALLENGE_MAX_ACTIONS = 10;
+        const CHALLENGE_TARGET_DIVERSITY = 70;
+        let challengeActionsLeft = CHALLENGE_MAX_ACTIONS;
+        let challengeInitialTheme = 'conspiracy';
+
+        // --- Fonctions Mathématiques : Diversité et Probabilités ---
+        function calculateDiversity(aff) {
+            const keys = Object.keys(aff);
+            let total = 0;
+            for (let i = 0; i < keys.length; i++) {
+                total += aff[keys[i]];
+            }
+            if (total === 0) {
+                return 100;
+            }
+
+            const maxEntropy = Math.log(keys.length); // ln(6) ≈ 1.7917
+            let entropy = 0;
+            for (let i = 0; i < keys.length; i++) {
+                const p = aff[keys[i]] / total;
+                if (p > 0) {
+                    entropy -= p * Math.log(p);
+                }
+            }
+            const ratio = entropy / maxEntropy;
+            return Math.max(0, Math.min(100, Math.round(ratio * 100)));
+        }
+
+        function calculateProbabilities(aff) {
+            const keys = Object.keys(aff);
+            let total = 0;
+            for (let i = 0; i < keys.length; i++) {
+                total += aff[keys[i]];
+            }
+            const probs = {};
+            if (total === 0) {
+                for (let i = 0; i < keys.length; i++) {
+                    probs[keys[i]] = Math.round(100 / keys.length);
+                }
+                return probs;
+            }
+
+            for (let i = 0; i < keys.length; i++) {
+                probs[keys[i]] = Math.round((aff[keys[i]] / total) * 100);
+            }
+            return probs;
+        }
+
+        function pickWeightedTheme(aff) {
+            const keys = Object.keys(aff);
+            let total = 0;
+            for (let i = 0; i < keys.length; i++) {
+                total += aff[keys[i]];
+            }
+            if (total === 0) {
+                return keys[Math.floor(Math.random() * keys.length)];
+            }
+            const rand = Math.random() * total;
+            let acc = 0;
+            for (let i = 0; i < keys.length; i++) {
+                acc += aff[keys[i]];
+                if (rand <= acc) {
+                    return keys[i];
+                }
+            }
+            return keys[keys.length - 1];
+        }
+
+        // --- Initialisation du Mode Défi ---
+        function startChallengeMode() {
+            currentMode = 'challenge';
+            challengeActionsLeft = CHALLENGE_MAX_ACTIONS;
+            // Choisir un thème dominant extrême (soit complot/buzz soit jeux vidéo)
+            challengeInitialTheme = Math.random() > 0.5 ? 'conspiracy' : 'gaming';
+
+            affinities = {
+                science: 1,
+                gaming: 1,
+                sport: 1,
+                animals: 1,
+                fashion: 1,
+                conspiracy: 1
+            };
+            affinities[challengeInitialTheme] = 65; // ~93% de présence
+
+            updateChallengeBanner();
+            document.getElementById('challenge-banner').style.display = 'flex';
+            document.getElementById('arena-grid').style.display = 'grid';
+            document.getElementById('pedagogy-panel').style.display = 'none';
+
+            postCounter = 1;
+            loadNewPost();
+            updateAlgorithmUI();
+
+            if (typeof window.playSound === 'function') {
+                window.playSound('tick');
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast('Défi lancé : Réussis à percer la bulle en 10 actions !', 'info');
+            }
+        }
+
+        function updateChallengeBanner() {
+            const div = calculateDiversity(affinities);
+            const actSpan = document.getElementById('challenge-actions-left');
+            const divSpan = document.getElementById('challenge-diversity-val');
+            if (actSpan) {
+                actSpan.textContent = challengeActionsLeft;
+            }
+            if (divSpan) {
+                divSpan.textContent = div + '%';
+            }
+        }
+
+        // --- Initialisation du Mode Exploration ---
+        function startExplorationMode() {
+            currentMode = 'exploration';
+            document.getElementById('challenge-banner').style.display = 'none';
+            document.getElementById('arena-grid').style.display = 'grid';
+            document.getElementById('pedagogy-panel').style.display = 'none';
+
+            affinities = {
+                science: 5,
+                gaming: 5,
+                sport: 5,
+                animals: 5,
+                fashion: 5,
+                conspiracy: 5
+            };
+            postCounter = 1;
+            loadNewPost();
+            updateAlgorithmUI();
+
+            if (typeof window.playSound === 'function') {
+                window.playSound('click');
+            }
+        }
+
+        // --- Affichage du Panneau Pédagogique ---
+        function showPedagogyPanel() {
+            currentMode = 'pedagogy';
+            document.getElementById('challenge-banner').style.display = 'none';
+            document.getElementById('arena-grid').style.display = 'none';
+            document.getElementById('pedagogy-panel').style.display = 'block';
+
+            if (typeof window.playSound === 'function') {
+                window.playSound('click');
+            }
+        }
+
+        // --- Chargement d'une Publication ---
+        function loadNewPost() {
+            const chosenTheme = pickWeightedTheme(affinities);
+            const candidatePosts = POSTS_DATABASE.filter(p => p.theme === chosenTheme);
+            const post = candidatePosts[Math.floor(Math.random() * candidatePosts.length)];
+            activePost = post;
+
+            renderPost(post);
+        }
+
+        function renderPost(post) {
+            const themeConfig = THEMES[post.theme];
+
+            // Éléments du DOM du post
+            const elCounter = document.getElementById('phone-post-counter');
+            const elAvatar = document.getElementById('post-avatar');
+            const elAuthor = document.getElementById('post-author-name');
+            const elHandle = document.getElementById('post-author-handle');
+            const elThemePill = document.getElementById('post-theme-pill');
+            const elMediaBox = document.getElementById('post-media-box');
+            const elMediaIcon = document.getElementById('post-media-icon');
+            const elHeadline = document.getElementById('post-media-headline');
+            const elContent = document.getElementById('post-text-content');
+            const elLikes = document.getElementById('post-stat-likes');
+            const elViews = document.getElementById('post-stat-views');
+            const elShares = document.getElementById('post-stat-shares');
+            const elReason = document.getElementById('post-reason-text');
+
+            if (elCounter) elCounter.textContent = 'Post #' + postCounter;
+            if (elAvatar) {
+                elAvatar.textContent = post.avatarEmoji;
+                elAvatar.style.background = themeConfig.color;
+            }
+            if (elAuthor) elAuthor.textContent = post.author;
+            if (elHandle) elHandle.textContent = post.handle;
+
+            if (elThemePill) {
+                elThemePill.textContent = themeConfig.icon + ' ' + themeConfig.name;
+                elThemePill.style.color = themeConfig.color;
+                elThemePill.style.background = 'var(--instructions-bg)';
+                elThemePill.style.border = '1px solid ' + themeConfig.color;
+            }
+
+            if (elMediaBox) {
+                elMediaBox.style.background = themeConfig.bgColor;
+            }
+            if (elMediaIcon) elMediaIcon.textContent = post.avatarEmoji;
+            if (elHeadline) elHeadline.textContent = post.headline;
+            if (elContent) elContent.textContent = post.text;
+
+            if (elLikes) elLikes.textContent = '❤️ ' + post.likes;
+            if (elViews) elViews.textContent = '👁️ ' + post.views;
+            if (elShares) elShares.textContent = '↗️ ' + post.shares;
+
+            // Raison algorithmique
+            if (elReason) {
+                const probs = calculateProbabilities(affinities);
+                const prob = probs[post.theme] || 0;
+                if (prob >= 60) {
+                    elReason.textContent = 'Recommandé avec ' + prob + '% de probabilité : Tu as beaucoup interagi avec ce sujet !';
+                } else if (prob >= 30) {
+                    elReason.textContent = 'Suggéré selon ton profil en cours (' + prob + '% de probabilité).';
+                } else {
+                    elReason.textContent = 'Exploration spontanée : L\'algorithme teste ta curiosité sur ce sujet (' + prob + '% de probabilité).';
+                }
+            }
+        }
+
+        // --- Interaction Utilisateur ---
+        function handleUserAction(type) {
+            if (!activePost) {
+                return;
+            }
+
+            const theme = activePost.theme;
+            let scoreDelta = 0;
+            let toastMsg = '';
+
+            if (type === 'like') {
+                scoreDelta = 3;
+                toastMsg = '❤️ J\'aime (+3 affinité ' + THEMES[theme].name + ')';
+                if (typeof window.playSound === 'function') {
+                    window.playSound('click');
+                }
+            } else if (type === 'watch') {
+                scoreDelta = 2;
+                toastMsg = '⏱️ Attention soutenue (+2 affinité ' + THEMES[theme].name + ')';
+                if (typeof window.playSound === 'function') {
+                    window.playSound('tick');
+                }
+            } else if (type === 'pass') {
+                scoreDelta = -1;
+                toastMsg = '⏩ Contenu passé (-1 affinité ' + THEMES[theme].name + ')';
+                if (typeof window.playSound === 'function') {
+                    window.playSound('tick');
+                }
+            }
+
+            // En mode Défi, amplifier l'impact pour rendre la tactique pédagogique percutante
+            if (currentMode === 'challenge') {
+                if (type === 'pass') {
+                    // Si on passe le thème dominant de la bulle, on réduit plus vite
+                    scoreDelta = -4;
+                } else if (type === 'like') {
+                    // Si on like un thème alternatif, on le propulse
+                    scoreDelta = 5;
+                } else if (type === 'watch') {
+                    scoreDelta = 3;
+                }
+            }
+
+            // Mise à jour de l'affinité
+            affinities[theme] = Math.max(0, affinities[theme] + scoreDelta);
+
+            // Toast feedback
+            if (typeof window.showToast === 'function') {
+                window.showToast(toastMsg, type === 'like' ? 'success' : (type === 'watch' ? 'info' : 'warn'));
+            }
+
+            postCounter++;
+
+            // Gestion du décompte en Mode Défi
+            if (currentMode === 'challenge') {
+                challengeActionsLeft--;
+                updateChallengeBanner();
+                const diversity = calculateDiversity(affinities);
+
+                if (diversity >= CHALLENGE_TARGET_DIVERSITY) {
+                    // Victoire immédiate
+                    showChallengeResult(true, diversity);
+                    return;
+                } else if (challengeActionsLeft <= 0) {
+                    // Échec du défi
+                    showChallengeResult(false, diversity);
+                    return;
+                }
+            }
+
+            // Prochaine publication
+            loadNewPost();
+            updateAlgorithmUI();
+        }
+
+        // --- Mise à Jour des Coulisses de l'Algorithme ---
+        function updateAlgorithmUI() {
+            const diversity = calculateDiversity(affinities);
+            const probs = calculateProbabilities(affinities);
+
+            // 1. Taux de diversité
+            const elDiversityVal = document.getElementById('diversity-val-display');
+            const elDiversityBar = document.getElementById('diversity-bar-fill');
+            const elStatusPill = document.getElementById('diversity-status-pill');
+            const elStatusText = document.getElementById('diversity-status-text');
+
+            if (elDiversityVal) elDiversityVal.textContent = diversity + '%';
+            if (elDiversityBar) {
+                elDiversityBar.style.width = diversity + '%';
+                if (diversity >= 70) {
+                    elDiversityBar.style.backgroundColor = '#10b981';
+                    if (elDiversityVal) elDiversityVal.style.color = '#10b981';
+                } else if (diversity >= 40) {
+                    elDiversityBar.style.backgroundColor = '#f59e0b';
+                    if (elDiversityVal) elDiversityVal.style.color = '#f59e0b';
+                } else {
+                    elDiversityBar.style.backgroundColor = '#ef4444';
+                    if (elDiversityVal) elDiversityVal.style.color = '#ef4444';
+                }
+            }
+
+            if (elStatusPill && elStatusText) {
+                elStatusPill.className = 'diversity-status-pill';
+                if (diversity >= 70) {
+                    elStatusPill.classList.add('status-open');
+                    elStatusText.textContent = 'Bulle ouverte : Diversité maximale';
+                } else if (diversity >= 40) {
+                    elStatusPill.classList.add('status-warning');
+                    elStatusText.textContent = 'Bulle en formation : Sujets restreints';
+                } else {
+                    elStatusPill.classList.add('status-echo');
+                    elStatusText.textContent = 'Chambre d\'écho hermétique : Enfermement total !';
+                }
+            }
+
+            // 2. Représentation visuelle de la Bulle SVG
+            updateBubbleVisual(diversity, probs);
+
+            // 3. Jauges de profilage des 6 thèmes
+            renderProfilingGauges(probs);
+
+            // 4. Prédiction du prochain post
+            updatePrediction(probs);
+        }
+
+        function updateBubbleVisual(diversity, probs) {
+            const bubbleCircle = document.getElementById('filter-bubble-circle');
+            const echoWave = document.getElementById('echo-wave');
+
+            if (bubbleCircle) {
+                // Le rayon de la bulle varie de 42px (très fermée) à 74px (très ouverte)
+                const radius = 40 + Math.round((diversity / 100) * 34);
+                bubbleCircle.setAttribute('r', radius);
+
+                if (diversity >= 70) {
+                    bubbleCircle.setAttribute('stroke', '#6366f1');
+                    bubbleCircle.setAttribute('stroke-width', '2.5');
+                    bubbleCircle.setAttribute('stroke-dasharray', '4,2');
+                    bubbleCircle.setAttribute('fill', 'rgba(99, 102, 241, 0.08)');
+                } else if (diversity >= 40) {
+                    bubbleCircle.setAttribute('stroke', '#f59e0b');
+                    bubbleCircle.setAttribute('stroke-width', '3.5');
+                    bubbleCircle.setAttribute('stroke-dasharray', '6,2');
+                    bubbleCircle.setAttribute('fill', 'rgba(245, 158, 11, 0.12)');
+                } else {
+                    bubbleCircle.setAttribute('stroke', '#ef4444');
+                    bubbleCircle.setAttribute('stroke-width', '5');
+                    bubbleCircle.setAttribute('stroke-dasharray', 'none');
+                    bubbleCircle.setAttribute('fill', 'rgba(239, 68, 68, 0.18)');
+                }
+            }
+
+            // Onde d'écho active si diversité faible
+            if (echoWave) {
+                if (diversity < 40) {
+                    echoWave.setAttribute('opacity', '0.6');
+                    echoWave.setAttribute('stroke-width', '3');
+                } else {
+                    echoWave.setAttribute('opacity', '0');
+                }
+            }
+
+            // Mise à jour de l'apparence des 6 nœuds orbitaux
+            const themeKeys = Object.keys(THEMES);
+            for (let i = 0; i < themeKeys.length; i++) {
+                const k = themeKeys[i];
+                const node = document.getElementById('node-' + k);
+                if (node) {
+                    const prob = probs[k] || 0;
+                    // Si probabilité < 8%, le thème est considéré comme exclu / hors bulle
+                    if (prob < 8 && diversity < 70) {
+                        node.setAttribute('opacity', '0.35');
+                        node.style.filter = 'grayscale(100%)';
+                    } else {
+                        node.setAttribute('opacity', '1');
+                        node.style.filter = 'none';
+                    }
+                }
+            }
+        }
+
+        function renderProfilingGauges(probs) {
+            const container = document.getElementById('theme-gauges-container');
+            if (!container) {
+                return;
+            }
+
+            // Nettoyage sécurisé
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            const themeKeys = Object.keys(THEMES);
+            // Trier par affinité décroissante pour voir le profilage en tête
+            themeKeys.sort((a, b) => affinities[b] - affinities[a]);
+
+            for (let i = 0; i < themeKeys.length; i++) {
+                const k = themeKeys[i];
+                const theme = THEMES[k];
+                const score = affinities[k];
+                const prob = probs[k] || 0;
+
+                const row = document.createElement('div');
+                row.className = 'theme-gauge-row';
+
+                const info = document.createElement('div');
+                info.className = 'theme-gauge-info';
+
+                const nameWrap = document.createElement('span');
+                nameWrap.className = 'theme-gauge-name';
+                nameWrap.textContent = theme.icon + ' ' + theme.name;
+
+                const statsWrap = document.createElement('span');
+                statsWrap.className = 'theme-gauge-stats';
+
+                const affSpan = document.createElement('span');
+                affSpan.className = 'theme-gauge-affinity';
+                affSpan.textContent = '+' + score + ' pts';
+
+                const probSpan = document.createElement('span');
+                probSpan.className = 'theme-gauge-prob';
+                probSpan.textContent = prob + '% de chance';
+
+                statsWrap.appendChild(affSpan);
+                statsWrap.appendChild(probSpan);
+
+                info.appendChild(nameWrap);
+                info.appendChild(statsWrap);
+
+                const barBg = document.createElement('div');
+                barBg.className = 'theme-bar-bg';
+
+                const barFill = document.createElement('div');
+                barFill.className = 'theme-bar-fill';
+                barFill.style.width = prob + '%';
+                barFill.style.backgroundColor = theme.color;
+
+                barBg.appendChild(barFill);
+
+                row.appendChild(info);
+                row.appendChild(barBg);
+
+                container.appendChild(row);
+            }
+        }
+
+        function updatePrediction(probs) {
+            const elPred = document.getElementById('next-post-prediction');
+            const elExp = document.getElementById('prediction-explanation');
+            if (!elPred) {
+                return;
+            }
+
+            const themeKeys = Object.keys(THEMES);
+            let dominantTheme = themeKeys[0];
+            let maxProb = probs[dominantTheme] || 0;
+
+            for (let i = 1; i < themeKeys.length; i++) {
+                const k = themeKeys[i];
+                if ((probs[k] || 0) > maxProb) {
+                    maxProb = probs[k] || 0;
+                    dominantTheme = k;
+                }
+            }
+
+            const theme = THEMES[dominantTheme];
+            elPred.textContent = theme.icon + ' ' + theme.name + ' (' + maxProb + '% de probabilité)';
+
+            if (elExp) {
+                if (maxProb >= 60) {
+                    elExp.textContent = 'L\'algorithme a détecté une très forte préférence et te sert principalement ce thème pour éviter que tu ne quittes l\'application.';
+                } else if (maxProb >= 35) {
+                    elExp.textContent = 'Ce sujet commence à dominer tes recommandations. L\'algorithme réduit peu à peu les sujets concurrents.';
+                } else {
+                    elExp.textContent = 'Ton profil est équilibré. L\'algorithme sélectionne les sujets de manière diversifiée sans t\'enfermer.';
+                }
+            }
+        }
+
+        // --- Résultat du Mode Défi ---
+        function showChallengeResult(isSuccess, finalDiversity) {
+            const modal = document.getElementById('challenge-modal');
+            const elIcon = document.getElementById('modal-icon');
+            const elTitle = document.getElementById('modal-title');
+            const elMsg = document.getElementById('modal-message');
+            const elDiv = document.getElementById('modal-final-diversity');
+            const elAct = document.getElementById('modal-actions-taken');
+
+            const actionsUsed = CHALLENGE_MAX_ACTIONS - challengeActionsLeft;
+
+            if (elDiv) elDiv.textContent = finalDiversity + '%';
+            if (elAct) elAct.textContent = actionsUsed + ' / ' + CHALLENGE_MAX_ACTIONS;
+
+            if (isSuccess) {
+                if (elIcon) elIcon.textContent = '🎉';
+                if (elTitle) elTitle.textContent = 'Victoire ! Bulle de Filtres Brisée !';
+                if (elMsg) {
+                    elMsg.textContent = 'Bravo ! En refusant de consommer passivement le contenu dominant et en stimulant ta curiosité vers d\'autres thèmes, tu as forcé l\'algorithme à rééquilibrer ton fil à plus de 70% de diversité.';
+                }
+
+                if (typeof window.playSound === 'function') {
+                    window.playSound('win');
+                }
+                if (typeof window.launchConfetti === 'function') {
+                    window.launchConfetti();
+                }
+            } else {
+                if (elIcon) elIcon.textContent = '🔒';
+                if (elTitle) elTitle.textContent = 'Échec : La Bulle t\'a Retenu·e !';
+                if (elMsg) {
+                    elMsg.textContent = 'Dommage ! Après 10 actions, la diversité n\'a pas dépassé les 70%. Pour t\'évader, pense à systématiquement "Passer" le thème qui t\'enferme et à "Aimer" ou "Regarder" au moins 3 ou 4 autres thèmes variés !';
+                }
+
+                if (typeof window.playSound === 'function') {
+                    window.playSound('error');
+                }
+            }
+
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeChallengeModal() {
+            const modal = document.getElementById('challenge-modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // --- Hook Global de Réinitialisation (Theme & Cache Manager) ---
+        window.__onResetApp = function () {
+            if (currentMode === 'challenge') {
+                startChallengeMode();
+            } else {
+                startExplorationMode();
+            }
+            if (typeof window.showToast === 'function') {
+                window.showToast('Application réinitialisée !', 'info');
+            }
+        };
+
+        // --- Initialisation au Chargement du DOM ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Boutons d'interaction du Smartphone
+            const btnLike = document.getElementById('btn-like');
+            const btnWatch = document.getElementById('btn-watch');
+            const btnPass = document.getElementById('btn-pass');
+
+            if (btnLike) {
+                btnLike.addEventListener('click', () => handleUserAction('like'));
+            }
+            if (btnWatch) {
+                btnWatch.addEventListener('click', () => handleUserAction('watch'));
+            }
+            if (btnPass) {
+                btnPass.addEventListener('click', () => handleUserAction('pass'));
+            }
+
+            // Onglets de Navigation
+            const tabExploration = document.getElementById('tab-exploration');
+            const tabChallenge = document.getElementById('tab-challenge');
+            const tabPedagogy = document.getElementById('tab-pedagogy');
+
+            function setActiveTab(btn) {
+                [tabExploration, tabChallenge, tabPedagogy].forEach(b => {
+                    if (b) b.classList.remove('active');
+                });
+                if (btn) btn.classList.add('active');
+            }
+
+            if (tabExploration) {
+                tabExploration.addEventListener('click', () => {
+                    setActiveTab(tabExploration);
+                    startExplorationMode();
+                });
+            }
+
+            if (tabChallenge) {
+                tabChallenge.addEventListener('click', () => {
+                    setActiveTab(tabChallenge);
+                    startChallengeMode();
+                });
+            }
+
+            if (tabPedagogy) {
+                tabPedagogy.addEventListener('click', () => {
+                    setActiveTab(tabPedagogy);
+                    showPedagogyPanel();
+                });
+            }
+
+            // Boutons de Relance
+            const btnRestartChallenge = document.getElementById('challenge-restart-btn');
+            if (btnRestartChallenge) {
+                btnRestartChallenge.addEventListener('click', startChallengeMode);
+            }
+
+            const btnResetAlgo = document.getElementById('btn-reset-algo');
+            if (btnResetAlgo) {
+                btnResetAlgo.addEventListener('click', () => {
+                    if (currentMode === 'challenge') {
+                        startChallengeMode();
+                    } else {
+                        startExplorationMode();
+                    }
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('Algorithme réinitialisé à l\'équilibre neutre', 'info');
+                    }
+                });
+            }
+
+            // Boutons de la Modale de Défi
+            const modalBtnRetry = document.getElementById('modal-btn-retry');
+            const modalBtnExplore = document.getElementById('modal-btn-explore');
+
+            if (modalBtnRetry) {
+                modalBtnRetry.addEventListener('click', () => {
+                    closeChallengeModal();
+                    startChallengeMode();
+                });
+            }
+
+            if (modalBtnExplore) {
+                modalBtnExplore.addEventListener('click', () => {
+                    closeChallengeModal();
+                    setActiveTab(tabExploration);
+                    startExplorationMode();
+                });
+            }
+
+            // Démarrage par défaut : Mode Exploration
+            startExplorationMode();
+        });
+    </script>
+</body>
+
+</html>

@@ -399,10 +399,13 @@ test('loadRegistry', async (t) => {
             'app-jeu-grue',              // 1-2H, 3-4H (1-4H)
             'app-coffre-fort',           // 3-4H, 5-6H (3-6H)
             'app-automate',              // 3-4H, 5-8H (3-8H)
+            'app-fabrique-recette',      // 3-5H
             'app-pixel',                 // 5-6H
             'app-reseau-tri',            // 5-6H
             'app-dactylo',               // 5H-11CO
             'app-mot-de-passe',          // 5H-11CO
+            'app-rendu-monnaie',         // 5-8H
+            'app-chasseur-infox',        // 6H-10CO
             'app-binaire',               // 7-8H
             'app-mots',                  // 7-8H
             'app-routage',               // 7-8H
@@ -411,9 +414,12 @@ test('loadRegistry', async (t) => {
             'app-simulateur-reseau-dns', // 7-8H
             'app-compresseur-magique',   // 7-8H
             'app-dresseur-neurones',     // 7-8H
+            'app-reseau-villages',       // 7-8H, 9CO
             'app-simulateur-telechargement', // 7-8H
             'app-calculatrice-binaire',   // 7H-11CO
-            'app-apprendre-pseudocode'   // 9CO
+            'app-bulle-filtres',         // 8H-11CO
+            'app-apprendre-pseudocode',  // 9CO
+            'app-portes-logiques'        // 9-11CO
         ];
 
         assert.deepEqual(activities.map(a => a.id), expectedIds, 'Activities must follow pedagogical grade progression');

@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-2df35715';
+const CACHE_NAME = 'ednum-e498b277';
 const ASSETS = [
     './',
     './index.html',
@@ -11,12 +11,19 @@ const ASSETS = [
     './confidentialite.html',
     './cgu.html',
     './alpha/webapps/apprendre_pseudocode.html',
+    './alpha/webapps/bulle_filtres.html',
+    './alpha/webapps/chasseur_infox.html',
     './alpha/webapps/coffre_fort.html',
     './alpha/webapps/compresseur_magique.html',
     './alpha/webapps/dresseur_neurones.html',
+    './alpha/webapps/fabrique_recette.html',
+    './alpha/webapps/portes_logiques.html',
+    './alpha/webapps/rendu_monnaie.html',
     './alpha/webapps/reseau_de_tri.html',
+    './alpha/webapps/reseau_villages.html',
     './alpha/webapps/simulateur_reseau_dns.html',
     './alpha/webapps/teacher/anonymiseur.html',
+    './alpha/webapps/teacher/createur_groupes.html',
     './assets/apple-touch-icon.png',
     './assets/css/automate.css',
     './assets/css/base.css',

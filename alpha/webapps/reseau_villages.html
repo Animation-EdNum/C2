@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>🏔️ Le Réseau des Villages</title>
+    <meta property="og:title" content="Le Réseau des Villages">
+    <meta property="og:description"
+        content="Arbre couvrant minimal (Algorithme de Kruskal & Graphes) - Relie tous les villages alpins au coût minimal sans boucle inutile.">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+    <style>
+        :root {
+            --bg-gradient-start: #38bdf8;
+            --bg-gradient-end: #0369a1;
+            --container-bg: rgba(255, 255, 255, 0.94);
+            --card-bg: rgba(248, 250, 252, 0.9);
+            --card-border: #cbd5e1;
+            --text-main: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --accent-dark: #0369a1;
+            --accent-light: #e0f2fe;
+            --badge-bg: #e0f2fe;
+            --badge-color: #0369a1;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --error: #dc2626;
+            --error-bg: #fee2e2;
+            --shadow-color: rgba(2, 132, 199, 0.25);
+            --cable-default: #94a3b8;
+            --cable-active: #0284c7;
+            --cable-kruskal: #10b981;
+            --map-sky-top: #bae6fd;
+            --map-sky-bot: #f0f9ff;
+            --mountain-back: #93c5fd;
+            --mountain-front: #60a5fa;
+            --village-fill: #ffffff;
+            --village-stroke: #0284c7;
+            --village-text: #0f172a;
+        }
+
+        body.dark {
+            --bg-gradient-start: #090d16;
+            --bg-gradient-end: #0f172a;
+            --container-bg: rgba(15, 23, 42, 0.92);
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-dark: #0284c7;
+            --accent-light: rgba(56, 189, 248, 0.15);
+            --badge-bg: rgba(56, 189, 248, 0.2);
+            --badge-color: #38bdf8;
+            --success: #34d399;
+            --success-bg: rgba(52, 211, 153, 0.15);
+            --warning: #fbbf24;
+            --warning-bg: rgba(251, 191, 36, 0.15);
+            --error: #f87171;
+            --error-bg: rgba(248, 113, 113, 0.15);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --cable-default: #475569;
+            --cable-active: #38bdf8;
+            --cable-kruskal: #34d399;
+            --map-sky-top: #0b1329;
+            --map-sky-bot: #1e293b;
+            --mountain-back: #1e293b;
+            --mountain-front: #334155;
+            --village-fill: #1e293b;
+            --village-stroke: #38bdf8;
+            --village-text: #f8fafc;
+        }
+
+        body>header,
+        body>.container {
+            animation: fadeInCascade 0.5s var(--spring-easing) forwards;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1400px);
+            width: 100%;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 24px 28px;
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--card-border);
+        }
+
+        /* --- Header Subtitle & Storyline Banner --- */
+        .story-banner {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--accent);
+            padding: 14px 18px;
+            border-radius: var(--radius-lg);
+            margin: 16px 0 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .story-text {
+            flex: 1;
+            font-size: 14.5px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .story-text strong {
+            color: var(--text-main);
+        }
+
+        /* --- Navigation & Challenge Tabs --- */
+        .challenge-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            min-height: 44px;
+        }
+
+        .nav-tab-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .nav-tab-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .nav-tab-btn .badge-pill {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .nav-tab-btn:not(.active) .badge-pill {
+            background: var(--badge-bg);
+            color: var(--badge-color);
+        }
+
+        /* --- Main Layout Grid --- */
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 992px) {
+            .app-grid {
+                grid-template-columns: 1.85fr 1fr;
+            }
+        }
+
+        /* --- Map Wrapper --- */
+        .map-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 16px;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .map-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .map-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .map-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
+            background: var(--container-bg);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 38px;
+        }
+
+        .tool-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tool-btn.primary {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .tool-btn.primary:hover {
+            opacity: 0.9;
+        }
+
+        .tool-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* --- Interactive SVG Canvas --- */
+        .svg-container {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(to bottom, var(--map-sky-top), var(--map-sky-bot));
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .svg-container svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* SVG Styles */
+        .mountain-back {
+            fill: var(--mountain-back);
+            opacity: 0.45;
+        }
+
+        .mountain-front {
+            fill: var(--mountain-front);
+            opacity: 0.6;
+        }
+
+        .mountain-snow {
+            fill: #ffffff;
+            opacity: 0.9;
+        }
+
+        body.dark .mountain-snow {
+            fill: #e2e8f0;
+            opacity: 0.75;
+        }
+
+        /* Edge Lines */
+        .edge-hit {
+            stroke: transparent;
+            stroke-width: 28px;
+            cursor: pointer;
+            stroke-linecap: round;
+        }
+
+        .edge-line {
+            stroke: var(--cable-default);
+            stroke-width: 3.5px;
+            stroke-dasharray: 6 5;
+            transition: stroke 0.3s, stroke-width 0.3s, filter 0.3s;
+            pointer-events: none;
+            stroke-linecap: round;
+        }
+
+        .edge-group {
+            cursor: pointer;
+            outline: none;
+        }
+
+        .edge-group:hover .edge-line,
+        .edge-group:focus-visible .edge-line {
+            stroke: var(--accent);
+            stroke-width: 5px;
+            stroke-dasharray: none;
+        }
+
+        .edge-group.selected .edge-line {
+            stroke: var(--cable-active);
+            stroke-width: 5px;
+            stroke-dasharray: none;
+            filter: drop-shadow(0 0 4px var(--cable-active));
+        }
+
+        .edge-group.kruskal-inspect .edge-line {
+            stroke: #f59e0b !important;
+            stroke-width: 6px !important;
+            stroke-dasharray: 8 4 !important;
+            animation: cablePulse 1s infinite alternate;
+        }
+
+        .edge-group.kruskal-accepted .edge-line {
+            stroke: var(--success) !important;
+            stroke-width: 5.5px !important;
+            stroke-dasharray: none !important;
+            filter: drop-shadow(0 0 6px var(--success));
+        }
+
+        .edge-group.kruskal-rejected .edge-line {
+            stroke: var(--error) !important;
+            stroke-width: 4px !important;
+            stroke-dasharray: 4 4 !important;
+            opacity: 0.6;
+        }
+
+        .edge-group.cycle-warning .edge-line {
+            stroke: var(--error) !important;
+            stroke-width: 6px !important;
+            stroke-dasharray: none !important;
+            animation: cycleShake 0.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes cablePulse {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        @keyframes cycleShake {
+            0% { transform: translateY(-1px); }
+            100% { transform: translateY(1px); }
+        }
+
+        /* Edge Badge */
+        .edge-badge-rect {
+            fill: var(--container-bg);
+            stroke: var(--card-border);
+            stroke-width: 1.5px;
+            transition: all 0.2s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+        }
+
+        .edge-badge-text {
+            fill: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        .edge-group:hover .edge-badge-rect,
+        .edge-group:focus-visible .edge-badge-rect {
+            stroke: var(--accent);
+            fill: var(--accent-light);
+        }
+
+        .edge-group.selected .edge-badge-rect {
+            stroke: var(--cable-active);
+            fill: var(--accent);
+        }
+
+        .edge-group.selected .edge-badge-text {
+            fill: #ffffff;
+        }
+
+        .edge-group.kruskal-inspect .edge-badge-rect {
+            stroke: #f59e0b;
+            fill: #fef3c7;
+        }
+
+        .edge-group.kruskal-inspect .edge-badge-text {
+            fill: #92400e;
+        }
+
+        .edge-group.kruskal-accepted .edge-badge-rect {
+            stroke: var(--success);
+            fill: var(--success);
+        }
+
+        .edge-group.kruskal-accepted .edge-badge-text {
+            fill: #ffffff;
+        }
+
+        .edge-group.kruskal-rejected .edge-badge-rect {
+            stroke: var(--error);
+            fill: var(--error-bg);
+        }
+
+        .edge-group.kruskal-rejected .edge-badge-text {
+            fill: var(--error);
+        }
+
+        /* Village Nodes */
+        .village-group {
+            cursor: pointer;
+            outline: none;
+        }
+
+        .village-halo {
+            fill: var(--accent);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .village-group:hover .village-halo,
+        .village-group:focus-visible .village-halo {
+            opacity: 0.2;
+            transform: scale(1.15);
+            transform-origin: center;
+        }
+
+        .village-group.connected .village-halo {
+            opacity: 0.15;
+            fill: var(--success);
+        }
+
+        .village-badge-rect {
+            fill: var(--container-bg);
+            stroke: var(--card-border);
+            stroke-width: 1.5px;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1));
+            transition: all 0.2s;
+        }
+
+        .village-group:hover .village-badge-rect,
+        .village-group:focus-visible .village-badge-rect {
+            stroke: var(--accent);
+        }
+
+        .village-group.connected .village-badge-rect {
+            stroke: var(--success);
+            border-left: 3px solid var(--success);
+        }
+
+        .village-name-text {
+            fill: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .village-alt-text {
+            fill: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 10.5px;
+            font-weight: 500;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        /* --- Real-Time Alert Banner --- */
+        .live-banner {
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .live-banner.info {
+            background: var(--accent-light);
+            border: 1px solid var(--badge-color);
+            color: var(--accent-dark);
+        }
+
+        body.dark .live-banner.info {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .live-banner.warning {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning);
+            color: #92400e;
+        }
+
+        body.dark .live-banner.warning {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .live-banner.error {
+            background: var(--error-bg);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        body.dark .live-banner.error {
+            background: rgba(248, 113, 113, 0.12);
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+
+        .live-banner.success {
+            background: var(--success-bg);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        body.dark .live-banner.success {
+            background: rgba(52, 211, 153, 0.12);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+
+        /* --- Dashboard Panel (Right) --- */
+        .dash-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .dash-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: var(--container-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .stat-unit {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .stat-box.highlight {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        body.dark .stat-box.highlight {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .stat-box.highlight .stat-value {
+            color: var(--accent);
+        }
+
+        .stat-box.success {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        body.dark .stat-box.success {
+            background: rgba(52, 211, 153, 0.1);
+        }
+
+        .stat-box.success .stat-value {
+            color: var(--success);
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: var(--card-border);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: var(--radius-full);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Toggles & Options inside Dash */
+        .options-box {
+            background: var(--container-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 13.5px;
+            color: var(--text-main);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .option-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* --- Kruskal Walkthrough Card --- */
+        .kruskal-card {
+            background: var(--container-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .kruskal-card.active {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 1px #f59e0b;
+        }
+
+        .kruskal-step-status {
+            font-size: 13px;
+            font-weight: 700;
+            color: #d97706;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kruskal-desc {
+            font-size: 13px;
+            line-height: 1.45;
+            color: var(--text-secondary);
+        }
+
+        .kruskal-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .kruskal-table-wrap {
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            margin-top: 6px;
+        }
+
+        .kruskal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .kruskal-table th {
+            background: var(--card-bg);
+            padding: 6px 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .kruskal-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+
+        .kruskal-table tr.current-step {
+            background: #fef3c7;
+            font-weight: 700;
+            color: #92400e;
+        }
+
+        body.dark .kruskal-table tr.current-step {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fcd34d;
+        }
+
+        .kruskal-table tr.accepted {
+            color: var(--success);
+        }
+
+        .kruskal-table tr.rejected {
+            color: var(--error);
+            text-decoration: line-through;
+            opacity: 0.65;
+        }
+
+        /* --- Educational Guide Accordion --- */
+        .edu-accordion {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .edu-summary {
+            padding: 16px 20px;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            user-select: none;
+        }
+
+        .edu-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .edu-content {
+            padding: 0 20px 20px 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .edu-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .edu-step-card {
+            background: var(--container-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .edu-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .edu-step-card h4 {
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* --- Sandbox Controls Modal / Bar --- */
+        .sandbox-bar {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .sandbox-bar.visible {
+            display: flex;
+        }
+
+        .sandbox-control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .sandbox-slider {
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        /* --- Celebration Modal Overlay --- */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .celebration-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-card {
+            background: var(--container-bg);
+            border: 2px solid var(--success);
+            border-radius: var(--radius-2xl);
+            padding: 32px 28px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            transform: scale(0.9);
+            transition: transform 0.3s var(--spring-easing);
+        }
+
+        .celebration-overlay.visible .celebration-card {
+            transform: scale(1);
+        }
+
+        .celebration-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--success-bg);
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .celebration-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .celebration-desc {
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .celebration-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* --- Footer & Misc --- */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @media (max-width: 640px) {
+            .badge-level {
+                display: none;
+            }
+            .container {
+                padding: 16px 14px;
+            }
+            .story-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
+                    <i data-fa="arrow-left"></i>
+                </a>
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="network-wired"></i>
+                </div>
+                <div>
+                    <h1>Le Réseau des Villages <span class="badge-level">7-8H, 9CO</span> <span
+                            class="badge-alpha">Alpha</span></h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn" title="Options">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="theme-toggle-btn">
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <span id="themeToggleText">Sombre</span>
+                        </button>
+                        <button class="menu-item-btn" id="audio-toggle-btn">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="story-banner">
+            <div class="story-text">
+                <strong data-i18n="reseau_villages.story_title">Mission Fibre Optique Alpine :</strong>
+                <span data-i18n="reseau_villages.story_desc">Relie tous les villages isolés du Valais par un réseau de câbles. Objectif : connecter <strong>100% des villages</strong> au <strong>coût total minimal</strong>, sans créer de <strong>boucle redondante</strong> !</span>
+            </div>
+            <button class="tool-btn primary" id="btn-toggle-kruskal-mode">
+                <i data-fa="play"></i> <span data-i18n="reseau_villages.btn_kruskal_mode">Algorithme de Kruskal (Pas à pas)</span>
+            </button>
+        </div>
+
+        <!-- Navigation des Défis -->
+        <nav class="challenge-nav" aria-label="Niveaux de défis">
+            <button class="nav-tab-btn active" data-level="0">
+                <span data-i18n="reseau_villages.level1_title">Défi 1 : La vallée aux 4 villages</span>
+                <span class="badge-pill">4 villages</span>
+            </button>
+            <button class="nav-tab-btn" data-level="1">
+                <span data-i18n="reseau_villages.level2_title">Défi 2 : Le cirque aux 5 chalets</span>
+                <span class="badge-pill">5 villages</span>
+            </button>
+            <button class="nav-tab-btn" data-level="2">
+                <span data-i18n="reseau_villages.level3_title">Défi 3 : Le col des 6 stations</span>
+                <span class="badge-pill">6 villages</span>
+            </button>
+            <button class="nav-tab-btn" data-level="3">
+                <span data-i18n="reseau_villages.level4_title">Défi 4 : Grand réseau cantonal</span>
+                <span class="badge-pill">7 villages</span>
+            </button>
+            <button class="nav-tab-btn" data-level="sandbox">
+                <i data-fa="dice"></i>
+                <span data-i18n="reseau_villages.sandbox_title">Mode Bac à sable</span>
+            </button>
+        </nav>
+
+        <!-- Sandbox Bar (Visible only in sandbox mode) -->
+        <div class="sandbox-bar" id="sandbox-bar">
+            <div class="sandbox-control-group">
+                <label for="sandbox-node-count" data-i18n="reseau_villages.lbl_villages_count">Nombre de villages :</label>
+                <input type="range" id="sandbox-node-count" class="sandbox-slider" min="4" max="8" value="5" step="1">
+                <span id="sandbox-node-val" style="font-weight: 800; min-width: 20px;">5</span>
+            </div>
+            <button class="tool-btn" id="btn-randomize-graph">
+                <i data-fa="arrows-rotate"></i> <span data-i18n="reseau_villages.btn_generate">Nouveau réseau aléatoire</span>
+            </button>
+        </div>
+
+        <main class="app-grid">
+            <!-- Left Column: Interactive Map -->
+            <section class="map-card" aria-label="Carte interactive du réseau">
+                <div class="map-header">
+                    <div class="map-title">
+                        <i data-fa="chart-network"></i>
+                        <span id="current-challenge-title">Défi 1 : La vallée aux 4 villages</span>
+                    </div>
+                    <div class="map-tools">
+                        <button class="tool-btn" id="btn-undo-edge" title="Annuler le dernier câble posé" disabled>
+                            <i data-fa="rotate-left"></i> <span data-i18n="reseau_villages.btn_undo">Annuler</span>
+                        </button>
+                        <button class="tool-btn" id="btn-clear-selection" title="Effacer tous les câbles posés">
+                            <i data-fa="arrows-rotate"></i> <span data-i18n="reseau_villages.btn_clear">Effacer</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SVG Area -->
+                <div class="svg-container" id="svg-container">
+                    <svg id="network-svg" viewBox="0 0 760 480" role="img" aria-label="Carte des villages alpins et câbles"></svg>
+                </div>
+
+                <!-- Real-time Alert / Feedback Banner -->
+                <div class="live-banner info" id="live-banner" role="status" aria-live="polite">
+                    <i data-fa="circle-info" id="live-banner-icon"></i>
+                    <span id="live-banner-text">Clique sur un sentier en pointillés pour poser un câble de fibre optique.</span>
+                </div>
+            </section>
+
+            <!-- Right Column: Dashboard & Kruskal Engine -->
+            <aside class="dash-card" aria-label="Tableau de bord et statistiques">
+                <!-- Stats Grid -->
+                <div>
+                    <div class="dash-section-title">
+                        <i data-fa="chart-simple"></i>
+                        <span data-i18n="reseau_villages.stats_title">État du Réseau</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box" id="stat-box-villages">
+                            <span class="stat-label" data-i18n="reseau_villages.stat_villages">Villages reliés</span>
+                            <div class="stat-value">
+                                <span id="stat-villages-connected">1</span>
+                                <span class="stat-unit" id="stat-villages-total">/ 4</span>
+                            </div>
+                        </div>
+                        <div class="stat-box" id="stat-box-cables">
+                            <span class="stat-label" data-i18n="reseau_villages.stat_cables">Câbles posés</span>
+                            <div class="stat-value">
+                                <span id="stat-cables-count">0</span>
+                                <span class="stat-unit" id="stat-cables-target">/ 3</span>
+                            </div>
+                        </div>
+                        <div class="stat-box highlight" id="stat-box-cost">
+                            <span class="stat-label" data-i18n="reseau_villages.stat_cost">Coût actuel</span>
+                            <div class="stat-value">
+                                <span id="stat-current-cost">0</span>
+                                <span class="stat-unit">km</span>
+                            </div>
+                        </div>
+                        <div class="stat-box" id="stat-box-target">
+                            <span class="stat-label" data-i18n="reseau_villages.stat_optimal">Objectif minimal</span>
+                            <div class="stat-value">
+                                <span id="stat-optimal-cost">?</span>
+                                <span class="stat-unit">km</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-wrapper">
+                    <div class="progress-header">
+                        <span data-i18n="reseau_villages.lbl_progress">Connectivité du territoire</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg" aria-hidden="true">
+                        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="options-box">
+                    <label class="option-row" for="chk-block-cycles">
+                        <span data-i18n="reseau_villages.opt_block_cycles">Bloquer les boucles inutiles (recommandé)</span>
+                        <input type="checkbox" id="chk-block-cycles" checked>
+                    </label>
+                    <label class="option-row" for="chk-show-optimal">
+                        <span data-i18n="reseau_villages.opt_show_optimal">Afficher l'objectif de coût optimal</span>
+                        <input type="checkbox" id="chk-show-optimal">
+                    </label>
+                </div>
+
+                <!-- Kruskal Walkthrough Card (Toggled or inline) -->
+                <div class="kruskal-card" id="kruskal-panel" style="display: none;">
+                    <div class="dash-section-title" style="margin-bottom: 0;">
+                        <i data-fa="play"></i>
+                        <span data-i18n="reseau_villages.kruskal_title">Algorithme de Kruskal (Glouton)</span>
+                    </div>
+                    <div class="kruskal-step-status" id="kruskal-step-status">
+                        <span>Étape 0 / 0</span>
+                    </div>
+                    <div class="kruskal-desc" id="kruskal-step-desc">
+                        L'algorithme de Kruskal trie tous les câbles possibles du moins cher au plus cher, puis les examine un par un.
+                    </div>
+                    <div class="kruskal-controls">
+                        <button class="tool-btn primary" id="btn-kruskal-next">
+                            <i data-fa="forward-step"></i> <span data-i18n="reseau_villages.btn_next_step">Étape suivante</span>
+                        </button>
+                        <button class="tool-btn" id="btn-kruskal-play">
+                            <i data-fa="play" id="icon-kruskal-play"></i> <span id="text-kruskal-play">Auto</span>
+                        </button>
+                        <button class="tool-btn" id="btn-kruskal-reset">
+                            <i data-fa="rotate-left"></i> <span data-i18n="reseau_villages.btn_reset_algo">Recommencer</span>
+                        </button>
+                    </div>
+                    <div class="kruskal-table-wrap">
+                        <table class="kruskal-table" id="kruskal-table">
+                            <thead>
+                                <tr>
+                                    <th>Câble</th>
+                                    <th>Coût</th>
+                                    <th>Décision Kruskal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kruskal-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Educational Accordion -->
+        <details class="edu-accordion">
+            <summary class="edu-summary">
+                <span><i data-fa="circle-info"></i> <span data-i18n="reseau_villages.edu_title">Comprendre l'Arbre Couvrant Minimal & l'Algorithme de Kruskal</span></span>
+                <i data-fa="chevron-down"></i>
+            </summary>
+            <div class="edu-content">
+                <div class="edu-step-card">
+                    <div class="edu-step-num">1</div>
+                    <h4 data-i18n="reseau_villages.edu_card1_title">Qu'est-ce qu'un Arbre ?</h4>
+                    <p data-i18n="reseau_villages.edu_card1_text">En informatique et en théorie des graphes, un <strong>arbre</strong> est un réseau où tous les sommets sont reliés <strong>sans former aucune boucle fermée (cycle)</strong>. Pour relier $V$ villages, un arbre utilise toujours exactement <strong>$V - 1$ câbles</strong>.</p>
+                </div>
+                <div class="edu-step-card">
+                    <div class="edu-step-num">2</div>
+                    <h4 data-i18n="reseau_villages.edu_card2_title">Pourquoi éviter les boucles ?</h4>
+                    <p data-i18n="reseau_villages.edu_card2_text">Si deux villages sont déjà reliés par un chemin (même passant par d'autres chalets), poser un nouveau câble entre eux crée une boucle inutile. Ce câble coûte de l'argent et n'apporte aucun village supplémentaire au réseau !</p>
+                </div>
+                <div class="edu-step-card">
+                    <div class="edu-step-num">3</div>
+                    <h4 data-i18n="reseau_villages.edu_card3_title">La méthode gloutonne de Kruskal</h4>
+                    <p data-i18n="reseau_villages.edu_card3_text">Joseph Kruskal (1956) a prouvé une méthode infaillible : <strong>1.</strong> Trier toutes les routes de la moins chère à la plus chère. <strong>2.</strong> Prendre la moins chère disponible. <strong>3.</strong> Si elle forme une boucle, la rejeter ; sinon l'ajouter. <strong>4.</strong> Répéter jusqu'à ce que tous les villages soient connectés !</p>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- Celebration Modal -->
+    <div class="celebration-overlay" id="celebration-overlay" role="dialog" aria-modal="true" aria-labelledby="celebration-title">
+        <div class="celebration-card">
+            <div class="celebration-icon">
+                <i data-fa="circle-check"></i>
+            </div>
+            <h2 class="celebration-title" id="celebration-title" data-i18n="reseau_villages.win_title">Félicitations !</h2>
+            <p class="celebration-desc" id="celebration-desc">Tu as connecté tous les villages au coût optimal théorique minimal, sans aucune boucle superflue !</p>
+            <div class="celebration-actions">
+                <button class="tool-btn" id="btn-celebration-replay">
+                    <i data-fa="arrows-rotate"></i> <span data-i18n="reseau_villages.btn_replay">Rejouer</span>
+                </button>
+                <button class="tool-btn primary" id="btn-celebration-next">
+                    <i data-fa="arrow-right"></i> <span data-i18n="reseau_villages.btn_next_level">Défi suivant</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements"
+                data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"
+                    data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+
+    <script>
+        /* SPDX-License-Identifier: AGPL-3.0-only
+         * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+        'use strict';
+
+        // --- DISJOINT SET UNION (UNION-FIND) ---
+        class DisjointSet {
+            constructor(elements) {
+                this.parent = {};
+                this.rank = {};
+                elements.forEach(el => {
+                    this.parent[el] = el;
+                    this.rank[el] = 0;
+                });
+            }
+
+            find(i) {
+                if (this.parent[i] === undefined) return i;
+                if (this.parent[i] === i) return i;
+                this.parent[i] = this.find(this.parent[i]);
+                return this.parent[i];
+            }
+
+            union(i, j) {
+                const rootI = this.find(i);
+                const rootJ = this.find(j);
+                if (rootI === rootJ) return false;
+
+                if (this.rank[rootI] < this.rank[rootJ]) {
+                    this.parent[rootI] = rootJ;
+                } else if (this.rank[rootI] > this.rank[rootJ]) {
+                    this.parent[rootJ] = rootI;
+                } else {
+                    this.parent[rootJ] = rootI;
+                    this.rank[rootI]++;
+                }
+                return true;
+            }
+
+            connected(i, j) {
+                return this.find(i) === this.find(j);
+            }
+
+            getComponentCount(allElements) {
+                const roots = new Set();
+                allElements.forEach(el => roots.add(this.find(el)));
+                return roots.size;
+            }
+
+            getComponentMembers(rootElement, allElements) {
+                const root = this.find(rootElement);
+                return allElements.filter(el => this.find(el) === root);
+            }
+        }
+
+        // --- VALAIS PREDEFINED CHALLENGES ---
+        const PREDEFINED_CHALLENGES = [
+            {
+                id: 'defi-1',
+                title: 'Défi 1 : La vallée aux 4 villages',
+                villages: [
+                    { id: 'sion', name: 'Sion', alt: '512m', x: 160, y: 310 },
+                    { id: 'nendaz', name: 'Nendaz', alt: '1350m', x: 360, y: 370 },
+                    { id: 'evolene', name: 'Evolène', alt: '1370m', x: 260, y: 140 },
+                    { id: 'grimentz', name: 'Grimentz', alt: '1570m', x: 560, y: 190 }
+                ],
+                edges: [
+                    { id: 'e1', u: 'sion', v: 'nendaz', cost: 8 },
+                    { id: 'e2', u: 'sion', v: 'evolene', cost: 14 },
+                    { id: 'e3', u: 'nendaz', v: 'evolene', cost: 11 },
+                    { id: 'e4', u: 'evolene', v: 'grimentz', cost: 9 },
+                    { id: 'e5', u: 'nendaz', v: 'grimentz', cost: 16 }
+                ]
+            },
+            {
+                id: 'defi-2',
+                title: 'Défi 2 : Le cirque aux 5 chalets',
+                villages: [
+                    { id: 'sion', name: 'Sion', alt: '512m', x: 130, y: 280 },
+                    { id: 'sierre', name: 'Sierre', alt: '530m', x: 290, y: 340 },
+                    { id: 'evolene', name: 'Evolène', alt: '1370m', x: 220, y: 130 },
+                    { id: 'grimentz', name: 'Grimentz', alt: '1570m', x: 480, y: 140 },
+                    { id: 'zinal', name: 'Zinal', alt: '1675m', x: 610, y: 300 }
+                ],
+                edges: [
+                    { id: 'e1', u: 'sion', v: 'sierre', cost: 10 },
+                    { id: 'e2', u: 'sion', v: 'evolene', cost: 15 },
+                    { id: 'e3', u: 'sierre', v: 'evolene', cost: 18 },
+                    { id: 'e4', u: 'sierre', v: 'grimentz', cost: 14 },
+                    { id: 'e5', u: 'evolene', v: 'grimentz', cost: 12 },
+                    { id: 'e6', u: 'grimentz', v: 'zinal', cost: 7 },
+                    { id: 'e7', u: 'sierre', v: 'zinal', cost: 21 }
+                ]
+            },
+            {
+                id: 'defi-3',
+                title: 'Défi 3 : Le col des 6 stations',
+                villages: [
+                    { id: 'martigny', name: 'Martigny', alt: '471m', x: 100, y: 340 },
+                    { id: 'verbier', name: 'Verbier', alt: '1500m', x: 170, y: 160 },
+                    { id: 'sion', name: 'Sion', alt: '512m', x: 310, y: 300 },
+                    { id: 'evolene', name: 'Evolène', alt: '1370m', x: 380, y: 140 },
+                    { id: 'saasfee', name: 'Saas-Fee', alt: '1800m', x: 570, y: 160 },
+                    { id: 'zermatt', name: 'Zermatt', alt: '1620m', x: 620, y: 340 }
+                ],
+                edges: [
+                    { id: 'e1', u: 'martigny', v: 'verbier', cost: 16 },
+                    { id: 'e2', u: 'martigny', v: 'sion', cost: 24 },
+                    { id: 'e3', u: 'verbier', v: 'sion', cost: 21 },
+                    { id: 'e4', u: 'sion', v: 'evolene', cost: 17 },
+                    { id: 'e5', u: 'verbier', v: 'evolene', cost: 26 },
+                    { id: 'e6', u: 'evolene', v: 'saasfee', cost: 22 },
+                    { id: 'e7', u: 'sion', v: 'saasfee', cost: 35 },
+                    { id: 'e8', u: 'saasfee', v: 'zermatt', cost: 15 },
+                    { id: 'e9', u: 'evolene', v: 'zermatt', cost: 28 },
+                    { id: 'e10', u: 'sion', v: 'zermatt', cost: 38 }
+                ]
+            },
+            {
+                id: 'defi-4',
+                title: 'Défi 4 : Le grand réseau cantonal',
+                villages: [
+                    { id: 'martigny', name: 'Martigny', alt: '471m', x: 90, y: 350 },
+                    { id: 'verbier', name: 'Verbier', alt: '1500m', x: 130, y: 160 },
+                    { id: 'sion', name: 'Sion', alt: '512m', x: 260, y: 280 },
+                    { id: 'sierre', name: 'Sierre', alt: '530m', x: 390, y: 340 },
+                    { id: 'evolene', name: 'Evolène', alt: '1370m', x: 330, y: 130 },
+                    { id: 'saasfee', name: 'Saas-Fee', alt: '1800m', x: 540, y: 140 },
+                    { id: 'zermatt', name: 'Zermatt', alt: '1620m', x: 630, y: 320 }
+                ],
+                edges: [
+                    { id: 'e1', u: 'martigny', v: 'verbier', cost: 16 },
+                    { id: 'e2', u: 'martigny', v: 'sion', cost: 24 },
+                    { id: 'e3', u: 'verbier', v: 'sion', cost: 20 },
+                    { id: 'e4', u: 'sion', v: 'sierre', cost: 15 },
+                    { id: 'e5', u: 'sion', v: 'evolene', cost: 19 },
+                    { id: 'e6', u: 'verbier', v: 'evolene', cost: 25 },
+                    { id: 'e7', u: 'sierre', v: 'evolene', cost: 18 },
+                    { id: 'e8', u: 'sierre', v: 'saasfee', cost: 28 },
+                    { id: 'e9', u: 'evolene', v: 'saasfee', cost: 23 },
+                    { id: 'e10', u: 'saasfee', v: 'zermatt', cost: 14 },
+                    { id: 'e11', u: 'sierre', v: 'zermatt', cost: 31 },
+                    { id: 'e12', u: 'evolene', v: 'zermatt', cost: 27 }
+                ]
+            }
+        ];
+
+        const VALAIS_TOWNS_POOL = [
+            { name: 'Sion', alt: '512m' },
+            { name: 'Sierre', alt: '530m' },
+            { name: 'Martigny', alt: '471m' },
+            { name: 'Monthey', alt: '430m' },
+            { name: 'Brig', alt: '681m' },
+            { name: 'Visp', alt: '658m' },
+            { name: 'Verbier', alt: '1500m' },
+            { name: 'Zermatt', alt: '1620m' },
+            { name: 'Saas-Fee', alt: '1800m' },
+            { name: 'Evolène', alt: '1370m' },
+            { name: 'Grimentz', alt: '1570m' },
+            { name: 'Zinal', alt: '1675m' },
+            { name: 'Saint-Luc', alt: '1655m' },
+            { name: 'Chandolin', alt: '1936m' },
+            { name: 'Nendaz', alt: '1350m' },
+            { name: 'Crans-Montana', alt: '1495m' },
+            { name: 'Leukerbad', alt: '1402m' },
+            { name: 'Champéry', alt: '1050m' }
+        ];
+
+        // --- GLOBAL APP STATE ---
+        let currentMode = '0'; // '0', '1', '2', '3', or 'sandbox'
+        let currentGraph = null;
+        let selectedEdgeIds = new Set();
+        let selectionHistory = []; // stack of edge IDs
+        let optimalMST = null; // { cost, edges: Set }
+        let kruskalSteps = [];
+        let currentKruskalStep = -1;
+        let kruskalTimer = null;
+        let isKruskalActive = false;
+
+        // --- KRUSKAL SOLVER & ALGORITHM ENGINE ---
+        function computeKruskalMST(graph) {
+            const sortedEdges = [...graph.edges].sort((a, b) => a.cost - b.cost);
+            const dsu = new DisjointSet(graph.villages.map(v => v.id));
+            const mstEdges = new Set();
+            let totalCost = 0;
+            const steps = [];
+
+            sortedEdges.forEach((edge, index) => {
+                const u = edge.u;
+                const v = edge.v;
+                const willCreateCycle = dsu.connected(u, v);
+
+                if (!willCreateCycle) {
+                    dsu.union(u, v);
+                    mstEdges.add(edge.id);
+                    totalCost += edge.cost;
+                    steps.push({
+                        stepIndex: index + 1,
+                        edge: edge,
+                        action: 'accept',
+                        reason: 'Relie deux villages ou groupes distincts sans former de boucle.',
+                        costSoFar: totalCost
+                    });
+                } else {
+                    steps.push({
+                        stepIndex: index + 1,
+                        edge: edge,
+                        action: 'reject',
+                        reason: 'Rejeté : ces villages sont déjà reliés par un autre chemin. Ce câble créerait une boucle redondante.',
+                        costSoFar: totalCost
+                    });
+                }
+            });
+
+            return {
+                cost: totalCost,
+                mstEdges: mstEdges,
+                steps: steps,
+                sortedEdges: sortedEdges
+            };
+        }
+
+        // Check if an edge forms a cycle with current selected edges
+        function wouldFormCycleWithSelection(edgeId) {
+            const edge = currentGraph.edges.find(e => e.id === edgeId);
+            if (!edge) return false;
+
+            const dsu = new DisjointSet(currentGraph.villages.map(v => v.id));
+            selectedEdgeIds.forEach(id => {
+                if (id !== edgeId) {
+                    const e = currentGraph.edges.find(x => x.id === id);
+                    if (e) dsu.union(e.u, e.v);
+                }
+            });
+
+            return dsu.connected(edge.u, edge.v);
+        }
+
+        // --- RANDOM GRAPH GENERATOR FOR SANDBOX ---
+        function generateRandomSandboxGraph(n) {
+            const shuffledPool = [...VALAIS_TOWNS_POOL].sort(() => 0.5 - Math.random());
+            const villages = [];
+            const minDistance = 110;
+            const width = 760;
+            const height = 440;
+            const padding = 70;
+
+            for (let i = 0; i < n; i++) {
+                let attempts = 0;
+                let x = 0;
+                let y = 0;
+                let valid = false;
+
+                while (!valid && attempts < 200) {
+                    attempts++;
+                    x = Math.round(padding + Math.random() * (width - 2 * padding));
+                    y = Math.round(padding + Math.random() * (height - 2 * padding));
+
+                    valid = villages.every(v => {
+                        const dist = Math.hypot(v.x - x, v.y - y);
+                        return dist >= minDistance;
+                    });
+                }
+
+                villages.push({
+                    id: 'v' + i,
+                    name: shuffledPool[i].name,
+                    alt: shuffledPool[i].alt,
+                    x: x,
+                    y: y
+                });
+            }
+
+            // Generate connected graph using Delaunay-like proximity
+            const candidateEdges = [];
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    const dist = Math.hypot(villages[i].x - villages[j].x, villages[i].y - villages[j].y);
+                    candidateEdges.push({
+                        u: villages[i].id,
+                        v: villages[j].id,
+                        dist: dist
+                    });
+                }
+            }
+
+            candidateEdges.sort((a, b) => a.dist - b.dist);
+
+            // Guarantee connectivity with a base tree, plus select close neighbors
+            const finalEdges = [];
+            const dsu = new DisjointSet(villages.map(v => v.id));
+            let edgeCounter = 1;
+
+            // 1. Spanning tree base
+            candidateEdges.forEach(e => {
+                if (!dsu.connected(e.u, e.v)) {
+                    dsu.union(e.u, e.v);
+                    const costKm = Math.max(5, Math.round(e.dist / 14));
+                    finalEdges.push({
+                        id: 'e' + edgeCounter++,
+                        u: e.u,
+                        v: e.v,
+                        cost: costKm
+                    });
+                }
+            });
+
+            // 2. Add supplementary close edges to provide alternative routes and cycles
+            const extraEdgesNeeded = Math.min(candidateEdges.length - finalEdges.length, Math.floor(n * 0.8) + 1);
+            let extraAdded = 0;
+
+            candidateEdges.forEach(e => {
+                if (extraAdded < extraEdgesNeeded) {
+                    const exists = finalEdges.some(f => (f.u === e.u && f.v === e.v) || (f.u === e.v && f.v === e.u));
+                    if (!exists && e.dist < 280) {
+                        const costKm = Math.max(5, Math.round(e.dist / 14));
+                        finalEdges.push({
+                            id: 'e' + edgeCounter++,
+                            u: e.u,
+                            v: e.v,
+                            cost: costKm
+                        });
+                        extraAdded++;
+                    }
+                }
+            });
+
+            return {
+                id: 'sandbox-' + Date.now(),
+                title: 'Mode Bac à sable (' + n + ' villages)',
+                villages: villages,
+                edges: finalEdges
+            };
+        }
+
+        // --- SVG GRAPH RENDERING ---
+        function renderGraph(graph) {
+            const svg = document.getElementById('network-svg');
+            svg.replaceChildren();
+
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+            // Chalet Def
+            const chaletGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            chaletGroup.setAttribute('id', 'chalet-icon');
+
+            // Roof with snow
+            const roof = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            roof.setAttribute('points', '0,-18 -18,-2 18,-2');
+            roof.setAttribute('fill', '#f8fafc');
+            roof.setAttribute('stroke', '#334155');
+            roof.setAttribute('stroke-width', '1.5');
+            chaletGroup.appendChild(roof);
+
+            // Wood Chalet Body
+            const bodyRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            bodyRect.setAttribute('x', '-13');
+            bodyRect.setAttribute('y', '-2');
+            bodyRect.setAttribute('width', '26');
+            bodyRect.setAttribute('height', '18');
+            bodyRect.setAttribute('fill', '#854d0e');
+            bodyRect.setAttribute('rx', '1');
+            chaletGroup.appendChild(bodyRect);
+
+            // Door
+            const door = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            door.setAttribute('x', '-4');
+            door.setAttribute('y', '4');
+            door.setAttribute('width', '8');
+            door.setAttribute('height', '12');
+            door.setAttribute('fill', '#451a03');
+            chaletGroup.appendChild(door);
+
+            // Windows
+            const win1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            win1.setAttribute('x', '-10');
+            win1.setAttribute('y', '2');
+            win1.setAttribute('width', '4');
+            win1.setAttribute('height', '5');
+            win1.setAttribute('fill', '#fef08a');
+            chaletGroup.appendChild(win1);
+
+            const win2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            win2.setAttribute('x', '6');
+            win2.setAttribute('y', '2');
+            win2.setAttribute('width', '4');
+            win2.setAttribute('height', '5');
+            win2.setAttribute('fill', '#fef08a');
+            chaletGroup.appendChild(win2);
+
+            defs.appendChild(chaletGroup);
+            svg.appendChild(defs);
+
+            // Layer 1: Mountain Backdrop Silhouettes
+            const mountainsLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            mountainsLayer.setAttribute('class', 'mountains-layer');
+            mountainsLayer.setAttribute('aria-hidden', 'true');
+
+            // Distant Mountains
+            const mBack = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            mBack.setAttribute('points', '0,480 0,260 140,110 280,260 420,90 560,240 680,120 760,230 760,480');
+            mBack.setAttribute('class', 'mountain-back');
+            mountainsLayer.appendChild(mBack);
+
+            // Snow Caps
+            const snow1 = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            snow1.setAttribute('points', '140,110 100,150 180,150');
+            snow1.setAttribute('class', 'mountain-snow');
+            mountainsLayer.appendChild(snow1);
+
+            const snow2 = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            snow2.setAttribute('points', '420,90 380,130 460,130');
+            snow2.setAttribute('class', 'mountain-snow');
+            mountainsLayer.appendChild(snow2);
+
+            const snow3 = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            snow3.setAttribute('points', '680,120 640,160 720,160');
+            snow3.setAttribute('class', 'mountain-snow');
+            mountainsLayer.appendChild(snow3);
+
+            // Near Mountains
+            const mFront = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            mFront.setAttribute('points', '0,480 0,380 90,260 210,380 320,240 450,400 590,250 720,410 760,370 760,480');
+            mFront.setAttribute('class', 'mountain-front');
+            mountainsLayer.appendChild(mFront);
+
+            svg.appendChild(mountainsLayer);
+
+            // Layer 2: Edges (Cables)
+            const edgesLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            edgesLayer.setAttribute('id', 'edges-layer');
+
+            const villageMap = new Map();
+            graph.villages.forEach(v => villageMap.set(v.id, v));
+
+            graph.edges.forEach(edge => {
+                const u = villageMap.get(edge.u);
+                const v = villageMap.get(edge.v);
+                if (!u || !v) return;
+
+                const edgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                edgeGroup.setAttribute('class', 'edge-group');
+                edgeGroup.setAttribute('id', 'edge-' + edge.id);
+                edgeGroup.setAttribute('tabindex', '0');
+                edgeGroup.setAttribute('role', 'button');
+                edgeGroup.setAttribute('aria-label', `Câble entre ${u.name} et ${v.name}, coût ${edge.cost} kilomètres`);
+
+                if (selectedEdgeIds.has(edge.id)) {
+                    edgeGroup.classList.add('selected');
+                }
+
+                // Invisible Wide Hit Path for mobile/TBI touch
+                const hitLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                hitLine.setAttribute('x1', u.x);
+                hitLine.setAttribute('y1', u.y);
+                hitLine.setAttribute('x2', v.x);
+                hitLine.setAttribute('y2', v.y);
+                hitLine.setAttribute('class', 'edge-hit');
+                edgeGroup.appendChild(hitLine);
+
+                // Visible Line
+                const visLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                visLine.setAttribute('x1', u.x);
+                visLine.setAttribute('y1', u.y);
+                visLine.setAttribute('x2', v.x);
+                visLine.setAttribute('y2', v.y);
+                visLine.setAttribute('class', 'edge-line');
+                edgeGroup.appendChild(visLine);
+
+                // Cost Badge
+                const midX = (u.x + v.x) / 2;
+                const midY = (u.y + v.y) / 2;
+
+                const badgeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                badgeG.setAttribute('transform', `translate(${midX}, ${midY})`);
+
+                const badgeRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                badgeRect.setAttribute('x', '-25');
+                badgeRect.setAttribute('y', '-12');
+                badgeRect.setAttribute('width', '50');
+                badgeRect.setAttribute('height', '24');
+                badgeRect.setAttribute('rx', '12');
+                badgeRect.setAttribute('class', 'edge-badge-rect');
+                badgeG.appendChild(badgeRect);
+
+                const badgeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                badgeText.setAttribute('class', 'edge-badge-text');
+                badgeText.textContent = edge.cost + ' km';
+                badgeG.appendChild(badgeText);
+
+                edgeGroup.appendChild(badgeG);
+
+                // Event Listeners
+                edgeGroup.addEventListener('click', () => handleEdgeToggle(edge.id));
+                edgeGroup.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleEdgeToggle(edge.id);
+                    }
+                });
+
+                edgesLayer.appendChild(edgeGroup);
+            });
+
+            svg.appendChild(edgesLayer);
+
+            // Layer 3: Villages (Chalets)
+            const villagesLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            villagesLayer.setAttribute('id', 'villages-layer');
+
+            graph.villages.forEach(village => {
+                const vGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                vGroup.setAttribute('class', 'village-group');
+                vGroup.setAttribute('id', 'village-' + village.id);
+                vGroup.setAttribute('transform', `translate(${village.x}, ${village.y})`);
+                vGroup.setAttribute('tabindex', '0');
+                vGroup.setAttribute('role', 'region');
+                vGroup.setAttribute('aria-label', `Village de ${village.name}, altitude ${village.alt}`);
+
+                // Halo
+                const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                halo.setAttribute('r', '32');
+                halo.setAttribute('class', 'village-halo');
+                vGroup.appendChild(halo);
+
+                // Chalet Instance
+                const chaletUse = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+                chaletUse.setAttribute('href', '#chalet-icon');
+                chaletUse.setAttribute('x', '0');
+                chaletUse.setAttribute('y', '-6');
+                vGroup.appendChild(chaletUse);
+
+                // Label pill underneath
+                const labelG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                labelG.setAttribute('transform', 'translate(0, 26)');
+
+                const labelWidth = Math.max(76, village.name.length * 9 + 18);
+                const labelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                labelRect.setAttribute('x', -labelWidth / 2);
+                labelRect.setAttribute('y', '-12');
+                labelRect.setAttribute('width', labelWidth);
+                labelRect.setAttribute('height', '32');
+                labelRect.setAttribute('rx', '8');
+                labelRect.setAttribute('class', 'village-badge-rect');
+                labelG.appendChild(labelRect);
+
+                const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                nameText.setAttribute('y', '-1');
+                nameText.setAttribute('class', 'village-name-text');
+                nameText.textContent = village.name;
+                labelG.appendChild(nameText);
+
+                const altText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                altText.setAttribute('y', '12');
+                altText.setAttribute('class', 'village-alt-text');
+                altText.textContent = village.alt;
+                labelG.appendChild(altText);
+
+                vGroup.appendChild(labelG);
+                villagesLayer.appendChild(vGroup);
+            });
+
+            svg.appendChild(villagesLayer);
+        }
+
+        // --- USER INTERACTIONS & CYCLE DETECTION ---
+        function handleEdgeToggle(edgeId) {
+            if (isKruskalActive) return; // Kruskal is animating
+
+            const edge = currentGraph.edges.find(e => e.id === edgeId);
+            if (!edge) return;
+
+            const u = currentGraph.villages.find(v => v.id === edge.u);
+            const v = currentGraph.villages.find(v => v.id === edge.v);
+            const uName = u ? u.name : edge.u;
+            const vName = v ? v.name : edge.v;
+
+            // If already selected, deselect
+            if (selectedEdgeIds.has(edgeId)) {
+                selectedEdgeIds.delete(edgeId);
+                selectionHistory = selectionHistory.filter(id => id !== edgeId);
+                window.playSound?.('click');
+                updateBanner('info', `Câble ${uName} ↔ ${vName} (${edge.cost} km) retiré.`);
+                updateUIState();
+                return;
+            }
+
+            // Check cycle
+            const autoBlock = document.getElementById('chk-block-cycles').checked;
+            const formsCycle = wouldFormCycleWithSelection(edgeId);
+
+            if (formsCycle) {
+                window.playSound?.('error');
+
+                // Visual flash on edge
+                const edgeEl = document.getElementById('edge-' + edgeId);
+                if (edgeEl) {
+                    edgeEl.classList.add('cycle-warning');
+                    setTimeout(() => edgeEl.classList.remove('cycle-warning'), 1200);
+                }
+
+                if (autoBlock) {
+                    updateBanner('error', `⚠️ Attention : <strong>${uName}</strong> et <strong>${vName}</strong> sont déjà reliés ! Poser ce câble créerait une <strong>boucle inutile</strong> (cycle) et gaspillerait du budget.`);
+                    return;
+                } else {
+                    updateBanner('warning', `⚠️ Attention : ce câble forme une boucle fermée redondante.`);
+                }
+            } else {
+                window.playSound?.('click');
+                updateBanner('info', `Câble ${uName} ↔ ${vName} (${edge.cost} km) connecté.`);
+            }
+
+            // Add edge
+            selectedEdgeIds.add(edgeId);
+            selectionHistory.push(edgeId);
+            updateUIState();
+        }
+
+        function undoLastEdge() {
+            if (selectionHistory.length === 0) return;
+            const lastId = selectionHistory.pop();
+            selectedEdgeIds.delete(lastId);
+            window.playSound?.('click');
+            updateBanner('info', 'Dernier câble annulé.');
+            updateUIState();
+        }
+
+        function clearAllEdges() {
+            selectedEdgeIds.clear();
+            selectionHistory = [];
+            window.playSound?.('click');
+            updateBanner('info', 'Tous les câbles ont été effacés.');
+            updateUIState();
+        }
+
+        // --- UI STATS & VICTORY EVALUATION ---
+        function updateUIState() {
+            const numVillages = currentGraph.villages.length;
+            const targetCables = numVillages - 1;
+
+            // 1. Calculate connected components and current cost
+            const dsu = new DisjointSet(currentGraph.villages.map(v => v.id));
+            let currentCost = 0;
+
+            selectedEdgeIds.forEach(id => {
+                const edge = currentGraph.edges.find(e => e.id === id);
+                if (edge) {
+                    dsu.union(edge.u, edge.v);
+                    currentCost += edge.cost;
+                }
+            });
+
+            // Find biggest connected component
+            let maxComponentSize = 1;
+            currentGraph.villages.forEach(v => {
+                const size = dsu.getComponentMembers(v.id, currentGraph.villages.map(x => x.id)).length;
+                if (size > maxComponentSize) maxComponentSize = size;
+            });
+
+            const componentCount = dsu.getComponentCount(currentGraph.villages.map(v => v.id));
+            const isFullyConnected = (componentCount === 1);
+            const cablesCount = selectedEdgeIds.size;
+
+            // Update DOM Elements
+            document.getElementById('stat-villages-connected').textContent = maxComponentSize;
+            document.getElementById('stat-villages-total').textContent = `/ ${numVillages}`;
+            document.getElementById('stat-cables-count').textContent = cablesCount;
+            document.getElementById('stat-cables-target').textContent = `/ ${targetCables}`;
+            document.getElementById('stat-current-cost').textContent = currentCost;
+
+            const percent = Math.round((maxComponentSize / numVillages) * 100);
+            document.getElementById('progress-percent').textContent = percent + '%';
+            document.getElementById('progress-bar-fill').style.width = percent + '%';
+
+            // Show optimal target if toggle enabled or level solved
+            const showOptimal = document.getElementById('chk-show-optimal').checked;
+            const optimalEl = document.getElementById('stat-optimal-cost');
+            optimalEl.textContent = (showOptimal || isFullyConnected) ? optimalMST.cost : '?';
+
+            // Undo Button State
+            document.getElementById('btn-undo-edge').disabled = (selectionHistory.length === 0);
+
+            // Sync visual classes on SVG edges
+            currentGraph.edges.forEach(edge => {
+                const edgeEl = document.getElementById('edge-' + edge.id);
+                if (!edgeEl) return;
+
+                if (selectedEdgeIds.has(edge.id)) {
+                    edgeEl.classList.add('selected');
+                } else {
+                    edgeEl.classList.remove('selected');
+                }
+            });
+
+            // Sync visual connected state on Villages
+            currentGraph.villages.forEach(v => {
+                const vEl = document.getElementById('village-' + v.id);
+                if (!vEl) return;
+                const members = dsu.getComponentMembers(v.id, currentGraph.villages.map(x => x.id));
+                if (members.length > 1) {
+                    vEl.classList.add('connected');
+                } else {
+                    vEl.classList.remove('connected');
+                }
+            });
+
+            // Check Victory Condition
+            if (isFullyConnected) {
+                if (currentCost === optimalMST.cost && cablesCount === targetCables) {
+                    // Perfect MST Victory!
+                    window.playSound?.('win');
+                    updateBanner('success', `🎉 Félicitations ! Tu as trouvé l'Arbre Couvrant Minimal exact (${currentCost} km) ! Tous les villages sont reliés au coût optimal.`);
+                    document.getElementById('stat-box-cost').className = 'stat-box success';
+                    launchConfettiCelebration(currentCost);
+                } else if (cablesCount > targetCables) {
+                    // Connected but redundant loops
+                    updateBanner('warning', `Tous les villages sont reliés, mais tu as posé trop de câbles (${cablesCount} au lieu de ${targetCables}). Élimine les boucles pour réduire le coût !`);
+                } else {
+                    // Tree spanning but higher cost
+                    updateBanner('warning', `Réseau complet sans boucle (${currentCost} km), mais il existe un tracé encore moins cher ! Peux-tu trouver l'arbre optimal ?`);
+                }
+            } else {
+                document.getElementById('stat-box-cost').className = 'stat-box highlight';
+            }
+        }
+
+        function updateBanner(type, htmlMsg) {
+            const banner = document.getElementById('live-banner');
+            const icon = document.getElementById('live-banner-icon');
+            const text = document.getElementById('live-banner-text');
+
+            banner.className = `live-banner ${type}`;
+
+            if (type === 'error') {
+                icon.setAttribute('data-fa', 'circle-exclamation');
+            } else if (type === 'warning') {
+                icon.setAttribute('data-fa', 'triangle-exclamation');
+            } else if (type === 'success') {
+                icon.setAttribute('data-fa', 'circle-check');
+            } else {
+                icon.setAttribute('data-fa', 'circle-info');
+            }
+
+            window.fa?.createIcons?.(banner);
+            text.innerHTML = htmlMsg;
+        }
+
+        // --- KRUSKAL WALKTHROUGH ENGINE ---
+        function toggleKruskalWalkthrough() {
+            const panel = document.getElementById('kruskal-panel');
+            const btn = document.getElementById('btn-toggle-kruskal-mode');
+
+            if (panel.style.display === 'none') {
+                panel.style.display = 'flex';
+                panel.classList.add('active');
+                btn.classList.add('primary');
+                initKruskalWalkthrough();
+            } else {
+                stopKruskalAnimation();
+                panel.style.display = 'none';
+                panel.classList.remove('active');
+                btn.classList.remove('primary');
+                resetKruskalVisuals();
+            }
+        }
+
+        function initKruskalWalkthrough() {
+            stopKruskalAnimation();
+            currentKruskalStep = -1;
+            kruskalSteps = optimalMST.steps;
+
+            // Build Kruskal Table
+            const tbody = document.getElementById('kruskal-table-body');
+            tbody.replaceChildren();
+
+            const villageMap = new Map();
+            currentGraph.villages.forEach(v => villageMap.set(v.id, v));
+
+            kruskalSteps.forEach((step, idx) => {
+                const tr = document.createElement('tr');
+                tr.id = 'kruskal-row-' + idx;
+
+                const u = villageMap.get(step.edge.u);
+                const v = villageMap.get(step.edge.v);
+                const uName = u ? u.name : step.edge.u;
+                const vName = v ? v.name : step.edge.v;
+
+                const tdEdge = document.createElement('td');
+                tdEdge.textContent = `${uName} ↔ ${vName}`;
+                tr.appendChild(tdEdge);
+
+                const tdCost = document.createElement('td');
+                tdCost.textContent = `${step.edge.cost} km`;
+                tr.appendChild(tdCost);
+
+                const tdDecision = document.createElement('td');
+                tdDecision.id = 'kruskal-decision-' + idx;
+                tdDecision.textContent = 'En attente';
+                tr.appendChild(tdDecision);
+
+                tbody.appendChild(tr);
+            });
+
+            // Reset SVG Kruskal classes
+            resetKruskalVisuals();
+            selectedEdgeIds.clear();
+            selectionHistory = [];
+            updateUIState();
+
+            document.getElementById('kruskal-step-status').textContent = `Étape 0 / ${kruskalSteps.length}`;
+            document.getElementById('kruskal-step-desc').textContent = "Prêt ! Kruskal a trié tous les tronçons du moins cher au plus cher. Clique sur « Étape suivante » pour observer le premier câble analysé.";
+        }
+
+        function stepKruskal() {
+            if (currentKruskalStep >= kruskalSteps.length - 1) {
+                stopKruskalAnimation();
+                updateBanner('success', "Algorithme de Kruskal terminé ! L'arbre couvrant minimal est complet.");
+                return;
+            }
+
+            // Unhighlight previous step edge
+            if (currentKruskalStep >= 0) {
+                const prevStep = kruskalSteps[currentKruskalStep];
+                const prevEl = document.getElementById('edge-' + prevStep.edge.id);
+                if (prevEl) prevEl.classList.remove('kruskal-inspect');
+            }
+
+            currentKruskalStep++;
+            const step = kruskalSteps[currentKruskalStep];
+            const edgeEl = document.getElementById('edge-' + step.edge.id);
+            const rowEl = document.getElementById('kruskal-row-' + currentKruskalStep);
+            const decisionCell = document.getElementById('kruskal-decision-' + currentKruskalStep);
+
+            // Table styling
+            document.querySelectorAll('#kruskal-table-body tr').forEach(r => r.classList.remove('current-step'));
+            if (rowEl) rowEl.classList.add('current-step');
+
+            const u = currentGraph.villages.find(v => v.id === step.edge.u);
+            const v = currentGraph.villages.find(v => v.id === step.edge.v);
+            const uName = u ? u.name : step.edge.u;
+            const vName = v ? v.name : step.edge.v;
+
+            if (step.action === 'accept') {
+                window.playSound?.('success');
+                if (edgeEl) {
+                    edgeEl.classList.remove('kruskal-inspect');
+                    edgeEl.classList.add('kruskal-accepted');
+                }
+                if (rowEl) rowEl.classList.add('accepted');
+                if (decisionCell) decisionCell.textContent = '✅ Accepté';
+
+                selectedEdgeIds.add(step.edge.id);
+                updateBanner('success', `Kruskal Étape ${currentKruskalStep + 1} : Le câble <strong>${uName} ↔ ${vName}</strong> (${step.edge.cost} km) est accepté ! ${step.reason}`);
+            } else {
+                window.playSound?.('error');
+                if (edgeEl) {
+                    edgeEl.classList.remove('kruskal-inspect');
+                    edgeEl.classList.add('kruskal-rejected');
+                }
+                if (rowEl) rowEl.classList.add('rejected');
+                if (decisionCell) decisionCell.textContent = '❌ Rejeté (Boucle)';
+
+                updateBanner('error', `Kruskal Étape ${currentKruskalStep + 1} : Le câble <strong>${uName} ↔ ${vName}</strong> (${step.edge.cost} km) est REJETÉ. ${step.reason}`);
+            }
+
+            document.getElementById('kruskal-step-status').textContent = `Étape ${currentKruskalStep + 1} / ${kruskalSteps.length}`;
+            document.getElementById('kruskal-step-desc').textContent = `Examen de ${uName} ↔ ${vName} (${step.edge.cost} km) : ${step.action === 'accept' ? 'AJOUTÉ au réseau.' : 'REJETÉ (forme une boucle).'}`;
+
+            updateUIState();
+        }
+
+        function toggleKruskalPlay() {
+            if (kruskalTimer) {
+                stopKruskalAnimation();
+            } else {
+                startKruskalAnimation();
+            }
+        }
+
+        function startKruskalAnimation() {
+            const playBtnText = document.getElementById('text-kruskal-play');
+            const playIcon = document.getElementById('icon-kruskal-play');
+            playBtnText.textContent = "Pause";
+            playIcon.setAttribute('data-fa', 'pause');
+            window.fa?.createIcons?.(document.getElementById('btn-kruskal-play'));
+
+            if (currentKruskalStep >= kruskalSteps.length - 1) {
+                initKruskalWalkthrough();
+            }
+
+            isKruskalActive = true;
+            stepKruskal();
+            kruskalTimer = setInterval(() => {
+                if (currentKruskalStep >= kruskalSteps.length - 1) {
+                    stopKruskalAnimation();
+                } else {
+                    stepKruskal();
+                }
+            }, 1600);
+        }
+
+        function stopKruskalAnimation() {
+            if (kruskalTimer) {
+                clearInterval(kruskalTimer);
+                kruskalTimer = null;
+            }
+            isKruskalActive = false;
+            const playBtnText = document.getElementById('text-kruskal-play');
+            const playIcon = document.getElementById('icon-kruskal-play');
+            if (playBtnText) playBtnText.textContent = "Auto";
+            if (playIcon) playIcon.setAttribute('data-fa', 'play');
+            window.fa?.createIcons?.(document.getElementById('btn-kruskal-play'));
+        }
+
+        function resetKruskalVisuals() {
+            document.querySelectorAll('.edge-group').forEach(el => {
+                el.classList.remove('kruskal-inspect', 'kruskal-accepted', 'kruskal-rejected', 'cycle-warning');
+            });
+        }
+
+        // --- CELEBRATION & MODAL ---
+        function launchConfettiCelebration(cost) {
+            window.confetti?.();
+            const modal = document.getElementById('celebration-overlay');
+            const desc = document.getElementById('celebration-desc');
+            desc.textContent = `Tu as relié tous les villages en trouvant l'Arbre Couvrant Minimal au coût de ${cost} km ! Aucun câble superflu, budget parfaitement optimisé.`;
+            modal.classList.add('visible');
+        }
+
+        function closeCelebrationModal() {
+            document.getElementById('celebration-overlay').classList.remove('visible');
+        }
+
+        function goToNextChallenge() {
+            closeCelebrationModal();
+            let nextIndex = 0;
+            if (currentMode !== 'sandbox') {
+                const idx = parseInt(currentMode, 10);
+                if (idx < PREDEFINED_CHALLENGES.length - 1) {
+                    nextIndex = idx + 1;
+                } else {
+                    nextIndex = 'sandbox';
+                }
+            } else {
+                nextIndex = 'sandbox';
+            }
+
+            loadChallenge(nextIndex);
+        }
+
+        // --- LEVEL / CHALLENGE SWITCHER ---
+        function loadChallenge(modeKey) {
+            currentMode = String(modeKey);
+            stopKruskalAnimation();
+
+            // Nav tabs active styling
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                if (btn.getAttribute('data-level') === currentMode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Sandbox bar display
+            const sandboxBar = document.getElementById('sandbox-bar');
+            if (currentMode === 'sandbox') {
+                sandboxBar.classList.add('visible');
+                const nodeCount = parseInt(document.getElementById('sandbox-node-count').value, 10) || 5;
+                currentGraph = generateRandomSandboxGraph(nodeCount);
+            } else {
+                sandboxBar.classList.remove('visible');
+                const idx = parseInt(currentMode, 10);
+                currentGraph = PREDEFINED_CHALLENGES[idx];
+            }
+
+            document.getElementById('current-challenge-title').textContent = currentGraph.title;
+
+            // Clear Selection
+            selectedEdgeIds.clear();
+            selectionHistory = [];
+
+            // Compute MST
+            optimalMST = computeKruskalMST(currentGraph);
+
+            // Close Kruskal panel if open
+            const kruskalPanel = document.getElementById('kruskal-panel');
+            if (kruskalPanel.style.display !== 'none') {
+                initKruskalWalkthrough();
+            }
+
+            // Render SVG
+            renderGraph(currentGraph);
+            updateUIState();
+            updateBanner('info', `Niveau chargé : <strong>${currentGraph.title}</strong> (${currentGraph.villages.length} villages, objectif : ${currentGraph.villages.length - 1} câbles).`);
+        }
+
+        // --- GLOBAL APP RESET LIFECYCLE HOOK ---
+        window.__onResetApp = function () {
+            stopKruskalAnimation();
+            const kruskalPanel = document.getElementById('kruskal-panel');
+            kruskalPanel.style.display = 'none';
+            document.getElementById('btn-toggle-kruskal-mode').classList.remove('primary');
+            loadChallenge(currentMode);
+        };
+
+        // --- DOM INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Level nav tabs
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const level = btn.getAttribute('data-level');
+                    loadChallenge(level);
+                });
+            });
+
+            // Sandbox slider & generate button
+            const slider = document.getElementById('sandbox-node-count');
+            const sliderVal = document.getElementById('sandbox-node-val');
+            slider.addEventListener('input', () => {
+                sliderVal.textContent = slider.value;
+            });
+            slider.addEventListener('change', () => {
+                loadChallenge('sandbox');
+            });
+
+            document.getElementById('btn-randomize-graph').addEventListener('click', () => {
+                loadChallenge('sandbox');
+            });
+
+            // Toolbar buttons
+            document.getElementById('btn-undo-edge').addEventListener('click', undoLastEdge);
+            document.getElementById('btn-clear-selection').addEventListener('click', clearAllEdges);
+            document.getElementById('btn-toggle-kruskal-mode').addEventListener('click', toggleKruskalWalkthrough);
+
+            // Kruskal panel controls
+            document.getElementById('btn-kruskal-next').addEventListener('click', stepKruskal);
+            document.getElementById('btn-kruskal-play').addEventListener('click', toggleKruskalPlay);
+            document.getElementById('btn-kruskal-reset').addEventListener('click', initKruskalWalkthrough);
+
+            // Celebration Modal buttons
+            document.getElementById('btn-celebration-replay').addEventListener('click', () => {
+                closeCelebrationModal();
+                clearAllEdges();
+            });
+            document.getElementById('btn-celebration-next').addEventListener('click', goToNextChallenge);
+
+            // Toggles
+            document.getElementById('chk-show-optimal').addEventListener('change', updateUIState);
+
+            // Initial load
+            loadChallenge('0');
+        });
+    </script>
+</body>
+
+</html>

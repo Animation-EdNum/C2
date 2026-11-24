@@ -107,3 +107,4 @@
 - **[2026-11-24]** [Cleanup] Removed legacy audit markdown files from repository.
 - **[2026-11-24]** [Docs] Audited and synchronized all user guides in meta/tuto with latest features and added missing app guides.
 - **[2026-11-24]** [Docs] Pruned obsolete tutorial files for non-production webapps from meta/tuto.
+- **[2026-11-24]** [Alpha/Apps] Created 7 new pedagogical webapps (#1 Rendu de monnaie, #3 Fabrique de recettes, #5 Portes logiques, #6 Réseau des villages, #7 Chasseur d'infox, #8 Bulle de filtres, #10 Créateur de groupes) with dedicated unit tests and 100% offline compliance.

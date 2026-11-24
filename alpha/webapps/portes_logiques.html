@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>⚡ L'Atelier des Portes Logiques</title>
+    <meta property="og:title" content="L'Atelier des Portes Logiques">
+    <meta property="og:description"
+        content="Circuits booléens interactifs (NON, ET, OU, XOR & Demi-Additionneur) pour le Cycle 3 (9-11CO).">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+    <style>
+        :root {
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #1e293b;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: #e2e8f0;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --accent-glow: rgba(2, 132, 199, 0.35);
+            --wire-off: #94a3b8;
+            --wire-on: #10b981;
+            --wire-on-glow: rgba(16, 185, 129, 0.6);
+            --led-off: #64748b;
+            --led-on: #22c55e;
+            --led-on-glow: rgba(34, 197, 94, 0.7);
+            --gate-bg: #f8fafc;
+            --gate-border: #cbd5e1;
+            --gate-text: #0f172a;
+            --table-active-bg: rgba(14, 165, 233, 0.12);
+            --table-active-border: #0284c7;
+            --circuit-bg: #f1f5f9;
+        }
+
+        body.dark {
+            --bg-gradient-start: #090d16;
+            --bg-gradient-end: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.9);
+            --card-border: #334155;
+            --container-bg: rgba(15, 23, 42, 0.92);
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --wire-off: #334155;
+            --wire-on: #34d399;
+            --wire-on-glow: rgba(52, 211, 153, 0.7);
+            --led-off: #334155;
+            --led-on: #4ade80;
+            --led-on-glow: rgba(74, 222, 128, 0.85);
+            --gate-bg: #1e293b;
+            --gate-border: #475569;
+            --gate-text: #f8fafc;
+            --table-active-bg: rgba(56, 189, 248, 0.18);
+            --table-active-border: #38bdf8;
+            --circuit-bg: #0b1120;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 16px;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1320px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 24px 28px;
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* --- NAVIGATION TABS --- */
+        .mode-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0.6rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+        }
+
+        .segmented-group {
+            display: inline-flex;
+            background: rgba(100, 116, 139, 0.14);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            gap: 4px;
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: calc(var(--radius-lg) - 2px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        /* --- MISSION PICKER BAR --- */
+        .mission-selector-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 2px;
+            scrollbar-width: thin;
+        }
+
+        .mission-chip {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mission-chip:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        .mission-chip.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        .mission-chip.completed::after {
+            content: "✓";
+            font-weight: 900;
+            color: #10b981;
+            margin-left: 2px;
+        }
+
+        .mission-chip.active.completed::after {
+            color: #ffffff;
+        }
+
+        /* --- MISSION BRIEF CARD --- */
+        .mission-brief-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--accent);
+            border-radius: var(--radius-xl);
+            padding: 18px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mission-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .mission-title-text {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mission-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent-glow);
+        }
+
+        .mission-story {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .mission-task-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(100, 116, 139, 0.08);
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .mission-progress-pill {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--accent);
+        }
+
+        /* --- SANDBOX GATE SELECTOR --- */
+        .sandbox-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+        }
+
+        .sandbox-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-right: 4px;
+        }
+
+        .gate-choice-btn {
+            border: 1px solid var(--card-border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .gate-choice-btn:hover {
+            color: var(--text-main);
+            border-color: var(--accent);
+        }
+
+        .gate-choice-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        /* --- MAIN WORKBENCH GRID --- */
+        .workbench-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.25rem;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .workbench-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- CIRCUIT BOARD CARD --- */
+        .circuit-board {
+            background: var(--circuit-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            position: relative;
+            min-height: 440px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .circuit-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .circuit-stage {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            min-height: 380px;
+        }
+
+        .circuit-svg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* --- SVG WIRES STYLING --- */
+        .wire-path {
+            stroke: var(--wire-off);
+            stroke-width: 5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.25s ease, filter 0.25s ease;
+        }
+
+        .wire-path.active {
+            stroke: var(--wire-on);
+            filter: drop-shadow(0 0 5px var(--wire-on-glow));
+        }
+
+        .wire-pulse {
+            stroke: #ffffff;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-dasharray: 8 24;
+            animation: pulseTravel 1.2s linear infinite;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .wire-pulse.active {
+            opacity: 0.9;
+        }
+
+        @keyframes pulseTravel {
+            to {
+                stroke-dashoffset: -32;
+            }
+        }
+
+        /* --- INTERACTIVE CIRCUIT NODES --- */
+        .circuit-elements-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        /* Switches container */
+        .switches-column {
+            position: absolute;
+            left: 4%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .switch-unit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 8px 14px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            user-select: none;
+            transition: transform 0.15s ease, border-color 0.2s ease;
+        }
+
+        .switch-unit:hover {
+            transform: scale(1.03);
+            border-color: var(--accent);
+        }
+
+        .switch-label-badge {
+            font-size: 0.95rem;
+            font-weight: 800;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(100, 116, 139, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+        }
+
+        /* Physical toggle switch */
+        .toggle-lever-btn {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #64748b;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            padding: 3px;
+            transition: background 0.25s ease, box-shadow 0.25s ease;
+            outline: none;
+        }
+
+        .toggle-lever-btn:focus-visible {
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .toggle-lever-btn.active {
+            background: #10b981;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+        }
+
+        .toggle-knob {
+            width: 26px;
+            height: 26px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            transform: translateX(0);
+            transition: transform 0.25s var(--spring-easing);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #475569;
+        }
+
+        .toggle-lever-btn.active .toggle-knob {
+            transform: translateX(28px);
+            color: #10b981;
+        }
+
+        /* Gate Case in Center */
+        .gates-column {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .gate-chip {
+            background: var(--gate-bg);
+            border: 2px solid var(--gate-border);
+            border-radius: var(--radius-xl);
+            padding: 16px 22px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 170px;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .gate-chip.eval-true {
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+        }
+
+        .gate-name-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--gate-text);
+        }
+
+        .gate-symbol-iec {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--accent);
+            background: rgba(14, 165, 233, 0.1);
+            padding: 2px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--accent-glow);
+        }
+
+        .gate-formula-tag {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .gate-svg-icon {
+            width: 70px;
+            height: 44px;
+            margin-top: 2px;
+        }
+
+        /* Outputs Column (LEDs) */
+        .outputs-column {
+            position: absolute;
+            right: 4%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .led-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 12px 18px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            min-width: 90px;
+        }
+
+        .led-bulb {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #94a3b8 0%, #475569 80%);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .led-bulb::after {
+            content: "";
+            position: absolute;
+            top: 6px;
+            left: 10px;
+            width: 10px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .led-bulb.active {
+            background: radial-gradient(circle at 35% 35%, #86efac 0%, #22c55e 60%, #15803d 100%);
+            border-color: #bbf7d0;
+            box-shadow: 0 0 25px var(--led-on-glow), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+            animation: ledPulse 1.8s infinite alternate ease-in-out;
+        }
+
+        .led-bulb.active.amber {
+            background: radial-gradient(circle at 35% 35%, #fde047 0%, #f59e0b 60%, #b45309 100%);
+            border-color: #fef08a;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.85);
+        }
+
+        .led-bulb.active.cyan {
+            background: radial-gradient(circle at 35% 35%, #a5f3fc 0%, #06b6d4 60%, #0e7490 100%);
+            border-color: #cffafe;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.85);
+        }
+
+        @keyframes ledPulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.06);
+            }
+        }
+
+        .led-name {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .led-val-badge {
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 2px 10px;
+            border-radius: var(--radius-pill);
+            background: rgba(100, 116, 139, 0.15);
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .led-val-badge.active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        /* Binary Arithmetic Readout Banner (Mission 5 / Half Adder) */
+        .arithmetic-banner {
+            margin-top: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .math-eq-token {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .math-val {
+            font-family: monospace;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--accent);
+            background: rgba(14, 165, 233, 0.12);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* --- RIGHT COLUMN : TRUTH TABLE & CONTROLS --- */
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .truth-table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 18px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .truth-table-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .truth-table-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .truth-table-hint {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .truth-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 4px;
+            font-size: 0.9rem;
+        }
+
+        .truth-table th {
+            padding: 8px 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-align: center;
+            border-bottom: 2px solid var(--card-border);
+            font-size: 0.85rem;
+        }
+
+        .truth-table td {
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: 700;
+            background: rgba(100, 116, 139, 0.06);
+            transition: all 0.2s ease;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .truth-table tr {
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .truth-table tr:hover td {
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .truth-table tr td:first-child {
+            border-radius: var(--radius-md) 0 0 var(--radius-md);
+        }
+
+        .truth-table tr td:last-child {
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+
+        /* Active Live Row Highlight */
+        .truth-table tr.current-active td {
+            background: var(--table-active-bg) !important;
+            color: var(--accent);
+            border-top: 1px solid var(--table-active-border);
+            border-bottom: 1px solid var(--table-active-border);
+            font-weight: 900;
+        }
+
+        .truth-table tr.current-active td:first-child {
+            border-left: 3px solid var(--table-active-border);
+        }
+
+        .truth-table tr.current-active td:last-child {
+            border-right: 1px solid var(--table-active-border);
+        }
+
+        .truth-table .check-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 4px;
+            background: transparent;
+        }
+
+        .truth-table .tested .check-dot {
+            background: #10b981;
+        }
+
+        /* --- EXPLANATION & COLLAPSIBLE ACCORDION --- */
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+        }
+
+        .info-header-btn {
+            width: 100%;
+            padding: 14px 18px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .info-header-btn:hover {
+            background: rgba(100, 116, 139, 0.05);
+        }
+
+        .info-body {
+            display: none;
+            padding: 0 18px 16px;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .info-body.show {
+            display: block;
+        }
+
+        .info-body p {
+            margin: 8px 0;
+        }
+
+        .info-body code {
+            font-size: 0.82rem;
+            background: rgba(100, 116, 139, 0.12);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Mission Celebration Box */
+        .mission-complete-alert {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        body.dark .mission-complete-alert {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .btn-next-mission {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-next-mission:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* Utility animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil"><i data-fa="arrow-left"></i></a>
+                <div class="header-icon" aria-hidden="true"><i data-fa="microchip"></i></div>
+                <div>
+                    <h1>L'Atelier des Portes Logiques <span class="badge-level">9-11CO</span> <span class="badge-alpha">Alpha</span></h1>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn"><i data-fa="gear"></i></button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="theme-toggle-btn"><i data-fa="moon" id="icon-moon"></i><i data-fa="sun-bright" id="icon-sun" style="display:none;"></i><span id="themeToggleText">Sombre</span></button>
+                        <button class="menu-item-btn" id="audio-toggle-btn"><i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i><i data-fa="volume-xmark" id="icon-vol-off"></i><span id="audioToggleText">Activer son</span></button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn"><i data-fa="arrows-rotate"></i><span id="resetCacheText">Réinitialiser</span></button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main style="display:flex; flex-direction:column; gap:1.25rem;">
+            <!-- MODE SWITCHER (MISSIONS vs SANDBOX) -->
+            <div class="mode-nav-bar">
+                <div class="segmented-group" role="tablist">
+                    <button class="tab-btn active" id="tab-missions" role="tab" aria-selected="true">
+                        <i data-fa="award"></i> Missions Guidées
+                    </button>
+                    <button class="tab-btn" id="tab-sandbox" role="tab" aria-selected="false">
+                        <i data-fa="brain-circuit"></i> Laboratoire Libre
+                    </button>
+                </div>
+                <div style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">
+                    <span id="mode-summary-label">5 missions interactives pour maîtriser les circuits logiques</span>
+                </div>
+            </div>
+
+            <!-- MISSION SELECTOR BAR (Visible only in Missions mode) -->
+            <div class="mission-selector-bar" id="mission-selector-bar">
+                <button class="mission-chip active" data-mission-index="0" id="chip-m0">1. Porte NON</button>
+                <button class="mission-chip" data-mission-index="1" id="chip-m1">2. Porte ET</button>
+                <button class="mission-chip" data-mission-index="2" id="chip-m2">3. Porte OU</button>
+                <button class="mission-chip" data-mission-index="3" id="chip-m3">4. Porte XOR</button>
+                <button class="mission-chip" data-mission-index="4" id="chip-m4">5. Demi-Additionneur</button>
+            </div>
+
+            <!-- MISSION BRIEF CARD -->
+            <div class="mission-brief-card" id="mission-brief-card">
+                <div class="mission-header-row">
+                    <div class="mission-title-text">
+                        <span id="mission-title">Mission 1 : La porte NON (La veilleuse automatique)</span>
+                    </div>
+                    <span class="mission-badge" id="mission-badge">Défi 1 / 5</span>
+                </div>
+                <div class="mission-story" id="mission-story">
+                    Un capteur de luminosité émet 1 en plein jour et 0 dans l'obscurité. La veilleuse automatique doit s'allumer UNIQUEMENT quand il fait nuit (capteur = 0) !
+                </div>
+                <div class="mission-task-box">
+                    <span id="mission-task-desc">🎯 <strong>Objectif :</strong> Active les interrupteurs pour faire briller la lampe et teste toutes les combinaisons de la table de vérité.</span>
+                    <span class="mission-progress-pill" id="mission-progress-pill">Combinaisons : 0 / 2</span>
+                </div>
+                <!-- Complete alert -->
+                <div class="mission-complete-alert" id="mission-complete-alert">
+                    <span>🎉 <strong>Félicitations !</strong> Tu as percé le secret de ce circuit logique !</span>
+                    <button class="btn-next-mission" id="btn-next-mission">Mission suivante <i data-fa="arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- SANDBOX CONTROLS ROW (Visible only in Sandbox mode) -->
+            <div class="sandbox-controls-row" id="sandbox-controls-row" style="display: none;">
+                <span class="sandbox-label"><i data-fa="sliders"></i> Choisir le circuit :</span>
+                <button class="gate-choice-btn active" data-gate-type="NOT">NON</button>
+                <button class="gate-choice-btn" data-gate-type="AND">ET</button>
+                <button class="gate-choice-btn" data-gate-type="OR">OU</button>
+                <button class="gate-choice-btn" data-gate-type="XOR">XOR</button>
+                <button class="gate-choice-btn" data-gate-type="NAND">NAND</button>
+                <button class="gate-choice-btn" data-gate-type="NOR">NOR</button>
+                <button class="gate-choice-btn" data-gate-type="HALF_ADDER">Demi-Additionneur</button>
+                <button class="gate-choice-btn" data-gate-type="COMBI_AND_OR">(A ET B) OU C</button>
+                <button class="gate-choice-btn" data-gate-type="COMBI_OR_AND">A ET (B OU C)</button>
+            </div>
+
+            <!-- WORKBENCH LAYOUT -->
+            <div class="workbench-layout">
+                <!-- Circuit Canvas Card -->
+                <div class="circuit-board">
+                    <div class="circuit-header">
+                        <span><i data-fa="microchip"></i> Schéma de câblage réactif</span>
+                        <span id="circuit-wire-status">Signal actif : 1 (Courant ON)</span>
+                    </div>
+
+                    <div class="circuit-stage" id="circuit-stage">
+                        <!-- SVG Wires Layer -->
+                        <svg class="circuit-svg-layer" id="circuit-svg" viewBox="0 0 760 400" preserveAspectRatio="none">
+                            <defs>
+                                <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                                <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            <!-- Dynamic wire paths injected via JS -->
+                            <g id="svg-wires-group"></g>
+                        </svg>
+
+                        <!-- Interactive Elements HTML Overlay -->
+                        <div class="circuit-elements-layer">
+                            <!-- Switches Column (Left) -->
+                            <div class="switches-column" id="switches-column">
+                                <!-- Dynamic switches injected via JS -->
+                            </div>
+
+                            <!-- Gates Center Column -->
+                            <div class="gates-column" id="gates-column">
+                                <!-- Dynamic gate chip(s) injected via JS -->
+                            </div>
+
+                            <!-- Outputs LEDs Column (Right) -->
+                            <div class="outputs-column" id="outputs-column">
+                                <!-- Dynamic output LED(s) injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arithmetic Banner for Half Adder -->
+                    <div class="arithmetic-banner" id="arithmetic-banner" style="display: none;">
+                        <span class="math-eq-token">Entrées : <span class="math-val" id="math-val-a">0</span> + <span class="math-val" id="math-val-b">0</span></span>
+                        <span class="math-eq-token">Addition binaire = <span class="math-val" id="math-val-bin">0 0</span><sub>2</sub></span>
+                        <span class="math-eq-token">Valeur décimale = <span class="math-val" id="math-val-dec">0</span></span>
+                    </div>
+                </div>
+
+                <!-- Sidebar Panel: Truth Table & Didactic Info -->
+                <div class="sidebar-panel">
+                    <!-- Truth Table Card -->
+                    <div class="truth-table-card">
+                        <div class="truth-table-header-row">
+                            <span class="truth-table-title"><i data-fa="table"></i> Table de vérité</span>
+                            <span class="truth-table-hint">Clique sur une ligne pour l'activer</span>
+                        </div>
+
+                        <div style="overflow-x: auto;">
+                            <table class="truth-table" id="truth-table">
+                                <thead id="truth-table-head">
+                                    <!-- Dynamic header injected via JS -->
+                                </thead>
+                                <tbody id="truth-table-body">
+                                    <!-- Dynamic rows injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Accordion: "Le coin des ingénieurs" -->
+                    <div class="info-card">
+                        <button class="info-header-btn" id="btn-toggle-info" aria-expanded="false">
+                            <span><i data-fa="circle-info"></i> Comment ça fonctionne ?</span>
+                            <i data-fa="chevron-down" id="info-chevron"></i>
+                        </button>
+                        <div class="info-body" id="info-body">
+                            <p><strong>Le langage binaire :</strong> Dans un circuit, l'information circule sous forme de tension électrique. <code>0</code> représente l'absence de tension (0 Volt, éteint) et <code>1</code> représente une tension active (5 Volts, allumé).</p>
+                            <p><strong>Les transistors :</strong> À l'intérieur d'une puce ou d'un processeur, des milliards de minuscules interrupteurs microscopiques appelés <em>transistors</em> s'associent pour former ces portes logiques.</p>
+                            <p><strong>Le Demi-Additionneur :</strong> En combinant une porte <code>XOR</code> (pour calculer la somme) et une porte <code>ET</code> (pour détecter la retenue), un ordinateur est capable de calculer mécaniquement l'addition $1 + 1 = 2$ ($10_2$) ! C'est la base absolue de toutes les calculatrices et consoles de jeu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- STANDARD FLAT FOOTER -->
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements"
+                data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"
+                    data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+
+    <!-- LOGIC GATES ENGINE SCRIPT -->
+    <script>
+        (function () {
+            "use strict";
+
+            // --- MISSIONS DEFINITIONS ---
+            const MISSIONS = [
+                {
+                    id: 'm1',
+                    gateType: 'NOT',
+                    title: 'Mission 1 : La porte NON (La veilleuse automatique)',
+                    badge: 'Défi 1 / 5',
+                    story: "Le capteur de luminosité envoie 1 en plein jour et 0 la nuit. La veilleuse automatique doit s'allumer UNIQUEMENT quand il fait sombre (capteur = 0) !",
+                    taskDesc: "🎯 <strong>Objectif :</strong> Bascule l'interrupteur A sur 0 pour allumer la veilleuse et teste les 2 combinaisons de la table.",
+                    inputs: ['A'],
+                    targetCondition: (inputs, outputs) => inputs.A === 0 && outputs.Q === 1
+                },
+                {
+                    id: 'm2',
+                    gateType: 'AND',
+                    title: 'Mission 2 : La porte ET (Le sas de haute sécurité)',
+                    badge: 'Défi 2 / 5',
+                    story: "Pour ouvrir le sas blindé de la banque, les deux agents A et B doivent tourner leur clé en même temps !",
+                    taskDesc: "🎯 <strong>Objectif :</strong> Trouve la seule combinaison qui permet d'ouvrir le sas (Q = 1) et teste les 4 lignes.",
+                    inputs: ['A', 'B'],
+                    targetCondition: (inputs, outputs) => inputs.A === 1 && inputs.B === 1 && outputs.Q === 1
+                },
+                {
+                    id: 'm3',
+                    gateType: 'OR',
+                    title: "Mission 3 : La porte OU (L'alarme anti-intrusion)",
+                    badge: 'Défi 3 / 5',
+                    story: "Une maison est protégée par un détecteur de mouvement (A) et un capteur de bris de fenêtre (B). Si l'un OU l'autre détecte un danger, l'alarme doit sonner !",
+                    taskDesc: "🎯 <strong>Objectif :</strong> Trouve une combinaison qui déclenche l'alarme (Q = 1) et teste toutes les alertes possibles.",
+                    inputs: ['A', 'B'],
+                    targetCondition: (inputs, outputs) => (inputs.A === 1 || inputs.B === 1) && outputs.Q === 1
+                },
+                {
+                    id: 'm4',
+                    gateType: 'XOR',
+                    title: "Mission 4 : La porte XOR (Le va-et-vient d'escalier)",
+                    badge: 'Défi 4 / 5',
+                    story: "Deux interrupteurs A et B sont placés en haut et en bas d'un escalier. Actionner N'IMPORTE LEQUEL des deux doit INVERSER l'état de la lampe (l'allumer si elle était éteinte, l'éteindre si elle était allumée) !",
+                    taskDesc: "🎯 <strong>Objectif :</strong> Expérimente le va-et-vient en testant toutes les combinaisons où la lampe s'allume.",
+                    inputs: ['A', 'B'],
+                    targetCondition: (inputs, outputs) => (inputs.A !== inputs.B) && outputs.Q === 1
+                },
+                {
+                    id: 'm5',
+                    gateType: 'HALF_ADDER',
+                    title: 'Mission 5 : Le Demi-Additionneur (Addition binaire 1 bit)',
+                    badge: 'Défi 5 / 5',
+                    story: "Découverte capitale ! Comment un ordinateur calcule-t-il 1 + 1 ? Deux portes (XOR pour la Somme S et ET pour la Retenue R) calculent l'addition simultanément !",
+                    taskDesc: "🎯 <strong>Objectif :</strong> Règle les entrées sur 1 + 1 et observe comment la Retenue (R = 1) et la Somme (S = 0) forment le nombre binaire 10₂ (2 en décimal) !",
+                    inputs: ['A', 'B'],
+                    targetCondition: (inputs, outputs) => inputs.A === 1 && inputs.B === 1 && outputs.R === 1 && outputs.S === 0
+                }
+            ];
+
+            // --- GATE LOGIC METADATA ---
+            const GATE_METADATA = {
+                'NOT': {
+                    name: 'NON / NOT',
+                    symbolIec: '1',
+                    formula: 'Q = NON A',
+                    inputs: ['A'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: inp.A === 1 ? 0 : 1 }),
+                    svgPath: 'M 10 5 L 45 22 L 10 39 Z M 48 22 A 3 3 0 1 1 54 22 A 3 3 0 1 1 48 22'
+                },
+                'AND': {
+                    name: 'ET / AND',
+                    symbolIec: '&',
+                    formula: 'Q = A ET B',
+                    inputs: ['A', 'B'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: (inp.A === 1 && inp.B === 1) ? 1 : 0 }),
+                    svgPath: 'M 10 5 L 30 5 A 17 17 0 0 1 30 39 L 10 39 Z'
+                },
+                'OR': {
+                    name: 'OU / OR',
+                    symbolIec: '≥1',
+                    formula: 'Q = A OU B',
+                    inputs: ['A', 'B'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: (inp.A === 1 || inp.B === 1) ? 1 : 0 }),
+                    svgPath: 'M 10 5 Q 25 22 10 39 Q 35 39 48 22 Q 35 5 10 5 Z'
+                },
+                'XOR': {
+                    name: 'XOR / OU Exclusif',
+                    symbolIec: '=1',
+                    formula: 'Q = A XOR B',
+                    inputs: ['A', 'B'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: (inp.A !== inp.B) ? 1 : 0 }),
+                    svgPath: 'M 5 5 Q 20 22 5 39 M 12 5 Q 27 22 12 39 Q 37 39 50 22 Q 37 5 12 5 Z'
+                },
+                'NAND': {
+                    name: 'NAND / NON-ET',
+                    symbolIec: '&',
+                    formula: 'Q = NON (A ET B)',
+                    inputs: ['A', 'B'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: (inp.A === 1 && inp.B === 1) ? 0 : 1 }),
+                    svgPath: 'M 10 5 L 30 5 A 17 17 0 0 1 30 39 L 10 39 Z M 48 22 A 3 3 0 1 1 54 22 A 3 3 0 1 1 48 22'
+                },
+                'NOR': {
+                    name: 'NOR / NON-OU',
+                    symbolIec: '≥1',
+                    formula: 'Q = NON (A OU B)',
+                    inputs: ['A', 'B'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: (inp.A === 1 || inp.B === 1) ? 0 : 1 }),
+                    svgPath: 'M 10 5 Q 25 22 10 39 Q 35 39 48 22 Q 35 5 10 5 Z M 50 22 A 3 3 0 1 1 56 22 A 3 3 0 1 1 50 22'
+                },
+                'HALF_ADDER': {
+                    name: 'Demi-Additionneur',
+                    symbolIec: '+',
+                    formula: 'S = A ⊕ B,  R = A · B',
+                    inputs: ['A', 'B'],
+                    outputs: ['S', 'R'],
+                    eval: (inp) => ({
+                        S: (inp.A !== inp.B) ? 1 : 0,
+                        R: (inp.A === 1 && inp.B === 1) ? 1 : 0
+                    })
+                },
+                'COMBI_AND_OR': {
+                    name: '(A ET B) OU C',
+                    symbolIec: '& / ≥1',
+                    formula: 'Q = (A ET B) OU C',
+                    inputs: ['A', 'B', 'C'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: ((inp.A === 1 && inp.B === 1) || inp.C === 1) ? 1 : 0 })
+                },
+                'COMBI_OR_AND': {
+                    name: 'A ET (B OU C)',
+                    symbolIec: '≥1 / &',
+                    formula: 'Q = A ET (B OU C)',
+                    inputs: ['A', 'B', 'C'],
+                    outputs: ['Q'],
+                    eval: (inp) => ({ Q: (inp.A === 1 && (inp.B === 1 || inp.C === 1)) ? 1 : 0 })
+                }
+            };
+
+            // --- APP STATE ---
+            let currentMode = 'missions'; // 'missions' | 'sandbox'
+            let currentMissionIndex = 0;
+            let currentGateType = 'NOT';
+            let switchStates = { A: 0, B: 0, C: 0 };
+            let testedRows = new Set();
+            let missionsCompleted = [false, false, false, false, false];
+
+            // DOM References
+            const tabMissions = document.getElementById('tab-missions');
+            const tabSandbox = document.getElementById('tab-sandbox');
+            const missionSelectorBar = document.getElementById('mission-selector-bar');
+            const missionBriefCard = document.getElementById('mission-brief-card');
+            const sandboxControlsRow = document.getElementById('sandbox-controls-row');
+            const modeSummaryLabel = document.getElementById('mode-summary-label');
+
+            const missionTitleEl = document.getElementById('mission-title');
+            const missionBadgeEl = document.getElementById('mission-badge');
+            const missionStoryEl = document.getElementById('mission-story');
+            const missionTaskDescEl = document.getElementById('mission-task-desc');
+            const missionProgressPillEl = document.getElementById('mission-progress-pill');
+            const missionCompleteAlertEl = document.getElementById('mission-complete-alert');
+            const btnNextMission = document.getElementById('btn-next-mission');
+
+            const switchesColumnEl = document.getElementById('switches-column');
+            const gatesColumnEl = document.getElementById('gates-column');
+            const outputsColumnEl = document.getElementById('outputs-column');
+            const svgWiresGroup = document.getElementById('svg-wires-group');
+            const circuitWireStatusEl = document.getElementById('circuit-wire-status');
+
+            const arithmeticBannerEl = document.getElementById('arithmetic-banner');
+            const mathValA = document.getElementById('math-val-a');
+            const mathValB = document.getElementById('math-val-b');
+            const mathValBin = document.getElementById('math-val-bin');
+            const mathValDec = document.getElementById('math-val-dec');
+
+            const truthTableHeadEl = document.getElementById('truth-table-head');
+            const truthTableBodyEl = document.getElementById('truth-table-body');
+
+            const btnToggleInfo = document.getElementById('btn-toggle-info');
+            const infoBody = document.getElementById('info-body');
+            const infoChevron = document.getElementById('info-chevron');
+
+            // --- AUDIO PLAY WRAPPER ---
+            function play(type) {
+                if (typeof window.playSound === 'function') {
+                    window.playSound(type);
+                }
+            }
+
+            // --- INIT MISSION ---
+            function loadMission(index) {
+                currentMissionIndex = index;
+                const mission = MISSIONS[index];
+                currentGateType = mission.gateType;
+
+                // Reset switches to 0
+                switchStates = { A: 0, B: 0, C: 0 };
+                testedRows.clear();
+
+                missionTitleEl.textContent = mission.title;
+                missionBadgeEl.textContent = mission.badge;
+                missionStoryEl.textContent = mission.story;
+
+                // Clear children and safely append task text
+                missionTaskDescEl.replaceChildren();
+                const tempDiv = document.createElement('div');
+                const parsed = new DOMParser().parseFromString(mission.taskDesc, 'text/html');
+                while (parsed.body.firstChild) {
+                    missionTaskDescEl.appendChild(parsed.body.firstChild);
+                }
+
+                missionCompleteAlertEl.style.display = 'none';
+
+                // Update chip active styles
+                document.querySelectorAll('.mission-chip').forEach((c, idx) => {
+                    c.classList.toggle('active', idx === index);
+                    c.classList.toggle('completed', missionsCompleted[idx]);
+                });
+
+                updateCircuit();
+            }
+
+            // --- SWITCH INTERACTION ---
+            function toggleSwitch(inputName) {
+                play('click');
+                switchStates[inputName] = switchStates[inputName] === 1 ? 0 : 1;
+                updateCircuit();
+            }
+
+            // --- EVALUATE ACTIVE CIRCUIT ---
+            function evaluateCircuit() {
+                const meta = GATE_METADATA[currentGateType];
+                if (!meta) {
+                    return { outputs: { Q: 0 }, meta: GATE_METADATA['NOT'] };
+                }
+                const outputs = meta.eval(switchStates);
+                return { outputs, meta };
+            }
+
+            // --- RENDER CIRCUIT & WIRES ---
+            function updateCircuit() {
+                const { outputs, meta } = evaluateCircuit();
+
+                // 1. Render Switches
+                renderSwitches(meta.inputs);
+
+                // 2. Render Gates
+                renderGates(meta, outputs);
+
+                // 3. Render Outputs
+                renderOutputs(meta.outputs, outputs);
+
+                // 4. Update Arithmetic Banner for Half Adder
+                if (currentGateType === 'HALF_ADDER') {
+                    arithmeticBannerEl.style.display = 'flex';
+                    mathValA.textContent = String(switchStates.A);
+                    mathValB.textContent = String(switchStates.B);
+                    mathValBin.textContent = `${outputs.R} ${outputs.S}`;
+                    mathValDec.textContent = String(outputs.R * 2 + outputs.S);
+                } else {
+                    arithmeticBannerEl.style.display = 'none';
+                }
+
+                // 5. Draw Wires with proper coordinates
+                const rAF = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+                    ? window.requestAnimationFrame
+                    : (fn) => setTimeout(fn, 16);
+                rAF(() => {
+                    drawSvgWires(meta, outputs);
+                });
+
+                // 6. Update Wire Status text
+                const isAnyOutputOn = Object.values(outputs).some(v => v === 1);
+                circuitWireStatusEl.textContent = isAnyOutputOn
+                    ? 'Signal actif : 1 (Lampe alimentée)'
+                    : 'Signal inactif : 0 (Courant coupé)';
+
+                // 7. Update Truth Table
+                updateTruthTable(meta, outputs);
+
+                // 8. Mission Check
+                if (currentMode === 'missions') {
+                    checkMissionProgress(outputs);
+                }
+            }
+
+            // --- RENDER SWITCHES IN DOM ---
+            function renderSwitches(inputsList) {
+                switchesColumnEl.replaceChildren();
+
+                inputsList.forEach(inputName => {
+                    const unit = document.createElement('div');
+                    unit.className = 'switch-unit';
+
+                    const badge = document.createElement('span');
+                    badge.className = 'switch-label-badge';
+                    badge.textContent = inputName;
+
+                    const leverBtn = document.createElement('button');
+                    leverBtn.className = 'toggle-lever-btn' + (switchStates[inputName] === 1 ? ' active' : '');
+                    leverBtn.setAttribute('aria-label', `Basculer interrupteur ${inputName}`);
+                    leverBtn.setAttribute('data-input', inputName);
+
+                    const knob = document.createElement('div');
+                    knob.className = 'toggle-knob';
+                    knob.textContent = String(switchStates[inputName]);
+                    leverBtn.appendChild(knob);
+
+                    leverBtn.addEventListener('click', () => {
+                        toggleSwitch(inputName);
+                    });
+
+                    unit.appendChild(badge);
+                    unit.appendChild(leverBtn);
+                    switchesColumnEl.appendChild(unit);
+                });
+            }
+
+            // --- RENDER GATES IN DOM ---
+            function renderGates(meta, outputs) {
+                gatesColumnEl.replaceChildren();
+
+                if (currentGateType === 'HALF_ADDER') {
+                    // Double gate view: XOR and AND
+                    const chipXor = createGateChipDOM('XOR (Somme S)', '=1', 'S = A XOR B', outputs.S === 1, 'M 5 5 Q 20 22 5 39 M 12 5 Q 27 22 12 39 Q 37 39 50 22 Q 37 5 12 5 Z');
+                    const chipAnd = createGateChipDOM('ET (Retenue R)', '&', 'R = A ET B', outputs.R === 1, 'M 10 5 L 30 5 A 17 17 0 0 1 30 39 L 10 39 Z');
+                    chipXor.id = 'gate-chip-xor';
+                    chipAnd.id = 'gate-chip-and';
+                    gatesColumnEl.appendChild(chipXor);
+                    gatesColumnEl.appendChild(chipAnd);
+                } else if (currentGateType.startsWith('COMBI_')) {
+                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1);
+                    chip.id = 'gate-chip-single';
+                    gatesColumnEl.appendChild(chip);
+                } else {
+                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1, meta.svgPath);
+                    chip.id = 'gate-chip-single';
+                    gatesColumnEl.appendChild(chip);
+                }
+            }
+
+            function createGateChipDOM(name, iec, formula, isTrue, svgPath) {
+                const chip = document.createElement('div');
+                chip.className = 'gate-chip' + (isTrue ? ' eval-true' : '');
+
+                const title = document.createElement('span');
+                title.className = 'gate-name-title';
+                title.textContent = name;
+                chip.appendChild(title);
+
+                const iecBadge = document.createElement('span');
+                iecBadge.className = 'gate-symbol-iec';
+                iecBadge.textContent = iec;
+                chip.appendChild(iecBadge);
+
+                if (svgPath) {
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('class', 'gate-svg-icon');
+                    svg.setAttribute('viewBox', '0 0 60 44');
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', svgPath);
+                    path.setAttribute('fill', 'none');
+                    path.setAttribute('stroke', isTrue ? '#10b981' : 'var(--text-secondary)');
+                    path.setAttribute('stroke-width', '2.5');
+                    svg.appendChild(path);
+                    chip.appendChild(svg);
+                }
+
+                const formulaEl = document.createElement('span');
+                formulaEl.className = 'gate-formula-tag';
+                formulaEl.textContent = formula;
+                chip.appendChild(formulaEl);
+
+                return chip;
+            }
+
+            // --- RENDER OUTPUTS IN DOM ---
+            function renderOutputs(outputsList, outputsVal) {
+                outputsColumnEl.replaceChildren();
+
+                outputsList.forEach(outName => {
+                    const unit = document.createElement('div');
+                    unit.className = 'led-unit';
+                    unit.id = `led-unit-${outName}`;
+
+                    const bulb = document.createElement('div');
+                    const isLit = outputsVal[outName] === 1;
+                    let colorClass = '';
+                    if (outName === 'S') colorClass = 'cyan';
+                    if (outName === 'R') colorClass = 'amber';
+                    bulb.className = `led-bulb ${isLit ? 'active ' + colorClass : ''}`;
+
+                    const nameLabel = document.createElement('span');
+                    nameLabel.className = 'led-name';
+                    if (outName === 'S') nameLabel.textContent = 'Somme (S)';
+                    else if (outName === 'R') nameLabel.textContent = 'Retenue (R)';
+                    else nameLabel.textContent = 'Sortie (Q)';
+
+                    const valBadge = document.createElement('span');
+                    valBadge.className = 'led-val-badge' + (isLit ? ' active' : '');
+                    valBadge.textContent = isLit ? '1 (Allumée)' : '0 (Éteinte)';
+
+                    unit.appendChild(bulb);
+                    unit.appendChild(nameLabel);
+                    unit.appendChild(valBadge);
+                    outputsColumnEl.appendChild(unit);
+                });
+            }
+
+            // --- DRAW SVG WIRES ---
+            function drawSvgWires(meta, outputs) {
+                svgWiresGroup.replaceChildren();
+
+                const stageRect = document.getElementById('circuit-stage').getBoundingClientRect();
+                if (stageRect.width === 0 || stageRect.height === 0) {
+                    return;
+                }
+
+                function getRelCoords(el) {
+                    if (!el) return { x: 0, y: 0 };
+                    const r = el.getBoundingClientRect();
+                    return {
+                        x: ((r.left + r.width / 2) - stageRect.left) / stageRect.width * 760,
+                        y: ((r.top + r.height / 2) - stageRect.top) / stageRect.height * 400
+                    };
+                }
+
+                function drawWire(x1, y1, x2, y2, isActive) {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const midX = (x1 + x2) / 2;
+                    const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+                    path.setAttribute('d', d);
+                    path.setAttribute('class', `wire-path ${isActive ? 'active' : ''}`);
+                    svgWiresGroup.appendChild(path);
+
+                    if (isActive) {
+                        const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        pulse.setAttribute('d', d);
+                        pulse.setAttribute('class', 'wire-pulse active');
+                        svgWiresGroup.appendChild(pulse);
+                    }
+                }
+
+                if (currentGateType === 'HALF_ADDER') {
+                    // Double Gate wiring
+                    const btnA = document.querySelector('.toggle-lever-btn[data-input="A"]');
+                    const btnB = document.querySelector('.toggle-lever-btn[data-input="B"]');
+                    const chipXor = document.getElementById('gate-chip-xor');
+                    const chipAnd = document.getElementById('gate-chip-and');
+                    const ledS = document.getElementById('led-unit-S');
+                    const ledR = document.getElementById('led-unit-R');
+
+                    const pA = getRelCoords(btnA);
+                    const pB = getRelCoords(btnB);
+                    const pXorIn = getRelCoords(chipXor);
+                    const pAndIn = getRelCoords(chipAnd);
+                    const pLedS = getRelCoords(ledS);
+                    const pLedR = getRelCoords(ledR);
+
+                    // A and B connect to XOR
+                    drawWire(pA.x + 20, pA.y, pXorIn.x - 70, pXorIn.y - 12, switchStates.A === 1);
+                    drawWire(pB.x + 20, pB.y, pXorIn.x - 70, pXorIn.y + 12, switchStates.B === 1);
+
+                    // A and B branch and connect to AND
+                    drawWire(pA.x + 20, pA.y, pAndIn.x - 70, pAndIn.y - 12, switchStates.A === 1);
+                    drawWire(pB.x + 20, pB.y, pAndIn.x - 70, pAndIn.y + 12, switchStates.B === 1);
+
+                    // XOR output to LED S
+                    drawWire(pXorIn.x + 70, pXorIn.y, pLedS.x - 30, pLedS.y, outputs.S === 1);
+
+                    // AND output to LED R
+                    drawWire(pAndIn.x + 70, pAndIn.y, pLedR.x - 30, pLedR.y, outputs.R === 1);
+
+                } else {
+                    // Single or Combi Gate wiring
+                    const singleGate = document.getElementById('gate-chip-single');
+                    const pGate = getRelCoords(singleGate);
+                    const ledQ = document.getElementById('led-unit-Q');
+                    const pLedQ = getRelCoords(ledQ);
+
+                    meta.inputs.forEach((inp, idx) => {
+                        const btn = document.querySelector(`.toggle-lever-btn[data-input="${inp}"]`);
+                        const pIn = getRelCoords(btn);
+                        const offsetRatio = (idx - (meta.inputs.length - 1) / 2) * 18;
+                        drawWire(pIn.x + 20, pIn.y, pGate.x - 80, pGate.y + offsetRatio, switchStates[inp] === 1);
+                    });
+
+                    // Gate to Output
+                    drawWire(pGate.x + 80, pGate.y, pLedQ.x - 30, pLedQ.y, outputs.Q === 1);
+                }
+            }
+
+            // --- TRUTH TABLE GENERATION ---
+            function generateTruthTableCombinations(inputs) {
+                const n = inputs.length;
+                const total = Math.pow(2, n);
+                const list = [];
+                for (let i = 0; i < total; i++) {
+                    const row = {};
+                    for (let j = 0; j < n; j++) {
+                        const bit = (i >> (n - 1 - j)) & 1;
+                        row[inputs[j]] = bit;
+                    }
+                    list.push(row);
+                }
+                return list;
+            }
+
+            function updateTruthTable(meta, currentOutputs) {
+                // Header
+                truthTableHeadEl.replaceChildren();
+                const trHead = document.createElement('tr');
+
+                meta.inputs.forEach(inp => {
+                    const th = document.createElement('th');
+                    th.textContent = inp;
+                    trHead.appendChild(th);
+                });
+
+                meta.outputs.forEach(out => {
+                    const th = document.createElement('th');
+                    th.textContent = out;
+                    th.style.color = 'var(--accent)';
+                    trHead.appendChild(th);
+                });
+
+                truthTableHeadEl.appendChild(trHead);
+
+                // Body rows
+                truthTableBodyEl.replaceChildren();
+                const combinations = generateTruthTableCombinations(meta.inputs);
+
+                combinations.forEach((combo) => {
+                    const tr = document.createElement('tr');
+                    const outVals = meta.eval(combo);
+
+                    // Check if current row matches active switch state
+                    const isCurrent = meta.inputs.every(inp => switchStates[inp] === combo[inp]);
+                    const rowKey = meta.inputs.map(k => combo[k]).join('-');
+
+                    if (isCurrent) {
+                        tr.className = 'current-active';
+                        testedRows.add(rowKey);
+                    }
+
+                    if (testedRows.has(rowKey)) {
+                        tr.classList.add('tested');
+                    }
+
+                    // Input cells
+                    meta.inputs.forEach(inp => {
+                        const td = document.createElement('td');
+                        td.textContent = String(combo[inp]);
+                        tr.appendChild(td);
+                    });
+
+                    // Output cells
+                    meta.outputs.forEach(out => {
+                        const td = document.createElement('td');
+                        td.textContent = String(outVals[out]);
+                        if (outVals[out] === 1) {
+                            td.style.color = '#10b981';
+                        }
+                        tr.appendChild(td);
+                    });
+
+                    // Clicking row sets switch states to match this row!
+                    tr.addEventListener('click', () => {
+                        meta.inputs.forEach(inp => {
+                            switchStates[inp] = combo[inp];
+                        });
+                        play('click');
+                        updateCircuit();
+                    });
+
+                    truthTableBodyEl.appendChild(tr);
+                });
+
+                // Update Progress Pill in Mission mode
+                if (currentMode === 'missions') {
+                    const totalRows = Math.pow(2, meta.inputs.length);
+                    missionProgressPillEl.textContent = `Combinaisons explorées : ${testedRows.size} / ${totalRows}`;
+                }
+            }
+
+            // --- MISSION COMPLETION CHECK ---
+            function checkMissionProgress(outputs) {
+                const mission = MISSIONS[currentMissionIndex];
+                const totalRows = Math.pow(2, mission.inputs.length);
+
+                const isConditionMet = mission.targetCondition(switchStates, outputs);
+                const allRowsTested = testedRows.size >= totalRows;
+
+                if (isConditionMet && allRowsTested && !missionsCompleted[currentMissionIndex]) {
+                    missionsCompleted[currentMissionIndex] = true;
+                    play('win');
+
+                    if (typeof window.launchConfetti === 'function') {
+                        window.launchConfetti();
+                    }
+
+                    missionCompleteAlertEl.style.display = 'flex';
+
+                    // Update chip checkmark
+                    const chip = document.getElementById(`chip-m${currentMissionIndex}`);
+                    if (chip) {
+                        chip.classList.add('completed');
+                    }
+
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('Bravo ! Mission accomplie avec succès !', 'success');
+                    }
+                }
+            }
+
+            // --- EVENT LISTENERS & NAVIGATION ---
+            tabMissions.addEventListener('click', () => {
+                currentMode = 'missions';
+                tabMissions.classList.add('active');
+                tabSandbox.classList.remove('active');
+                missionSelectorBar.style.display = 'flex';
+                missionBriefCard.style.display = 'flex';
+                sandboxControlsRow.style.display = 'none';
+                modeSummaryLabel.textContent = '5 missions interactives pour maîtriser les circuits logiques';
+                loadMission(currentMissionIndex);
+            });
+
+            tabSandbox.addEventListener('click', () => {
+                currentMode = 'sandbox';
+                tabSandbox.classList.add('active');
+                tabMissions.classList.remove('active');
+                missionSelectorBar.style.display = 'none';
+                missionBriefCard.style.display = 'none';
+                sandboxControlsRow.style.display = 'flex';
+                modeSummaryLabel.textContent = 'Compose et teste librement tes propres portes et circuits';
+                updateCircuit();
+            });
+
+            // Mission Chips Click
+            document.querySelectorAll('.mission-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const idx = parseInt(chip.getAttribute('data-mission-index'), 10);
+                    play('click');
+                    loadMission(idx);
+                });
+            });
+
+            // Next Mission Button
+            btnNextMission.addEventListener('click', () => {
+                play('click');
+                if (currentMissionIndex < MISSIONS.length - 1) {
+                    loadMission(currentMissionIndex + 1);
+                } else {
+                    // All missions completed! Switch to sandbox
+                    tabSandbox.click();
+                }
+            });
+
+            // Sandbox Gate Buttons
+            document.querySelectorAll('.gate-choice-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    play('click');
+                    document.querySelectorAll('.gate-choice-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentGateType = btn.getAttribute('data-gate-type');
+                    switchStates = { A: 0, B: 0, C: 0 };
+                    testedRows.clear();
+                    updateCircuit();
+                });
+            });
+
+            // Keyboard Shortcuts (A, B, C keys to toggle switches)
+            window.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                const key = e.key.toUpperCase();
+                if (key === 'A' || key === 'B' || key === 'C') {
+                    const meta = GATE_METADATA[currentGateType];
+                    if (meta && meta.inputs.includes(key)) {
+                        toggleSwitch(key);
+                    }
+                }
+            });
+
+            // Resize observer for crisp SVG wire redraw
+            window.addEventListener('resize', () => {
+                const { outputs, meta } = evaluateCircuit();
+                drawSvgWires(meta, outputs);
+            });
+
+            // Info Accordion
+            btnToggleInfo.addEventListener('click', () => {
+                const isShown = infoBody.classList.toggle('show');
+                btnToggleInfo.setAttribute('aria-expanded', isShown);
+                if (infoChevron) {
+                    infoChevron.setAttribute('data-fa', isShown ? 'chevron-up' : 'chevron-down');
+                    window.fa?.createIcons?.();
+                }
+            });
+
+            // Universal App Reset Hook
+            window.__onResetApp = function () {
+                switchStates = { A: 0, B: 0, C: 0 };
+                testedRows.clear();
+                missionsCompleted = [false, false, false, false, false];
+                document.querySelectorAll('.mission-chip').forEach(c => c.classList.remove('completed'));
+                if (currentMode === 'missions') {
+                    loadMission(0);
+                } else {
+                    updateCircuit();
+                }
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Atelier réinitialisé.', 'info');
+                }
+            };
+
+            // Initialize app
+            loadMission(0);
+            window.fa?.createIcons?.();
+
+            // Export engine for automated testing & verification
+            window.PortesLogiquesEngine = {
+                getGateMetadata: () => GATE_METADATA,
+                getMissions: () => MISSIONS,
+                getSwitchStates: () => switchStates,
+                setSwitchStates: (s) => { switchStates = Object.assign(switchStates, s); updateCircuit(); },
+                setGateType: (t) => { currentGateType = t; updateCircuit(); },
+                loadMission,
+                evaluateCircuit
+            };
+        })();
+    </script>
+</body>
+
+</html>
