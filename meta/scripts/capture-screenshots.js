@@ -294,27 +294,133 @@ async function captureBitDeParite(browser, port) {
   await page.close();
 }
 
+async function captureAutoApp(browser, port, urlPath, outName, setupFn) {
+  const page = await browser.newPage({
+    viewport: { width: 1280, height: 720 },
+    deviceScaleFactor: 2
+  });
+  await page.goto(`http://127.0.0.1:${port}/${urlPath}`, { waitUntil: 'networkidle' });
+  await prepPage(page);
+  if (typeof setupFn === 'function') {
+    await setupFn(page);
+  }
+  await page.waitForTimeout(350);
+
+  const height = await page.evaluate(() => {
+    const shell = document.querySelector('.container, .app-shell, main');
+    const bodyHeight = document.body.scrollHeight;
+    const shellHeight = shell ? shell.getBoundingClientRect().height + 40 : 0;
+    return Math.max(Math.ceil(Math.max(bodyHeight, shellHeight)), 720);
+  });
+
+  await page.setViewportSize({ width: 1280, height });
+  await page.waitForTimeout(150);
+
+  const outPath = path.join(outDir, outName);
+  await page.screenshot({ path: outPath });
+  console.log(`✓ Rendered meta/screenshots/${outName} (2560x${height * 2})`);
+  await page.close();
+}
+
+async function captureMachineATrier(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/machine_a_trier.html', 'machine_a_trier.png');
+}
+
+async function captureJeuDeLaGrue(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/jeu_de_la_grue.html', 'jeu_de_la_grue.png');
+}
+
+async function captureDactylo(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/dactylo.html', 'dactylo.png', async (page) => {
+    await page.evaluate(() => {
+      document.getElementById('btnDismissTouchNotice')?.click();
+      document.getElementById('btnToggleKeyboard')?.click();
+    });
+  });
+}
+
+async function captureCalculatriceBinaire(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/calculatrice_binaire.html', 'calculatrice_binaire.png', async (page) => {
+    await page.evaluate(() => {
+      if (window.CalculatriceBinaire && typeof window.CalculatriceBinaire.setDecimalValue === 'function') {
+        window.CalculatriceBinaire.setDecimalValue(42);
+      }
+    });
+  });
+}
+
+async function captureMachineAChiffrer(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/machine_a_chiffrer.html', 'machine_a_chiffrer.png', async (page) => {
+    await page.fill('#input-clear', 'BONJOUR VALAIS !');
+  });
+}
+
+async function captureSimulateurTelechargement(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/simulateur_telechargement.html', 'simulateur_telechargement.png');
+}
+
+async function captureRoueDeLaChance(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/teacher/roue_de_la_chance.html', 'roue_de_la_chance.png');
+}
+
+async function captureQrcode(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/teacher/qrcode.html', 'qrcode.png');
+}
+
+async function captureTimeTimer(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/teacher/time_timer.html', 'time_timer.png');
+}
+
+async function captureSimDyslexie(browser, port) {
+  await captureAutoApp(browser, port, 'webapps/teacher/sim_dyslexie.html', 'sim_dyslexie.png', async (page) => {
+    await page.click('#compGraphemes');
+    await page.click('#compSilentLetters');
+  });
+}
+
 async function main() {
+  const onlyMissing = process.argv.includes('--missing');
   const port = 8125;
   const server = await startServer(port);
   console.log(`Screenshot server running on http://127.0.0.1:${port}`);
 
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
 
-  await captureIndex(browser, port);
-  await captureTirage(browser, port);
-  await captureBareme(browser, port);
-  await capturePasswordGen(browser, port);
-  await captureAutomate(browser, port);
-  await captureBinaireStudio(browser, port);
-  await captureBinaireCodage(browser, port);
-  await captureBinaireMessage(browser, port);
-  await captureRoutageReseau(browser, port);
-  await captureBitDeParite(browser, port);
+  const allTasks = [
+    { name: 'index.png', fn: () => captureIndex(browser, port) },
+    { name: 'tirage.png', fn: () => captureTirage(browser, port) },
+    { name: 'bareme.png', fn: () => captureBareme(browser, port) },
+    { name: 'generateur_mot_de_passe.png', fn: () => capturePasswordGen(browser, port) },
+    { name: 'simulateur_automate.png', fn: () => captureAutomate(browser, port) },
+    { name: 'binaire_studio.png', fn: () => captureBinaireStudio(browser, port) },
+    { name: 'binaire_codage.png', fn: () => captureBinaireCodage(browser, port) },
+    { name: 'binaire_message.png', fn: () => captureBinaireMessage(browser, port) },
+    { name: 'routage_reseau.png', fn: () => captureRoutageReseau(browser, port) },
+    { name: 'bit_de_parite.png', fn: () => captureBitDeParite(browser, port) },
+    { name: 'machine_a_trier.png', fn: () => captureMachineATrier(browser, port) },
+    { name: 'jeu_de_la_grue.png', fn: () => captureJeuDeLaGrue(browser, port) },
+    { name: 'dactylo.png', fn: () => captureDactylo(browser, port) },
+    { name: 'calculatrice_binaire.png', fn: () => captureCalculatriceBinaire(browser, port) },
+    { name: 'machine_a_chiffrer.png', fn: () => captureMachineAChiffrer(browser, port) },
+    { name: 'simulateur_telechargement.png', fn: () => captureSimulateurTelechargement(browser, port) },
+    { name: 'roue_de_la_chance.png', fn: () => captureRoueDeLaChance(browser, port) },
+    { name: 'qrcode.png', fn: () => captureQrcode(browser, port) },
+    { name: 'time_timer.png', fn: () => captureTimeTimer(browser, port) },
+    { name: 'sim_dyslexie.png', fn: () => captureSimDyslexie(browser, port) }
+  ];
+
+  let count = 0;
+  for (const task of allTasks) {
+    if (onlyMissing && fs.existsSync(path.join(outDir, task.name))) {
+      continue;
+    }
+    await task.fn();
+    count++;
+  }
 
   await browser.close();
   server.close();
-  console.log('🎉 All 12 documentation screenshots successfully updated in meta/screenshots/');
+  console.log(`🎉 ${count} documentation screenshot(s) successfully updated in meta/screenshots/`);
 }
 
 main().catch(err => {

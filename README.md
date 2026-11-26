@@ -49,17 +49,19 @@ Voici un exemple avec le simulateur d'automate, prouvant la compatibilité sur d
 
 ### 🎮 Nos Webapps pour les élèves (Jeux pédagogiques)
 
-Toutes nos applications intègrent une interface unifiée (design "Glassmorphism" moderne), un mode clair/sombre/contraste élevé, une difficulté adaptative intelligente, et des graphiques circulaires pour visualiser les progrès. L'application portail d'accueil (`index.html`) permet un accès facile et rapide à chaque outil. Pour les plus jeunes (4-7 ans, Cycle 1), un portail simplifié est également disponible (`indexC1.html`). Les activités sont classées par ordre de progression scolaire (1-4H jusqu'à 9-11CO).
+Toutes nos applications intègrent une interface unifiée (design "Glassmorphism" moderne), un mode clair/sombre/contraste élevé, une difficulté adaptative intelligente, et des graphiques circulaires pour visualiser les progrès. L'application portail d'accueil (`index.html`) permet un accès facile et rapide à chaque outil. Pour les plus jeunes (4-7 ans, Cycle 1), un portail simplifié est également disponible (`indexC1.html`). Les activités sont classées par ordre de progression scolaire (`1-4H` jusqu'en `10CO` pour l'éducation numérique, et jusqu'en `11CO` pour les outils d'usages).
 
 ![Portail d'accueil](meta/screenshots/index.png)
 
 #### 1. Machine à trier (`webapps/machine_a_trier.html` - 1-2H & 3-4H)
+![Machine à trier](meta/screenshots/machine_a_trier.png)
 - **À quoi sert l'outil :** Initiation aux algorithmes de tri et à la classification logique d'objets selon divers critères (forme, couleur, taille, quantité) via une bande transporteuse et des bacs récepteurs. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_MACHINE_A_TRIER.md).
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · Tri et classification (Demi-cycle 3-4H).
 - **Fonctionnalités :** 2 modes (*Classique* et *Usine* avec tapis roulant interactif), 3 niveaux de difficulté (Facile, Moyen, Difficile) et rétroaction immédiate.
 - **Valeur pédagogique :** Développe la catégorisation d'éléments, la discrimination visuelle et l'assimilation des règles algorithmiques de tri sans écran individuel requis pour les plus jeunes.
 
-#### 2. Jeu de la grue (`webapps/jeu_de_la_grue.html` - 3-4H)
+#### 2. Jeu de la grue (`webapps/jeu_de_la_grue.html` - 1-2H & 3-4H)
+![Jeu de la grue](meta/screenshots/jeu_de_la_grue.png)
 - **À quoi sert l'outil :** Initiation à la programmation séquentielle avec une grue mécanique déplaçant des cubes de couleur vers un objectif cible. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_JEU_DE_LA_GRUE.md).
 - **Lien DÉ>CODAGE :** [3-4e](https://decodage.edu-vd.ch/3-4/) · **Scénario 2 — Automates** (Demi-cycle 3-4H).
 - **Fonctionnalités :** Interface épurée avec 3 commandes simples (Gauche, Action attraper/poser, Droite), ruban d'instructions modifiable, exécution pas à pas et 3 niveaux de difficulté (1 à 3 cubes).
@@ -80,6 +82,7 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Valeur pédagogique :** Matérialise le concept abstrait de "numérisation". Comprendre que l'information visuelle (pixels) se traduit en séquences binaires de 0 et de 1.
 
 #### 5. Tape-Texte (`webapps/dactylo.html` - 5H-11CO)
+![Tape-Texte](meta/screenshots/dactylo.png)
 - **À quoi sert l'outil :** Entraînement progressif à la frappe rapide et fluide sur clavier physique avec disposition suisse romande et suisse allemande (QWERTZ). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_DACTYLO.md).
 - **Lien PER & Lehrplan 21 :** Cycle 2 & Cycle 3 (dès 5H jusqu'au secondaire I / 11CO).
 - **Fonctionnalités :** 10 niveaux pédagogiques progressifs adaptés à la Suisse (phrases types, cédilles et accents, caractères spéciaux `LEVELS_DE` en allemand), clavier virtuel d'aide visuelle en cas d'erreur, analyse en temps réel (précision %, vitesse MPM/WPM, touches à travailler) et bilan élève exportable en PNG.
@@ -117,22 +120,29 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Valeur pédagogique :** Initie à l'intégrité de la donnée via des métadonnées (le bit de parité) et développe le repérage spatial via des coordonnées sur une grille.
 
 #### 11. Calculatrice binaire (`webapps/calculatrice_binaire.html` - 7H-10CO)
+![Calculatrice binaire](meta/screenshots/calculatrice_binaire.png)
 - **À quoi sert l'outil :** Convertisseur et explorateur interactif permettant de comprendre et décomposer facilement un octet (8 bits, valeurs de 0 à 255) entre le système binaire et décimal. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_CALCULATRICE_BINAIRE.md).
 - **Lien PER & Lehrplan 21 :** Cycle 2 & Cycle 3 (dès 7H jusqu'en 10CO) · **EN 22+32 · Science informatique — Codage en système binaire** (Connected 1 · 1.2 / Décodages 7-8).
 - **Fonctionnalités :** Tableau interactif sur 8 bits ordonné selon les 3 rangées pédagogiques (Bits, Puissances de 2 de $2^7$ à $2^0$, Valeurs de position de 128 à 1), bascule directe des bits ou des valeurs au clic, synchronisation bidirectionnelle instantanée avec le champ décimal (0 à 255), calcul explicatif de la somme décomposée en direct, affichage binaire formaté par demi-octets (nibbles) avec bouton de copie, et bouton de remise à zéro rapide.
 - **Valeur pédagogique :** Démystifie le fonctionnement interne des ordinateurs en visualisant le lien direct entre l'état binaire (0/1), la valeur pondérée de chaque rang et la somme décimale totale. Idéal pour l'expérimentation libre, la vérification de calculs ou l'introduction au système binaire en classe.
 
 #### 12. Machine à chiffrer (`webapps/machine_a_chiffrer.html` - 7-8H)
+![Machine à chiffrer](meta/screenshots/machine_a_chiffrer.png)
 - **À quoi sert l'outil :** Outil interactif d'initiation à la cryptographie pour chiffrer et déchiffrer des messages secrets grâce à 5 modes d'exploration : Code César (avec roue cryptographique animée), Code Vigenère (chiffrement polyalphabétique avec mot-clé), Atbash (inversion miroir de l'alphabet), Code Morse (signaux textuels et bips sonores en Web Audio API) et Mode Hacker (interception de messages secrets et analyse fréquentielle des lettres de la langue française). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_MACHINE_A_CHIFFRER.md).
 - **Lien PER & Lehrplan 21 :** Cycle 2 (7-8H) · **EN 22 · Science informatique - Cryptage et décryptage** (Connected 1 · 1.2 / Décodages 7-8).
 - **Valeur pédagogique :** Démystifie la cryptographie classique, illustre le passage de l'information sous formes codées et développe l'esprit d'analyse par l'étude des fréquences et des clés de décalage.
 
 #### 13. Simulateur de téléchargement (`webapps/simulateur_telechargement.html` - 7-8H)
+![Simulateur de téléchargement](meta/screenshots/simulateur_telechargement.png)
 - **À quoi sert l'outil :** Simulation visuelle interactive pour appréhender concrètement la taille des fichiers numériques et le débit des réseaux à travers deux modes : *Défi des 4 médias* (estimer et ordonner la vitesse de téléchargement d'un texte, d'une image, d'un fichier audio et d'une vidéo sans voir leur débit) et *Laboratoire* (manipulation libre de 9 objets numériques concrets sur 4 technologies de connexion : Modem 56k, 3G, 4G et Fibre optique). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_TELECHARGEMENT.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 3 — La taille des fichiers** (Demi-cycle 7-8H).
 - **Valeur pédagogique :** Fait ressentir physiquement le « poids » des données numériques, ancre la compréhension des unités de mesure (octet, Ko, Mo, Go) et sensibilise aux réalités physiques de l'infrastructure réseau.
 
 #### 🌐 Ressources externes partenaires
+- **Qwant Junior** ([Ouvrir Qwant Junior](https://www.qwantjunior.com/) - 4H-8H) : Le moteur de recherche sécurisé pour les enfants qui respecte la vie privée.
+- **ia-pedia** ([Ouvrir ia-pedia](https://ia-pedia.ch/) - 5H-10CO) : Simplifie les articles de Wikipédia au niveau des élèves et répond à leurs questions.
+- **Le Dico des Ados** ([Ouvrir Le Dico des Ados](https://fr.dicoado.org/dico/Dico:Accueil) - 5H-10CO) : Un dictionnaire libre et collaboratif pour chercher et enrichir des définitions.
+- **Scratch** ([Ouvrir Scratch](https://scratch.mit.edu/projects/editor/) - 7H-10CO) : Plateforme visuelle pour créer des histoires interactives, des jeux et des animations.
 - **Totem** ([Ouvrir Totem](https://guillaumetschupp.com/outils/totem/app.html) - 7H-10CO) : Un faux test de personnalité ludique et surprenant pour aiguiser l'esprit critique des élèves face aux pièges ordinaires du web et à la collecte de données (bilingue FR/DE, 100% exécuté localement dans le navigateur).
 
 
@@ -148,25 +158,36 @@ Un petit utilitaire sans publicité permettant de générer instantanément un b
 Outil visuel pour désigner un·e élève au hasard. Gère l'importation de listes de classe (XLS/XLSX, CSV, ENT) et l'exportation, la sauvegarde automatique (`localStorage`), l'exclusion d'élèves (absents) et conserve l'historique des tirages. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIRAGE_AU_SORT.md).
 
 #### Roue de la chance (`webapps/teacher/roue_de_la_chance.html`)
+![Roue de la chance](meta/screenshots/roue_de_la_chance.png)
 Roue interactive personnalisable pour le tirage au sort en classe, l'attribution des rôles, les privilèges ou les questions d'éducation numérique. Gestion des listes personnelles (`localStorage`), présélections intégrées, générateur 1 à N et mode plein écran adapté aux TBI/TNI. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_ROUE_DE_LA_CHANCE.md).
 
 #### Créateur de QR codes (`webapps/teacher/qrcode.html`)
+![Créateur de QR codes](meta/screenshots/qrcode.png)
 Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables, projection TBI, téléchargement HD et copie presse-papier). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_QRCODE.md).
 
 #### Minuteur visuel (Time-Timer) (`webapps/teacher/time_timer.html`)
+![Minuteur visuel (Time-Timer)](meta/screenshots/time_timer.png)
 Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, réglage fluide au glisser-déposer, raccourcis d'activités prédéfinis, carillons sonores (Web Audio API sans ressource externe) et modes plein écran / projection TBI pour structurer le temps en classe. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIME_TIMER.md).
 
 #### Adaptateur & Simulateur DYS (`webapps/teacher/sim_dyslexie.html`)
+![Adaptateur & Simulateur DYS](meta/screenshots/sim_dyslexie.png)
 Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration CERAS, syllabes bicolores, lettres muettes grisées, polices adaptées comme OpenDyslexic ou Century Gothic, profils enregistrables, export Word .docx et impression A4) et simulateur de sensibilisation cognitive aux difficultés de lecture. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md).
 
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
 - 🔒 **Coffre-fort numérique** (`alpha/webapps/coffre_fort.html`, 3-6H)
+- 🍕 **La Fabrique de Recettes** (`alpha/webapps/fabrique_recette.html`, 3-5H)
 - 🔀 **Réseau de tri** (`alpha/webapps/reseau_de_tri.html`, 5-6H)
+- 🪙 **Le Rendu de Monnaie** (`alpha/webapps/rendu_monnaie.html`, 5-8H)
+- 🔍 **Chasseur d'Infox** (`alpha/webapps/chasseur_infox.html`, 6H-10CO)
 - ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H)
 - 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H)
-- 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO)
 - 🌐 **Simulateur Réseau & DNS** (`alpha/webapps/simulateur_reseau_dns.html`, 7-8H)
+- 🏔️ **Le Réseau des Villages** (`alpha/webapps/reseau_villages.html`, 7-8H, 9-10CO)
+- 🫧 **La Bulle de Filtres** (`alpha/webapps/bulle_filtres.html`, 8H-10CO)
+- 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO)
+- ⚙️ **L'Atelier des Portes Logiques** (`alpha/webapps/portes_logiques.html`, 9-10CO)
 - 🛡️ **Anonymiseur de textes** (`alpha/webapps/teacher/anonymiseur.html`, Enseignant)
+- 👥 **Créateur de Groupes & Équipes** (`alpha/webapps/teacher/createur_groupes.html`, Enseignant)
 
 
 ---
@@ -184,6 +205,7 @@ We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no n
     *   Scores and Gamification: `assets/js/scores.js` (ScoreManager).
     *   Sounds (Web Audio API): `assets/js/audio.js` (no external .mp3 files).
     *   Toasts & Particles: `assets/js/toast.js` and `assets/js/confetti.js`.
+    *   Internationalization (`FR` / `de-CH`): `assets/js/i18n.js` and `assets/js/i18n/de.js`.
     *   Class Roster Importer: `assets/js/roster-import.js` (Swiss ENT/ISM, Excel, CSV, TSV).
 *   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, a Node.js script (`meta/scripts/generate_fa_subset.js`) parses the HTML and dynamically generates `assets/js/fa-subset.js` (under 20kb!).
 
