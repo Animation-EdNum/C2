@@ -97,6 +97,7 @@ let simState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
             program: [], obstacles: [], locked: false, isAnimating: false, type: 'destination', bugIndex: -1
         };
+        window.readState = readState;
         let readGlobalScore = 0;
         let readGlobalStreak = 0, readGlobalStreakBest = 0;
 

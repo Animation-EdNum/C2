@@ -414,6 +414,7 @@ test('loadRegistry', async (t) => {
             'app-simulateur-reseau-dns', // 7-8H
             'app-compresseur-magique',   // 7-8H
             'app-dresseur-neurones',     // 7-8H
+            'app-crediter-image',        // 7-8H
             'app-reseau-villages',       // 7-8H, 9CO
             'app-simulateur-telechargement', // 7-8H
             'app-calculatrice-binaire',   // 7H-10CO

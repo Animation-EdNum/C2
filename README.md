@@ -182,6 +182,7 @@ Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration 
 - ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H)
 - 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H)
 - 🌐 **Simulateur Réseau & DNS** (`alpha/webapps/simulateur_reseau_dns.html`, 7-8H)
+- ⚖️ **Créditer une image (TASL)** (`alpha/webapps/crediter_image.html`, 7-8H)
 - 🏔️ **Le Réseau des Villages** (`alpha/webapps/reseau_villages.html`, 7-8H, 9-10CO)
 - 🫧 **La Bulle de Filtres** (`alpha/webapps/bulle_filtres.html`, 8H-10CO)
 - 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO)

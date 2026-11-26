@@ -1,0 +1,2614 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="fr">
+
+<head>
+    <link rel="root" href="../../">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>⚖️ Créditer une image (TASL)</title>
+    <meta property="og:title" content="Créditer une image (TASL)">
+    <meta property="og:description"
+        content="Apprends à créditer correctement les images Creative Commons selon ton degré (7H : Auteur + Source ; 8H : méthode TASL complète sur Wikimedia Commons).">
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../assets/css/tokens.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/components.css">
+    <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
+    <style>
+        :root {
+            --bg-gradient-start: #0f766e;
+            --bg-gradient-end: #1e293b;
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --card-border: #e2e8f0;
+            --container-bg: rgba(255, 255, 255, 0.93);
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #0d9488;
+            --accent-dark: #0f766e;
+            --primary: #0d9488;
+            --primary-hover: #0f766e;
+            --primary-light: rgba(13, 148, 136, 0.14);
+            --badge-bg: #ccfbf1;
+            --badge-color: #0f766e;
+            --success: #16a34a;
+            --warning: #d97706;
+            --error: #dc2626;
+            --wiki-bg: #f8fafc;
+            --wiki-border: #cbd5e1;
+            --wiki-header: #eaecf0;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --shadow-color: rgba(0, 0, 0, 0.25);
+        }
+
+        body.dark {
+            color-scheme: dark;
+            --bg-gradient-start: #0f172a;
+            --bg-gradient-end: #020617;
+            --card-bg: rgba(30, 41, 59, 0.92);
+            --card-border: #334155;
+            --container-bg: rgba(15, 23, 42, 0.92);
+            --text-main: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent: #0d9488;
+            --accent-dark: #0f766e;
+            --accent-bright: #5eead4;
+            --primary: #14b8a6;
+            --primary-hover: #2dd4bf;
+            --primary-light: rgba(45, 212, 191, 0.16);
+            --badge-bg: rgba(45, 212, 191, 0.16);
+            --badge-color: #5eead4;
+            --wiki-bg: #1e293b;
+            --wiki-border: #475569;
+            --wiki-header: #0f172a;
+            --card-shadow: rgba(0, 0, 0, 0.4);
+            --shadow-color: rgba(0, 0, 0, 0.55);
+        }
+
+        body.dark .badge-level,
+        body.dark .header-icon {
+            color: #5eead4;
+        }
+
+        body.dark .live-caption-box a {
+            color: #5eead4;
+        }
+
+        body {
+            touch-action: manipulation;
+            font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        body > .container {
+            animation: fadeInCascade 0.45s var(--spring-easing) forwards;
+        }
+
+        .container {
+            max-width: var(--container-max-width, 1400px);
+            width: 100%;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 28px 32px;
+            border-radius: var(--radius-2xl);
+            box-shadow: 0 20px 60px var(--shadow-color);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+        }
+
+        .app-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        /* --- TOP NAVIGATION TABS --- */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(100, 116, 139, 0.1);
+            padding: 6px;
+            border-radius: var(--radius-xl);
+        }
+
+        .tab-btn {
+            flex: 1 1 180px;
+            min-height: 44px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: calc(var(--radius-xl) - 4px);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        body.dark .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--accent-dark);
+            border-color: var(--accent);
+            box-shadow: 0 3px 10px var(--card-shadow);
+        }
+
+        body.dark .tab-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .tab-badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: var(--primary-light);
+            color: var(--accent-dark);
+        }
+
+        body.dark .tab-badge {
+            color: #5eead4;
+        }
+
+        body.dark .tab-btn.active .tab-badge {
+            background: rgba(15, 23, 42, 0.35);
+            color: #ffffff;
+        }
+
+        /* --- PANELS --- */
+        .tab-panel {
+            display: none;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .tab-panel.active {
+            display: flex;
+        }
+
+        /* --- PEDAGOGICAL GOAL BANNER --- */
+        .goal-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 14px 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--accent);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .goal-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1 1 300px;
+        }
+
+        .goal-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-lg);
+            background: var(--primary-light);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .goal-text h2 {
+            font-size: 1rem;
+            font-weight: 800;
+            margin: 0 0 2px 0;
+        }
+
+        .goal-text p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .challenge-switcher {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chal-dot-btn {
+            min-width: 40px;
+            min-height: 40px;
+            padding: 0 10px;
+            border-radius: var(--radius-lg);
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .chal-dot-btn.active {
+            border-color: var(--accent);
+            background: var(--primary-light);
+            color: var(--accent-dark);
+        }
+
+        body.dark .chal-dot-btn.active {
+            color: #5eead4;
+        }
+
+        body.dark .pick-chip {
+            color: #5eead4;
+        }
+
+        body.dark .goal-icon {
+            color: #5eead4;
+        }
+
+        .chal-dot-btn.solved {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        /* --- SPLIT WORKSPACE (COMMONS + WORKBENCH) --- */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- SIMULATED WIKIMEDIA COMMONS BROWSER --- */
+        .commons-browser {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 6px 20px var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--wiki-header);
+            border-bottom: 1px solid var(--wiki-border);
+            flex-wrap: wrap;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .browser-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot-r { background: #ef4444; }
+        .dot-y { background: #f59e0b; }
+        .dot-g { background: #10b981; }
+
+        .url-pill {
+            flex: 1 1 240px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--wiki-border);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.78rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+        }
+
+        .url-pill:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .url-pill-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pick-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: var(--primary-light);
+            color: var(--accent-dark);
+            flex-shrink: 0;
+        }
+
+        body.dark .pick-chip {
+            color: var(--accent);
+        }
+
+        .commons-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .commons-masthead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid var(--wiki-border);
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .commons-brand {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .commons-filename {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            word-break: break-word;
+            margin: 0;
+        }
+
+        .commons-preview-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--wiki-bg);
+            border: 1px solid var(--wiki-border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            min-height: 195px;
+        }
+
+        .commons-preview-box svg {
+            width: 100%;
+            max-width: 340px;
+            height: 175px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .commons-hint-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            background: rgba(13, 148, 136, 0.08);
+            border: 1px dashed rgba(13, 148, 136, 0.4);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+        }
+
+        /* Wikimedia metadata table */
+        .wiki-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            border: 1px solid var(--wiki-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .wiki-table tr {
+            border-bottom: 1px solid var(--wiki-border);
+        }
+
+        .wiki-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .wiki-table th {
+            width: 30%;
+            text-align: left;
+            padding: 9px 11px;
+            background: var(--wiki-header);
+            color: var(--text-main);
+            font-weight: 700;
+            vertical-align: top;
+        }
+
+        .wiki-table td {
+            padding: 9px 11px;
+            background: var(--card-bg);
+            color: var(--text-main);
+            vertical-align: top;
+        }
+
+        .clickable-field {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 9px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid transparent;
+            background: rgba(100, 116, 139, 0.09);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s ease;
+            min-height: 34px;
+        }
+
+        .clickable-field:hover {
+            border-color: var(--accent);
+            background: var(--primary-light);
+        }
+
+        .clickable-field.captured {
+            border-color: var(--success);
+            background: rgba(22, 163, 74, 0.14);
+            color: #15803d;
+        }
+
+        body.dark .clickable-field.captured {
+            color: #4ade80;
+        }
+
+        .cc-wiki-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--wiki-bg);
+            border: 1px solid var(--wiki-border);
+            border-radius: var(--radius-md);
+            flex-wrap: wrap;
+        }
+
+        .cc-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #1e293b;
+            color: #f8fafc;
+            font-weight: 800;
+            font-size: 0.78rem;
+            letter-spacing: 0.03em;
+            flex-shrink: 0;
+        }
+
+        body.dark .cc-pill-badge {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* --- WORKBENCH PANEL (STUDENT PRESENTATION CARD + FORM) --- */
+        .workbench-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 18px 20px;
+            box-shadow: 0 6px 20px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .workbench-title {
+            font-size: 1rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        /* Slide Preview */
+        .slide-preview {
+            background: var(--wiki-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-preview-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .slide-thumb svg {
+            width: 210px;
+            height: 112px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .live-caption-box {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            font-size: 0.86rem;
+            text-align: center;
+            line-height: 1.45;
+            min-height: 44px;
+        }
+
+        .live-caption-box a {
+            color: var(--accent-dark);
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        body.dark .live-caption-box a {
+            color: var(--accent);
+        }
+
+        /* Form Inputs */
+        .tasl-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .tasl-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-right: 4px;
+        }
+
+        .tasl-input,
+        .tasl-select {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--card-border);
+            background: var(--wiki-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .tasl-input:focus,
+        .tasl-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        body.dark .tasl-input,
+        body.dark .tasl-select {
+            background: #0f172a;
+            color: var(--text-main);
+            border-color: #475569;
+        }
+
+        body.dark .tasl-input:focus,
+        body.dark .tasl-select:focus {
+            background: #0f172a !important;
+            color: var(--text-main) !important;
+        }
+
+        .quick-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .choice-pill {
+            min-height: 36px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--card-border);
+            background: var(--wiki-bg);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .choice-pill:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        .feedback-box {
+            display: none;
+            padding: 12px 14px;
+            border-radius: var(--radius-lg);
+            font-size: 0.88rem;
+            line-height: 1.45;
+            border: 1px solid transparent;
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box.success {
+            background: rgba(22, 163, 74, 0.12);
+            border-color: rgba(22, 163, 74, 0.4);
+            color: #15803d;
+        }
+
+        .feedback-box.error {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: rgba(220, 38, 38, 0.35);
+            color: #b91c1c;
+        }
+
+        body.dark .feedback-box.success {
+            color: #4ade80;
+        }
+
+        body.dark .feedback-box.error {
+            color: #fca5a5;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-primary-tasl {
+            flex: 1 1 180px;
+            min-height: 46px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--radius-lg);
+            background: var(--accent);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary-tasl:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary-tasl {
+            min-height: 46px;
+            padding: 10px 14px;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+
+        .btn-secondary-tasl:hover {
+            border-color: var(--accent);
+        }
+
+        /* --- DECRYPTOR TAB --- */
+        .cc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .panel-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 18px 20px;
+            box-shadow: 0 4px 14px var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-card h3 {
+            margin: 0;
+            font-size: 1.02rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brick-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .brick-btn {
+            min-height: 54px;
+            padding: 8px 12px;
+            border-radius: var(--radius-lg);
+            border: 1.5px solid var(--card-border);
+            background: var(--wiki-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brick-btn strong {
+            font-size: 0.95rem;
+        }
+
+        .brick-btn span {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+        }
+
+        .brick-btn.active {
+            border-color: var(--accent);
+            background: var(--primary-light);
+        }
+
+        .license-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .preset-cc-btn {
+            min-height: 40px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .preset-cc-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .rights-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        @media (max-width: 560px) {
+            .rights-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .right-item {
+            padding: 10px 12px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border);
+            background: var(--wiki-bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .right-status {
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .right-status.yes {
+            background: rgba(22, 163, 74, 0.15);
+            color: #15803d;
+        }
+
+        .right-status.no {
+            background: rgba(220, 38, 38, 0.15);
+            color: #b91c1c;
+        }
+
+        .right-status.req {
+            background: rgba(217, 119, 6, 0.16);
+            color: #b45309;
+        }
+
+        body.dark .right-status.yes { color: #4ade80; }
+        body.dark .right-status.no { color: #fca5a5; }
+        body.dark .right-status.req { color: #fcd34d; }
+
+        /* Quiz section */
+        .quiz-card {
+            background: var(--wiki-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quiz-opt-btn {
+            flex: 1 1 140px;
+            min-height: 44px;
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .quiz-opt-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .quiz-opt-btn.correct {
+            border-color: var(--success);
+            background: rgba(22, 163, 74, 0.15);
+        }
+
+        .quiz-opt-btn.wrong {
+            border-color: var(--error);
+            background: rgba(220, 38, 38, 0.12);
+        }
+
+        /* Search tip box */
+        .search-tip-query {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.86rem;
+            background: var(--wiki-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tasl-memo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .tasl-memo-item {
+            padding: 12px;
+            border-radius: var(--radius-lg);
+            background: var(--wiki-bg);
+            border: 1px solid var(--card-border);
+            font-size: 0.84rem;
+            line-height: 1.4;
+        }
+
+        /* --- GENERATOR TAB --- */
+        .gen-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .code-output-box {
+            background: var(--wiki-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 16px;
+            }
+            .badge-level {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link" data-i18n="common.skip_link">Aller au contenu principal</a>
+    <div class="container" id="main-content">
+        <header class="app-header">
+            <div class="header-title-wrapper">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil" data-i18n-attr="title:common.back_home;aria-label:common.back_home">
+                    <i data-fa="arrow-left"></i>
+                </a>
+                <div class="header-icon" aria-hidden="true">
+                    <i data-fa="scale-balanced"></i>
+                </div>
+                <div>
+                    <h1>
+                        <span data-i18n="crediter_image.title">Créditer une image (TASL)</span>
+                        <span class="badge-level">7-8H</span>
+                        <span class="badge-alpha">Alpha</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <div class="settings-dropdown">
+                    <button class="icon-action-btn" aria-label="Options" id="options-menu-btn"
+                        data-i18n-attr="aria-label:common.options">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <span id="themeToggleText" data-i18n="common.theme_dark">Sombre</span>
+                        </button>
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                            <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
+                            <i data-fa="volume-xmark" id="icon-vol-off"></i>
+                            <span id="audioToggleText" data-i18n="common.audio_on">Activer son</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText" data-i18n="common.reset">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-shell">
+            <!-- Navigation par onglets -->
+            <div class="tabs" role="tablist" aria-label="Modes d'apprentissage">
+                <button type="button" class="tab-btn active" role="tab" id="tab-btn-7h" aria-selected="true"
+                    data-tab="mode7h">
+                    <i data-fa="medal"></i>
+                    <span>Mode 7H</span>
+                    <span class="tab-badge">Auteur + Source</span>
+                </button>
+                <button type="button" class="tab-btn" role="tab" id="tab-btn-8h" aria-selected="false"
+                    data-tab="mode8h">
+                    <i data-fa="trophy-star"></i>
+                    <span>Mode 8H</span>
+                    <span class="tab-badge">TASL complet</span>
+                </button>
+                <button type="button" class="tab-btn" role="tab" id="tab-btn-cc" aria-selected="false"
+                    data-tab="decryptor">
+                    <i data-fa="magnifying-glass"></i>
+                    <span>Décrypteur CC &amp; Mémo</span>
+                </button>
+                <button type="button" class="tab-btn" role="tab" id="tab-btn-gen" aria-selected="false"
+                    data-tab="generator">
+                    <i data-fa="pen-to-square"></i>
+                    <span>Générateur d'exposé</span>
+                </button>
+            </div>
+
+            <!-- ONGLET 1 & 2 : EXERCICE GUIDÉ (7H / 8H) -->
+            <section id="panel-practice" class="tab-panel active" aria-labelledby="practice-goal-title">
+                <div class="goal-banner">
+                    <div class="goal-info">
+                        <div class="goal-icon" aria-hidden="true">
+                            <i data-fa="image"></i>
+                        </div>
+                        <div class="goal-text">
+                            <h2 id="practice-goal-title">Mission 7H : Auteur + Source</h2>
+                            <p id="practice-goal-desc">Observe la fiche Wikimedia Commons et crédite correctement l'image pour ton exposé (le Titre et la Licence restent optionnels en 7H).</p>
+                        </div>
+                    </div>
+                    <div class="challenge-switcher" id="challenge-switcher" aria-label="Choix de l'image"></div>
+                </div>
+
+                <div class="workspace-grid">
+                    <!-- Colonne gauche : Fiche Wikimedia Commons simulée -->
+                    <article class="commons-browser" aria-label="Simulation d'une page Wikimedia Commons">
+                        <div class="browser-bar">
+                            <div class="browser-dots" aria-hidden="true">
+                                <span class="browser-dot dot-r"></span>
+                                <span class="browser-dot dot-y"></span>
+                                <span class="browser-dot dot-g"></span>
+                            </div>
+                            <button type="button" class="url-pill" id="wiki-url-btn"
+                                title="Cliquer pour copier cette adresse Source dans ton crédit">
+                                <i data-fa="lock" style="color: var(--success);"></i>
+                                <span class="url-pill-text" id="wiki-url-text">https://commons.wikimedia.org/wiki/File:…</span>
+                                <span class="pick-chip"><i data-fa="hand-pointer"></i> Source</span>
+                            </button>
+                        </div>
+
+                        <div class="commons-body">
+                            <div class="commons-masthead">
+                                <div class="commons-brand">
+                                    <i data-fa="globe"></i>
+                                    <span>Wikimedia Commons · Photothèque libre</span>
+                                </div>
+                                <span class="tab-badge" id="wiki-index-label">Image 1 / 5</span>
+                            </div>
+
+                            <h3 class="commons-filename" id="wiki-file-heading">File:Salamandre_tachetée.png</h3>
+
+                            <div class="commons-preview-box" id="wiki-svg-container"></div>
+
+                            <div class="commons-hint-bar">
+                                <i data-fa="lightbulb" style="color: var(--warning); flex-shrink: 0;"></i>
+                                <span>Astuce : clique directement sur un élément dans la fiche ci-dessous (ou sur la barre d'adresse en haut) pour le reporter dans ton crédit !</span>
+                            </div>
+
+                            <table class="wiki-table" aria-label="Informations sur le fichier">
+                                <tbody>
+                                    <tr>
+                                        <th>Description</th>
+                                        <td>
+                                            <button type="button" class="clickable-field" id="wiki-field-title"
+                                                data-pick="title">
+                                                <i data-fa="pen"></i>
+                                                <span id="wiki-desc-text">Salamandre tachetée</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <td><span id="wiki-date-text">11 mai 2014</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Source</th>
+                                        <td>
+                                            <span id="wiki-origin-text" style="color: var(--text-secondary);">Travail personnel</span>
+                                            <span style="display:block; font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+                                                (Attention : pour citer l'image, on donne l'adresse URL du fichier en haut du navigateur !)
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Auteur</th>
+                                        <td>
+                                            <button type="button" class="clickable-field" id="wiki-field-author"
+                                                data-pick="author">
+                                                <i data-fa="user"></i>
+                                                <span id="wiki-author-text">Paligui</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Appareil photo</th>
+                                        <td>
+                                            <button type="button" class="clickable-field" id="wiki-field-camera"
+                                                data-pick="camera">
+                                                <span id="wiki-camera-text">Nikon D5300</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Conditions d'utilisation</th>
+                                        <td>
+                                            <div class="cc-wiki-box">
+                                                <span class="cc-pill-badge" id="wiki-cc-badge">CC BY-SA 3.0</span>
+                                                <button type="button" class="clickable-field" id="wiki-field-license"
+                                                    data-pick="license">
+                                                    <i data-fa="scale-balanced"></i>
+                                                    <span id="wiki-license-text">Creative Commons Attribution – Partage dans les Mêmes Conditions 3.0</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <!-- Colonne droite : Support élève & Établi de citation -->
+                    <section class="workbench-card" aria-label="Création du crédit pour l'exposé">
+                        <h3 class="workbench-title">
+                            <i data-fa="book-open-reader" style="color: var(--accent);"></i>
+                            <span>Mon support d'exposé</span>
+                        </h3>
+
+                        <!-- Aperçu visuel du support élève -->
+                        <div class="slide-preview">
+                            <div class="slide-preview-header">
+                                <span id="slide-topic-label">Exposé de classe</span>
+                                <span id="slide-mode-pill" class="tab-badge">7H · Auteur + Source</span>
+                            </div>
+                            <div class="slide-thumb" id="slide-svg-container"></div>
+                            <div class="live-caption-box" id="live-caption-preview" aria-live="polite">
+                                Aperçu de la légende sous ton image…
+                            </div>
+                        </div>
+
+                        <!-- Formulaire 7H / 8H -->
+                        <form class="tasl-form" id="tasl-practice-form" novalidate>
+                            <!-- T : Titre (8H uniquement) -->
+                            <div class="field-group" id="group-input-title">
+                                <label class="field-label" for="input-title">
+                                    <span><span class="tasl-letter">T</span> Titre de l'image</span>
+                                    <span style="font-size:0.76rem; color:var(--text-muted);">En français clair</span>
+                                </label>
+                                <input type="text" id="input-title" class="tasl-input"
+                                    placeholder="Clique sur Description dans la fiche ou écris le titre…" autocomplete="off">
+                                <div class="quick-choices" id="choices-title"></div>
+                            </div>
+
+                            <!-- A : Auteur (7H et 8H) -->
+                            <div class="field-group" id="group-input-author">
+                                <label class="field-label" for="input-author">
+                                    <span><span class="tasl-letter">A</span> Auteur (nom ou pseudo)</span>
+                                    <span style="font-size:0.76rem; color:var(--text-muted);">Créateur·trice</span>
+                                </label>
+                                <input type="text" id="input-author" class="tasl-input"
+                                    placeholder="Clique sur Auteur dans la fiche Wikimedia…" autocomplete="off">
+                                <div class="quick-choices" id="choices-author"></div>
+                            </div>
+
+                            <!-- S : Source (7H et 8H) -->
+                            <div class="field-group" id="group-input-source">
+                                <label class="field-label" for="input-source">
+                                    <span><span class="tasl-letter">S</span> Source (adresse web exacte)</span>
+                                    <span style="font-size:0.76rem; color:var(--text-muted);">Jamais « Google Images » !</span>
+                                </label>
+                                <input type="url" id="input-source" class="tasl-input"
+                                    placeholder="Clique sur la barre d'adresse en haut de Wikimedia…" autocomplete="off">
+                                <div class="quick-choices" id="choices-source"></div>
+                            </div>
+
+                            <!-- L : Licence (8H uniquement) -->
+                            <div class="field-group" id="group-input-license">
+                                <label class="field-label" for="select-license">
+                                    <span><span class="tasl-letter">L</span> Licence précise</span>
+                                    <span style="font-size:0.76rem; color:var(--text-muted);">« CC » seul ne suffit pas</span>
+                                </label>
+                                <select id="select-license" class="tasl-select">
+                                    <option value="">-- Choisir la licence exacte --</option>
+                                    <option value="CC">CC (Creative Commons générique)</option>
+                                    <option value="Libre de droits">Image libre trouvée sur Internet</option>
+                                    <option value="CC0 1.0">CC0 1.0 (Domaine public)</option>
+                                    <option value="CC BY 4.0">CC BY 4.0 (Attribution)</option>
+                                    <option value="CC BY-SA 3.0">CC BY-SA 3.0 (Attribution - Partage dans les mêmes conditions)</option>
+                                    <option value="CC BY-SA 4.0">CC BY-SA 4.0 (Attribution - Partage dans les mêmes conditions)</option>
+                                    <option value="CC BY-NC 4.0">CC BY-NC 4.0 (Attribution - Pas d'utilisation commerciale)</option>
+                                    <option value="CC BY-NC-SA 4.0">CC BY-NC-SA 4.0</option>
+                                    <option value="CC BY-ND 4.0">CC BY-ND 4.0 (Pas de modification)</option>
+                                    <option value="CC BY-NC-ND 4.0">CC BY-NC-ND 4.0</option>
+                                </select>
+                            </div>
+
+                            <div class="feedback-box" id="practice-feedback" aria-live="polite"></div>
+
+                            <div class="action-row">
+                                <button type="submit" class="btn-primary-tasl" id="btn-validate-credit">
+                                    <i data-fa="check"></i>
+                                    <span>Vérifier mon crédit</span>
+                                </button>
+                                <button type="button" class="btn-secondary-tasl" id="btn-next-challenge"
+                                    style="display:none;">
+                                    <span>Image suivante</span>
+                                    <i data-fa="arrow-right"></i>
+                                </button>
+                                <button type="button" class="btn-secondary-tasl" id="btn-clear-form"
+                                    title="Vider les champs">
+                                    <i data-fa="arrows-rotate"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </section>
+
+            <!-- ONGLET 3 : DÉCRYPTEUR CC & MÉMO -->
+            <section id="panel-decryptor" class="tab-panel" aria-label="Décrypteur Creative Commons et Mémo TASL">
+                <div class="cc-grid">
+                    <!-- Manipulateur des 4 briques CC -->
+                    <article class="panel-card">
+                        <h3><i data-fa="scale-balanced" style="color: var(--accent);"></i> Décrypteur des licences Creative Commons</h3>
+                        <p style="font-size:0.88rem; color:var(--text-secondary); margin:0;">
+                            Combine les 4 briques ou sélectionne une licence pour voir immédiatement ce que tu as le droit de faire :
+                        </p>
+
+                        <div class="license-presets" id="cc-presets-row">
+                            <button type="button" class="preset-cc-btn" data-cc="CC0">CC0</button>
+                            <button type="button" class="preset-cc-btn" data-cc="CC BY">CC BY</button>
+                            <button type="button" class="preset-cc-btn active" data-cc="CC BY-SA">CC BY-SA</button>
+                            <button type="button" class="preset-cc-btn" data-cc="CC BY-NC">CC BY-NC</button>
+                            <button type="button" class="preset-cc-btn" data-cc="CC BY-NC-SA">CC BY-NC-SA</button>
+                            <button type="button" class="preset-cc-btn" data-cc="CC BY-ND">CC BY-ND</button>
+                            <button type="button" class="preset-cc-btn" data-cc="CC BY-NC-ND">CC BY-NC-ND</button>
+                        </div>
+
+                        <div class="brick-buttons">
+                            <button type="button" class="brick-btn active" id="brick-by" data-brick="BY">
+                                <strong>BY · Attribution</strong>
+                                <span>Citer l'auteur obligatoire</span>
+                            </button>
+                            <button type="button" class="brick-btn active" id="brick-sa" data-brick="SA">
+                                <strong>SA · Share Alike</strong>
+                                <span>Repartager sous même licence</span>
+                            </button>
+                            <button type="button" class="brick-btn" id="brick-nc" data-brick="NC">
+                                <strong>NC · Non Commercial</strong>
+                                <span>Pas d'usage commercial</span>
+                            </button>
+                            <button type="button" class="brick-btn" id="brick-nd" data-brick="ND">
+                                <strong>ND · No Derivatives</strong>
+                                <span>Pas de modification</span>
+                            </button>
+                        </div>
+
+                        <div style="padding:10px 12px; border-radius:var(--radius-lg); background:var(--primary-light); font-weight:800; font-size:0.95rem;"
+                            id="cc-active-summary">
+                            Licence active : CC BY-SA
+                        </div>
+
+                        <div class="rights-list" id="cc-rights-list"></div>
+                    </article>
+
+                    <!-- Mini-Quiz : Ai-je le droit ? -->
+                    <article class="panel-card">
+                        <h3><i data-fa="circle-info" style="color: var(--accent);"></i> Mises en situation : Ai-je le droit ?</h3>
+                        <div class="quiz-card">
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; font-weight:700; color:var(--text-muted);">
+                                <span id="quiz-progress-label">Question 1 / 5</span>
+                                <span id="quiz-score-label">Score : 0</span>
+                            </div>
+                            <p id="quiz-question-text" style="font-size:0.95rem; font-weight:700; margin:4px 0;"></p>
+                            <div class="quiz-options" id="quiz-options-row"></div>
+                            <div class="feedback-box" id="quiz-feedback" aria-live="polite"></div>
+                            <div class="action-row">
+                                <button type="button" class="btn-secondary-tasl" id="btn-quiz-next" style="display:none;">
+                                    <span>Question suivante</span>
+                                    <i data-fa="arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Astuce de recherche -->
+                        <h3 style="margin-top:6px;"><i data-fa="magnifying-glass" style="color: var(--accent);"></i> Astuce de recherche sur le web</h3>
+                        <p style="font-size:0.86rem; color:var(--text-secondary); margin:0;">
+                            Pour trouver des images libres facilement sur un moteur de recherche, ajoute <code>site:commons.wikimedia.org</code> à tes mots-clés :
+                        </p>
+                        <div class="search-tip-query">
+                            <span id="search-tip-text">château médiéval site:commons.wikimedia.org</span>
+                            <button type="button" class="btn-secondary-tasl" id="btn-copy-search-tip"
+                                style="min-height:36px; padding:4px 10px; font-size:0.8rem;">
+                                <i data-fa="copy"></i>
+                                <span>Copier</span>
+                            </button>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">
+                            Autres banques utiles : Wikimedia Commons, Flickr (filtre Creative Commons), Snappygoat. En Suisse, l'exception pédagogique (art. 19 al. 1 let. b LDA) autorise certains usages en classe fermée, mais citer ses sources reste indispensable !
+                        </p>
+                    </article>
+                </div>
+
+                <!-- Mémo TASL visuel -->
+                <article class="panel-card">
+                    <h3><i data-fa="bookmark" style="color: var(--accent);"></i> Mémo TASL : 4 lettres pour ne rien oublier</h3>
+                    <div class="tasl-memo-grid">
+                        <div class="tasl-memo-item">
+                            <strong><span class="tasl-letter">T</span> Titre</strong><br>
+                            Quel est le nom de l'œuvre ? S'il n'est pas en français, traduis-le clairement. <em>(Optionnel en 7H, requis en 8H)</em>
+                        </div>
+                        <div class="tasl-memo-item">
+                            <strong><span class="tasl-letter">A</span> Auteur</strong><br>
+                            Prénom et nom, pseudonyme ou institution qui a créé l'image. Jamais le modèle d'appareil photo !
+                        </div>
+                        <div class="tasl-memo-item">
+                            <strong><span class="tasl-letter">S</span> Source</strong><br>
+                            Adresse URL exacte de la page d'origine (ex. Wikimedia Commons). Jamais « Google Images » !
+                        </div>
+                        <div class="tasl-memo-item">
+                            <strong><span class="tasl-letter">L</span> Licence</strong><br>
+                            Nom précis de la licence (ex. <code>CC BY-SA 4.0</code>, <code>CC0</code>). « CC » seul ne suffit pas ! <em>(Optionnel en 7H, requis en 8H)</em>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <!-- ONGLET 4 : GÉNÉRATEUR DE CRÉDIT POUR EXPOSÉ -->
+            <section id="panel-generator" class="tab-panel" aria-label="Générateur de crédit pour mes exposés">
+                <div class="goal-banner">
+                    <div class="goal-info">
+                        <div class="goal-icon" aria-hidden="true">
+                            <i data-fa="pen-to-square"></i>
+                        </div>
+                        <div class="goal-text">
+                            <h2>Générateur de crédit pour tes vrais exposés</h2>
+                            <p>Saisis les informations trouvées sur Wikimedia Commons ou Flickr, vérifie l'aperçu, puis copie ton crédit tout prêt !</p>
+                        </div>
+                    </div>
+                    <div class="challenge-switcher">
+                        <button type="button" class="chal-dot-btn active" id="gen-mode-7h">Format 7H (A + S)</button>
+                        <button type="button" class="chal-dot-btn" id="gen-mode-8h">Format 8H (TASL)</button>
+                    </div>
+                </div>
+
+                <div class="gen-layout">
+                    <article class="panel-card">
+                        <h3>1. Informations de ton image</h3>
+                        <div class="field-group" id="gen-group-title" style="display:none;">
+                            <label class="field-label" for="gen-title"><span><span class="tasl-letter">T</span> Titre</span></label>
+                            <input type="text" id="gen-title" class="tasl-input" placeholder="Ex : Salamandre tachetée">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="gen-author"><span><span class="tasl-letter">A</span> Auteur</span></label>
+                            <input type="text" id="gen-author" class="tasl-input" placeholder="Ex : Paligui">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="gen-source"><span><span class="tasl-letter">S</span> Lien URL Source</span></label>
+                            <input type="url" id="gen-source" class="tasl-input"
+                                placeholder="https://commons.wikimedia.org/wiki/File:…">
+                        </div>
+                        <div class="field-group" id="gen-group-license" style="display:none;">
+                            <label class="field-label" for="gen-license"><span><span class="tasl-letter">L</span> Licence</span></label>
+                            <select id="gen-license" class="tasl-select">
+                                <option value="CC0 1.0">CC0 1.0 (Domaine public)</option>
+                                <option value="CC BY 4.0">CC BY 4.0</option>
+                                <option value="CC BY-SA 4.0" selected>CC BY-SA 4.0</option>
+                                <option value="CC BY-SA 3.0">CC BY-SA 3.0</option>
+                                <option value="CC BY-NC 4.0">CC BY-NC 4.0</option>
+                                <option value="CC BY-NC-SA 4.0">CC BY-NC-SA 4.0</option>
+                                <option value="CC BY-ND 4.0">CC BY-ND 4.0</option>
+                                <option value="CC BY-NC-ND 4.0">CC BY-NC-ND 4.0</option>
+                            </select>
+                        </div>
+                        <div class="action-row">
+                            <button type="button" class="btn-secondary-tasl" id="btn-gen-example">
+                                <i data-fa="sparkles"></i>
+                                <span>Charger un exemple</span>
+                            </button>
+                            <button type="button" class="btn-secondary-tasl" id="btn-gen-clear">
+                                <i data-fa="trash-can"></i>
+                                <span>Effacer</span>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="panel-card">
+                        <h3>2. Crédit prêt à coller</h3>
+                        <div class="live-caption-box" id="gen-visual-preview" aria-live="polite">
+                            Complète les champs à gauche pour générer ton crédit…
+                        </div>
+                        <div class="field-group">
+                            <span class="field-label">Format texte / Markdown :</span>
+                            <div class="code-output-box" id="gen-code-preview"></div>
+                        </div>
+                        <div class="action-row">
+                            <button type="button" class="btn-primary-tasl" id="btn-gen-copy-text">
+                                <i data-fa="copy"></i>
+                                <span>Copier le crédit</span>
+                            </button>
+                            <button type="button" class="btn-secondary-tasl" id="btn-gen-copy-rich">
+                                <i data-fa="clipboard"></i>
+                                <span>Copier avec liens (Word/Pages)</span>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Standard Localized Flat Footer -->
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements"
+                data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"
+                    data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/confetti.js"></script>
+    <script>
+        (function () {
+            'use strict';
+
+            const LICENSE_URLS = {
+                'CC0 1.0': 'https://creativecommons.org/publicdomain/zero/1.0/deed.fr',
+                'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/deed.fr',
+                'CC BY-SA 3.0': 'https://creativecommons.org/licenses/by-sa/3.0/deed.fr',
+                'CC BY-SA 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/deed.fr',
+                'CC BY-NC 4.0': 'https://creativecommons.org/licenses/by-nc/4.0/deed.fr',
+                'CC BY-NC-SA 4.0': 'https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr',
+                'CC BY-ND 4.0': 'https://creativecommons.org/licenses/by-nd/4.0/deed.fr',
+                'CC BY-NC-ND 4.0': 'https://creativecommons.org/licenses/by-nc-nd/4.0/deed.fr'
+            };
+
+            function buildSvgScene(type) {
+                const ns = 'http://www.w3.org/2000/svg';
+                const svg = document.createElementNS(ns, 'svg');
+                svg.setAttribute('viewBox', '0 0 320 170');
+                svg.setAttribute('role', 'img');
+
+                const addEl = (tag, attrs, parent = svg) => {
+                    const el = document.createElementNS(ns, tag);
+                    for (const [k, v] of Object.entries(attrs)) {
+                        el.setAttribute(k, String(v));
+                    }
+                    parent.appendChild(el);
+                    return el;
+                };
+
+                if (type === 'salamandre') {
+                    svg.setAttribute('aria-label', 'Illustration d\'une salamandre tachetée sur une feuille');
+                    addEl('rect', { width: 320, height: 170, fill: '#14532d' });
+                    addEl('ellipse', { cx: 160, cy: 145, rx: 145, ry: 32, fill: '#166534' });
+                    addEl('path', { d: 'M30 135 Q160 110 295 140', stroke: '#4ade80', 'stroke-width': 3, fill: 'none', opacity: 0.35 });
+                    // Salamander body
+                    addEl('path', { d: 'M75 110 Q135 72 205 95 Q245 108 265 124 Q235 125 195 112 Q135 102 82 122 Z', fill: '#0f172a' });
+                    addEl('ellipse', { cx: 80, cy: 108, rx: 22, ry: 14, fill: '#0f172a' });
+                    // Legs
+                    addEl('path', { d: 'M105 114 L92 134 M120 112 L126 134 M175 108 L168 130 M195 110 L208 130', stroke: '#0f172a', 'stroke-width': 7, 'stroke-linecap': 'round' });
+                    // Yellow spots
+                    [[76, 104, 5], [110, 92, 6], [134, 86, 7], [160, 88, 6], [186, 95, 7], [214, 105, 5], [102, 124, 4], [172, 122, 4]].forEach(([cx, cy, r]) => {
+                        addEl('circle', { cx, cy, r, fill: '#facc15' });
+                    });
+                    addEl('circle', { cx: 70, cy: 103, r: 2.5, fill: '#ffffff' });
+                    addEl('circle', { cx: 70, cy: 103, r: 1.2, fill: '#000000' });
+                } else if (type === 'chateau') {
+                    svg.setAttribute('aria-label', 'Illustration des ruines d\'un château médiéval sur une colline');
+                    addEl('rect', { width: 320, height: 170, fill: '#7dd3fc' });
+                    addEl('circle', { cx: 265, cy: 38, r: 22, fill: '#fef08a' });
+                    addEl('path', { d: 'M0 130 Q90 85 170 118 Q245 92 320 125 L320 170 L0 170 Z', fill: '#15803d' });
+                    // Castle ruins
+                    addEl('rect', { x: 105, y: 58, width: 32, height: 64, fill: '#94a3b8', stroke: '#475569', 'stroke-width': 2 });
+                    addEl('rect', { x: 137, y: 78, width: 52, height: 44, fill: '#cbd5e1', stroke: '#475569', 'stroke-width': 2 });
+                    addEl('rect', { x: 189, y: 66, width: 28, height: 56, fill: '#94a3b8', stroke: '#475569', 'stroke-width': 2 });
+                    // Battlements
+                    [105, 117, 129, 189, 203].forEach((x) => {
+                        addEl('rect', { x, y: x < 150 ? 50 : 58, width: 8, height: 9, fill: '#64748b' });
+                    });
+                    addEl('path', { d: 'M156 122 L156 102 A7 7 0 0 1 170 102 L170 122 Z', fill: '#334155' });
+                } else if (type === 'cervin') {
+                    svg.setAttribute('aria-label', 'Illustration du Cervin au lever du soleil');
+                    addEl('rect', { width: 320, height: 170, fill: '#0284c7' });
+                    addEl('circle', { cx: 64, cy: 42, r: 20, fill: '#fde047' });
+                    // Matterhorn peak
+                    addEl('polygon', { points: '55,155 152,24 252,155', fill: '#475569' });
+                    addEl('polygon', { points: '152,24 195,88 158,95 142,74', fill: '#f8fafc' });
+                    addEl('polygon', { points: '152,24 128,68 152,85 158,95', fill: '#cbd5e1' });
+                    addEl('polygon', { points: '0,155 75,112 160,155', fill: '#1e293b' });
+                    addEl('polygon', { points: '185,155 262,102 320,155', fill: '#334155' });
+                } else if (type === 'bouquetin') {
+                    svg.setAttribute('aria-label', 'Illustration d\'un bouquetin des Alpes sur un rocher');
+                    addEl('rect', { width: 320, height: 170, fill: '#38bdf8' });
+                    addEl('polygon', { points: '0,170 95,88 225,170', fill: '#64748b' });
+                    addEl('polygon', { points: '140,170 245,98 320,170', fill: '#475569' });
+                    // Ibex silhouette
+                    addEl('ellipse', { cx: 162, cy: 96, rx: 28, ry: 15, fill: '#78350f' });
+                    addEl('circle', { cx: 190, cy: 76, r: 10, fill: '#78350f' });
+                    addEl('path', { d: 'M144 106 L140 130 M152 108 L150 130 M172 106 L174 130 M180 105 L184 128', stroke: '#78350f', 'stroke-width': 5, 'stroke-linecap': 'round' });
+                    // Curved horns
+                    addEl('path', { d: 'M190 68 Q178 34 150 42', stroke: '#451a03', 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round' });
+                    addEl('path', { d: 'M194 69 Q184 39 158 46', stroke: '#451a03', 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round' });
+                } else {
+                    svg.setAttribute('aria-label', 'Illustration d\'une marmotte des Alpes dans une prairie');
+                    addEl('rect', { width: 320, height: 170, fill: '#bae6fd' });
+                    addEl('rect', { x: 0, y: 112, width: 320, height: 58, fill: '#22c55e' });
+                    addEl('ellipse', { cx: 105, cy: 135, rx: 32, ry: 12, fill: '#451a03' });
+                    // Marmot
+                    addEl('ellipse', { cx: 175, cy: 106, rx: 24, ry: 30, fill: '#92400e' });
+                    addEl('circle', { cx: 175, cy: 70, r: 16, fill: '#92400e' });
+                    addEl('circle', { cx: 164, cy: 58, r: 5, fill: '#78350f' });
+                    addEl('circle', { cx: 186, cy: 58, r: 5, fill: '#78350f' });
+                    addEl('circle', { cx: 169, cy: 67, r: 2.2, fill: '#0f172a' });
+                    addEl('circle', { cx: 181, cy: 67, r: 2.2, fill: '#0f172a' });
+                    addEl('ellipse', { cx: 175, cy: 74, rx: 4, ry: 2.5, fill: '#451a03' });
+                }
+                return svg;
+            }
+
+            const CHALLENGES = [
+                {
+                    id: 'salamandre',
+                    topic: 'Exposé · Les amphibiens de Suisse',
+                    svgType: 'salamandre',
+                    fileHeading: 'File:Salamandre_tachetée.png',
+                    rawTitleField: 'Salamandre tachetée (Parc naturel)',
+                    expectedTitle: 'Salamandre tachetée',
+                    acceptedTitles: ['salamandre tachetée', 'salamandre tachetee', 'salamandre tachetée (parc naturel)'],
+                    author: 'Paligui',
+                    url: 'https://commons.wikimedia.org/wiki/File:Salamandre_tachet%C3%A9e.png',
+                    date: '11 mai 2014',
+                    originNote: 'Travail personnel',
+                    camera: 'Nikon D5300',
+                    licenseCode: 'CC BY-SA 3.0',
+                    licenseFullText: 'Creative Commons Attribution – Partage dans les Mêmes Conditions 3.0',
+                    titleChoices: ['Salamandre tachetée', 'Photo Nikon D5300', 'Image Google'],
+                    authorChoices: ['Paligui', 'Nikon D5300', 'Wikimedia'],
+                    sourceChoices: [
+                        'https://commons.wikimedia.org/wiki/File:Salamandre_tachet%C3%A9e.png',
+                        'Google Images',
+                        'Travail personnel'
+                    ]
+                },
+                {
+                    id: 'bresis',
+                    topic: 'Exposé · Les châteaux au Moyen Âge',
+                    svgType: 'chateau',
+                    fileHeading: 'File:Château-fort_en_ruines_de_Brésis.jpg',
+                    rawTitleField: 'Ruines du château-fort de Brésis',
+                    expectedTitle: 'Ruines du château-fort de Brésis',
+                    acceptedTitles: ['ruines du château-fort de brésis', 'ruines du chateau-fort de bresis', 'château-fort en ruines de brésis'],
+                    author: 'Dominique Robert',
+                    url: 'https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau-fort_en_ruines_de_Br%C3%A9sis.jpg',
+                    date: '22 août 2019',
+                    originNote: 'Travail personnel',
+                    camera: 'Canon EOS 70D',
+                    licenseCode: 'CC BY-SA 4.0',
+                    licenseFullText: 'Creative Commons Attribution – Partage dans les Mêmes Conditions 4.0 International',
+                    titleChoices: ['Ruines du château-fort de Brésis', 'Chateau.jpg', 'Canon EOS 70D'],
+                    authorChoices: ['Dominique Robert', 'Canon EOS 70D', 'Travail personnel'],
+                    sourceChoices: [
+                        'https://commons.wikimedia.org/wiki/File:Ch%C3%A2teau-fort_en_ruines_de_Br%C3%A9sis.jpg',
+                        'Google Images',
+                        'Wikipédia'
+                    ]
+                },
+                {
+                    id: 'cervin',
+                    topic: 'Exposé · Les sommets du Valais',
+                    svgType: 'cervin',
+                    fileHeading: 'File:Matterhorn_from_Domhütte_-_2.jpg',
+                    rawTitleField: 'Matterhorn from Domhütte (Le Cervin depuis la cabane du Dom)',
+                    expectedTitle: 'Le Cervin depuis la cabane du Dom',
+                    acceptedTitles: ['le cervin depuis la cabane du dom', 'cervin depuis la cabane du dom', 'matterhorn from domhütte', 'le cervin'],
+                    author: 'Zacharie Grossen',
+                    url: 'https://commons.wikimedia.org/wiki/File:Matterhorn_from_Domh%C3%BCtte_-_2.jpg',
+                    date: '14 juillet 2021',
+                    originNote: 'Travail personnel',
+                    camera: 'Sony Alpha 7 III',
+                    licenseCode: 'CC BY-SA 4.0',
+                    licenseFullText: 'Creative Commons Attribution – Partage dans les Mêmes Conditions 4.0 International',
+                    titleChoices: ['Le Cervin depuis la cabane du Dom', 'Sony Alpha 7', '2.jpg'],
+                    authorChoices: ['Zacharie Grossen', 'Sony Alpha 7 III', 'Cabane du Dom'],
+                    sourceChoices: [
+                        'https://commons.wikimedia.org/wiki/File:Matterhorn_from_Domh%C3%BCtte_-_2.jpg',
+                        'Internet',
+                        'Travail personnel'
+                    ]
+                },
+                {
+                    id: 'bouquetin',
+                    topic: 'Exposé · La faune alpine',
+                    svgType: 'bouquetin',
+                    fileHeading: 'File:Capra_ibex_Valais.jpg',
+                    rawTitleField: 'Bouquetin des Alpes en Valais',
+                    expectedTitle: 'Bouquetin des Alpes en Valais',
+                    acceptedTitles: ['bouquetin des alpes en valais', 'bouquetin des alpes', 'bouquetin'],
+                    author: 'AlpinisteVS',
+                    url: 'https://commons.wikimedia.org/wiki/File:Capra_ibex_Valais.jpg',
+                    date: '3 septembre 2022',
+                    originNote: 'Travail personnel',
+                    camera: 'Fujifilm X-T4',
+                    licenseCode: 'CC BY 4.0',
+                    licenseFullText: 'Creative Commons Attribution 4.0 International',
+                    titleChoices: ['Bouquetin des Alpes en Valais', 'Valais.jpg', 'Fujifilm X-T4'],
+                    authorChoices: ['AlpinisteVS', 'Fujifilm X-T4', 'Wikimedia Commons'],
+                    sourceChoices: [
+                        'https://commons.wikimedia.org/wiki/File:Capra_ibex_Valais.jpg',
+                        'Google Images',
+                        'Safari'
+                    ]
+                },
+                {
+                    id: 'marmotte',
+                    topic: 'Exposé · Les animaux de montagne',
+                    svgType: 'marmotte',
+                    fileHeading: 'File:Marmota_marmota_alpin.jpg',
+                    rawTitleField: 'Marmotte des Alpes devant son terrier',
+                    expectedTitle: 'Marmotte des Alpes devant son terrier',
+                    acceptedTitles: ['marmotte des alpes devant son terrier', 'marmotte des alpes', 'marmotte'],
+                    author: 'Claire Dubois (Musée de la Nature)',
+                    url: 'https://commons.wikimedia.org/wiki/File:Marmota_marmota_alpin.jpg',
+                    date: '19 juin 2024',
+                    originNote: 'Don d\'archive institutionnelle',
+                    camera: 'Olympus OM-D E-M1',
+                    licenseCode: 'CC0 1.0',
+                    licenseFullText: 'Creative Commons CC0 1.0 Transfert universel dans le Domaine Public',
+                    titleChoices: ['Marmotte des Alpes devant son terrier', 'Alpin.jpg', 'Olympus OM-D'],
+                    authorChoices: ['Claire Dubois (Musée de la Nature)', 'Olympus OM-D E-M1', 'Domaine public'],
+                    sourceChoices: [
+                        'https://commons.wikimedia.org/wiki/File:Marmota_marmota_alpin.jpg',
+                        'Google',
+                        'Archives'
+                    ]
+                }
+            ];
+
+            const QUIZ_QUESTIONS = [
+                {
+                    q: 'Léo veut retoucher une photo sous licence CC BY-NC-ND pour changer ses couleurs et l\'ajouter à son exposé. A-t-il le droit de la modifier ?',
+                    options: ['Oui, toutes les licences CC permettent les modifications', 'Non, le sigle ND (No Derivatives) interdit toute modification', 'Oui, s\'il supprime le nom de l\'auteur'],
+                    correct: 1,
+                    explain: 'Exact ! ND signifie « Pas de modification autorisée » : tu peux la montrer telle quelle en citant l\'auteur, mais pas la retoucher ni la découper.'
+                },
+                {
+                    q: 'Léa copie une photo trouvée sur Google Images et écrit « Source : Google Images » sous son affiche. Est-ce correct ?',
+                    options: ['Oui, c\'est là qu\'elle l\'a trouvée', 'Non, Google Images est un moteur de recherche, pas la source d\'origine', 'Oui, en 7H on peut écrire Google'],
+                    correct: 1,
+                    explain: 'Bravo ! Google Images ne crée ni n\'héberge les photos. Il faut cliquer jusqu\'au site d\'origine (ex. Wikimedia Commons) et copier sa véritable adresse URL.'
+                },
+                {
+                    q: 'Un élève trouve une image sous licence CC BY-SA 4.0 et l\'intègre dans un document partagé sur le site de l\'école. Quelle obligation supplémentaire impose « SA » ?',
+                    options: ['Aucune, il suffit de citer l\'auteur', 'Il doit partager son nouveau document modifié sous la même licence CC BY-SA', 'Il doit payer une taxe commerciale'],
+                    correct: 1,
+                    explain: 'Parfait ! SA (Share Alike) signifie « Partage dans les mêmes conditions » : si l\'on modifie ou intègre l\'œuvre, le résultat doit garder la même licence.'
+                },
+                {
+                    q: 'Dans un exposé de 8H, un élève écrit simplement « Licence : CC ». Pourquoi son enseignant lui demande-t-il de corriger ?',
+                    options: ['Parce que « CC » ne suffit pas : il existe plusieurs licences très différentes (CC0, CC BY-SA, CC BY-NC-ND…)', 'Parce que Creative Commons est interdit à l\'école', 'Parce qu\'il faut écrire « Copyright » à la place'],
+                    correct: 0,
+                    explain: 'Bien vu ! Entre CC0 (domaine public) et CC BY-NC-ND (très restrictive), les droits changent du tout au tout. Il faut toujours nommer la licence précise.'
+                },
+                {
+                    q: 'En Suisse, quand un·e enseignant·e utilise une œuvre protégée pour sa classe fermée (plateforme scolaire sécurisée), quelle règle s\'applique ?',
+                    options: ['L\'exception pédagogique (art. 19 al. 1 let. b LDA)', 'Le droit d\'auteur est totalement supprimé en Suisse', 'L\'usage libre sur les réseaux sociaux'],
+                    correct: 0,
+                    explain: 'Exact ! L\'art. 19 al. 1 let. b LDA autorise l\'usage pédagogique en cercle scolaire restreint (et les écoles paient des redevances collectives), mais dès qu\'on publie sur le web public, une licence libre (ou autorisation) reste requise !'
+                }
+            ];
+
+            // --- STATE ---
+            let activeTab = 'mode7h'; // 'mode7h' | 'mode8h' | 'decryptor' | 'generator'
+            let practiceGrade = '7H'; // '7H' | '8H'
+            let currentChallengeIdx = 0;
+            const solvedSet = { '7H': new Set(), '8H': new Set() };
+            let streak = 0;
+
+            let ccBricks = { BY: true, SA: true, NC: false, ND: false, isCC0: false };
+            let quizIdx = 0;
+            let quizScore = 0;
+            let quizAnswered = false;
+            let genFormat = '7H';
+
+            // --- DOM ELEMENTS ---
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const panelPractice = document.getElementById('panel-practice');
+            const panelDecryptor = document.getElementById('panel-decryptor');
+            const panelGenerator = document.getElementById('panel-generator');
+
+            const practiceGoalTitle = document.getElementById('practice-goal-title');
+            const practiceGoalDesc = document.getElementById('practice-goal-desc');
+            const slideModePill = document.getElementById('slide-mode-pill');
+            const challengeSwitcher = document.getElementById('challenge-switcher');
+
+            const wikiUrlBtn = document.getElementById('wiki-url-btn');
+            const wikiUrlText = document.getElementById('wiki-url-text');
+            const wikiIndexLabel = document.getElementById('wiki-index-label');
+            const wikiFileHeading = document.getElementById('wiki-file-heading');
+            const wikiSvgContainer = document.getElementById('wiki-svg-container');
+            const wikiDescText = document.getElementById('wiki-desc-text');
+            const wikiDateText = document.getElementById('wiki-date-text');
+            const wikiOriginText = document.getElementById('wiki-origin-text');
+            const wikiAuthorText = document.getElementById('wiki-author-text');
+            const wikiCameraText = document.getElementById('wiki-camera-text');
+            const wikiCcBadge = document.getElementById('wiki-cc-badge');
+            const wikiLicenseText = document.getElementById('wiki-license-text');
+
+            const slideTopicLabel = document.getElementById('slide-topic-label');
+            const slideSvgContainer = document.getElementById('slide-svg-container');
+            const liveCaptionPreview = document.getElementById('live-caption-preview');
+
+            const groupTitle = document.getElementById('group-input-title');
+            const groupLicense = document.getElementById('group-input-license');
+            const inputTitle = document.getElementById('input-title');
+            const inputAuthor = document.getElementById('input-author');
+            const inputSource = document.getElementById('input-source');
+            const selectLicense = document.getElementById('select-license');
+            const choicesTitle = document.getElementById('choices-title');
+            const choicesAuthor = document.getElementById('choices-author');
+            const choicesSource = document.getElementById('choices-source');
+            const practiceFeedback = document.getElementById('practice-feedback');
+            const btnNextChallenge = document.getElementById('btn-next-challenge');
+            const btnClearForm = document.getElementById('btn-clear-form');
+            const practiceForm = document.getElementById('tasl-practice-form');
+
+            // --- HELPERS ---
+            function normalizeText(str) {
+                return (str || '')
+                    .trim()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, ' ');
+            }
+
+            function normalizeUrl(url) {
+                try {
+                    return decodeURIComponent((url || '').trim()).toLowerCase().replace(/\/+$/, '');
+                } catch (e) {
+                    return (url || '').trim().toLowerCase().replace(/\/+$/, '');
+                }
+            }
+
+            function notifyToast(msg, type) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast(msg, type || 'info');
+                }
+            }
+
+            function triggerSound(kind) {
+                if (typeof window.playSound === 'function') {
+                    window.playSound(kind);
+                }
+            }
+
+            function clearElement(el) {
+                if (el) {
+                    el.replaceChildren();
+                }
+            }
+
+            // --- TAB SWITCHING ---
+            function switchTab(tabName) {
+                activeTab = tabName;
+                tabBtns.forEach((btn) => {
+                    const isMatch = btn.dataset.tab === tabName;
+                    btn.classList.toggle('active', isMatch);
+                    btn.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+                });
+
+                panelPractice.classList.remove('active');
+                panelDecryptor.classList.remove('active');
+                panelGenerator.classList.remove('active');
+
+                if (tabName === 'mode7h' || tabName === 'mode8h') {
+                    practiceGrade = tabName === 'mode7h' ? '7H' : '8H';
+                    panelPractice.classList.add('active');
+                    renderChallenge(currentChallengeIdx);
+                } else if (tabName === 'decryptor') {
+                    panelDecryptor.classList.add('active');
+                } else if (tabName === 'generator') {
+                    panelGenerator.classList.add('active');
+                }
+                triggerSound('click');
+            }
+
+            tabBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    switchTab(btn.dataset.tab);
+                });
+            });
+
+            // --- PRACTICE MODE (7H & 8H) ---
+            function buildChoicePills(container, items, targetInput) {
+                clearElement(container);
+                items.forEach((label) => {
+                    const pill = document.createElement('button');
+                    pill.type = 'button';
+                    pill.className = 'choice-pill';
+                    pill.textContent = label.length > 42 ? label.slice(0, 40) + '…' : label;
+                    pill.addEventListener('click', () => {
+                        targetInput.value = label;
+                        updateLivePreview();
+                        triggerSound('click');
+                    });
+                    container.appendChild(pill);
+                });
+            }
+
+            function renderChallengeSwitcher() {
+                clearElement(challengeSwitcher);
+                CHALLENGES.forEach((ch, idx) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'chal-dot-btn';
+                    if (idx === currentChallengeIdx) {
+                        btn.classList.add('active');
+                    }
+                    if (solvedSet[practiceGrade].has(ch.id)) {
+                        btn.classList.add('solved');
+                    }
+                    btn.textContent = String(idx + 1);
+                    btn.setAttribute('aria-label', 'Image ' + (idx + 1) + ' : ' + ch.expectedTitle);
+                    btn.addEventListener('click', () => {
+                        renderChallenge(idx);
+                        triggerSound('click');
+                    });
+                    challengeSwitcher.appendChild(btn);
+                });
+            }
+
+            function resetFormInputs() {
+                inputTitle.value = '';
+                inputAuthor.value = '';
+                inputSource.value = '';
+                selectLicense.value = '';
+                practiceFeedback.className = 'feedback-box';
+                practiceFeedback.textContent = '';
+                btnNextChallenge.style.display = 'none';
+                document.querySelectorAll('.clickable-field').forEach((el) => {
+                    el.classList.remove('captured');
+                });
+                updateLivePreview();
+            }
+
+            function renderChallenge(idx) {
+                currentChallengeIdx = idx;
+                const ch = CHALLENGES[idx];
+                const is8H = practiceGrade === '8H';
+
+                if (is8H) {
+                    practiceGoalTitle.textContent = 'Mission 8H : Méthode TASL complète (T + A + S + L)';
+                    practiceGoalDesc.textContent = 'En 8H, crédite l\'image avec les 4 éléments : Titre (en français) + Auteur + Source (URL sur le titre) + Licence précise.';
+                    slideModePill.textContent = '8H · TASL complet';
+                    groupTitle.style.display = 'flex';
+                    groupLicense.style.display = 'flex';
+                } else {
+                    practiceGoalTitle.textContent = 'Mission 7H : Auteur + Source';
+                    practiceGoalDesc.textContent = 'En 7H, crédite l\'image avec l\'Auteur et la Source (le Titre et la Licence restent optionnels à ce stade).';
+                    slideModePill.textContent = '7H · Auteur + Source';
+                    groupTitle.style.display = 'none';
+                    groupLicense.style.display = 'none';
+                }
+
+                wikiUrlText.textContent = ch.url;
+                wikiIndexLabel.textContent = 'Image ' + (idx + 1) + ' / ' + CHALLENGES.length;
+                wikiFileHeading.textContent = ch.fileHeading;
+                wikiDescText.textContent = ch.rawTitleField;
+                wikiDateText.textContent = ch.date;
+                wikiOriginText.textContent = ch.originNote;
+                wikiAuthorText.textContent = ch.author;
+                wikiCameraText.textContent = ch.camera;
+                wikiCcBadge.textContent = ch.licenseCode;
+                wikiLicenseText.textContent = ch.licenseFullText;
+
+                clearElement(wikiSvgContainer);
+                wikiSvgContainer.appendChild(buildSvgScene(ch.svgType));
+                slideTopicLabel.textContent = ch.topic;
+                clearElement(slideSvgContainer);
+                slideSvgContainer.appendChild(buildSvgScene(ch.svgType));
+
+                buildChoicePills(choicesTitle, ch.titleChoices, inputTitle);
+                buildChoicePills(choicesAuthor, ch.authorChoices, inputAuthor);
+                buildChoicePills(choicesSource, ch.sourceChoices, inputSource);
+
+                resetFormInputs();
+                renderChallengeSwitcher();
+            }
+
+            function renderFormattedCaption(targetEl, titleVal, authorVal, sourceVal, licenseVal, isFullTasl) {
+                clearElement(targetEl);
+                const hasAuthor = Boolean((authorVal || '').trim());
+                const hasSource = Boolean((sourceVal || '').trim());
+                const hasTitle = Boolean((titleVal || '').trim());
+                const hasLic = Boolean((licenseVal || '').trim());
+
+                if (!hasAuthor && !hasSource && (!isFullTasl || (!hasTitle && !hasLic))) {
+                    targetEl.textContent = 'Aperçu de la légende sous ton image…';
+                    return;
+                }
+
+                const validUrl = /^https?:\/\//i.test((sourceVal || '').trim());
+                if (!isFullTasl) {
+                    const spanAuthor = document.createElement('span');
+                    spanAuthor.textContent = 'Image : ' + (hasAuthor ? authorVal.trim() : '[Auteur ?]') + ' · Source : ';
+                    targetEl.appendChild(spanAuthor);
+
+                    if (validUrl) {
+                        const link = document.createElement('a');
+                        link.href = sourceVal.trim();
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                        link.textContent = 'Wikimedia Commons';
+                        targetEl.appendChild(link);
+                    } else {
+                        const spanSrc = document.createElement('span');
+                        spanSrc.textContent = hasSource ? sourceVal.trim() : '[Source ?]';
+                        targetEl.appendChild(spanSrc);
+                    }
+                    return;
+                }
+
+                // 8H TASL format: [Titre](Source) par Auteur · [Licence](LicUrl)
+                if (validUrl && hasTitle) {
+                    const linkTitle = document.createElement('a');
+                    linkTitle.href = sourceVal.trim();
+                    linkTitle.target = '_blank';
+                    linkTitle.rel = 'noopener noreferrer';
+                    linkTitle.textContent = titleVal.trim();
+                    targetEl.appendChild(linkTitle);
+                } else {
+                    const spanT = document.createElement('span');
+                    spanT.textContent = hasTitle ? titleVal.trim() : '[Titre ?]';
+                    targetEl.appendChild(spanT);
+                }
+
+                const spanMid = document.createElement('span');
+                spanMid.textContent = ' par ' + (hasAuthor ? authorVal.trim() : '[Auteur ?]') + ' · ';
+                targetEl.appendChild(spanMid);
+
+                const licUrl = LICENSE_URLS[licenseVal];
+                if (licUrl) {
+                    const linkLic = document.createElement('a');
+                    linkLic.href = licUrl;
+                    linkLic.target = '_blank';
+                    linkLic.rel = 'noopener noreferrer';
+                    linkLic.textContent = licenseVal;
+                    targetEl.appendChild(linkLic);
+                } else {
+                    const spanLic = document.createElement('span');
+                    spanLic.textContent = hasLic ? licenseVal : '[Licence ?]';
+                    targetEl.appendChild(spanLic);
+                }
+            }
+
+            function updateLivePreview() {
+                renderFormattedCaption(
+                    liveCaptionPreview,
+                    inputTitle.value,
+                    inputAuthor.value,
+                    inputSource.value,
+                    selectLicense.value,
+                    practiceGrade === '8H'
+                );
+            }
+
+            [inputTitle, inputAuthor, inputSource].forEach((el) => {
+                el.addEventListener('input', updateLivePreview);
+            });
+            selectLicense.addEventListener('change', updateLivePreview);
+
+            // Interactive clicking on the simulated Wikimedia Commons sheet
+            wikiUrlBtn.addEventListener('click', () => {
+                const ch = CHALLENGES[currentChallengeIdx];
+                inputSource.value = ch.url;
+                updateLivePreview();
+                triggerSound('click');
+                notifyToast('Adresse Source reportée !', 'info');
+            });
+
+            document.getElementById('wiki-field-title').addEventListener('click', (e) => {
+                const ch = CHALLENGES[currentChallengeIdx];
+                if (practiceGrade === '7H') {
+                    notifyToast('En 7H, le Titre est optionnel : concentre-toi sur Auteur + Source !', 'info');
+                    return;
+                }
+                inputTitle.value = ch.expectedTitle;
+                e.currentTarget.classList.add('captured');
+                updateLivePreview();
+                triggerSound('click');
+            });
+
+            document.getElementById('wiki-field-author').addEventListener('click', (e) => {
+                const ch = CHALLENGES[currentChallengeIdx];
+                inputAuthor.value = ch.author;
+                e.currentTarget.classList.add('captured');
+                updateLivePreview();
+                triggerSound('click');
+            });
+
+            document.getElementById('wiki-field-camera').addEventListener('click', () => {
+                triggerSound('error');
+                notifyToast('Attention : c\'est le modèle d\'appareil photo, pas l\'auteur !', 'warn');
+            });
+
+            document.getElementById('wiki-field-license').addEventListener('click', (e) => {
+                const ch = CHALLENGES[currentChallengeIdx];
+                if (practiceGrade === '7H') {
+                    notifyToast('En 7H, la Licence est optionnelle : concentre-toi sur Auteur + Source !', 'info');
+                    return;
+                }
+                selectLicense.value = ch.licenseCode;
+                e.currentTarget.classList.add('captured');
+                updateLivePreview();
+                triggerSound('click');
+            });
+
+            // Validation Engine (exported for testing)
+            function evaluateSubmission(grade, challenge, values) {
+                const issues = [];
+                const authorVal = (values.author || '').trim();
+                const sourceVal = (values.source || '').trim();
+                const titleVal = (values.title || '').trim();
+                const licenseVal = (values.license || '').trim();
+
+                // Author check
+                if (!authorVal) {
+                    issues.push('Indique le nom ou le pseudonyme de l\'auteur (A).');
+                } else if (normalizeText(authorVal) === normalizeText(challenge.camera)) {
+                    issues.push('Tu as écrit le nom de l\'appareil photo (' + challenge.camera + ') au lieu de l\'auteur !');
+                } else if (normalizeText(authorVal).includes('wikimedia') || normalizeText(authorVal) === 'travail personnel') {
+                    issues.push('« ' + authorVal + ' » n\'est pas l\'auteur de l\'image. Regarde la ligne « Auteur » de la fiche.');
+                } else if (normalizeText(authorVal) !== normalizeText(challenge.author)) {
+                    issues.push('L\'auteur attendu pour cette fiche est « ' + challenge.author + ' ».');
+                }
+
+                // Source check
+                if (!sourceVal) {
+                    issues.push('Indique l\'adresse URL Source (S) où l\'on peut retrouver l\'image.');
+                } else if (normalizeText(sourceVal).includes('google')) {
+                    issues.push('« Google Images » est un moteur de recherche, jamais la vraie source ! Copie l\'adresse URL de Wikimedia Commons.');
+                } else if (normalizeText(sourceVal) === 'travail personnel' || normalizeText(sourceVal) === 'internet' || normalizeText(sourceVal) === 'wikipedia' || normalizeText(sourceVal) === 'wikipédia') {
+                    issues.push('« ' + sourceVal + ' » ne permet pas de retrouver l\'image : utilise l\'adresse URL complète commençant par https://commons.wikimedia.org/…');
+                } else if (normalizeUrl(sourceVal) !== normalizeUrl(challenge.url)) {
+                    issues.push('L\'URL Source ne correspond pas à la barre d\'adresse de cette fiche Wikimedia Commons.');
+                }
+
+                if (grade === '8H') {
+                    // Title check
+                    const normTitle = normalizeText(titleVal);
+                    if (!titleVal) {
+                        issues.push('En 8H, ajoute un Titre clair (T) pour l\'œuvre.');
+                    } else if (normTitle.includes('.jpg') || normTitle.includes('.png') || normTitle.includes('%c3') || normTitle === normalizeText(challenge.camera)) {
+                        issues.push('Évite les noms techniques ou extensions de fichier (.jpg/.png) : écris un titre propre et lisible.');
+                    } else if (!challenge.acceptedTitles.includes(normTitle)) {
+                        issues.push('Le titre attendu est « ' + challenge.expectedTitle + ' ».');
+                    }
+
+                    // License check
+                    if (!licenseVal) {
+                        issues.push('En 8H, sélectionne la Licence précise (L).');
+                    } else if (licenseVal === 'CC' || licenseVal === 'Libre de droits') {
+                        issues.push('« ' + licenseVal + ' » ne suffit pas ! Il faut préciser la licence exacte (ici : ' + challenge.licenseCode + ').');
+                    } else if (licenseVal !== challenge.licenseCode) {
+                        issues.push('La licence indiquée sur la fiche Wikimedia est « ' + challenge.licenseCode + ' ».');
+                    }
+                }
+
+                return {
+                    ok: issues.length === 0,
+                    issues
+                };
+            }
+
+            practiceForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const ch = CHALLENGES[currentChallengeIdx];
+                const result = evaluateSubmission(practiceGrade, ch, {
+                    title: inputTitle.value,
+                    author: inputAuthor.value,
+                    source: inputSource.value,
+                    license: selectLicense.value
+                });
+
+                clearElement(practiceFeedback);
+                if (result.ok) {
+                    practiceFeedback.className = 'feedback-box success visible';
+                    const strong = document.createElement('strong');
+                    strong.textContent = practiceGrade === '7H'
+                        ? 'Bravo ! Ton crédit 7H (Auteur + Source) est impeccable !'
+                        : 'Excellent travail ! Ton crédit TASL complet (8H) est parfait !';
+                    practiceFeedback.appendChild(strong);
+                    const p = document.createElement('p');
+                    p.style.margin = '6px 0 0 0';
+                    p.textContent = 'Cette image peut maintenant illustrer ton exposé en respectant le travail de ' + ch.author + '.';
+                    practiceFeedback.appendChild(p);
+
+                    solvedSet[practiceGrade].add(ch.id);
+                    streak++;
+                    renderChallengeSwitcher();
+                    btnNextChallenge.style.display = 'inline-flex';
+                    triggerSound('success');
+                    if (typeof window.handleStreakCelebration === 'function') {
+                        window.handleStreakCelebration(streak, false, solvedSet[practiceGrade].size);
+                    }
+                } else {
+                    practiceFeedback.className = 'feedback-box error visible';
+                    const strong = document.createElement('strong');
+                    strong.textContent = 'Pas tout à fait ! Vérifie ces points :';
+                    practiceFeedback.appendChild(strong);
+                    const ul = document.createElement('ul');
+                    ul.style.margin = '6px 0 0 18px';
+                    result.issues.forEach((msg) => {
+                        const li = document.createElement('li');
+                        li.textContent = msg;
+                        ul.appendChild(li);
+                    });
+                    practiceFeedback.appendChild(ul);
+                    streak = 0;
+                    triggerSound('error');
+                }
+            });
+
+            btnNextChallenge.addEventListener('click', () => {
+                const nextIdx = (currentChallengeIdx + 1) % CHALLENGES.length;
+                renderChallenge(nextIdx);
+                triggerSound('click');
+            });
+
+            btnClearForm.addEventListener('click', () => {
+                resetFormInputs();
+                triggerSound('click');
+            });
+
+            // --- TAB 3 : DECRYPTOR & QUIZ ---
+            const presetCcBtns = document.querySelectorAll('.preset-cc-btn');
+            const brickBtns = document.querySelectorAll('.brick-btn');
+            const ccActiveSummary = document.getElementById('cc-active-summary');
+            const ccRightsList = document.getElementById('cc-rights-list');
+
+            function computeCcRights(bricks) {
+                if (bricks.isCC0) {
+                    return {
+                        code: 'CC0 (Domaine public)',
+                        citeAuthor: { status: 'no', text: 'Attribution non obligatoire (mais recommandée par courtoisie)' },
+                        modify: { status: 'yes', text: 'Modifications & retouches autorisées' },
+                        commercial: { status: 'yes', text: 'Usage commercial autorisé' },
+                        shareAlike: { status: 'no', text: 'Pas d\'obligation de conserver la même licence' }
+                    };
+                }
+                const parts = ['CC'];
+                if (bricks.BY) { parts.push('BY'); }
+                if (bricks.NC) { parts.push('NC'); }
+                if (bricks.ND) { parts.push('ND'); }
+                else if (bricks.SA) { parts.push('SA'); }
+
+                return {
+                    code: parts.join(parts.length > 1 ? '-' : '').replace('CC-', 'CC '),
+                    citeAuthor: bricks.BY
+                        ? { status: 'req', text: 'Citer l\'auteur obligatoire (BY)' }
+                        : { status: 'no', text: 'Attribution libre' },
+                    modify: bricks.ND
+                        ? { status: 'no', text: 'Aucune modification autorisée (ND)' }
+                        : { status: 'yes', text: 'Modifications & découpages autorisés' },
+                    commercial: bricks.NC
+                        ? { status: 'no', text: 'Pas d\'utilisation commerciale (NC)' }
+                        : { status: 'yes', text: 'Usage commercial autorisé' },
+                    shareAlike: (!bricks.ND && bricks.SA)
+                        ? { status: 'req', text: 'Si modifié, repartager sous la même licence (SA)' }
+                        : { status: 'no', text: 'Pas d\'obligation de partage à l\'identique' }
+                };
+            }
+
+            function renderCcDecryptor() {
+                // SA and ND are mutually exclusive in CC
+                if (ccBricks.ND && ccBricks.SA) {
+                    ccBricks.SA = false;
+                }
+                brickBtns.forEach((btn) => {
+                    const key = btn.dataset.brick;
+                    const active = !ccBricks.isCC0 && Boolean(ccBricks[key]);
+                    btn.classList.toggle('active', active);
+                });
+
+                const res = computeCcRights(ccBricks);
+                ccActiveSummary.textContent = 'Licence active : ' + res.code;
+
+                presetCcBtns.forEach((pBtn) => {
+                    const target = pBtn.dataset.cc;
+                    pBtn.classList.toggle('active', res.code.startsWith(target) && (target !== 'CC BY' || res.code === 'CC BY'));
+                });
+
+                clearElement(ccRightsList);
+                const rows = [
+                    { badge: res.citeAuthor.status === 'req' ? 'OBLIGATOIRE' : 'LIBRE', cls: res.citeAuthor.status, label: res.citeAuthor.text },
+                    { badge: res.modify.status === 'yes' ? 'OUI' : 'NON', cls: res.modify.status, label: res.modify.text },
+                    { badge: res.commercial.status === 'yes' ? 'OUI' : 'NON', cls: res.commercial.status, label: res.commercial.text },
+                    { badge: res.shareAlike.status === 'req' ? 'MÊME LICENCE' : 'LIBRE', cls: res.shareAlike.status, label: res.shareAlike.text }
+                ];
+
+                rows.forEach((r) => {
+                    const div = document.createElement('div');
+                    div.className = 'right-item';
+                    const badge = document.createElement('span');
+                    badge.className = 'right-status ' + r.cls;
+                    badge.textContent = r.badge;
+                    const txt = document.createElement('span');
+                    txt.textContent = r.label;
+                    div.appendChild(badge);
+                    div.appendChild(txt);
+                    ccRightsList.appendChild(div);
+                });
+            }
+
+            presetCcBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const cc = btn.dataset.cc;
+                    if (cc === 'CC0') {
+                        ccBricks = { BY: false, SA: false, NC: false, ND: false, isCC0: true };
+                    } else {
+                        ccBricks = {
+                            BY: cc.includes('BY'),
+                            SA: cc.includes('SA'),
+                            NC: cc.includes('NC'),
+                            ND: cc.includes('ND'),
+                            isCC0: false
+                        };
+                    }
+                    renderCcDecryptor();
+                    triggerSound('click');
+                });
+            });
+
+            brickBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.brick;
+                    ccBricks.isCC0 = false;
+                    if (key === 'BY') {
+                        ccBricks.BY = true; // All modern CC licenses include BY
+                        notifyToast('Toutes les licences CC (sauf CC0) incluent BY : il faut citer l\'auteur !', 'info');
+                    } else {
+                        ccBricks[key] = !ccBricks[key];
+                        if (key === 'ND' && ccBricks.ND) {
+                            ccBricks.SA = false;
+                        } else if (key === 'SA' && ccBricks.SA) {
+                            ccBricks.ND = false;
+                        }
+                        if (!ccBricks.BY) {
+                            ccBricks.BY = true;
+                        }
+                    }
+                    renderCcDecryptor();
+                    triggerSound('click');
+                });
+            });
+
+            // Quiz logic
+            const quizProgressLabel = document.getElementById('quiz-progress-label');
+            const quizScoreLabel = document.getElementById('quiz-score-label');
+            const quizQuestionText = document.getElementById('quiz-question-text');
+            const quizOptionsRow = document.getElementById('quiz-options-row');
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const btnQuizNext = document.getElementById('btn-quiz-next');
+
+            function renderQuizQuestion() {
+                quizAnswered = false;
+                const item = QUIZ_QUESTIONS[quizIdx];
+                quizProgressLabel.textContent = 'Question ' + (quizIdx + 1) + ' / ' + QUIZ_QUESTIONS.length;
+                quizScoreLabel.textContent = 'Score : ' + quizScore;
+                quizQuestionText.textContent = item.q;
+                quizFeedback.className = 'feedback-box';
+                quizFeedback.textContent = '';
+                btnQuizNext.style.display = 'none';
+
+                clearElement(quizOptionsRow);
+                item.options.forEach((optText, idx) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'quiz-opt-btn';
+                    btn.textContent = optText;
+                    btn.addEventListener('click', () => {
+                        if (quizAnswered) {
+                            return;
+                        }
+                        quizAnswered = true;
+                        const isRight = idx === item.correct;
+                        btn.classList.add(isRight ? 'correct' : 'wrong');
+                        if (!isRight) {
+                            quizOptionsRow.children[item.correct]?.classList.add('correct');
+                        } else {
+                            quizScore++;
+                            quizScoreLabel.textContent = 'Score : ' + quizScore;
+                        }
+                        quizFeedback.className = 'feedback-box ' + (isRight ? 'success' : 'error') + ' visible';
+                        quizFeedback.textContent = item.explain;
+                        btnQuizNext.style.display = 'inline-flex';
+                        triggerSound(isRight ? 'success' : 'error');
+                    });
+                    quizOptionsRow.appendChild(btn);
+                });
+            }
+
+            btnQuizNext.addEventListener('click', () => {
+                quizIdx = (quizIdx + 1) % QUIZ_QUESTIONS.length;
+                if (quizIdx === 0) {
+                    quizScore = 0;
+                }
+                renderQuizQuestion();
+                triggerSound('click');
+            });
+
+            document.getElementById('btn-copy-search-tip').addEventListener('click', () => {
+                const txt = document.getElementById('search-tip-text').textContent;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(txt).catch(() => {});
+                }
+                notifyToast('Requête exemple copiée !', 'success');
+                triggerSound('click');
+            });
+
+            // --- TAB 4 : FREE GENERATOR FOR EXPOSÉS ---
+            const genMode7h = document.getElementById('gen-mode-7h');
+            const genMode8h = document.getElementById('gen-mode-8h');
+            const genGroupTitle = document.getElementById('gen-group-title');
+            const genGroupLicense = document.getElementById('gen-group-license');
+            const genTitle = document.getElementById('gen-title');
+            const genAuthor = document.getElementById('gen-author');
+            const genSource = document.getElementById('gen-source');
+            const genLicense = document.getElementById('gen-license');
+            const genVisualPreview = document.getElementById('gen-visual-preview');
+            const genCodePreview = document.getElementById('gen-code-preview');
+
+            function updateGeneratorPreview() {
+                const is8H = genFormat === '8H';
+                renderFormattedCaption(
+                    genVisualPreview,
+                    genTitle.value,
+                    genAuthor.value,
+                    genSource.value,
+                    genLicense.value,
+                    is8H
+                );
+
+                const a = genAuthor.value.trim() || 'Auteur';
+                const s = genSource.value.trim() || 'https://commons.wikimedia.org/…';
+                if (!is8H) {
+                    genCodePreview.textContent = 'Image : ' + a + ' · Source : ' + s;
+                } else {
+                    const t = genTitle.value.trim() || 'Titre de l\'image';
+                    const l = genLicense.value || 'CC BY-SA 4.0';
+                    const lUrl = LICENSE_URLS[l] || 'https://creativecommons.org/licenses/';
+                    genCodePreview.textContent = '[' + t + '](' + s + ') par ' + a + ' · [' + l + '](' + lUrl + ')';
+                }
+            }
+
+            function setGenFormat(fmt) {
+                genFormat = fmt;
+                const is8H = fmt === '8H';
+                genMode7h.classList.toggle('active', !is8H);
+                genMode8h.classList.toggle('active', is8H);
+                genGroupTitle.style.display = is8H ? 'flex' : 'none';
+                genGroupLicense.style.display = is8H ? 'flex' : 'none';
+                updateGeneratorPreview();
+            }
+
+            genMode7h.addEventListener('click', () => {
+                setGenFormat('7H');
+                triggerSound('click');
+            });
+            genMode8h.addEventListener('click', () => {
+                setGenFormat('8H');
+                triggerSound('click');
+            });
+
+            [genTitle, genAuthor, genSource].forEach((el) => {
+                el.addEventListener('input', updateGeneratorPreview);
+            });
+            genLicense.addEventListener('change', updateGeneratorPreview);
+
+            document.getElementById('btn-gen-example').addEventListener('click', () => {
+                genTitle.value = 'Salamandre tachetée';
+                genAuthor.value = 'Paligui';
+                genSource.value = 'https://commons.wikimedia.org/wiki/File:Salamandre_tachet%C3%A9e.png';
+                genLicense.value = 'CC BY-SA 3.0';
+                updateGeneratorPreview();
+                triggerSound('click');
+            });
+
+            document.getElementById('btn-gen-clear').addEventListener('click', () => {
+                genTitle.value = '';
+                genAuthor.value = '';
+                genSource.value = '';
+                genLicense.value = 'CC BY-SA 4.0';
+                updateGeneratorPreview();
+                triggerSound('click');
+            });
+
+            document.getElementById('btn-gen-copy-text').addEventListener('click', () => {
+                const txt = genCodePreview.textContent;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(txt).catch(() => {});
+                }
+                notifyToast('Crédit copié dans le presse-papier !', 'success');
+                triggerSound('success');
+            });
+
+            document.getElementById('btn-gen-copy-rich').addEventListener('click', () => {
+                const plainTxt = genVisualPreview.textContent;
+                const htmlTxt = genVisualPreview.innerHTML;
+                if (navigator.clipboard && typeof window.ClipboardItem !== 'undefined' && navigator.clipboard.write) {
+                    const item = new window.ClipboardItem({
+                        'text/html': new Blob([htmlTxt], { type: 'text/html' }),
+                        'text/plain': new Blob([plainTxt], { type: 'text/plain' })
+                    });
+                    navigator.clipboard.write([item]).catch(() => {});
+                } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(plainTxt).catch(() => {});
+                }
+                notifyToast('Crédit avec liens hypertextes copié !', 'success');
+                triggerSound('success');
+            });
+
+            // Universal Reset Hook
+            window.__onResetApp = function () {
+                solvedSet['7H'].clear();
+                solvedSet['8H'].clear();
+                streak = 0;
+                quizIdx = 0;
+                quizScore = 0;
+                ccBricks = { BY: true, SA: true, NC: false, ND: false, isCC0: false };
+                renderChallenge(0);
+                renderCcDecryptor();
+                renderQuizQuestion();
+                setGenFormat('7H');
+                genTitle.value = '';
+                genAuthor.value = '';
+                genSource.value = '';
+                updateGeneratorPreview();
+            };
+
+            // Expose Test Engine
+            window.CrediterImageEngine = {
+                getChallenges: () => CHALLENGES,
+                evaluateSubmission,
+                computeCcRights,
+                switchTab,
+                renderChallenge,
+                setGenFormat
+            };
+
+            // Initialize
+            renderChallenge(0);
+            renderCcDecryptor();
+            renderQuizQuestion();
+            setGenFormat('7H');
+            window.fa?.createIcons?.();
+        })();
+    </script>
+</body>
+
+</html>

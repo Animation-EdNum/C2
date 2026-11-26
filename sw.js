@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-4310b97a';
+const CACHE_NAME = 'ednum-c3944112';
 const ASSETS = [
     './',
     './index.html',
@@ -15,6 +15,7 @@ const ASSETS = [
     './alpha/webapps/chasseur_infox.html',
     './alpha/webapps/coffre_fort.html',
     './alpha/webapps/compresseur_magique.html',
+    './alpha/webapps/crediter_image.html',
     './alpha/webapps/dresseur_neurones.html',
     './alpha/webapps/fabrique_recette.html',
     './alpha/webapps/portes_logiques.html',

@@ -270,6 +270,7 @@ test('pickOption challenge completion without ReferenceError on target', async (
         window.moveRobot = (state) => ({ robotRow: state.robotRow, robotCol: state.robotCol + 1, robotDir: state.robotDir, blocked: false });
         window.renderRobot = () => {};
         window.TrailManager = { clear: () => {}, captureInitialState: () => {}, addSegment: () => {} };
+        window.AT_SVGS = { forward: '<svg></svg>', backward: '<svg></svg>', left: '<svg></svg>', right: '<svg></svg>', pause: '<svg></svg>', sound: '<svg></svg>' };
         Object.assign(window.simState, { consecutiveMistakes: 0 });
         Object.assign(window.chalState, {
             isAnimating: false,
@@ -332,6 +333,7 @@ test('handleReadGridClick and newReadChallenge transitions without ReferenceErro
         window.moveRobot = (state) => ({ robotRow: state.robotRow, robotCol: state.robotCol + 1, robotDir: state.robotDir, blocked: false });
         window.renderRobot = () => {};
         window.TrailManager = { clear: () => {}, captureInitialState: () => {}, addSegment: () => {} };
+        window.AT_SVGS = { forward: '<svg></svg>', backward: '<svg></svg>', left: '<svg></svg>', right: '<svg></svg>', pause: '<svg></svg>', sound: '<svg></svg>' };
         Object.assign(window.simState, { consecutiveMistakes: 0 });
         Object.assign(window.readState, {
             isAnimating: false,

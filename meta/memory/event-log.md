@@ -110,3 +110,4 @@
 - **[2026-11-24]** [Alpha/Apps] Created 7 new pedagogical webapps (#1 Rendu de monnaie, #3 Fabrique de recettes, #5 Portes logiques, #6 Réseau des villages, #7 Chasseur d'infox, #8 Bulle de filtres, #10 Créateur de groupes) with dedicated unit tests and 100% offline compliance.
 - **[2026-11-26]** [Curriculum] Restricted 11CO scope strictly to Usages tools (Tape-Texte, Générateur de mots de passe) and capped Media/CS apps at 10CO (`7H-10CO`, `8H-10CO`, `9-10CO`).
 - **[2026-11-26]** [Docs/Media] Captured 10 missing production app screenshots (+ refreshed `index.png`), extended `capture-screenshots.js`, and synchronized `README.md`.
+- **[2026-11-26]** [Alpha/App] Created `crediter_image.html` (7-8H Creative Commons & TASL citation trainer with Wikimedia Commons simulator, CC decryptor, and exposé generator).

@@ -633,6 +633,32 @@ window.REGISTRY = [
     "inC1": false
   },
   {
+    "id": "app-crediter-image",
+    "href": "alpha/webapps/crediter_image.html",
+    "isAlpha": true,
+    "dataLevel": "7-8H",
+    "icon": "scale-balanced",
+    "title": "Créditer une image (TASL)",
+    "desc": "Apprends à repérer les infos sur Wikimedia Commons et à citer les images Creative Commons (Auteur+Source en 7H, TASL complet en 8H).",
+    "tags": [
+      "#CreativeCommons",
+      "#TASL",
+      "#DroitD'auteur",
+      "#ÉducationAuxMédias",
+      "#Wikimedia"
+    ],
+    "ref": "PER EN 21+23 · Médias & Usages — Créditer ses sources (TASL)",
+    "badges": [
+      {
+        "text": "7-8H",
+        "grey": false
+      }
+    ],
+    "category": "students_activities",
+    "inIndex": true,
+    "inC1": false
+  },
+  {
     "id": "app-reseau-villages",
     "href": "alpha/webapps/reseau_villages.html",
     "isAlpha": true,
