@@ -2015,85 +2015,89 @@ let simState = {
 
             readState.locked = true;
             readState.isAnimating = true;
+            let adaptiveShown = false;
 
-            const isCorrect = (r === readState.targetRow && c === readState.targetCol);
-            const cell = document.querySelector(`#read-grid .bot-cell[data-row="${r}"][data-col="${c}"]`);
+            try {
+                const isCorrect = (r === readState.targetRow && c === readState.targetCol);
+                const cell = document.querySelector(`#read-grid .bot-cell[data-row="${r}"][data-col="${c}"]`);
 
-            if (isCorrect) {
-                readState.locked = true;
-                simState.consecutiveMistakes = 0;
-                readGlobalScore++;
-                readGlobalStreak++;
-                const adaptiveShown = ScoreManager.addSuccess('read', readState.difficulty, 0);
-                updateExtremeVisibility();
+                if (isCorrect) {
+                    readState.locked = true;
+                    simState.consecutiveMistakes = 0;
+                    readGlobalScore++;
+                    readGlobalStreak++;
+                    adaptiveShown = ScoreManager.addSuccess('read', readState.difficulty, 0);
+                    updateExtremeVisibility();
 
-                // Déblocages
-                if (readState.difficulty === 'extreme') {
-                    if (readState.mistakes === 0) {
-                        unlockSkin('volcano');
-                        document.getElementById('sim-grid').classList.add('ground-fire');
-                        document.getElementById('chal-grid').classList.add('ground-fire');
-                        document.getElementById('read-grid').classList.add('ground-fire');
-                        showToast('Le sol est maintenant EN FEU !', 'success');
-                    }
-                }
-
-                if (cell) cell.style.background = 'rgba(16, 185, 129, 0.4)'; // vert
-
-                document.getElementById('read-global-score').textContent = readGlobalScore;
-                document.getElementById('read-global-streak').textContent = readGlobalStreak;
-
-                // Animate automate to destination
-                let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
-                TrailManager.captureInitialState('read-grid', currR, currC, currD);
-                for (const cmd of readState.program) {
-                    const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd);
-                    currR = res.robotRow; currC = res.robotCol; currD = res.robotDir;
-                    renderRobot('read-grid', 'read-robot', currR, currC, currD);
-
-                    if (cmd === 'forward' || cmd === 'backward') {
-                        await sleep(350);
-                        TrailManager.addSegment('read-grid', currR, currC);
+                    // Déblocages
+                    if (readState.difficulty === 'extreme') {
+                        if (readState.mistakes === 0) {
+                            unlockSkin('volcano');
+                            document.getElementById('sim-grid').classList.add('ground-fire');
+                            document.getElementById('chal-grid').classList.add('ground-fire');
+                            document.getElementById('read-grid').classList.add('ground-fire');
+                            showToast('Le sol est maintenant EN FEU !', 'success');
+                        }
                     }
 
-                    await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
+                    if (cell) cell.style.background = 'rgba(16, 185, 129, 0.4)'; // vert
+
+                    document.getElementById('read-global-score').textContent = readGlobalScore;
+                    document.getElementById('read-global-streak').textContent = readGlobalStreak;
+
+                    // Animate automate to destination
+                    let currR = readState.robotRow, currC = readState.robotCol, currD = readState.robotDir;
+                    TrailManager.captureInitialState('read-grid', currR, currC, currD);
+                    for (const cmd of readState.program) {
+                        const res = moveRobot({ robotRow: currR, robotCol: currC, robotDir: currD, obstacles: readState.obstacles }, cmd);
+                        currR = res.robotRow; currC = res.robotCol; currD = res.robotDir;
+                        renderRobot('read-grid', 'read-robot', currR, currC, currD);
+
+                        if (cmd === 'forward' || cmd === 'backward') {
+                            await sleep(350);
+                            TrailManager.addSegment('read-grid', currR, currC);
+                        }
+
+                        await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
+                    }
+
+                    playSound('success');
+                    handleStreakCelebration(1, false, false); // Read: light celebration, no streak
+                    showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_success', `Excellent ! C'est la bonne réponse !`) : `Excellent ! C'est la bonne réponse !`, 'success');
+
+                    if (readGlobalStreak > 0) {
+                        const readIsExtreme = (readState.difficulty === 'extreme');
+                        if (readGlobalStreak > readGlobalStreakBest) readGlobalStreakBest = readGlobalStreak;
+                        const readNewRecord = (readGlobalStreak === readGlobalStreakBest);
+                        handleStreakCelebration(readGlobalStreak, readIsExtreme, readNewRecord);
+                    }
+
+                } else {
+                    playSound('error');
+                    if (cell) {
+                        cell.style.background = 'rgba(239, 68, 68, 0.4)'; // rouge
+                        setTimeout(() => cell.style.background = '', 1000);
+                    }
+                    readGlobalStreak = 0;
+                    readState.mistakes = (readState.mistakes || 0) + 1;
+                    simState.consecutiveMistakes++;
+                    if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
+                    ScoreManager.addMistake("read", readState.difficulty);
+                    document.getElementById('read-global-streak').textContent = readGlobalStreak;
+                    showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_fail', 'Faux. Essaie encore !') : 'Faux. Essaie encore !', 'error');
+                    readState.locked = false;
                 }
 
-                playSound('success');
-                handleStreakCelebration(1, false, false); // Read: light celebration, no streak
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_success', `Excellent ! C'est la bonne réponse !`) : `Excellent ! C'est la bonne réponse !`, 'success');
-
-                if (readGlobalStreak > 0) {
-                    const readIsExtreme = (readState.difficulty === 'extreme');
-                    if (readGlobalStreak > readGlobalStreakBest) readGlobalStreakBest = readGlobalStreak;
-                    const readNewRecord = (readGlobalStreak === readGlobalStreakBest);
-                    handleStreakCelebration(readGlobalStreak, readIsExtreme, readNewRecord);
+                if (isCorrect) {
+                    document.getElementById('btn-next-read').style.display = 'inline-flex';
+                    clearTimeout(readNextTimer);
+                    if (!adaptiveShown) {
+                        readNextTimer = setTimeout(() => { if (document.getElementById('btn-next-read').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
+                    }
                 }
-
-            } else {
-                playSound('error');
-                if (cell) {
-                    cell.style.background = 'rgba(239, 68, 68, 0.4)'; // rouge
-                    setTimeout(() => cell.style.background = '', 1000);
-                }
-                readGlobalStreak = 0;
-                readState.mistakes = (readState.mistakes || 0) + 1;
-                simState.consecutiveMistakes++;
-                if (simState.consecutiveMistakes >= 5) unlockSkin('botanique');
-                ScoreManager.addMistake("read", readState.difficulty);
-                document.getElementById('read-global-streak').textContent = readGlobalStreak;
-                showToast(window.I18N ? window.I18N.t('simulateur_automate.toast_read_fail', 'Faux. Essaie encore !') : 'Faux. Essaie encore !', 'error');
-                readState.locked = false;
+            } finally {
+                readState.isAnimating = false;
             }
-
-            if (isCorrect) {
-                document.getElementById('btn-next-read').style.display = 'inline-flex';
-                clearTimeout(readNextTimer);
-                if (!adaptiveShown) {
-                    readNextTimer = setTimeout(() => { if (document.getElementById('btn-next-read').style.display !== 'none' && activeTab === 'read') newReadChallenge(); }, 3000);
-                }
-            }
-            readState.isAnimating = false;
         }
 
         function newChallenge() {

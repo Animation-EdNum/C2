@@ -292,3 +292,70 @@ test('pickOption challenge completion without ReferenceError on target', async (
         assert.strictEqual(target.classList.contains('pulse'), true);
     });
 });
+
+test('handleReadGridClick and newReadChallenge transitions without ReferenceError', async (t) => {
+    await t.test('resets readState.isAnimating after win so newReadChallenge loads next puzzle', async () => {
+        const window = setupDOM();
+        const document = window.document;
+
+        const grid = document.createElement('div');
+        grid.id = 'read-grid';
+        const targetCell = document.createElement('div');
+        targetCell.className = 'bot-cell';
+        targetCell.dataset.row = '0';
+        targetCell.dataset.col = '1';
+        grid.appendChild(targetCell);
+
+        const robot = document.createElement('div');
+        robot.id = 'read-robot';
+        const strip = document.createElement('div');
+        strip.id = 'read-program';
+        const inst = document.createElement('div');
+        inst.id = 'read-instruction';
+        const scoreEl = document.createElement('span');
+        scoreEl.id = 'read-global-score';
+        const streakEl = document.createElement('span');
+        streakEl.id = 'read-global-streak';
+        const nextBtn = document.createElement('button');
+        nextBtn.id = 'btn-next-read';
+        nextBtn.style.display = 'none';
+        document.body.append(grid, robot, strip, inst, scoreEl, streakEl, nextBtn);
+
+        window.activeTab = 'read';
+        window.ScoreManager = {
+            stats: {},
+            addSuccess: () => false,
+            addMistake: () => {}
+        };
+        window.handleStreakCelebration = () => {};
+        window.sleep = () => Promise.resolve();
+        window.moveRobot = (state) => ({ robotRow: state.robotRow, robotCol: state.robotCol + 1, robotDir: state.robotDir, blocked: false });
+        window.renderRobot = () => {};
+        window.TrailManager = { clear: () => {}, captureInitialState: () => {}, addSegment: () => {} };
+        Object.assign(window.simState, { consecutiveMistakes: 0 });
+        Object.assign(window.readState, {
+            isAnimating: false,
+            locked: false,
+            type: 'destination',
+            difficulty: 'easy',
+            robotRow: 0,
+            robotCol: 0,
+            robotDir: 1,
+            targetRow: 0,
+            targetCol: 1,
+            obstacles: [],
+            mistakes: 0,
+            program: ['forward']
+        });
+
+        await window.handleReadGridClick(0, 1);
+
+        assert.strictEqual(window.readState.isAnimating, false, 'isAnimating must reset cleanly after winning');
+        assert.strictEqual(nextBtn.style.display, 'inline-flex', '#btn-next-read must become visible');
+        assert.strictEqual(scoreEl.textContent, '1');
+
+        window.newReadChallenge();
+        assert.strictEqual(window.readState.locked, false, 'newReadChallenge must unlock readState');
+        assert.strictEqual(nextBtn.style.display, 'none', '#btn-next-read must hide after advancing');
+    });
+});

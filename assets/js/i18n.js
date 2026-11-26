@@ -147,7 +147,7 @@
                 'jeu_de_la_grue.diff_extreme': 'Extrême',
                 'jeu_de_la_grue.extreme_unlocked': '🔥 Niveau Extrême débloqué ! Bravo pour ce sans-faute !',
 
-                                // Navigation & boutons communs
+                // Navigation & boutons communs
                 'common.home': "Retour à l'accueil",
                 'common.restart': "Recommencer",
                 'portal.view_mode_aria': "Mode d'affichage",
