@@ -111,3 +111,4 @@
 - **[2026-11-26]** [Curriculum] Restricted 11CO scope strictly to Usages tools (Tape-Texte, Générateur de mots de passe) and capped Media/CS apps at 10CO (`7H-10CO`, `8H-10CO`, `9-10CO`).
 - **[2026-11-26]** [Docs/Media] Captured 10 missing production app screenshots (+ refreshed `index.png`), extended `capture-screenshots.js`, and synchronized `README.md`.
 - **[2026-11-26]** [Alpha/App] Created `crediter_image.html` (7-8H Creative Commons & TASL citation trainer with Wikimedia Commons simulator, CC decryptor, and exposé generator).
+- **[2026-11-26]** [Release] Bumped `@ednum/suite-ednum` package version to `2.2.0` to publish latest webapps and fixes via npm (`npx @ednum/suite-ednum`).
