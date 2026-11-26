@@ -2,7 +2,7 @@
 
 Le **Simulateur de téléchargement** fait découvrir et ressentir concrètement aux élèves le **« poids » réel des données numériques** (texte, image, son, vidéo) ainsi que l'impact de la vitesse de connexion à travers l'histoire des télécommunications, du modem 56k des années 90 jusqu'à la fibre optique ultra-rapide.
 
-- **Public cible :** Cycle 2 (7-8H) et Cycle 3 (9-11CO).
+- **Public cible :** Cycle 2 (7-8H) et Cycle 3 (9-10CO).
 - **Alignement PER & Lehrplan 21 :** EN 22+32 · Science informatique — Représentation des données, unités de stockage (Ko, Mo, Go), réseaux et débits (*Connected 1 · 1.1 | Datenmengen verstehen* et *Décodages 7-8 · Activité 8*).
 - **Accès direct :** `webapps/simulateur_telechargement.html`.
 

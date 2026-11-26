@@ -28,6 +28,7 @@ function localizeBadgeText(text) {
         '5H-11CO': '5. Primar - 11. OS',
         '7H-10CO': '7. Primar - 10. OS',
         '7H-11CO': '7. Primar - 11. OS',
+        '8H-10CO': '8. Primar - 10. OS',
         '3H-10CO': '3. Primar - 10. OS',
         '3H-8H': '3.-8. Primar',
         '1-2H': '1.-2. Primar',

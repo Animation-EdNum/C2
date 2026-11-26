@@ -46,7 +46,7 @@ test('bulle_filtres.html - Structure and Requirements', async (t) => {
         // Badges
         const levelBadge = doc.querySelector('.badge-level');
         assert.ok(levelBadge, 'badge-level exists');
-        assert.strictEqual(levelBadge.textContent.trim(), '8H-11CO');
+        assert.strictEqual(levelBadge.textContent.trim(), '8H-10CO');
 
         const alphaBadge = doc.querySelector('.badge-alpha');
         assert.ok(alphaBadge, 'badge-alpha exists');

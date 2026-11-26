@@ -117,7 +117,7 @@
                 'simulateur_automate.badge_level_5_8h': '5-8H',
                 'dactylo.badge_level': '5H-11CO',
                 'generateur_mot_de_passe.badge_level': '5H-11CO',
-                'calculatrice_binaire.badge_level': '7H-11CO',
+                'calculatrice_binaire.badge_level': '7H-10CO',
                 'calculatrice_binaire.binary_input_label': 'Binaire (base 2) :',
                 'calculatrice_binaire.toast_max_val': 'La valeur maximale pour un octet (8 bits) est 255.',
                 'machine_a_chiffrer.badge_level': '7-8H',

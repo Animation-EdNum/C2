@@ -653,7 +653,7 @@ window.REGISTRY = [
         "grey": false
       },
       {
-        "text": "9-11CO",
+        "text": "9-10CO",
         "grey": false
       }
     ],
@@ -701,7 +701,7 @@ window.REGISTRY = [
   {
     "id": "app-calculatrice-binaire",
     "href": "webapps/calculatrice_binaire.html",
-    "dataLevel": "7H-11CO",
+    "dataLevel": "7H-10CO",
     "icon": "calculator",
     "title": "Calculatrice binaire",
     "desc": "Convertis et décompose facilement un octet (8 bits) entre binaire et décimal.",
@@ -727,7 +727,7 @@ window.REGISTRY = [
     },
     "badges": [
       {
-        "text": "7H-11CO",
+        "text": "7H-10CO",
         "grey": false
       }
     ],
@@ -739,7 +739,7 @@ window.REGISTRY = [
     "id": "app-bulle-filtres",
     "href": "alpha/webapps/bulle_filtres.html",
     "isAlpha": true,
-    "dataLevel": "8H-11CO",
+    "dataLevel": "8H-10CO",
     "icon": "bullseye",
     "title": "La Bulle de Filtres",
     "desc": "Simule l'algorithme de recommandation d'un réseau social et observe la formation d'une bulle de filtres.",
@@ -752,7 +752,7 @@ window.REGISTRY = [
     "ref": "PER Éducation numérique · Algorithmes de recommandation",
     "badges": [
       {
-        "text": "8H-11CO",
+        "text": "8H-10CO",
         "grey": false
       }
     ],
@@ -788,7 +788,7 @@ window.REGISTRY = [
     "id": "app-portes-logiques",
     "href": "alpha/webapps/portes_logiques.html",
     "isAlpha": true,
-    "dataLevel": "9-11CO",
+    "dataLevel": "9-10CO",
     "icon": "microchip",
     "title": "L'Atelier des Portes Logiques",
     "desc": "Construis des circuits booléens (ET, OU, NON, XOR) et découvre le demi-additionneur binaire.",
@@ -798,10 +798,10 @@ window.REGISTRY = [
       "#Binaire",
       "#Circuits"
     ],
-    "ref": "Cycle 3 (9-11CO) · Systèmes numériques & Logique",
+    "ref": "Cycle 3 (9-10CO) · Systèmes numériques & Logique",
     "badges": [
       {
-        "text": "9-11CO",
+        "text": "9-10CO",
         "grey": false
       }
     ],

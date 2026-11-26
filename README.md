@@ -116,9 +116,9 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Enquête 5 — Peut-on détecter des erreurs... ?** (Demi-cycle 7-8H)
 - **Valeur pédagogique :** Initie à l'intégrité de la donnée via des métadonnées (le bit de parité) et développe le repérage spatial via des coordonnées sur une grille.
 
-#### 11. Calculatrice binaire (`webapps/calculatrice_binaire.html` - 7H-11CO)
+#### 11. Calculatrice binaire (`webapps/calculatrice_binaire.html` - 7H-10CO)
 - **À quoi sert l'outil :** Convertisseur et explorateur interactif permettant de comprendre et décomposer facilement un octet (8 bits, valeurs de 0 à 255) entre le système binaire et décimal. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_CALCULATRICE_BINAIRE.md).
-- **Lien PER & Lehrplan 21 :** Cycle 2 & Cycle 3 (dès 7H jusqu'au secondaire I / 11CO) · **EN 22+32 · Science informatique — Codage en système binaire** (Connected 1 · 1.2 / Décodages 7-8).
+- **Lien PER & Lehrplan 21 :** Cycle 2 & Cycle 3 (dès 7H jusqu'en 10CO) · **EN 22+32 · Science informatique — Codage en système binaire** (Connected 1 · 1.2 / Décodages 7-8).
 - **Fonctionnalités :** Tableau interactif sur 8 bits ordonné selon les 3 rangées pédagogiques (Bits, Puissances de 2 de $2^7$ à $2^0$, Valeurs de position de 128 à 1), bascule directe des bits ou des valeurs au clic, synchronisation bidirectionnelle instantanée avec le champ décimal (0 à 255), calcul explicatif de la somme décomposée en direct, affichage binaire formaté par demi-octets (nibbles) avec bouton de copie, et bouton de remise à zéro rapide.
 - **Valeur pédagogique :** Démystifie le fonctionnement interne des ordinateurs en visualisant le lien direct entre l'état binaire (0/1), la valeur pondérée de chaque rang et la somme décimale totale. Idéal pour l'expérimentation libre, la vérification de calculs ou l'introduction au système binaire en classe.
 

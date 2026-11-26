@@ -2,7 +2,7 @@
 
 **Calculatrice binaire** est une application web interactive d'exploration, de conversion et de décomposition d'un octet (8 bits) entre le système binaire (base 2) et le système décimal (base 10), avec des valeurs allant de 0 à 255.
 
-- **Public cible :** Cycle 2 (7-8H) et Cycle 3 (9-11CO).
+- **Public cible :** Cycle 2 (7-8H) et Cycle 3 (9-10CO).
 - **Alignement PER & Lehrplan 21 :** EN 22+32 · Science informatique — Codage en système binaire (*Connected 1 · 1.2 | Zahlen in Binär* et *Décodages 7-8 · Activité 2*).
 - **Accès direct :** `webapps/calculatrice_binaire.html`.
 

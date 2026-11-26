@@ -416,10 +416,10 @@ test('loadRegistry', async (t) => {
             'app-dresseur-neurones',     // 7-8H
             'app-reseau-villages',       // 7-8H, 9CO
             'app-simulateur-telechargement', // 7-8H
-            'app-calculatrice-binaire',   // 7H-11CO
-            'app-bulle-filtres',         // 8H-11CO
+            'app-calculatrice-binaire',   // 7H-10CO
+            'app-bulle-filtres',         // 8H-10CO
             'app-apprendre-pseudocode',  // 9CO
-            'app-portes-logiques'        // 9-11CO
+            'app-portes-logiques'        // 9-10CO
         ];
 
         assert.deepEqual(activities.map(a => a.id), expectedIds, 'Activities must follow pedagogical grade progression');

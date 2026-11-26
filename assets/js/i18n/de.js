@@ -268,7 +268,7 @@
         // --- CALCULATRICE BINAIRE (CALCULATRICE_BINAIRE.HTML) ---
         'calculatrice_binaire.title': 'Binärrechner',
         'calculatrice_binaire.desc': 'Interaktiver 8-Bit-Rechner zur Umrechnung zwischen Binär- und Dezimalwerten.',
-        'calculatrice_binaire.badge_level': '7. Primar - 11. OS',
+        'calculatrice_binaire.badge_level': '7. Primar - 10. OS',
         'calculatrice_binaire.instruction': 'Klicke auf die Schalter oder ändere die Dezimalzahl (0 bis 255):',
         'calculatrice_binaire.powers_of_two': 'Zweierpotenzen',
         'calculatrice_binaire.decimal_values': 'Werte',
