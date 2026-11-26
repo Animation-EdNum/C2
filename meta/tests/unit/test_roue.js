@@ -133,4 +133,21 @@ test('roue_de_la_chance.html - Roue de la chance tests', async (t) => {
         assert.strictEqual(confettiCalled, true, 'launchConfetti should be called on winner');
         assert.strictEqual(engine.state.history[0], 'Gagnant 1', 'History should record the winner');
     });
+
+    await t.test('Garde clientWidth < 20 empêche IndexSizeError et modalSpinAgainBtn réinitialise si activeItems est vide', () => {
+        const engine = window.RoueEngine;
+        Object.defineProperty(window.document.querySelector('.wheel-stage'), 'clientWidth', { value: 0, configurable: true });
+        assert.doesNotThrow(() => engine.renderWheel(), 'renderWheel must safely bail when container width is < 20px');
+
+        engine.state.originalItems = ['A', 'B'];
+        engine.state.activeItems = ['A'];
+        engine.state.autoRemove = true;
+        engine.onWheelWinner('A');
+
+        assert.strictEqual(engine.state.activeItems.length, 0);
+        const spinAgainBtn = window.document.getElementById('modalSpinAgainBtn');
+        assert.match(spinAgainBtn.textContent, /réinitialiser/i);
+        spinAgainBtn.click();
+        assert.deepStrictEqual(Array.from(engine.state.activeItems), ['A', 'B'], 'Clicking reset button on empty activeItems should restore all choices');
+    });
 });

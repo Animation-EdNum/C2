@@ -522,4 +522,77 @@ test('time_timer.html - Rainbow customization, concentric disk & smiling cloud m
         projBtn.click();
         assert.ok(!window.document.body.classList.contains('projection'), 'Body should exit projection class');
     });
+
+    await t.test('13. Non-blocking MCD notification at main end: celebration modal stays hidden during tiers-temps and opens at true end', () => {
+        const engine = window.TimeTimerEngine;
+        const celebrationOverlay = window.document.getElementById('celebrationOverlay');
+        const compensationNotice = window.document.getElementById('compensationNotice');
+
+        engine.setTimeMinutes(1, false); // 60s
+        engine.setCompensation(true, 'ratio', 1 / 3, 5); // +20s = 80s
+        engine.startTimer(false);
+
+        const state = engine.getState();
+        const originalNow = window.Date.now;
+        try {
+            // Reach end of main time while 15s of MCD remain
+            window.Date.now = () => state.targetEndTime + 5000;
+            engine.tick();
+
+            assert.strictEqual(celebrationOverlay.classList.contains('hidden'), true, 'celebrationOverlay must remain hidden while compensation time is running');
+            assert.strictEqual(compensationNotice.style.display, 'flex', 'Non-blocking compensationNotice must be displayed');
+
+            // Reach end of compensation time
+            window.Date.now = () => state.compensationTargetEndTime + 1000;
+            engine.tick();
+
+            assert.strictEqual(celebrationOverlay.classList.contains('hidden'), false, 'celebrationOverlay should display once compensation ends');
+            assert.strictEqual(compensationNotice.style.display, 'none', 'compensationNotice should hide once compensation finishes');
+        } finally {
+            window.Date.now = originalNow;
+            engine.stopTimer();
+            engine.setCompensation(false);
+        }
+    });
+
+    await t.test('14. Mid-run MCD activation subtracts elapsed time and adjustSeconds scales with appliedDelta', () => {
+        const engine = window.TimeTimerEngine;
+        engine.setTimeMinutes(10, false); // 600s
+        engine.setCompensation(false, 'ratio', 1 / 3, 5);
+        engine.startTimer(false);
+
+        const state = engine.getState();
+        const originalNow = window.Date.now;
+        try {
+            // Simulate 8 minutes elapsed (120s remaining on main timer)
+            window.Date.now = () => state.targetEndTime - (120 * 1000);
+            engine.tick();
+            assert.strictEqual(engine.getState().remainingSeconds, 120);
+
+            // Enable +1/3 MCD mid-run: 800s total - 480s elapsed = 320s remaining (NOT 800s!)
+            engine.setCompensation(true, 'ratio', 1 / 3, 5);
+            const midState = engine.getState();
+            assert.strictEqual(midState.compensationTotalSeconds, 800);
+            assert.strictEqual(midState.compensationRemainingSeconds, 320, 'Mid-run MCD activation must subtract already-elapsed time');
+
+            // Asymmetric clamp check: when remainingSeconds < 60, -1 min clamps main by -30s (appliedDelta), NOT -60s
+            engine.stopTimer();
+            window.Date.now = () => Date.now();
+            engine.setTimeMinutes(1, false);
+            engine.setCompensation(true, 'ratio', 1 / 3, 5); // main=60, comp=80
+            // Simulate 30s elapsed
+            engine.startTimer(false);
+            const st2 = engine.getState();
+            window.Date.now = () => st2.targetEndTime - (30 * 1000);
+            engine.tick(); // main=30, comp=50
+            engine.adjustSeconds(-60); // appliedDelta = -30 -> compDelta = -40 -> comp=10!
+            const afterClamp = engine.getState();
+            assert.strictEqual(afterClamp.remainingSeconds, 0);
+            assert.strictEqual(afterClamp.compensationRemainingSeconds, 10, 'adjustSeconds must scale compensation by appliedDelta (-30 * 4/3 = -40 -> 10s remaining)');
+        } finally {
+            window.Date.now = originalNow;
+            engine.stopTimer();
+            engine.setCompensation(false);
+        }
+    });
 });

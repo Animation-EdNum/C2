@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-c7a76953';
+const CACHE_NAME = 'ednum-218a4acc';
 const ASSETS = [
     './',
     './index.html',
@@ -41,7 +41,12 @@ const ASSETS = [
     './assets/css/tokens.css',
     './assets/css/utilities.css',
     './assets/favicon.svg',
+    './assets/fonts/LICENSES.txt',
+    './assets/fonts/didact-gothic-latin-400-normal.woff2',
     './assets/fonts/jetbrains-mono.woff2',
+    './assets/fonts/opendyslexic-latin-400-italic.woff2',
+    './assets/fonts/opendyslexic-latin-400-normal.woff2',
+    './assets/fonts/opendyslexic-latin-700-normal.woff2',
     './assets/fonts/outfit.woff2',
     './assets/icon-192.png',
     './assets/icon-512.png',

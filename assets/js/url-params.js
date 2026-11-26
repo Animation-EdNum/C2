@@ -59,7 +59,7 @@ function applyUrlParameters() {
 
     if (rowsVal && colsVal) {
         window.hasSharedGrid = true;
-        
+
         if (typeof GRID_ROWS !== 'undefined') {
             GRID_ROWS = parseInt(rowsVal, 10);
             GRID_COLS = parseInt(colsVal, 10);
@@ -431,11 +431,11 @@ function initShareModal() {
                     <div class="options-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
 
                         <div class="options-column" id="col-apparence-pedagogie">
-                            <h3>🎨 Apparence</h3>
+                            <h3>${t('url_params.appearance', '🎨 Apparence')}</h3>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-highContrast">Contraste élevé</label>
-                                    <div class="share-option-desc">Active le thème à fort contraste.</div>
+                                    <label class="share-option-label" for="opt-highContrast">${t('theme.high_contrast', 'Contraste élevé')}</label>
+                                    <div class="share-option-desc">${t('url_params.high_contrast_desc', 'Active le thème à fort contraste.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-highContrast">
@@ -444,8 +444,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-coloredWeights" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-coloredWeights">Couleurs de poids <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Affiche les poids du réseau avec une coloration dynamique.</div>
+                                    <label class="share-option-label" for="opt-coloredWeights">${t('url_params.colored_weights', 'Couleurs de poids')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.colored_weights_desc', 'Affiche les poids du réseau avec une coloration dynamique.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-coloredWeights">
@@ -454,8 +454,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-noAudio">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noAudio">Pas de son</label>
-                                    <div class="share-option-desc">Désactive le son.</div>
+                                    <label class="share-option-label" for="opt-noAudio">${t('url_params.no_audio', 'Pas de son')}</label>
+                                    <div class="share-option-desc">${t('url_params.no_audio_desc', 'Désactive le son.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noAudio">
@@ -464,8 +464,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-coloredCmds" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-coloredCmds">Commandes colorées <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Colorie les commandes de manière distinctive. Utile pour les personnes non latéralisées.</div>
+                                    <label class="share-option-label" for="opt-coloredCmds">${t('url_params.colored_cmds', 'Commandes colorées')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.colored_cmds_desc', 'Colorie les commandes de manière distinctive. Utile pour les personnes non latéralisées.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-coloredCmds">
@@ -474,8 +474,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-noInstructions" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noInstructions">Masquer les instructions</label>
-                                    <div class="share-option-desc">Retire les textes d'aide.</div>
+                                    <label class="share-option-label" for="opt-noInstructions">${t('url_params.no_instructions', 'Masquer les instructions')}</label>
+                                    <div class="share-option-desc">${t('url_params.no_instructions_desc', "Retire les textes d'aide.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noInstructions">
@@ -484,8 +484,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-hideGrid" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-hideGrid">Pas de quadrillage <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Désactive les lignes pour estimer les distances sans repère.</div>
+                                    <label class="share-option-label" for="opt-hideGrid">${t('url_params.hide_grid', 'Pas de quadrillage')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.hide_grid_desc', 'Désactive les lignes pour estimer les distances sans repère.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-hideGrid">
@@ -493,11 +493,11 @@ function initShareModal() {
                                 </label>
                             </div>
 
-                            <h3 style="margin-top: 20px;">🧠 Pédagogie</h3>
+                            <h3 style="margin-top: 20px;">${t('url_params.pedagogy', '🧠 Pédagogie')}</h3>
                             <div class="share-option" id="lbl-customGrid" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-customGrid">Partager ma grille personnalisée <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Inclut la taille de grille, les obstacles, le trésor et l'automate tels que vous les avez positionnés au clavier.</div>
+                                    <label class="share-option-label" for="opt-customGrid">${t('url_params.custom_grid', 'Partager ma grille personnalisée')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.custom_grid_desc', "Inclut la taille de grille, les obstacles, le trésor et l'automate tels que vous les avez positionnés au clavier.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-customGrid">
@@ -506,8 +506,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-noCmdToggle">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noCmdToggle">Commandes masquées</label>
-                                    <div class="share-option-desc">L'élève peut afficher les commandes manuellement.</div>
+                                    <label class="share-option-label" for="opt-noCmdToggle">${t('url_params.hidden_cmds', 'Commandes masquées')}</label>
+                                    <div class="share-option-desc">${t('url_params.hidden_cmds_desc', "L'élève peut afficher les commandes manuellement.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noCmdToggle">
@@ -516,8 +516,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-blindcode">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-blindcode">Mode aveugle (Blindcoding)</label>
-                                    <div class="share-option-desc">L'élève programme de tête sans voir la trace des commandes.</div>
+                                    <label class="share-option-label" for="opt-blindcode">${t('url_params.blind_mode', 'Mode aveugle (Blindcoding)')}</label>
+                                    <div class="share-option-desc">${t('url_params.blind_mode_desc', "L'élève programme de tête sans voir la trace des commandes.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-blindcode">
@@ -526,8 +526,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-hideDict" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-hideDict">Pas de dictionnaire ASCII <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Désactive l'aide visuelle.</div>
+                                    <label class="share-option-label" for="opt-hideDict">${t('url_params.hide_dict', 'Pas de dictionnaire ASCII')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.hide_dict_desc', "Désactive l'aide visuelle.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-hideDict">
@@ -536,8 +536,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-strictMode" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-strictMode">Mode strict <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">N'indique pas où sont les erreurs.</div>
+                                    <label class="share-option-label" for="opt-strictMode">${t('url_params.strict_mode', 'Mode strict')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.strict_mode_desc', "N'indique pas où sont les erreurs.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-strictMode">
@@ -546,8 +546,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-colorMode" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-colorMode">Mode Couleurs <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Force l'application à s'ouvrir en mode 4 couleurs (2 bits).</div>
+                                    <label class="share-option-label" for="opt-colorMode">${t('url_params.color_mode', 'Mode Couleurs')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.color_mode_desc', "Force l'application à s'ouvrir en mode 4 couleurs (2 bits).")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-colorMode">
@@ -556,8 +556,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-tbi" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-tbi">Mode TBI <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Ouvre l'application directement en mode projection pour grand écran.</div>
+                                    <label class="share-option-label" for="opt-tbi">${t('common.tbi_mode', 'Mode TBI')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.tbi_mode_desc', "Ouvre l'application directement en mode projection pour grand écran.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-tbi">
@@ -567,11 +567,11 @@ function initShareModal() {
                         </div>
 
                         <div class="options-column" id="col-restrictions">
-                            <h3>🔐 Restrictions</h3>
+                            <h3>${t('url_params.restrictions', '🔐 Restrictions')}</h3>
                             <div class="share-option" id="lbl-lockDiff">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockDiff">Difficulté verrouillée</label>
-                                    <div class="share-option-desc">Impose le niveau de difficulté actuel.</div>
+                                    <label class="share-option-label" for="opt-lockDiff">${t('url_params.lock_diff', 'Difficulté verrouillée')}</label>
+                                    <div class="share-option-desc">${t('url_params.lock_diff_desc', 'Impose le niveau de difficulté actuel.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockDiff">
@@ -580,8 +580,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-only">Mode actuel uniquement</label>
-                                    <div class="share-option-desc">Bloque l'application sur le mode actuel.</div>
+                                    <label class="share-option-label" for="opt-only">${t('url_params.only_mode', 'Mode actuel uniquement')}</label>
+                                    <div class="share-option-desc">${t('url_params.only_mode_desc', "Bloque l'application sur le mode actuel.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-only">
@@ -590,8 +590,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noHome">Pas de lien accueil</label>
-                                    <div class="share-option-desc">Empêche de quitter l'activité.</div>
+                                    <label class="share-option-label" for="opt-noHome">${t('url_params.no_home', "Pas de lien accueil")}</label>
+                                    <div class="share-option-desc">${t('url_params.no_home_desc', "Empêche de quitter l'activité.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noHome">
@@ -600,8 +600,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-noSettings">Pas de réglages</label>
-                                    <div class="share-option-desc">Bloque l'accès aux paramètres.</div>
+                                    <label class="share-option-label" for="opt-noSettings">${t('url_params.no_settings', 'Pas de réglages')}</label>
+                                    <div class="share-option-desc">${t('url_params.no_settings_desc', "Bloque l'accès aux paramètres.")}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-noSettings">
@@ -610,8 +610,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockSkin">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSkin">Pas de skins <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Pas de personnalisation visuelle du robot.</div>
+                                    <label class="share-option-label" for="opt-lockSkin">${t('url_params.no_skins', 'Pas de skins')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.no_skins_desc', 'Pas de personnalisation visuelle du robot.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockSkin">
@@ -620,8 +620,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockMat">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockMat">Sans tapis <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Désactive le choix de tapis.</div>
+                                    <label class="share-option-label" for="opt-lockMat">${t('url_params.no_mat', 'Sans tapis')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.no_mat_desc', 'Désactive le choix de tapis.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockMat">
@@ -630,8 +630,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-forceMat">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-forceMat">Tapis imposé <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Charge le tapis actuellement sélectionné.</div>
+                                    <label class="share-option-label" for="opt-forceMat">${t('url_params.force_mat', 'Tapis imposé')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.force_mat_desc', 'Charge le tapis actuellement sélectionné.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-forceMat">
@@ -640,8 +640,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockSpeed">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockSpeed">Vitesse imposée <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Charge la vitesse actuellement sélectionnée.</div>
+                                    <label class="share-option-label" for="opt-lockSpeed">${t('url_params.lock_speed', 'Vitesse imposée')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.lock_speed_desc', 'Charge la vitesse actuellement sélectionnée.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockSpeed">
@@ -650,8 +650,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-lockTopology" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-lockTopology">Carte réseau fixe <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Même réseau pour tous les élèves.</div>
+                                    <label class="share-option-label" for="opt-lockTopology">${t('url_params.lock_topology', 'Carte réseau fixe')} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.lock_topology_desc', 'Même réseau pour tous les élèves.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-lockTopology">
@@ -660,8 +660,8 @@ function initShareModal() {
                             </div>
                             <div class="share-option" id="lbl-unlockEditor" style="display: none;">
                                 <div class="share-option-text">
-                                    <label class="share-option-label" for="opt-unlockEditor">Débloquer l'éditeur <span class="badge-specific" title="Spécifique à l'application">*</span></label>
-                                    <div class="share-option-desc">Mode "Éditeur" accessible immédiatement.</div>
+                                    <label class="share-option-label" for="opt-unlockEditor">${t('url_params.unlock_editor', "Débloquer l'éditeur")} <span class="badge-specific" title="${t('url_params.app_specific', "Spécifique à l'application")}">*</span></label>
+                                    <div class="share-option-desc">${t('url_params.unlock_editor_desc', 'Mode "Éditeur" accessible immédiatement.')}</div>
                                 </div>
                                 <label class="share-toggle">
                                     <input type="checkbox" id="opt-unlockEditor">
@@ -671,7 +671,7 @@ function initShareModal() {
                         </div>
                     </div>
                     <div style="text-align: right; margin-top: 10px; font-size: 0.85em; color: var(--text-secondary, #4a5568);">
-                        * = spécifique à l'application
+                        ${t('url_params.specific_legend', "* = spécifique à l'application")}
                     </div>
                 </div>
             </div>
@@ -925,7 +925,7 @@ function initShareModal() {
                 const lblForceMat = document.getElementById('lbl-forceMat');
                 if (lblForceMat) {
                     lblForceMat.style.opacity = '0.5';
-                    lblForceMat.title = 'Activé automatiquement par le mode actuel uniquement';
+                    lblForceMat.title = t('url_params.force_mat_auto_title', 'Activé automatiquement par le mode actuel uniquement');
                 }
             } else {
                 // Check if we need to restore normal state (but only if it wasn't a custom mat restriction)
@@ -959,7 +959,7 @@ function initShareModal() {
             const icon = document.createElement('i');
             icon.setAttribute('data-fa', 'clipboard');
             btnCopy.appendChild(icon);
-            btnCopy.appendChild(document.createTextNode(' Copier'));
+            btnCopy.appendChild(document.createTextNode(' ' + t('url_params.copy', 'Copier')));
             btnCopy.classList.remove('btn-success');
             window.fa?.createIcons?.();
         }
@@ -982,7 +982,7 @@ function initShareModal() {
                 const lbl = document.getElementById('lbl-forceMat');
                 if (lbl) {
                     lbl.style.opacity = '0.5';
-                    lbl.title = 'Impossible de forcer un tapis personnalisé';
+                    lbl.title = t('url_params.custom_mat_disabled_title', 'Impossible de forcer un tapis personnalisé');
                 }
             } else {
                 forceMatCb.disabled = false;
@@ -1061,19 +1061,19 @@ function initShareModal() {
 
     if (btnPresetMission) {
         btnPresetMission.addEventListener('click', () => {
-            applyPreset(['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'], "Mode Mission appliqué");
+            applyPreset(['opt-lockDiff', 'opt-only', 'opt-noHome', 'opt-noSettings'], t('url_params.preset_mission_applied', 'Mode Mission appliqué'));
         });
     }
 
     if (btnPresetEntrainement) {
         btnPresetEntrainement.addEventListener('click', () => {
-            applyPreset(['opt-noHome', 'opt-only'], "Mode Entraînement appliqué");
+            applyPreset(['opt-noHome', 'opt-only'], t('url_params.preset_training_applied', 'Mode Entraînement appliqué'));
         });
     }
 
     if (btnPresetInclusif) {
         btnPresetInclusif.addEventListener('click', () => {
-            applyPreset(['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'], "Mode Inclusif appliqué");
+            applyPreset(['opt-highContrast', 'opt-coloredCmds', 'opt-noAudio', 'opt-noHome', 'opt-only'], t('url_params.preset_inclusive_applied', 'Mode Inclusif appliqué'));
         });
     }
 
@@ -1081,7 +1081,7 @@ function initShareModal() {
         btnToggleAdvanced.addEventListener('click', () => {
             const isVisible = advancedOptions.style.display === 'block';
             advancedOptions.style.display = isVisible ? 'none' : 'block';
-            btnToggleAdvanced.replaceChildren(document.createTextNode('Options Avancées '));
+            btnToggleAdvanced.replaceChildren(document.createTextNode(t('url_params.advanced_options', 'Options Avancées') + ' '));
             const icon = document.createElement('i');
             icon.setAttribute('data-fa', `chevron-${isVisible ? 'down' : 'up'}`);
             btnToggleAdvanced.appendChild(icon);
@@ -1101,10 +1101,8 @@ function initShareModal() {
 
     if (btnCopy && urlInput) {
         btnCopy.addEventListener('click', () => {
-            navigator.clipboard.writeText(urlInput.value).then(() => {
-                const copiedLabel = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
-                    ? window.I18N.t('common.copied', 'Copié !')
-                    : 'Copié !';
+            const onCopied = () => {
+                const copiedLabel = t('common.copied', 'Copié !');
                 btnCopy.replaceChildren();
                 const icon = document.createElement('i');
                 icon.setAttribute('data-fa', 'clipboard');
@@ -1114,12 +1112,16 @@ function initShareModal() {
                 window.fa?.createIcons?.();
 
                 if (typeof showToast === 'function') {
-                    const toastMsg = (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
-                        ? window.I18N.t('url_params.copied', 'Lien copié dans le presse-papiers !')
-                        : 'Lien copié dans le presse-papiers !';
+                    const toastMsg = t('url_params.copied', 'Lien copié dans le presse-papiers !');
                     showToast(toastMsg, true);
                 }
-            });
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(urlInput.value).then(onCopied).catch(() => { });
+            } else {
+                urlInput.select();
+                try { if (document.execCommand('copy')) onCopied(); } catch (e) { }
+            }
         });
     }
 
@@ -1134,7 +1136,7 @@ function initShareModal() {
                 const icon = document.createElement('i');
                 icon.setAttribute('data-fa', 'qrcode');
                 btnQrShare.appendChild(icon);
-                btnQrShare.appendChild(document.createTextNode(' Afficher le QR Code'));
+                btnQrShare.appendChild(document.createTextNode(' ' + t('url_params.show_qr', 'Afficher le QR Code')));
                 window.fa?.createIcons?.();
                 return;
             }
@@ -1170,7 +1172,7 @@ function initShareModal() {
         const icon = document.createElement('i');
         icon.setAttribute('data-fa', 'qrcode');
         btnQrShare.appendChild(icon);
-        btnQrShare.appendChild(document.createTextNode(' Masquer le QR Code'));
+        btnQrShare.appendChild(document.createTextNode(' ' + t('url_params.hide_qr', 'Masquer le QR Code')));
         window.fa?.createIcons?.();
         new QRious({
             element: qrCanvas,

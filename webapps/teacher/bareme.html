@@ -23,13 +23,15 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de barèmes</title>
+    <title data-i18n="bareme.title">Générateur de barèmes</title>
     <meta property="og:title" content="Générateur de barèmes">
     <meta property="og:description"
         content="Générateur instantané de barème de points pour la correction d'évaluations.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../assets/js/fa-subset.js"></script>
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
@@ -38,7 +40,8 @@
     <style>
         /* Header structure is handled by teacher.css */
 
-        body > header, body > .app-shell {
+        body>header,
+        body>.app-shell {
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
@@ -48,14 +51,14 @@
             --primary-light: #ccfbf1;
             --bg-gradient-start: #0d9488;
             --bg-gradient-end: #064e4b;
-            
+
             --glass-bg: rgba(255, 255, 255, 0.82);
             --glass-border: rgba(255, 255, 255, 0.3);
             --text-main: #0f172a;
             --text-secondary: #475569;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            
+
             --success: #10b981;
             --error: #ef4444;
             --shadow-color: rgba(0, 0, 0, 0.15);
@@ -74,7 +77,11 @@
             --shadow-color: rgba(0, 0, 0, 0.4);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         button {
             min-width: 44px;
@@ -261,7 +268,8 @@
         .toggle-content {
             transition: all 0.3s ease;
             overflow: hidden;
-            max-height: 1000px; /* Large enough */
+            max-height: 1000px;
+            /* Large enough */
             opacity: 1;
             display: flex;
             flex-direction: column;
@@ -303,15 +311,34 @@
             min-height: 38px;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-light);
             background: white;
         }
 
-        body.dark input:focus, body.dark select:focus {
+        body.dark input:focus,
+        body.dark select:focus {
             background: #0f172a;
+        }
+
+        input.input-error {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+        }
+
+        .field-validation-msg {
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--error);
+            margin-top: 2px;
+            display: none;
+        }
+
+        .field-validation-msg.visible {
+            display: block;
         }
 
         .checkbox-card {
@@ -321,7 +348,7 @@
             padding: 8px 10px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border);
-            background: rgba(0,0,0,0.03);
+            background: rgba(0, 0, 0, 0.03);
             cursor: pointer;
             transition: 0.2s;
             margin-top: 2px;
@@ -381,8 +408,11 @@
             flex: 1;
             min-height: 0;
             height: 100%;
+            width: 100%;
+            max-width: 100%;
             overflow-x: auto;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
             background: var(--glass-bg);
@@ -415,7 +445,7 @@
             font-size: 0.72rem;
             letter-spacing: 0.05em;
             padding: 7px 6px;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         td {
@@ -436,15 +466,32 @@
             border-right: 3px solid var(--border);
         }
 
-        td:last-child, th:last-child {
+        td:last-child,
+        th:last-child {
             border-right: none;
         }
 
-        .grade { font-weight: 800; }
-        .grade.passing { color: var(--success); }
-        .grade.failing { color: var(--error); }
-        .mistake { color: var(--error); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
-        .passing-row { background: rgba(16, 185, 129, 0.03) !important; }
+        .grade {
+            font-weight: 800;
+        }
+
+        .grade.passing {
+            color: var(--success);
+        }
+
+        .grade.failing {
+            color: var(--error);
+        }
+
+        .mistake {
+            color: var(--error);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .passing-row {
+            background: rgba(16, 185, 129, 0.03) !important;
+        }
 
         /* BUTTONS */
 
@@ -452,12 +499,22 @@
 
 
 
-        .demarcation-bottom { border-bottom: 3px double var(--error) !important; }
-        .grade.failing { color: var(--error); }
-        .failing-row { background: rgba(239, 68, 68, 0.03) !important; }
+        .demarcation-bottom {
+            border-bottom: 3px double var(--error) !important;
+        }
+
+        .grade.failing {
+            color: var(--error);
+        }
+
+        .failing-row {
+            background: rgba(239, 68, 68, 0.03) !important;
+        }
 
         /* PRINT UI */
-        .print-only { display: none; }
+        .print-only {
+            display: none;
+        }
 
         @page {
             size: A4 portrait;
@@ -465,19 +522,26 @@
         }
 
         @media print {
-            html, body {
+
+            html,
+            body {
                 height: auto !important;
                 overflow: visible !important;
                 background: white !important;
                 font-family: 'Outfit', sans-serif;
             }
+
             body {
                 touch-action: manipulation;
                 background: white !important;
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            .no-print { display: none !important; }
+
+            .no-print {
+                display: none !important;
+            }
+
             .app-shell {
                 border: none !important;
                 box-shadow: none !important;
@@ -492,9 +556,23 @@
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
-            .print-only { display: block !important; }
-            .results-panel { padding: 0 !important; overflow: visible !important; }
-            .table-container { border: none !important; overflow: visible !important; max-height: none !important; height: auto !important; }
+
+            .print-only {
+                display: block !important;
+            }
+
+            .results-panel {
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+
+            .table-container {
+                border: none !important;
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+            }
+
             table {
                 border: 1.5px solid black !important;
                 font-size: var(--print-font-size, 8.5pt) !important;
@@ -504,6 +582,7 @@
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
+
             th {
                 background: #f0f0f0 !important;
                 color: black !important;
@@ -516,6 +595,7 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+
             td {
                 border: 1px solid #bbb !important;
                 color: black !important;
@@ -524,19 +604,28 @@
                 text-align: center !important;
                 line-height: 1.15 !important;
             }
-            .col-end { border-right: 2px solid black !important; font-weight: bold; }
+
+            .col-end {
+                border-right: 2px solid black !important;
+                font-weight: bold;
+            }
+
             .passing-row {
                 background: #f0fdf4 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+
             .failing-row {
                 background: #fef2f2 !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            .demarcation-bottom { border-bottom: 2.5px double #000 !important; }
-            
+
+            .demarcation-bottom {
+                border-bottom: 2.5px double #000 !important;
+            }
+
             .print-header {
                 text-align: center;
                 margin-bottom: 6px;
@@ -545,8 +634,22 @@
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
-            .print-header h2 { font-size: 1.25rem; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.03em; }
-            .print-meta { display: flex; justify-content: center; gap: 1.5rem; font-size: 0.8rem; font-weight: bold; color: #222; }
+
+            .print-header h2 {
+                font-size: 1.25rem;
+                text-transform: uppercase;
+                margin-bottom: 3px;
+                letter-spacing: 0.03em;
+            }
+
+            .print-meta {
+                display: flex;
+                justify-content: center;
+                gap: 1.5rem;
+                font-size: 0.8rem;
+                font-weight: bold;
+                color: #222;
+            }
         }
 
         @media (max-width: 600px) {
@@ -586,23 +689,36 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 0.45rem;
-                flex-wrap: nowrap;
+                row-gap: 0.5rem;
+                flex-wrap: wrap;
             }
 
             .header-actions {
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 gap: 0.35rem;
-                flex: 1 1 auto;
+                flex: 1 1 220px;
                 min-width: 0;
             }
 
             .header-actions .btn {
                 flex: 1 1 auto;
-                min-width: 0;
-                padding: 7px 6px;
-                font-size: 12px;
+                min-width: max-content;
+                padding: 7px 8px;
+                font-size: 0.78rem;
                 justify-content: center;
+            }
+
+            .results-header {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            th,
+            td {
+                padding: 5px 4px;
+                font-size: 0.82rem;
             }
 
             .panel-section {
@@ -624,10 +740,24 @@
             flex-shrink: 0;
         }
 
-        footer a { color: var(--primary); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
-        footer a:hover { color: var(--primary-hover); }
-        body.dark footer a { color: #2dd4bf !important; }
-        body.dark footer a:hover { color: #5eead4 !important; }
+        footer a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        footer a:hover {
+            color: var(--primary-hover);
+        }
+
+        body.dark footer a {
+            color: #2dd4bf !important;
+        }
+
+        body.dark footer a:hover {
+            color: #5eead4 !important;
+        }
 
         /* ========== PROJECTION / TNI MODE ========== */
         body.projection {
@@ -742,7 +872,9 @@
             font-size: clamp(0.85rem, 1.3vw, 1.25rem) !important;
         }
 
-        .hidden { display: none !important; }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -753,47 +885,47 @@
     <div class="app-shell" id="pdf-container">
         <header class="no-print">
             <div class="header-title-wrapper">
-                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
+                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s" data-i18n-attr="title:common.back_teachers;aria-label:common.back_teachers">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
                     <i data-fa="chart-simple"></i>
                 </div>
                 <div>
-                    <h1>Générateur de barèmes</h1>
+                    <h1 data-i18n="bareme.title">Générateur de barèmes</h1>
                 </div>
             </div>
 
             <div class="header-right-group">
                 <div class="header-actions">
-                    <button class="btn btn-secondary" id="exportImageBtn" title="Exporter en image">
+                    <button class="btn btn-secondary" id="exportImageBtn" title="Exporter en image" data-i18n-attr="title:bareme.export_img_title">
                         <i data-fa="image" style="width:18px;height:18px;"></i>
-                        <span>Image</span>
+                        <span data-i18n="bareme.btn_image">Image</span>
                     </button>
-                    <button class="btn btn-secondary" id="copyTableBtn" title="Copier le tableau">
+                    <button class="btn btn-secondary" id="copyTableBtn" title="Copier le tableau" data-i18n-attr="title:bareme.copy_table_title">
                         <i data-fa="copy" style="width:18px;height:18px;"></i>
-                        <span>Copier</span>
+                        <span data-i18n="bareme.btn_copy">Copier</span>
                     </button>
-                    <button class="btn btn-secondary" id="shareBtn" title="Partager le lien du barème">
+                    <button class="btn btn-secondary" id="shareBtn" title="Partager le lien du barème" data-i18n-attr="title:bareme.share_title">
                         <i data-fa="share-nodes" style="width:18px;height:18px;"></i>
-                        <span>Partager</span>
+                        <span data-i18n="bareme.btn_share">Partager</span>
                     </button>
-                    <button class="btn btn-primary" id="printBtn" title="Imprimer le tableau">
+                    <button class="btn btn-primary" id="printBtn" title="Imprimer le tableau" data-i18n-attr="title:bareme.print_title">
                         <i data-fa="print" style="width:18px;height:18px;"></i>
-                        <span>Imprimer</span>
+                        <span data-i18n="bareme.btn_print">Imprimer</span>
                     </button>
                 </div>
                 <div class="header-divider"></div>
                 <div class="action-buttons no-print">
-                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/Plein écran (F)" aria-label="Mode TNI/Plein écran">
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/Plein écran (F)" aria-label="Mode TNI/Plein écran" data-i18n-attr="title:bareme.tbi_mode;aria-label:bareme.tbi_aria">
                         <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
                         <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème" data-i18n-attr="aria-label:common.theme_toggle;title:common.theme_toggle">
                         <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
                         <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application" data-i18n-attr="aria-label:common.reset_app;title:common.reset_app">
                         <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
                     </button>
                 </div>
@@ -802,7 +934,7 @@
 
         <div class="print-only">
             <div class="print-header">
-                <h2 id="printTitleDisplay">Barème de notation</h2>
+                <h2 id="printTitleDisplay" data-i18n="bareme.print_default_title">Barème de notation</h2>
                 <div class="print-meta">
                     <span id="printTotal">Total: 20 pts</span>
                     <span id="printPass">Note 4 à 12 pts</span>
@@ -816,50 +948,55 @@
                 <div class="panel-section">
                     <div class="panel-section-title">
                         <i data-fa="gear-complex" style="width:14px;height:14px;"></i>
-                        Configuration de base
+                        <span data-i18n="bareme.sec_basic">Configuration de base</span>
                     </div>
                     <div class="input-group">
-                        <label for="totalPoints">Points maximum</label>
-                        <input type="number" id="totalPoints" value="20" min="1" step="0.5">
+                        <label for="totalPoints" data-i18n="bareme.label_total_points">Points maximum</label>
+                        <input type="number" id="totalPoints" value="20" min="0.5" max="1000" step="0.5">
+                        <div class="field-validation-msg" id="totalPointsHint" role="status"></div>
                     </div>
                 </div>
 
                 <div class="panel-section" id="advancedSection">
-                    <button type="button" class="panel-section-title toggle-header" id="advancedToggle" aria-expanded="true" aria-controls="advancedContent" style="width:100%; border:none; background:none; text-align:left; font:inherit; color:inherit; cursor:pointer; padding:0; display:flex; align-items:center;">
+                    <button type="button" class="panel-section-title toggle-header" id="advancedToggle"
+                        aria-expanded="true" aria-controls="advancedContent"
+                        style="width:100%; border:none; background:none; text-align:left; font:inherit; color:inherit; cursor:pointer; padding:0; display:flex; align-items:center;">
                         <i data-fa="sliders-up" style="width:14px;height:14px;"></i>
-                        Options avancées
-                        <i data-fa="chevron-down" class="toggle-icon" style="margin-left:auto; width:14px;height:14px;"></i>
+                        <span data-i18n="bareme.sec_advanced">Options avancées</span>
+                        <i data-fa="chevron-down" class="toggle-icon"
+                            style="margin-left:auto; width:14px;height:14px;"></i>
                     </button>
                     <div class="settings-panel toggle-content" id="advancedContent">
                         <div class="input-group">
-                            <label for="titleInput">Titre de l'épreuve</label>
-                            <input type="text" id="titleInput" placeholder="Ex: Mathématiques 5H">
+                            <label for="titleInput" data-i18n="bareme.label_exam_title">Titre de l'épreuve</label>
+                            <input type="text" id="titleInput" placeholder="Ex: Mathématiques 5H" data-i18n-attr="placeholder:bareme.placeholder_exam_title">
                         </div>
                         <div class="input-group">
-                            <label for="pointsFor4">Seuil de suffisance (Note 4)</label>
-                            <input type="number" id="pointsFor4" placeholder="Points pour le 4" step="0.25">
+                            <label for="pointsFor4" data-i18n="bareme.label_pass_threshold">Seuil de suffisance (Note 4)</label>
+                            <input type="number" id="pointsFor4" placeholder="Points pour le 4" step="0.25" data-i18n-attr="placeholder:bareme.placeholder_pass_threshold">
+                            <div class="field-validation-msg" id="pointsFor4Hint" role="status"></div>
                         </div>
                         <div class="input-group">
-                            <label for="increment">Pas du barème</label>
+                            <label for="increment" data-i18n="bareme.label_increment">Pas du barème</label>
                             <select id="increment">
-                                <option value="1">1 point</option>
-                                <option value="0.5" selected>0.5 point</option>
-                                <option value="0.25">0.25 point</option>
-                                <option value="0.1">0.1 point</option>
+                                <option value="1" data-i18n="bareme.inc_1">1 point</option>
+                                <option value="0.5" selected data-i18n="bareme.inc_05">0.5 point</option>
+                                <option value="0.25" data-i18n="bareme.inc_025">0.25 point</option>
+                                <option value="0.1" data-i18n="bareme.inc_01">0.1 point</option>
                             </select>
                         </div>
                         <div class="input-group">
-                            <label for="rounding">Arrondi des notes</label>
+                            <label for="rounding" data-i18n="bareme.label_rounding">Arrondi des notes</label>
                             <select id="rounding">
-                                <option value="0.1" selected>Au dixième (4.3)</option>
-                                <option value="0.25">Au quart (4.25)</option>
-                                <option value="0.5">Au demi (4.5)</option>
-                                <option value="1">À l'entier (4)</option>
+                                <option value="0.1" selected data-i18n="bareme.round_01">Au dixième (4.3)</option>
+                                <option value="0.25" data-i18n="bareme.round_025">Au quart (4.25)</option>
+                                <option value="0.5" data-i18n="bareme.round_05">Au demi (4.5)</option>
+                                <option value="1" data-i18n="bareme.round_1">À l'entier (4)</option>
                             </select>
                         </div>
                         <label class="checkbox-card" for="showMistakes">
                             <input type="checkbox" id="showMistakes">
-                            <span class="checkbox-label" style="font-size: 0.8rem; font-weight: 600;">Afficher les points perdus (-fautes)</span>
+                            <span class="checkbox-label" style="font-size: 0.8rem; font-weight: 600;" data-i18n="bareme.show_mistakes">Afficher les points perdus (-fautes)</span>
                         </label>
                     </div>
                 </div>
@@ -868,7 +1005,7 @@
             <main id="main-content" class="results-panel">
                 <div class="results-header no-print">
                     <div class="results-title-group">
-                        <h2>Aperçu du barème</h2>
+                        <h2 data-i18n="bareme.preview_title">Aperçu du barème</h2>
                         <div class="active-title" id="displayTitle">Barème / 20 pts</div>
                     </div>
                     <div class="formula-badge" id="displayFormula">Note = 5 * (Pts / 20) + 1</div>
@@ -887,11 +1024,18 @@
 
         <footer class="no-print">
             <p>
-                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                    href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                    data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
-                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
-                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                            data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                        rel="noopener noreferrer">AGPL-3.0</a>)
                     · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
                     · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
                     · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
@@ -903,6 +1047,10 @@
 
     <script>
         window.fa?.createIcons?.();
+
+        const bt = (key, fb, vars) => (window.I18N && typeof window.I18N.t === 'function')
+            ? window.I18N.t(key, fb, vars)
+            : (vars ? String(fb).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? String(vars[k]) : `{${k}}`)) : fb);
 
         function toggleAdvanced() {
             const sec = document.getElementById('advancedSection');
@@ -928,8 +1076,11 @@
         // SAUVEGARDE / CHARGEMENT DES PRÉFÉRENCES
         // ==========================================
         const STORAGE_KEY = 'bareme_prefs_v2';
+        let loadedFromUrl = false;
+        let userEditedSinceUrl = false;
 
         function savePreferences() {
+            if (loadedFromUrl && !userEditedSinceUrl) return;
             const prefs = {
                 title: document.getElementById('titleInput').value,
                 totalPoints: document.getElementById('totalPoints').value,
@@ -974,6 +1125,7 @@
                     document.getElementById('showMistakes').checked = m === '1' || m === 'true';
                     found = true;
                 }
+                if (found) loadedFromUrl = true;
                 return found;
             } catch (e) {
                 return false;
@@ -1017,12 +1169,14 @@
 
         function generatePointsList(total, step) {
             const list = [];
-            if (total <= 0) return [0];
+            if (!Number.isFinite(total) || total <= 0) return [0];
+            const safeStep = (!Number.isFinite(step) || step <= 0) ? 0.5 : step;
             const cleanTotal = Math.round(total * 100) / 100;
             list.push(cleanTotal);
 
-            const maxMultiple = Math.floor((cleanTotal - 1e-9) / step) * step;
-            for (let p = maxMultiple; p >= -1e-9; p -= step) {
+            const MAX_ROWS = 1500;
+            const maxMultiple = Math.floor((cleanTotal - 1e-9) / safeStep) * safeStep;
+            for (let p = maxMultiple; p >= -1e-9 && list.length < MAX_ROWS; p -= safeStep) {
                 const roundedP = Math.round(p * 100) / 100;
                 if (Math.abs(roundedP - cleanTotal) > 1e-4) {
                     list.push(Math.max(0, roundedP));
@@ -1059,30 +1213,74 @@
         // ==========================================
         function updateAll() {
             const title = document.getElementById('titleInput').value;
-            const totalPoints = parseFloat(document.getElementById('totalPoints').value) || 20;
-            const ptFor4Val = document.getElementById('pointsFor4').value;
-            const pointsFor4 = ptFor4Val ? parseFloat(ptFor4Val) : null;
+            const totalEl = document.getElementById('totalPoints');
+            const totalHint = document.getElementById('totalPointsHint');
+            const rawTotal = parseFloat(totalEl.value);
+            const isTotalValid = Number.isFinite(rawTotal) && rawTotal > 0 && rawTotal <= 1000;
+            const totalPoints = isTotalValid ? rawTotal : (Number.isFinite(rawTotal) && rawTotal > 1000 ? 1000 : 20);
+
+            if (totalHint) {
+                if (!Number.isFinite(rawTotal) || rawTotal <= 0) {
+                    totalEl.classList.add('input-error');
+                    totalEl.setAttribute('aria-invalid', 'true');
+                    totalHint.textContent = bt('bareme.err_total_invalid', 'Total invalide (> 0 requis) — aperçu sur 20 pts.');
+                    totalHint.classList.add('visible');
+                } else if (rawTotal > 1000) {
+                    totalEl.classList.add('input-error');
+                    totalEl.setAttribute('aria-invalid', 'true');
+                    totalHint.textContent = bt('bareme.err_total_max', 'Maximum 1000 points supporté (plafonné à 1000).');
+                    totalHint.classList.add('visible');
+                } else {
+                    totalEl.classList.remove('input-error');
+                    totalEl.removeAttribute('aria-invalid');
+                    totalHint.textContent = '';
+                    totalHint.classList.remove('visible');
+                }
+            }
+
+            const p4El = document.getElementById('pointsFor4');
+            const p4Hint = document.getElementById('pointsFor4Hint');
+            const ptFor4Val = p4El.value.trim();
+            const parsedP4 = ptFor4Val !== '' ? parseFloat(ptFor4Val) : null;
+            const isP4Provided = ptFor4Val !== '';
+            const isDoubleBareme = Boolean(parsedP4 !== null && Number.isFinite(parsedP4) && parsedP4 > 0 && parsedP4 < totalPoints);
+            const pointsFor4 = isDoubleBareme ? parsedP4 : null;
+
+            if (p4Hint) {
+                if (isP4Provided && !isDoubleBareme) {
+                    p4El.classList.add('input-error');
+                    p4El.setAttribute('aria-invalid', 'true');
+                    p4Hint.textContent = bt('bareme.err_p4_range', `Seuil ignoré : doit être strictement entre 0 et ${totalPoints}.`, { total: totalPoints });
+                    p4Hint.classList.add('visible');
+                } else {
+                    p4El.classList.remove('input-error');
+                    p4El.removeAttribute('aria-invalid');
+                    p4Hint.textContent = '';
+                    p4Hint.classList.remove('visible');
+                }
+            }
+
             const increment = parseFloat(document.getElementById('increment').value);
             const rounding = parseFloat(document.getElementById('rounding').value);
             const showMistakes = document.getElementById('showMistakes').checked;
 
             // Mise à jour des libellés
-            document.getElementById('displayTitle').textContent = (title || 'Barème') + ' / ' + totalPoints + ' pts';
+            const uPts = bt('bareme.unit_pts', 'pts');
+            document.getElementById('displayTitle').textContent = (title || bt('bareme.short_title', 'Barème')) + ' / ' + totalPoints + ' ' + uPts;
 
-            const isDoubleBareme = Boolean(pointsFor4 && pointsFor4 > 0 && pointsFor4 < totalPoints);
             let formulaText;
             if (isDoubleBareme) {
-                formulaText = `Double barème (Note 4 à ${pointsFor4} pts)`;
-                document.getElementById('printPass').textContent = `Suffisance: ${pointsFor4} pts`;
+                formulaText = bt('bareme.formula_double', `Double barème (Note 4 à ${pointsFor4} pts)`, { p4: pointsFor4 });
+                document.getElementById('printPass').textContent = bt('bareme.print_pass_pts', `Suffisance: ${pointsFor4} pts`, { p4: pointsFor4 });
             } else {
-                formulaText = 'Note = 5 * (Pts / ' + totalPoints + ') + 1';
-                document.getElementById('printPass').textContent = 'Suffisance: 4.0 (standard)';
+                formulaText = bt('bareme.formula_std', 'Note = 5 * (Pts / ' + totalPoints + ') + 1', { total: totalPoints });
+                document.getElementById('printPass').textContent = bt('bareme.print_pass_std', 'Suffisance: 4.0 (standard)');
             }
             document.getElementById('displayFormula').textContent = formulaText;
 
-            document.getElementById('printTitleDisplay').textContent = title || 'Barème de notation';
-            document.getElementById('printTotal').textContent = 'Total: ' + totalPoints + ' pts';
-            document.getElementById('printFormula').textContent = 'Formule: ' + formulaText;
+            document.getElementById('printTitleDisplay').textContent = title || bt('bareme.print_default_title', 'Barème de notation');
+            document.getElementById('printTotal').textContent = bt('bareme.print_total', 'Total: ' + totalPoints + ' pts', { total: totalPoints });
+            document.getElementById('printFormula').textContent = bt('bareme.print_formula', 'Formule: ' + formulaText, { formula: formulaText });
 
             // Génération + rendu
             const data = generateData(totalPoints, pointsFor4, increment, rounding);
@@ -1112,7 +1310,7 @@
                 const neededForHeight = Math.ceil(dataLength / maxRowsFit);
 
                 // Nombre maximal de colonnes selon la largeur disponible
-                const minGroupW = showMistakes ? (isProjection ? 160 : 130) : (isProjection ? 120 : 95);
+                const minGroupW = showMistakes ? (isProjection ? 160 : 145) : (isProjection ? 120 : 108);
                 const maxGroupsFit = Math.max(2, Math.floor(availW / minGroupW));
 
                 // Pour aérer et éviter des colonnes trop hautes ou démesurément larges dès que la largeur le permet
@@ -1160,16 +1358,16 @@
             for (let k = 0; k < groupsPerRow; k++) {
                 if (showMistakes) {
                     const thLost = document.createElement('th');
-                    thLost.textContent = '-Pts';
+                    thLost.textContent = bt('bareme.col_lost', '-Pts');
                     headerTr.appendChild(thLost);
                 }
                 const thPts = document.createElement('th');
-                thPts.textContent = 'Pts';
+                thPts.textContent = bt('bareme.col_pts', 'Pts');
                 headerTr.appendChild(thPts);
 
                 const thGrade = document.createElement('th');
                 thGrade.className = 'col-end';
-                thGrade.textContent = 'Note';
+                thGrade.textContent = bt('bareme.col_grade', 'Note');
                 headerTr.appendChild(thGrade);
             }
             thead.replaceChildren(headerTr);
@@ -1286,129 +1484,164 @@
                     'text/html': new Blob([htmlString], { type: 'text/html' })
                 });
                 await navigator.clipboard.write([clipboardItem]);
-                showToast('Tableau copié (format compatible Word/Excel)', 'success');
+                showToast(bt('bareme.toast_copied_rich', 'Tableau copié (format compatible Word/Excel)'), 'success');
             } catch (err) {
                 console.warn("ClipboardItem API failed, falling back to text copy", err);
                 try {
                     await navigator.clipboard.writeText(text);
-                    showToast('Tableau copié (format texte uniquement)', 'success');
+                    showToast(bt('bareme.toast_copied_text', 'Tableau copié (format texte uniquement)'), 'success');
                 } catch (fallbackErr) {
                     console.error("Fallback text copy failed", fallbackErr);
-                    showToast('Erreur lors de la copie', 'error');
+                    showToast(bt('bareme.toast_copy_err', 'Erreur lors de la copie'), 'error');
                 }
             }
         }
 
         // ==========================================
-        // EXPORTER EN IMAGE
+        // EXPORTER EN IMAGE (Canvas 2D pur — compatible Safari / iPadOS)
         // ==========================================
         function exportImage() {
             const table = document.getElementById('gradeTable');
-            const showMistakes = document.getElementById('showMistakes').checked;
-            const groupsPerRow = table.querySelector('tr').querySelectorAll('th.col-end').length;
+            const rows = Array.from(table.querySelectorAll('tr'));
+            if (!rows.length) return;
 
-            let htmlString = `<table xmlns="http://www.w3.org/1999/xhtml" style="border-collapse: collapse; font-family: sans-serif; font-size: 14px; width: 100%; background-color: white;">\n`;
+            const title = (document.getElementById('displayTitle').textContent || bt('bareme.short_title', 'Barème')).trim();
+            const formula = (document.getElementById('displayFormula').textContent || '').trim();
+            const colCount = rows[0].querySelectorAll('th, td').length;
+            if (!colCount) return;
 
-            table.querySelectorAll('tr').forEach((r, rowIdx) => {
-                htmlString += `  <tr>\n`;
-                const cols = Array.from(r.querySelectorAll('td, th'));
-                cols.forEach(c => {
-                    let textContent = c.innerText.trim();
-                    let isTh = c.tagName.toLowerCase() === 'th';
-                    let isPassing = c.classList.contains('passing-row');
-                    let isFailing = c.classList.contains('failing-row');
-                    let isGrade = c.classList.contains('grade');
-                    let isColEnd = c.classList.contains('col-end');
-                    let isDemarcation = c.classList.contains('demarcation-bottom');
+            const dpr = 2;
+            const padX = 24;
+            const padY = 20;
+            const headerBlockH = 62;
+            const rowH = 30;
+            const cellW = 64;
+            const logicalWidth = Math.max(420, padX * 2 + colCount * cellW);
+            const logicalHeight = padY * 2 + headerBlockH + rows.length * rowH;
 
-                    let style = "padding: 6px 8px; text-align: center; border: 1px solid #ccc;";
+            const canvas = document.createElement('canvas');
+            canvas.width = logicalWidth * dpr;
+            canvas.height = logicalHeight * dpr;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                if (typeof showToast === 'function') showToast(bt('bareme.toast_img_unavail', 'Export image indisponible dans ce navigateur'), 'error');
+                return;
+            }
+            ctx.scale(dpr, dpr);
+
+            // Fond blanc propre
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, logicalWidth, logicalHeight);
+
+            // Titre et formule
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 20px Outfit, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(title, logicalWidth / 2, padY + 14);
+
+            ctx.fillStyle = '#475569';
+            ctx.font = '600 12px Outfit, sans-serif';
+            ctx.fillText(formula, logicalWidth / 2, padY + 40);
+
+            const startX = (logicalWidth - colCount * cellW) / 2;
+            const tableTop = padY + headerBlockH;
+
+            rows.forEach((tr, rIdx) => {
+                const y = tableTop + rIdx * rowH;
+                const cells = Array.from(tr.querySelectorAll('th, td'));
+                cells.forEach((cell, cIdx) => {
+                    const x = startX + cIdx * cellW;
+                    const text = (cell.textContent || '').trim();
+                    const isTh = cell.tagName.toLowerCase() === 'th';
+                    const isPassing = cell.classList.contains('passing-row');
+                    const isFailing = cell.classList.contains('failing-row');
+                    const isGrade = cell.classList.contains('grade');
+                    const isColEnd = cell.classList.contains('col-end');
+                    const isDemarcation = cell.classList.contains('demarcation-bottom');
 
                     if (isTh) {
-                        style += " background-color: #f0f0f0; font-weight: bold;";
+                        ctx.fillStyle = '#0d9488';
+                    } else if (isPassing) {
+                        ctx.fillStyle = '#f0fdf4';
+                    } else if (isFailing) {
+                        ctx.fillStyle = '#fef2f2';
                     } else {
-                        if (isPassing) style += " background-color: #f0fdf4;";
-                        else if (isFailing) style += " background-color: #fef2f2;";
+                        ctx.fillStyle = '#ffffff';
+                    }
+                    ctx.fillRect(x, y, cellW, rowH);
 
-                        if (isGrade) {
-                            style += " font-weight: bold;";
-                            if (isPassing) style += " color: #10b981;";
-                            if (isFailing) style += " color: #ef4444;";
-                        }
+                    // Bordure standard
+                    ctx.strokeStyle = isTh ? 'rgba(255,255,255,0.25)' : '#cbd5e1';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, y, cellW, rowH);
+
+                    if (isColEnd && cIdx < cells.length - 1) {
+                        ctx.strokeStyle = isTh ? '#0f766e' : '#334155';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x + cellW, y);
+                        ctx.lineTo(x + cellW, y + rowH);
+                        ctx.stroke();
                     }
 
-                    if (isColEnd) style += " border-right: 2px solid #000;";
-                    if (isDemarcation) style += " border-bottom: 3px double #000;";
+                    if (isDemarcation) {
+                        ctx.strokeStyle = '#ef4444';
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y + rowH - 3);
+                        ctx.lineTo(x + cellW, y + rowH - 3);
+                        ctx.moveTo(x, y + rowH - 0.5);
+                        ctx.lineTo(x + cellW, y + rowH - 0.5);
+                        ctx.stroke();
+                    }
 
-                    if (textContent === "") textContent = "&#160;";
-
-                    let tag = isTh ? 'th' : 'td';
-                    htmlString += `    <${tag} style="${style}">${textContent}</${tag}>\n`;
+                    if (text) {
+                        if (isTh) {
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 12px Outfit, sans-serif';
+                        } else if (isGrade) {
+                            ctx.fillStyle = isPassing ? '#047857' : (isFailing ? '#dc2626' : '#0f172a');
+                            ctx.font = 'bold 13px Outfit, sans-serif';
+                        } else {
+                            ctx.fillStyle = cell.classList.contains('mistake') ? '#dc2626' : '#0f172a';
+                            ctx.font = '600 13px Outfit, sans-serif';
+                        }
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(text, x + cellW / 2, y + rowH / 2);
+                    }
                 });
-                htmlString += `  </tr>\n`;
             });
-            htmlString += `</table>`;
 
-            const title = document.getElementById('displayTitle').innerText;
-            const formula = document.getElementById('displayFormula').innerText;
+            // Contour global du tableau
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(startX, tableTop, colCount * cellW, rows.length * rowH);
 
-            // Escape HTML characters to prevent SVG parsing errors
-            const escapeHtml = (unsafe) => {
-                return unsafe
-                     .replace(/&/g, "&amp;")
-                     .replace(/</g, "&lt;")
-                     .replace(/>/g, "&gt;")
-                     .replace(/"/g, "&quot;")
-                     .replace(/'/g, "&#039;");
-            };
-
-            const safeTitle = escapeHtml(title);
-            const safeFormula = escapeHtml(formula);
-
-            const finalHtml = `
-                <div xmlns="http://www.w3.org/1999/xhtml" style="background-color: white; padding: 20px; font-family: sans-serif;">
-                    <h2 style="text-align: center; margin-top: 0;">${safeTitle}</h2>
-                    <p style="text-align: center; font-size: 12px; color: #666; margin-bottom: 20px;">${safeFormula}</p>
-                    ${htmlString}
-                </div>
-            `;
-
-            // Calculate approximate dimensions
-            const estWidth = 150 + (groupsPerRow * (showMistakes ? 180 : 130));
-            const estHeight = 100 + (table.querySelectorAll('tr').length * 30);
-
-            const svg = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="${estWidth}" height="${estHeight}">
-                    <foreignObject width="100%" height="100%">
-                        ${finalHtml}
-                    </foreignObject>
-                </svg>
-            `;
-
-
-            const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = estWidth;
-                canvas.height = estHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-
-
-                const pngUrl = canvas.toDataURL('image/png');
+            const filename = `bareme_${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
+            const triggerDownload = (href, revokeAfter) => {
                 const a = document.createElement('a');
-                a.href = pngUrl;
-                a.download = `bareme_${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
+                a.href = href;
+                a.download = filename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-
-                showToast('Image exportée avec succès', 'success');
+                if (revokeAfter) setTimeout(() => URL.revokeObjectURL(href), 2000);
+                if (typeof showToast === 'function') showToast(bt('bareme.toast_img_ok', 'Image exportée avec succès'), 'success');
             };
-            img.src = url;
+
+            if (typeof canvas.toBlob === 'function') {
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        triggerDownload(URL.createObjectURL(blob), true);
+                    } else {
+                        triggerDownload(canvas.toDataURL('image/png'), false);
+                    }
+                }, 'image/png');
+            } else {
+                triggerDownload(canvas.toDataURL('image/png'), false);
+            }
         }
 
         // ==========================================
@@ -1483,12 +1716,16 @@
         document.getElementById('copyTableBtn').addEventListener('click', copyTable);
         document.getElementById('printBtn').addEventListener('click', handlePrint);
         document.getElementById('advancedToggle').addEventListener('click', toggleAdvanced);
-        document.getElementById('totalPoints').addEventListener('input', updateAll);
-        document.getElementById('titleInput').addEventListener('input', updateAll);
-        document.getElementById('pointsFor4').addEventListener('input', updateAll);
-        document.getElementById('increment').addEventListener('change', updateAll);
-        document.getElementById('rounding').addEventListener('change', updateAll);
-        document.getElementById('showMistakes').addEventListener('change', updateAll);
+        const onUserFieldEdit = () => {
+            userEditedSinceUrl = true;
+            updateAll();
+        };
+        document.getElementById('totalPoints').addEventListener('input', onUserFieldEdit);
+        document.getElementById('titleInput').addEventListener('input', onUserFieldEdit);
+        document.getElementById('pointsFor4').addEventListener('input', onUserFieldEdit);
+        document.getElementById('increment').addEventListener('change', onUserFieldEdit);
+        document.getElementById('rounding').addEventListener('change', onUserFieldEdit);
+        document.getElementById('showMistakes').addEventListener('change', onUserFieldEdit);
 
         // Partage d'URL
         function getShareUrl() {
@@ -1519,13 +1756,13 @@
                 if (navigator.clipboard?.writeText) {
                     await navigator.clipboard.writeText(shareUrl);
                     if (typeof showToast === 'function') {
-                        showToast('Lien de partage copié dans le presse-papiers !', 'success');
+                        showToast(bt('bareme.toast_share_copied', 'Lien de partage copié dans le presse-papiers !'), 'success');
                     }
                 } else {
-                    prompt('Copiez ce lien pour partager ce barème :', shareUrl);
+                    prompt(bt('bareme.prompt_share', 'Copiez ce lien pour partager ce barème :'), shareUrl);
                 }
             } catch (err) {
-                prompt('Copiez ce lien pour partager ce barème :', shareUrl);
+                prompt(bt('bareme.prompt_share', 'Copiez ce lien pour partager ce barème :'), shareUrl);
             }
         });
 
@@ -1540,8 +1777,8 @@
                 iconCompress.style.display = isProj ? 'inline-block' : 'none';
             }
             if (projBtn) {
-                projBtn.setAttribute('title', isProj ? 'Quitter le mode TNI (Échap)' : 'Mode TNI/Plein écran (F)');
-                projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI' : 'Mode TNI/Plein écran');
+                projBtn.setAttribute('title', isProj ? bt('bareme.tbi_exit_esc', 'Quitter le mode TNI (Échap)') : bt('bareme.tbi_mode', 'Mode TNI/Plein écran (F)'));
+                projBtn.setAttribute('aria-label', isProj ? bt('bareme.tbi_exit', 'Quitter le mode TNI') : bt('bareme.tbi_aria', 'Mode TNI/Plein écran'));
             }
             if (window.fa?.createIcons) window.fa.createIcons();
             updateAll();
@@ -1594,10 +1831,12 @@
             }
         }
 
-        window.__onResetApp = function() {
+        window.__onResetApp = function () {
+            loadedFromUrl = false;
+            userEditedSinceUrl = false;
             try {
                 localStorage.removeItem(STORAGE_KEY);
-            } catch (e) {}
+            } catch (e) { }
             document.getElementById('totalPoints').value = '20';
             document.getElementById('titleInput').value = '';
             document.getElementById('pointsFor4').value = '';
@@ -1606,7 +1845,7 @@
             document.getElementById('showMistakes').checked = false;
             updateAll();
             if (typeof showToast === 'function') {
-                showToast("Barème réinitialisé", "info");
+                showToast(bt('bareme.toast_reset', 'Barème réinitialisé'), 'info');
             }
         };
 
@@ -1620,6 +1859,7 @@
             window.loadFromUrlParams = loadFromUrlParams;
             window.setProjectionMode = setProjectionMode;
             window.getOptimalScreenGroups = getOptimalScreenGroups;
+            window.exportImage = exportImage;
         }
 
         if (typeof module !== 'undefined' && module.exports) {

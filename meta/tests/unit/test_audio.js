@@ -93,6 +93,33 @@ test('audio.js - updateAudioUI', async (t) => {
         assert.strictEqual(iconOff.style.display, 'block', 'icon-vol-off should be visible when unmuted (to suggest disabling)');
         assert.strictEqual(audioText.textContent, 'Couper son', 'Text should be Couper son when unmuted');
     });
+
+    await t.test('standalone toolbar button without #audioToggleText reflects actual mute state', () => {
+        const window = setupDOM({ c2_audio_muted: 'true' });
+        const document = window.document;
+        document.getElementById('audioToggleText').remove();
+
+        window.updateAudioUI();
+
+        const btn = document.getElementById('audio-toggle-btn');
+        const iconOn = document.getElementById('icon-vol-on');
+        const iconOff = document.getElementById('icon-vol-off');
+        assert.strictEqual(iconOn.style.display, 'none', 'icon-vol-on should be hidden on standalone button when muted');
+        assert.strictEqual(iconOff.style.display, 'block', 'icon-vol-off should be visible on standalone button when muted');
+        assert.strictEqual(btn.title, 'Activer le son');
+
+        window.toggleAudio();
+        assert.strictEqual(iconOn.style.display, 'block', 'icon-vol-on should be visible on standalone button when unmuted');
+        assert.strictEqual(iconOff.style.display, 'none', 'icon-vol-off should be hidden on standalone button when unmuted');
+        assert.strictEqual(btn.title, 'Couper le son');
+    });
+
+    await t.test('uses I18N.t when available for menu label', () => {
+        const window = setupDOM({ c2_audio_muted: 'true' });
+        window.I18N = { t: (k, fb) => (k === 'common.audio_on' ? 'Ton einschalten' : fb) };
+        window.updateAudioUI();
+        assert.strictEqual(window.document.getElementById('audioToggleText').textContent, 'Ton einschalten');
+    });
 });
 
 test('audio.js - toggleAudio', async (t) => {

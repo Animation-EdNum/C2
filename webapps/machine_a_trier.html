@@ -508,7 +508,7 @@
             <div class="action-buttons">
                 <div class="settings-dropdown">
                     <button class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn"
-                        data-i18n-attr="title:common.options,aria-label:common.options">
+                        data-i18n-attr="title:common.options;aria-label:common.options">
                         <i data-fa="gear"></i>
                     </button>
                     <div class="settings-dropdown-content">
@@ -1292,6 +1292,30 @@
         window.addEventListener('languageChanged', () => {
             startNewLevel();
         });
+
+        window.__onResetApp = function () {
+            if (typeof factoryAnimationId !== 'undefined' && factoryAnimationId) {
+                cancelAnimationFrame(factoryAnimationId);
+                factoryAnimationId = null;
+            }
+            if (typeof resetModeTimer === 'function') resetModeTimer();
+            window.ScoreManager?.clearCurrentAppStats?.();
+            globalCorrect = 0;
+            globalStreak = 0;
+            globalBest = 0;
+            perfectLevelsStreak = 0;
+            mistakesInCurrentLevel = 0;
+            const cEl = document.getElementById('global-correct');
+            const sEl = document.getElementById('global-streak');
+            if (cEl) cEl.textContent = '0';
+            if (sEl) sEl.textContent = '0';
+            setPlaystyle('classic');
+            setMode('color');
+            if (typeof showToast === 'function') {
+                const msg = window.I18N ? window.I18N.t('common.reset_done', 'Application réinitialisée') : 'Application réinitialisée';
+                showToast(msg, 'info');
+            }
+        };
 
         window.addEventListener('load', init);
     </script>

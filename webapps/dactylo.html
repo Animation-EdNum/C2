@@ -1152,6 +1152,7 @@
                 flex-wrap: wrap;
                 gap: 8px;
             }
+
             .notice-dismiss-btn {
                 margin-left: auto;
             }
@@ -1452,7 +1453,7 @@
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
     <canvas id="confetti-canvas"></canvas>
 
-        <div class="app-shell" id="main-content">
+    <div class="app-shell" id="main-content">
         <!-- HEADER -->
         <header class="app-header">
             <div class="header-title-wrapper">
@@ -1544,15 +1545,21 @@
         </div>
 
         <!-- MOBILE & TABLET KEYBOARD NOTICE -->
-        <div class="mobile-keyboard-notice no-print" id="mobileKeyboardNotice" role="region" aria-label="Conseil d'utilisation sur tablette">
+        <div class="mobile-keyboard-notice no-print" id="mobileKeyboardNotice" role="region"
+            aria-label="Conseil d'utilisation sur tablette">
             <div class="notice-icon-box">
                 <i data-fa="keyboard"></i>
             </div>
             <div class="notice-content">
                 <strong class="notice-title" data-i18n="dactylo.mobile_notice_title">Conseil pour tablette :</strong>
-                <span class="notice-body" data-i18n-html="dactylo.mobile_notice_body">Tape-Texte est conçu pour l'apprentissage du clavier à dix doigts. Le clavier tactile à l'écran masque le guide des mains. Pour un confort optimal, utilise un <strong>clavier physique</strong> ou un <strong>ordinateur</strong>.</span>
+                <span class="notice-body" data-i18n-html="dactylo.mobile_notice_body">Tape-Texte est conçu pour
+                    l'apprentissage du clavier à dix doigts. Le clavier tactile à l'écran masque le guide des mains.
+                    Pour un confort optimal, utilise un <strong>clavier physique</strong> ou un
+                    <strong>ordinateur</strong>.</span>
             </div>
-            <button type="button" class="notice-dismiss-btn" id="btnDismissTouchNotice" title="J'ai un clavier / Fermer" aria-label="Fermer ce message" data-i18n-attr="title:dactylo.mobile_notice_dismiss;aria-label:dactylo.mobile_notice_dismiss">
+            <button type="button" class="notice-dismiss-btn" id="btnDismissTouchNotice" title="J'ai un clavier / Fermer"
+                aria-label="Fermer ce message"
+                data-i18n-attr="title:dactylo.mobile_notice_dismiss;aria-label:dactylo.mobile_notice_dismiss">
                 <span data-i18n="dactylo.mobile_notice_dismiss">J'ai un clavier</span> <i data-fa="xmark"></i>
             </button>
         </div>
@@ -1580,7 +1587,8 @@
             <div class="keyboard-section" id="keyboardSection" aria-live="polite">
                 <div class="keyboard-header">
                     <span><i data-fa="keyboard"></i> Disposition QWERTZ · Clavier physique</span>
-                    <span class="keyboard-guide-hint" id="keyboardGuideHint"><i data-fa="circle-info"></i> Repère la touche demandée ci-dessous</span>
+                    <span class="keyboard-guide-hint" id="keyboardGuideHint"><i data-fa="circle-info"></i> Repère la
+                        touche demandée ci-dessous</span>
                 </div>
                 <div class="keyboard-wrapper" id="visualKeyboard" role="region"
                     aria-label="Repère visuel du clavier physique">
@@ -1615,7 +1623,8 @@
                     <i data-fa="trophy-star"></i> Nouveau Record !
                 </div>
                 <h2 data-i18n="dactylo.results_title">Bien joué !</h2>
-                <p class="results-subtitle" id="resultsSubtitle" data-i18n="dactylo.results_subtitle">Tu as terminé ce niveau avec succès.</p>
+                <p class="results-subtitle" id="resultsSubtitle" data-i18n="dactylo.results_subtitle">Tu as terminé ce
+                    niveau avec succès.</p>
             </div>
 
             <div class="results-stats-grid">
@@ -1671,7 +1680,8 @@
                         style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
                     <span data-i18n="dactylo.modal_scores_title">Statistiques détaillées</span>
                 </h2>
-                <p class="modal-subtitle" data-i18n="dactylo.modal_subtitle">Tape-Texte · Clavier QWERTZ Suisse Romand</p>
+                <p class="modal-subtitle" data-i18n="dactylo.modal_subtitle">Tape-Texte · Clavier QWERTZ Suisse Romand
+                </p>
             </div>
 
             <!-- Student Info Bar -->
@@ -2210,6 +2220,16 @@
                 }
             }
 
+            function escapeHtml(str) {
+                if (str == null) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
             // --- MOTEUR DE RECETTES DE TOUCHES (TOUTES TOUCHES, TOUCHES MORTES & SYMBOLES) ---
             function getKeyRecipe(char) {
                 if (!char) return null;
@@ -2499,13 +2519,15 @@
                 };
                 if (altGrMap[char]) {
                     const item = altGrMap[char];
+                    const escChar = escapeHtml(char);
+                    const escLabel = escapeHtml(item.label);
                     return {
                         char,
                         type: 'altgr',
                         keyId: item.keyId,
                         keyLabel: item.label,
-                        hintHtml: `Maintiens <strong>AltGr</strong> + appuie sur <strong>${item.label}</strong>`,
-                        recipeExplain: `Pour faire <strong>${char}</strong> : maintiens la touche <span class="kbd-chip">AltGr</span> et appuie sur <span class="kbd-chip">${item.label}</span>.`
+                        hintHtml: `Maintiens <strong>AltGr</strong> + appuie sur <strong>${escLabel}</strong>`,
+                        recipeExplain: `Pour faire <strong>${escChar}</strong> : maintiens la touche <span class="kbd-chip">AltGr</span> et appuie sur <span class="kbd-chip">${escLabel}</span>.`
                     };
                 }
 
@@ -2523,23 +2545,26 @@
                             };
                         }
                         if (key.label === char) {
+                            const escLabel = escapeHtml(key.label);
                             return {
                                 char,
                                 type: 'direct',
                                 keyId: key.id,
                                 keyLabel: key.label,
-                                hintHtml: `Touche : <strong>${key.label}</strong>`,
-                                recipeExplain: `Touche à frapper : appuie directement sur <span class="kbd-chip">${key.label}</span>.`
+                                hintHtml: `Touche : <strong>${escLabel}</strong>`,
+                                recipeExplain: `Touche à frapper : appuie directement sur <span class="kbd-chip">${escLabel}</span>.`
                             };
                         }
                         if (key.shift === char) {
+                            const escChar = escapeHtml(char);
+                            const escLabel = escapeHtml(key.label || char);
                             return {
                                 char,
                                 type: 'shift',
                                 keyId: key.id,
                                 keyLabel: key.label || char,
-                                hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${key.label || char}</strong>`,
-                                recipeExplain: `Pour faire <strong>${char}</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${key.label || char}</span>.`
+                                hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${escLabel}</strong>`,
+                                recipeExplain: `Pour faire <strong>${escChar}</strong> : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${escLabel}</span>.`
                             };
                         }
                     }
@@ -2559,13 +2584,14 @@
                 }
 
                 // Repli de secours
+                const escChar = escapeHtml(char);
                 return {
                     char,
                     type: 'direct',
                     keyId: null,
                     keyLabel: char,
-                    hintHtml: `Touche : <strong>${char}</strong>`,
-                    recipeExplain: `Touche demandée : <span class="kbd-chip">${char}</span>.`
+                    hintHtml: `Touche : <strong>${escChar}</strong>`,
+                    recipeExplain: `Touche demandée : <span class="kbd-chip">${escChar}</span>.`
                 };
             }
 
@@ -2617,7 +2643,7 @@
 
                         if (keyboardGuideHint) {
                             if (pendingDeadKey) {
-                                keyboardGuideHint.innerHTML = `<i data-fa="circle-check"></i> Étape 1 réussie (<strong>${recipe.step1Label}</strong>) ! Maintenant tape <strong>${recipe.step2Label}</strong>`;
+                                keyboardGuideHint.innerHTML = `<i data-fa="circle-check"></i> Étape 1 réussie (<strong>${escapeHtml(recipe.step1Label)}</strong>) ! Maintenant tape <strong>${escapeHtml(recipe.step2Label)}</strong>`;
                             } else {
                                 keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
                             }
@@ -2740,17 +2766,26 @@
                     const displayWrong = (char === ' ') ? 'Espace' : char;
                     const displayExpected = (expected === ' ') ? 'Espace' : expected;
 
-                    let recipeHtml = '';
-                    if (recipe && recipe.recipeExplain) {
-                        recipeHtml = `<div class="error-recipe-hint"><i data-fa="lightbulb"></i> ${recipe.recipeExplain}</div>`;
-                    }
+                    const mainMsgEl = document.createElement('div');
+                    mainMsgEl.className = 'error-main-msg';
+                    mainMsgEl.appendChild(document.createTextNode('Tu as tapé '));
+                    const wrongStrong = document.createElement('strong');
+                    wrongStrong.textContent = displayWrong;
+                    mainMsgEl.appendChild(wrongStrong);
+                    mainMsgEl.appendChild(document.createTextNode(' au lieu de '));
+                    const expStrong = document.createElement('strong');
+                    expStrong.textContent = displayExpected;
+                    mainMsgEl.appendChild(expStrong);
+                    mainMsgEl.appendChild(document.createTextNode('.'));
 
-                    errorMessage.innerHTML = `
-                        <div class="error-main-msg">
-                            Tu as tapé <strong>${displayWrong}</strong> au lieu de <strong>${displayExpected}</strong>.
-                        </div>
-                        ${recipeHtml}
-                    `;
+                    const nodes = [mainMsgEl];
+                    if (recipe && recipe.recipeExplain) {
+                        const recipeDiv = document.createElement('div');
+                        recipeDiv.className = 'error-recipe-hint';
+                        recipeDiv.innerHTML = `<i data-fa="lightbulb"></i> ${recipe.recipeExplain}`;
+                        nodes.push(recipeDiv);
+                    }
+                    errorMessage.replaceChildren(...nodes);
                     errorBanner.style.display = 'flex';
                     showVirtualKeyboard();
                     window.fa?.createIcons?.();
@@ -2826,7 +2861,7 @@
                     mobileNoticeEl.classList.add('dismissed');
                     try {
                         sessionStorage.setItem('dactylo_touch_notice_dismissed', 'true');
-                    } catch (err) {}
+                    } catch (err) { }
                 }
 
                 handleKeyInput(e.key);
@@ -2861,9 +2896,14 @@
                 resultErrors.textContent = errors;
 
                 if (!isBetter && existing) {
-                    resultsSubtitle.textContent = `Niveau réussi ! Record actuel : ${existing.wpm} MPM (${existing.accuracy}%).`;
+                    const unit = (window.I18N && window.I18N.t) ? window.I18N.t('dactylo.unit_wpm', 'MPM') : 'MPM';
+                    resultsSubtitle.textContent = (window.I18N && window.I18N.t)
+                        ? window.I18N.t('dactylo.results_record', `Niveau réussi ! Record actuel : ${existing.wpm} ${unit} (${existing.accuracy}%).`, { wpm: existing.wpm, unit, accuracy: existing.accuracy })
+                        : `Niveau réussi ! Record actuel : ${existing.wpm} MPM (${existing.accuracy}%).`;
                 } else {
-                    resultsSubtitle.textContent = `Félicitations ! Tu as complété ce niveau avec succès.`;
+                    resultsSubtitle.textContent = (window.I18N && window.I18N.t)
+                        ? window.I18N.t('dactylo.results_congrats', 'Félicitations ! Tu as complété ce niveau avec succès.')
+                        : `Félicitations ! Tu as complété ce niveau avec succès.`;
                 }
 
                 // Analyse des touches à travailler
@@ -2980,19 +3020,25 @@
                 textDisplayBox.focus();
             });
 
-            // Réinitialisation des scores via le menu d'options
-            const resetCacheBtn = document.getElementById('reset-cache-btn');
-            if (resetCacheBtn) {
-                resetCacheBtn.addEventListener('click', () => {
-                    if (confirm("Réinitialiser tous les records de Tape-Texte ?")) {
-                        scores = {};
-                        localStorage.removeItem(STORAGE_KEY);
-                        localStorage.removeItem(LEGACY_STORAGE_KEY);
-                        initLevelSelect();
-                        loadLevel(currentLevelIdx);
-                    }
-                });
-            }
+            // Réinitialisation dédiée (empêche theme.js de purger localStorage de toute la suite EdNum)
+            window.__onResetApp = function () {
+                if (errorTimeout) {
+                    clearTimeout(errorTimeout);
+                    errorTimeout = null;
+                }
+                scores = {};
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(LEGACY_STORAGE_KEY);
+                    localStorage.removeItem('c2_student_name');
+                } catch (e) { }
+                initLevelSelect();
+                loadLevel(currentLevelIdx);
+                if (typeof showToast === 'function') {
+                    const msg = window.I18N ? window.I18N.t('dactylo.toast_reset', 'Records de dactylographie réinitialisés') : 'Records de dactylographie réinitialisés';
+                    showToast(msg, 'info');
+                }
+            };
 
             // --- GESTION DE LA MODALE DE BILAN & EXPORT ---
             function renderDactyloScoreModal() {
@@ -3213,7 +3259,10 @@
             // Réinitialisation des scores depuis la modale
             if (btnResetDactyloScores) {
                 btnResetDactyloScores.addEventListener('click', () => {
-                    if (confirm("Réinitialiser tous les records de Tape-Texte ?")) {
+                    const confirmMsg = (window.I18N && window.I18N.t)
+                        ? window.I18N.t('dactylo.confirm_reset_scores', 'Réinitialiser tous les records de Tape-Texte ?')
+                        : 'Réinitialiser tous les records de Tape-Texte ?';
+                    if (confirm(confirmMsg)) {
                         scores = {};
                         localStorage.removeItem(STORAGE_KEY);
                         localStorage.removeItem(LEGACY_STORAGE_KEY);
@@ -3240,7 +3289,7 @@
                 let dismissed = false;
                 try {
                     dismissed = sessionStorage.getItem('dactylo_touch_notice_dismissed') === 'true';
-                } catch (e) {}
+                } catch (e) { }
 
                 if (isTouchScreenDevice() && !dismissed) {
                     mobileNoticeEl.classList.add('visible');
@@ -3254,7 +3303,7 @@
                         mobileNoticeEl.classList.add('dismissed');
                         try {
                             sessionStorage.setItem('dactylo_touch_notice_dismissed', 'true');
-                        } catch (e) {}
+                        } catch (e) { }
                     });
                 }
             }

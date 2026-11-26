@@ -42,7 +42,6 @@
 
 <body>
     <a href="#main-content" class="skip-link" data-i18n="common.skip_link">Aller au contenu principal</a>
-    <canvas id="confetti-canvas"></canvas>
 
     <div class="container" id="main-content">
         <header class="app-header">
@@ -69,11 +68,11 @@
                         <i data-fa="gear"></i>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" id="btn-toggle-projection" aria-label="Mode TBI / Projection"
+                        <button class="menu-item-btn" id="projection-toggle-btn" aria-label="Mode TBI / Projection"
                             data-i18n-attr="aria-label:common.tbi_mode">
-                            <i data-fa="expand" id="icon-expand"></i>
-                            <i data-fa="compress" id="icon-compress" style="display:none;"></i>
-                            <span data-i18n="common.tbi_mode">Mode TBI</span>
+                            <i data-fa="expand" id="icon-proj-expand"></i>
+                            <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
+                            <span id="projectionToggleText" data-i18n="common.tbi_mode">Mode TBI</span>
                         </button>
                         <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son"
                             data-i18n-attr="aria-label:common.audio_toggle">
@@ -140,7 +139,7 @@
                     <div class="calc-card-sub">
                         <label for="bin-input" data-i18n="calculatrice_binaire.binary_input_label">Binaire (base 2) :</label>
                         <div class="decimal-input-group">
-                            <input type="text" id="bin-input" value="0000 0000" maxlength="9"
+                            <input type="text" id="bin-input" value="0000 0000" maxlength="16"
                                 inputmode="numeric" autocomplete="off" spellcheck="false"
                                 class="bin-input-field"
                                 aria-label="Valeur binaire (base 2)"
@@ -156,6 +155,24 @@
 
                 <!-- Actions rapides -->
                 <div class="calc-actions">
+                    <button class="btn" id="btn-dec-minus" title="- 1" aria-label="- 1"
+                        data-i18n-attr="title:calculatrice_binaire.btn_minus_title;aria-label:calculatrice_binaire.btn_minus_title">
+                        <span>−1</span>
+                    </button>
+                    <button class="btn" id="btn-dec-plus" title="+ 1" aria-label="+ 1"
+                        data-i18n-attr="title:calculatrice_binaire.btn_plus_title;aria-label:calculatrice_binaire.btn_plus_title">
+                        <span>+1</span>
+                    </button>
+                    <button class="btn" id="btn-invert-bits" title="Inverser tous les bits"
+                        data-i18n-attr="title:calculatrice_binaire.btn_invert_title">
+                        <span aria-hidden="true">⇄</span>
+                        <span data-i18n="calculatrice_binaire.btn_invert">Inverser</span>
+                    </button>
+                    <button class="btn" id="btn-all-ones" title="Mettre tous les bits à 1 (255)"
+                        data-i18n-attr="title:calculatrice_binaire.btn_all_ones_title">
+                        <span aria-hidden="true">1111 1111</span>
+                        <span data-i18n="calculatrice_binaire.btn_all_ones">Tout à 1</span>
+                    </button>
                     <button class="btn" id="reset-calc-btn">
                         <i data-fa="arrows-rotate"></i>
                         <span data-i18n="common.reset">Remise à zéro</span>
@@ -195,20 +212,39 @@
         window.fa?.createIcons?.();
 
         // TBI projection mode toggle
-        const projBtn = document.getElementById('btn-toggle-projection');
+        const projBtn = document.getElementById('projection-toggle-btn');
+        const projText = document.getElementById('projectionToggleText');
+        function setProjectionMode(active) {
+            document.body.classList.toggle('projection', active);
+            const expIcon = document.getElementById('icon-proj-expand');
+            const compIcon = document.getElementById('icon-proj-compress');
+            if (expIcon && compIcon) {
+                expIcon.style.display = active ? 'none' : '';
+                compIcon.style.display = active ? '' : 'none';
+            }
+            if (projText) {
+                const labelKey = active ? 'common.tbi_exit' : 'common.tbi_mode';
+                const fallback = active ? 'Quitter mode TNI/TBI' : 'Mode TBI';
+                projText.setAttribute('data-i18n', labelKey);
+                projText.textContent = window.I18N ? window.I18N.t(labelKey, fallback) : fallback;
+            }
+            if (projBtn) {
+                projBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+            }
+        }
         if (projBtn) {
             projBtn.addEventListener('click', () => {
-                document.body.classList.toggle('projection');
-                const isProj = document.body.classList.contains('projection');
-                const expIcon = document.getElementById('icon-expand');
-                const compIcon = document.getElementById('icon-compress');
-                if (expIcon && compIcon) {
-                    expIcon.style.display = isProj ? 'none' : '';
-                    compIcon.style.display = isProj ? '' : 'none';
-                }
+                setProjectionMode(!document.body.classList.contains('projection'));
+                if (typeof playSound === 'function') playSound('click');
             });
         }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                setProjectionMode(false);
+            }
+        });
     </script>
+    <script src="../assets/js/url-params.js"></script>
 </body>
 
 </html>

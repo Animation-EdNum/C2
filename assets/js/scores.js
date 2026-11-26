@@ -288,18 +288,27 @@ const ScoreManager = {
             return false;
         }
 
+        const t = function (key, fallback) {
+            if (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function') {
+                return window.I18N.t(key, fallback);
+            }
+            return fallback;
+        };
+
         this.isAdaptivePopupOpen = true;
 
         let popup = document.getElementById('adaptive-difficulty-popup');
         if (!popup) {
+            const promptIntro = t('scores.adaptive_prompt_prefix', 'Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau ');
+            const promptSuffix = t('scores.adaptive_prompt_suffix', ' ?');
             const popupHtml = `
                 <div id="adaptive-difficulty-popup" class="ui-modal-overlay z-top" aria-hidden="true" role="dialog">
                     <div class="ui-modal-content ui-modal-prompt">
-                        <h2>🌟 Niveau maîtrisé !</h2>
-                        <p>Tu as réussi ce niveau 3 fois du premier coup. Veux-tu essayer le niveau <strong><span id="adaptive-next-label"></span></strong> ?</p>
+                        <h2>${t('scores.adaptive_title', '🌟 Niveau maîtrisé !')}</h2>
+                        <p>${promptIntro}<strong><span id="adaptive-next-label"></span></strong>${promptSuffix}</p>
                         <div class="ui-modal-prompt-actions">
-                            <button id="btn-adaptive-yes" class="btn btn-new">Oui, allons-y !</button>
-                            <button id="btn-adaptive-no" class="btn btn-outline-error">Non, je reste ici</button>
+                            <button id="btn-adaptive-yes" class="btn btn-new">${t('scores.adaptive_yes', 'Oui, allons-y !')}</button>
+                            <button id="btn-adaptive-no" class="btn btn-outline-error">${t('scores.adaptive_no', 'Non, je reste ici')}</button>
                         </div>
                     </div>
                 </div>
@@ -317,7 +326,10 @@ const ScoreManager = {
             });
         }
 
-        document.getElementById('adaptive-next-label').textContent = nextDiffLabel;
+        const labelEl = document.getElementById('adaptive-next-label');
+        if (labelEl) {
+            labelEl.textContent = t(`scores.diff.${nextDiffKey}`, nextDiffLabel);
+        }
 
         const btnYes = document.getElementById('btn-adaptive-yes');
         // Remove old listeners by cloning
@@ -341,6 +353,18 @@ const ScoreManager = {
         }, 400);
 
         return true;
+    },
+
+    clearCurrentAppStats() {
+        this.stats = {};
+        if (this.appId) {
+            try {
+                localStorage.removeItem(`c2_stats_${this.appId}`);
+            } catch (e) {}
+        }
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('c2_scores_reset', { detail: { appId: this.appId } }));
+        }
     },
 
     resetScores() {

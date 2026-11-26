@@ -354,4 +354,40 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
         inputSeverity.dispatchEvent(new window.Event('input'));
         assert.strictEqual(window.SimDyslexieEngine.state.severity, 0.7);
     });
+
+    await t.test('Rendu sécurisé des profils personnalisés contre le XSS DOM stocké', () => {
+        const btnSaveProfile = window.document.getElementById('btnSaveProfile');
+        const inputProfileName = window.document.getElementById('inputProfileName');
+        const btnConfirm = window.document.getElementById('btnModalConfirmProfile');
+        const slot = window.document.getElementById('customProfilesSlot');
+
+        btnSaveProfile.click();
+        const xssPayload = '<img src=x onerror="window.__xssTriggered=1">';
+        inputProfileName.value = xssPayload;
+        btnConfirm.click();
+
+        assert.strictEqual(window.__xssTriggered, undefined, 'Aucun script XSS ne doit être exécuté');
+        assert.strictEqual(slot.querySelectorAll('img').length, 0, 'Aucune balise <img> ne doit être injectée dans le slot');
+        const span = slot.querySelector('.profile-btn span');
+        assert.ok(span, 'Le nom du profil doit être rendu dans un span');
+        assert.strictEqual(span.textContent, xssPayload, 'Le texte saisi doit être affiché littéralement en textContent');
+    });
+
+    await t.test('Polices locales OpenDyslexic et Didact Gothic déclarées sans CDN externe', () => {
+        const styleText = window.document.querySelector('style').textContent;
+        assert.ok(styleText.includes("font-family: 'OpenDyslexic'"), '@font-face OpenDyslexic doit être déclaré');
+        assert.ok(styleText.includes("font-family: 'Didact Gothic'"), '@font-face Didact Gothic doit être déclaré');
+        assert.ok(!/https?:\/\/fonts\.(googleapis|gstatic)|cdn\./i.test(styleText), 'Aucun CDN externe ne doit être utilisé pour les polices');
+
+        const fontFiles = [
+            'opendyslexic-latin-400-normal.woff2',
+            'opendyslexic-latin-400-italic.woff2',
+            'opendyslexic-latin-700-normal.woff2',
+            'didact-gothic-latin-400-normal.woff2'
+        ];
+        for (const f of fontFiles) {
+            assert.ok(styleText.includes(`../../assets/fonts/${f}`), `La feuille CSS doit référencer ../../assets/fonts/${f}`);
+            assert.ok(fs.existsSync(path.resolve(__dirname, '../../../assets/fonts', f)), `Le fichier local assets/fonts/${f} doit exister`);
+        }
+    });
 });

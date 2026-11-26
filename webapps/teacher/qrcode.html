@@ -23,12 +23,14 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créateur de QR codes</title>
+    <title data-i18n="qrcode.title">Créateur de QR codes</title>
     <meta property="og:title" content="Créateur de QR codes">
     <meta property="og:description"
         content="Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, fiches et planches imprimables).">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
@@ -38,7 +40,8 @@
     <style>
         /* Header structure is handled by teacher.css */
 
-        body > header, body > .app-shell {
+        body>header,
+        body>.app-shell {
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
@@ -48,14 +51,14 @@
             --primary-light: #ccfbf1;
             --bg-gradient-start: #0d9488;
             --bg-gradient-end: #064e4b;
-            
+
             --glass-bg: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.3);
             --text-main: #0f172a;
             --text-secondary: #475569;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            
+
             --success: #10b981;
             --error: #ef4444;
             --shadow-color: rgba(0, 0, 0, 0.12);
@@ -74,7 +77,11 @@
             --shadow-color: rgba(0, 0, 0, 0.4);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             touch-action: manipulation;
@@ -231,6 +238,13 @@
             cursor: pointer;
             user-select: none;
             transition: color 0.2s;
+            background: transparent;
+            border: none;
+            padding: 0;
+            width: 100%;
+            font-family: inherit;
+            text-align: left;
+            min-height: 32px;
         }
 
         .toggle-header:hover {
@@ -325,14 +339,18 @@
             font-size: 1rem;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
             background: white;
         }
 
-        body.dark input:focus, body.dark select:focus, body.dark textarea:focus {
+        body.dark input:focus,
+        body.dark select:focus,
+        body.dark textarea:focus {
             background: #0f172a;
         }
 
@@ -431,8 +449,14 @@
             transform: scale(1.08);
         }
 
-        .custom-color-input::-webkit-color-swatch-wrapper { padding: 0; }
-        .custom-color-input::-webkit-color-swatch { border: none; border-radius: var(--radius-full); }
+        .custom-color-input::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .custom-color-input::-webkit-color-swatch {
+            border: none;
+            border-radius: var(--radius-full);
+        }
 
         .checkbox-card {
             display: flex;
@@ -441,7 +465,7 @@
             padding: 10px 12px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
-            background: rgba(0,0,0,0.02);
+            background: rgba(0, 0, 0, 0.02);
             cursor: pointer;
             transition: 0.2s;
             user-select: none;
@@ -480,7 +504,8 @@
 
         body.dark .qr-display-card {
             background: #ffffff;
-            color: #0f172a; /* Keep card clean white for scan contrast */
+            color: #0f172a;
+            /* Keep card clean white for scan contrast */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
@@ -506,7 +531,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
         }
 
         canvas {
@@ -563,7 +588,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             gap: 0.5rem;
         }
 
@@ -638,14 +663,17 @@
                 align-items: stretch;
                 gap: 0.75rem;
             }
+
             .header-title-wrapper {
                 width: 100%;
                 justify-content: flex-start;
                 gap: 0.6rem;
             }
+
             .header-title-wrapper h1 {
                 font-size: 1.15rem;
             }
+
             .header-right-group {
                 width: 100%;
                 display: flex;
@@ -654,6 +682,7 @@
                 gap: 0.45rem;
                 flex-wrap: nowrap;
             }
+
             .header-actions {
                 display: flex;
                 align-items: center;
@@ -661,6 +690,7 @@
                 flex: 1 1 auto;
                 min-width: 0;
             }
+
             .header-actions .btn {
                 flex: 1 1 auto;
                 min-width: 0;
@@ -671,12 +701,16 @@
         }
 
         /* PRINT STYLES */
-        .print-only { display: none; }
+        .print-only {
+            display: none;
+        }
+
         @media print {
             @page {
                 size: A4 portrait;
                 margin: 1cm;
             }
+
             body {
                 touch-action: manipulation;
                 background: white !important;
@@ -684,12 +718,14 @@
                 font-family: 'Outfit', sans-serif;
                 color: black !important;
             }
+
             .app-header,
             .app-main,
             footer,
             .no-print {
                 display: none !important;
             }
+
             .app-shell {
                 border: none;
                 box-shadow: none;
@@ -702,8 +738,15 @@
                 padding: 0;
                 margin: 0;
             }
-            .print-only { display: block !important; }
-            .results-panel { padding: 0; min-height: auto; }
+
+            .print-only {
+                display: block !important;
+            }
+
+            .results-panel {
+                padding: 0;
+                min-height: auto;
+            }
 
             /* Single Print Layout (Agrandie 1.2x, 1 seule page, sans distraction) */
             .print-single-container {
@@ -794,10 +837,24 @@
             color: var(--text-muted);
         }
 
-        footer a { color: var(--primary); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
-        footer a:hover { color: var(--primary-hover); }
-        body.dark footer a { color: #2dd4bf !important; }
-        body.dark footer a:hover { color: #5eead4 !important; }
+        footer a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        footer a:hover {
+            color: var(--primary-hover);
+        }
+
+        body.dark footer a {
+            color: #2dd4bf !important;
+        }
+
+        body.dark footer a:hover {
+            color: #5eead4 !important;
+        }
 
         .capacity-warning-banner {
             display: none;
@@ -811,13 +868,16 @@
             text-align: left;
             line-height: 1.4;
         }
+
         body.dark .capacity-warning-banner {
             background: #450a0a;
             color: #fca5a5;
             border-color: #7f1d1d;
         }
 
-        .hidden { display: none !important; }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -827,36 +887,44 @@
     <div class="app-shell" id="main-content">
         <header class="no-print">
             <div class="header-title-wrapper">
-                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
+                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
+                    aria-label="Retour à l'espace enseignant·e·s"
+                    data-i18n-attr="title:common.back_teachers;aria-label:common.back_teachers">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
                     <i data-fa="qrcode"></i>
                 </div>
                 <div>
-                    <h1>
+                    <h1 data-i18n="qrcode.title">
                         Créateur de QR codes
                     </h1>
                 </div>
             </div>
             <div class="header-right-group">
                 <div class="header-actions">
-                    <button class="btn btn-secondary" id="resetBtn" title="Réinitialiser les champs">
+                    <button class="btn btn-secondary" id="resetBtn" title="Réinitialiser les champs"
+                        data-i18n-attr="title:qrcode.clear_title">
                         <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
-                        <span>Effacer</span>
+                        <span data-i18n="qrcode.clear">Effacer</span>
                     </button>
                 </div>
                 <div class="header-divider"></div>
                 <div class="action-buttons no-print">
-                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème"
+                        title="Changer de thème"
+                        data-i18n-attr="aria-label:common.theme_toggle;title:common.theme_toggle">
                         <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
                         <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI"
+                        aria-label="Mode TNI/TBI" data-i18n-attr="title:common.tbi_mode;aria-label:common.tbi_mode">
                         <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
                         <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application"
+                        title="Réinitialiser l'application"
+                        data-i18n-attr="aria-label:common.reset_app;title:common.reset_app">
                         <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
                     </button>
                 </div>
@@ -875,70 +943,91 @@
                 <div class="panel-section">
                     <div class="panel-section-title">
                         <i data-fa="pen" style="width:13px;height:13px;"></i>
-                        Type de contenu
+                        <span data-i18n="qrcode.sec_content">Type de contenu</span>
                     </div>
 
                     <div class="tabs">
-                        <button class="tab-btn active" data-type="url">Lien web</button>
-                        <button class="tab-btn" data-type="text">Texte</button>
-                        <button class="tab-btn" data-type="wifi">Wi-Fi</button>
-                        <button class="tab-btn" data-type="batch">Lot</button>
+                        <button class="tab-btn active" data-type="url" data-i18n="qrcode.tab_url">Lien web</button>
+                        <button class="tab-btn" data-type="text" data-i18n="qrcode.tab_text">Texte</button>
+                        <button class="tab-btn" data-type="wifi" data-i18n="qrcode.tab_wifi">Wi-Fi</button>
+                        <button class="tab-btn" data-type="batch" data-i18n="qrcode.tab_batch">Lot</button>
                     </div>
 
                     <!-- Mode URL -->
                     <div id="content-url-view" class="input-group">
                         <label for="inputUrl">
-                            <span>Adresse web (URL)</span>
+                            <span data-i18n="qrcode.url_label">Adresse web (URL)</span>
                         </label>
                         <div class="input-with-action">
                             <input type="text" id="inputUrl" placeholder="https://ednum.org" value="https://ednum.org">
-                            <button class="btn-input-action" id="testLinkBtn" title="Tester le lien dans un nouvel onglet">
+                            <button class="btn-input-action" id="testLinkBtn"
+                                title="Tester le lien dans un nouvel onglet"
+                                data-i18n-attr="title:qrcode.test_link_title">
                                 <i data-fa="arrow-up-right-from-square" style="width:12px;height:12px;"></i>
-                                Tester
+                                <span data-i18n="qrcode.test_link">Tester</span>
                             </button>
                         </div>
-                        <span class="input-help">Ex: Lien vers un exercice LearningApps, une vidéo ou un Genially.</span>
+                        <span class="input-help" data-i18n="qrcode.url_help">Ex: Lien vers un exercice LearningApps, une
+                            vidéo ou un Genially.</span>
                     </div>
 
                     <!-- Mode Texte -->
                     <div id="content-text-view" class="input-group hidden">
-                        <label for="inputText">Texte ou consigne pour les élèves</label>
-                        <textarea id="inputText" placeholder="Bravo ! Tu as trouvé l'indice n°3. Rends-toi maintenant à la bibliothèque pour ouvrir le coffre."></textarea>
-                        <span class="input-help">Idéal pour un escape game, rallye ou message secret.</span>
+                        <label for="inputText" data-i18n="qrcode.text_label">Texte ou consigne pour les élèves</label>
+                        <textarea id="inputText"
+                            placeholder="Bravo ! Tu as trouvé l'indice n°3. Rends-toi maintenant à la bibliothèque pour ouvrir le coffre."
+                            data-i18n-attr="placeholder:qrcode.text_placeholder"></textarea>
+                        <span class="input-help" data-i18n="qrcode.text_help">Idéal pour un escape game, rallye ou
+                            message secret.</span>
                     </div>
 
                     <!-- Mode Wi-Fi -->
                     <div id="content-wifi-view" class="input-group hidden">
                         <div class="input-group">
-                            <label for="wifiSsid">Nom du réseau (SSID)</label>
-                            <input type="text" id="wifiSsid" placeholder="Ex: WiFi_Classe_5H">
+                            <label for="wifiSsid" data-i18n="qrcode.wifi_ssid_label">Nom du réseau (SSID)</label>
+                            <input type="text" id="wifiSsid" placeholder="Ex: WiFi_Classe_5H"
+                                data-i18n-attr="placeholder:qrcode.wifi_ssid_placeholder">
                         </div>
                         <div class="input-group" style="margin-top: 6px;">
-                            <label for="wifiPassword">Mot de passe</label>
+                            <label for="wifiPassword" data-i18n="qrcode.wifi_pass_label">Mot de passe</label>
                             <div class="input-with-action">
-                                <input type="password" id="wifiPassword" placeholder="Clé de sécurité">
-                                <button class="btn-input-action" id="toggleWifiPassBtn" title="Afficher/Masquer le mot de passe">
+                                <input type="password" id="wifiPassword" placeholder="Clé de sécurité"
+                                    data-i18n-attr="placeholder:qrcode.wifi_pass_placeholder">
+                                <button class="btn-input-action" id="toggleWifiPassBtn"
+                                    title="Afficher/Masquer le mot de passe"
+                                    data-i18n-attr="title:qrcode.wifi_toggle_pass">
                                     <i data-fa="eye" id="wifiPassIcon" style="width:13px;height:13px;"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="input-group" style="margin-top: 6px;">
-                            <label for="wifiType">Sécurité</label>
+                            <label for="wifiType" data-i18n="qrcode.wifi_sec_label">Sécurité</label>
                             <select id="wifiType">
-                                <option value="WPA" selected>WPA / WPA2 / WPA3 (Standard)</option>
-                                <option value="WEP">WEP (Ancien)</option>
-                                <option value="nopass">Aucun (Réseau ouvert)</option>
+                                <option value="WPA" selected data-i18n="qrcode.wifi_sec_wpa">WPA / WPA2 / WPA3
+                                    (Standard)</option>
+                                <option value="WEP" data-i18n="qrcode.wifi_sec_wep">WEP (Ancien)</option>
+                                <option value="nopass" data-i18n="qrcode.wifi_sec_none">Aucun (Réseau ouvert)</option>
                             </select>
                         </div>
+                        <label class="checkbox-card" for="showWifiPassSubtext" style="margin-top: 6px;">
+                            <input type="checkbox" id="showWifiPassSubtext">
+                            <span style="font-size: 0.78rem; font-weight: 600;"
+                                data-i18n="qrcode.wifi_show_pass_subtext">Afficher aussi le mot de passe en clair sous
+                                le QR code</span>
+                        </label>
                     </div>
 
                     <!-- Mode Batch / Multi-QR -->
                     <div id="content-batch-view" class="input-group hidden">
                         <label for="inputBatch">
-                            <span>Liste des QR codes (1 par ligne)</span>
+                            <span data-i18n="qrcode.batch_label">Liste des QR codes (1 par ligne)</span>
                         </label>
-                        <textarea id="inputBatch" style="min-height: 130px;" placeholder="Atelier 1 | https://site.ch/1&#10;Atelier 2 | https://site.ch/2&#10;Atelier 3 | https://site.ch/3"></textarea>
-                        <span class="input-help">Format : <code>Titre | Lien ou texte</code> (ou juste une liste de liens).</span>
+                        <textarea id="inputBatch" style="min-height: 130px;"
+                            placeholder="Atelier 1 | https://site.ch/1&#10;Atelier 2 | https://site.ch/2&#10;Atelier 3 | https://site.ch/3"
+                            data-i18n-attr="placeholder:qrcode.batch_placeholder"></textarea>
+                        <span class="input-help"><span data-i18n="qrcode.batch_help_prefix">Format :</span> <code
+                                data-i18n="qrcode.batch_help_code">Titre | Lien ou texte</code> <span
+                                data-i18n="qrcode.batch_help_suffix">(ou juste une liste de liens).</span></span>
                     </div>
                 </div>
 
@@ -946,44 +1035,58 @@
                 <div class="panel-section" id="labelsSection">
                     <div class="panel-section-title">
                         <i data-fa="marker" style="width:13px;height:13px;"></i>
-                        Étiquettes & Légendes
+                        <span data-i18n="qrcode.sec_labels">Étiquettes &amp; Légendes</span>
                     </div>
 
                     <div class="input-group">
                         <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                            <label for="inputTitle">Titre au-dessus du QR code</label>
-                            <span id="titleCounter" style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">0/60</span>
+                            <label for="inputTitle" data-i18n="qrcode.title_label">Titre au-dessus du QR code</label>
+                            <span id="titleCounter"
+                                style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">0/60</span>
                         </div>
-                        <input type="text" id="inputTitle" maxlength="60" placeholder="Ex: Activité Numérique 5H" value="Portail Éducation Numérique">
-                        <span class="input-help">Titre court (max. 60 caractères / 2 lignes).</span>
+                        <input type="text" id="inputTitle" maxlength="60" placeholder="Ex: Activité Numérique 5H"
+                            value="Portail Éducation Numérique" data-i18n-attr="placeholder:qrcode.title_placeholder">
+                        <span class="input-help" data-i18n="qrcode.title_help">Titre court (max. 60 caractères / 2
+                            lignes).</span>
                     </div>
 
                     <label class="checkbox-card" for="showSubtext">
                         <input type="checkbox" id="showSubtext" checked>
-                        <span style="font-size: 0.82rem; font-weight: 600;">Afficher l'adresse / le texte en clair en dessous</span>
+                        <span style="font-size: 0.82rem; font-weight: 600;"
+                            data-i18n="qrcode.show_subtext_label">Afficher l'adresse / le texte en clair en
+                            dessous</span>
                     </label>
                 </div>
 
                 <!-- Section 3 : Options avancées -->
                 <div class="panel-section" id="advancedSection">
-                    <div class="panel-section-title toggle-header" id="advancedToggle">
+                    <button type="button" class="panel-section-title toggle-header" id="advancedToggle"
+                        aria-expanded="true">
                         <i data-fa="sliders-up" style="width:13px;height:13px;"></i>
-                        Style & Précision
-                        <i data-fa="chevron-down" class="toggle-icon" style="margin-left:auto; width:13px;height:13px;"></i>
-                    </div>
+                        <span data-i18n="qrcode.sec_style">Style &amp; Précision</span>
+                        <i data-fa="chevron-down" class="toggle-icon"
+                            style="margin-left:auto; width:13px;height:13px;"></i>
+                    </button>
 
                     <div class="toggle-content">
                         <!-- Couleur -->
                         <div class="input-group">
-                            <label>Couleur du QR code</label>
+                            <label data-i18n="qrcode.color_label">Couleur du QR code</label>
                             <div class="color-palette">
-                                <button class="color-chip active" data-color="#000000" style="background: #000000;" title="Noir classique"></button>
-                                <button class="color-chip" data-color="#0d9488" style="background: #0d9488;" title="Teal EdNum"></button>
-                                <button class="color-chip" data-color="#2563eb" style="background: #2563eb;" title="Bleu Éducation"></button>
-                                <button class="color-chip" data-color="#7c3aed" style="background: #7c3aed;" title="Violet"></button>
-                                <button class="color-chip" data-color="#b91c1c" style="background: #b91c1c;" title="Rouge"></button>
-                                <div class="custom-color-wrapper" title="Couleur personnalisée">
-                                    <input type="color" id="customColorInput" class="custom-color-input" value="#000000">
+                                <button class="color-chip active" data-color="#000000" style="background: #000000;"
+                                    title="Noir classique" data-i18n-attr="title:qrcode.color_black"></button>
+                                <button class="color-chip" data-color="#0d9488" style="background: #0d9488;"
+                                    title="Teal EdNum" data-i18n-attr="title:qrcode.color_teal"></button>
+                                <button class="color-chip" data-color="#2563eb" style="background: #2563eb;"
+                                    title="Bleu Éducation" data-i18n-attr="title:qrcode.color_blue"></button>
+                                <button class="color-chip" data-color="#7c3aed" style="background: #7c3aed;"
+                                    title="Violet" data-i18n-attr="title:qrcode.color_purple"></button>
+                                <button class="color-chip" data-color="#b91c1c" style="background: #b91c1c;"
+                                    title="Rouge" data-i18n-attr="title:qrcode.color_red"></button>
+                                <div class="custom-color-wrapper" title="Couleur personnalisée"
+                                    data-i18n-attr="title:qrcode.color_custom">
+                                    <input type="color" id="customColorInput" class="custom-color-input"
+                                        value="#000000">
                                 </div>
                             </div>
                         </div>
@@ -991,24 +1094,27 @@
                         <!-- Correction d'erreur -->
                         <div class="input-group">
                             <label for="eccLevel">
-                                <span>Correction d'erreur (ECC)</span>
+                                <span data-i18n="qrcode.ecc_label">Correction d'erreur (ECC)</span>
                             </label>
                             <select id="eccLevel">
-                                <option value="L">L (7% - Moins dense)</option>
-                                <option value="M" selected>M (15% - Équilibré)</option>
-                                <option value="Q">Q (25% - Robuste)</option>
-                                <option value="H">H (30% - Recommandé pour la classe & découpage)</option>
+                                <option value="L" data-i18n="qrcode.ecc_l">L (7% - Moins dense)</option>
+                                <option value="M" selected data-i18n="qrcode.ecc_m">M (15% - Équilibré)</option>
+                                <option value="Q" data-i18n="qrcode.ecc_q">Q (25% - Robuste)</option>
+                                <option value="H" data-i18n="qrcode.ecc_h">H (30% - Recommandé pour la classe &amp;
+                                    découpage)</option>
                             </select>
-                            <span class="input-help">Un niveau plus élevé (H) permet au QR code de rester lisible même s'il est abîmé ou manipulé par les élèves.</span>
+                            <span class="input-help" data-i18n="qrcode.ecc_help">Un niveau plus élevé (H) permet au QR
+                                code de rester lisible même s'il est abîmé ou manipulé par les élèves.</span>
                         </div>
 
                         <!-- Taille du rendu -->
                         <div class="input-group">
-                            <label for="renderSize">Résolution d'export</label>
+                            <label for="renderSize" data-i18n="qrcode.size_label">Résolution d'export</label>
                             <select id="renderSize">
-                                <option value="300">Standard (300 px)</option>
-                                <option value="600" selected>Haute Définition (600 px)</option>
-                                <option value="1200">Impression Pro HD (1200 px)</option>
+                                <option value="300" data-i18n="qrcode.size_300">Standard (300 px)</option>
+                                <option value="600" selected data-i18n="qrcode.size_600">Haute Définition (600 px)
+                                </option>
+                                <option value="1200" data-i18n="qrcode.size_1200">Impression Pro HD (1200 px)</option>
                             </select>
                         </div>
                     </div>
@@ -1035,19 +1141,21 @@
                 <div class="preview-controls no-print">
                     <button class="btn btn-secondary" id="copyImgBtn">
                         <i data-fa="copy" style="width:16px;height:16px;"></i>
-                        <span>Copier l'image</span>
+                        <span data-i18n="qrcode.btn_copy_img">Copier l'image</span>
                     </button>
                     <button class="btn btn-secondary" id="downloadImgBtn">
                         <i data-fa="download" style="width:16px;height:16px;"></i>
-                        <span>Télécharger PNG</span>
+                        <span data-i18n="qrcode.btn_dl_png">Télécharger PNG</span>
                     </button>
-                    <button class="btn btn-secondary" id="downloadSvgBtn" title="Télécharger le QR code en format vectoriel SVG">
+                    <button class="btn btn-secondary" id="downloadSvgBtn"
+                        title="Télécharger le QR code en format vectoriel SVG"
+                        data-i18n-attr="title:qrcode.btn_dl_svg_title">
                         <i data-fa="download" style="width:16px;height:16px;"></i>
                         <span>SVG</span>
                     </button>
                     <button class="btn btn-primary" id="printActionBtn">
                         <i data-fa="print" style="width:16px;height:16px;"></i>
-                        <span>Imprimer A4</span>
+                        <span data-i18n="qrcode.btn_print">Imprimer A4</span>
                     </button>
                 </div>
             </main>
@@ -1055,11 +1163,18 @@
 
         <footer class="no-print">
             <p>
-                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                    href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                    data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
-                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
-                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                            data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                        rel="noopener noreferrer">AGPL-3.0</a>)
                     · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
                     · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
                     · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
@@ -1100,19 +1215,33 @@
     <script>
         window.fa?.createIcons?.();
 
+        const qt = (key, fb, vars) => (window.I18N && typeof window.I18N.t === 'function')
+            ? window.I18N.t(key, fb, vars)
+            : (vars ? String(fb).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? String(vars[k]) : `{${k}}`)) : fb);
+
+        function getQrDefaults() {
+            return {
+                text: qt('qrcode.default_text', 'Bravo ! Tu as trouvé l\'indice.'),
+                wifiSsid: qt('qrcode.default_ssid', 'WiFi_Classe'),
+                batchText: qt('qrcode.default_batch', 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu'),
+                title: qt('qrcode.default_title', 'Portail Éducation Numérique')
+            };
+        }
+
         // ==========================================
         // ÉTAT ET VARIABLES GLOBALES
         // ==========================================
         const STORAGE_KEY = 'c2_qrcode_prefs_v1';
+        const qrDefaults = getQrDefaults();
         let state = {
             type: 'url',           // 'url' | 'text' | 'wifi' | 'batch'
             url: 'https://ednum.org',
-            text: 'Bravo ! Tu as trouvé l\'indice.',
-            wifiSsid: 'WiFi_Classe',
+            text: qrDefaults.text,
+            wifiSsid: qrDefaults.wifiSsid,
             wifiPass: '',
             wifiType: 'WPA',
-            batchText: 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu',
-            title: 'Portail Éducation Numérique',
+            batchText: qrDefaults.batchText,
+            title: qrDefaults.title,
             showSubtext: true,
             color: '#000000',
             ecc: 'M',
@@ -1121,8 +1250,8 @@
 
         function getQRious() {
             return (typeof QRious !== 'undefined' ? QRious : null) ||
-                   (typeof window !== 'undefined' && window.QRious ? window.QRious : null) ||
-                   (typeof globalThis !== 'undefined' && globalThis.QRious ? globalThis.QRious : null);
+                (typeof window !== 'undefined' && window.QRious ? window.QRious : null) ||
+                (typeof globalThis !== 'undefined' && globalThis.QRious ? globalThis.QRious : null);
         }
 
         let qrInstance = null;
@@ -1135,7 +1264,7 @@
         const viewText = document.getElementById('content-text-view');
         const viewWifi = document.getElementById('content-wifi-view');
         const viewBatch = document.getElementById('content-batch-view');
-        
+
         const inputUrl = document.getElementById('inputUrl');
         const inputText = document.getElementById('inputText');
         const inputWifiSsid = document.getElementById('wifiSsid');
@@ -1182,7 +1311,8 @@
         const advancedSection = document.getElementById('advancedSection');
         if (advancedToggle) {
             advancedToggle.addEventListener('click', () => {
-                advancedSection.classList.toggle('collapsed');
+                const isCollapsed = advancedSection.classList.toggle('collapsed');
+                advancedToggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
             });
         }
 
@@ -1224,7 +1354,7 @@
         // Test Link button
         document.getElementById('testLinkBtn')?.addEventListener('click', () => {
             let url = inputUrl ? inputUrl.value.trim() : '';
-            if (!url || url === 'null' || url === 'undefined') return showToast('Veuillez saisir une adresse web', 'warn');
+            if (!url || url === 'null' || url === 'undefined') return showToast(qt('qrcode.toast_enter_url', 'Veuillez saisir une adresse web'), 'warn');
             if (!/^https?:\/\//i.test(url)) {
                 url = 'https://' + url;
             }
@@ -1318,20 +1448,40 @@
             return val;
         }
 
+        function renderQRToCanvas(options) {
+            const QRLib = getQRious();
+            if (!QRLib) return null;
+            try {
+                return new QRLib(options);
+            } catch (err) {
+                console.error('QRious generation failed:', err);
+                if (typeof showToast === 'function') {
+                    showToast(qt('qrcode.toast_too_long_ecc', 'Contenu trop long pour le niveau de correction choisi (essayez ECC L ou réduisez le texte).'), 'error');
+                }
+                return null;
+            }
+        }
+
         function getSubtextDisplay() {
             if (state.type === 'url') {
                 return inputUrl.value.trim() || 'https://ednum.org';
             } else if (state.type === 'text') {
-                const val = (inputText.value.trim() || 'Exemple de texte').replace(/\s+/g, ' ');
+                const val = (inputText.value.trim() || qt('qrcode.sample_text', 'Exemple de texte')).replace(/\s+/g, ' ');
                 return val.length > 80 ? val.substring(0, 77) + '...' : val;
             } else if (state.type === 'wifi') {
-                const ssid = inputWifiSsid.value.trim() || 'WiFi_Classe';
+                const ssid = inputWifiSsid.value.trim() || qt('qrcode.default_ssid', 'WiFi_Classe');
                 const pass = inputWifiPass.value;
                 const type = selectWifiType ? selectWifiType.value : 'WPA';
+                const showPassInSubtext = Boolean(document.getElementById('showWifiPassSubtext')?.checked);
                 if (type === 'nopass') {
-                    return `Wi-Fi : ${ssid} (Réseau ouvert)`;
+                    return qt('qrcode.wifi_sub_open', `Wi-Fi : ${ssid} (Réseau ouvert)`, { ssid });
                 }
-                return pass ? `Wi-Fi : ${ssid} | Clé : ${pass}` : `Wi-Fi : ${ssid}`;
+                if (pass && showPassInSubtext) {
+                    return qt('qrcode.wifi_sub_key', `Wi-Fi : ${ssid} | Clé : ${pass}`, { ssid, pass });
+                }
+                return pass
+                    ? qt('qrcode.wifi_sub_secured', `Wi-Fi : ${ssid} (Réseau sécurisé)`, { ssid })
+                    : qt('qrcode.wifi_sub_basic', `Wi-Fi : ${ssid}`, { ssid });
             }
             return '';
         }
@@ -1370,7 +1520,7 @@
                 }
                 if (capWarningEl) {
                     if (byteLen > maxCap) {
-                        capWarningEl.textContent = `⚠️ Texte très long (${byteLen} octets / max conseillé ${maxCap} en niveau ${state.ecc}). Réduisez le texte ou choisissez le niveau ECC L.`;
+                        capWarningEl.textContent = qt('qrcode.capacity_warning', `⚠️ Texte très long (${byteLen} octets / max conseillé ${maxCap} en niveau ${state.ecc}). Réduisez le texte ou choisissez le niveau ECC L.`, { bytes: byteLen, max: maxCap, ecc: state.ecc });
                         capWarningEl.style.display = 'block';
                     } else {
                         capWarningEl.style.display = 'none';
@@ -1380,25 +1530,32 @@
                 const qrByteValue = toUtf8ByteString(value);
                 const QRLib = getQRious();
                 if (!QRLib) return;
-                if (!qrInstance) {
-                    qrInstance = new QRLib({
-                        element: qrCanvas,
-                        size: 260,
-                        value: qrByteValue,
-                        level: state.ecc,
-                        foreground: state.color,
-                        background: '#ffffff',
-                        padding: 12
-                    });
-                } else {
-                    qrInstance.set({
-                        value: qrByteValue,
-                        level: state.ecc,
-                        foreground: state.color,
-                        background: '#ffffff',
-                        size: 260,
-                        padding: 12
-                    });
+                try {
+                    if (!qrInstance) {
+                        qrInstance = renderQRToCanvas({
+                            element: qrCanvas,
+                            size: 260,
+                            value: qrByteValue,
+                            level: state.ecc,
+                            foreground: state.color,
+                            background: '#ffffff',
+                            padding: 12
+                        });
+                    } else {
+                        qrInstance.set({
+                            value: qrByteValue,
+                            level: state.ecc,
+                            foreground: state.color,
+                            background: '#ffffff',
+                            size: 260,
+                            padding: 12
+                        });
+                    }
+                } catch (err) {
+                    console.error('QRious update failed:', err);
+                    if (typeof showToast === 'function') {
+                        showToast(qt('qrcode.toast_ecc_failed', 'Contenu trop long pour ce niveau ECC.'), 'error');
+                    }
                 }
             } else {
                 renderBatch();
@@ -1415,13 +1572,13 @@
                 emptyMsg.style.textAlign = 'center';
                 emptyMsg.style.padding = '2rem';
                 emptyMsg.style.color = 'var(--text-muted)';
-                emptyMsg.textContent = 'Collez vos liens dans la zone de texte à gauche pour générer les QR codes.';
+                emptyMsg.textContent = qt('qrcode.batch_empty', 'Collez vos liens dans la zone de texte à gauche pour générer les QR codes.');
                 batchPreviewContainer.appendChild(emptyMsg);
                 return;
             }
 
             lines.forEach((line, index) => {
-                let title = `Atelier ${index + 1}`;
+                let title = qt('qrcode.batch_default_item', `Atelier ${index + 1}`, { index: index + 1 });
                 let value = line;
 
                 if (line.includes('|')) {
@@ -1441,18 +1598,15 @@
                 card.appendChild(cardTitle);
 
                 const canvas = document.createElement('canvas');
-                const QRLib = getQRious();
-                if (QRLib) {
-                    new QRLib({
-                        element: canvas,
-                        size: 150,
-                        value: toUtf8ByteString(value),
-                        level: state.ecc,
-                        foreground: state.color,
-                        background: '#ffffff',
-                        padding: 8
-                    });
-                }
+                renderQRToCanvas({
+                    element: canvas,
+                    size: 150,
+                    value: toUtf8ByteString(value),
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: 8
+                });
                 card.appendChild(canvas);
 
                 if (state.showSubtext) {
@@ -1536,11 +1690,11 @@
         function createBatchExportCanvas() {
             const lines = inputBatch.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             if (lines.length === 0) {
-                throw new Error('Veuillez entrer au moins un élément dans la liste');
+                throw new Error(qt('qrcode.toast_batch_min', 'Veuillez entrer au moins un élément dans la liste'));
             }
 
             const items = lines.map((line, index) => {
-                let title = `Atelier ${index + 1}`;
+                let title = qt('qrcode.batch_default_item', `Atelier ${index + 1}`, { index: index + 1 });
                 let value = line;
                 if (line.includes('|')) {
                     const parts = line.split('|');
@@ -1603,18 +1757,15 @@
 
                 // QR Code
                 const itemCanvas = document.createElement('canvas');
-                const QRLib = getQRious();
-                if (QRLib) {
-                    new QRLib({
-                        element: itemCanvas,
-                        size: 260,
-                        value: toUtf8ByteString(item.value),
-                        level: state.ecc,
-                        foreground: state.color,
-                        background: '#ffffff',
-                        padding: 12
-                    });
-                }
+                renderQRToCanvas({
+                    element: itemCanvas,
+                    size: 260,
+                    value: toUtf8ByteString(item.value),
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: 12
+                });
                 ctx.drawImage(itemCanvas, x + (cardWidth - 260) / 2, y + 60);
 
                 // Subtext
@@ -1631,6 +1782,22 @@
             return composite;
         }
 
+        function copyTextFallback(text) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                const ok = document.execCommand('copy');
+                ta.remove();
+                return ok;
+            } catch (e) {
+                return false;
+            }
+        }
+
         // ==========================================
         // EXPORT : COPIER L'IMAGE DANS LE PRESSE-PAPIER
         // ==========================================
@@ -1645,25 +1812,40 @@
 
                 exportCanvas.toBlob(async (blob) => {
                     if (!blob) {
-                        return showToast('Erreur lors de la génération de l\'image', 'error');
+                        return showToast(qt('qrcode.toast_img_gen_err', 'Erreur lors de la génération de l\'image'), 'error');
                     }
                     try {
-                        const item = new ClipboardItem({ 'image/png': blob });
-                        await navigator.clipboard.write([item]);
-                        showToast(state.type === 'batch' ? 'Planche de QR codes copiée !' : 'Image du QR code copiée !', 'success');
+                        if (typeof ClipboardItem !== 'undefined' && navigator.clipboard && navigator.clipboard.write) {
+                            const item = new ClipboardItem({ 'image/png': blob });
+                            await navigator.clipboard.write([item]);
+                            showToast(state.type === 'batch' ? qt('qrcode.toast_batch_copied', 'Planche de QR codes copiée !') : qt('qrcode.toast_img_copied', 'Image du QR code copiée !'), 'success');
+                            return;
+                        }
+                        throw new Error('ClipboardItem unsupported');
                     } catch (err) {
                         console.error('Clipboard copy failed:', err);
                         if (state.type !== 'batch') {
-                            navigator.clipboard.writeText(getQRValue());
-                            showToast('Texte/Lien copié dans le presse-papier !', 'info');
+                            const textVal = getQRValue();
+                            let copied = false;
+                            if (navigator.clipboard && navigator.clipboard.writeText) {
+                                try {
+                                    await navigator.clipboard.writeText(textVal);
+                                    copied = true;
+                                } catch (clipErr) {
+                                    copied = copyTextFallback(textVal);
+                                }
+                            } else {
+                                copied = copyTextFallback(textVal);
+                            }
+                            showToast(copied ? qt('qrcode.toast_text_copied', 'Texte/Lien copié dans le presse-papier !') : qt('qrcode.toast_clip_fail', 'Impossible de copier dans le presse-papier'), copied ? 'info' : 'error');
                         } else {
-                            showToast('Impossible de copier l\'image directement', 'error');
+                            showToast(qt('qrcode.toast_img_copy_unavail', 'Impossible de copier l\'image directement'), 'error');
                         }
                     }
                 }, 'image/png');
             } catch (e) {
                 console.error(e);
-                showToast(e.message || 'Impossible de copier l\'image', 'error');
+                showToast(e.message || qt('qrcode.toast_img_copy_err', 'Impossible de copier l\'image'), 'error');
             }
         }
 
@@ -1698,10 +1880,10 @@
                 link.download = fileName;
                 link.href = exportCanvas.toDataURL('image/png');
                 link.click();
-                showToast(state.type === 'batch' ? 'Téléchargement de la planche lancé' : 'Téléchargement du QR code lancé', 'success');
+                showToast(state.type === 'batch' ? qt('qrcode.toast_dl_batch_ok', 'Téléchargement de la planche lancé') : qt('qrcode.toast_dl_single_ok', 'Téléchargement du QR code lancé'), 'success');
             } catch (e) {
                 console.error('Download error:', e);
-                showToast(e.message || 'Erreur lors du téléchargement', 'error');
+                showToast(e.message || qt('qrcode.toast_dl_err', 'Erreur lors du téléchargement'), 'error');
             }
         }
 
@@ -1709,18 +1891,15 @@
         function createExportCanvas() {
             const size = state.size || 600;
             const tempCanvas = document.createElement('canvas');
-            const QRLib = getQRious();
-            if (QRLib) {
-                new QRLib({
-                    element: tempCanvas,
-                    size: size,
-                    value: toUtf8ByteString(getQRValue()),
-                    level: state.ecc,
-                    foreground: state.color,
-                    background: '#ffffff',
-                    padding: Math.round(size * 0.05)
-                });
-            }
+            renderQRToCanvas({
+                element: tempCanvas,
+                size: size,
+                value: toUtf8ByteString(getQRValue()),
+                level: state.ecc,
+                foreground: state.color,
+                background: '#ffffff',
+                padding: Math.round(size * 0.05)
+            });
 
             // Check title and subtext
             const hasRawTitle = Boolean(state.title && state.title.trim().length > 0);
@@ -1813,18 +1992,15 @@
                 const qrWrap = document.createElement('div');
                 qrWrap.className = 'print-single-qr';
                 const printCanvas = document.createElement('canvas');
-                const QRLib = getQRious();
-                if (QRLib) {
-                    new QRLib({
-                        element: printCanvas,
-                        size: 540,
-                        value: toUtf8ByteString(getQRValue()),
-                        level: state.ecc,
-                        foreground: state.color,
-                        background: '#ffffff',
-                        padding: 16
-                    });
-                }
+                renderQRToCanvas({
+                    element: printCanvas,
+                    size: 540,
+                    value: toUtf8ByteString(getQRValue()),
+                    level: state.ecc,
+                    foreground: state.color,
+                    background: '#ffffff',
+                    padding: 16
+                });
                 qrWrap.appendChild(printCanvas);
                 singleWrap.appendChild(qrWrap);
 
@@ -1843,7 +2019,7 @@
 
                 const lines = inputBatch.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
                 lines.forEach((line, index) => {
-                    let title = `Atelier ${index + 1}`;
+                    let title = qt('qrcode.batch_default_item', `Atelier ${index + 1}`, { index: index + 1 });
                     let value = line;
                     if (line.includes('|')) {
                         const parts = line.split('|');
@@ -1860,18 +2036,15 @@
                     card.appendChild(h3);
 
                     const canvas = document.createElement('canvas');
-                    const QRLib = getQRious();
-                    if (QRLib) {
-                        new QRLib({
-                            element: canvas,
-                            size: 220,
-                            value: toUtf8ByteString(value),
-                            level: state.ecc,
-                            foreground: state.color,
-                            background: '#ffffff',
-                            padding: 10
-                        });
-                    }
+                    renderQRToCanvas({
+                        element: canvas,
+                        size: 220,
+                        value: toUtf8ByteString(value),
+                        level: state.ecc,
+                        foreground: state.color,
+                        background: '#ffffff',
+                        padding: 10
+                    });
                     card.appendChild(canvas);
 
                     if (state.showSubtext) {
@@ -1896,7 +2069,7 @@
         function setProjectionMode(active) {
             if (active) {
                 document.body.classList.add('projection');
-                showToast('Mode TNI/TBI activé (Échap pour quitter)', 'info');
+                showToast(qt('qrcode.toast_tbi_on', 'Mode TNI/TBI activé (Échap pour quitter)'), 'info');
             } else {
                 document.body.classList.remove('projection');
             }
@@ -1911,8 +2084,8 @@
                 iconCompress.style.display = isProj ? 'inline-block' : 'none';
             }
             if (projBtn) {
-                projBtn.setAttribute('title', isProj ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
-                projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
+                projBtn.setAttribute('title', isProj ? qt('common.tbi_exit_esc', 'Quitter le mode TNI/TBI (Échap)') : qt('common.tbi_mode', 'Mode TNI/TBI'));
+                projBtn.setAttribute('aria-label', isProj ? qt('common.tbi_exit_short', 'Quitter le mode TNI/TBI') : qt('common.tbi_mode', 'Mode TNI/TBI'));
             }
         }
 
@@ -1933,17 +2106,18 @@
         function resetAll() {
             try {
                 localStorage.removeItem(STORAGE_KEY);
-            } catch (e) {}
+            } catch (e) { }
 
+            const defs = getQrDefaults();
             state = {
                 type: 'url',
                 url: 'https://ednum.org',
-                text: 'Bravo ! Tu as trouvé l\'indice.',
-                wifiSsid: 'WiFi_Classe',
+                text: defs.text,
+                wifiSsid: defs.wifiSsid,
                 wifiPass: '',
                 wifiType: 'WPA',
-                batchText: 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu',
-                title: 'Portail Éducation Numérique',
+                batchText: defs.batchText,
+                title: defs.title,
                 showSubtext: true,
                 color: '#000000',
                 ecc: 'M',
@@ -1954,6 +2128,13 @@
             inputText.value = state.text;
             inputWifiSsid.value = state.wifiSsid;
             inputWifiPass.value = state.wifiPass;
+            inputWifiPass.type = 'password';
+            if (wifiPassIcon) {
+                wifiPassIcon.setAttribute('data-fa', 'eye');
+                window.fa?.createIcons?.();
+            }
+            const showWifiKeyCheckbox = document.getElementById('showWifiPassSubtext');
+            if (showWifiKeyCheckbox) showWifiKeyCheckbox.checked = false;
             selectWifiType.value = state.wifiType;
             inputBatch.value = state.batchText;
             inputTitle.value = state.title;
@@ -1972,10 +2153,12 @@
             viewText.classList.add('hidden');
             viewWifi.classList.add('hidden');
             viewBatch.classList.add('hidden');
+            singlePreviewContainer.classList.remove('hidden');
+            batchPreviewContainer.classList.add('hidden');
 
             updateQR();
             if (typeof showToast === 'function') {
-                showToast('Application réinitialisée', 'info');
+                showToast(qt('qrcode.toast_reset', 'Application réinitialisée'), 'info');
             }
         }
 
@@ -1990,15 +2173,27 @@
         // ==========================================
         // EXPORT SVG VECTORIEL PUR
         // ==========================================
-        function generateSvgFromQR(value, ecc, foreground = '#000000', background = '#ffffff') {
-            const QRLib = getQRious();
-            if (!QRLib) {
-                return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <rect width="100%" height="100%" fill="${background}"/>
-  <text x="150" y="150" text-anchor="middle" fill="${foreground}">QR Code</text>
-</svg>`;
+        function parseHexRgb(hex) {
+            const clean = String(hex || '').trim().replace('#', '');
+            if (clean.length === 3) {
+                return [
+                    parseInt(clean[0] + clean[0], 16) || 0,
+                    parseInt(clean[1] + clean[1], 16) || 0,
+                    parseInt(clean[2] + clean[2], 16) || 0
+                ];
             }
+            if (clean.length >= 6) {
+                const r = parseInt(clean.slice(0, 2), 16);
+                const g = parseInt(clean.slice(2, 4), 16);
+                const b = parseInt(clean.slice(4, 6), 16);
+                if (!isNaN(r) && !isNaN(g) && !isNaN(b)) return [r, g, b];
+            }
+            return [255, 255, 255];
+        }
+
+        function extractQrVectorData(value, ecc, foreground = '#000000', background = '#ffffff') {
+            const QRLib = getQRious();
+            if (!QRLib) return null;
             const canvas = document.createElement('canvas');
             const size = 300;
             const padding = 12;
@@ -2013,22 +2208,21 @@
             });
 
             const ctx = canvas.getContext ? canvas.getContext('2d') : null;
-            if (!ctx || !ctx.getImageData) {
-                return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
-  <rect width="100%" height="100%" fill="${background}"/>
-  <text x="150" y="150" text-anchor="middle" fill="${foreground}">QR Code</text>
-</svg>`;
-            }
+            if (!ctx || !ctx.getImageData) return null;
 
             const imgData = ctx.getImageData(0, 0, size, size);
             const data = imgData.data;
+            const [bgR, bgG, bgB] = parseHexRgb(background);
+            const isModulePixel = (idx) => {
+                const diff = Math.abs(data[idx] - bgR) + Math.abs(data[idx + 1] - bgG) + Math.abs(data[idx + 2] - bgB);
+                return diff > 30;
+            };
 
             let firstX = -1, firstY = -1;
             for (let y = 0; y < size && firstY === -1; y++) {
                 for (let x = 0; x < size; x++) {
                     const idx = (y * size + x) * 4;
-                    if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                    if (isModulePixel(idx)) {
                         firstX = x;
                         firstY = y;
                         break;
@@ -2037,14 +2231,13 @@
             }
 
             if (firstX === -1) {
-                return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="${background}"/></svg>`;
+                return { totalGrid: size, rects: [], empty: true };
             }
 
             let finderWidth = 0;
             for (let x = firstX; x < size; x++) {
                 const idx = (firstY * size + x) * 4;
-                if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                if (isModulePixel(idx)) {
                     finderWidth++;
                 } else {
                     break;
@@ -2056,7 +2249,7 @@
             for (let y = size - 1; y >= 0 && lastY === firstY; y--) {
                 for (let x = size - 1; x >= 0; x--) {
                     const idx = (y * size + x) * 4;
-                    if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                    if (isModulePixel(idx)) {
                         lastX = Math.max(lastX, x);
                         lastY = Math.max(lastY, y);
                     }
@@ -2069,45 +2262,120 @@
             const rects = [];
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
-                    const sampleX = Math.round(firstX + (c + 0.5) * moduleSize);
-                    const sampleY = Math.round(firstY + (r + 0.5) * moduleSize);
+                    const sampleX = Math.min(size - 1, Math.round(firstX + (c + 0.5) * moduleSize));
+                    const sampleY = Math.min(size - 1, Math.round(firstY + (r + 0.5) * moduleSize));
                     const idx = (sampleY * size + sampleX) * 4;
-                    if (data[idx] < 200 || data[idx + 1] < 200 || data[idx + 2] < 200) {
+                    if (isModulePixel(idx)) {
                         rects.push(`<rect x="${c + 1}" y="${r + 1}" width="1" height="1" fill="${foreground}"/>`);
                     }
                 }
             }
 
-            const totalGrid = gridCols + 2;
-            return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalGrid} ${totalGrid}" shape-rendering="crispEdges">
+            return { totalGrid: gridCols + 2, rects, empty: false };
+        }
+
+        function generateSvgFromQR(value, ecc, foreground = '#000000', background = '#ffffff') {
+            const vec = extractQrVectorData(value, ecc, foreground, background);
+            if (!vec) {
+                return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
   <rect width="100%" height="100%" fill="${background}"/>
-  ${rects.join('\n  ')}
+  <text x="150" y="150" text-anchor="middle" fill="${foreground}">QR Code</text>
+</svg>`;
+            }
+            if (vec.empty) {
+                return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vec.totalGrid} ${vec.totalGrid}"><rect width="100%" height="100%" fill="${background}"/></svg>`;
+            }
+            return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vec.totalGrid} ${vec.totalGrid}" shape-rendering="crispEdges">
+  <rect width="100%" height="100%" fill="${background}"/>
+  ${vec.rects.join('\n  ')}
+</svg>`;
+        }
+
+        function escapeSvgXml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function generateBatchSvg(lines) {
+            const items = lines.map((line, index) => {
+                let title = qt('qrcode.batch_default_item', `Atelier ${index + 1}`, { index: index + 1 });
+                let value = line;
+                if (line.includes('|')) {
+                    const parts = line.split('|');
+                    title = parts[0].trim();
+                    value = parts.slice(1).join('|').trim();
+                }
+                return { title, value: formatBatchValue(value) };
+            });
+            const cols = items.length === 1 ? 1 : 2;
+            const rows = Math.ceil(items.length / cols);
+            const cardW = 380, cardH = 430, pad = 30, gap = 20;
+            const totalW = pad * 2 + cols * cardW + (cols - 1) * gap;
+            const totalH = pad * 2 + rows * cardH + (rows - 1) * gap;
+            const blocks = items.map((item, idx) => {
+                const col = idx % cols;
+                const row = Math.floor(idx / cols);
+                const x = pad + col * (cardW + gap);
+                const y = pad + row * (cardH + gap);
+                const vec = extractQrVectorData(item.value, state.ecc, state.color, '#ffffff');
+                const qrDrawSize = 260;
+                const qrX = x + (cardW - qrDrawSize) / 2;
+                const qrY = y + 60;
+                const scale = vec && vec.totalGrid ? (qrDrawSize / vec.totalGrid) : 1;
+                const qrInner = vec && vec.rects ? `<g transform="translate(${qrX}, ${qrY}) scale(${scale.toFixed(4)})">${vec.rects.join('')}</g>` : '';
+                const sub = state.showSubtext ? `<text x="${x + cardW / 2}" y="${y + 365}" text-anchor="middle" font-family="monospace" font-size="13" fill="#64748b">${escapeSvgXml(item.value.length > 50 ? item.value.substring(0, 47) + '...' : item.value)}</text>` : '';
+                const titleTxt = item.title.length > 28 ? item.title.substring(0, 25) + '...' : item.title;
+                return `<g>
+  <rect x="${x}" y="${y}" width="${cardW}" height="${cardH}" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="${x + cardW / 2}" y="${y + 40}" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="20" fill="#0f172a">${escapeSvgXml(titleTxt)}</text>
+  ${qrInner}
+  ${sub}
+</g>`;
+            });
+            return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalW} ${totalH}" shape-rendering="crispEdges">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  ${blocks.join('\n  ')}
 </svg>`;
         }
 
         function downloadSvg() {
             try {
-                const qrValue = getQRValue();
-                const svgContent = generateSvgFromQR(qrValue, state.ecc, state.color, '#ffffff');
+                let svgContent;
+                let fileName;
+                if (state.type === 'batch') {
+                    const lines = inputBatch.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    if (lines.length === 0) {
+                        if (typeof showToast === 'function') showToast(qt('qrcode.toast_batch_min', 'Veuillez entrer au moins un élément dans la liste'), 'warn');
+                        return;
+                    }
+                    svgContent = generateBatchSvg(lines);
+                    fileName = 'planche_qrcodes.svg';
+                } else {
+                    const qrValue = getQRValue();
+                    svgContent = generateSvgFromQR(qrValue, state.ecc, state.color, '#ffffff');
+                    const rawTitle = state.title || 'qrcode';
+                    const cleanTitle = rawTitle.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9_-]/gi, '_');
+                    fileName = `${cleanTitle}.svg`;
+                }
                 const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                let rawTitle = state.title || 'qrcode';
-                const cleanTitle = rawTitle.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9_-]/gi, '_');
-                a.download = `${cleanTitle}.svg`;
+                a.download = fileName;
                 a.href = url;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
                 if (typeof showToast === 'function') {
-                    showToast('QR code vectoriel (SVG) téléchargé !', 'success');
+                    showToast(qt('qrcode.toast_svg_ok', 'QR code vectoriel (SVG) téléchargé !'), 'success');
                 }
             } catch (err) {
                 console.error('SVG download error:', err);
                 if (typeof showToast === 'function') {
-                    showToast('Erreur lors du téléchargement SVG', 'error');
+                    showToast(qt('qrcode.toast_svg_err', 'Erreur lors du téléchargement SVG'), 'error');
                 }
             }
         }
@@ -2143,14 +2411,15 @@
                     const parsed = JSON.parse(saved);
                     Object.assign(state, parsed);
                 }
-                
+
+                const defs = getQrDefaults();
                 inputUrl.value = (state.url !== undefined && state.url !== null && state.url !== 'null') ? state.url : 'https://ednum.org';
-                inputText.value = (state.text !== undefined && state.text !== null && state.text !== 'null') ? state.text : 'Bravo ! Tu as trouvé l\'indice.';
-                inputWifiSsid.value = (state.wifiSsid !== undefined && state.wifiSsid !== null && state.wifiSsid !== 'null') ? state.wifiSsid : 'WiFi_Classe';
+                inputText.value = (state.text !== undefined && state.text !== null && state.text !== 'null') ? state.text : defs.text;
+                inputWifiSsid.value = (state.wifiSsid !== undefined && state.wifiSsid !== null && state.wifiSsid !== 'null') ? state.wifiSsid : defs.wifiSsid;
                 inputWifiPass.value = (state.wifiPass !== undefined && state.wifiPass !== null) ? state.wifiPass : '';
                 selectWifiType.value = state.wifiType || 'WPA';
-                inputBatch.value = (state.batchText !== undefined && state.batchText !== null) ? state.batchText : 'Atelier 1 | https://ednum.org\nAtelier 2 | https://learningapps.org\nAtelier 3 | https://genially.com\nAtelier 4 | https://scratch.mit.edu';
-                inputTitle.value = (state.title !== undefined && state.title !== null && state.title !== 'null') ? state.title : 'Portail Éducation Numérique';
+                inputBatch.value = (state.batchText !== undefined && state.batchText !== null) ? state.batchText : defs.batchText;
+                inputTitle.value = (state.title !== undefined && state.title !== null && state.title !== 'null') ? state.title : defs.title;
                 checkShowSubtext.checked = state.showSubtext !== undefined && state.showSubtext !== null ? state.showSubtext : true;
                 selectEcc.value = state.ecc || 'M';
                 selectRenderSize.value = String(state.size || 600);

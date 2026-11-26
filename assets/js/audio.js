@@ -50,12 +50,31 @@ function playSound(type) {
 function updateAudioUI() {
     const iconOn = document.getElementById('icon-vol-on');
     const iconOff = document.getElementById('icon-vol-off');
-    if (iconOn) iconOn.style.display = isMuted ? 'block' : 'none';
-    if (iconOff) iconOff.style.display = isMuted ? 'none' : 'block';
-
     const audioText = document.getElementById('audioToggleText');
+    const audioBtn = document.getElementById('audio-toggle-btn');
+
+    const t = (key, fallback) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+        ? window.I18N.t(key, fallback)
+        : fallback;
+
     if (audioText) {
-        audioText.textContent = isMuted ? 'Activer son' : 'Couper son';
+        // Dans un menu avec libellé d'action (« Activer son » / « Couper son »), l'icône illustre l'action proposée
+        if (iconOn) iconOn.style.display = isMuted ? 'block' : 'none';
+        if (iconOff) iconOff.style.display = isMuted ? 'none' : 'block';
+        audioText.textContent = isMuted
+            ? t('common.audio_on', 'Activer son')
+            : t('common.audio_off', 'Couper son');
+    } else {
+        // Bouton icône seule (ex. barre d'outils) : reflète l'état réel (muet = haut-parleur barré)
+        if (iconOn) iconOn.style.display = isMuted ? 'none' : 'block';
+        if (iconOff) iconOff.style.display = isMuted ? 'block' : 'none';
+        if (audioBtn) {
+            const label = isMuted
+                ? t('common.audio_on', 'Activer le son')
+                : t('common.audio_off', 'Couper le son');
+            audioBtn.title = label;
+            audioBtn.setAttribute('aria-label', label);
+        }
     }
 }
 

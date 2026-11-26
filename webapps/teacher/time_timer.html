@@ -23,12 +23,15 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob: data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minuteur visuel · Compte à rebours pour la classe</title>
+    <title data-i18n="time_timer.page_title">Minuteur visuel · Compte à rebours pour la classe</title>
     <meta property="og:title" content="Minuteur visuel · Compte à rebours pour la classe">
-    <meta property="og:description" content="Minuteur visuel circulaire interactif de 0 à 60 minutes pour gérer le temps en classe en 1 clic.">
+    <meta property="og:description"
+        content="Minuteur visuel circulaire interactif de 0 à 60 minutes pour gérer le temps en classe en 1 clic.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../assets/js/fa-subset.js"></script>
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
@@ -37,7 +40,8 @@
     <style>
         /* Header structure is handled by teacher.css */
 
-        body > header, body > .app-shell {
+        body>header,
+        body>.app-shell {
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
@@ -47,14 +51,14 @@
             --primary-light: rgba(13, 148, 136, 0.15);
             --bg-gradient-start: #0f766e;
             --bg-gradient-end: #064e4b;
-            
+
             --glass-bg: rgba(255, 255, 255, 0.88);
             --glass-border: rgba(255, 255, 255, 0.35);
             --text-main: #0f172a;
             --text-secondary: #475569;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            
+
             --success: #10b981;
             --error: #ef4444;
             --shadow-color: rgba(0, 0, 0, 0.12);
@@ -88,7 +92,11 @@
             --clock-num: #f1f5f9;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             touch-action: manipulation;
@@ -324,12 +332,16 @@
         }
 
         @keyframes dotSequencePulse {
-            0%, 33.33% {
+
+            0%,
+            33.33% {
                 transform: scale(1.5);
                 opacity: 1;
                 box-shadow: 0 0 8px var(--timer-disk-glow, rgba(13, 148, 136, 0.4));
             }
-            33.34%, 100% {
+
+            33.34%,
+            100% {
                 transform: scale(1);
                 opacity: 0.28;
                 box-shadow: none;
@@ -379,7 +391,7 @@
         /* COMPENSATION TIMER (MCD / TIERS-TEMPS) */
         .compensation-display {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
             margin: 0.15rem auto 0.35rem;
             padding: 8px 14px;
             background: rgba(59, 130, 246, 0.09);
@@ -449,6 +461,32 @@
             transition: width 0.25s linear;
         }
 
+        .compensation-notice {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #92400e;
+            background: rgba(245, 158, 11, 0.16);
+            border-radius: var(--radius-md);
+            padding: 6px 10px;
+            text-align: center;
+        }
+
+        body.dark .compensation-notice {
+            color: #fde68a;
+            background: rgba(245, 158, 11, 0.22);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .compensation-display.active-ongoing {
+                animation: none !important;
+            }
+        }
+
         .compensation-display.active-ongoing {
             background: rgba(245, 158, 11, 0.12);
             border-color: rgba(245, 158, 11, 0.45);
@@ -489,8 +527,15 @@
         }
 
         @keyframes compPulse {
-            0%, 100% { box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15); }
-            50% { box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35); }
+
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+            }
+
+            50% {
+                box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+            }
         }
 
         body.projection .compensation-display {
@@ -592,7 +637,10 @@
                 font-size: 1.15rem;
             }
 
-            #btnSub1, #btnAdd1, #btnAdd5, #btnReset {
+            #btnSub1,
+            #btnAdd1,
+            #btnAdd5,
+            #btnReset {
                 padding: 10px 4px;
                 font-size: 0.88rem;
                 width: 100%;
@@ -718,7 +766,8 @@
         }
 
         .btn-play.running {
-            background: #d97706; /* Amber warning */
+            background: #d97706;
+            /* Amber warning */
             color: white;
             box-shadow: 0 6px 18px rgba(217, 119, 6, 0.25);
         }
@@ -935,10 +984,17 @@
             box-shadow: 0 0 0 2px var(--glass-bg), 0 3px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .custom-color-input::-webkit-color-swatch-wrapper { padding: 0; }
-        .custom-color-input::-webkit-color-swatch { border: none; border-radius: 50%; }
+        .custom-color-input::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
 
-        .custom-select, .custom-checkbox-row {
+        .custom-color-input::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        .custom-select,
+        .custom-checkbox-row {
             padding: 8px 12px;
             background: var(--glass-bg);
             border: 1px solid var(--border);
@@ -1023,13 +1079,25 @@
         }
 
         @keyframes scaleUp {
-            from { transform: scale(0.85); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .celebration-icon-circle {
@@ -1046,8 +1114,13 @@
         }
 
         @keyframes bellShake {
-            0% { transform: rotate(-10deg); }
-            100% { transform: rotate(10deg); }
+            0% {
+                transform: rotate(-10deg);
+            }
+
+            100% {
+                transform: rotate(10deg);
+            }
         }
 
         /* FOOTER */
@@ -1240,11 +1313,25 @@
             max-width: none !important;
         }
 
-        body.projection #btnSub1 { order: 1 !important; }
-        body.projection #mainPlayBtn { order: 2 !important; }
-        body.projection #btnAdd1 { order: 3 !important; }
-        body.projection #btnAdd5 { order: 4 !important; }
-        body.projection #btnReset { order: 5 !important; }
+        body.projection #btnSub1 {
+            order: 1 !important;
+        }
+
+        body.projection #mainPlayBtn {
+            order: 2 !important;
+        }
+
+        body.projection #btnAdd1 {
+            order: 3 !important;
+        }
+
+        body.projection #btnAdd5 {
+            order: 4 !important;
+        }
+
+        body.projection #btnReset {
+            order: 5 !important;
+        }
 
         body.projection .btn-play {
             font-size: 1.15rem !important;
@@ -1266,21 +1353,27 @@
 
         /* RESPONSIVE */
         @media (max-width: 600px) {
-            body { padding: 10px; }
+            body {
+                padding: 10px;
+            }
+
             header {
                 padding: 1rem;
                 flex-direction: column;
                 align-items: stretch;
                 gap: 0.75rem;
             }
+
             .header-title-wrapper {
                 width: 100%;
                 justify-content: flex-start;
                 gap: 0.6rem;
             }
+
             .header-title-wrapper h1 {
                 font-size: 1.15rem;
             }
+
             .header-right-group {
                 width: 100%;
                 display: flex;
@@ -1289,6 +1382,7 @@
                 gap: 0.45rem;
                 flex-wrap: nowrap;
             }
+
             .header-actions {
                 display: flex;
                 align-items: center;
@@ -1296,6 +1390,7 @@
                 flex: 1 1 auto;
                 min-width: 0;
             }
+
             .header-actions .btn {
                 flex: 1 1 auto;
                 min-width: 0;
@@ -1303,54 +1398,71 @@
                 font-size: 0.8rem;
                 justify-content: center;
             }
-            main { padding: 1rem; }
-            .timer-stage { max-width: 320px; }
-            .digital-time { font-size: 2.6rem; }
-            .btn-play { width: 100%; }
-            .preset-chip { padding: 6px 12px; font-size: 0.85rem; min-width: 46px; }
+
+            main {
+                padding: 1rem;
+            }
+
+            .timer-stage {
+                max-width: 320px;
+            }
+
+            .digital-time {
+                font-size: 2.6rem;
+            }
+
+            .btn-play {
+                width: 100%;
+            }
+
+            .preset-chip {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+                min-width: 46px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <a href="#main-content" class="skip-link" data-i18n="common.skip_to_content">Aller au contenu principal</a>
 
     <div class="app-shell" id="main-content">
         <!-- HEADER -->
         <header class="no-print">
             <div class="header-title-wrapper">
-                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s">
+                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s" aria-label="Retour à l'espace enseignant·e·s" data-i18n-attr="title:common.back_teachers;aria-label:common.back_teachers">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
                     <i data-fa="timer" style="width:22px;height:22px;"></i>
                 </div>
                 <div class="header-title-group">
-                    <h1>Minuteur visuel</h1>
+                    <h1 data-i18n="time_timer.title">Minuteur visuel</h1>
                 </div>
             </div>
             <div class="header-right-group">
                 <div class="header-actions">
-                    <button class="btn btn-secondary" id="optionsToggleBtn" title="Personnaliser le minuteur">
+                    <button class="btn btn-secondary" id="optionsToggleBtn" title="Personnaliser le minuteur" data-i18n-attr="title:time_timer.options_title">
                         <i data-fa="sliders" style="width:16px;height:16px;"></i>
-                        <span>Options</span>
+                        <span data-i18n="time_timer.options_btn">Options</span>
                     </button>
                 </div>
                 <div class="header-divider"></div>
                 <div class="action-buttons no-print">
-                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
+                    <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème" data-i18n-attr="aria-label:common.theme_toggle;title:common.theme_toggle">
                         <i data-fa="sun-bright" id="icon-sun" style="display:none; width:20px;height:20px;"></i>
                         <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son">
+                    <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son" aria-label="Activer/Désactiver le son" data-i18n-attr="title:common.audio_toggle;aria-label:common.audio_toggle">
                         <i data-fa="volume-high" id="icon-vol-on" style="display:none; width:20px;height:20px;"></i>
                         <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
+                    <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI" data-i18n-attr="title:common.tbi_mode;aria-label:common.tbi_mode">
                         <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
                         <i data-fa="compress" id="icon-proj-compress" style="display:none; width:20px;height:20px;"></i>
                     </button>
-                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
+                    <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application" data-i18n-attr="aria-label:common.reset_app;title:common.reset_app">
                         <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
                     </button>
                 </div>
@@ -1364,16 +1476,17 @@
                 <div class="timer-visual-zone">
                     <!-- ACTIVITY TITLE -->
                     <div class="activity-title-container">
-                        <input type="text" id="activityTitleInput" class="activity-title-input" placeholder="Titre de l'activité…" maxlength="60" aria-label="Titre de l'activité" autocomplete="off" spellcheck="false">
+                        <input type="text" id="activityTitleInput" class="activity-title-input" placeholder="Titre de l'activité…" maxlength="60" aria-label="Titre de l'activité" autocomplete="off" spellcheck="false" data-i18n-attr="placeholder:time_timer.activity_placeholder;aria-label:time_timer.activity_aria">
                     </div>
 
                     <!-- INTERACTIVE SVG CLOCK -->
-                    <div class="timer-stage" id="timerStage" role="region" aria-label="Cadran circulaire du minuteur visuel">
+                    <div class="timer-stage" id="timerStage" role="region" aria-label="Cadran circulaire du minuteur visuel" data-i18n-attr="aria-label:time_timer.stage_aria">
                         <svg id="clockSvg" class="clock-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <!-- Glow filter for active disk -->
                                 <filter id="diskGlow" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--timer-disk-color)" flood-opacity="0.35"/>
+                                    <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="var(--timer-disk-color)"
+                                        flood-opacity="0.35" />
                                 </filter>
 
                                 <!-- Clip path for Rainbow concentric wedge -->
@@ -1383,28 +1496,32 @@
                             </defs>
 
                             <!-- Base Clock Outer Ring -->
-                            <circle id="clockOuterRing" cx="250" cy="250" r="235" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="6"/>
-                            <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2"/>
+                            <circle id="clockOuterRing" cx="250" cy="250" r="235" fill="var(--clock-face-bg)"
+                                stroke="var(--clock-face-border)" stroke-width="6" />
+                            <circle cx="250" cy="250" r="238" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2" />
 
                             <!-- Compensation Timer Disk (rendered behind/underneath main timer disk) -->
-                            <path id="compensationDisk" d="" fill="rgba(59, 130, 246, 0.45)" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4" style="display:none;"></path>
+                            <path id="compensationDisk" d="" fill="rgba(59, 130, 246, 0.45)" stroke="#2563eb"
+                                stroke-width="2" stroke-dasharray="6 4" style="display:none;"></path>
 
                             <!-- Colored Timer Disk/Arc (Standard solid color) -->
                             <path id="timerDisk" d="" fill="var(--timer-disk-color)" filter="url(#diskGlow)"></path>
 
                             <!-- Rainbow Concentric Arcs Group (Active when settings.color === 'rainbow') -->
-                            <g id="rainbowGroup" clip-path="url(#timerDiskClip)" style="display:none;" filter="url(#diskGlow)">
+                            <g id="rainbowGroup" clip-path="url(#timerDiskClip)" style="display:none;"
+                                filter="url(#diskGlow)">
                                 <!-- 6 concentric colored bands from outer to inner matching physical Time Timer -->
-                                <circle cx="250" cy="250" r="210" fill="#f43f5e"/>
-                                <circle cx="250" cy="250" r="175" fill="#fb923c"/>
-                                <circle cx="250" cy="250" r="140" fill="#facc15"/>
-                                <circle cx="250" cy="250" r="105" fill="#4ade80"/>
-                                <circle cx="250" cy="250" r="70"  fill="#38bdf8"/>
-                                <circle cx="250" cy="250" r="35"  fill="#818cf8"/>
+                                <circle cx="250" cy="250" r="210" fill="#f43f5e" />
+                                <circle cx="250" cy="250" r="175" fill="#fb923c" />
+                                <circle cx="250" cy="250" r="140" fill="#facc15" />
+                                <circle cx="250" cy="250" r="105" fill="#4ade80" />
+                                <circle cx="250" cy="250" r="70" fill="#38bdf8" />
+                                <circle cx="250" cy="250" r="35" fill="#818cf8" />
                             </g>
 
                             <!-- Optional Inner cutout for Doughnut/Ring style -->
-                            <circle id="donutHole" cx="250" cy="250" r="95" fill="var(--clock-face-bg)" stroke="var(--clock-face-border)" stroke-width="2" style="display:none;"></circle>
+                            <circle id="donutHole" cx="250" cy="250" r="95" fill="var(--clock-face-bg)"
+                                stroke="var(--clock-face-border)" stroke-width="2" style="display:none;"></circle>
 
                             <!-- Tick Marks Group (Generated via JS) -->
                             <g id="tickMarksGroup"></g>
@@ -1416,55 +1533,73 @@
                             <g id="rainbowCloud" style="display:none; pointer-events:none;">
                                 <!-- Sun rays crest -->
                                 <g class="cloud-sunburst">
-                                    <circle cx="16" cy="-12" r="10" fill="#f59e0b"/>
-                                    <line x1="25" y1="-21" x2="29" y2="-25" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
-                                    <line x1="16" y1="-24" x2="16" y2="-29" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
-                                    <line x1="27" y1="-12" x2="32" y2="-12" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
-                                    <line x1="24" y1="-3" x2="28" y2="1" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="16" cy="-12" r="10" fill="#f59e0b" />
+                                    <line x1="25" y1="-21" x2="29" y2="-25" stroke="#f59e0b" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <line x1="16" y1="-24" x2="16" y2="-29" stroke="#f59e0b" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <line x1="27" y1="-12" x2="32" y2="-12" stroke="#f59e0b" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <line x1="24" y1="-3" x2="28" y2="1" stroke="#f59e0b" stroke-width="2.5"
+                                        stroke-linecap="round" />
                                 </g>
                                 <!-- Puffy Cloud Body -->
-                                <path d="M -24,8 C -30,8 -34,3 -34,-2 C -34,-7 -29,-11 -23,-11 C -21,-19 -13,-24 -3,-24 C 6,-24 13,-19 16,-12 C 21,-13 26,-8 26,-2 C 30,-2 33,2 33,6 C 33,10 29,14 24,14 L -24,14 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8" stroke-linejoin="round" filter="drop-shadow(0 2px 5px rgba(0,0,0,0.2))"/>
+                                <path
+                                    d="M -24,8 C -30,8 -34,3 -34,-2 C -34,-7 -29,-11 -23,-11 C -21,-19 -13,-24 -3,-24 C 6,-24 13,-19 16,-12 C 21,-13 26,-8 26,-2 C 30,-2 33,2 33,6 C 33,10 29,14 24,14 L -24,14 Z"
+                                    fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8" stroke-linejoin="round"
+                                    filter="drop-shadow(0 2px 5px rgba(0,0,0,0.2))" />
                                 <!-- Smiling Happy Eyes -->
-                                <path d="M -14,-3 Q -10,-8 -6,-3" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
-                                <path d="M 4,-3 Q 8,-8 12,-3" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+                                <path d="M -14,-3 Q -10,-8 -6,-3" fill="none" stroke="#1e293b" stroke-width="2.2"
+                                    stroke-linecap="round" />
+                                <path d="M 4,-3 Q 8,-8 12,-3" fill="none" stroke="#1e293b" stroke-width="2.2"
+                                    stroke-linecap="round" />
                                 <!-- Blushing Rosy Cheeks -->
-                                <ellipse cx="-15" cy="4" rx="4" ry="2.5" fill="#fb7185" opacity="0.85"/>
-                                <ellipse cx="13" cy="4" rx="4" ry="2.5" fill="#fb7185" opacity="0.85"/>
+                                <ellipse cx="-15" cy="4" rx="4" ry="2.5" fill="#fb7185" opacity="0.85" />
+                                <ellipse cx="13" cy="4" rx="4" ry="2.5" fill="#fb7185" opacity="0.85" />
                                 <!-- Cute Mouth -->
-                                <path d="M -3,2 Q -1,5.5 1,2" fill="none" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+                                <path d="M -3,2 Q -1,5.5 1,2" fill="none" stroke="#1e293b" stroke-width="1.8"
+                                    stroke-linecap="round" />
                             </g>
 
                             <!-- Center Pivot Pin (Heartbeat Pulse) -->
                             <g id="centerPivot" class="center-pivot">
-                                <circle id="centerPivotGlow" cx="250" cy="250" r="22" fill="var(--timer-disk-color)" opacity="0"/>
-                                <circle cx="250" cy="250" r="14" fill="#0f172a" stroke="#ffffff" stroke-width="3"/>
-                                <circle cx="250" cy="250" r="5" fill="#ffffff"/>
+                                <circle id="centerPivotGlow" cx="250" cy="250" r="22" fill="var(--timer-disk-color)"
+                                    opacity="0" />
+                                <circle cx="250" cy="250" r="14" fill="#0f172a" stroke="#ffffff" stroke-width="3" />
+                                <circle cx="250" cy="250" r="5" fill="#ffffff" />
                             </g>
 
                             <!-- Drag Handle Knob at Trailing Edge -->
-                            <circle id="dragHandle" cx="250" cy="40" r="13" fill="#ffffff" stroke="var(--text-main)" stroke-width="3" style="cursor: grab; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)); display:none;"/>
+                            <circle id="dragHandle" cx="250" cy="40" r="13" fill="#ffffff" stroke="var(--text-main)"
+                                stroke-width="3"
+                                style="cursor: grab; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)); display:none;" />
                         </svg>
                     </div>
 
                     <!-- MINIMALIST 3-DOT STATUS INDICATOR -->
-                    <div class="timer-status-dots" id="timerStatusDots" role="status" aria-label="Indicateur d'activité">
+                    <div class="timer-status-dots" id="timerStatusDots" role="status" aria-label="Indicateur d'activité" data-i18n-attr="aria-label:time_timer.dots_aria">
                         <span class="pulse-dot"></span>
                         <span class="pulse-dot"></span>
                         <span class="pulse-dot"></span>
                     </div>
 
                     <!-- COMPENSATION TIMER READOUT (TIERS-TEMPS / MCD) -->
-                    <div class="compensation-display" id="compensationDisplay" style="display: none;" role="region" aria-label="Minuteur de compensation des désavantages">
+                    <div class="compensation-display" id="compensationDisplay" style="display: none;" role="region" aria-label="Minuteur de compensation des désavantages" data-i18n-attr="aria-label:time_timer.comp_aria">
                         <div class="compensation-content">
                             <div class="compensation-top-row">
                                 <span class="compensation-badge">
                                     <i data-fa="universal-access" style="width:14px;height:14px;"></i>
-                                    <span id="compensationStatusLabel">Temps adapté (MCD)</span>
+                                    <span id="compensationStatusLabel" data-i18n="time_timer.comp_label">Temps adapté (MCD)</span>
                                 </span>
                                 <span class="compensation-digits" id="compensationDigits">13:20</span>
                             </div>
                             <div class="compensation-bar-track">
                                 <div class="compensation-bar-fill" id="compensationBarFill" style="width: 100%;"></div>
+                            </div>
+                            <div class="compensation-notice" id="compensationNotice" style="display: none;"
+                                role="status" aria-live="polite">
+                                <i data-fa="bell" style="width:13px;height:13px;flex-shrink:0;"></i>
+                                <span data-i18n="time_timer.comp_notice">Temps principal écoulé — Mesure de compensation en cours</span>
                             </div>
                         </div>
                     </div>
@@ -1479,28 +1614,28 @@
                 <div class="timer-commands-zone">
                     <!-- CONTROLS BAR -->
                     <div class="controls-bar">
-                        <button class="btn btn-primary btn-play paused" id="mainPlayBtn" title="Démarrer ou mettre en pause (Espace)">
+                        <button class="btn btn-primary btn-play paused" id="mainPlayBtn" title="Démarrer ou mettre en pause (Espace)" data-i18n-attr="title:time_timer.play_title">
                             <i data-fa="play" id="iconPlay" style="width:20px;height:20px;"></i>
                             <i data-fa="pause" id="iconPause" style="display:none; width:20px;height:20px;"></i>
-                            <span id="playBtnText">Démarrer</span>
+                            <span id="playBtnText" data-i18n="time_timer.btn_start">Démarrer</span>
                         </button>
-                        <button class="btn-delta" id="btnSub1" title="Retirer 1 minute (-1 min)" aria-label="Retirer 1 minute">
+                        <button class="btn-delta" id="btnSub1" title="Retirer 1 minute (-1 min)" aria-label="Retirer 1 minute" data-i18n-attr="title:time_timer.sub1_title;aria-label:time_timer.sub1_aria">
                             -1 min
                         </button>
-                        <button class="btn-delta" id="btnAdd1" title="Ajouter 1 minute (+1 min)" aria-label="Ajouter 1 minute">
+                        <button class="btn-delta" id="btnAdd1" title="Ajouter 1 minute (+1 min)" aria-label="Ajouter 1 minute" data-i18n-attr="title:time_timer.add1_title;aria-label:time_timer.add1_aria">
                             +1 min
                         </button>
-                        <button class="btn-delta" id="btnAdd5" title="Ajouter 5 minutes (+5 min)" aria-label="Ajouter 5 minutes">
+                        <button class="btn-delta" id="btnAdd5" title="Ajouter 5 minutes (+5 min)" aria-label="Ajouter 5 minutes" data-i18n-attr="title:time_timer.add5_title;aria-label:time_timer.add5_aria">
                             +5 min
                         </button>
-                        <button class="btn btn-secondary" id="btnReset" title="Réinitialiser le minuteur (R)" aria-label="Réinitialiser">
+                        <button class="btn btn-secondary" id="btnReset" title="Réinitialiser le minuteur (R)" aria-label="Réinitialiser" data-i18n-attr="title:time_timer.reset_title;aria-label:time_timer.reset_aria">
                             <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
                         </button>
                     </div>
 
                     <!-- 1-CLICK PRESETS -->
                     <div class="presets-section">
-                        <span class="presets-label">Préréglages rapides (1 clic)</span>
+                        <span class="presets-label" data-i18n="time_timer.presets_label">Préréglages rapides (1 clic)</span>
                         <div class="presets-grid" id="presetsGrid">
                             <button class="preset-chip" data-min="1">1 min</button>
                             <button class="preset-chip" data-min="2">2 min</button>
@@ -1521,22 +1656,22 @@
             <div class="options-panel hidden" id="optionsPanel">
                 <div class="options-title">
                     <i data-fa="sliders" style="width:18px;height:18px;"></i>
-                    <span>Personnalisation du minuteur visuel</span>
+                    <span data-i18n="time_timer.options_panel_title">Personnalisation du minuteur visuel</span>
                 </div>
 
                 <div class="options-grid">
                     <!-- Option: Color Palette -->
                     <div class="option-group" style="grid-column: 1 / -1;">
-                        <label class="option-label">Couleur du disque</label>
+                        <label class="option-label" data-i18n="time_timer.opt_color">Couleur du disque</label>
                         <div class="color-palette" id="colorPalette">
-                            <button class="color-swatch rainbow-swatch" data-color="rainbow" title="Arc-en-ciel magique 🌈"></button>
-                            <button class="color-swatch active" style="background:#ef4444;" data-color="#ef4444" title="Rouge classique"></button>
-                            <button class="color-swatch" style="background:#0ea5e9;" data-color="#0ea5e9" title="Bleu ciel"></button>
-                            <button class="color-swatch" style="background:#10b981;" data-color="#10b981" title="Vert menthe"></button>
-                            <button class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b" title="Ambre chaud"></button>
-                            <button class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6" title="Violet doux"></button>
-                            <button class="color-swatch" style="background:#ec4899;" data-color="#ec4899" title="Rose bonbon"></button>
-                            <div class="custom-color-wrapper" title="Couleur personnalisée">
+                            <button class="color-swatch rainbow-swatch" data-color="rainbow" title="Arc-en-ciel magique 🌈" data-i18n-attr="title:time_timer.color_rainbow"></button>
+                            <button class="color-swatch active" style="background:#ef4444;" data-color="#ef4444" title="Rouge classique" data-i18n-attr="title:time_timer.color_red"></button>
+                            <button class="color-swatch" style="background:#0ea5e9;" data-color="#0ea5e9" title="Bleu ciel" data-i18n-attr="title:time_timer.color_blue"></button>
+                            <button class="color-swatch" style="background:#10b981;" data-color="#10b981" title="Vert menthe" data-i18n-attr="title:time_timer.color_green"></button>
+                            <button class="color-swatch" style="background:#f59e0b;" data-color="#f59e0b" title="Ambre chaud" data-i18n-attr="title:time_timer.color_amber"></button>
+                            <button class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6" title="Violet doux" data-i18n-attr="title:time_timer.color_purple"></button>
+                            <button class="color-swatch" style="background:#ec4899;" data-color="#ec4899" title="Rose bonbon" data-i18n-attr="title:time_timer.color_pink"></button>
+                            <div class="custom-color-wrapper" title="Couleur personnalisée" data-i18n-attr="title:qrcode.color_custom">
                                 <input type="color" id="customColorInput" class="custom-color-input" value="#ef4444">
                             </div>
                         </div>
@@ -1544,103 +1679,108 @@
 
                     <!-- Option: Disk Style -->
                     <div class="option-group">
-                        <label for="diskStyleSelect" class="option-label">Style visuel du cadran</label>
+                        <label for="diskStyleSelect" class="option-label" data-i18n="time_timer.opt_style">Style visuel du cadran</label>
                         <select id="diskStyleSelect" class="custom-select">
-                            <option value="solid" selected>Disque plein (classique)</option>
-                            <option value="ring">Anneau moderne (donut)</option>
+                            <option value="solid" selected data-i18n="time_timer.style_solid">Disque plein (classique)</option>
+                            <option value="ring" data-i18n="time_timer.style_ring">Anneau moderne (donut)</option>
                         </select>
                     </div>
 
                     <!-- Option: Rotation Direction -->
                     <div class="option-group">
-                        <label for="directionSelect" class="option-label">Sens du décompte</label>
+                        <label for="directionSelect" class="option-label" data-i18n="time_timer.opt_direction">Sens du décompte</label>
                         <select id="directionSelect" class="custom-select">
-                            <option value="counter-clockwise" selected>Sens anti-horaire classique (vers 0)</option>
-                            <option value="clockwise">Sens des aiguilles d'une montre (horaire)</option>
+                            <option value="counter-clockwise" selected data-i18n="time_timer.dir_ccw">Sens anti-horaire classique (vers 0)</option>
+                            <option value="clockwise" data-i18n="time_timer.dir_cw">Sens des aiguilles d'une montre (horaire)</option>
                         </select>
                     </div>
 
                     <!-- Option: End Sound -->
                     <div class="option-group" style="grid-column: 1 / -1;">
                         <label for="soundSelect" class="option-label">
-                            <i data-fa="bell" style="width:16px;height:16px;margin-right:4px;"></i> Sonnerie de fin
+                            <i data-fa="bell" style="width:16px;height:16px;margin-right:4px;"></i> <span data-i18n="time_timer.opt_sound">Sonnerie de fin</span>
                         </label>
                         <div style="display:flex; gap:10px; align-items: center; width: 100%;">
                             <select id="soundSelect" class="custom-select" style="flex:1; min-width: 0;">
-                                <option value="zen" selected>Carillon zen doux</option>
-                                <option value="bell">Cloche d'école cristalline</option>
-                                <option value="dingdong">Ding-dong harmonieux</option>
-                                <option value="beeps">Petits bips discrets</option>
-                                <option value="custom" id="customSoundOption">Sonnerie personnalisée (fichier)</option>
-                                <option value="mute">Silencieux (aucun son)</option>
+                                <option value="zen" selected data-i18n="time_timer.sound_zen">Carillon zen doux</option>
+                                <option value="bell" data-i18n="time_timer.sound_bell">Cloche d'école cristalline</option>
+                                <option value="dingdong" data-i18n="time_timer.sound_dingdong">Ding-dong harmonieux</option>
+                                <option value="beeps" data-i18n="time_timer.sound_beeps">Petits bips discrets</option>
+                                <option value="custom" id="customSoundOption" data-i18n="time_timer.sound_custom">Sonnerie personnalisée (fichier)</option>
+                                <option value="mute" data-i18n="time_timer.sound_mute">Silencieux (aucun son)</option>
                             </select>
-                            <button class="btn btn-secondary" id="testSoundBtn" title="Écouter le son choisi" style="padding: 6px 14px; font-size:0.85rem; min-width: 86px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                            <button class="btn btn-secondary" id="testSoundBtn" title="Écouter le son choisi" data-i18n-attr="title:time_timer.test_sound_title" style="padding: 6px 14px; font-size:0.85rem; min-width: 86px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
                                 <i data-fa="bell" style="width:14px;height:14px;"></i>
-                                <span>Tester</span>
+                                <span data-i18n="time_timer.test_btn">Tester</span>
                             </button>
                         </div>
                         <!-- Custom sound upload zone -->
-                        <div id="customSoundUploadRow" style="margin-top: 8px; padding: 8px 12px; border-radius: var(--radius-md); background: rgba(0,0,0,0.03); border: 1px dashed var(--border); display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box;">
+                        <div id="customSoundUploadRow"
+                            style="margin-top: 8px; padding: 8px 12px; border-radius: var(--radius-md); background: rgba(0,0,0,0.03); border: 1px dashed var(--border); display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box;">
                             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                                <label for="customAudioFileInput" class="btn btn-secondary" style="font-size: 0.8rem; padding: 5px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin: 0;">
+                                <label for="customAudioFileInput" class="btn btn-secondary"
+                                    style="font-size: 0.8rem; padding: 5px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin: 0;">
                                     <i data-fa="arrow-up-from-square" style="width:13px;height:13px;"></i>
-                                    <span id="customSoundBtnText">Importer un fichier (MP3, WAV)</span>
+                                    <span id="customSoundBtnText" data-i18n="time_timer.custom_sound_import">Importer un fichier (MP3, WAV)</span>
                                 </label>
                                 <input type="file" id="customAudioFileInput" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav" style="display: none;">
-                                <button class="btn btn-secondary" id="removeCustomSoundBtn" title="Supprimer la sonnerie personnalisée" style="padding: 5px 8px; font-size:0.8rem; display: none; color: var(--error);" aria-label="Supprimer la sonnerie importée">
+                                <button class="btn btn-secondary" id="removeCustomSoundBtn" title="Supprimer la sonnerie personnalisée" style="padding: 5px 8px; font-size:0.8rem; display: none; color: var(--error);" aria-label="Supprimer la sonnerie importée" data-i18n-attr="title:time_timer.custom_sound_remove_title;aria-label:time_timer.custom_sound_remove_aria">
                                     <i data-fa="trash" style="width:13px;height:13px;"></i>
                                 </button>
                             </div>
-                            <div id="customSoundInfo" style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+                            <div id="customSoundInfo"
+                                style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
                                 <i data-fa="volume-high" style="width:12px;height:12px;"></i>
-                                <span id="customSoundFileName">Aucun fichier importé</span>
+                                <span id="customSoundFileName" data-i18n="time_timer.custom_sound_none">Aucun fichier importé</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Option: Activity Title -->
                     <div class="option-group" style="grid-column: 1 / -1;">
-                        <label for="optionsActivityInput" class="option-label">Titre ou consigne d'activité</label>
-                        <input type="text" id="optionsActivityInput" class="custom-select" placeholder="Ex: 📖 Lecture autonome, ✍️ Travail individuel…" maxlength="60">
+                        <label for="optionsActivityInput" class="option-label" data-i18n="time_timer.opt_activity">Titre ou consigne d'activité</label>
+                        <input type="text" id="optionsActivityInput" class="custom-select" placeholder="Ex: 📖 Lecture autonome, ✍️ Travail individuel…" maxlength="60" data-i18n-attr="placeholder:time_timer.opt_activity_placeholder">
                     </div>
 
                     <!-- Option: Checkboxes -->
                     <div class="option-group" style="justify-content: center; gap: 8px; grid-column: 1 / -1;">
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkAutoStart" checked>
-                            <span>Démarrer immédiatement au clic d'un préréglage</span>
+                            <span data-i18n="time_timer.chk_auto_start">Démarrer immédiatement au clic d'un préréglage</span>
                         </label>
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkShowDigits">
-                            <span>Afficher le temps numérique</span>
+                            <span data-i18n="time_timer.chk_show_digits">Afficher le temps numérique</span>
                         </label>
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkShowPulseDots" checked>
-                            <span>Afficher les points d'activité (pulse dots)</span>
+                            <span data-i18n="time_timer.chk_pulse_dots">Afficher les points d'activité (pulse dots)</span>
                         </label>
                         <label class="custom-checkbox-row">
                             <input type="checkbox" id="checkStartSound" checked>
-                            <span>Son discret au démarrage</span>
+                            <span data-i18n="time_timer.chk_start_sound">Son discret au démarrage</span>
                         </label>
-                        <div class="custom-checkbox-row warning-sound-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                            <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                        <div class="custom-checkbox-row warning-sound-row"
+                            style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                            <label
+                                style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                                 <input type="checkbox" id="checkWarningSound" checked>
-                                <span>Signal sonore avant la fin</span>
+                                <span data-i18n="time_timer.chk_warning_sound">Signal sonore avant la fin</span>
                             </label>
                             <div style="display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                                <select id="warningToneSelect" class="custom-select" style="padding: 3px 8px; font-size: 0.85rem; width: auto;" aria-label="Type de signal sonore avant la fin">
-                                    <option value="discrete" selected>Discret</option>
-                                    <option value="loud">Bien audible</option>
+                                <select id="warningToneSelect" class="custom-select" style="padding: 3px 8px; font-size: 0.85rem; width: auto;" aria-label="Type de signal sonore avant la fin" data-i18n-attr="aria-label:time_timer.warn_tone_aria">
+                                    <option value="discrete" selected data-i18n="time_timer.warn_tone_discrete">Discret</option>
+                                    <option value="loud" data-i18n="time_timer.warn_tone_loud">Bien audible</option>
                                 </select>
-                                <span style="font-size: 0.85rem; color: var(--text-secondary);">à</span>
-                                <select id="warningTimeSelect" class="custom-select" style="padding: 3px 8px; font-size: 0.85rem; width: auto;" aria-label="Délai du signal sonore avant la fin">
-                                    <option value="30">30 secondes</option>
-                                    <option value="60" selected>1 minute</option>
-                                    <option value="120">2 minutes</option>
-                                    <option value="180">3 minutes</option>
-                                    <option value="300">5 minutes</option>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);" data-i18n="time_timer.warn_at">à</span>
+                                <select id="warningTimeSelect" class="custom-select" style="padding: 3px 8px; font-size: 0.85rem; width: auto;" aria-label="Délai du signal sonore avant la fin" data-i18n-attr="aria-label:time_timer.warn_delay_aria">
+                                    <option value="30" data-i18n="time_timer.warn_30s">30 secondes</option>
+                                    <option value="60" selected data-i18n="time_timer.warn_1m">1 minute</option>
+                                    <option value="120" data-i18n="time_timer.warn_2m">2 minutes</option>
+                                    <option value="180" data-i18n="time_timer.warn_3m">3 minutes</option>
+                                    <option value="300" data-i18n="time_timer.warn_5m">5 minutes</option>
                                 </select>
-                                <button type="button" class="btn btn-secondary" id="testWarningSoundBtn" title="Écouter le signal sonore choisi" style="padding: 4px 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; min-width: 30px;" aria-label="Tester le signal sonore">
+                                <button type="button" class="btn btn-secondary" id="testWarningSoundBtn" title="Écouter le signal sonore choisi" style="padding: 4px 8px; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; min-width: 30px;" aria-label="Tester le signal sonore" data-i18n-attr="title:time_timer.warn_test_title;aria-label:time_timer.warn_test_aria">
                                     <i data-fa="play" style="width:11px;height:11px;"></i>
                                 </button>
                             </div>
@@ -1648,47 +1788,55 @@
                     </div>
 
                     <!-- Option: Compensation Timer (MCD / Tiers-temps) -->
-                    <div class="option-group" style="grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; width: 100%;">
-                            <label for="checkCompensation" class="option-label" style="margin-bottom: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                    <div class="option-group"
+                        style="grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.5rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; width: 100%;">
+                            <label for="checkCompensation" class="option-label"
+                                style="margin-bottom: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
                                 <i data-fa="universal-access" style="width:16px;height:16px; color: #3b82f6;"></i>
-                                <span>Mesure de compensation des désavantages (tiers-temps)</span>
+                                <span data-i18n="time_timer.comp_title">Mesure de compensation des désavantages (tiers-temps)</span>
                             </label>
-                            <label class="custom-checkbox-row" style="margin: 0; padding: 4px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <label class="custom-checkbox-row"
+                                style="margin: 0; padding: 4px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                                 <input type="checkbox" id="checkCompensation">
-                                <span style="font-size: 0.9rem;">Activer</span>
+                                <span style="font-size: 0.9rem;" data-i18n="time_timer.comp_enable">Activer</span>
                             </label>
                         </div>
 
-                        <div id="compensationSettingsBlock" style="display: none; margin-top: 0.75rem; padding: 12px 14px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-md); gap: 10px; flex-direction: column; width: 100%; box-sizing: border-box;">
+                        <div id="compensationSettingsBlock"
+                            style="display: none; margin-top: 0.75rem; padding: 12px 14px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-md); gap: 10px; flex-direction: column; width: 100%; box-sizing: border-box;">
                             <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                <label for="compensationModeSelect" style="font-size: 0.88rem; font-weight: 600; color: var(--text-main);">Mode :</label>
+                                <label for="compensationModeSelect" style="font-size: 0.88rem; font-weight: 600; color: var(--text-main);" data-i18n="time_timer.comp_mode_label">Mode :</label>
                                 <select id="compensationModeSelect" class="custom-select" style="padding: 4px 10px; font-size: 0.85rem; width: auto; flex: 1; min-width: 170px;">
-                                    <option value="ratio" selected>Proportion du temps (+1/3, +1/2…)</option>
-                                    <option value="fixed">Durée fixe supplémentaire (+X min)</option>
+                                    <option value="ratio" selected data-i18n="time_timer.comp_mode_ratio">Proportion du temps (+1/3, +1/2…)</option>
+                                    <option value="fixed" data-i18n="time_timer.comp_mode_fixed">Durée fixe supplémentaire (+X min)</option>
                                 </select>
                             </div>
 
                             <div id="compensationRatioRow" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                <label for="compensationRatioSelect" style="font-size: 0.88rem; color: var(--text-secondary);">Temps supplémentaire :</label>
+                                <label for="compensationRatioSelect" style="font-size: 0.88rem; color: var(--text-secondary);" data-i18n="time_timer.comp_extra_label">Temps supplémentaire :</label>
                                 <select id="compensationRatioSelect" class="custom-select" style="padding: 4px 10px; font-size: 0.85rem; width: auto; flex: 1; min-width: 170px;">
-                                    <option value="0.25">+1/4 du temps (+25%)</option>
-                                    <option value="0.3333333333333333" selected>+1/3 du temps (+33.3% - Tiers-temps standard)</option>
-                                    <option value="0.5">+1/2 du temps (+50%)</option>
-                                    <option value="0.6666666666666666">+2/3 du temps (+66.7%)</option>
-                                    <option value="1">+100% (Temps doublé)</option>
+                                    <option value="0.25" data-i18n="time_timer.comp_ratio_quarter">+1/4 du temps (+25%)</option>
+                                    <option value="0.3333333333333333" selected data-i18n="time_timer.comp_ratio_third">+1/3 du temps (+33.3% - Tiers-temps standard)</option>
+                                    <option value="0.5" data-i18n="time_timer.comp_ratio_half">+1/2 du temps (+50%)</option>
+                                    <option value="0.6666666666666666" data-i18n="time_timer.comp_ratio_two_thirds">+2/3 du temps (+66.7%)</option>
+                                    <option value="1" data-i18n="time_timer.comp_ratio_double">+100% (Temps doublé)</option>
                                 </select>
                             </div>
 
                             <div id="compensationFixedRow" style="display: none; gap: 10px; align-items: center; flex-wrap: wrap;">
-                                <label for="compensationFixedMinutesInput" style="font-size: 0.88rem; color: var(--text-secondary);">Minutes fixes en plus :</label>
+                                <label for="compensationFixedMinutesInput" style="font-size: 0.88rem; color: var(--text-secondary);" data-i18n="time_timer.comp_fixed_label">Minutes fixes en plus :</label>
                                 <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                    <input type="number" id="compensationFixedMinutesInput" class="custom-select" min="1" max="60" value="5" style="width: 70px; padding: 4px 8px; text-align: center; font-size: 0.9rem;">
+                                    <input type="number" id="compensationFixedMinutesInput" class="custom-select"
+                                        min="1" max="60" value="5"
+                                        style="width: 70px; padding: 4px 8px; text-align: center; font-size: 0.9rem;">
                                     <span style="font-size: 0.85rem; color: var(--text-secondary);">min</span>
                                 </div>
                             </div>
 
-                            <div style="font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                            <div
+                                style="font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
                                 <i data-fa="circle-info" style="width:13px;height:13px; flex-shrink: 0;"></i>
                                 <span id="compensationPreviewText">Pour 10 min : +3 min 20 s = 13 min 20 s total</span>
                             </div>
@@ -1701,11 +1849,18 @@
         <!-- FOOTER -->
         <footer class="no-print">
             <p>
-                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                    href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                    data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
                 <br>
                 <span style="font-size: 0.9em; opacity: 0.85;">
-                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
-                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                            data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                        rel="noopener noreferrer">AGPL-3.0</a>)
                     · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
                     · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
                     · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
@@ -1716,20 +1871,20 @@
     </div>
 
     <!-- CELEBRATION OVERLAY -->
-    <div class="celebration-overlay hidden" id="celebrationOverlay" role="dialog" aria-modal="true" aria-label="Temps écoulé">
+    <div class="celebration-overlay hidden" id="celebrationOverlay" role="dialog" aria-modal="true" aria-label="Temps écoulé" data-i18n-attr="aria-label:time_timer.celebration_aria">
         <div class="celebration-card">
             <div class="celebration-icon-circle">
                 <i data-fa="bell" id="celebrationBellIcon" style="width:40px;height:40px;"></i>
             </div>
             <div>
-                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem;">Temps écoulé !</h2>
-                <p id="celebrationMessage" style="color: var(--text-secondary); font-size: 1.05rem;">L'activité est maintenant terminée.</p>
+                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem;" data-i18n="time_timer.celebration_title">Temps écoulé !</h2>
+                <p id="celebrationMessage" style="color: var(--text-secondary); font-size: 1.05rem;" data-i18n="time_timer.celebration_msg">L'activité est maintenant terminée.</p>
             </div>
             <div style="display:flex; gap:10px; width:100%;">
-                <button class="btn btn-secondary" id="celebrationPlus1Btn" style="flex:1;">
+                <button class="btn btn-secondary" id="celebrationPlus1Btn" style="flex:1;" data-i18n="time_timer.celebration_plus1">
                     + 1 minute
                 </button>
-                <button class="btn btn-primary" id="celebrationCloseBtn" style="flex:1;">
+                <button class="btn btn-primary" id="celebrationCloseBtn" style="flex:1;" data-i18n="time_timer.celebration_close">
                     Fermer
                 </button>
             </div>
@@ -1748,6 +1903,10 @@
         (function () {
             'use strict';
 
+            const tmt = (key, fb, vars) => (window.I18N && typeof window.I18N.t === 'function')
+                ? window.I18N.t(key, fb, vars)
+                : (vars ? String(fb).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? String(vars[k]) : `{${k}}`)) : fb);
+
             // DOM Elements
             const timerDisk = document.getElementById('timerDisk');
             const timerDiskClipPath = document.getElementById('timerDiskClipPath');
@@ -1756,6 +1915,7 @@
             const compensationDigits = document.getElementById('compensationDigits');
             const compensationBarFill = document.getElementById('compensationBarFill');
             const compensationStatusLabel = document.getElementById('compensationStatusLabel');
+            const compensationNotice = document.getElementById('compensationNotice');
             const rainbowGroup = document.getElementById('rainbowGroup');
             const rainbowCloud = document.getElementById('rainbowCloud');
             const donutHole = document.getElementById('donutHole');
@@ -1926,12 +2086,12 @@
                     customAudioFileName = fileName;
                     if (customSoundFileName) customSoundFileName.textContent = fileName;
                     if (removeCustomSoundBtn) removeCustomSoundBtn.style.display = 'inline-flex';
-                    if (customSoundBtnText) customSoundBtnText.textContent = 'Remplacer le son';
+                    if (customSoundBtnText) customSoundBtnText.textContent = tmt('time_timer.custom_sound_replace', 'Remplacer le son');
                 } else {
                     customAudioFileName = '';
-                    if (customSoundFileName) customSoundFileName.textContent = 'Aucun fichier importé';
+                    if (customSoundFileName) customSoundFileName.textContent = tmt('time_timer.custom_sound_none', 'Aucun fichier importé');
                     if (removeCustomSoundBtn) removeCustomSoundBtn.style.display = 'none';
-                    if (customSoundBtnText) customSoundBtnText.textContent = 'Importer un fichier (MP3, WAV)';
+                    if (customSoundBtnText) customSoundBtnText.textContent = tmt('time_timer.custom_sound_import', 'Importer un fichier (MP3, WAV)');
                 }
                 window.fa?.createIcons?.();
             }
@@ -1940,7 +2100,7 @@
                 try {
                     const record = await getCustomSoundFromDB();
                     if (record && record.buffer) {
-                        updateCustomAudioUI(record.name || 'Sonnerie personnalisée');
+                        updateCustomAudioUI(record.name || tmt('time_timer.custom_sound_default_name', 'Sonnerie personnalisée'));
                         if (customAudioBlobUrl) {
                             URL.revokeObjectURL(customAudioBlobUrl);
                         }
@@ -1970,8 +2130,8 @@
                 if (volOn) volOn.style.display = isMuted ? 'none' : 'block';
                 if (volOff) volOff.style.display = isMuted ? 'block' : 'none';
                 if (audioToggleBtn) {
-                    audioToggleBtn.title = isMuted ? 'Activer le son' : 'Couper le son';
-                    audioToggleBtn.setAttribute('aria-label', isMuted ? 'Activer le son' : 'Couper le son');
+                    audioToggleBtn.title = isMuted ? tmt('common.audio_unmute', 'Activer le son') : tmt('common.audio_mute', 'Couper le son');
+                    audioToggleBtn.setAttribute('aria-label', isMuted ? tmt('common.audio_unmute', 'Activer le son') : tmt('common.audio_mute', 'Couper le son'));
                 }
             }
             updateAudioIcon();
@@ -1999,8 +2159,8 @@
                 }
                 if (audioCtx && audioCtx.state === 'suspended') {
                     try {
-                        audioCtx.resume().catch(() => {});
-                    } catch (_) {}
+                        audioCtx.resume().catch(() => { });
+                    } catch (_) { }
                 }
                 return audioCtx;
             }
@@ -2051,11 +2211,11 @@
                 icon.style.height = '11px';
                 if (playing) {
                     icon.setAttribute('data-fa', 'square');
-                    testWarningSoundBtn.title = 'Arrêter la lecture du signal';
+                    testWarningSoundBtn.title = tmt('time_timer.warn_stop_title', 'Arrêter la lecture du signal');
                     testWarningSoundBtn.classList.add('btn-playing');
                 } else {
                     icon.setAttribute('data-fa', 'play');
-                    testWarningSoundBtn.title = 'Écouter le signal sonore choisi';
+                    testWarningSoundBtn.title = tmt('time_timer.warn_test_title', 'Écouter le signal sonore choisi');
                     testWarningSoundBtn.classList.remove('btn-playing');
                 }
                 testWarningSoundBtn.replaceChildren(icon);
@@ -2072,14 +2232,14 @@
                     icon.style.width = '11px';
                     icon.style.height = '11px';
                     const span = document.createElement('span');
-                    span.textContent = 'Arrêter';
-                    testSoundBtn.title = 'Arrêter la lecture du son';
+                    span.textContent = tmt('time_timer.test_stop', 'Arrêter');
+                    testSoundBtn.title = tmt('time_timer.test_stop_title', 'Arrêter la lecture du son');
                     testSoundBtn.classList.add('btn-playing');
                     testSoundBtn.replaceChildren(icon, document.createTextNode(' '), span);
                 } else {
                     const span = document.createElement('span');
-                    span.textContent = 'Tester';
-                    testSoundBtn.title = 'Écouter le son choisi';
+                    span.textContent = tmt('time_timer.test_btn', 'Tester');
+                    testSoundBtn.title = tmt('time_timer.test_sound_title', 'Écouter le son choisi');
                     testSoundBtn.classList.remove('btn-playing');
                     testSoundBtn.replaceChildren(span);
                 }
@@ -2100,7 +2260,7 @@
                         const gain = ctx.createGain();
                         osc.type = 'sine';
                         osc.frequency.setValueAtTime(freq, now + idx * 0.12);
-                        
+
                         gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
                         gain.gain.linearRampToValueAtTime(0.18, now + idx * 0.12 + 0.04);
                         gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 2.5);
@@ -2429,14 +2589,14 @@
 
                     if (soundSelect.value === 'mute') {
                         if (typeof showToast === 'function') {
-                            showToast("Le son de fin est actuellement réglé sur Silencieux", "info");
+                            showToast(tmt('time_timer.toast_sound_mute', 'Le son de fin est actuellement réglé sur Silencieux'), 'info');
                         }
                         return;
                     }
 
                     if (soundSelect.value === 'custom' && !customAudioBlobUrl && !customAudioBuffer) {
                         if (typeof showToast === 'function') {
-                            showToast("Veuillez d'abord importer un fichier audio (MP3 ou WAV)", "warning");
+                            showToast(tmt('time_timer.toast_sound_custom_missing', 'Veuillez d\'abord importer un fichier audio (MP3 ou WAV)'), 'warning');
                         }
                         return;
                     }
@@ -2501,13 +2661,15 @@
                 const extraSecs = compSecs - baseSecs;
                 const extraM = Math.floor(extraSecs / 60);
                 const extraS = extraSecs % 60;
-                const extraStr = extraS > 0 ? `+${extraM} min ${extraS} s` : `+${extraM} min`;
+                const uMin = tmt('time_timer.unit_min', 'min');
+                const uSec = tmt('time_timer.unit_s', 's');
+                const extraStr = extraS > 0 ? `+${extraM} ${uMin} ${extraS} ${uSec}` : `+${extraM} ${uMin}`;
 
                 const totM = Math.floor(compSecs / 60);
                 const totS = compSecs % 60;
-                const totStr = totS > 0 ? `${totM} min ${totS} s` : `${totM} min`;
+                const totStr = totS > 0 ? `${totM} ${uMin} ${totS} ${uSec}` : `${totM} ${uMin}`;
 
-                compensationPreviewText.textContent = `Pour ${baseMins} min : ${extraStr} = ${totStr} total`;
+                compensationPreviewText.textContent = tmt('time_timer.comp_preview', `Pour ${baseMins} min : ${extraStr} = ${totStr} total`, { base: baseMins, extra: extraStr, total: totStr });
             }
 
             function updateCompensationUI() {
@@ -2548,17 +2710,26 @@
                 if (remainingSeconds <= 0 && compensationRemainingSeconds > 0) {
                     compensationDisplay.classList.add('active-ongoing');
                     if (compensationStatusLabel) {
-                        compensationStatusLabel.textContent = 'Tiers-temps en cours';
+                        compensationStatusLabel.textContent = tmt('time_timer.comp_status_ongoing', 'Tiers-temps en cours');
+                    }
+                    if (compensationNotice) {
+                        compensationNotice.style.display = 'flex';
                     }
                 } else if (compensationRemainingSeconds <= 0) {
                     compensationDisplay.classList.remove('active-ongoing');
                     if (compensationStatusLabel) {
-                        compensationStatusLabel.textContent = 'Tiers-temps terminé';
+                        compensationStatusLabel.textContent = tmt('time_timer.comp_status_done', 'Tiers-temps terminé');
+                    }
+                    if (compensationNotice) {
+                        compensationNotice.style.display = 'none';
                     }
                 } else {
                     compensationDisplay.classList.remove('active-ongoing');
                     if (compensationStatusLabel) {
-                        compensationStatusLabel.textContent = 'Temps adapté (MCD)';
+                        compensationStatusLabel.textContent = tmt('time_timer.comp_label', 'Temps adapté (MCD)');
+                    }
+                    if (compensationNotice) {
+                        compensationNotice.style.display = 'none';
                     }
                 }
             }
@@ -2754,37 +2925,37 @@
             }
 
             // Helper to generate SVG pie wedge path from seconds
-            function getWedgePath(secs) {
+            function getWedgePath(secs, customRadius = RADIUS) {
                 const fraction = Math.max(0, Math.min(1, secs / 3600));
                 const angleDeg = fraction * 360;
                 if (fraction <= 0) return '';
                 if (fraction >= 0.9999) {
                     return `
-                        M ${CX} ${CY - RADIUS}
-                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY + RADIUS}
-                        A ${RADIUS} ${RADIUS} 0 1 1 ${CX} ${CY - RADIUS}
+                        M ${CX} ${CY - customRadius}
+                        A ${customRadius} ${customRadius} 0 1 1 ${CX} ${CY + customRadius}
+                        A ${customRadius} ${customRadius} 0 1 1 ${CX} ${CY - customRadius}
                         Z
                     `;
                 }
                 const isCounterClockwise = settings.direction === 'counter-clockwise';
                 const angleRad = (angleDeg * Math.PI) / 180;
                 const topX = CX;
-                const topY = CY - RADIUS;
+                const topY = CY - customRadius;
                 let endX, endY, sweepFlag;
                 if (isCounterClockwise) {
-                    endX = CX - RADIUS * Math.sin(angleRad);
-                    endY = CY - RADIUS * Math.cos(angleRad);
+                    endX = CX - customRadius * Math.sin(angleRad);
+                    endY = CY - customRadius * Math.cos(angleRad);
                     sweepFlag = 0;
                 } else {
-                    endX = CX + RADIUS * Math.sin(angleRad);
-                    endY = CY - RADIUS * Math.cos(angleRad);
+                    endX = CX + customRadius * Math.sin(angleRad);
+                    endY = CY - customRadius * Math.cos(angleRad);
                     sweepFlag = 1;
                 }
                 const largeArcFlag = angleDeg > 180 ? 1 : 0;
                 return `
                     M ${CX} ${CY}
                     L ${topX} ${topY}
-                    A ${RADIUS} ${RADIUS} 0 ${largeArcFlag} ${sweepFlag} ${endX.toFixed(2)} ${endY.toFixed(2)}
+                    A ${customRadius} ${customRadius} 0 ${largeArcFlag} ${sweepFlag} ${endX.toFixed(2)} ${endY.toFixed(2)}
                     Z
                 `;
             }
@@ -2796,10 +2967,11 @@
                 const angleDeg = fraction * 360;
                 const isRainbow = settings.color === 'rainbow';
 
-                // 1. Render Compensation Disk underneath if enabled
+                // 1. Render Compensation Disk underneath if enabled (slightly outer radius so >60 min remains visible)
                 if (compensationDisk) {
                     if (settings.compensationEnabled && compensationRemainingSeconds > 0) {
-                        const compPath = getWedgePath(compensationRemainingSeconds);
+                        const compRadius = (compensationRemainingSeconds >= 3600 || secs >= 3600) ? (RADIUS + 5) : RADIUS;
+                        const compPath = getWedgePath(compensationRemainingSeconds, compRadius);
                         compensationDisk.setAttribute('d', compPath);
                         compensationDisk.style.display = compPath ? 'block' : 'none';
                     } else {
@@ -2896,13 +3068,15 @@
                 if (isRunning) {
                     mainPlayBtn.classList.remove('paused');
                     mainPlayBtn.classList.add('running');
-                    playBtnText.textContent = 'Pause';
+                    playBtnText.textContent = tmt('time_timer.btn_pause', 'Pause');
                     if (iconPlay) iconPlay.style.display = 'none';
                     if (iconPause) iconPause.style.display = 'inline-block';
                 } else {
                     mainPlayBtn.classList.add('paused');
                     mainPlayBtn.classList.remove('running');
-                    playBtnText.textContent = isFullyEnded ? 'Relancer' : (remainingSeconds < totalSeconds ? 'Reprendre' : 'Démarrer');
+                    playBtnText.textContent = isFullyEnded
+                        ? tmt('time_timer.btn_restart', 'Relancer')
+                        : (remainingSeconds < totalSeconds ? tmt('time_timer.btn_resume', 'Reprendre') : tmt('time_timer.btn_start', 'Démarrer'));
                     if (iconPlay) iconPlay.style.display = 'inline-block';
                     if (iconPause) iconPause.style.display = 'none';
                 }
@@ -2964,10 +3138,15 @@
 
                 // Check main timer finish
                 if (prevSecs > 0 && remainingSeconds <= 0) {
+                    const compOngoing = settings.compensationEnabled && compensationRemainingSeconds > 0;
                     playEndSound();
-                    showCelebration();
-                    if (typeof showToast === 'function' && settings.compensationEnabled && compensationRemainingSeconds > 0) {
-                        showToast("Temps principal écoulé — Mesure de compensation en cours", "info");
+                    if (compOngoing) {
+                        // Non-blocking notification while MCD (tiers-temps) continues running
+                        if (typeof showToast === 'function') {
+                            showToast(tmt('time_timer.comp_notice', 'Temps principal écoulé — Mesure de compensation en cours'), 'info');
+                        }
+                    } else {
+                        showCelebration();
                     }
                 }
 
@@ -2982,8 +3161,9 @@
                     updateUI();
                     if (settings.compensationEnabled && prevCompSecs > 0) {
                         playEndSound();
+                        showCelebration();
                         if (typeof showToast === 'function') {
-                            showToast("Temps de compensation terminé !", "success");
+                            showToast(tmt('time_timer.toast_comp_done', 'Temps de compensation terminé !'), 'success');
                         }
                     }
                 }
@@ -3067,6 +3247,11 @@
                     cancelAnimationFrame(diskAnimRaf);
                     diskAnimRaf = null;
                 }
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    renderDisk(toSecs);
+                    if (onComplete) onComplete();
+                    return;
+                }
                 const startTime = performance.now();
                 function step(now) {
                     const elapsed = now - startTime;
@@ -3126,16 +3311,21 @@
             }
 
             function adjustSeconds(deltaSec) {
-                remainingSeconds = Math.max(0, Math.min(3600, remainingSeconds + deltaSec));
+                const prevRemaining = remainingSeconds;
+                const nextRemaining = Math.max(0, Math.min(3600, prevRemaining + deltaSec));
+                const appliedDelta = nextRemaining - prevRemaining;
+                remainingSeconds = nextRemaining;
                 totalSeconds = Math.max(baseTotalSeconds, remainingSeconds);
 
                 if (settings.compensationEnabled) {
                     let compDelta;
-                    if (settings.compensationMode === 'fixed') {
+                    if (prevRemaining === 0 && deltaSec < 0 && compensationRemainingSeconds > 0) {
                         compDelta = deltaSec;
+                    } else if (settings.compensationMode === 'fixed') {
+                        compDelta = appliedDelta;
                     } else {
                         const ratio = parseFloat(settings.compensationRatio) || (1 / 3);
-                        compDelta = Math.round(deltaSec * (1 + ratio));
+                        compDelta = Math.round(appliedDelta * (1 + ratio));
                     }
                     compensationRemainingSeconds = Math.max(0, compensationRemainingSeconds + compDelta);
                     compensationTotalSeconds = Math.max(compensationTotalSeconds, compensationRemainingSeconds);
@@ -3188,8 +3378,8 @@
             function showCelebration() {
                 const title = (settings.activityTitle || '').trim();
                 celebrationMessage.textContent = title
-                    ? `L'activité « ${title} » est terminée !`
-                    : 'Le compte à rebours est terminé.';
+                    ? tmt('time_timer.celebration_msg_activity', `L'activité « ${title} » est terminée !`, { title })
+                    : tmt('time_timer.celebration_msg_default', 'Le compte à rebours est terminé.');
                 const bellIcon = document.getElementById('celebrationBellIcon');
                 if (bellIcon) {
                     bellIcon.setAttribute('data-fa', isMuted || settings.sound === 'mute' ? 'bell-slash' : 'bell');
@@ -3254,6 +3444,9 @@
             }
 
             function handlePointerStart(e) {
+                if (isRunning && e.target !== dragHandle) {
+                    return;
+                }
                 isDragging = true;
                 const m = getMinutesFromEvent(e);
                 if (m !== null) {
@@ -3358,8 +3551,8 @@
                     iconCompress.style.display = isProj ? 'inline-block' : 'none';
                 }
                 if (projBtn) {
-                    projBtn.setAttribute('title', isProj ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
-                    projBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
+                    projBtn.setAttribute('title', isProj ? tmt('common.tbi_exit_esc', 'Quitter le mode TNI/TBI (Échap)') : tmt('common.tbi_mode', 'Mode TNI/TBI'));
+                    projBtn.setAttribute('aria-label', isProj ? tmt('common.tbi_exit_short', 'Quitter le mode TNI/TBI') : tmt('common.tbi_mode', 'Mode TNI/TBI'));
                 }
             }
 
@@ -3515,68 +3708,61 @@
                 });
             }
 
+            function syncCompensationWithElapsed() {
+                const elapsed = Math.max(0, totalSeconds - remainingSeconds);
+                compensationTotalSeconds = getCompensationSeconds(totalSeconds);
+                compensationRemainingSeconds = Math.max(0, compensationTotalSeconds - elapsed);
+                if (isRunning) {
+                    compensationTargetEndTime = settings.compensationEnabled
+                        ? (Date.now() + compensationRemainingSeconds * 1000)
+                        : null;
+                } else {
+                    compensationTargetEndTime = null;
+                }
+            }
+
+            function onCompensationSettingUpdated() {
+                if (compensationSettingsBlock) {
+                    compensationSettingsBlock.style.display = settings.compensationEnabled ? 'flex' : 'none';
+                }
+                if (compensationRatioRow) {
+                    compensationRatioRow.style.display = (settings.compensationMode === 'fixed') ? 'none' : 'flex';
+                }
+                if (compensationFixedRow) {
+                    compensationFixedRow.style.display = (settings.compensationMode === 'fixed') ? 'flex' : 'none';
+                }
+                syncCompensationWithElapsed();
+                saveSettings();
+                updateCompensationPreview();
+                updateUI();
+            }
+
             if (checkCompensation) {
                 checkCompensation.addEventListener('change', () => {
                     settings.compensationEnabled = checkCompensation.checked;
-                    if (compensationSettingsBlock) {
-                        compensationSettingsBlock.style.display = settings.compensationEnabled ? 'flex' : 'none';
-                    }
-                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
-                    compensationRemainingSeconds = compensationTotalSeconds;
-                    if (isRunning) {
-                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
-                    }
-                    saveSettings();
-                    updateCompensationPreview();
-                    updateUI();
+                    onCompensationSettingUpdated();
                 });
             }
 
             if (compensationModeSelect) {
                 compensationModeSelect.addEventListener('change', () => {
                     settings.compensationMode = compensationModeSelect.value;
-                    if (compensationRatioRow) {
-                        compensationRatioRow.style.display = (settings.compensationMode === 'fixed') ? 'none' : 'flex';
-                    }
-                    if (compensationFixedRow) {
-                        compensationFixedRow.style.display = (settings.compensationMode === 'fixed') ? 'flex' : 'none';
-                    }
-                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
-                    compensationRemainingSeconds = compensationTotalSeconds;
-                    if (isRunning) {
-                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
-                    }
-                    saveSettings();
-                    updateCompensationPreview();
-                    updateUI();
+                    onCompensationSettingUpdated();
                 });
             }
 
             if (compensationRatioSelect) {
                 compensationRatioSelect.addEventListener('change', () => {
                     settings.compensationRatio = parseFloat(compensationRatioSelect.value) || (1 / 3);
-                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
-                    compensationRemainingSeconds = compensationTotalSeconds;
-                    if (isRunning) {
-                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
-                    }
-                    saveSettings();
-                    updateCompensationPreview();
-                    updateUI();
+                    onCompensationSettingUpdated();
                 });
             }
 
             if (compensationFixedMinutesInput) {
                 compensationFixedMinutesInput.addEventListener('input', () => {
-                    settings.compensationFixedMins = parseInt(compensationFixedMinutesInput.value, 10) || 5;
-                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
-                    compensationRemainingSeconds = compensationTotalSeconds;
-                    if (isRunning) {
-                        compensationTargetEndTime = Date.now() + compensationRemainingSeconds * 1000;
-                    }
-                    saveSettings();
-                    updateCompensationPreview();
-                    updateUI();
+                    const parsed = parseInt(compensationFixedMinutesInput.value, 10);
+                    settings.compensationFixedMins = Number.isFinite(parsed) ? Math.max(1, Math.min(60, parsed)) : 5;
+                    onCompensationSettingUpdated();
                 });
             }
 
@@ -3589,7 +3775,7 @@
                     // Max size check: 15 MB
                     if (file.size > 15 * 1024 * 1024) {
                         if (typeof showToast === 'function') {
-                            showToast('Fichier trop volumineux (max 15 Mo)', 'error');
+                            showToast(tmt('time_timer.toast_file_too_big', 'Fichier trop volumineux (max 15 Mo)'), 'error');
                         }
                         return;
                     }
@@ -3616,17 +3802,17 @@
                             const ctx = getAudioContext();
                             ctx.decodeAudioData(buffer.slice(0), (decoded) => {
                                 customAudioBuffer = decoded;
-                            }, () => {});
-                        } catch (_) {}
+                            }, () => { });
+                        } catch (_) { }
 
                         if (typeof showToast === 'function') {
-                            showToast(`Sonnerie « ${file.name} » enregistrée !`, 'success');
+                            showToast(tmt('time_timer.toast_sound_saved', `Sonnerie « ${file.name} » enregistrée !`, { name: file.name }), 'success');
                         }
                         // Do not auto-play on upload: teacher can test by clicking "Tester"
                     } catch (err) {
                         console.error('File read error', err);
                         if (typeof showToast === 'function') {
-                            showToast('Erreur lors de la lecture du fichier', 'error');
+                            showToast(tmt('time_timer.toast_file_read_err', 'Erreur lors de la lecture du fichier'), 'error');
                         }
                     }
                 });
@@ -3654,7 +3840,7 @@
                             saveSettings();
                         }
                         if (typeof showToast === 'function') {
-                            showToast('Sonnerie personnalisée supprimée', 'info');
+                            showToast(tmt('time_timer.toast_sound_deleted', 'Sonnerie personnalisée supprimée'), 'info');
                         }
                     } catch (err) {
                         console.error('Delete sound err', err);
@@ -3736,7 +3922,7 @@
                 setTimeMinutes(10, false);
                 updateUI();
                 if (typeof showToast === 'function') {
-                    showToast("Minuteur réinitialisé", "info");
+                    showToast(tmt('time_timer.toast_reset', 'Minuteur réinitialisé'), 'info');
                 }
             };
 
@@ -3765,8 +3951,7 @@
                     if (mode !== undefined) settings.compensationMode = mode;
                     if (ratio !== undefined) settings.compensationRatio = ratio;
                     if (fixedMins !== undefined) settings.compensationFixedMins = fixedMins;
-                    compensationTotalSeconds = getCompensationSeconds(totalSeconds);
-                    compensationRemainingSeconds = compensationTotalSeconds;
+                    syncCompensationWithElapsed();
                     saveSettings();
                     updateCompensationPreview();
                     updateUI();

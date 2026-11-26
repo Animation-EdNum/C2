@@ -122,6 +122,42 @@
             background-attachment: fixed;
         }
 
+        body.high-contrast {
+            --primary: #000000;
+            --primary-hover: #262626;
+            --primary-light: #fef08a;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --card-border: #000000;
+            --border: #000000;
+            --text-main: #000000;
+            --text-light: #1e293b;
+            background: #ffffff !important;
+            background-image: none !important;
+        }
+
+        body.high-contrast .container {
+            background: #ffffff !important;
+            border: 2px solid #000000 !important;
+            box-shadow: none !important;
+        }
+
+        body.high-contrast .canal-card,
+        body.high-contrast .object-card,
+        body.high-contrast .media-reference-card,
+        body.high-contrast .speed-choice-btn,
+        body.high-contrast .instructions,
+        body.high-contrast .tab-btn {
+            background: #ffffff !important;
+            border: 2px solid #000000 !important;
+            color: #000000 !important;
+        }
+
+        body.high-contrast .tab-btn.active {
+            background: #000000 !important;
+            color: #fef08a !important;
+        }
+
         svg {
             display: inline-block;
             vertical-align: middle;
@@ -1012,41 +1048,49 @@
         }
 
         /* Mode TBI Projection */
-        body.mode-tbi {
+        body.mode-tbi,
+        body.projection {
             padding: 10px;
         }
 
-        body.mode-tbi .container {
+        body.mode-tbi .container,
+        body.projection .container {
             max-width: 1400px;
             padding: 1rem 1.5rem;
             margin: 0 auto;
         }
 
-        body.mode-tbi .canal-card {
+        body.mode-tbi .canal-card,
+        body.projection .canal-card {
             padding: 1.25rem 1.5rem;
             gap: 1.5rem;
         }
 
-        body.mode-tbi .progress-track {
+        body.mode-tbi .progress-track,
+        body.projection .progress-track {
             height: 14px;
         }
 
-        body.mode-tbi .progress-info {
+        body.mode-tbi .progress-info,
+        body.projection .progress-info {
             font-size: 1.05rem;
         }
 
-        body.mode-tbi .canal-number {
+        body.mode-tbi .canal-number,
+        body.projection .canal-number {
             width: 48px;
             height: 48px;
             font-size: 1.35rem;
         }
 
-        body.mode-tbi .canal-play-btn {
+        body.mode-tbi .canal-play-btn,
+        body.projection .canal-play-btn {
             width: 50px;
             height: 50px;
         }
 
-        body.mode-tbi .canal-play-btn svg {
+        body.mode-tbi .canal-play-btn svg,
+        body.projection .canal-play-btn svg {
             width: 22px;
             height: 22px;
         }
@@ -1151,6 +1195,27 @@
             .container {
                 padding: 0 0.85rem 1.5rem;
             }
+            .app-header {
+                flex-wrap: nowrap;
+                gap: 0.5rem;
+            }
+            .header-title-wrapper {
+                flex: 1 1 auto;
+                min-width: 0;
+                gap: 0.5rem;
+            }
+            .header-icon {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+            }
+            .app-header h1 {
+                font-size: 1.02rem;
+                line-height: 1.2;
+            }
+            .badge-level {
+                display: none;
+            }
             .tabs {
                 gap: 6px;
             }
@@ -1158,9 +1223,35 @@
                 padding: 8px 14px;
                 font-size: 0.88rem;
             }
-            .app-header h1 {
-                font-size: 1.15rem;
-            }
+        }
+
+        .lab-multiplier-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px;
+            border-radius: var(--radius-md);
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .lab-mult-btn {
+            min-width: auto;
+            min-height: 32px;
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .lab-mult-btn.active {
+            background: var(--primary);
+            color: #ffffff;
         }
     </style>
 </head>
@@ -1172,7 +1263,7 @@
         <!-- En-tête standard C2 -->
         <header class="app-header">
             <div class="header-title-wrapper">
-                <a href="../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil" data-i18n-attr="title:common.back_home;aria-label:common.back_home">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
@@ -1180,24 +1271,36 @@
                 </div>
                 <div>
                     <h1>
-                        Simulateur de téléchargement
+                        <span data-i18n="simulateur_telechargement.title">Simulateur de téléchargement</span>
                         <span class="badge-level" data-i18n="simulateur_telechargement.badge_level">7-8H</span>
                     </h1>
                 </div>
             </div>
 
             <div class="action-buttons">
-                <button type="button" class="icon-action-btn theme-toggle" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème">
-                    <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
-                    <i data-fa="moon" id="icon-moon"></i>
-                </button>
-                <button type="button" class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI">
-                    <i data-fa="expand" id="icon-proj-expand"></i>
-                    <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
-                </button>
-                <button type="button" class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application">
-                    <i data-fa="arrows-rotate"></i>
-                </button>
+                <div class="settings-dropdown">
+                    <button type="button" class="icon-action-btn" title="Options" aria-label="Options" id="options-menu-btn" data-i18n-attr="title:common.options;aria-label:common.options">
+                        <i data-fa="gear"></i>
+                    </button>
+                    <div class="settings-dropdown-content">
+                        <button type="button" class="menu-item-btn" id="projection-toggle-btn" title="Mode TNI/TBI" aria-label="Mode TNI/TBI" data-i18n-attr="title:common.tbi_mode;aria-label:common.tbi_mode">
+                            <i data-fa="expand" id="icon-proj-expand"></i>
+                            <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
+                            <span id="projectionToggleText" data-i18n="common.tbi_mode">Mode TNI/TBI</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="menu-item-btn theme-toggle" id="theme-toggle-btn" aria-label="Changer de thème" title="Changer de thème" data-i18n-attr="aria-label:common.theme_toggle;title:common.theme_toggle">
+                            <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
+                            <i data-fa="moon" id="icon-moon"></i>
+                            <span id="themeToggleText" data-i18n="common.theme_dark">Sombre</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button type="button" class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application" title="Réinitialiser l'application" data-i18n-attr="aria-label:common.reset;title:common.reset">
+                            <i data-fa="arrows-rotate"></i>
+                            <span id="resetCacheText" data-i18n="common.reset">Réinitialiser</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -1206,11 +1309,11 @@
             <div class="tabs" role="tablist" aria-label="Modes du simulateur">
                 <button type="button" class="tab-btn active" id="tabDefiBtn" role="tab" aria-selected="true" aria-controls="viewDefi">
                     <i data-fa="shuffle"></i>
-                    <span>Défi des 4 médias</span>
+                    <span data-i18n="simulateur_telechargement.tab_defi">Défi des 4 médias</span>
                 </button>
                 <button type="button" class="tab-btn" id="tabLabBtn" role="tab" aria-selected="false" aria-controls="viewLab">
                     <i data-fa="wifi"></i>
-                    <span>Laboratoire de débits</span>
+                    <span data-i18n="simulateur_telechargement.tab_lab">Laboratoire de débits</span>
                 </button>
             </div>
 
@@ -1220,12 +1323,12 @@
         <div id="viewDefi" role="tabpanel" aria-labelledby="tabDefiBtn">
             <!-- Consigne déroulante intégrée au Défi -->
             <details class="instructions" id="consigneBox">
-                <summary><strong>📖 Consigne de l'activité (cliquer pour ouvrir/masquer)</strong></summary>
+                <summary><strong data-i18n="simulateur_telechargement.instructions_summary">📖 Consigne de l'activité (cliquer pour ouvrir/masquer)</strong></summary>
                 <div class="instructions-content" style="margin-top: 0.6rem;">
-                    <p>1. Clique sur les boutons <strong>« Démarrer le téléchargement »</strong> à gauche pour chaque canal (1 à 4) ou sur <strong>« Tout lancer »</strong>.</p>
-                    <p>2. Observe la vitesse et le temps d'avancement des Ko pour chaque fichier sur sa jauge.</p>
-                    <p>3. <strong>Émets ton hypothèse :</strong> clique directement sur <strong>📄 Texte</strong>, <strong>🖼️ Image</strong>, <strong>🎵 Audio</strong> ou <strong>🎬 Vidéo</strong> dès que tu penses avoir reconnu le média. La validation est immédiate !</p>
-                    <p>4. Découvre ton score final et clique sur les fiches des médias ci-dessous pour explorer leurs caractéristiques.</p>
+                    <p data-i18n-html="simulateur_telechargement.step1_html">1. Clique sur les boutons <strong>« Démarrer le téléchargement »</strong> à gauche pour chaque canal (1 à 4) ou sur <strong>« Tout lancer »</strong>.</p>
+                    <p data-i18n="simulateur_telechargement.step2">2. Observe la vitesse et le temps d'avancement des Ko pour chaque fichier sur sa jauge.</p>
+                    <p data-i18n-html="simulateur_telechargement.step3_html">3. <strong>Émets ton hypothèse :</strong> clique directement sur <strong>📄 Texte</strong>, <strong>🖼️ Image</strong>, <strong>🎵 Audio</strong> ou <strong>🎬 Vidéo</strong> dès que tu penses avoir reconnu le média. La validation est immédiate !</p>
+                    <p data-i18n="simulateur_telechargement.step4">4. Découvre ton score final et clique sur les fiches des médias ci-dessous pour explorer leurs caractéristiques.</p>
                 </div>
             </details>
 
@@ -1234,14 +1337,14 @@
                 <div class="command-group">
                     <button type="button" class="btn-action btn-primary" id="btnLaunchAll">
                         <i data-fa="play"></i>
-                        Tout lancer
+                        <span data-i18n="simulateur_telechargement.launch_all">Tout lancer</span>
                     </button>
                     <button type="button" class="btn-action" id="btnReset">
                         <i data-fa="arrows-rotate"></i>
-                        Réinitialiser
+                        <span data-i18n="common.reset">Réinitialiser</span>
                     </button>
                 </div>
-                <div class="game-status-hint" id="gameStatusHint">
+                <div class="game-status-hint" id="gameStatusHint" data-i18n="simulateur_telechargement.ready_hint">
                     Prêt ! Lance les téléchargements pour tester les 4 fichiers.
                 </div>
             </div>
@@ -1254,58 +1357,58 @@
             <!-- Cartes de référence des médias -->
             <div class="media-cards-title">
                 <i data-fa="eye"></i>
-                Les 4 médias de l'activité (clique pour inspecter)
+                <span data-i18n="simulateur_telechargement.media_cards_title">Les 4 médias de l'activité (clique pour inspecter)</span>
             </div>
             <div class="media-cards-grid">
                 <div class="media-reference-card card-text" data-media="texte">
                     <div class="media-card-header">
-                        <span class="media-card-title" style="color: var(--color-text);">
+                        <span class="media-card-title" style="color: var(--color-text);" data-i18n="simulateur_telechargement.media_text">
                             📄 Texte
                         </span>
                     </div>
-                    <div class="media-card-subtitle">Livre de 311 pages</div>
+                    <div class="media-card-subtitle" data-i18n="simulateur_telechargement.media_text_sub">Livre de 311 pages</div>
                     <div class="media-card-stats">
-                        <span>Taille : ~500 Ko</span>
-                        <span>Temps : ~0.8 s</span>
+                        <span data-i18n="simulateur_telechargement.media_text_size">Taille : ~500 Ko</span>
+                        <span data-i18n="simulateur_telechargement.media_text_time">Temps : ~0.8 s</span>
                     </div>
                 </div>
 
                 <div class="media-reference-card card-image" data-media="image">
                     <div class="media-card-header">
-                        <span class="media-card-title" style="color: var(--color-image);">
+                        <span class="media-card-title" style="color: var(--color-image);" data-i18n="simulateur_telechargement.media_image">
                             🖼️ Image
                         </span>
                     </div>
-                    <div class="media-card-subtitle">Image plein écran HD</div>
+                    <div class="media-card-subtitle" data-i18n="simulateur_telechargement.media_image_sub">Image plein écran HD</div>
                     <div class="media-card-stats">
-                        <span>Taille : ~1.8 Mo</span>
-                        <span>Temps : ~4.5 s</span>
+                        <span data-i18n="simulateur_telechargement.media_image_size">Taille : ~1.8 Mo</span>
+                        <span data-i18n="simulateur_telechargement.media_image_time">Temps : ~4.5 s</span>
                     </div>
                 </div>
 
                 <div class="media-reference-card card-audio" data-media="audio">
                     <div class="media-card-header">
-                        <span class="media-card-title" style="color: var(--color-audio);">
+                        <span class="media-card-title" style="color: var(--color-audio);" data-i18n="simulateur_telechargement.media_audio">
                             🎵 Audio
                         </span>
                     </div>
-                    <div class="media-card-subtitle">Morceau de musique de 4 min</div>
+                    <div class="media-card-subtitle" data-i18n="simulateur_telechargement.media_audio_sub">Morceau de musique de 4 min</div>
                     <div class="media-card-stats">
-                        <span>Taille : ~4 Mo</span>
-                        <span>Temps : ~8.5 s</span>
+                        <span data-i18n="simulateur_telechargement.media_audio_size">Taille : ~4 Mo</span>
+                        <span data-i18n="simulateur_telechargement.media_audio_time">Temps : ~8.5 s</span>
                     </div>
                 </div>
 
                 <div class="media-reference-card card-video" data-media="video">
                     <div class="media-card-header">
-                        <span class="media-card-title" style="color: var(--color-video);">
+                        <span class="media-card-title" style="color: var(--color-video);" data-i18n="simulateur_telechargement.media_video">
                             🎬 Vidéo
                         </span>
                     </div>
-                    <div class="media-card-subtitle">Film de 2h, qualité standard</div>
+                    <div class="media-card-subtitle" data-i18n="simulateur_telechargement.media_video_sub">Film de 2h, qualité standard</div>
                     <div class="media-card-stats">
-                        <span>Taille : ~700 Mo</span>
-                        <span>Temps : ~19 s</span>
+                        <span data-i18n="simulateur_telechargement.media_video_size">Taille : ~700 Mo</span>
+                        <span data-i18n="simulateur_telechargement.media_video_time">Temps : ~19 s</span>
                     </div>
                 </div>
             </div>
@@ -1320,27 +1423,27 @@
                 <div class="lab-controls-panel">
                     <h2 style="font-size: 1.05rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
                         <i data-fa="wifi"></i>
-                        Choisis ta vitesse de connexion simulée :
+                        <span data-i18n="simulateur_telechargement.lab_speed_title">Choisis ta vitesse de connexion simulée :</span>
                     </h2>
-                    <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                    <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 0.75rem;" data-i18n="simulateur_telechargement.lab_speed_desc">
                         Observe comment la vitesse du réseau transforme radicalement le temps d'attente pour un même fichier !
                     </p>
                     <div class="lab-speeds-grid" id="speedSelectorGrid">
                         <button type="button" class="speed-choice-btn" data-speed="56k">
-                            <span class="speed-btn-name">📞 Modem 56k</span>
-                            <span class="speed-btn-rate">56 Kb/s (~7 Ko/s) · Années 90</span>
+                            <span class="speed-btn-name" data-i18n="simulateur_telechargement.speed_56k_name">📞 Modem 56k</span>
+                            <span class="speed-btn-rate" data-i18n="simulateur_telechargement.speed_56k_rate">56 Kb/s (~7 Ko/s) · Années 90</span>
                         </button>
                         <button type="button" class="speed-choice-btn active" data-speed="adsl">
-                            <span class="speed-btn-name">🌐 ADSL / 3G</span>
-                            <span class="speed-btn-rate">2 Mb/s (~250 Ko/s) · Années 2000</span>
+                            <span class="speed-btn-name" data-i18n="simulateur_telechargement.speed_adsl_name">🌐 ADSL / 3G</span>
+                            <span class="speed-btn-rate" data-i18n="simulateur_telechargement.speed_adsl_rate">2 Mb/s (~250 Ko/s) · Années 2000</span>
                         </button>
                         <button type="button" class="speed-choice-btn" data-speed="vdsl">
-                            <span class="speed-btn-name">📶 4G / VDSL École</span>
-                            <span class="speed-btn-rate">20 Mb/s (~2.5 Mo/s) · Actuel</span>
+                            <span class="speed-btn-name" data-i18n="simulateur_telechargement.speed_vdsl_name">📶 4G / VDSL École</span>
+                            <span class="speed-btn-rate" data-i18n="simulateur_telechargement.speed_vdsl_rate">20 Mb/s (~2.5 Mo/s) · Actuel</span>
                         </button>
                         <button type="button" class="speed-choice-btn" data-speed="fiber">
-                            <span class="speed-btn-name">⚡ Fibre optique / 5G</span>
-                            <span class="speed-btn-rate">200 Mb/s (~25 Mo/s) · Ultra-rapide</span>
+                            <span class="speed-btn-name" data-i18n="simulateur_telechargement.speed_fiber_name">⚡ Fibre optique / 5G</span>
+                            <span class="speed-btn-rate" data-i18n="simulateur_telechargement.speed_fiber_rate">200 Mb/s (~25 Mo/s) · Ultra-rapide</span>
                         </button>
                     </div>
                 </div>
@@ -1349,13 +1452,18 @@
                 <div class="lab-toolbar">
                     <div class="lab-toolbar-left">
                         <button type="button" class="btn-action btn-primary" id="btnLabLaunchAll">
-                            <i data-fa="play"></i> Tout lancer (9 fichiers)
+                            <i data-fa="play"></i> <span data-i18n="simulateur_telechargement.lab_launch_all">Tout lancer (9 fichiers)</span>
                         </button>
                         <button type="button" class="btn-action" id="btnLabCancelAll" style="display:none;">
-                            <i data-fa="xmark"></i> Tout arrêter
+                            <i data-fa="xmark"></i> <span data-i18n="simulateur_telechargement.lab_cancel_all">Tout arrêter</span>
                         </button>
+                        <div class="lab-multiplier-group" role="group" aria-label="Vitesse de simulation">
+                            <button type="button" class="lab-mult-btn active" data-mult="1" title="Vitesse réelle" data-i18n-attr="title:simulateur_telechargement.mult_1_title">×1</button>
+                            <button type="button" class="lab-mult-btn" data-mult="60" title="Accéléré : 1 minute par seconde" data-i18n-attr="title:simulateur_telechargement.mult_60_title">×60</button>
+                            <button type="button" class="lab-mult-btn" data-mult="3600" title="Ultra-rapide : 1 heure par seconde" data-i18n-attr="title:simulateur_telechargement.mult_3600_title">×3600</button>
+                        </div>
                     </div>
-                    <div class="game-status-hint" id="labStatusHint">
+                    <div class="game-status-hint" id="labStatusHint" data-i18n="simulateur_telechargement.lab_status_hint">
                         Lance tous les téléchargements pour comparer les 9 fichiers en temps réel.
                     </div>
                 </div>
@@ -1363,19 +1471,19 @@
                 <!-- Les 9 Objets officiels de la Fiche 2 -->
                 <div>
                     <!-- Section Ko -->
-                    <div class="objects-category-title" style="color: var(--color-text);">
+                    <div class="objects-category-title" style="color: var(--color-text);" data-i18n="simulateur_telechargement.cat_ko">
                         📄 Documents de type Texte (Zone des Kilo-octets · Ko)
                     </div>
                     <div class="objects-grid" id="gridKo"></div>
 
                     <!-- Section Mo -->
-                    <div class="objects-category-title" style="color: var(--color-audio); margin-top: 1.5rem;">
+                    <div class="objects-category-title" style="color: var(--color-audio); margin-top: 1.5rem;" data-i18n="simulateur_telechargement.cat_mo">
                         🖼️🎵 Images & Musique (Zone des Méga-octets · Mo)
                     </div>
                     <div class="objects-grid" id="gridMo"></div>
 
                     <!-- Section Go -->
-                    <div class="objects-category-title" style="color: var(--color-video); margin-top: 1.5rem;">
+                    <div class="objects-category-title" style="color: var(--color-video); margin-top: 1.5rem;" data-i18n="simulateur_telechargement.cat_go">
                         🎬 Vidéos & Films (Zone des Giga-octets · Go)
                     </div>
                     <div class="objects-grid" id="gridGo"></div>
@@ -1405,11 +1513,11 @@
     <!-- Modale d'Aperçu Média -->
     <div class="modal-overlay" id="mediaModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-card">
-            <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Fermer">
+            <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Fermer" data-i18n-attr="aria-label:common.close">
                 <i data-fa="xmark"></i>
             </button>
-            <h2 id="modalTitle" style="font-size: 1.25rem; font-weight: 800; margin: 0 0 0.25rem;">Titre</h2>
-            <div id="modalSubtitle" style="color: var(--text-light); font-size: 0.9rem; font-style: italic;">Sous-titre</div>
+            <h2 id="modalTitle" style="font-size: 1.25rem; font-weight: 800; margin: 0 0 0.25rem;" data-i18n="simulateur_telechargement.modal_title">Titre</h2>
+            <div id="modalSubtitle" style="color: var(--text-light); font-size: 0.9rem; font-style: italic;" data-i18n="simulateur_telechargement.modal_subtitle">Sous-titre</div>
 
             <div class="modal-illustration" id="modalIllustration"></div>
 
@@ -1430,6 +1538,35 @@
     <script>
         /* SPDX-License-Identifier: AGPL-3.0-only
          * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
+
+        const st = (key, fb, vars) => (window.I18N && typeof window.I18N.t === 'function')
+            ? window.I18N.t(key, fb, vars)
+            : (vars ? String(fb).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? String(vars[k]) : `{${k}}`)) : fb);
+
+        function getMediaText(media) {
+            if (!media) return {};
+            const k = media.id;
+            return {
+                ...media,
+                name: st(`simulateur_telechargement.media_${k}_name`, media.name),
+                subtitle: st(`simulateur_telechargement.media_${k}_subtitle`, media.subtitle),
+                sizeDisplay: st(`simulateur_telechargement.media_${k}_size`, media.sizeDisplay),
+                totalDisplay: st(`simulateur_telechargement.media_${k}_total`, media.totalDisplay),
+                description: st(`simulateur_telechargement.media_${k}_desc`, media.description),
+                analogy: st(`simulateur_telechargement.media_${k}_analogy`, media.analogy)
+            };
+        }
+
+        function getFiche2Text(obj) {
+            if (!obj) return {};
+            const k = obj.id;
+            return {
+                ...obj,
+                title: st(`simulateur_telechargement.obj_${k}_title`, obj.title),
+                sizeDisplay: st(`simulateur_telechargement.obj_${k}_size`, obj.sizeDisplay),
+                desc: st(`simulateur_telechargement.obj_${k}_desc`, obj.desc)
+            };
+        }
 
         // Configuration des 4 Médias pour le Défi (Activité 3)
         const MEDIAS_CONFIG = {
@@ -1600,9 +1737,24 @@
         // État de l'application
         let state = {
             currentSpeed: 'adsl',
+            labMultiplier: 1,
             // Canaux 1 à 4
             canals: []
         };
+
+        function setBtnIconAndLabel(btn, iconName, text) {
+            if (!btn) return;
+            const frag = document.createDocumentFragment();
+            if (iconName) {
+                const icon = document.createElement('i');
+                icon.setAttribute('data-fa', iconName);
+                frag.appendChild(icon);
+            }
+            if (text) {
+                frag.appendChild(document.createTextNode((iconName ? ' ' : '') + text));
+            }
+            btn.replaceChildren(frag);
+        }
 
         // Algorithme de mélange Fisher-Yates
         function shuffleArray(arr) {
@@ -1627,22 +1779,27 @@
 
         // Formatage lisible des Ko avec séparateur de milliers
         function formatKo(ko) {
-            return Math.round(ko).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' Ko';
+            return Math.round(ko).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ' + st('simulateur_telechargement.unit_ko', 'Ko');
         }
 
         // Formatage lisible du temps
         function formatDuration(seconds) {
-            if (seconds < 0.05) return '< 0.1 s';
-            if (seconds < 60) return seconds.toFixed(1).replace('.', ',') + ' s';
-            const mins = Math.floor(seconds / 60);
-            const remSecs = Math.round(seconds % 60);
-            if (mins < 60) return `${mins} min ${remSecs > 0 ? remSecs + ' s' : ''}`;
+            if (seconds < 0.05) return st('simulateur_telechargement.dur_lt_01', '< 0.1 s');
+            const uS = st('simulateur_telechargement.unit_s', 's');
+            const uMin = st('simulateur_telechargement.unit_min', 'min');
+            const uH = st('simulateur_telechargement.unit_h', 'h');
+            const uD = st('simulateur_telechargement.unit_d', 'j');
+            if (seconds < 59.95) return `${seconds.toFixed(1).replace('.', ',')} ${uS}`;
+            const totalSecs = Math.round(seconds);
+            const mins = Math.floor(totalSecs / 60);
+            const remSecs = totalSecs % 60;
+            if (mins < 60) return remSecs > 0 ? `${mins} ${uMin} ${remSecs} ${uS}` : `${mins} ${uMin}`;
             const hours = Math.floor(mins / 60);
             const remMins = mins % 60;
-            if (hours < 24) return `${hours} h ${remMins > 0 ? remMins + ' min' : ''}`;
+            if (hours < 24) return remMins > 0 ? `${hours} ${uH} ${remMins} ${uMin}` : `${hours} ${uH}`;
             const days = Math.floor(hours / 24);
             const remHours = hours % 24;
-            return `${days} j ${remHours > 0 ? remHours + ' h' : ''}`;
+            return remHours > 0 ? `${days} ${uD} ${remHours} ${uH}` : `${days} ${uD}`;
         }
 
         /* ----------------------------------------------------
@@ -1654,31 +1811,35 @@
             container.innerHTML = '';
 
             state.canals.forEach(c => {
-                const media = MEDIAS_CONFIG[c.mediaKey];
+                const startLbl = st('simulateur_telechargement.start_canal_aria', `Démarrer le canal ${c.id}`, { id: c.id });
+                const tTxt = st('simulateur_telechargement.media_texte_name', 'Texte');
+                const tImg = st('simulateur_telechargement.media_image_name', 'Image');
+                const tAud = st('simulateur_telechargement.media_audio_name', 'Audio');
+                const tVid = st('simulateur_telechargement.media_video_name', 'Vidéo');
                 const card = document.createElement('div');
                 card.className = 'canal-card';
                 card.id = `canalCard-${c.id}`;
 
                 card.innerHTML = `
                     <div class="canal-number" id="canalNum-${c.id}">${c.id}</div>
-                    <button type="button" class="canal-play-btn" id="playBtn-${c.id}" title="Démarrer le canal ${c.id}" aria-label="Démarrer le canal ${c.id}">
+                    <button type="button" class="canal-play-btn" id="playBtn-${c.id}" title="${startLbl}" aria-label="${startLbl}">
                         <i data-fa="play"></i>
                     </button>
                     <div class="progress-block">
                         <div class="progress-info">
-                            <span id="sizeLabel-${c.id}">${formatKo(0)} / ${media ? media.totalDisplay : '---'}</span>
-                            <span id="timeLabel-${c.id}">0,0 s (0%)</span>
+                            <span id="sizeLabel-${c.id}">${formatKo(0)}</span>
+                            <span id="timeLabel-${c.id}">0,0 ${st('simulateur_telechargement.unit_s', 's')}</span>
                         </div>
                         <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressTrack-${c.id}">
                             <div class="progress-fill" id="progressFill-${c.id}"></div>
                         </div>
                     </div>
                     <div class="guess-block" id="guessBlock-${c.id}">
-                        <span style="font-size:0.82rem;font-weight:700;margin-right:0.2rem;color:var(--text-light);">Je pense que c'est :</span>
-                        <button type="button" class="guess-btn" data-guess="texte" title="Texte">📄 Texte</button>
-                        <button type="button" class="guess-btn" data-guess="image" title="Image">🖼️ Image</button>
-                        <button type="button" class="guess-btn" data-guess="audio" title="Audio">🎵 Audio</button>
-                        <button type="button" class="guess-btn" data-guess="video" title="Vidéo">🎬 Vidéo</button>
+                        <span style="font-size:0.82rem;font-weight:700;margin-right:0.2rem;color:var(--text-light);">${st('simulateur_telechargement.guess_prefix', 'Je pense que c\'est :')}</span>
+                        <button type="button" class="guess-btn" data-guess="texte" title="${tTxt}">📄 ${tTxt}</button>
+                        <button type="button" class="guess-btn" data-guess="image" title="${tImg}">🖼️ ${tImg}</button>
+                        <button type="button" class="guess-btn" data-guess="audio" title="${tAud}">🎵 ${tAud}</button>
+                        <button type="button" class="guess-btn" data-guess="video" title="${tVid}">🎬 ${tVid}</button>
                     </div>
                     <div class="verdict-block" id="verdictBlock-${c.id}">
                         <div class="revealed-pill" id="revealedPill-${c.id}"></div>
@@ -1732,7 +1893,7 @@
 
             const playBtn = document.getElementById(`playBtn-${canal.id}`);
             if (playBtn) {
-                playBtn.innerHTML = '<i data-fa="pause"></i>';
+                setBtnIconAndLabel(playBtn, 'pause');
                 window.fa?.createIcons?.();
             }
 
@@ -1743,15 +1904,16 @@
             canal.timerId = setInterval(() => {
                 const elapsed = Date.now() - startTime;
                 let pct = (elapsed / totalDurationMs) * 100;
-                canal.timeElapsed = elapsed / 1000;
+                canal.timeElapsed = Math.min(elapsed / 1000, media.duration);
 
                 if (pct >= 100) {
                     pct = 100;
+                    canal.progress = 100;
                     finishCanal(canal);
+                } else {
+                    canal.progress = pct;
+                    updateCanalProgressUI(canal);
                 }
-
-                canal.progress = pct;
-                updateCanalProgressUI(canal);
             }, 30);
         }
 
@@ -1762,7 +1924,7 @@
 
             const playBtn = document.getElementById(`playBtn-${canal.id}`);
             if (playBtn) {
-                playBtn.innerHTML = '<i data-fa="play"></i>';
+                setBtnIconAndLabel(playBtn, 'play');
                 window.fa?.createIcons?.();
             }
         }
@@ -1770,22 +1932,26 @@
         function finishCanal(canal) {
             canal.isRunning = false;
             canal.isFinished = true;
+            canal.progress = 100;
             clearInterval(canal.timerId);
             canal.timerId = null;
 
             const playBtn = document.getElementById(`playBtn-${canal.id}`);
             if (playBtn) {
-                playBtn.innerHTML = '<i data-fa="check"></i>';
+                setBtnIconAndLabel(playBtn, 'check');
                 playBtn.disabled = true;
-                window.fa?.createIcons?.();
             }
 
-            const sizeLabel = document.getElementById(`sizeLabel-${canal.id}`);
-            const media = MEDIAS_CONFIG[canal.mediaKey];
-            if (sizeLabel && media) {
-                sizeLabel.textContent = `${formatKo(media.sizeKo)} / ${media.totalDisplay}`;
+            updateCanalProgressUI(canal);
+
+            const launchBtn = document.getElementById('btnLaunchAll');
+            if (launchBtn && !state.canals.some(c => c.isRunning)) {
+                const allFinished = state.canals.every(c => c.isFinished);
+                setBtnIconAndLabel(launchBtn, 'play', st('simulateur_telechargement.btn_launch_all', 'Tout lancer'));
+                launchBtn.disabled = allFinished;
             }
 
+            window.fa?.createIcons?.();
             if (typeof playSound === 'function') playSound('tick');
             updateStatusHint();
         }
@@ -1795,16 +1961,23 @@
             const timeLabel = document.getElementById(`timeLabel-${canal.id}`);
             const sizeLabel = document.getElementById(`sizeLabel-${canal.id}`);
             const track = document.getElementById(`progressTrack-${canal.id}`);
-            const media = MEDIAS_CONFIG[canal.mediaKey];
+            const mediaRaw = MEDIAS_CONFIG[canal.mediaKey];
+            const media = getMediaText(mediaRaw);
+            const uS = st('simulateur_telechargement.unit_s', 's');
 
             if (fill) fill.style.width = canal.progress + '%';
             if (track) track.setAttribute('aria-valuenow', Math.round(canal.progress));
             if (timeLabel) {
-                timeLabel.textContent = `${canal.timeElapsed.toFixed(1).replace('.', ',')} s (${Math.round(canal.progress)}%)`;
+                const elapsedStr = `${canal.timeElapsed.toFixed(1).replace('.', ',')} ${uS}`;
+                timeLabel.textContent = canal.isRevealed
+                    ? `${elapsedStr} (${Math.round(canal.progress)}%)`
+                    : elapsedStr;
             }
-            if (sizeLabel && media) {
-                const currentKo = (canal.progress / 100) * media.sizeKo;
-                sizeLabel.textContent = `${formatKo(currentKo)} / ${media.totalDisplay}`;
+            if (sizeLabel && mediaRaw) {
+                const currentKo = (canal.progress / 100) * mediaRaw.sizeKo;
+                sizeLabel.textContent = canal.isRevealed
+                    ? `${formatKo(currentKo)} / ${media.totalDisplay}`
+                    : formatKo(currentKo);
             }
         }
 
@@ -1814,7 +1987,8 @@
             if (!canal || canal.isRevealed) return;
 
             canal.isRevealed = true;
-            const targetMedia = MEDIAS_CONFIG[canal.mediaKey];
+            updateCanalProgressUI(canal);
+            const targetMedia = getMediaText(MEDIAS_CONFIG[canal.mediaKey]);
             const isCorrect = canal.userGuess === canal.mediaKey;
 
             const card = document.getElementById(`canalCard-${canalId}`);
@@ -1850,22 +2024,22 @@
             if (pill) {
                 pill.style.display = 'inline-flex';
                 pill.style.cursor = 'pointer';
-                pill.title = 'Cliquer pour voir la fiche détaillée';
+                pill.title = st('simulateur_telechargement.pill_title', 'Cliquer pour voir la fiche détaillée');
                 pill.addEventListener('click', () => openMediaModal(canal.mediaKey));
 
                 if (isCorrect) {
                     pill.style.background = targetMedia.badgeBg;
-                    pill.innerHTML = `✅ ${targetMedia.icon} ${targetMedia.name}`;
+                    pill.textContent = `✅ ${targetMedia.icon} ${targetMedia.name}`;
                     if (typeof playSound === 'function') playSound('success');
                     if (typeof showToast === 'function') {
-                        showToast(`Bravo ! Le canal ${canal.id} est bien ${targetMedia.name}.`, 'success');
+                        showToast(st('simulateur_telechargement.toast_guess_ok', `Bravo ! Le canal ${canal.id} est bien ${targetMedia.name}.`, { id: canal.id, name: targetMedia.name }), 'success');
                     }
                 } else {
                     pill.style.background = '#dc2626';
-                    pill.innerHTML = `❌ ${targetMedia.icon} ${targetMedia.name}`;
+                    pill.textContent = `❌ ${targetMedia.icon} ${targetMedia.name}`;
                     if (typeof playSound === 'function') playSound('error');
                     if (typeof showToast === 'function') {
-                        showToast(`Oups ! Le canal ${canal.id} était en réalité : ${targetMedia.name}.`, 'warning');
+                        showToast(st('simulateur_telechargement.toast_guess_wrong', `Oups ! Le canal ${canal.id} était en réalité : ${targetMedia.name}.`, { id: canal.id, name: targetMedia.name }), 'warning');
                     }
                 }
             }
@@ -1882,7 +2056,13 @@
                 }
                 const hint = document.getElementById('gameStatusHint');
                 if (hint) {
-                    hint.innerHTML = `🎉 <strong>Manche terminée !</strong> Score : ${correctCount}/4 prédictions correctes.`;
+                    const strong = document.createElement('strong');
+                    strong.textContent = st('simulateur_telechargement.round_finished', 'Manche terminée !');
+                    hint.replaceChildren(
+                        document.createTextNode('🎉 '),
+                        strong,
+                        document.createTextNode(' ' + st('simulateur_telechargement.round_score', `Score : ${correctCount}/4 prédictions correctes.`, { correct: correctCount }))
+                    );
                 }
             }
         }
@@ -1895,23 +2075,26 @@
             const anyRunning = state.canals.some(c => c.isRunning);
 
             if (anyRunning) {
-                hint.textContent = 'Téléchargement en cours... Observe bien les durées.';
+                hint.textContent = st('simulateur_telechargement.hint_running', 'Téléchargement en cours... Observe bien les durées.');
             } else if (allFinished) {
-                hint.textContent = 'Tous les téléchargements sont finis ! Clique sur ton choix pour valider chaque canal.';
+                hint.textContent = st('simulateur_telechargement.hint_all_finished', 'Tous les téléchargements sont finis ! Clique sur ton choix pour valider chaque canal.');
             }
         }
 
         // Tout lancer en même temps
         function launchAllCanals() {
             const anyRunning = state.canals.some(c => c.isRunning);
+            const launchBtn = document.getElementById('btnLaunchAll');
             if (anyRunning) {
                 state.canals.forEach(c => pauseCanal(c));
-                document.getElementById('btnLaunchAll').innerHTML = '<i data-fa="play"></i> Tout lancer';
+                setBtnIconAndLabel(launchBtn, 'play', st('simulateur_telechargement.btn_launch_all', 'Tout lancer'));
             } else {
                 state.canals.forEach(c => {
                     if (!c.isFinished) startCanal(c);
                 });
-                document.getElementById('btnLaunchAll').innerHTML = '<i data-fa="pause"></i> Tout suspendre';
+                if (state.canals.some(c => c.isRunning)) {
+                    setBtnIconAndLabel(launchBtn, 'pause', st('simulateur_telechargement.btn_pause_all', 'Tout suspendre'));
+                }
             }
             window.fa?.createIcons?.();
         }
@@ -1933,9 +2116,12 @@
             });
             initCanalsUI();
             const launchBtn = document.getElementById('btnLaunchAll');
-            if (launchBtn) launchBtn.innerHTML = '<i data-fa="play"></i> Tout lancer';
+            if (launchBtn) {
+                setBtnIconAndLabel(launchBtn, 'play', st('simulateur_telechargement.btn_launch_all', 'Tout lancer'));
+                launchBtn.disabled = false;
+            }
             const hint = document.getElementById('gameStatusHint');
-            if (hint) hint.textContent = 'Prêt ! Lance les téléchargements pour tester les 4 fichiers.';
+            if (hint) hint.textContent = st('simulateur_telechargement.hint_ready', 'Prêt ! Lance les téléchargements pour tester les 4 fichiers.');
             window.fa?.createIcons?.();
         }
 
@@ -1945,15 +2131,35 @@
         const activeLabSimulations = {};
 
         function formatBytes(bytes) {
-            if (bytes < 1024) return Math.round(bytes) + ' octets';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1).replace('.0', '').replace('.', ',') + ' Ko';
-            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1).replace('.0', '').replace('.', ',') + ' Mo';
-            return (bytes / (1024 * 1024 * 1024)).toFixed(2).replace('.', ',') + ' Go';
+            if (bytes < 1024) return Math.round(bytes) + ' ' + st('simulateur_telechargement.unit_bytes', 'octets');
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1).replace('.0', '').replace('.', ',') + ' ' + st('simulateur_telechargement.unit_ko', 'Ko');
+            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1).replace('.0', '').replace('.', ',') + ' ' + st('simulateur_telechargement.unit_mo', 'Mo');
+            return (bytes / (1024 * 1024 * 1024)).toFixed(2).replace('.', ',') + ' ' + st('simulateur_telechargement.unit_go', 'Go');
         }
 
         function initLabUI() {
             renderSpeedButtons();
+            renderMultiplierButtons();
             renderObjectsGrids();
+        }
+
+        function resetAllLabCardsUI() {
+            FICHE2_OBJECTS.forEach(obj => {
+                const track = document.getElementById(`simTrack-${obj.id}`);
+                const fill = document.getElementById(`simFill-${obj.id}`);
+                const statusEl = document.getElementById(`simStatus-${obj.id}`);
+                const b = document.getElementById(`simBtn-${obj.id}`);
+                if (track) track.style.display = 'none';
+                if (fill) fill.style.width = '0%';
+                if (statusEl) {
+                    statusEl.style.display = 'none';
+                    statusEl.textContent = '';
+                }
+                if (b) {
+                    b.className = 'object-sim-btn';
+                    setBtnIconAndLabel(b, 'download', st('simulateur_telechargement.lab_btn_sim', 'Simuler le téléchargement'));
+                }
+            });
         }
 
         function renderSpeedButtons() {
@@ -1964,9 +2170,24 @@
                     btn.classList.add('active');
                     state.currentSpeed = btn.getAttribute('data-speed');
 
-                    // Annule les simulations en cours pour recalculer proprement
+                    // Annule et réinitialise toutes les cartes pour éviter tout reste d'un ancien débit
                     cancelAllLabObjects();
+                    resetAllLabCardsUI();
                     updateObjectCalculations();
+                    window.fa?.createIcons?.();
+                });
+            });
+        }
+
+        function renderMultiplierButtons() {
+            const buttons = document.querySelectorAll('.lab-mult-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.labMultiplier = parseInt(btn.getAttribute('data-mult'), 10) || 1;
+                    cancelAllLabObjects();
+                    resetAllLabCardsUI();
                     window.fa?.createIcons?.();
                 });
             });
@@ -1984,18 +2205,19 @@
             gridGo.innerHTML = '';
 
             FICHE2_OBJECTS.forEach(obj => {
+                const tObj = getFiche2Text(obj);
                 const card = document.createElement('div');
                 card.className = 'object-card';
                 card.id = `objCard-${obj.id}`;
 
                 card.innerHTML = `
                     <div class="object-card-header">
-                        <span class="object-title">${obj.icon} ${obj.title}</span>
-                        <span class="object-size-badge">${obj.sizeDisplay}</span>
+                        <span class="object-title">${obj.icon} ${tObj.title}</span>
+                        <span class="object-size-badge">${tObj.sizeDisplay}</span>
                     </div>
-                    <p style="font-size:0.83rem;color:var(--text-light);margin:0;">${obj.desc}</p>
+                    <p style="font-size:0.83rem;color:var(--text-light);margin:0;">${tObj.desc}</p>
                     <div class="object-eta-box">
-                        <span>Temps estimé :</span>
+                        <span>${st('simulateur_telechargement.lab_eta_label', 'Temps estimé :')}</span>
                         <span class="object-eta-time" id="eta-${obj.id}">...</span>
                     </div>
                     <div class="progress-track" style="height:14px;display:none;margin-top:0.35rem;" id="simTrack-${obj.id}">
@@ -2003,7 +2225,7 @@
                     </div>
                     <div class="sim-live-status" id="simStatus-${obj.id}" style="display:none;margin-top:0.25rem;"></div>
                     <button type="button" class="object-sim-btn" id="simBtn-${obj.id}">
-                        <i data-fa="download"></i> Simuler le téléchargement
+                        <i data-fa="download"></i> ${st('simulateur_telechargement.lab_btn_sim', 'Simuler le téléchargement')}
                     </button>
                 `;
 
@@ -2045,7 +2267,7 @@
             });
             updateLabToolbarButtons();
             if (typeof showToast === 'function') {
-                showToast('Téléchargement des 9 fichiers lancé !', 'info');
+                showToast(st('simulateur_telechargement.lab_toast_all_started', 'Téléchargement des 9 fichiers lancé !'), 'info');
             }
         }
 
@@ -2059,11 +2281,11 @@
                     const b = document.getElementById(`simBtn-${obj.id}`);
                     if (b) {
                         b.className = 'object-sim-btn';
-                        b.innerHTML = '<i data-fa="download"></i> Simuler le téléchargement';
+                        setBtnIconAndLabel(b, 'download', st('simulateur_telechargement.lab_btn_sim', 'Simuler le téléchargement'));
                     }
                     const statusEl = document.getElementById(`simStatus-${obj.id}`);
                     if (statusEl) {
-                        statusEl.textContent = '❌ Téléchargement interrompu';
+                        statusEl.textContent = st('simulateur_telechargement.lab_status_aborted', '❌ Téléchargement interrompu');
                     }
                 }
             });
@@ -2078,16 +2300,17 @@
 
             if (!launchBtn) return;
             if (activeCount > 0) {
-                launchBtn.innerHTML = '<i data-fa="pause"></i> Tout arrêter';
+                setBtnIconAndLabel(launchBtn, 'pause', st('simulateur_telechargement.lab_btn_stop_all', 'Tout arrêter'));
                 if (cancelBtn) cancelBtn.style.display = 'inline-flex';
             } else {
-                launchBtn.innerHTML = '<i data-fa="play"></i> Tout lancer (9 fichiers)';
+                setBtnIconAndLabel(launchBtn, 'play', st('simulateur_telechargement.lab_btn_launch_all', 'Tout lancer (9 fichiers)'));
                 if (cancelBtn) cancelBtn.style.display = 'none';
             }
             window.fa?.createIcons?.();
         }
 
         function simulateObjectDownload(obj) {
+            const tObj = getFiche2Text(obj);
             const track = document.getElementById(`simTrack-${obj.id}`);
             const fill = document.getElementById(`simFill-${obj.id}`);
             const btn = document.getElementById(`simBtn-${obj.id}`);
@@ -2100,22 +2323,23 @@
 
                 if (btn) {
                     btn.className = 'object-sim-btn';
-                    btn.innerHTML = '<i data-fa="download"></i> Simuler le téléchargement';
+                    setBtnIconAndLabel(btn, 'download', st('simulateur_telechargement.lab_btn_sim', 'Simuler le téléchargement'));
                 }
                 if (statusEl) {
-                    statusEl.textContent = '❌ Téléchargement interrompu';
+                    statusEl.textContent = st('simulateur_telechargement.lab_status_aborted', '❌ Téléchargement interrompu');
                 }
                 updateLabToolbarButtons();
                 window.fa?.createIcons?.();
                 if (typeof showToast === 'function') {
-                    showToast(`Téléchargement de « ${obj.title} » interrompu.`, 'info');
+                    showToast(st('simulateur_telechargement.lab_toast_aborted', `Téléchargement de « ${tObj.title} » interrompu.`, { title: tObj.title }), 'info');
                 }
                 return;
             }
 
-            // Démarrage de la simulation en temps RÉEL (non compressé)
+            // Démarrage de la simulation (temps réel ou accéléré selon multiplicateur)
             const speedInfo = NETWORK_SPEEDS[state.currentSpeed];
             const actualSeconds = obj.sizeBytes / speedInfo.bytesPerSec;
+            const mult = state.labMultiplier || 1;
 
             if (track) track.style.display = 'block';
             if (statusEl) statusEl.style.display = 'block';
@@ -2123,14 +2347,14 @@
 
             if (btn) {
                 btn.className = 'object-sim-btn btn-cancel';
-                btn.innerHTML = '<i data-fa="xmark"></i> Annuler';
+                setBtnIconAndLabel(btn, 'xmark', st('simulateur_telechargement.lab_btn_cancel', 'Annuler'));
                 window.fa?.createIcons?.();
             }
 
             const startTime = Date.now();
 
             const timer = setInterval(() => {
-                const elapsed = (Date.now() - startTime) / 1000;
+                const elapsed = ((Date.now() - startTime) / 1000) * mult;
                 const downloadedBytes = Math.min(elapsed * speedInfo.bytesPerSec, obj.sizeBytes);
                 const pct = Math.min((downloadedBytes / obj.sizeBytes) * 100, 100);
 
@@ -2140,7 +2364,10 @@
                 const pctFormatted = pct < 1 ? pct.toFixed(2) : pct.toFixed(1);
 
                 if (statusEl) {
-                    statusEl.textContent = `${formatBytes(downloadedBytes)} / ${obj.sizeDisplay} (${pctFormatted}%) · Reste : ${formatDuration(remainingSecs)}`;
+                    const multTag = mult > 1 ? ' ' + st('simulateur_telechargement.lab_mult_tag', `· Accéléré ×${mult}`, { mult }) : '';
+                    const dlStr = formatBytes(downloadedBytes);
+                    const remStr = formatDuration(remainingSecs);
+                    statusEl.textContent = st('simulateur_telechargement.lab_status_progress', `${dlStr} / ${tObj.sizeDisplay} (${pctFormatted}%) · Reste : ${remStr}${multTag}`, { downloaded: dlStr, total: tObj.sizeDisplay, pct: pctFormatted, remaining: remStr, multTag });
                 }
 
                 if (downloadedBytes >= obj.sizeBytes) {
@@ -2149,16 +2376,17 @@
 
                     if (btn) {
                         btn.className = 'object-sim-btn';
-                        btn.innerHTML = '<i data-fa="download"></i> Relancer';
+                        setBtnIconAndLabel(btn, 'download', st('simulateur_telechargement.lab_btn_restart', 'Relancer'));
                     }
                     if (statusEl) {
-                        statusEl.innerHTML = `✅ Téléchargé en ${formatDuration(actualSeconds)} !`;
+                        const durStr = formatDuration(actualSeconds);
+                        statusEl.textContent = st('simulateur_telechargement.lab_status_done', `✅ Téléchargé en ${durStr} (réel) !`, { duration: durStr });
                     }
                     updateLabToolbarButtons();
                     window.fa?.createIcons?.();
                     if (typeof playSound === 'function') playSound('ding');
                     if (typeof showToast === 'function') {
-                        showToast(`Téléchargement de « ${obj.title} » terminé !`, 'success');
+                        showToast(st('simulateur_telechargement.lab_toast_done', `Téléchargement de « ${tObj.title} » terminé !`, { title: tObj.title }), 'success');
                     }
                 }
             }, 50);
@@ -2171,8 +2399,9 @@
            MODALE DESCRIPTIVE D'APERÇU
         ---------------------------------------------------- */
         function openMediaModal(mediaKey) {
-            const media = MEDIAS_CONFIG[mediaKey];
-            if (!media) return;
+            const mediaRaw = MEDIAS_CONFIG[mediaKey];
+            if (!mediaRaw) return;
+            const media = getMediaText(mediaRaw);
 
             document.getElementById('modalTitle').textContent = `${media.icon} ${media.name}`;
             document.getElementById('modalSubtitle').textContent = media.subtitle;
@@ -2182,12 +2411,13 @@
             illu.innerHTML = getSvgIllustration(mediaKey);
 
             const stats = document.getElementById('modalStatsBox');
+            const uS = st('simulateur_telechargement.unit_s', 's');
             stats.innerHTML = `
                 <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem;">
-                    <strong>Taille estimée :</strong> <span>${media.sizeDisplay}</span>
+                    <strong>${st('simulateur_telechargement.modal_est_size', 'Taille estimée :')}</strong> <span>${media.sizeDisplay}</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem;">
-                    <strong>Temps au défi :</strong> <span>~${media.duration.toFixed(1)} s</span>
+                    <strong>${st('simulateur_telechargement.modal_challenge_time', 'Temps au défi :')}</strong> <span>~${media.duration.toFixed(1)} ${uS}</span>
                 </div>
                 <div style="font-size:0.85rem;color:var(--text-light);margin-top:0.5rem;border-top:1px dashed var(--border);padding-top:0.4rem;">
                     💡 <em>${media.analogy}</em>
@@ -2212,7 +2442,7 @@
                         <line x1="45" y1="50" x2="155" y2="50" stroke="#93c5fd" stroke-width="3" stroke-linecap="round"/>
                         <line x1="45" y1="65" x2="155" y2="65" stroke="#93c5fd" stroke-width="3" stroke-linecap="round"/>
                         <line x1="45" y1="80" x2="110" y2="80" stroke="#93c5fd" stroke-width="3" stroke-linecap="round"/>
-                        <text x="100" y="100" fill="#2563eb" font-size="9" font-weight="bold" text-anchor="middle">LIVRE DE 311 PAGES</text>
+                        <text x="100" y="100" fill="#2563eb" font-size="9" font-weight="bold" text-anchor="middle">${st('simulateur_telechargement.svg_book_label', 'LIVRE DE 311 PAGES')}</text>
                     </svg>
                 `;
             } else if (mediaKey === 'image') {
@@ -2326,49 +2556,67 @@
             const projBtn = document.getElementById('projection-toggle-btn');
             function setProjectionMode(active) {
                 document.body.classList.toggle('mode-tbi', active);
+                document.body.classList.toggle('projection', active);
                 const iconExpand = document.getElementById('icon-proj-expand');
                 const iconCompress = document.getElementById('icon-proj-compress');
                 if (iconExpand && iconCompress) {
                     iconExpand.style.display = active ? 'none' : 'inline-block';
                     iconCompress.style.display = active ? 'inline-block' : 'none';
                 }
+                const projText = document.getElementById('projectionToggleText');
+                if (projText) {
+                    projText.textContent = active ? st('simulateur_telechargement.normal_mode', 'Mode normal') : st('common.tbi_mode', 'Mode TNI/TBI');
+                }
                 if (projBtn) {
-                    projBtn.setAttribute('title', active ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
-                    projBtn.setAttribute('aria-label', active ? 'Quitter le mode TNI/TBI' : 'Mode TNI/TBI');
+                    projBtn.setAttribute('title', active ? st('common.tbi_exit_esc', 'Quitter le mode TNI/TBI (Échap)') : st('common.tbi_mode', 'Mode TNI/TBI'));
+                    projBtn.setAttribute('aria-label', active ? st('common.tbi_exit_short', 'Quitter le mode TNI/TBI') : st('common.tbi_mode', 'Mode TNI/TBI'));
                 }
             }
 
             if (projBtn) {
                 projBtn.addEventListener('click', () => {
-                    const isTbi = document.body.classList.contains('mode-tbi');
+                    const isTbi = document.body.classList.contains('mode-tbi') || document.body.classList.contains('projection');
                     setProjectionMode(!isTbi);
                 });
             }
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && document.body.classList.contains('mode-tbi')) {
-                    setProjectionMode(false);
-                }
-            });
+            if (document.body.classList.contains('projection') || document.body.classList.contains('mode-tbi')) {
+                setProjectionMode(true);
+            }
 
             // Réinitialisation globale de l'application via le bouton standard C2
             window.__onResetApp = function () {
                 resetCanals();
                 cancelAllLabObjects();
+                resetAllLabCardsUI();
                 if (typeof showToast === 'function') {
-                    showToast('Simulation réinitialisée', 'info');
+                    showToast(st('simulateur_telechargement.toast_reset', 'Simulation réinitialisée'), 'info');
                 }
             };
 
-            // Fermeture de la modale
+            // Fermeture de la modale prioritaire avant sortie du mode TBI
             document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
             document.getElementById('mediaModal').addEventListener('click', (e) => {
                 if (e.target.id === 'mediaModal') closeModal();
             });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeModal();
+                if (e.key !== 'Escape') return;
+                const modal = document.getElementById('mediaModal');
+                if (modal && modal.classList.contains('open')) {
+                    closeModal();
+                } else if (document.body.classList.contains('mode-tbi') || document.body.classList.contains('projection')) {
+                    setProjectionMode(false);
+                }
             });
         });
+
+        window.SimTelechargementEngine = {
+            formatDuration,
+            formatKo,
+            finishCanal,
+            revealCanal,
+            state
+        };
     </script>
 </body>
 </html>

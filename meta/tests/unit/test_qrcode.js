@@ -130,14 +130,20 @@ describe('qrcode.html - QR engine & protocol encoders', () => {
         assert.strictEqual(window.formatBatchValue('https://scratch.mit.edu'), 'https://scratch.mit.edu', 'Already qualified URL remains unchanged');
     });
 
-    test('5. Reset function correctly targets .color-chip and synchronizes active chip', () => {
+    test('5. Reset function correctly targets .color-chip and synchronizes active chip and batch preview containers', () => {
         const { window, document } = createEnv();
-        // Select red chip
-        const redChip = document.querySelector('.color-chip[data-color="#ef4444"]');
-        if (redChip) {
-            redChip.click();
-            assert.strictEqual(redChip.classList.contains('active'), true, 'Red chip should be active after click');
-        }
+        // Select red chip (#b91c1c)
+        const redChip = document.querySelector('.color-chip[data-color="#b91c1c"]');
+        assert.ok(redChip, 'Red color chip (#b91c1c) must exist');
+        redChip.click();
+        assert.strictEqual(redChip.classList.contains('active'), true, 'Red chip should be active after click');
+
+        // Switch to batch tab so singlePreviewContainer gets hidden
+        const batchTab = document.querySelector('.tab-btn[data-type="batch"]');
+        assert.ok(batchTab, 'Batch tab button must exist');
+        batchTab.click();
+        assert.strictEqual(document.getElementById('singlePreviewContainer').classList.contains('hidden'), true);
+        assert.strictEqual(document.getElementById('batchPreviewContainer').classList.contains('hidden'), false);
 
         // Trigger reset
         window.resetAll();
@@ -145,9 +151,9 @@ describe('qrcode.html - QR engine & protocol encoders', () => {
         const blackChip = document.querySelector('.color-chip[data-color="#000000"]');
         assert.ok(blackChip, 'Black chip must exist');
         assert.strictEqual(blackChip.classList.contains('active'), true, 'Black color chip must be active after reset');
-        if (redChip) {
-            assert.strictEqual(redChip.classList.contains('active'), false, 'Red color chip must no longer be active');
-        }
+        assert.strictEqual(redChip.classList.contains('active'), false, 'Red color chip must no longer be active');
+        assert.strictEqual(document.getElementById('singlePreviewContainer').classList.contains('hidden'), false, 'Single preview must be restored after reset');
+        assert.strictEqual(document.getElementById('batchPreviewContainer').classList.contains('hidden'), true, 'Batch preview must be hidden after reset');
     });
 
     test('6. UTF-8 byte length calculation correctly counts multi-byte characters', () => {
@@ -157,11 +163,41 @@ describe('qrcode.html - QR engine & protocol encoders', () => {
         assert.strictEqual(window.getUtf8ByteLength('🎉'), 4, 'Emoji is 4 bytes in UTF-8');
     });
 
-    test('7. SVG generation produces valid vector XML document', () => {
+    test('7. SVG generation produces valid vector XML document including light foreground colors', () => {
         const { window } = createEnv();
         const svg = window.generateSvgFromQR('https://ednum.org', 'M', '#000000', '#ffffff');
         assert.ok(svg.includes('<svg'), 'Generated output must contain <svg tag');
         assert.ok(svg.includes('xmlns="http://www.w3.org/2000/svg"'), 'Must contain SVG namespace');
         assert.ok(svg.includes('viewBox="'), 'Must contain viewBox attribute for scalability');
+
+        // Simulate realistic white canvas with bright yellow (#fde047 -> RGB 253, 224, 71) finder square
+        const lightData = new Uint8ClampedArray(300 * 300 * 4).fill(255);
+        for (let y = 12; y < 82; y++) {
+            for (let x = 12; x < 82; x++) {
+                const i = (y * 300 + x) * 4;
+                lightData[i] = 253;
+                lightData[i + 1] = 224;
+                lightData[i + 2] = 71;
+                lightData[i + 3] = 255;
+            }
+        }
+        window.HTMLCanvasElement.prototype.getContext = () => ({
+            ...mockContext,
+            getImageData: () => ({ data: lightData })
+        });
+        const yellowSvg = window.generateSvgFromQR('https://ednum.org', 'M', '#fde047', '#ffffff');
+        assert.ok(yellowSvg.includes('<rect x="1" y="1" width="1" height="1" fill="#fde047"/>'), 'Light foreground color must emit SVG module rects instead of empty SVG');
+    });
+
+    test('8. WPA Wi-Fi password is hidden from subtext display unless explicitly enabled', () => {
+        const { window, document } = createEnv();
+        window.state.type = 'wifi';
+        document.getElementById('wifiSsid').value = 'Ecole_Prive';
+        document.getElementById('wifiPassword').value = 'MonSuperMotDePasse123';
+        document.getElementById('wifiType').value = 'WPA';
+
+        const subDefault = window.getSubtextDisplay();
+        assert.ok(subDefault.includes('Ecole_Prive'), 'SSID must appear');
+        assert.ok(!subDefault.includes('MonSuperMotDePasse123'), 'WPA password must NOT leak in subtext by default');
     });
 });

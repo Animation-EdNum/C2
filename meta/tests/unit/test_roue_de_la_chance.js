@@ -135,4 +135,13 @@ test('roue_de_la_chance.html - presets, number generator & personal list', async
         loadBtn.click();
         assert.strictEqual(choicesInput.value, myStudents.join('\n'), 'choicesInput should be restored with personal list');
     });
+
+    await t.test('file import controls and SheetJS + RosterImport scripts exist in setup view', () => {
+        assert.ok(htmlContent.includes('vendor/xlsx.full.min.js'), 'xlsx.full.min.js must be loaded for ENT Excel import');
+        assert.ok(htmlContent.includes('roster-import.js'), 'roster-import.js must be loaded');
+        const importBtn = window.document.getElementById('importRosterBtn');
+        const fileInput = window.document.getElementById('rosterFileInput');
+        assert.ok(importBtn, 'importRosterBtn must exist');
+        assert.ok(fileInput, 'rosterFileInput must exist');
+    });
 });

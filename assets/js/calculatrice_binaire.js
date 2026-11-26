@@ -426,6 +426,28 @@
         if (resetBtn) {
             resetBtn.addEventListener('click', resetCalc);
         }
+        const minusBtn = document.getElementById('btn-dec-minus');
+        if (minusBtn) {
+            minusBtn.addEventListener('click', () => {
+                if (typeof window.playSound === 'function') window.playSound('click');
+                setDecimalValue(Math.max(0, calculateSum() - 1));
+            });
+        }
+        const plusBtn = document.getElementById('btn-dec-plus');
+        if (plusBtn) {
+            plusBtn.addEventListener('click', () => {
+                if (typeof window.playSound === 'function') window.playSound('click');
+                setDecimalValue(Math.min(255, calculateSum() + 1));
+            });
+        }
+        const invertBtn = document.getElementById('btn-invert-bits');
+        if (invertBtn) {
+            invertBtn.addEventListener('click', invertBits);
+        }
+        const allOnesBtn = document.getElementById('btn-all-ones');
+        if (allOnesBtn) {
+            allOnesBtn.addEventListener('click', setAllOnes);
+        }
 
         // Boutons de copie
         const copyBinBtn = document.getElementById('btn-copy-bin');

@@ -91,6 +91,7 @@ let simState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
             correctProgram: [], options: [], locked: false, obstacles: [], isAnimating: false
         };
+        window.chalState = chalState;
 
         let readState = {
             difficulty: 'easy', robotRow: 0, robotCol: 0, robotDir: 0, targetRow: 0, targetCol: 0,
@@ -2188,8 +2189,11 @@ let simState = {
                 await sleep(currentSpeed - (cmd === 'forward' || cmd === 'backward' ? 350 : 0));
             }
 
+            const target = document.getElementById('chal-target');
+
             if (!chalState.locked) {
                 chalState.locked = true;
+                let adaptiveShown = false;
                 if (option.isCorrect) {
                     playSound('success');
                     simState.consecutiveMistakes = 0;
@@ -2197,7 +2201,7 @@ let simState = {
                     globalScore++;
                     globalStreak++;
                     if (globalStreak > globalStreakBest) globalStreakBest = globalStreak;
-                    const adaptiveShown = ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
+                    adaptiveShown = ScoreManager.addSuccess("chal", chalState.difficulty, chalState.mistakes || 0);
                     updateExtremeVisibility();
 
                     document.getElementById('global-score').textContent = globalScore;
@@ -2241,7 +2245,6 @@ let simState = {
                 }
             } else if (option.isCorrect) {
                 playSound('success');
-                const target = document.getElementById('chal-target');
                 if (target) target.classList.add('pulse');
             }
             chalState.isAnimating = false;

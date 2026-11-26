@@ -236,3 +236,59 @@ test('treasureBubbleState and nudge triggers', async (t) => {
         assert.strictEqual(window.treasureBubbleState.active, true);
     });
 });
+
+test('pickOption challenge completion without ReferenceError on target', async (t) => {
+    await t.test('completes first-try correct answer in challenge mode and pulses #chal-target', async () => {
+        const window = setupDOM();
+        const document = window.document;
+
+        const grid = document.createElement('div');
+        grid.id = 'chal-grid';
+        const robot = document.createElement('div');
+        robot.id = 'chal-robot';
+        const target = document.createElement('div');
+        target.id = 'chal-target';
+        const scoreEl = document.createElement('span');
+        scoreEl.id = 'global-score';
+        const streakEl = document.createElement('span');
+        streakEl.id = 'global-streak';
+        const nextBtn = document.createElement('button');
+        nextBtn.id = 'btn-next-challenge';
+        nextBtn.style.display = 'none';
+        const optBtn = document.createElement('div');
+        optBtn.className = 'challenge-option';
+        document.body.append(grid, robot, target, scoreEl, streakEl, nextBtn, optBtn);
+
+        window.activeTab = 'challenge';
+        window.ScoreManager = {
+            stats: {},
+            addSuccess: () => true,
+            addMistake: () => {}
+        };
+        window.handleStreakCelebration = () => {};
+        window.sleep = () => Promise.resolve();
+        window.moveRobot = (state) => ({ robotRow: state.robotRow, robotCol: state.robotCol + 1, robotDir: state.robotDir, blocked: false });
+        window.renderRobot = () => {};
+        window.TrailManager = { clear: () => {}, captureInitialState: () => {}, addSegment: () => {} };
+        Object.assign(window.simState, { consecutiveMistakes: 0 });
+        Object.assign(window.chalState, {
+            isAnimating: false,
+            locked: false,
+            difficulty: 'easy',
+            robotRow: 0,
+            robotCol: 0,
+            robotDir: 0,
+            obstacles: [],
+            mistakes: 0,
+            options: [{ cmds: ['forward'], isCorrect: true }]
+        });
+
+        await window.pickOption(0);
+
+        assert.strictEqual(window.chalState.locked, true);
+        assert.strictEqual(window.chalState.isAnimating, false);
+        assert.strictEqual(scoreEl.textContent, '1');
+        assert.strictEqual(nextBtn.style.display, 'inline-flex');
+        assert.strictEqual(target.classList.contains('pulse'), true);
+    });
+});

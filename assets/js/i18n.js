@@ -557,10 +557,12 @@
                 return;
             }
 
-            // Cas B : Barre d'actions directe (.action-buttons, comme sur index.html et indexC1.html)
-            const actionButtons = document.querySelector('.action-buttons, .header-actions');
+            // Cas B : Barre d'actions directe (.action-buttons, comme sur index.html, indexC1.html et outils enseignant)
+            const themeBtn = document.getElementById('theme-toggle-btn');
+            const actionButtons = (themeBtn && themeBtn.closest('.action-buttons, .header-actions'))
+                || document.querySelector('.action-buttons')
+                || document.querySelector('.header-actions');
             if (actionButtons) {
-                const themeBtn = document.getElementById('theme-toggle-btn');
                 const langBtn = document.createElement('button');
                 langBtn.className = 'icon-action-btn lang-toggle-btn';
                 langBtn.id = 'lang-toggle-btn';
@@ -578,7 +580,7 @@
                     langBtn.style.display = 'none';
                 }
 
-                if (themeBtn) {
+                if (themeBtn && themeBtn.parentNode === actionButtons) {
                     actionButtons.insertBefore(langBtn, themeBtn);
                 } else {
                     actionButtons.appendChild(langBtn);

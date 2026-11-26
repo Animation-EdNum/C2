@@ -230,4 +230,30 @@ describe('bareme.html - mathematical engine & DOM interactions', () => {
         const renderedRows = document.querySelectorAll('#tableBody tr').length;
         assert.ok(renderedRows <= 7, `Rendered table for 21 items across >= 3 groups must have <= 7 rows, got ${renderedRows}`);
     });
+
+    test('14. Invalid pointsFor4 shows validation feedback and shared URL params do not overwrite localStorage preferences', () => {
+        const localDom = new JSDOM(htmlContent, {
+            runScripts: 'dangerously',
+            url: 'http://localhost/webapps/teacher/bareme.html?total=30&p4=18'
+        });
+        const w = localDom.window;
+        const d = w.document;
+        try {
+            assert.strictEqual(d.getElementById('totalPoints').value, '30');
+            assert.strictEqual(w.localStorage.getItem('bareme_prefs_v2'), null, 'Initial load from URL params must NOT overwrite localStorage');
+
+            // Invalid threshold feedback
+            d.getElementById('pointsFor4').value = '45';
+            d.getElementById('pointsFor4').dispatchEvent(new w.Event('input'));
+            assert.strictEqual(d.getElementById('pointsFor4').getAttribute('aria-invalid'), 'true');
+            assert.ok(d.getElementById('pointsFor4Hint').classList.contains('visible'));
+            assert.ok(w.localStorage.getItem('bareme_prefs_v2'), 'Explicit user edit updates localStorage');
+        } finally {
+            w.close();
+        }
+    });
+
+    test('15. exportImage renders cleanly with Canvas 2D without SVG foreignObject', () => {
+        assert.ok(!htmlContent.includes('<foreignObject'), 'bareme.html must not rely on SVG foreignObject for PNG export');
+    });
 });

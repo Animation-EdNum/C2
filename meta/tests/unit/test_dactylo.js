@@ -243,5 +243,17 @@ test('dactylo.html - Visual keyboard guidance & non-clickable keys', async (t) =
         assert.strictEqual(noticeEl.classList.contains('visible'), false, 'Typing on physical keyboard must auto-dismiss touch notice');
         assert.strictEqual(window.sessionStorage.getItem('dactylo_touch_notice_dismissed'), 'true');
     });
+
+    await t.test('typing "<" or ">" renders safely without breaking errorMessage HTML structure', () => {
+        const errorMessage = window.document.getElementById('errorMessage');
+
+        window.dispatchEvent(new window.KeyboardEvent('keydown', { key: '<', bubbles: true }));
+        const strongWrong = errorMessage.querySelector('.error-main-msg strong');
+        assert.ok(strongWrong, 'Wrong character should be wrapped in a <strong> element');
+        assert.strictEqual(strongWrong.textContent, '<', 'Literal "<" must be preserved as text content');
+
+        window.dispatchEvent(new window.KeyboardEvent('keydown', { key: '>', bubbles: true }));
+        assert.strictEqual(errorMessage.querySelector('.error-main-msg strong')?.textContent, '>');
+    });
 });
 

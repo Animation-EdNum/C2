@@ -145,6 +145,10 @@
     // ==========================================
     // WEAK PATTERNS DETECTION
     // ==========================================
+    const gt = (key, fallback, params) => (typeof window !== 'undefined' && window.I18N && typeof window.I18N.t === 'function')
+        ? window.I18N.t(key, fallback, params)
+        : fallback;
+
     function detectWeakPatterns(pw) {
         if (!pw) return [];
         const warnings = [];
@@ -153,7 +157,7 @@
         // 1. Common weak dictionary words
         for (const w of COMMON_WEAK_WORDS) {
             if (lower.includes(w)) {
-                warnings.push(`Contient un mot trop classique ou prévisible (« ${w} »).`);
+                warnings.push(gt('generateur_mot_de_passe.warn_dict', 'Contient un mot trop classique ou prévisible (« {word} »).', { word: w }));
                 break;
             }
         }
@@ -161,7 +165,7 @@
         // 2. Keyboard sequences (4+ keys in sequence)
         for (const seq of COMMON_SEQUENCES) {
             if (lower.includes(seq)) {
-                warnings.push(`Contient une suite de clavier ou de chiffres évidente (« ${seq} »).`);
+                warnings.push(gt('generateur_mot_de_passe.warn_seq', 'Contient une suite de clavier ou de chiffres évidente (« {seq} »).', { seq }));
                 break;
             }
         }
@@ -169,7 +173,7 @@
         // 3. Repeated characters (3+ identical characters in a row, e.g., 'aaa', '111', '!!!')
         const repeatMatch = pw.match(/(.)\1{2,}/);
         if (repeatMatch) {
-            warnings.push(`Contient des répétitions de caractères consécutifs (« ${repeatMatch[0]} »).`);
+            warnings.push(gt('generateur_mot_de_passe.warn_repeat', 'Contient des répétitions de caractères consécutifs (« {rep} »).', { rep: repeatMatch[0] }));
         }
 
         return warnings;
@@ -179,7 +183,7 @@
     // CRACK TIME ESTIMATION
     // ==========================================
     function estimateCrackTime(pw, patterns = []) {
-        if (!pw) return "instantané";
+        if (!pw) return gt('generateur_mot_de_passe.time_instant', 'instantané');
 
         const len = pw.length;
         const hasUpper = /[A-Z]/.test(pw);
@@ -238,23 +242,23 @@
         }
 
         if (seconds < 1) {
-            return "instantané";
+            return gt('generateur_mot_de_passe.time_instant', 'instantané');
         } else if (seconds < 60) {
-            return "quelques secondes";
+            return gt('generateur_mot_de_passe.time_seconds', 'quelques secondes');
         } else if (seconds < 3600) {
-            return "quelques minutes";
+            return gt('generateur_mot_de_passe.time_minutes', 'quelques minutes');
         } else if (seconds < 86400) {
-            return "quelques heures";
+            return gt('generateur_mot_de_passe.time_hours', 'quelques heures');
         } else if (seconds < 2592000) {
-            return "quelques jours";
+            return gt('generateur_mot_de_passe.time_days', 'quelques jours');
         } else if (seconds < 31536000) {
-            return "quelques mois";
+            return gt('generateur_mot_de_passe.time_months', 'quelques mois');
         } else if (seconds < 3153600000) {         // < 100 years
-            return "quelques années";
+            return gt('generateur_mot_de_passe.time_years', 'quelques années');
         } else if (seconds < 3.1536e12) {          // < 100 000 years
-            return "des siècles";
+            return gt('generateur_mot_de_passe.time_centuries', 'des siècles');
         } else {
-            return "des millions d'années";
+            return gt('generateur_mot_de_passe.time_millions', "des millions d'années");
         }
     }
 
@@ -294,7 +298,11 @@
     function renderColoredPreviewInto(containerEl, parts, order) {
         if (!containerEl) return;
 
-        if (!parts || !parts.word) {
+        const linkedInput = (containerEl === elCreatedColoredPreview)
+            ? elCreatedPwInput
+            : (containerEl === elColoredPreview ? elPasswordInput : null);
+
+        if (!parts || !parts.word || (linkedInput && linkedInput.type === 'password')) {
             containerEl.replaceChildren();
             containerEl.style.display = 'none';
             return;
@@ -302,9 +310,9 @@
 
         containerEl.replaceChildren();
         const blockConfig = {
-            word: { className: 'pw-block-word', label: 'Mot' },
-            number: { className: 'pw-block-number', label: 'Nombre' },
-            service: { className: 'pw-block-service', label: 'Caractère / Site' }
+            word: { className: 'pw-block-word', label: gt('generateur_mot_de_passe.block_word', 'Mot') },
+            number: { className: 'pw-block-number', label: gt('generateur_mot_de_passe.block_number', 'Nombre') },
+            service: { className: 'pw-block-service', label: gt('generateur_mot_de_passe.block_service_name', 'Caractère / Site') }
         };
 
         for (const key of order) {
@@ -345,9 +353,9 @@
         if (!pw) {
             elCreatedStrengthBar.style.width = '0%';
             elCreatedStrengthBar.style.backgroundColor = 'var(--error)';
-            elCreatedStrengthStatus.textContent = 'En attente';
+            elCreatedStrengthStatus.textContent = gt('generateur_mot_de_passe.status_waiting', 'En attente');
             if (elCreatedTimeEstimate) {
-                elCreatedTimeEstimate.textContent = 'Remplis au moins le mot de base (min. 4 lettres) et un nombre !';
+                elCreatedTimeEstimate.textContent = gt('generateur_mot_de_passe.created_empty_estimate', 'Remplis les 4 blocs pour tester la solidité de ton mot de passe !');
             }
             renderColoredPreviewInto(elCreatedColoredPreview, null, elementsOrder);
             return;
@@ -367,16 +375,16 @@
         elCreatedStrengthBar.style.width = `${score}%`;
 
         let color = 'var(--error)';
-        let status = 'Faible ⚠️';
+        let status = gt('generateur_mot_de_passe.strength_weak', 'Faible') + ' ⚠️';
 
         if (score > 40 && score <= 60) {
-            status = 'Moyen 🔏';
+            status = gt('generateur_mot_de_passe.strength_medium', 'Moyen') + ' 🔏';
             color = 'var(--warn)';
         } else if (score > 60 && score < 100) {
-            status = 'Fort 👍';
+            status = gt('generateur_mot_de_passe.strength_strong', 'Fort') + ' 👍';
             color = 'var(--accent)';
         } else if (score >= 100) {
-            status = 'Très fort ! 💪';
+            status = gt('generateur_mot_de_passe.strength_very_strong', 'Très fort !') + ' 💪';
             color = 'var(--success)';
         }
 
@@ -386,11 +394,11 @@
         const timeStr = estimateCrackTime(pw, patterns);
         if (elCreatedTimeEstimate) {
             elCreatedTimeEstimate.replaceChildren();
-            elCreatedTimeEstimate.appendChild(document.createTextNode('Estimation : '));
+            elCreatedTimeEstimate.appendChild(document.createTextNode(gt('generateur_mot_de_passe.estimate_prefix', 'Estimation : ')));
             const strongEl = document.createElement('strong');
             strongEl.textContent = timeStr;
             elCreatedTimeEstimate.appendChild(strongEl);
-            elCreatedTimeEstimate.appendChild(document.createTextNode(' pour pirater ce mot de passe par force brute.'));
+            elCreatedTimeEstimate.appendChild(document.createTextNode(gt('generateur_mot_de_passe.estimate_suffix_created', ' pour pirater ce mot de passe par force brute.')));
         }
 
         renderColoredPreviewInto(elCreatedColoredPreview, parts, elementsOrder);
@@ -455,7 +463,7 @@
                 titleDiv.className = 'pattern-warning-title';
                 titleDiv.appendChild(document.createTextNode('⚠️ '));
                 const titleStrong = document.createElement('strong');
-                titleStrong.textContent = 'Motif détecté :';
+                titleStrong.textContent = gt('generateur_mot_de_passe.pattern_detected', 'Motif détecté :');
                 titleDiv.appendChild(titleStrong);
                 elPatternWarning.appendChild(titleDiv);
 
@@ -494,21 +502,21 @@
         elStrengthBar.style.width = `${score}%`;
 
         let color = 'var(--error)';
-        let status = 'Vide';
+        let status = gt('generateur_mot_de_passe.status_empty', 'Vide');
 
         if (score === 0 && pw.length > 0) {
-            status = 'Très faible ❌';
+            status = gt('generateur_mot_de_passe.strength_very_weak', 'Très faible') + ' ❌';
         } else if (score > 0 && score <= 40) {
-            status = 'Faible ⚠️';
+            status = gt('generateur_mot_de_passe.strength_weak', 'Faible') + ' ⚠️';
             color = 'var(--error)';
         } else if (score > 40 && score <= 60) {
-            status = 'Moyen 🔏';
+            status = gt('generateur_mot_de_passe.strength_medium', 'Moyen') + ' 🔏';
             color = 'var(--warn)';
         } else if (score > 60 && score < 100) {
-            status = 'Fort 👍';
+            status = gt('generateur_mot_de_passe.strength_strong', 'Fort') + ' 👍';
             color = 'var(--accent)';
         } else if (score === 100) {
-            status = 'Très fort ! 💪';
+            status = gt('generateur_mot_de_passe.strength_very_strong', 'Très fort !') + ' 💪';
             color = 'var(--success)';
         }
 
@@ -542,10 +550,10 @@
         if (elGaugeBadge) {
             if (isSecure) {
                 elGaugeBadge.className = 'gauge-badge secure';
-                elGaugeBadge.textContent = 'Fort';
+                elGaugeBadge.textContent = gt('generateur_mot_de_passe.strength_strong', 'Fort');
             } else {
                 elGaugeBadge.className = 'gauge-badge vulnerable';
-                elGaugeBadge.textContent = 'Vulnérable';
+                elGaugeBadge.textContent = gt('generateur_mot_de_passe.badge_vulnerable', 'Vulnérable');
             }
         }
 
@@ -556,7 +564,7 @@
             const strongEl = document.createElement('strong');
             strongEl.textContent = timeStr;
             elTimeEstimate.appendChild(strongEl);
-            elTimeEstimate.appendChild(document.createTextNode(' pour pirater ce mot de passe'));
+            elTimeEstimate.appendChild(document.createTextNode(gt('generateur_mot_de_passe.estimate_suffix_test', ' pour pirater ce mot de passe')));
         }
 
         // Colored preview rendering
@@ -608,12 +616,12 @@
 
         elElementsOrderContainer.replaceChildren();
         elElementsOrderContainer.setAttribute('role', 'list');
-        elElementsOrderContainer.setAttribute('aria-label', 'Ordre des blocs du mot de passe');
+        elElementsOrderContainer.setAttribute('aria-label', gt('generateur_mot_de_passe.order_aria', 'Ordre des blocs du mot de passe'));
 
         const labels = {
-            word: { text: 'Mot', name: 'Mot' },
-            number: { text: 'Nombre', name: 'Nombre' },
-            service: { text: 'Site/App', name: 'Caractère / Site' }
+            word: { text: gt('generateur_mot_de_passe.block_word', 'Mot'), name: gt('generateur_mot_de_passe.block_word', 'Mot') },
+            number: { text: gt('generateur_mot_de_passe.block_number', 'Nombre'), name: gt('generateur_mot_de_passe.block_number', 'Nombre') },
+            service: { text: gt('generateur_mot_de_passe.block_site_short', 'Site/App'), name: gt('generateur_mot_de_passe.block_service_name', 'Caractère / Site') }
         };
 
         const specChar = elSpecCharInput ? elSpecCharInput.value : "";
@@ -627,7 +635,7 @@
         } else if (specChar) {
             serviceText = specChar;
         } else {
-            serviceText = "Site/App";
+            serviceText = gt('generateur_mot_de_passe.block_site_short', 'Site/App');
         }
         labels.service.text = serviceText;
 
@@ -639,7 +647,7 @@
             item.setAttribute('tabindex', '0');
             item.setAttribute('role', 'listitem');
             item.setAttribute('draggable', 'true');
-            item.setAttribute('aria-label', `${labels[key].name}, position ${i + 1} sur ${elementsOrder.length}. Glisse-dépose ou utilise les flèches pour déplacer.`);
+            item.setAttribute('aria-label', `${labels[key].name}, position ${i + 1}/${elementsOrder.length}`);
 
             // HTML5 Drag and Drop
             item.addEventListener('dragstart', (e) => {
@@ -700,8 +708,8 @@
                 leftBtn.type = 'button';
                 leftBtn.setAttribute('draggable', 'false');
                 leftBtn.textContent = '◀';
-                leftBtn.title = 'Déplacer à gauche';
-                leftBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à gauche`);
+                leftBtn.title = gt('generateur_mot_de_passe.move_left', 'Déplacer à gauche');
+                leftBtn.setAttribute('aria-label', `${gt('generateur_mot_de_passe.move_left', 'Déplacer à gauche')} (${labels[key].name})`);
                 leftBtn.setAttribute('tabindex', '-1');
                 leftBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -723,8 +731,8 @@
                 rightBtn.type = 'button';
                 rightBtn.setAttribute('draggable', 'false');
                 rightBtn.textContent = '▶';
-                rightBtn.title = 'Déplacer à droite';
-                rightBtn.setAttribute('aria-label', `Déplacer ${labels[key].name} à droite`);
+                rightBtn.title = gt('generateur_mot_de_passe.move_right', 'Déplacer à droite');
+                rightBtn.setAttribute('aria-label', `${gt('generateur_mot_de_passe.move_right', 'Déplacer à droite')} (${labels[key].name})`);
                 rightBtn.setAttribute('tabindex', '-1');
                 rightBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -746,10 +754,10 @@
     function setProjectionMode(active) {
         if (active) {
             document.body.classList.add('projection');
-            if (elProjectionText) elProjectionText.textContent = 'Quitter mode TNI/TBI';
+            if (elProjectionText) elProjectionText.textContent = gt('common.tbi_exit', 'Quitter mode TNI/TBI');
         } else {
             document.body.classList.remove('projection');
-            if (elProjectionText) elProjectionText.textContent = 'Mode TNI/TBI';
+            if (elProjectionText) elProjectionText.textContent = gt('common.tbi_mode', 'Mode TNI/TBI');
         }
         const iconExpand = document.getElementById('icon-proj-expand');
         const iconCompress = document.getElementById('icon-proj-compress');
@@ -812,19 +820,22 @@
     }
 
     // Helper for password visibility toggle
-    function setupToggleVisibility(btnEl, inputEl) {
+    function setupToggleVisibility(btnEl, inputEl, previewEl, onUnmask) {
         if (!btnEl || !inputEl) return;
         btnEl.addEventListener('click', () => {
-            if (inputEl.type === 'password') {
-                inputEl.type = 'text';
-                icon.setAttribute('data-fa', 'dt-eye-slash');
-                icon.setAttribute('data-fa', 'dt-eye-slash');
-            } else {
-                inputEl.type = 'password';
-                icon.setAttribute('data-fa', 'dt-eye');
-                icon.setAttribute('data-fa', 'dt-eye');
+            const icon = btnEl.querySelector('[data-fa], svg');
+            const isMasking = inputEl.type !== 'password';
+            inputEl.type = isMasking ? 'password' : 'text';
+            if (previewEl && isMasking) {
+                previewEl.replaceChildren();
+                previewEl.style.display = 'none';
+            } else if (!isMasking && typeof onUnmask === 'function') {
+                onUnmask();
             }
-            window.fa?.createIcons?.();
+            if (icon) {
+                icon.setAttribute('data-fa', isMasking ? 'dt-eye' : 'dt-eye-slash');
+                window.fa?.createIcons?.();
+            }
         });
     }
 
@@ -844,10 +855,12 @@
         });
     }
 
-    setupToggleVisibility(elCreatedPwToggle, elCreatedPwInput);
+    setupToggleVisibility(elCreatedPwToggle, elCreatedPwInput, elCreatedColoredPreview, autoGeneratePassword);
 
     setupCopyButton(elPasswordCopy, elPasswordInput);
-    setupToggleVisibility(elPasswordToggle, elPasswordInput);
+    setupToggleVisibility(elPasswordToggle, elPasswordInput, elColoredPreview, () => {
+        updatePasswordChecklist(elPasswordInput.value, null);
+    });
 
     // Strict input restrictions for block 2 (numbers only) and special character block
     if (elNumberInput) {
@@ -891,7 +904,7 @@
     if (elMinLengthSlider) {
         elMinLengthSlider.addEventListener('input', (e) => {
             if (elMinLengthVal) {
-                elMinLengthVal.textContent = e.target.value + ' caractères';
+                elMinLengthVal.textContent = e.target.value + ' ' + gt('generateur_mot_de_passe.chars_unit', 'caractères');
             }
             autoGeneratePassword();
         });
@@ -927,5 +940,25 @@
     } catch (e) {
         // ignore
     }
+
+    window.__onResetApp = function () {
+        passwordUnlockedMode1 = false;
+        passwordUnlockedMode2 = false;
+        elementsOrder = ['word', 'number', 'service'];
+        lastGeneratedParts = null;
+        if (elBaseWordInput) elBaseWordInput.value = '';
+        if (elNumberInput) elNumberInput.value = '';
+        if (elServiceInput) elServiceInput.value = '';
+        if (elSpecCharInput) elSpecCharInput.value = '';
+        if (elMinLengthSlider) elMinLengthSlider.value = '12';
+        if (elMinLengthVal) {
+            elMinLengthVal.textContent = '12 ' + (window.I18N ? window.I18N.t('generateur_mot_de_passe.chars_unit', 'caractères') : 'caractères');
+        }
+        if (elPasswordInput) elPasswordInput.value = '';
+        renderElementsOrder();
+        autoGeneratePassword();
+        updatePasswordChecklist('', null);
+        switchTab('create', false);
+    };
 
 })();

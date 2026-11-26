@@ -202,4 +202,27 @@ test('Calculatrice binaire - quick actions and app reset', async (t) => {
         window.__onResetApp();
         assert.strictEqual(api.calculateSum(), 0);
     });
+
+    await t.test('quick action buttons (-1, +1, invert, all ones) update state and HTML structure has no confetti-canvas', () => {
+        const htmlContent = fs.readFileSync('webapps/calculatrice_binaire.html', 'utf-8');
+        const fullDom = new JSDOM(htmlContent, { runScripts: 'dangerously', url: 'http://localhost/webapps/calculatrice_binaire.html' });
+        const win = fullDom.window;
+        assert.strictEqual(win.document.getElementById('confetti-canvas'), null, 'Unused confetti-canvas must be removed');
+        const binInput = win.document.getElementById('bin-input');
+        assert.ok(parseInt(binInput.getAttribute('maxlength'), 10) >= 16, 'bin-input maxlength must allow direct editing');
+
+        win.eval(calcScriptSrc);
+        win.CalculatriceBinaire.init();
+
+        win.document.getElementById('btn-dec-plus').click();
+        assert.strictEqual(win.CalculatriceBinaire.calculateSum(), 1);
+        win.document.getElementById('btn-dec-minus').click();
+        assert.strictEqual(win.CalculatriceBinaire.calculateSum(), 0);
+        win.document.getElementById('btn-invert-bits').click();
+        assert.strictEqual(win.CalculatriceBinaire.calculateSum(), 255);
+        win.document.getElementById('reset-calc-btn').click();
+        assert.strictEqual(win.CalculatriceBinaire.calculateSum(), 0);
+        win.document.getElementById('btn-all-ones').click();
+        assert.strictEqual(win.CalculatriceBinaire.calculateSum(), 255);
+    });
 });

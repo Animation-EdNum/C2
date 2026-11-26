@@ -23,13 +23,15 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roue de la chance · Suite EdNum</title>
+    <title data-i18n="roue_de_la_chance.page_title">Roue de la chance · Suite EdNum</title>
     <meta property="og:title" content="Roue de la chance · Suite EdNum">
     <meta property="og:description"
         content="Roue aléatoire interactive pour tirer au sort les responsabilités, privilèges, questions et défis de classe.">
     <meta property="og:type" content="website">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <script src="../../assets/js/fa-subset.js"></script>
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <link rel="stylesheet" href="../../assets/css/tokens.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
@@ -89,12 +91,14 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 0.45rem;
-                flex-wrap: nowrap;
+                row-gap: 0.5rem;
+                flex-wrap: wrap;
             }
 
             .header-actions {
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 gap: 0.35rem;
                 flex: 1 1 auto;
                 min-width: 0;
@@ -102,7 +106,7 @@
 
             .header-actions .btn {
                 flex: 1 1 auto;
-                min-width: 0;
+                min-width: max-content;
                 padding: 7px 8px;
                 font-size: 0.8rem;
                 justify-content: center;
@@ -785,16 +789,71 @@
         body.projection .app-shell {
             max-width: 100vw;
             height: 100vh;
+            max-height: 100vh;
             border-radius: 0;
             border: none;
         }
 
+        body.projection .app-main {
+            padding: 0.85rem 1.5rem;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            justify-content: center;
+        }
+
+        body.projection .wheel-layout {
+            display: grid;
+            grid-template-columns: minmax(0, auto) minmax(260px, 340px);
+            grid-template-rows: auto auto 1fr;
+            justify-content: center;
+            align-items: center;
+            column-gap: 2.25rem;
+            row-gap: 0.85rem;
+            height: 100%;
+        }
+
         body.projection .wheel-stage {
-            max-width: min(72vh, 620px);
+            grid-column: 1;
+            grid-row: 1 / -1;
+            width: min(72vh, calc(100vh - 110px), 580px);
+            max-width: min(72vh, calc(100vh - 110px), 580px);
+        }
+
+        body.projection .spin-main-btn {
+            grid-column: 2;
+            grid-row: 1;
+            justify-content: center;
+            width: 100%;
+        }
+
+        body.projection .wheel-controls {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        body.projection .history-section {
+            grid-column: 2;
+            grid-row: 3;
+            align-self: start;
+        }
+
+        @media (max-width: 899px) {
+            body.projection .wheel-layout {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+            }
+
+            body.projection .wheel-stage {
+                width: min(56vh, 88vw, 440px);
+                max-width: min(56vh, 88vw, 440px);
+            }
         }
 
         body.projection header {
-            padding: 0.75rem 1.5rem;
+            padding: 0.65rem 1.5rem;
+            flex-shrink: 0;
         }
 
         body.projection footer {
@@ -822,18 +881,21 @@
             .header-right-group {
                 width: 100%;
                 justify-content: space-between;
+                flex-wrap: wrap;
                 gap: 0.5rem;
             }
 
             .header-actions {
-                width: 100%;
+                width: auto;
+                flex: 1 1 auto;
                 display: flex;
+                flex-wrap: wrap;
                 gap: 0.5rem;
             }
 
             .header-actions .btn {
-                flex: 1;
-                min-width: 0;
+                flex: 1 1 auto;
+                min-width: max-content;
             }
 
             .app-main {
@@ -852,58 +914,66 @@
 </head>
 
 <body>
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+    <a href="#main-content" class="skip-link" data-i18n="common.skip_to_content">Aller au contenu principal</a>
     <div class="app-shell">
         <header>
             <div class="header-title-wrapper">
                 <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
-                    aria-label="Retour à l'espace enseignant·e·s">
+                    aria-label="Retour à l'espace enseignant·e·s"
+                    data-i18n-attr="title:common.back_teachers;aria-label:common.back_teachers">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
                     <i data-fa="bullseye" style="width:24px;height:24px;"></i>
                 </div>
                 <div>
-                    <h1>
+                    <h1 data-i18n="roue_de_la_chance.title">
                         Roue de la chance
                     </h1>
                 </div>
             </div>
             <div class="header-right-group">
                 <div class="header-actions">
-                    <button class="btn btn-secondary" id="editWheelBtn" title="Modifier les éléments de la roue">
+                    <button class="btn btn-secondary" id="editWheelBtn" title="Modifier les éléments de la roue"
+                        data-i18n-attr="title:roue_de_la_chance.btn_edit_title">
                         <i data-fa="gear" style="width:16px;height:16px;"></i>
-                        <span>Modifier</span>
+                        <span data-i18n="roue_de_la_chance.btn_edit">Modifier</span>
                     </button>
-                    <button class="btn btn-secondary" id="resetWheelBtn" title="Réinitialiser tous les choix d'origine">
+                    <button class="btn btn-secondary" id="resetWheelBtn" title="Réinitialiser tous les choix d'origine"
+                        data-i18n-attr="title:roue_de_la_chance.btn_reset_title">
                         <i data-fa="rotate-left" style="width:16px;height:16px;"></i>
-                        <span>Réinitialiser</span>
+                        <span data-i18n="roue_de_la_chance.btn_reset">Réinitialiser</span>
                     </button>
                 </div>
                 <div class="header-divider" id="headerDivider"></div>
                 <div class="action-buttons no-print">
                     <button class="icon-action-btn" id="shareBtn" title="Partager par lien web"
-                        aria-label="Partager par lien web">
+                        aria-label="Partager par lien web"
+                        data-i18n-attr="title:common.share_link;aria-label:common.share_link">
                         <i data-fa="share-nodes" style="width:20px;height:20px;"></i>
                     </button>
                     <button class="icon-action-btn" id="theme-toggle-btn" aria-label="Changer de thème"
-                        title="Changer de thème">
+                        title="Changer de thème"
+                        data-i18n-attr="aria-label:common.theme_toggle;title:common.theme_toggle">
                         <i data-fa="sun-bright" id="icon-sun" style="display: none; width:20px;height:20px;"></i>
                         <i data-fa="moon" id="icon-moon" style="width:20px;height:20px;"></i>
                     </button>
                     <button class="icon-action-btn" id="audio-toggle-btn" title="Activer/Désactiver le son"
-                        aria-label="Activer/Désactiver le son">
+                        aria-label="Activer/Désactiver le son"
+                        data-i18n-attr="title:common.audio_toggle;aria-label:common.audio_toggle">
                         <i data-fa="volume-high" id="icon-vol-on" style="display: none; width:20px;height:20px;"></i>
                         <i data-fa="volume-xmark" id="icon-vol-off" style="width:20px;height:20px;"></i>
                     </button>
                     <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI/TBI (Plein écran)"
-                        aria-label="Mode TNI/TBI">
+                        aria-label="Mode TNI/TBI"
+                        data-i18n-attr="title:roue_de_la_chance.tbi_mode_title;aria-label:common.tbi_mode">
                         <i data-fa="expand" id="icon-proj-expand" style="width:20px;height:20px;"></i>
                         <i data-fa="compress" id="icon-proj-compress"
                             style="display: none; width:20px;height:20px;"></i>
                     </button>
                     <button class="icon-action-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application"
-                        title="Réinitialiser l'application">
+                        title="Réinitialiser l'application"
+                        data-i18n-attr="aria-label:common.reset_app;title:common.reset_app">
                         <i data-fa="arrows-rotate" style="width:20px;height:20px;"></i>
                     </button>
                 </div>
@@ -921,28 +991,33 @@
                     </svg>
 
                     <!-- Main Canvas -->
-                    <canvas id="wheelCanvas" width="500" height="500" role="img" aria-label="Roue de la chance interactive"></canvas>
+                    <canvas id="wheelCanvas" width="500" height="500" role="img"
+                        aria-label="Roue de la chance interactive"
+                        data-i18n-attr="aria-label:roue_de_la_chance.canvas_aria"></canvas>
                     <div id="wheelLiveAnnounce" class="sr-only" aria-live="polite"></div>
 
                     <!-- Center Click Hub -->
-                    <div class="wheel-center-hub" id="centerSpinBtn" title="Tourner la roue (ou appuyez sur Espace)">
+                    <div class="wheel-center-hub" id="centerSpinBtn" title="Tourner la roue (ou appuyez sur Espace)"
+                        data-i18n-attr="title:roue_de_la_chance.center_spin_title">
                         <i data-fa="arrows-rotate"></i>
-                        <span>Tourner</span>
+                        <span data-i18n="roue_de_la_chance.center_spin_label">Tourner</span>
                     </div>
                 </div>
 
                 <!-- Action Button -->
                 <button class="btn btn-primary spin-main-btn" id="spinBtn">
                     <i data-fa="play" style="width:20px;height:20px;"></i>
-                    <span>Lancer la roue !</span>
-                    <span style="font-size: 0.8rem; opacity: 0.85; font-weight: 500;">(ou Espace)</span>
+                    <span data-i18n="roue_de_la_chance.spin_btn">Lancer la roue !</span>
+                    <span style="font-size: 0.8rem; opacity: 0.85; font-weight: 500;"
+                        data-i18n="roue_de_la_chance.spin_space_hint">(ou Espace)</span>
                 </button>
 
                 <!-- Options & Live Status -->
                 <div class="wheel-controls">
-                    <label class="toggle-option" title="Retirer automatiquement le quartier tiré de la roue">
+                    <label class="toggle-option" title="Retirer automatiquement le quartier tiré de la roue"
+                        data-i18n-attr="title:roue_de_la_chance.auto_remove_title">
                         <input type="checkbox" id="autoRemoveToggle">
-                        <span>Retirer automatiquement l'élément tiré</span>
+                        <span data-i18n="roue_de_la_chance.auto_remove">Retirer automatiquement l'élément tiré</span>
                     </label>
                     <div style="font-size: 0.95rem; font-weight: 700; color: var(--primary);" id="remainingCountBadge">
                         8 choix disponibles
@@ -952,11 +1027,12 @@
                 <!-- History of draws -->
                 <div class="history-section" id="historySection">
                     <div class="history-header">
-                        <span>Derniers tirages</span>
+                        <span data-i18n="roue_de_la_chance.history_title">Derniers tirages</span>
                         <span id="historyCountBadge" style="font-size: 0.8rem; font-weight: 600;">0 tiré</span>
                     </div>
                     <div class="history-chips" id="historyChips">
-                        <span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;"
+                            data-i18n="roue_de_la_chance.no_history">
                             Aucun élément tiré pour le moment.
                         </span>
                     </div>
@@ -966,10 +1042,12 @@
             <!-- VIEW 2: SETUP / EDIT VIEW -->
             <div class="setup-card hidden" id="setupView">
                 <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;">
+                    <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem;"
+                        data-i18n="roue_de_la_chance.setup_title">
                         Personnaliser la roue
                     </h2>
-                    <p style="font-size: 0.88rem; color: var(--text-secondary);">
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);"
+                        data-i18n="roue_de_la_chance.setup_sub">
                         Saisissez un élément par ligne ou choisissez un modèle prêt à l'emploi.
                     </p>
                 </div>
@@ -977,33 +1055,42 @@
                 <!-- Quick Presets -->
                 <div>
                     <span
-                        style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem;">
+                        style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem;"
+                        data-i18n="roue_de_la_chance.presets_label">
                         Modèles prêts à l'emploi :
                     </span>
                     <div class="presets-bar">
                         <button type="button" class="preset-btn" data-preset="custom" id="presetCustomBtn"
-                            title="Charger votre liste personnelle">
-                            <i data-fa="star"></i> Ma liste
+                            title="Charger votre liste personnelle"
+                            data-i18n-attr="title:roue_de_la_chance.preset_custom_title">
+                            <i data-fa="star"></i> <span data-i18n="roue_de_la_chance.preset_custom">Ma liste</span>
                         </button>
-                        <div class="preset-number-pill" id="presetNumbersGroup" title="Générer une série de 1 à N">
+                        <div class="preset-number-pill" id="presetNumbersGroup" title="Générer une série de 1 à N"
+                            data-i18n-attr="title:roue_de_la_chance.preset_numbers_group_title">
                             <button type="button" class="preset-number-btn" id="presetNumbersBtn"
-                                title="Générer de 1 à ce nombre">
-                                <i data-fa="dice"></i> 1 à
+                                title="Générer de 1 à ce nombre"
+                                data-i18n-attr="title:roue_de_la_chance.preset_numbers_btn_title">
+                                <i data-fa="dice"></i> <span data-i18n="roue_de_la_chance.preset_1_to">1 à</span>
                             </button>
                             <input type="number" id="presetMaxNumberInput" min="2" max="500" value="10"
-                                title="Choisir le nombre maximum (ex: 10, 25, 50)" aria-label="Nombre maximum">
+                                title="Choisir le nombre maximum (ex: 10, 25, 50)" aria-label="Nombre maximum"
+                                data-i18n-attr="title:roue_de_la_chance.preset_max_title;aria-label:roue_de_la_chance.preset_max_aria">
                             <button type="button" class="preset-number-apply" id="applyNumbersBtn"
-                                title="Générer la roue de 1 à ce nombre" aria-label="Valider le nombre maximum">
+                                title="Générer la roue de 1 à ce nombre" aria-label="Valider le nombre maximum"
+                                data-i18n-attr="title:roue_de_la_chance.preset_apply_title;aria-label:roue_de_la_chance.preset_apply_aria">
                                 <i data-fa="arrow-right"></i>
                             </button>
                         </div>
                         <button type="button" class="preset-btn" data-preset="oui_non"
-                            title="Charger les choix Oui / Non">
-                            <i data-fa="scale-balanced"></i> Oui / Non
+                            title="Charger les choix Oui / Non"
+                            data-i18n-attr="title:roue_de_la_chance.preset_yn_title">
+                            <i data-fa="scale-balanced"></i> <span data-i18n="roue_de_la_chance.preset_yn">Oui /
+                                Non</span>
                         </button>
                         <button type="button" class="preset-btn" data-preset="alphabet"
-                            title="Charger les 26 lettres de l'alphabet (A à Z)">
-                            <i data-fa="a"></i> Alphabet (A–Z)
+                            title="Charger les 26 lettres de l'alphabet (A à Z)"
+                            data-i18n-attr="title:roue_de_la_chance.preset_alpha_title">
+                            <i data-fa="a"></i> <span data-i18n="roue_de_la_chance.preset_alpha">Alphabet (A–Z)</span>
                         </button>
                     </div>
                 </div>
@@ -1012,25 +1099,40 @@
                 <div>
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                        <label for="choicesInput" style="font-size: 0.9rem; font-weight: 700;">
+                        <label for="choicesInput" style="font-size: 0.9rem; font-weight: 700;"
+                            data-i18n="roue_de_la_chance.choices_label">
                             Liste des éléments :
                         </label>
-                        <button type="button" class="btn-save-custom" id="saveCustomListBtn"
-                            title="Sauvegarder cette liste sur cet appareil pour la réutiliser facilement">
-                            <i data-fa="floppy-disk"></i> <span id="saveCustomBtnText">Sauvegarder ma liste</span>
-                        </button>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <input type="file" id="rosterFileInput" accept=".csv,.txt,.tsv,.xls,.xlsx"
+                                style="display:none;">
+                            <button type="button" class="btn-save-custom" id="importRosterBtn"
+                                title="Importer une liste d'élèves (fichier ENT XLS, XLSX, CSV ou texte)"
+                                data-i18n-attr="title:tirage.btn_import_title">
+                                <i data-fa="arrow-up-from-square"></i> <span data-i18n="tirage.btn_import">Importer
+                                    (XLS/CSV)</span>
+                            </button>
+                            <button type="button" class="btn-save-custom" id="saveCustomListBtn"
+                                title="Sauvegarder cette liste sur cet appareil pour la réutiliser facilement"
+                                data-i18n-attr="title:roue_de_la_chance.save_custom_title">
+                                <i data-fa="floppy-disk"></i> <span id="saveCustomBtnText"
+                                    data-i18n="roue_de_la_chance.save_custom">Sauvegarder ma liste</span>
+                            </button>
+                        </div>
                     </div>
                     <textarea id="choicesInput" class="choices-input"
-                        placeholder="Exemple :&#10;1&#10;2&#10;3&#10;4&#10;5... ou un prénom par ligne"></textarea>
+                        placeholder="Exemple :&#10;1&#10;2&#10;3&#10;4&#10;5... ou un prénom par ligne"
+                        data-i18n-attr="placeholder:roue_de_la_chance.choices_placeholder"></textarea>
                 </div>
 
                 <!-- Setup Action Buttons -->
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                     <button class="btn btn-primary" id="saveAndStartBtn" style="flex: 1; padding: 1rem;">
                         <i data-fa="check" style="width:18px;height:18px;"></i>
-                        Enregistrer et lancer la roue
+                        <span data-i18n="roue_de_la_chance.save_and_start">Enregistrer et lancer la roue</span>
                     </button>
-                    <button class="btn btn-secondary" id="cancelSetupBtn" style="padding: 1rem 1.5rem;">
+                    <button class="btn btn-secondary" id="cancelSetupBtn" style="padding: 1rem 1.5rem;"
+                        data-i18n="roue_de_la_chance.cancel">
                         Annuler
                     </button>
                 </div>
@@ -1043,16 +1145,19 @@
                 <div class="winner-icon-badge">
                     <i data-fa="trophy-star" style="width:32px;height:32px;font-size:32px;"></i>
                 </div>
-                <div class="winner-label">Tirage au sort</div>
+                <div class="winner-label" data-i18n="roue_de_la_chance.winner_label">Tirage au sort</div>
                 <div class="winner-name" id="winnerName">—</div>
                 <div class="winner-actions">
                     <button class="btn btn-primary" id="modalSpinAgainBtn" style="padding: 0.85rem 1.6rem;">
-                        <i data-fa="rotate-right"></i> Relancer la roue
+                        <i data-fa="rotate-right"></i> <span data-i18n="roue_de_la_chance.spin_again">Relancer la
+                            roue</span>
                     </button>
                     <button class="btn btn-secondary" id="modalRemoveBtn" style="padding: 0.85rem 1.4rem;">
-                        <i data-fa="trash-can"></i> Retirer ce choix
+                        <i data-fa="trash-can"></i> <span data-i18n="roue_de_la_chance.remove_choice">Retirer ce
+                            choix</span>
                     </button>
-                    <button class="btn btn-secondary" id="modalCloseBtn" style="padding: 0.85rem 1.2rem;">
+                    <button class="btn btn-secondary" id="modalCloseBtn" style="padding: 0.85rem 1.2rem;"
+                        data-i18n="roue_de_la_chance.close">
                         Fermer
                     </button>
                 </div>
@@ -1100,6 +1205,7 @@
         <i data-fa="share-nodes"></i>
         <i data-fa="floppy-disk"></i>
         <i data-fa="star"></i>
+        <i data-fa="arrow-up-from-square"></i>
     </div>
 
     <!-- SCRIPTS -->
@@ -1108,6 +1214,7 @@
     <script src="../../assets/js/pwa.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/vendor/xlsx.full.min.js"></script>
     <script src="../../assets/js/roster-import.js"></script>
     <script src="../../assets/js/url-params.js"></script>
 
@@ -1119,6 +1226,10 @@
 
         const STORAGE_KEY = 'ednum_roue_chance_state';
         const CUSTOM_PRESET_KEY = 'ednum_roue_custom_list';
+
+        const wt = (key, fb, vars) => (window.I18N && typeof window.I18N.t === 'function')
+            ? window.I18N.t(key, fb, vars)
+            : (vars ? String(fb).replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? String(vars[k]) : `{${k}}`)) : fb);
 
         // Predefined Educational Presets
         const PRESETS = {
@@ -1230,7 +1341,7 @@
         function copyShareLink() {
             const list = state.originalItems.length > 0 ? state.originalItems : state.activeItems;
             if (!list || list.length < 2) {
-                if (typeof showToast === 'function') showToast('Veuillez ajouter au moins 2 choix dans la roue', 'error');
+                if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_min_2_share', 'Veuillez ajouter au moins 2 choix dans la roue'), 'error');
                 return;
             }
 
@@ -1238,9 +1349,9 @@
             url.search = '';
             url.hash = `items=${encodeURIComponent(JSON.stringify(list))}`;
             navigator.clipboard.writeText(url.toString()).then(() => {
-                if (typeof showToast === 'function') showToast('Lien direct de la roue copié dans le presse-papier !', 'success');
+                if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_share_copied', 'Lien direct de la roue copié dans le presse-papier !'), 'success');
             }).catch(() => {
-                prompt('Copiez ce lien pour partager cette roue :', url.toString());
+                prompt(wt('roue_de_la_chance.prompt_share', 'Copiez ce lien pour partager cette roue :'), url.toString());
             });
         }
 
@@ -1264,7 +1375,7 @@
                 updateUI();
                 renderWheel();
                 setTimeout(() => {
-                    if (typeof showToast === 'function') showToast('Roue chargée depuis le lien partagé !', 'success');
+                    if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_loaded_link', 'Roue chargée depuis le lien partagé !'), 'success');
                 }, 100);
                 return;
             }
@@ -1292,15 +1403,17 @@
             if (!canvas || !ctx) return;
             const dpr = window.devicePixelRatio || 1;
             const size = canvas.parentElement ? canvas.parentElement.clientWidth : 500;
+            if (!size || size < 20) return;
             canvas.width = size * dpr;
             canvas.height = size * dpr;
-            ctx.scale(dpr, dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             renderWheel();
         }
 
         function renderWheel() {
             if (!canvas || !ctx) return;
             const size = canvas.parentElement ? canvas.parentElement.clientWidth : 500;
+            if (!size || size < 20) return;
             const radius = size / 2;
             const items = state.activeItems;
             const count = items.length;
@@ -1323,9 +1436,9 @@
                 ctx.font = 'bold 16px Outfit, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('Tous les choix ont été tirés !', 0, -10);
+                ctx.fillText(wt('roue_de_la_chance.wheel_empty_title', 'Tous les choix ont été tirés !'), 0, -10);
                 ctx.font = '14px Outfit, sans-serif';
-                ctx.fillText('Cliquez sur Réinitialiser', 0, 15);
+                ctx.fillText(wt('roue_de_la_chance.wheel_empty_sub', 'Cliquez sur Réinitialiser'), 0, 15);
                 ctx.restore();
                 return;
             }
@@ -1425,14 +1538,12 @@
             const randomOffsetWithinSlice = (Math.random() * 0.7 + 0.15) * sliceAngle;
             const fullSpins = (Math.floor(Math.random() * 3) + 4) * 2 * Math.PI; // 4 to 6 full turns
 
-            // Pointer at angle -PI/2. A slice 'i' centered at (i + 0.5) * sliceAngle.
-            // When rotated by currentAngle, slice position is at (angle + sliceCenter).
-            // We want (finalAngle + targetSliceIndex * sliceAngle + randomOffset) % 2PI == 3*PI/2
+            // Pointer at angle 3*PI/2 (12 o'clock). We want (finalAngle + targetSliceIndex*sliceAngle + randomOffset) % 2PI == 3*PI/2
             const desiredTopAngle = (3 * Math.PI / 2);
-            const remainder = (desiredTopAngle - (targetSliceIndex * sliceAngle + randomOffsetWithinSlice)) % (2 * Math.PI);
-            const normalizedRemainder = remainder < 0 ? remainder + 2 * Math.PI : remainder;
+            startAngle = ((currentAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+            const rawDelta = (desiredTopAngle - (targetSliceIndex * sliceAngle + randomOffsetWithinSlice) - startAngle) % (2 * Math.PI);
+            const normalizedRemainder = rawDelta < 0 ? rawDelta + 2 * Math.PI : rawDelta;
 
-            startAngle = currentAngle % (2 * Math.PI);
             targetAngle = startAngle + fullSpins + normalizedRemainder;
             spinStartTime = performance.now();
             const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1523,7 +1634,7 @@
             // Accessible screen reader announcement
             const liveAnnounce = document.getElementById('wheelLiveAnnounce');
             if (liveAnnounce) {
-                liveAnnounce.textContent = `Résultat : ${winner}`;
+                liveAnnounce.textContent = wt('roue_de_la_chance.aria_result', `Résultat : ${winner}`, { winner });
             }
 
             // Auto-remove option logic: single occurrence removal
@@ -1541,6 +1652,20 @@
             updateUI();
             renderWheel();
 
+            // Update "Relancer" vs "Réinitialiser" CTA when no choices remain
+            if (modalSpinAgainBtn) {
+                modalSpinAgainBtn.textContent = '';
+                const ic = document.createElement('i');
+                ic.setAttribute('data-fa', state.activeItems.length === 0 ? 'rotate-left' : 'rotate-right');
+                modalSpinAgainBtn.append(
+                    ic,
+                    document.createTextNode(' ' + (state.activeItems.length === 0
+                        ? wt('roue_de_la_chance.modal_reset_all', 'Tout réinitialiser')
+                        : wt('roue_de_la_chance.spin_again', 'Relancer la roue')))
+                );
+                window.fa?.createIcons?.();
+            }
+
             // Open winner celebration modal
             setTimeout(() => {
                 winnerModal.classList.add('active');
@@ -1553,17 +1678,22 @@
         function updateUI() {
             // Remaining count
             const remaining = state.activeItems.length;
-            remainingCountBadge.textContent = `${remaining} choix disponible${remaining > 1 ? 's' : ''}`;
+            remainingCountBadge.textContent = remaining > 1
+                ? wt('roue_de_la_chance.remaining_plural', `${remaining} choix disponibles`, { count: remaining })
+                : wt('roue_de_la_chance.remaining_singular', `${remaining} choix disponible`, { count: remaining });
             spinBtn.disabled = remaining === 0;
 
             // History Chips
-            historyCountBadge.textContent = `${state.history.length} tiré${state.history.length > 1 ? 's' : ''}`;
+            const histLen = state.history.length;
+            historyCountBadge.textContent = histLen > 1
+                ? wt('roue_de_la_chance.drawn_plural', `${histLen} tirés`, { count: histLen })
+                : wt('roue_de_la_chance.drawn_singular', `${histLen} tiré`, { count: histLen });
             if (state.history.length === 0) {
                 const emptySpan = document.createElement('span');
                 emptySpan.style.fontSize = '0.85rem';
                 emptySpan.style.color = 'var(--text-muted)';
                 emptySpan.style.fontStyle = 'italic';
-                emptySpan.textContent = 'Aucun élément tiré pour le moment.';
+                emptySpan.textContent = wt('roue_de_la_chance.no_history', 'Aucun élément tiré pour le moment.');
                 historyChips.replaceChildren(emptySpan);
             } else {
                 const chips = state.history.slice(0, 10).map((item, idx) => {
@@ -1615,20 +1745,22 @@
                     const items = JSON.parse(saved);
                     if (Array.isArray(items) && items.length > 0) {
                         presetCustomBtn.classList.add('has-saved-list');
-                        presetCustomBtn.title = `Charger votre liste personnelle (${items.length} élément${items.length > 1 ? 's' : ''})`;
+                        presetCustomBtn.title = items.length > 1
+                            ? wt('roue_de_la_chance.custom_title_plural', `Charger votre liste personnelle (${items.length} éléments)`, { count: items.length })
+                            : wt('roue_de_la_chance.custom_title_singular', `Charger votre liste personnelle (${items.length} élément)`, { count: items.length });
                         return;
                     }
                 }
             } catch (e) { }
             presetCustomBtn.classList.remove('has-saved-list');
-            presetCustomBtn.title = 'Charger votre liste personnelle';
+            presetCustomBtn.title = wt('roue_de_la_chance.preset_custom_title', 'Charger votre liste personnelle');
         }
 
         function saveCustomList() {
-            const raw = choicesInput.value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            const raw = (window.RosterImport ? window.RosterImport.parseNamesList(choicesInput.value) : choicesInput.value.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean));
             if (raw.length < 2) {
                 if (typeof showToast === 'function') {
-                    showToast('Veuillez entrer au moins 2 éléments pour sauvegarder une liste', 'error');
+                    showToast(wt('roue_de_la_chance.toast_custom_min2', 'Veuillez entrer au moins 2 éléments pour sauvegarder une liste'), 'error');
                 }
                 return;
             }
@@ -1637,19 +1769,19 @@
                 updateCustomPresetUI();
                 const btnText = document.getElementById('saveCustomBtnText');
                 if (btnText) {
-                    btnText.textContent = 'Liste sauvegardée !';
+                    btnText.textContent = wt('roue_de_la_chance.custom_saved_btn', 'Liste sauvegardée !');
                     setTimeout(() => {
-                        btnText.textContent = 'Sauvegarder ma liste';
+                        btnText.textContent = wt('roue_de_la_chance.save_custom', 'Sauvegarder ma liste');
                     }, 2000);
                 }
                 if (typeof playSound === 'function') playSound('click');
                 if (typeof showToast === 'function') {
-                    showToast(`Liste personnelle enregistrée (${raw.length} éléments) !`, 'success');
+                    showToast(wt('roue_de_la_chance.toast_custom_saved', `Liste personnelle enregistrée (${raw.length} éléments) !`, { count: raw.length }), 'success');
                 }
             } catch (e) {
                 console.error('Erreur sauvegarde liste perso :', e);
                 if (typeof showToast === 'function') {
-                    showToast('Impossible d\'enregistrer dans le navigateur', 'error');
+                    showToast(wt('roue_de_la_chance.toast_storage_err', 'Impossible d\'enregistrer dans le navigateur'), 'error');
                 }
             }
         }
@@ -1659,7 +1791,7 @@
                 const saved = localStorage.getItem(CUSTOM_PRESET_KEY);
                 if (!saved) {
                     if (typeof showToast === 'function') {
-                        showToast('Aucune liste personnelle enregistrée. Saisissez vos choix puis cliquez sur "Sauvegarder ma liste".', 'info');
+                        showToast(wt('roue_de_la_chance.toast_custom_empty', 'Aucune liste personnelle enregistrée. Saisissez vos choix puis cliquez sur "Sauvegarder ma liste".'), 'info');
                     }
                     return;
                 }
@@ -1668,7 +1800,7 @@
                     choicesInput.value = items.join('\n');
                     if (typeof playSound === 'function') playSound('click');
                     if (typeof showToast === 'function') {
-                        showToast(`Liste personnelle chargée (${items.length} éléments) !`, 'info');
+                        showToast(wt('roue_de_la_chance.toast_custom_loaded', `Liste personnelle chargée (${items.length} éléments) !`, { count: items.length }), 'info');
                     }
                 }
             } catch (e) {
@@ -1723,11 +1855,48 @@
             saveCustomListBtn.addEventListener('click', saveCustomList);
         }
 
+        // Import ENT / Excel / CSV / TXT file into choicesInput
+        const importRosterBtn = document.getElementById('importRosterBtn');
+        const rosterFileInput = document.getElementById('rosterFileInput');
+        function processUploadedRosterFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const buffer = event.target.result;
+                let imported = [];
+                try {
+                    if (window.RosterImport && typeof window.RosterImport.parseRosterContent === 'function') {
+                        imported = window.RosterImport.parseRosterContent(buffer);
+                    }
+                } catch (err) {
+                    console.error('Erreur import fichier classe :', err);
+                }
+                if (imported && imported.length > 0) {
+                    choicesInput.value = imported.join('\n');
+                    if (typeof playSound === 'function') playSound('click');
+                    if (typeof showToast === 'function') {
+                        showToast(wt('roue_de_la_chance.toast_imported', `${imported.length} élément(s) importé(s) !`, { count: imported.length }), 'success');
+                    }
+                } else if (typeof showToast === 'function') {
+                    showToast(wt('roue_de_la_chance.toast_import_empty', 'Aucun nom ou élément détecté dans ce fichier.'), 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        if (importRosterBtn && rosterFileInput) {
+            importRosterBtn.addEventListener('click', () => rosterFileInput.click());
+            rosterFileInput.addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (file) processUploadedRosterFile(file);
+                rosterFileInput.value = '';
+            });
+        }
+
         // Save Custom Choices
         saveAndStartBtn.addEventListener('click', () => {
             const raw = (window.RosterImport ? window.RosterImport.parseNamesList(choicesInput.value) : choicesInput.value.split(/[\n,;]+/).map(s => s.trim()).filter(Boolean));
             if (raw.length < 2) {
-                if (typeof showToast === 'function') showToast('Veuillez entrer au moins 2 éléments', 'error');
+                if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_min2', 'Veuillez entrer au moins 2 éléments'), 'error');
                 return;
             }
             state.originalItems = [...raw];
@@ -1737,7 +1906,7 @@
             setView('play');
             updateUI();
             renderWheel();
-            if (typeof showToast === 'function') showToast('Roue mise à jour avec succès !', 'success');
+            if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_updated', 'Roue mise à jour avec succès !'), 'success');
         });
 
         // Preset buttons
@@ -1746,6 +1915,11 @@
                 const presetKey = btn.dataset.preset;
                 if (presetKey === 'custom') {
                     loadCustomList();
+                    return;
+                }
+                if (presetKey === 'oui_non') {
+                    choicesInput.value = [wt('roue_de_la_chance.yes', 'Oui'), wt('roue_de_la_chance.no', 'Non')].join('\n');
+                    if (typeof playSound === 'function') playSound('click');
                     return;
                 }
                 if (PRESETS[presetKey]) {
@@ -1769,7 +1943,7 @@
             const items = Array.from({ length: max }, (_, i) => String(i + 1));
             choicesInput.value = items.join('\n');
             if (typeof playSound === 'function') playSound('click');
-            if (typeof showToast === 'function') showToast(`Roue de 1 à ${max} générée (${max} nombres) !`, 'info');
+            if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_numbers_gen', `Roue de 1 à ${max} générée (${max} nombres) !`, { max }), 'info');
         }
 
         if (presetNumbersBtn) {
@@ -1806,7 +1980,7 @@
             updateUI();
             renderWheel();
             if (typeof playSound === 'function') playSound('click');
-            if (typeof showToast === 'function') showToast('Roue réinitialisée avec tous les choix', 'success');
+            if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_reset_all', 'Roue réinitialisée avec tous les choix'), 'success');
         }
 
         resetWheelBtn.addEventListener('click', () => {
@@ -1823,7 +1997,11 @@
 
         modalSpinAgainBtn.addEventListener('click', () => {
             winnerModal.classList.remove('active');
-            setTimeout(spinWheel, 200);
+            if (state.activeItems.length === 0) {
+                resetWheel();
+            } else {
+                setTimeout(spinWheel, 200);
+            }
         });
 
         modalRemoveBtn.addEventListener('click', () => {
@@ -1837,7 +2015,7 @@
                 renderWheel();
                 winnerModal.classList.remove('active');
                 if (typeof showToast === 'function') {
-                    showToast(`"${lastWinnerItem}" retiré de la roue`, 'info');
+                    showToast(wt('roue_de_la_chance.toast_removed_choice', `"${lastWinnerItem}" retiré de la roue`, { item: lastWinnerItem }), 'info');
                 }
             }
         });
@@ -1853,7 +2031,7 @@
                 iconCompress.style.display = active ? 'inline-block' : 'none';
             }
             if (elProjBtn) {
-                elProjBtn.setAttribute('title', active ? 'Quitter le mode TNI/TBI (Échap)' : 'Mode TNI/TBI');
+                elProjBtn.setAttribute('title', active ? wt('common.tbi_exit_esc', 'Quitter le mode TNI/TBI (Échap)') : wt('roue_de_la_chance.tbi_mode_title', 'Mode TNI/TBI (Plein écran)'));
             }
             setTimeout(resizeCanvas, 50);
         }
@@ -1897,7 +2075,7 @@
             updateUI();
             renderWheel();
             if (typeof playSound === 'function') playSound('click');
-            if (typeof showToast === 'function') showToast('Roue réinitialisée', 'info');
+            if (typeof showToast === 'function') showToast(wt('roue_de_la_chance.toast_reset', 'Roue réinitialisée'), 'info');
         };
 
         // Export for headless testing

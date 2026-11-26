@@ -131,5 +131,45 @@ test('generateur_mot_de_passe.js - generatePedagogicalPassword', async (t) => {
         const badge = window.document.querySelector('.badge-level');
         assert.strictEqual(badge.textContent.trim(), '5H-11CO');
     });
+
+    await t.test('Toggling password visibility works without error and hides colored preview when masked', () => {
+        const createdInput = window.document.getElementById('created-password-input');
+        const createdToggle = window.document.getElementById('created-password-toggle');
+        const createdPreview = window.document.getElementById('created-colored-preview');
+        const baseInput = window.document.getElementById('generator-base-word');
+        const numInput = window.document.getElementById('generator-number');
+
+        baseInput.value = 'saPin';
+        numInput.value = '2026';
+        baseInput.dispatchEvent(new window.Event('input'));
+
+        assert.strictEqual(createdInput.type, 'text');
+        assert.strictEqual(createdPreview.style.display, 'flex');
+
+        createdToggle.click();
+        assert.strictEqual(createdInput.type, 'password');
+        assert.strictEqual(createdPreview.style.display, 'none');
+        assert.strictEqual(createdToggle.querySelector('[data-fa]').getAttribute('data-fa'), 'dt-eye');
+
+        createdToggle.click();
+        assert.strictEqual(createdInput.type, 'text');
+        assert.strictEqual(createdPreview.style.display, 'flex');
+        assert.strictEqual(createdToggle.querySelector('[data-fa]').getAttribute('data-fa'), 'dt-eye-slash');
+
+        const testerInput = window.document.getElementById('password-input');
+        const testerToggle = window.document.getElementById('password-toggle');
+        const testerPreview = window.document.getElementById('password-colored-preview');
+        testerInput.value = 'saPin2026!edu';
+        testerInput.dispatchEvent(new window.Event('input'));
+        assert.strictEqual(testerPreview.style.display, 'none');
+
+        testerToggle.click();
+        assert.strictEqual(testerInput.type, 'password');
+        assert.strictEqual(testerToggle.querySelector('[data-fa]').getAttribute('data-fa'), 'dt-eye');
+
+        testerToggle.click();
+        assert.strictEqual(testerInput.type, 'text');
+        assert.strictEqual(testerToggle.querySelector('[data-fa]').getAttribute('data-fa'), 'dt-eye-slash');
+    });
 });
 

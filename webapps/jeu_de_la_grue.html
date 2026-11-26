@@ -1757,6 +1757,31 @@
             craneState,
             program
         });
+
+        window.__onResetApp = function () {
+            clearTimeout(window.failTimeout);
+            clearTimeout(winTimeout);
+            winTimeout = null;
+            localStorage.removeItem('c2_grue_extreme_unlocked');
+            localStorage.removeItem('grue_seen_hint');
+            if (typeof ScoreManager !== 'undefined' && ScoreManager.clearCurrentAppStats) {
+                ScoreManager.clearCurrentAppStats();
+            }
+            isExecuting = false;
+            isCooldown = false;
+            if (playBtn) playBtn.disabled = false;
+            globalCorrect = 0;
+            globalStreak = 0;
+            globalBest = 0;
+            currentMistakes = 0;
+            const gcEl = document.getElementById('global-correct');
+            const gsEl = document.getElementById('global-streak');
+            if (gcEl) gcEl.textContent = '0';
+            if (gsEl) gsEl.textContent = '0';
+            clearProgram();
+            updateExtremeButtonVisibility();
+            setDifficulty('easy');
+        };
     </script>
     <script src="../assets/js/toast.js"></script>
     <script src="../assets/js/theme.js"></script>

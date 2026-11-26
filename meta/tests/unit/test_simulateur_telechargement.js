@@ -185,11 +185,38 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.ok(pill && pill.style.display !== 'none', 'La pastille de verdict doit être visible');
     });
 
-    await t.test('Le label de progression affiche les Ko téléchargés sur la taille totale', () => {
+    await t.test('Le label de progression n affiche que les Ko téléchargés et le temps écoulé avant validation, puis révèle le total après', () => {
         const doc = window.document;
         const sizeLabel1 = doc.getElementById('sizeLabel-1');
+        const timeLabel1 = doc.getElementById('timeLabel-1');
         assert.ok(sizeLabel1, 'sizeLabel-1 doit exister');
+        assert.ok(timeLabel1, 'timeLabel-1 doit exister');
+        assert.strictEqual(sizeLabel1.textContent.trim(), '0 Ko');
+        assert.strictEqual(timeLabel1.textContent.trim(), '0,0 s');
+
+        // Après hypothèse, le total et le pourcentage sont révélés
+        const card1 = doc.getElementById('canalCard-1');
+        card1.querySelector('[data-guess="texte"]').click();
         assert.match(sizeLabel1.textContent, /^0 Ko \/ .* Ko/);
+        assert.match(timeLabel1.textContent, /^0,0 s \(0%\)$/);
+    });
+
+    await t.test('formatDuration gère sans "60 s" les arrondis à la borne (119.8 s -> 2 min)', () => {
+        const engine = window.SimTelechargementEngine;
+        assert.ok(engine, 'SimTelechargementEngine doit être exposé');
+        assert.strictEqual(engine.formatDuration(119.8), '2 min');
+        assert.strictEqual(engine.formatDuration(59.96), '1 min');
+    });
+
+    await t.test('finishCanal resynchronise le bouton Tout lancer lorsque tous les canaux sont terminés', () => {
+        const doc = window.document;
+        const engine = window.SimTelechargementEngine;
+        doc.getElementById('btnLaunchAll').click();
+        assert.match(doc.getElementById('btnLaunchAll').textContent, /Tout suspendre/i);
+
+        engine.state.canals.forEach(c => engine.finishCanal(c));
+        assert.match(doc.getElementById('btnLaunchAll').textContent, /Tout lancer/i);
+        assert.strictEqual(doc.getElementById('btnLaunchAll').disabled, true);
     });
 
     await t.test('Le bouton Tout lancer du laboratoire démarre tous les téléchargements', () => {
@@ -215,6 +242,7 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
 
         projBtn.click();
         assert.ok(doc.body.classList.contains('mode-tbi'), 'Le body doit avoir la classe mode-tbi après le clic');
+        assert.ok(doc.body.classList.contains('projection'), 'Le body doit aussi avoir la classe standard projection');
 
         const iconExpand = doc.getElementById('icon-proj-expand');
         const iconCompress = doc.getElementById('icon-proj-compress');
