@@ -131,9 +131,9 @@
                             La grille de données est générée aléatoirement. Complète les cases de parité vides (en
                             bordure) pour respecter le but du jeu.</span>
                         <span data-i18n-html="bit_de_parite.instructions_detect"><strong>🔍 Trouve l'erreur :</strong>
-                            Un bit a été corrompu lors d'une transmission. Les bits de parité corrects sont affichés en
-                            bordure. <strong>L'intersection</strong> de la ligne et de la colonne suspectes désigne le
-                            bit corrompu — clique dessus pour le corriger !</span>
+                            Un bit a été corrompu lors d'une transmission. Recompte chaque ligne et chaque colonne :
+                            la bordure signale la parité attendue (après une erreur en mode normal, les bordures
+                            orange guident ton intersection) — clique sur le bit erroné pour le corriger !</span>
                     </div>
                 </details>
 
@@ -308,10 +308,15 @@
         let detectNextTimer = null;
 
         function switchTab(event, tab) {
+            clearTimeout(trainNextTimer);
+            clearTimeout(detectNextTimer);
+            trainNextTimer = null;
+            detectNextTimer = null;
             currentMode = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            event.target.classList.add('active');
+            const activeTabBtn = (event && event.currentTarget) ? event.currentTarget : document.getElementById(`tab-${tab}`);
+            if (activeTabBtn) activeTabBtn.classList.add('active');
             document.getElementById(`view-${tab}`).classList.add('active');
             if (tab === 'train') initTrainMode();
             else initDetectMode();
@@ -323,7 +328,7 @@
         // ==========================================
         function setDifficulty(lvl) {
             document.querySelectorAll('.diff-btn').forEach(b =>
-                b.classList.toggle('active', b.innerText.includes(lvl === 'easy' ? '4×4' : lvl === 'medium' ? '5×5' : '6×6'))
+                b.classList.toggle('active', b.id === `diff-${lvl}`)
             );
             gridSize = lvl === 'easy' ? 4 : (lvl === 'medium' ? 5 : 6);
             initTrainMode();

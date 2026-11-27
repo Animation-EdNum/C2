@@ -50,7 +50,7 @@
             --primary: #4f46e5;
             --primary-hover: #4338ca;
             --primary-light: rgba(79, 70, 229, 0.12);
-            --accent: #06b6d4;
+            --accent: #0e7490;
             --bg-gradient-start: #1e1b4b;
             --bg-gradient-end: #312e81;
 
@@ -1137,14 +1137,41 @@
         }
 
         body.dark .notice-dismiss-btn {
-            background: rgba(251, 191, 36, 0.2);
-            border-color: rgba(251, 191, 36, 0.4);
-            color: #fde68a;
+            background: #78350f;
+            border-color: #fbbf24;
+            color: #fef3c7;
         }
 
         body.dark .notice-dismiss-btn:hover {
-            background: rgba(251, 191, 36, 0.3);
-            border-color: rgba(251, 191, 36, 0.6);
+            background: #92400e;
+            border-color: #fde68a;
+        }
+
+        body.dark .btn-secondary {
+            background: #334155;
+            border-color: #475569;
+            color: #f8fafc;
+        }
+
+        body.dark .btn-secondary:hover {
+            background: #475569;
+            color: #ffffff;
+        }
+
+        body.high-contrast .app-shell,
+        body.high-contrast .result-stat-box,
+        body.high-contrast .error-analysis,
+        body.high-contrast .dactylo-scores-table-wrapper {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 2px solid #000000 !important;
+            box-shadow: none !important;
+        }
+
+        body.high-contrast .btn-secondary {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 2px solid #000000 !important;
         }
 
         @media (max-width: 640px) {
@@ -1552,9 +1579,9 @@
             </div>
             <div class="notice-content">
                 <strong class="notice-title" data-i18n="dactylo.mobile_notice_title">Conseil pour tablette :</strong>
-                <span class="notice-body" data-i18n-html="dactylo.mobile_notice_body">Tape-Texte est conçu pour
-                    l'apprentissage du clavier à dix doigts. Le clavier tactile à l'écran masque le guide des mains.
-                    Pour un confort optimal, utilise un <strong>clavier physique</strong> ou un
+                <span class="notice-body" data-i18n-html="dactylo.mobile_notice_body">Tape-Texte te permet de
+                    t'entraîner à écrire le plus vite possible et sans faute. Sur tablette, le clavier tactile à
+                    l'écran gêne la frappe : utilise un <strong>clavier physique</strong> ou un
                     <strong>ordinateur</strong>.</span>
             </div>
             <button type="button" class="notice-dismiss-btn" id="btnDismissTouchNotice" title="J'ai un clavier / Fermer"
@@ -1808,13 +1835,13 @@
                 {
                     id: 4,
                     name: "4. Premières phrases simples",
-                    description: "Enchaîne les mots avec fluidité. Utilise le pouce pour la barre d'espace.",
+                    description: "Enchaîne les mots avec fluidité sans t'arrêter aux espaces.",
                     text: "le chat boit du lait. tu aimes la musique. il fait très beau aujourd'hui."
                 },
                 {
                     id: 5,
                     name: "5. Majuscules et ponctuation",
-                    description: "Maintiens la touche Shift (Majuscule) d'une main pendant que l'autre frappe la lettre.",
+                    description: "Maintiens la touche Shift (Majuscule) en même temps que la lettre pour écrire une majuscule.",
                     text: "La Terre tourne autour du Soleil. Les étoiles brillent dans la nuit noire."
                 },
                 {
@@ -1866,18 +1893,18 @@
                     id: 3,
                     name: "3. Schweizer Umlaute (ä, ö, ü)",
                     description: "Übe die direkten Tasten ä, ö und ü auf der Schweizer Tastatur.",
-                    text: "für über spät hören schön März früh grün Vögel Bäume Grüsse Tür kühl"
+                    text: "für über spät hören schön märz früh grün vögel bäume grüsse tür kühl"
                 },
                 {
                     id: 4,
                     name: "4. Erste einfache Sätze",
-                    description: "Tippe flüssig von Wort zu Wort. Nutze den Daumen für die Leertaste.",
-                    text: "Die Katze schläft gerne. Die Sonne scheint heute hell. Wir spielen draussen."
+                    description: "Tippe flüssig von Wort zu Wort und setze Leerzeichen sicher.",
+                    text: "die katze schläft gerne. die sonne scheint heute hell. wir spielen draussen."
                 },
                 {
                     id: 5,
                     name: "5. Grossschreibung und Satzzeichen",
-                    description: "Halte die Umschalt-Taste (Shift) mit einer Hand, während die andere tippt.",
+                    description: "Halte die Umschalt-Taste (Shift) gleichzeitig mit dem Buchstaben gedrückt.",
                     text: "In der Schule lernen die Kinder mit Freude, Neugier und grossem Fleiss."
                 },
                 {
@@ -2150,6 +2177,42 @@
                 });
             }
 
+            function unescapeBasicHtml(str) {
+                return String(str)
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;/g, "'")
+                    .replace(/&amp;/g, '&');
+            }
+
+            function setRichHintContent(el, iconName, rawStr) {
+                if (!el) return;
+                el.textContent = '';
+                if (iconName) {
+                    const ic = document.createElement('i');
+                    ic.setAttribute('data-fa', iconName);
+                    el.append(ic, document.createTextNode(' '));
+                }
+                const tokenRe = /<(strong|span class="kbd-chip")>(.*?)<\/(strong|span)>/g;
+                let last = 0;
+                let m;
+                while ((m = tokenRe.exec(rawStr)) !== null) {
+                    if (m.index > last) {
+                        el.appendChild(document.createTextNode(unescapeBasicHtml(rawStr.slice(last, m.index))));
+                    }
+                    const tag = m[1].startsWith('span') ? 'span' : 'strong';
+                    const node = document.createElement(tag);
+                    if (tag === 'span') node.className = 'kbd-chip';
+                    node.textContent = unescapeBasicHtml(m[2]);
+                    el.appendChild(node);
+                    last = tokenRe.lastIndex;
+                }
+                if (last < rawStr.length) {
+                    el.appendChild(document.createTextNode(unescapeBasicHtml(rawStr.slice(last))));
+                }
+            }
+
             // --- GESTION DU NIVEAU ACTIF ---
             function loadLevel(idx) {
                 currentLevelIdx = Math.max(0, Math.min(LEVELS.length - 1, idx));
@@ -2173,7 +2236,12 @@
                 if (best) {
                     const unit = isGerman() ? 'WPM' : 'MPM';
                     const recLabel = isGerman() ? 'Rekord' : 'Record';
-                    levelRecord.innerHTML = `<i data-fa="trophy-star"></i> ${recLabel} : ${best.wpm} ${unit} (${best.accuracy}%)`;
+                    const recIcon = document.createElement('i');
+                    recIcon.setAttribute('data-fa', 'trophy-star');
+                    levelRecord.replaceChildren(
+                        recIcon,
+                        document.createTextNode(` ${recLabel} : ${best.wpm} ${unit} (${best.accuracy}%)`)
+                    );
                     levelRecord.style.display = 'inline-flex';
                 } else {
                     levelRecord.style.display = 'none';
@@ -2510,10 +2578,10 @@
                     '#': { keyId: 'Digit3', label: '3' },
                     '~': { keyId: 'Equal', label: '^' },
                     '€': { keyId: 'KeyE', label: 'e' },
-                    '{': { keyId: 'BracketLeft', label: 'è' },
-                    '}': { keyId: 'Quote', label: 'à' },
-                    '[': { keyId: 'BracketRight', label: '¨' },
-                    ']': { keyId: 'Backslash', label: '$' },
+                    '[': { keyId: 'BracketLeft', label: 'è' },
+                    ']': { keyId: 'BracketRight', label: '¨' },
+                    '{': { keyId: 'Quote', label: 'à' },
+                    '}': { keyId: 'Backslash', label: '$' },
                     '\\': { keyId: 'IntlBackslash', label: '<' },
                     '|': { keyId: 'Digit1', label: '1' }
                 };
@@ -2541,7 +2609,7 @@
                                 keyId: 'Space',
                                 keyLabel: 'Espace',
                                 hintHtml: `Appuie sur la <strong>Barre d'espace</strong>`,
-                                recipeExplain: `Pour faire un espace : appuie sur la <span class="kbd-chip">Barre d'espace</span> avec le pouce.`
+                                recipeExplain: `Pour faire un espace : appuie sur la <span class="kbd-chip">Barre d'espace</span>.`
                             };
                         }
                         if (key.label === char) {
@@ -2579,7 +2647,7 @@
                         keyId: 'Key' + char,
                         keyLabel: lower,
                         hintHtml: `Maintiens <strong>Maj ⇧</strong> + appuie sur <strong>${lower}</strong>`,
-                        recipeExplain: `Pour faire <strong>${char}</strong> (majuscule) : maintiens <span class="kbd-chip">Maj ⇧</span> d'une main et tape <span class="kbd-chip">${lower}</span> de l'autre.`
+                        recipeExplain: `Pour faire <strong>${char}</strong> (majuscule) : maintiens <span class="kbd-chip">Maj ⇧</span> et appuie sur <span class="kbd-chip">${lower}</span>.`
                     };
                 }
 
@@ -2643,9 +2711,13 @@
 
                         if (keyboardGuideHint) {
                             if (pendingDeadKey) {
-                                keyboardGuideHint.innerHTML = `<i data-fa="circle-check"></i> Étape 1 réussie (<strong>${escapeHtml(recipe.step1Label)}</strong>) ! Maintenant tape <strong>${escapeHtml(recipe.step2Label)}</strong>`;
+                                setRichHintContent(
+                                    keyboardGuideHint,
+                                    'circle-check',
+                                    `Étape 1 réussie (<strong>${escapeHtml(recipe.step1Label)}</strong>) ! Maintenant tape <strong>${escapeHtml(recipe.step2Label)}</strong>`
+                                );
                             } else {
-                                keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                                setRichHintContent(keyboardGuideHint, 'circle-info', recipe.hintHtml);
                             }
                         }
                     } else if (recipe.type === 'shift') {
@@ -2655,7 +2727,7 @@
                             keyElementMap[recipe.keyId].classList.add('target');
                         }
                         if (keyboardGuideHint) {
-                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                            setRichHintContent(keyboardGuideHint, 'circle-info', recipe.hintHtml);
                         }
                     } else if (recipe.type === 'altgr') {
                         keyElementMap['AltRight']?.classList.add('target-altgr');
@@ -2663,7 +2735,7 @@
                             keyElementMap[recipe.keyId].classList.add('target');
                         }
                         if (keyboardGuideHint) {
-                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                            setRichHintContent(keyboardGuideHint, 'circle-info', recipe.hintHtml);
                         }
                     } else if (recipe.type === 'caps') {
                         keyElementMap['CapsLock']?.classList.add('target-shift');
@@ -2671,14 +2743,14 @@
                             keyElementMap[recipe.keyId].classList.add('target');
                         }
                         if (keyboardGuideHint) {
-                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                            setRichHintContent(keyboardGuideHint, 'circle-info', recipe.hintHtml);
                         }
                     } else { // 'direct'
                         if (recipe.keyId && keyElementMap[recipe.keyId]) {
                             keyElementMap[recipe.keyId].classList.add('target');
                         }
                         if (keyboardGuideHint) {
-                            keyboardGuideHint.innerHTML = `<i data-fa="circle-info"></i> ${recipe.hintHtml}`;
+                            setRichHintContent(keyboardGuideHint, 'circle-info', recipe.hintHtml);
                         }
                     }
                 }
@@ -2707,9 +2779,8 @@
             }
 
             function calculateAccuracy() {
-                if (currentIndex === 0) return 100;
-                const correct = Math.max(0, currentIndex - errors);
-                return Math.max(0, Math.round((correct / (correct + errors)) * 100));
+                if (currentIndex === 0 && errors === 0) return 100;
+                return Math.max(0, Math.round((currentIndex / Math.max(1, currentIndex + errors)) * 100));
             }
 
             function updateStats() {
@@ -2734,7 +2805,7 @@
                 // Validation si frappe correcte ou si deuxième étape de touche morte réussie
                 const isMatch = (char === expected) || (
                     pendingDeadKey && recipe && (recipe.type === 'dead' || recipe.type === 'dead-shift') &&
-                    char && char.toLowerCase() === recipe.step2Label.toLowerCase()
+                    char && (recipe.step2Shift ? char === recipe.step2Label : char === recipe.step2Label.toLowerCase())
                 );
 
                 if (isMatch) {
@@ -2782,7 +2853,7 @@
                     if (recipe && recipe.recipeExplain) {
                         const recipeDiv = document.createElement('div');
                         recipeDiv.className = 'error-recipe-hint';
-                        recipeDiv.innerHTML = `<i data-fa="lightbulb"></i> ${recipe.recipeExplain}`;
+                        setRichHintContent(recipeDiv, 'lightbulb', recipe.recipeExplain);
                         nodes.push(recipeDiv);
                     }
                     errorMessage.replaceChildren(...nodes);
@@ -2812,6 +2883,14 @@
                     }
                     return;
                 }
+
+                const activeTag = document.activeElement ? document.activeElement.tagName : '';
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag)) {
+                    if (e.key === 'Escape') document.activeElement.blur();
+                    return;
+                }
+
+                if (e.repeat) return;
 
                 if (isFinished) {
                     if (e.key === 'Enter') {
@@ -2874,7 +2953,7 @@
                 const text = LEVELS[currentLevelIdx].text;
                 const minutes = Math.max(0.01, (endTime - startTime) / 60000);
                 const finalWpm = Math.round((text.length / 5) / minutes);
-                const finalAcc = Math.max(0, Math.round(((text.length - errors) / text.length) * 100));
+                const finalAcc = calculateAccuracy();
 
                 const lvlId = LEVELS[currentLevelIdx].id;
                 const existing = scores[lvlId];
@@ -2909,12 +2988,18 @@
                 // Analyse des touches à travailler
                 const sortedErrors = Object.entries(errorDetails).sort((a, b) => b[1] - a[1]);
                 if (sortedErrors.length > 0) {
-                    errorTags.innerHTML = '';
+                    errorTags.replaceChildren();
                     sortedErrors.forEach(([ch, count]) => {
                         const tag = document.createElement('div');
                         tag.className = 'error-tag';
                         const displayCh = ch === ' ' ? 'Espace' : ch;
-                        tag.innerHTML = `<span class="error-tag-char">${displayCh}</span><span class="error-tag-count">${count}×</span>`;
+                        const chSpan = document.createElement('span');
+                        chSpan.className = 'error-tag-char';
+                        chSpan.textContent = displayCh;
+                        const cntSpan = document.createElement('span');
+                        cntSpan.className = 'error-tag-count';
+                        cntSpan.textContent = `${count}×`;
+                        tag.append(chSpan, cntSpan);
                         errorTags.appendChild(tag);
                     });
                     errorAnalysis.style.display = 'block';
@@ -2939,6 +3024,7 @@
 
             // --- EFFET DE CONFETTIS ---
             function launchConfetti() {
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
                 const canvas = document.getElementById('confetti-canvas');
                 if (!canvas) return;
                 const ctx = canvas.getContext('2d');
@@ -3055,7 +3141,7 @@
                     month: '2-digit',
                     year: 'numeric'
                 });
-                const timeFormatted = now.toLocaleTimeString('fr-CH', {
+                const timeFormatted = now.toLocaleTimeString(locale, {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
@@ -3085,15 +3171,25 @@
                         const tr = document.createElement('tr');
                         const best = scores[lvl.id];
 
+                        const createLvlCell = (lvlIdx, lvlName) => {
+                            const cell = document.createElement('td');
+                            cell.className = 'level-name-col';
+                            const strong = document.createElement('strong');
+                            strong.textContent = `Niveau ${lvlIdx + 1}`;
+                            const sub = document.createElement('span');
+                            sub.className = 'level-sub';
+                            sub.textContent = lvlName;
+                            cell.append(strong, document.createTextNode(' '), sub);
+                            return cell;
+                        };
+
                         if (best) {
                             completedCount++;
                             totalWpm += best.wpm;
                             totalAcc += best.accuracy;
                             tr.className = 'completed-row';
 
-                            const tdLvl = document.createElement('td');
-                            tdLvl.className = 'level-name-col';
-                            tdLvl.innerHTML = `<strong>Niveau ${idx + 1}</strong> <span class="level-sub">${lvl.name}</span>`;
+                            const tdLvl = createLvlCell(idx, lvl.name);
 
                             const tdWpm = document.createElement('td');
                             tdWpm.className = 'score-num-col';
@@ -3106,16 +3202,19 @@
                             const tdStatus = document.createElement('td');
                             tdStatus.className = 'score-status-col';
                             const statusTxt = de ? "Bestanden" : "Validé";
-                            tdStatus.innerHTML = `<span class="level-status-pill success"><i data-fa="circle-check"></i> ${statusTxt}</span>`;
+                            const pill = document.createElement('span');
+                            pill.className = 'level-status-pill success';
+                            const checkIcon = document.createElement('i');
+                            checkIcon.setAttribute('data-fa', 'circle-check');
+                            pill.append(checkIcon, document.createTextNode(` ${statusTxt}`));
+                            tdStatus.appendChild(pill);
 
                             tr.appendChild(tdLvl);
                             tr.appendChild(tdWpm);
                             tr.appendChild(tdAcc);
                             tr.appendChild(tdStatus);
                         } else {
-                            const tdLvl = document.createElement('td');
-                            tdLvl.className = 'level-name-col';
-                            tdLvl.innerHTML = `<strong>Niveau ${idx + 1}</strong> <span class="level-sub">${lvl.name}</span>`;
+                            const tdLvl = createLvlCell(idx, lvl.name);
 
                             const tdWpm = document.createElement('td');
                             tdWpm.className = 'score-num-col';
@@ -3128,7 +3227,10 @@
                             const tdStatus = document.createElement('td');
                             tdStatus.className = 'score-status-col';
                             const pendingTxt = de ? "Ausstehend" : "Non complété";
-                            tdStatus.innerHTML = `<span class="level-status-pill pending">${pendingTxt}</span>`;
+                            const pill = document.createElement('span');
+                            pill.className = 'level-status-pill pending';
+                            pill.textContent = pendingTxt;
+                            tdStatus.appendChild(pill);
 
                             tr.appendChild(tdLvl);
                             tr.appendChild(tdWpm);

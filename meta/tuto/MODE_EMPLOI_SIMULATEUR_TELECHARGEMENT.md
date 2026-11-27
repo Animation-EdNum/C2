@@ -11,7 +11,7 @@ Le **Simulateur de téléchargement** fait découvrir et ressentir concrètement
 ## 🎯 Pourquoi cet outil en classe ?
 
 - **Rendre tangible l'immatériel :** Sur un écran moderne, ouvrir une page ou une vidéo semble souvent « magique et instantané ». Ce simulateur matérialise le flux d'octets qui circule dans les câbles et les ondes.
-- **Maîtriser les ordres de grandeur :** Comprendre pourquoi un courriel texte pèse quelques kilo-octets (Ko), une photo quelques méga-octets (Mo), et un film complet plusieurs giga-octets (Go).
+- **Maîtriser les ordres de grandeur :** Comprendre pourquoi un livre texte pèse quelques centaines de kilo-octets (Ko), une photo quelques méga-octets (Mo), et un film complet plusieurs centaines de Mo à plusieurs giga-octets (Go).
 - **Historique des technologies :** Expérimenter le saut vertigineux de vitesse entre les premières connexions téléphoniques commutées et le très haut débit moderne.
 - **Sensibilisation à la sobriété numérique :** Prendre conscience du coût en données et en énergie du streaming vidéo haute définition par rapport à des formats plus légers.
 
@@ -23,51 +23,48 @@ L'application propose deux onglets complémentaires en haut de l'écran :
 
 | Onglet | Intitulé | Ce que fait l'élève |
 |---|---|---|
-| 🎯 **Mode 1** | **Défi des 4 médias** | Compare en direct le téléchargement simultané des 4 grands formats de données (Texte, Image, Audio, Vidéo) pour observer l'écart colossal de durée. |
-| 🔬 **Mode 2** | **Laboratoire de débits** | Choisit une technologie de connexion (56k, ADSL, 4G, Fibre) et lance le téléchargement sur une sélection de 9 fichiers types ou un fichier personnalisé. |
+| 🎯 **Mode 1** | **Défi des 4 médias** | Observe les canaux anonymes (1 à 4), suit les Ko déjà téléchargés et le temps écoulé sur chaque jauge, puis devine quel média correspond à chaque téléchargement. |
+| 🔬 **Mode 2** | **Laboratoire de débits** | Choisit une technologie de connexion (56k, ADSL, 4G/VDSL, Fibre) et lance le téléchargement **en temps réel** sur les 9 fichiers de référence de la Fiche 2. |
 
 ---
 
-## 2. Les 4 technologies réseau et débits simulés
+## 2. Le Défi des 4 médias
 
-Dans les deux modes, l'élève peut basculer d'une technologie réseau à l'autre pour constater la différence de débit :
+Les 4 médias sont mélangés aléatoirement sur les canaux 1 à 4 à chaque manche :
+
+1. 📄 **Texte (Livre de 311 pages) :** $\sim 500\text{ Ko}$ ($\sim 0.85\text{ s}$)
+2. 🖼️ **Image (Image plein écran HD) :** $\sim 1.8\text{ Mo}$ ($\sim 4.5\text{ s}$)
+3. 🎵 **Audio (Morceau de musique de 4 min) :** $\sim 4\text{ Mo}$ ($\sim 8.5\text{ s}$)
+4. 🎬 **Vidéo (Film de 2h, qualité standard) :** $\sim 700\text{ Mo}$ ($\sim 19\text{ s}$)
+
+### Déroulement :
+1. Cliquez sur **« Tout lancer »** (ou démarrez chaque canal individuellement).
+2. Observez sur chaque jauge **les Ko déjà téléchargés** et **le temps écoulé** (la taille totale et le pourcentage restent cachés tant que vous n'avez pas émis d'hypothèse).
+3. Émettez votre hypothèse en cliquant sur **📄 Texte**, **🖼️ Image**, **🎵 Audio** ou **🎬 Vidéo** : la validation et la taille complète s'affichent immédiatement.
+4. En bas de page, cliquez sur les 4 cartes de référence pour inspecter les explications et analogies de chaque type de fichier.
+
+---
+
+## 3. Le Laboratoire de débits (temps réel)
+
+Cet espace permet de comparer l'effet de 4 vitesses de connexion sur les **9 fichiers de référence** répartis en Ko, Mo et Go :
 
 | Réseau | Débit binaire | Vitesse de transfert | Époque & Contexte |
 |---|---|---|---|
-| 📞 **Modem 56k** | 56 Kb/s | $\sim 7\text{ Ko/s}$ | Années 90 · Ligne téléphonique commutée (bruit de numérotation caractéristique !) |
-| 🌐 **ADSL / 3G** | 2 Mb/s | $\sim 250\text{ Ko/s}$ | Années 2000 · Première démocratisation d'Internet à la maison |
-| 📶 **4G / VDSL École** | 20 Mb/s | $\sim 2.5\text{ Mo/s}$ | Actuel · Connexion standard dans les salles de classe |
-| ⚡ **Fibre optique / 5G** | 200 Mb/s | $\sim 25\text{ Mo/s}$ | Moderne · Très haut débit sans latence perceptible |
+| 📞 **Modem 56k** | 56 Kb/s | $\sim 7\text{ Ko/s}$ | Années 90 · Ligne téléphonique commutée |
+| 🌐 **ADSL / 3G** | 2 Mb/s | $\sim 250\text{ Ko/s}$ | Années 2000 · Premiers accès haut débit |
+| 📶 **4G / VDSL École** | 20 Mb/s | $\sim 2.5\text{ Mo/s}$ | Actuel · Connexion standard |
+| ⚡ **Fibre optique / 5G** | 200 Mb/s | $\sim 25\text{ Mo/s}$ | Moderne · Très haut débit |
+
+- **9 fichiers classés par ordre de grandeur :**
+  - **Zone Ko :** Petit recueil de poèmes (50 Ko), Règles du jeu Little Town (200 Ko), Texte d'un roman complet (750 Ko).
+  - **Zone Mo :** Photo de famille HD (3 Mo), Morceau de musique MP3 (4 Mo), Musique d'un concert sur CD (700 Mo).
+  - **Zone Go :** Le film Jurassic Park HD (1.5 Go), Série TV complète sur DVD (4.7 Go), Films Harry Potter sur clé USB (32 Go).
+- **Simulation strictement en temps réel (×1) :** Aucune accélération artificielle n'est appliquée dans le laboratoire. Chaque carte indique d'emblée le **temps estimé** puis affiche en direct la quantité téléchargée, le pourcentage et le temps restant — montrant concrètement qu'un fichier de plusieurs Go reste très long à récupérer sur un débit lent.
 
 ---
 
-## 3. Le Défi des 4 médias
-
-L'écran affiche 4 jauges de progression colorées représentant les familles de contenus numériques :
-
-1. 📄 **Fichier Texte (Article) :** $\sim 50\text{ Ko}$ (Couleur bleue)
-2. 🖼️ **Image HD (Photo) :** $\sim 2\text{ Mo}$ (Couleur verte)
-3. 🎵 **Morceau Audio (Chanson MP3) :** $\sim 10\text{ Mo}$ (Couleur orange)
-4. 🎬 **Vidéo (Court métrage HD) :** $\sim 250\text{ Mo}$ (Couleur violette)
-
-### Déroulement :
-1. Cliquez sur **« Tout lancer »** (ou lancez chaque média individuellement).
-2. Observez la vitesse de remplissage des barres, le temps écoulé et le temps restant estimé.
-3. **Constat saisissant :** En modem 56k, le texte arrive en 7 secondes, mais la vidéo nécessiterait près de **10 heures** de téléchargement ininterrompu ! En fibre optique, l'ensemble se télécharge en quelques secondes.
-
----
-
-## 4. Le Laboratoire de débits
-
-Cet espace d'investigation libre permet d'approfondir les calculs et les tests :
-
-- **9 fichiers types :** Message texte (2 Ko), Photo de vacances (3.5 Mo), Album musical (60 Mo), Application mobile (120 Mo), Film HD (1.4 Go), Mise à jour système (4.2 Go), etc.
-- **Fichier personnalisé :** Permet à l'élève ou à l'enseignant de saisir une taille libre en Ko, Mo ou Go et de lancer la simulation pour répondre à une question concrète (*« Combien de temps pour télécharger le jeu de 15 Go avec la 4G de mon smartphone ? »*).
-- **Statistiques en direct :** Quantité de données transférées, pourcentage complété, vitesse instantanée en Mo/s et temps restant dynamique.
-
----
-
-## 5. Pistes pédagogiques pour la classe
+## 4. Pistes pédagogiques pour la classe
 
 1. **Calculs interdisciplinaires (Maths & Numérique) :**
    - Rappeler la relation fondamentale : $\text{Temps} = \frac{\text{Taille du fichier}}{\text{Débit réel}}$.
@@ -78,12 +75,12 @@ Cet espace d'investigation libre permet d'approfondir les calculs et les tests :
    - $1\text{ Mo (méga-octet)} \approx 1\,000\text{ Ko} \approx 1\,000\,000\text{ octets}$
    - $1\text{ Go (giga-octet)} \approx 1\,000\text{ Mo} \approx 1\,000\,000\,000\text{ octets}$
 3. **Débat sur l'impact écologique du streaming :**
-   - Discuter de l'intérêt d'écouter de la musique sans le flux vidéo (YouTube Music vs YouTube vidéo) pour économiser les données et l'énergie des serveurs relais.
+   - Discuter de l'intérêt d'écouter de la musique sans le flux vidéo (audio seul vs vidéo HD) pour économiser les données et l'énergie des serveurs.
 
 ---
 
 ## ⚙️ Options & Accessibilité
 
-- **Sons 🔊 :** Bruitages rétro authentiques de connexion modem 56k et sons de complétion synthétisés nativement (Web Audio API).
 - **Thème sombre / clair 🌙 :** Bascule instantanée pour adapter le contraste à la projection en classe.
-- **Mode TBI :** Affichage optimisé pour le grand écran tactile de la classe.
+- **Mode TNI/TBI :** Affichage optimisé pour le grand écran tactile de la classe (sans plein écran navigateur forcé, sortie avec `Échap`).
+- **Réinitialisation :** Remet à zéro et remélange les 4 canaux du Défi ainsi que les téléchargements en cours dans le Laboratoire.

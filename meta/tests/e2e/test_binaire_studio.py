@@ -12,7 +12,7 @@ def test_binaire_studio_decode(page: Page):
     expect(page.locator("#grid-decode")).to_be_visible()
     
     # Click some pixels in the decode grid
-    pixels = page.locator("#grid-decode .pixel")
+    pixels = page.locator("#grid-decode .grid-cell")
     if pixels.count() > 0:
         pixels.nth(0).click()
     
@@ -29,7 +29,7 @@ def test_binaire_studio_encode(page: Page):
     expect(page.locator("#encode-inputs")).to_be_visible()
     
     # Fill an input
-    inputs = page.locator(".encode-row-input")
+    inputs = page.locator("#encode-inputs input")
     if inputs.count() > 0:
         inputs.nth(0).fill("0")
         

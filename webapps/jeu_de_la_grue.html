@@ -94,6 +94,18 @@
             background: rgba(30, 41, 59, 0.8);
         }
 
+        .btn-primary,
+        body.dark .btn-primary {
+            background: #b45309 !important;
+            color: #ffffff !important;
+            border-color: #92400e !important;
+        }
+
+        .btn-primary:hover:not(:disabled),
+        body.dark .btn-primary:hover:not(:disabled) {
+            background: #92400e !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -179,9 +191,9 @@
             gap: 6px;
             padding: 6px 16px;
             border-radius: var(--radius-pill);
-            border: 2px solid var(--accent);
+            border: 2px solid #b45309;
             background: transparent;
-            color: var(--accent);
+            color: #92400e;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -192,16 +204,39 @@
         }
 
         .diff-btn.active {
-            background: var(--accent);
-            color: #fff;
+            background: #b45309;
+            border-color: #b45309;
+            color: #ffffff;
         }
 
         .diff-btn:hover:not(.active) {
             background: #fef3c7;
         }
 
+        body.dark .diff-btn {
+            border-color: #fbbf24;
+            color: #fde68a;
+        }
+
+        body.dark .diff-btn.active {
+            background: #b45309;
+            border-color: #fbbf24;
+            color: #ffffff;
+        }
+
         body.dark .diff-btn:hover:not(.active) {
             background: var(--card-bg);
+        }
+
+        body.high-contrast .diff-btn {
+            border-color: #000000 !important;
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
+
+        body.high-contrast .diff-btn.active {
+            background: #000000 !important;
+            color: #ffffff !important;
         }
 
         .diff-btn#diff-extreme {
@@ -398,8 +433,13 @@
 
         .target-board .cube {
             height: 36px;
-            box-shadow: 0 2px 0 #1d4ed8, 0 3px 3px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35), 0 3px 3px rgba(0, 0, 0, 0.2);
             border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+        }
+
+        body.high-contrast .cube {
+            border: 2px solid #000000 !important;
         }
 
         .crane-layer {
@@ -557,12 +597,6 @@
             box-shadow: 0 4px 0 #334155;
         }
 
-        .prog-step:hover:not(.active):not(.error-step) {
-            transform: scale(1.1);
-            background: var(--error);
-            box-shadow: 0 2px 0 #991b1b;
-        }
-
         .prog-step::after {
             content: '×';
             font-size: 24px;
@@ -572,13 +606,21 @@
             font-weight: bold;
         }
 
-        .prog-step:hover:not(.active):not(.error-step) svg,
-        .prog-step:hover:not(.active):not(.error-step) i {
-            display: none;
-        }
+        @media (hover: hover) {
+            .prog-step:hover:not(.active):not(.error-step) {
+                transform: scale(1.1);
+                background: var(--error);
+                box-shadow: 0 2px 0 #991b1b;
+            }
 
-        .prog-step:hover:not(.active):not(.error-step)::after {
-            display: block;
+            .prog-step:hover:not(.active):not(.error-step) svg,
+            .prog-step:hover:not(.active):not(.error-step) i {
+                display: none;
+            }
+
+            .prog-step:hover:not(.active):not(.error-step)::after {
+                display: block;
+            }
         }
 
         .prog-step.active {
@@ -788,6 +830,39 @@
             box-shadow: 0 7px 0 #14532d;
         }
 
+        body.dark .play-btn {
+            background: #15803d;
+            color: #ffffff;
+        }
+
+        body.dark .play-btn:hover {
+            background: #166534;
+        }
+
+        footer {
+            background: rgba(15, 23, 42, 0.78);
+            color: #f8fafc;
+            border-radius: var(--radius-lg);
+            padding: 10px 18px;
+            width: fit-content;
+            margin: 18px auto 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: #fde68a;
+        }
+
+        body.high-contrast footer {
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+        }
+
+        body.high-contrast footer a {
+            color: #0000ff;
+        }
+
         .play-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -949,21 +1024,24 @@
                         <i data-fa="gear"></i>
                     </button>
                     <div class="settings-dropdown-content">
-                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son">
+                        <button class="menu-item-btn" id="audio-toggle-btn" aria-label="Activer/Désactiver le son"
+                            data-i18n-attr="aria-label:common.audio_toggle">
                             <i data-fa="volume-high" id="icon-vol-on" style="display:none;"></i>
                             <i data-fa="volume-xmark" id="icon-vol-off"></i>
-                            <span id="audioToggleText">Activer son</span>
+                            <span id="audioToggleText" data-i18n="common.audio_on">Activer son</span>
                         </button>
                         <div class="dropdown-divider"></div>
-                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème">
+                        <button class="menu-item-btn" id="theme-toggle-btn" aria-label="Changer de thème"
+                            data-i18n-attr="aria-label:common.theme_toggle">
                             <i data-fa="sun-bright" id="icon-sun" style="display:none;"></i>
                             <i data-fa="moon" id="icon-moon"></i>
-                            <span id="themeToggleText">Sombre</span>
+                            <span id="themeToggleText" data-i18n="common.theme_dark">Sombre</span>
                         </button>
                         <div class="dropdown-divider"></div>
-                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
+                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application"
+                            data-i18n-attr="aria-label:common.reset">
                             <i data-fa="arrows-rotate"></i>
-                            <span id="resetCacheText">Réinitialiser</span>
+                            <span id="resetCacheText" data-i18n="common.reset">Réinitialiser</span>
                         </button>
                     </div>
                 </div>
@@ -1002,7 +1080,8 @@
                         data-i18n="jeu_de_la_grue.diff_medium">Moyen</span></button>
                 <button class="diff-btn" id="diff-hard"><i data-fa="circle" style="color: #e74c3c;"></i> <span
                         data-i18n="jeu_de_la_grue.diff_hard">Difficile</span></button>
-                <button class="diff-btn" id="diff-extreme" data-diff="extreme" style="display: none;"><i data-fa="fire" style="color: #ef4444;"></i> <span
+                <button class="diff-btn" id="diff-extreme" data-diff="extreme" style="display: none;"><i data-fa="fire"
+                        style="color: #ef4444;"></i> <span
                         data-i18n="jeu_de_la_grue.diff_extreme">Extrême</span></button>
             </div>
 
@@ -1117,6 +1196,7 @@
         const NUM_CUPS = 3;
         const MAX_STACK = 3;
         const COLORS = ['#3b82f6', '#ef4444', '#10b981'];
+        const BLOCK_SYMBOLS = { '#3b82f6': '★', '#ef4444': '●', '#10b981': '▲' };
 
         let cups = [[], [], []];
         let initialCupsState = [[], [], []];
@@ -1126,6 +1206,7 @@
         let program = [];
         let isExecuting = false;
         let isCooldown = false;
+        let executionId = 0;
 
         const targetBoardEl = document.getElementById('target-board');
         const mainBoardEl = document.getElementById('main-board');
@@ -1139,7 +1220,7 @@
                 if (localStorage.getItem('c2_grue_extreme_unlocked') === 'true') return true;
                 const hardStats = ScoreManager.stats?.jeu_de_la_grue?.hard;
                 if (hardStats && (hardStats.firstTrySuccess >= 1)) return true;
-            } catch (e) {}
+            } catch (e) { }
             return false;
         }
 
@@ -1227,7 +1308,7 @@
                 if (!e.detail || e.detail.appId === 'jeu_de_la_grue') {
                     try {
                         localStorage.removeItem('c2_grue_extreme_unlocked');
-                    } catch (err) {}
+                    } catch (err) { }
                     updateExtremeButtonVisibility();
                 }
             });
@@ -1302,6 +1383,7 @@
             clearTimeout(window.failTimeout);
             clearTimeout(winTimeout);
             winTimeout = null;
+            executionId++;
             isExecuting = false;
             isCooldown = false;
             playBtn.disabled = false;
@@ -1321,12 +1403,23 @@
                     break;
                 }
             } while (
-                minMoves === 0 ||
+                minMoves <= 0 ||
                 (currentDifficulty === 'easy' && minMoves !== 1) ||
                 (currentDifficulty === 'medium' && minMoves !== 2) ||
                 (currentDifficulty === 'hard' && (minMoves < 3 || minMoves > 4)) ||
                 (currentDifficulty === 'extreme' && minMoves < 5)
             );
+
+            if (minMoves <= 0) {
+                for (let c = 0; c < NUM_CUPS; c++) {
+                    if (cups[c].length > 0) {
+                        const dst = (c + 1) % NUM_CUPS;
+                        targetCups = JSON.parse(JSON.stringify(cups));
+                        targetCups[dst].push(targetCups[c].pop());
+                        break;
+                    }
+                }
+            }
 
             initialCupsState = JSON.parse(JSON.stringify(cups));
             craneState = { pos: 0, holding: null };
@@ -1337,6 +1430,7 @@
         }
 
         function resetToInitial() {
+            executionId++;
             cups = JSON.parse(JSON.stringify(initialCupsState));
             craneState = { pos: 0, holding: null };
             if (craneArmEl) {
@@ -1382,6 +1476,7 @@
                     const blockEl = document.createElement('div');
                     blockEl.className = 'cube';
                     blockEl.style.setProperty('--cube-color', block.color);
+                    blockEl.textContent = BLOCK_SYMBOLS[block.color] || '';
                     blocksContainer.appendChild(blockEl);
                 }
                 cupEl.appendChild(blocksContainer);
@@ -1516,7 +1611,7 @@
             return { valid: false, reason: window.I18N ? window.I18N.t('jeu_de_la_grue.toast_action_unknown', 'Action inconnue.') : 'Action inconnue.' };
         }
 
-        async function executeActionInstruction() {
+        async function executeActionInstruction(myExecId) {
             const currentStack = cups[craneState.pos];
             const blocksInCup = currentStack.length;
             const isGrabbing = !craneState.holding;
@@ -1533,8 +1628,8 @@
 
             craneArmEl.style.height = `${targetArmHeight}px`;
             await delay(450);
-            if (!isExecuting) {
-                return { valid: false };
+            if (!isExecuting || myExecId !== executionId) {
+                return { valid: false, canceled: true };
             }
 
             if (isGrabbing) {
@@ -1547,12 +1642,15 @@
             renderBoard(cups, mainBoardEl, false);
             updateCraneVisuals();
             await delay(250);
-            if (!isExecuting) {
-                return { valid: false };
+            if (!isExecuting || myExecId !== executionId) {
+                return { valid: false, canceled: true };
             }
 
             craneArmEl.style.height = '10px';
             await delay(450);
+            if (!isExecuting || myExecId !== executionId) {
+                return { valid: false, canceled: true };
+            }
             return { valid: true };
         }
 
@@ -1560,20 +1658,24 @@
             if (isExecuting || isCooldown || program.length === 0) {
                 return;
             }
+            const myExecId = ++executionId;
+            clearTimeout(window.failTimeout);
             isExecuting = true;
             playBtn.disabled = true;
 
-            resetToInitial();
+            cups = JSON.parse(JSON.stringify(initialCupsState));
+            craneState = { pos: 0, holding: null };
+            if (craneArmEl) craneArmEl.style.height = '10px';
             renderAll();
             await delay(400);
-            if (!isExecuting) {
+            if (!isExecuting || myExecId !== executionId) {
                 return;
             }
 
             const progSteps = document.querySelectorAll('.prog-step');
 
             for (let i = 0; i < program.length; i++) {
-                if (!isExecuting) {
+                if (!isExecuting || myExecId !== executionId) {
                     return;
                 }
 
@@ -1588,7 +1690,7 @@
                 const inst = program[i];
                 let result;
                 if (inst === 'action') {
-                    result = await executeActionInstruction();
+                    result = await executeActionInstruction(myExecId);
                 } else {
                     result = processMoveInstruction(inst);
                     if (result.valid) {
@@ -1598,6 +1700,10 @@
                     }
                 }
 
+                if (!isExecuting || myExecId !== executionId || result.canceled) {
+                    return;
+                }
+
                 if (!result.valid) {
                     if (result.reason) {
                         showToast(result.reason, 'error', 4000);
@@ -1605,13 +1711,25 @@
                     if (currentStepEl) {
                         currentStepEl.classList.add('error-step');
                     }
-                    break;
+                    currentMistakes++;
+                    updateScore(false);
+                    playSound('error');
+                    isExecuting = false;
+                    isCooldown = true;
+                    playBtn.disabled = true;
+                    window.failTimeout = setTimeout(() => {
+                        isCooldown = false;
+                        renderProgram();
+                        resetToInitial();
+                    }, 4000);
+                    return;
                 }
             }
 
-            if (!isExecuting) {
+            if (!isExecuting || myExecId !== executionId) {
                 return;
             }
+            isExecuting = false;
             progSteps.forEach(el => {
                 if (!el.classList.contains('error-step')) {
                     el.classList.remove('active');
@@ -1639,7 +1757,7 @@
                 playSound('error');
 
                 const errorReason = craneState.holding
-                    ?(window.I18N ? window.I18N.t('jeu_de_la_grue.toast_not_dropped', 'Objet non posé !') : 'Objet non posé !')
+                    ? (window.I18N ? window.I18N.t('jeu_de_la_grue.toast_not_dropped', 'Objet non posé !') : 'Objet non posé !')
                     : (window.I18N ? window.I18N.t('jeu_de_la_grue.toast_incorrect_layout', 'Disposition incorrecte !') : 'Disposition incorrecte !');
                 showToast(errorReason, 'error', 4000);
 
@@ -1675,7 +1793,7 @@
                 if (currentDifficulty === 'hard' && currentMistakes === 0 && !previouslyUnlocked) {
                     try {
                         localStorage.setItem('c2_grue_extreme_unlocked', 'true');
-                    } catch (e) {}
+                    } catch (e) { }
                     updateExtremeButtonVisibility();
                     if (typeof launchConfetti === 'function') {
                         launchConfetti();
@@ -1711,7 +1829,7 @@
                 if (localStorage.getItem('grue_seen_hint')) {
                     return;
                 }
-                const targetBtn = document.getElementById('btn-inst-action');
+                const targetBtn = document.getElementById(cups[0].length > 0 ? 'btn-inst-action' : 'btn-inst-right');
                 if (!targetBtn) {
                     return;
                 }

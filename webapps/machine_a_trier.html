@@ -148,7 +148,8 @@
             flex-wrap: wrap;
         }
 
-        .diff-btn {
+        .diff-btn,
+        .playstyle-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -167,13 +168,34 @@
             min-height: 44px;
         }
 
-        .diff-btn.active {
-            background: var(--accent);
-            color: #fff;
+        .diff-btn.active,
+        .playstyle-btn.active {
+            background: #4338ca;
+            border-color: #4338ca;
+            color: #ffffff;
         }
 
-        .diff-btn:hover:not(.active) {
+        .diff-btn:hover:not(.active),
+        .playstyle-btn:hover:not(.active) {
             background: #eef2ff;
+        }
+
+        body.dark .diff-btn,
+        body.dark .playstyle-btn {
+            border-color: #818cf8;
+            color: #e0e7ff;
+        }
+
+        body.dark .diff-btn.active,
+        body.dark .playstyle-btn.active {
+            background: #4f46e5;
+            border-color: #818cf8;
+            color: #ffffff;
+        }
+
+        body.dark .diff-btn:hover:not(.active),
+        body.dark .playstyle-btn:hover:not(.active) {
+            background: rgba(99, 102, 241, 0.22);
         }
 
         /* ========== GAME AREA ========== */
@@ -259,6 +281,7 @@
             border: 2px solid #e2e8f0;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             user-select: none;
+            touch-action: none;
         }
 
         .item:active {
@@ -304,6 +327,11 @@
             border-color: var(--accent);
             background: #e0e7ff;
             transform: translateY(-5px);
+        }
+
+        body.dark .bin:hover,
+        body.dark .bin.drag-over {
+            background: rgba(99, 102, 241, 0.22);
         }
 
         .bin-label {
@@ -549,19 +577,19 @@
 
             <!-- STYLE DE JEU -->
             <div class="difficulty-bar" style="margin-bottom: 15px;">
-                <button class="diff-btn active" id="playstyle-classic"><i data-fa="box"
+                <button class="playstyle-btn active" id="playstyle-classic"><i data-fa="box"
                         style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i>
                     <span data-i18n="machine_a_trier.playstyle_classic">Classique</span></button>
-                <button class="diff-btn" id="playstyle-factory"><i data-fa="conveyor-belt-boxes"
+                <button class="playstyle-btn" id="playstyle-factory"><i data-fa="conveyor-belt-boxes"
                         style="width: 16px; height: 16px; vertical-align: text-bottom; margin-right: 4px;"></i> <span
                         data-i18n="machine_a_trier.playstyle_factory">Usine (Tapis)</span></button>
             </div>
 
             <!-- DIFFICULTÉ -->
             <div class="difficulty-bar">
-                <button class="diff-btn" id="diff-easy"><i data-fa="circle" style="color: #2ecc71;"></i> <span
+                <button class="diff-btn active" id="diff-easy"><i data-fa="circle" style="color: #2ecc71;"></i> <span
                         data-i18n="machine_a_trier.diff_easy_short">Facile</span></button>
-                <button class="diff-btn active" id="diff-medium"><i data-fa="circle" style="color: #f1c40f;"></i>
+                <button class="diff-btn" id="diff-medium"><i data-fa="circle" style="color: #f1c40f;"></i>
                     <span data-i18n="machine_a_trier.diff_medium_short">Moyen</span></button>
                 <button class="diff-btn" id="diff-hard"><i data-fa="circle" style="color: #e74c3c;"></i>
                     <span data-i18n="machine_a_trier.diff_hard_short">Difficile</span></button>
@@ -673,7 +701,7 @@
         }
 
         let currentMode = 'color'; // 'color', 'shape', 'quantity', 'size'
-        let currentDifficulty = 'medium'; // 'easy', 'medium', 'hard'
+        let currentDifficulty = 'easy'; // 'easy', 'medium', 'hard'
         let isFactoryMode = false;
 
         let globalCorrect = 0;
@@ -690,7 +718,9 @@
         let factoryItemsQueue = []; // Objets en attente
         let activeBeltItems = []; // Objets actuellement sur le tapis
         let factoryLastSpawnTime = 0;
+        let lastFactoryFrameTime = 0;
         let isDragged = false; // Bloquer animation si objet draggué
+        let currentDraggedItem = null;
 
         let modeTimer = null; // Timer d'inactivité du mode
 
@@ -724,6 +754,8 @@
         // --- Touch Events Support ---
         let touchOffsetX = 0;
         let touchOffsetY = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
         let activeClone = null;
         let currentTouchItem = null;
         let touchHasMoved = false;
@@ -732,6 +764,8 @@
             const touch = e.touches[0];
             currentTouchItem = this;
             touchHasMoved = false;
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
 
             const rect = this.getBoundingClientRect();
             touchOffsetX = touch.clientX - rect.left;
@@ -745,12 +779,14 @@
 
         function handleTouchMove(e) {
             if (!currentTouchItem) return;
+            const touch = e.touches[0];
+            if (!touchHasMoved && Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY) < 8) {
+                return;
+            }
             touchHasMoved = true;
 
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
-
-            const touch = e.touches[0];
 
             if (!activeClone) {
                 activeClone = currentTouchItem.cloneNode(true);
@@ -816,6 +852,7 @@
         function setupItemEvents(item) {
             item.addEventListener('dragstart', (e) => {
                 isDragged = true;
+                currentDraggedItem = item;
                 e.dataTransfer.setData('text/plain', item.id);
                 item.style.opacity = '0.5';
                 selectItem(item);
@@ -823,6 +860,7 @@
 
             item.addEventListener('dragend', () => {
                 isDragged = false;
+                currentDraggedItem = null;
                 item.style.opacity = '1';
             });
 
@@ -921,14 +959,19 @@
             if (factoryAnimationId) cancelAnimationFrame(factoryAnimationId);
             activeBeltItems = [];
             factoryLastSpawnTime = performance.now();
+            lastFactoryFrameTime = factoryLastSpawnTime;
             factoryAnimationId = requestAnimationFrame(updateFactory);
         }
 
         function updateFactory(time) {
             if (!isFactoryMode) return;
 
+            const dt = lastFactoryFrameTime ? Math.min(0.05, (time - lastFactoryFrameTime) / 1000) : (1 / 60);
+            lastFactoryFrameTime = time;
+
             const spawnInterval = currentDifficulty === 'easy' ? 2000 : (currentDifficulty === 'medium' ? 1600 : 1200);
             const speed = currentDifficulty === 'easy' ? 1.5 : (currentDifficulty === 'medium' ? 2.0 : 2.5);
+            const stepX = speed * (dt * 60);
 
             // Apparition de nouveaux objets
             if (time - factoryLastSpawnTime > spawnInterval && factoryItemsQueue.length > 0) {
@@ -949,12 +992,12 @@
                     continue;
                 }
 
-                if (el === currentTouchItem || el === selectedItem || el.classList.contains('selected') || (el.style.opacity && parseFloat(el.style.opacity) < 1)) {
-                    // Object is currently being dragged or selected, skip moving it
+                if ((el === currentTouchItem && touchHasMoved) || (isDragged && el === currentDraggedItem) || (el.style.opacity && parseFloat(el.style.opacity) < 1)) {
+                    // Object is currently being dragged, pause movement while dragging
                     continue;
                 }
 
-                beltItem.x += speed;
+                beltItem.x += stepX;
                 el.style.left = beltItem.x + 'px';
 
                 // Vérifier si tombé du tapis
@@ -1117,6 +1160,7 @@
 
             // Générer des objets (ex: 2 objets par bac, ou plus en mode usine)
             const numItems = isFactoryMode ? numBins * 4 : numBins * 2;
+            const uniformSizeShape = currentMode === 'size' ? SHAPES[Math.floor(Math.random() * SHAPES.length)] : null;
             let items = [];
             for (let i = 0; i < numItems; i++) {
                 // Choisir un type valide parmi ceux des bacs
@@ -1125,7 +1169,7 @@
                 // Assigner la forme ou couleur opposée aléatoirement pour varier l'apparence
                 let itemColor, itemShape, itemQuantity, itemScale;
                 itemColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-                itemShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+                itemShape = uniformSizeShape || SHAPES[Math.floor(Math.random() * SHAPES.length)];
 
                 if (currentMode === 'color') {
                     itemColor = correctType;
@@ -1280,7 +1324,7 @@
                 const wasNewRecord = globalStreak > globalBest;
                 if (wasNewRecord) globalBest = globalStreak;
                 handleStreakCelebration(globalStreak, false, wasNewRecord);
-                ScoreManager.addSuccess(currentMode, currentDifficulty, 0);
+                ScoreManager.addSuccess(currentMode, currentDifficulty, mistakesInCurrentLevel);
             } else {
                 globalStreak = 0;
                 ScoreManager.addMistake(currentMode, currentDifficulty);
@@ -1310,6 +1354,7 @@
             if (cEl) cEl.textContent = '0';
             if (sEl) sEl.textContent = '0';
             setPlaystyle('classic');
+            setDifficulty('easy');
             setMode('color');
             if (typeof showToast === 'function') {
                 const msg = window.I18N ? window.I18N.t('common.reset_done', 'Application réinitialisée') : 'Application réinitialisée';

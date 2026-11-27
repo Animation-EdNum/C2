@@ -1,6 +1,6 @@
 # ⌨️ Mode d'emploi : Tape-Texte (Clavier suisse romand QWERTZ)
 
-**Tape-Texte** est une application web d'apprentissage et d'entraînement à la saisie de texte au clavier, spécialement conçue pour les élèves du **Cycle 2 (5-8H)** et du **Cycle 3 (9-11CO)** avec la disposition **QWERTZ suisse romande**.
+**Tape-Texte** est une application web d'entraînement à la frappe rapide et précise au clavier, spécialement conçue pour les élèves du **Cycle 2 (5-8H)** et du **Cycle 3 (9-11CO)** avec la disposition **QWERTZ suisse romande**.
 
 100% hors-ligne · Zéro publicité · Zéro compte élève · Conforme aux objectifs du PER (EN 23) · Licence libre AGPL-3.0.
 
@@ -8,10 +8,10 @@
 
 ## 🎯 Intérêt pédagogique & Liens PER
 
-- **PER EN 23 (Usages — Saisie d'un texte) :** Développer une frappe fluide et précise au clavier d'ordinateur pour libérer l'attention cognitive de l'élève au profit de la réflexion, de l'orthographe et de la rédaction de textes.
+- **PER EN 23 (Usages — Saisie d'un texte) :** Développer une frappe fluide et précise au clavier d'ordinateur pour écrire rapidement et sans erreur, en libérant l'attention cognitive de l'élève au profit de la réflexion, de l'orthographe et de la rédaction de textes.
 - **Disposition QWERTZ suisse romande :** Intègre les touches et spécificités helvétiques : touches directes d'accentuation (`é`, `è`, `à`), inversion `Z`/`Y`, cédille `ç`, chiffres accessibles avec la touche Majuscule (`Shift`), et symboles suisses (`CHF`).
-- **Guidage visuel adaptatif :** Le clavier visuel reste masqué pendant la frappe normale pour encourager l'élève à regarder son écran et mémoriser l'emplacement des touches sur son clavier physique. En cas d'erreur de frappe au clavier physique, le clavier visuel apparaît pour aider l'élève à repérer où se trouve la touche recherchée.
-- **Usage recommandé sur ordinateur ou clavier physique (alerte tactile) :** Sur iPad ou tablette sans clavier physique, l'ouverture du clavier virtuel tactile masque une large partie de l'écran et empêche l'élève d'adopter la posture ergonomique à dix doigts. L'application détecte automatiquement les appareils tactiles et affiche un bandeau bienveillant recommandant l'usage d'un ordinateur ou d'un clavier externe physique (Bluetooth ou dock).
+- **Guidage visuel adaptatif :** Le clavier visuel reste masqué pendant la frappe normale pour encourager l'élève à garder les yeux sur le texte. En cas d'erreur de frappe au clavier physique, le clavier visuel apparaît pour aider l'élève à repérer où se trouve la touche recherchée.
+- **Usage recommandé sur ordinateur ou clavier physique (alerte tactile) :** Sur iPad ou tablette sans clavier physique, le clavier virtuel tactile à l'écran gêne la frappe directe et recouvre la zone de texte. L'application détecte automatiquement les appareils tactiles et affiche un bandeau bienveillant recommandant l'usage d'un ordinateur ou d'un clavier externe physique (Bluetooth ou dock).
 
 ---
 
@@ -40,8 +40,8 @@ L'application propose 10 paliers progressifs aux contenus calibrés pour l'écol
 | **1** | **Mots très simples** | *Trouve ton rythme sur les petits mots fréquents de deux à trois lettres.* | `le la les de du un une il elle on a y en ce se sa son` |
 | **2** | **Mots courants** | *On allonge un peu les mots. Garde les yeux sur l'écran plutôt que sur tes mains !* | `qui que quoi dont pour dans sur sous vers avec sans oui non bien tout` |
 | **3** | **Accents romands (é, è, à)** | *Apprivoise les touches é, è et à propres à notre disposition de clavier.* | `été vélo déjà mère père frère forêt fête règle café vérité élève` |
-| **4** | **Premières phrases simples** | *Enchaîne les mots avec fluidité. Utilise le pouce pour la barre d'espace.* | `le chat boit du lait. tu aimes la musique. il fait très beau aujourd'hui.` |
-| **5** | **Majuscules et ponctuation** | *Maintiens la touche Shift (Majuscule) d'une main pendant que l'autre frappe la lettre.* | `La Terre tourne autour du Soleil. Les étoiles brillent dans la nuit noire.` |
+| **4** | **Premières phrases simples** | *Enchaîne les mots avec fluidité sans t'arrêter aux espaces.* | `le chat boit du lait. tu aimes la musique. il fait très beau aujourd'hui.` |
+| **5** | **Majuscules et ponctuation** | *Maintiens la touche Shift (Majuscule) en même temps que la lettre pour écrire une majuscule.* | `La Terre tourne autour du Soleil. Les étoiles brillent dans la nuit noire.` |
 | **6** | **Le monde numérique** | *Vocabulaire de l'éducation numérique : entraîne-toi sur des termes technologiques.* | `ordinateur écran clavier souris robot pixel données réseau code internet boucle` |
 | **7** | **Mots longs et endurance** | *Développe ta précision sur des mots plus longs demandant de la régularité.* | `communication apprentissage magnifique développement concentration extraordinaire scientifique` |
 | **8** | **Chiffres et symboles (Shift)** | *Un peu de gymnastique avec la rangée du haut pour combiner chiffres et symboles.* | `Dans 10 jours, nous aurons 24 défis et 100% de réussite ! Prix : 15 CHF.` |

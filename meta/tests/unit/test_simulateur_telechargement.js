@@ -95,6 +95,11 @@ test('Simulateur de téléchargement - Fichier et Structure', async (t) => {
     await t.test('La jauge de progression est fine (10px)', () => {
         assert.match(html, /\.progress-track\s*\{[^}]*height:\s*10px;/i);
     });
+
+    await t.test('Le laboratoire simule uniquement en temps réel sans accélérateur', () => {
+        assert.ok(!html.includes('lab-mult-btn'), 'Aucun bouton accélérateur ne doit exister dans le laboratoire');
+        assert.ok(!html.includes('labMultiplier'), 'Aucune variable labMultiplier ne doit exister');
+    });
 });
 
 test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t) => {

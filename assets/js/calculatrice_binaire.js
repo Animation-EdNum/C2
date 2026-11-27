@@ -142,24 +142,6 @@
         updateUI();
     }
 
-    function setAllOnes() {
-        calcState = [1, 1, 1, 1, 1, 1, 1, 1];
-        if (typeof window.playSound === 'function') {
-            window.playSound('click');
-        }
-        updateUI();
-    }
-
-    function invertBits() {
-        for (let i = 0; i < 8; i++) {
-            calcState[i] = calcState[i] === 1 ? 0 : 1;
-        }
-        if (typeof window.playSound === 'function') {
-            window.playSound('click');
-        }
-        updateUI();
-    }
-
     function calculateSum() {
         let sum = 0;
         for (let i = 0; i < 8; i++) {
@@ -440,14 +422,6 @@
                 setDecimalValue(Math.min(255, calculateSum() + 1));
             });
         }
-        const invertBtn = document.getElementById('btn-invert-bits');
-        if (invertBtn) {
-            invertBtn.addEventListener('click', invertBits);
-        }
-        const allOnesBtn = document.getElementById('btn-all-ones');
-        if (allOnesBtn) {
-            allOnesBtn.addEventListener('click', setAllOnes);
-        }
 
         // Boutons de copie
         const copyBinBtn = document.getElementById('btn-copy-bin');
@@ -474,8 +448,6 @@
         setDecimalValue,
         setBinaryValue,
         resetCalc,
-        setAllOnes,
-        invertBits,
         calculateSum,
         getState: () => [...calcState]
     };

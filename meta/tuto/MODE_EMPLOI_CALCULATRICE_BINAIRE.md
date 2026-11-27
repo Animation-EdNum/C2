@@ -52,6 +52,7 @@ Le champ **« Binaire (base 2) : »** permet également d'éditer la valeur bina
 
 ### 5. Actions rapides
 
+- **−1 / +1 :** Ajuste la valeur décimale d'une unité vers le bas ou vers le haut pour observer l'effet sur les retenues binaires.
 - **Remise à zéro :** Désactive tous les bits et réinitialise la valeur à 0 d'un seul clic.
 
 ---

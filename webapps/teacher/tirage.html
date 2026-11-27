@@ -581,7 +581,7 @@
         }
 
         footer a {
-            color: var(--primary);
+            color: #0f766e;
             font-weight: 700;
             text-decoration: underline;
             text-underline-offset: 2px;
@@ -991,8 +991,8 @@
             let list = [];
             if (state.mode === 'number') {
                 const max = parseInt(totalInput.value) || state.allParticipants.length;
-                if (!max || max < 1) {
-                    if (typeof showToast === 'function') showToast(tt('tirage.toast_config_first', 'Veuillez d\'abord configurer la liste'), 'error');
+                if (!max || max < 1 || max > 500) {
+                    if (typeof showToast === 'function') showToast(tt('tirage.toast_config_first', 'Veuillez entrer un nombre valide (1 à 500)'), 'error');
                     return;
                 }
                 list = Array.from({ length: max }, (_, i) => String(i + 1));
@@ -1011,11 +1011,15 @@
             const url = new URL(window.location.href);
             url.search = '';
             url.hash = `items=${encodeURIComponent(JSON.stringify(list))}`;
-            navigator.clipboard.writeText(url.toString()).then(() => {
-                if (typeof showToast === 'function') showToast(tt('tirage.toast_share_copied', 'Lien de partage copié dans le presse-papier !'), 'success');
-            }).catch(() => {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(url.toString()).then(() => {
+                    if (typeof showToast === 'function') showToast(tt('tirage.toast_share_copied', 'Lien de partage copié dans le presse-papier !'), 'success');
+                }).catch(() => {
+                    prompt(tt('tirage.prompt_share', 'Copiez ce lien de partage :'), url.toString());
+                });
+            } else {
                 prompt(tt('tirage.prompt_share', 'Copiez ce lien de partage :'), url.toString());
-            });
+            }
         }
 
         function loadState() {
@@ -1035,7 +1039,22 @@
 
             const saved = localStorage.getItem(STATE_KEY);
             if (saved) {
-                state = JSON.parse(saved);
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (!parsed || !Array.isArray(parsed.allParticipants)) throw new Error('Invalid state');
+                    state = {
+                        mode: parsed.mode === 'names' ? 'names' : 'number',
+                        allParticipants: parsed.allParticipants,
+                        availableParticipants: Array.isArray(parsed.availableParticipants) ? parsed.availableParticipants : [...parsed.allParticipants],
+                        drawnParticipants: Array.isArray(parsed.drawnParticipants) ? parsed.drawnParticipants : [],
+                        absentParticipants: Array.isArray(parsed.absentParticipants) ? parsed.absentParticipants : [],
+                        drawHistory: Array.isArray(parsed.drawHistory) ? parsed.drawHistory : []
+                    };
+                } catch (e) {
+                    localStorage.removeItem(STATE_KEY);
+                    setView('setup');
+                    return;
+                }
                 totalInput.value = state.mode === 'number' ? state.allParticipants.length : '';
                 namesInput.value = state.mode === 'names' ? state.allParticipants.join('\n') : '';
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === state.mode));
@@ -1044,6 +1063,8 @@
                 if (state.allParticipants.length > 0) {
                     setView('draw');
                     updateUI();
+                } else {
+                    setView('setup');
                 }
             } else {
                 setView('setup');
@@ -1054,7 +1075,7 @@
             let list = [];
             if (state.mode === 'number') {
                 const max = parseInt(totalInput.value);
-                if (!max || max < 1) return showToast(tt('tirage.toast_invalid_num', 'Entrez un nombre valide'), 'error');
+                if (!max || max < 1 || max > 500) return showToast(tt('tirage.toast_invalid_num', 'Entrez un nombre valide (1 à 500)'), 'error');
                 list = Array.from({ length: max }, (_, i) => String(i + 1));
             } else {
                 const raw = namesInput.value.trim();
@@ -1183,13 +1204,36 @@
             finishedMsg.classList.toggle('hidden', avail > 0 || drawn === 0);
 
             participantItems.innerHTML = '';
+            const drawnRemain = new Map();
+            state.drawnParticipants.forEach(n => drawnRemain.set(n, (drawnRemain.get(n) || 0) + 1));
+            const absentRemain = new Map();
+            state.absentParticipants.forEach(n => absentRemain.set(n, (absentRemain.get(n) || 0) + 1));
+
             state.allParticipants.forEach(p => {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
-                if (state.drawnParticipants.includes(p)) { cell.classList.add('drawn'); }
-                if (state.absentParticipants.includes(p)) { cell.classList.add('absent'); }
+                cell.setAttribute('role', 'button');
+                cell.setAttribute('tabindex', '0');
+                let cellStatus = 'available';
+                if ((drawnRemain.get(p) || 0) > 0) {
+                    cell.classList.add('drawn');
+                    drawnRemain.set(p, drawnRemain.get(p) - 1);
+                    cellStatus = 'drawn';
+                } else if ((absentRemain.get(p) || 0) > 0) {
+                    cell.classList.add('absent');
+                    absentRemain.set(p, absentRemain.get(p) - 1);
+                    cellStatus = 'absent';
+                }
+                cell.dataset.status = cellStatus;
                 cell.textContent = p;
-                cell.addEventListener('click', () => toggleParticipantState(p));
+                const handleCellActivate = () => toggleParticipantState(p, cell.dataset.status);
+                cell.addEventListener('click', handleCellActivate);
+                cell.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleCellActivate();
+                    }
+                });
                 participantItems.appendChild(cell);
             });
 
@@ -1211,22 +1255,26 @@
             }
         }
 
-        function toggleParticipantState(p) {
+        function removeOneOccurrence(arr, value) {
+            const idx = arr.indexOf(value);
+            if (idx !== -1) arr.splice(idx, 1);
+        }
+
+        function toggleParticipantState(p, currentStatus) {
             if (isDrawing) return;
-            if (state.absentParticipants.includes(p)) {
-                state.absentParticipants = state.absentParticipants.filter(x => x !== p);
-                if (!state.drawnParticipants.includes(p)) {
-                    state.drawnParticipants.push(p);
-                    state.availableParticipants = state.availableParticipants.filter(x => x !== p);
-                    if (!state.drawHistory.includes(p)) state.drawHistory.push(p);
-                }
-            } else if (state.drawnParticipants.includes(p)) {
-                state.drawnParticipants = state.drawnParticipants.filter(x => x !== p);
-                if (!state.availableParticipants.includes(p)) state.availableParticipants.push(p);
-                state.drawHistory = state.drawHistory.filter(x => x !== p);
+            const status = currentStatus || (state.absentParticipants.includes(p) ? 'absent' : (state.drawnParticipants.includes(p) ? 'drawn' : 'available'));
+            if (status === 'absent') {
+                removeOneOccurrence(state.absentParticipants, p);
+                state.drawnParticipants.push(p);
+                removeOneOccurrence(state.availableParticipants, p);
+                state.drawHistory.push(p);
+            } else if (status === 'drawn') {
+                removeOneOccurrence(state.drawnParticipants, p);
+                state.availableParticipants.push(p);
+                removeOneOccurrence(state.drawHistory, p);
             } else {
-                state.availableParticipants = state.availableParticipants.filter(x => x !== p);
-                if (!state.absentParticipants.includes(p)) state.absentParticipants.push(p);
+                removeOneOccurrence(state.availableParticipants, p);
+                state.absentParticipants.push(p);
             }
             saveState();
             updateUI();
@@ -1554,15 +1602,24 @@
 
         document.getElementById('copyBtn').addEventListener('click', () => {
             if (state.drawHistory.length === 0) return;
-            navigator.clipboard.writeText(state.drawHistory.join('\n'));
-            showToast(tt('tirage.toast_history_copied', 'Historique copié'), 'success');
+            const text = state.drawHistory.join('\n');
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(tt('tirage.toast_history_copied', 'Historique copié'), 'success');
+                }).catch(() => {
+                    prompt(tt('tirage.prompt_copy_history', 'Copiez l\'historique :'), text);
+                });
+            } else {
+                prompt(tt('tirage.prompt_copy_history', 'Copiez l\'historique :'), text);
+            }
         });
 
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (!setupView || !setupView.classList.contains('hidden')) return;
             const tag = document.activeElement ? document.activeElement.tagName : '';
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return;
-            if (e.target && e.target.tagName === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+            if (e.target && (e.target.tagName === 'BUTTON' || e.target.getAttribute('role') === 'button') && (e.key === 'Enter' || e.key === ' ')) return;
             if ((e.key === 'Enter' || e.key === ' ' || e.code === 'Space') && !isDrawing && !drawBtn.disabled) {
                 e.preventDefault();
                 triggerRoulette();
@@ -1651,14 +1708,7 @@
         if (typeof module !== 'undefined' && module.exports) {
             module.exports = window.TirageEngine;
         }
-
-        loadState();
     </script>
-    <script src="../../assets/js/toast.js"></script>
-    <script src="../../assets/js/theme.js"></script>
-    <script src="../../assets/js/pwa.js"></script>
-    <script src="../../assets/js/audio.js"></script>
-    <script src="../../assets/js/url-params.js"></script>
 
     <!-- FontAwesome dynamic subsets declaration -->
     <div style="display:none;" aria-hidden="true">
@@ -1673,6 +1723,14 @@
         <i data-fa="arrow-up-from-square"></i>
         <i data-fa="download"></i>
     </div>
+    <script>
+        loadState();
+    </script>
+    <script src="../../assets/js/toast.js"></script>
+    <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/pwa.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
 </body>
 
 </html>

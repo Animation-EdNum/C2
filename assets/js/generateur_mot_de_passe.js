@@ -176,6 +176,12 @@
             warnings.push(gt('generateur_mot_de_passe.warn_repeat', 'Contient des répétitions de caractères consécutifs (« {rep} »).', { rep: repeatMatch[0] }));
         }
 
+        // 4. Repeated base chunk (e.g., 'ChatChat', 'LapinLapin')
+        const chunkRepeatMatch = pw.match(/(.{3,})\1+/i);
+        if (chunkRepeatMatch && !repeatMatch) {
+            warnings.push(gt('generateur_mot_de_passe.warn_repeat', 'Contient un motif répété (« {rep} »).', { rep: chunkRepeatMatch[1] }));
+        }
+
         return warnings;
     }
 
@@ -186,10 +192,10 @@
         if (!pw) return gt('generateur_mot_de_passe.time_instant', 'instantané');
 
         const len = pw.length;
-        const hasUpper = /[A-Z]/.test(pw);
-        const hasLower = /[a-z]/.test(pw);
-        const hasNumber = /[0-9]/.test(pw);
-        const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+        const hasUpper = /\p{Lu}/u.test(pw);
+        const hasLower = /\p{Ll}/u.test(pw);
+        const hasNumber = /\p{Nd}/u.test(pw);
+        const hasSpecial = /[^\p{L}\p{N}]/u.test(pw);
         const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
 
         let poolSize = 0;
@@ -362,15 +368,15 @@
         }
 
         const len = pw.length;
-        const hasUpper = /[A-Z]/.test(pw);
-        const hasLower = /[a-z]/.test(pw);
-        const hasNumber = /[0-9]/.test(pw);
-        const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+        const hasUpper = /\p{Lu}/u.test(pw);
+        const hasLower = /\p{Ll}/u.test(pw);
+        const hasNumber = /\p{Nd}/u.test(pw);
+        const hasSpecial = /[^\p{L}\p{N}]/u.test(pw);
         const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
         const patterns = detectWeakPatterns(pw);
 
         let score = Math.min(40, Math.floor((len / 12) * 40)) + Math.min(60, typesCount * 15);
-        if (patterns.length > 0) score = Math.max(5, score - (patterns.length * 15));
+        if (patterns.length > 0) score = Math.min(55, Math.max(5, score - (patterns.length * 25)));
 
         elCreatedStrengthBar.style.width = `${score}%`;
 
@@ -439,10 +445,10 @@
 
         // Rules
         const hasLength = pw.length >= 12;
-        const hasUpper = /[A-Z]/.test(pw);
-        const hasLower = /[a-z]/.test(pw);
-        const hasNumber = /[0-9]/.test(pw);
-        const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+        const hasUpper = /\p{Lu}/u.test(pw);
+        const hasLower = /\p{Ll}/u.test(pw);
+        const hasNumber = /\p{Nd}/u.test(pw);
+        const hasSpecial = /[^\p{L}\p{N}]/u.test(pw);
 
         const typesCount = (hasUpper ? 1 : 0) + (hasLower ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
         const hasTypes = typesCount >= 3;

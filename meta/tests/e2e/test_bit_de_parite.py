@@ -36,7 +36,8 @@ def test_bit_de_parite_detect(page: Page):
     
     # Wait for grid generation
     page.wait_for_timeout(500)
-    pixels = page.locator("#detect-grid .pixel")
+    expect(page.locator("#detect-grid .cell")).to_have_count(36)
+    pixels = page.locator("#detect-grid .cell.data")
     
     # Click a pixel to guess the error
     if pixels.count() > 0:

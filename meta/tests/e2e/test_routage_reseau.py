@@ -20,7 +20,7 @@ def test_routage_reseau_load_and_interact(page: Page):
     expect(page.locator("#undoBtn")).to_be_disabled()
     
     # Try to click an available node to advance
-    available_nodes = page.locator(".node.available")
+    available_nodes = page.locator(".node.clickable-next")
     if available_nodes.count() > 0:
         available_nodes.nth(0).click()
         

@@ -735,10 +735,23 @@
         }
 
         .preset-chip.active {
-            background: var(--primary);
+            background: #0f766e;
             color: #ffffff !important;
-            border-color: var(--primary);
+            border-color: #0f766e;
             box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+        }
+
+        body.high-contrast .preset-chip {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 2px solid #000000 !important;
+            box-shadow: none !important;
+        }
+
+        body.high-contrast .preset-chip.active {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border-color: #000000 !important;
         }
 
         /* MAIN CONTROLS */
@@ -762,7 +775,7 @@
         }
 
         .btn-play.paused {
-            background: var(--primary);
+            background: #0f766e;
         }
 
         .btn-play.running {
@@ -1133,7 +1146,7 @@
         }
 
         footer a {
-            color: var(--primary);
+            color: #0f766e;
             font-weight: 700;
             text-decoration: underline;
             text-underline-offset: 2px;
@@ -2237,11 +2250,15 @@
                     testSoundBtn.classList.add('btn-playing');
                     testSoundBtn.replaceChildren(icon, document.createTextNode(' '), span);
                 } else {
+                    const icon = document.createElement('i');
+                    icon.setAttribute('data-fa', 'bell');
+                    icon.style.width = '11px';
+                    icon.style.height = '11px';
                     const span = document.createElement('span');
                     span.textContent = tmt('time_timer.test_btn', 'Tester');
                     testSoundBtn.title = tmt('time_timer.test_sound_title', 'Écouter le son choisi');
                     testSoundBtn.classList.remove('btn-playing');
-                    testSoundBtn.replaceChildren(span);
+                    testSoundBtn.replaceChildren(icon, document.createTextNode(' '), span);
                 }
                 window.fa?.createIcons?.();
             }
@@ -3894,6 +3911,17 @@
                 try {
                     localStorage.removeItem(STORAGE_KEY);
                 } catch (e) { }
+                deleteCustomSoundFromDB();
+                if (customAudioEl) {
+                    customAudioEl.pause();
+                    customAudioEl = null;
+                }
+                customAudioBuffer = null;
+                if (customAudioBlobUrl) {
+                    URL.revokeObjectURL(customAudioBlobUrl);
+                    customAudioBlobUrl = null;
+                }
+                updateCustomAudioUI('');
 
                 settings = {
                     color: '#ef4444',

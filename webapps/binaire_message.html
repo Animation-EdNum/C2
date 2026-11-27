@@ -177,7 +177,7 @@
                             data-i18n-attr="placeholder:binaire_message.creator_output_placeholder"
                             style="display: none;"></textarea>
                         <div id="creator-output-display"
-                            style="background: var(--card-bg); color: #34d399; font-family: 'Consolas', monospace; font-size: 20px; letter-spacing: 4px; text-align: center; padding: 15px; border-radius: var(--radius-md); margin-bottom: 15px; min-height: 56px;">
+                            style="background: var(--card-bg); color: #047857; font-family: 'Consolas', monospace; font-size: 20px; letter-spacing: 4px; text-align: center; padding: 15px; border-radius: var(--radius-md); margin-bottom: 15px; min-height: 56px;">
                         </div>
                         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                             <button class="btn btn-new" id="copy-binary-btn" style="margin: 0;"><i data-fa="clipboard"
@@ -208,7 +208,7 @@
                                 style="margin-bottom: 15px; border: 2px solid var(--card-border); border-radius: var(--radius-lg); overflow: hidden; display: none;">
                                 <div class="alpha-reveal-msg">💡 Aide déverrouillée suite à une erreur !</div>
                                 <div class="alpha-body visible"
-                                    style="padding: 14px; background: #fafbff; display: block;">
+                                    style="padding: 14px; background: var(--card-bg); display: block;">
                                     <div class="alpha-grid" id="decode-alpha-grid"></div>
                                 </div>
                             </div>
@@ -482,21 +482,39 @@
         let decodeMistakes = 0;
         let decodeCorrect = 0;
         let decodeStreak = 0;
+        let decodeLocked = false;
+        let decodeNextTimer = null;
 
         function prepareDecode() {
             const input = document.getElementById('decoder-input').value.trim();
-            const blocks = input.replace(/[^01]/g, ' ').split(/\s+/).filter(b => b.length === 5);
+            const rawTokens = input.replace(/[^01.]/g, ' ').split(/\s+/).filter(Boolean);
+            const blocks = rawTokens.filter(b => {
+                if (b === '.....') return true;
+                if (!/^[01]{5}$/.test(b)) return false;
+                const v = parseInt(b, 2);
+                return v >= 1 && v <= 26;
+            });
+            const hasInvalid = rawTokens.some(b => {
+                if (b === '.....') return false;
+                if (!/^[01]{5}$/.test(b)) return true;
+                const v = parseInt(b, 2);
+                return v < 1 || v > 26;
+            });
             const btn = document.getElementById('btn-start-decode');
 
-            if (blocks.length > 0 && blocks.length <= 6) {
+            if (!hasInvalid && blocks.length > 0 && blocks.length <= 6) {
                 decodeBlocks = blocks;
                 btn.disabled = false;
             } else {
+                decodeBlocks = [];
                 btn.disabled = true;
             }
         }
 
         function startDecoding() {
+            clearTimeout(decodeNextTimer);
+            decodeNextTimer = null;
+            decodeLocked = false;
             document.getElementById('btn-start-decode').style.display = 'none';
             document.getElementById('decoder-input').disabled = true;
             document.getElementById('decoder-workspace').style.display = 'block';
@@ -506,7 +524,10 @@
             destGrid.replaceChildren(...Array.from(srcGrid.cloneNode(true).childNodes));
 
             decodeCurrentIndex = 0;
-            decodeWordResult = Array(decodeBlocks.length).fill('_');
+            decodeWordResult = decodeBlocks.map(b => b === '.....' ? ' ' : '_');
+            while (decodeCurrentIndex < decodeBlocks.length && decodeBlocks[decodeCurrentIndex] === '.....') {
+                decodeCurrentIndex++;
+            }
 
             const inputLetter = document.getElementById('decode-letter-input');
             inputLetter.value = '';
@@ -522,6 +543,11 @@
         }
 
         function renderDecoder() {
+            decodeLocked = false;
+            while (decodeCurrentIndex < decodeBlocks.length && decodeBlocks[decodeCurrentIndex] === '.....') {
+                decodeWordResult[decodeCurrentIndex] = ' ';
+                decodeCurrentIndex++;
+            }
             document.getElementById('decode-progress').innerText = decodeWordResult.join(' ');
 
             if (decodeCurrentIndex >= decodeBlocks.length) {
@@ -537,8 +563,11 @@
             document.getElementById('decode-alpha-section').style.display = 'none';
             document.getElementById('decode-values-row').style.display = 'none';
             document.getElementById('decode-live-calc').style.display = 'none';
-            document.getElementById('decode-letter-input').value = '';
-            document.getElementById('decode-letter-input').style.borderColor = 'var(--accent)';
+            const letterIn = document.getElementById('decode-letter-input');
+            letterIn.value = '';
+            letterIn.disabled = false;
+            letterIn.style.borderColor = 'var(--accent)';
+            letterIn.style.backgroundColor = '';
 
             const block = decodeBlocks[decodeCurrentIndex];
             const bits = block.split('').map(Number);
@@ -576,11 +605,14 @@
         }
 
         function checkDecodeLetter(typedChar) {
+            if (decodeLocked || decodeCurrentIndex >= decodeBlocks.length) return;
             const block = decodeBlocks[decodeCurrentIndex];
             const expectedChar = rankToLetter(parseInt(block, 2));
             const inputEl = document.getElementById('decode-letter-input');
 
             if (typedChar === expectedChar) {
+                decodeLocked = true;
+                inputEl.disabled = true;
                 playSound('success');
                 decodeCorrect++;
                 decodeStreak++;
@@ -592,7 +624,7 @@
                 ScoreManager.addSuccess("decode", null, decodeMistakes);
                 decodeMistakes = 0; // Reset for next letter
                 inputEl.style.borderColor = 'var(--success)';
-                inputEl.style.backgroundColor = '#d4edda';
+                inputEl.style.backgroundColor = document.body.classList.contains('dark') ? 'rgba(16, 185, 129, 0.25)' : '#d4edda';
 
                 document.getElementById('decode-values-row').style.display = 'flex';
                 document.getElementById('decode-live-calc').style.display = 'block';
@@ -610,7 +642,9 @@
                 decodeWordResult[decodeCurrentIndex] = typedChar;
                 document.getElementById('decode-progress').innerText = decodeWordResult.join(' ');
 
-                setTimeout(() => {
+                clearTimeout(decodeNextTimer);
+                decodeNextTimer = setTimeout(() => {
+                    inputEl.disabled = false;
                     inputEl.style.backgroundColor = '';
                     decodeCurrentIndex++;
                     renderDecoder();
@@ -647,6 +681,9 @@
         }
 
         function resetDecoder() {
+            clearTimeout(decodeNextTimer);
+            decodeNextTimer = null;
+            decodeLocked = false;
             document.getElementById('decoder-success').style.display = 'none';
             document.getElementById('decoder-input').value = '';
             document.getElementById('decoder-input').disabled = false;
@@ -842,7 +879,8 @@
                 calc.innerText = `${str.join(' + ')} = ${userSum} ➜ ${letter} ✅`;
                 calc.classList.add('success-anim');
 
-                setTimeout(() => {
+                clearTimeout(encodeNextLetterTimer);
+                encodeNextLetterTimer = setTimeout(() => {
                     calc.classList.remove('success-anim');
                     encodeIndex++; encodeBits = [0, 0, 0, 0, 0]; encodeLocked = false;
                     encodeLetterMistakes = 0;

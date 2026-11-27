@@ -337,7 +337,7 @@ function generateMatContent(matId) {
     const endContainer = document.getElementById('sim-end-container');
     const toggleEndBtn = document.getElementById('btn-toggle-end-container');
     const placeElementsBtn = document.getElementById('btn-place-elements');
-    
+
     if (config && (config.content || config.baseContent)) {
         if (toggleEndBtn) toggleEndBtn.style.display = 'inline-block';
         if (placeElementsBtn) placeElementsBtn.style.display = 'none';
@@ -427,7 +427,7 @@ function updateEndModesVisibility() {
         if (spellBtn) spellBtn.style.display = 'none';
         if (memoryBtn) memoryBtn.style.display = 'none';
         if (placeElementsBtn) placeElementsBtn.style.display = 'inline-block';
-        
+
         // Also close the container if no content
         const endContainer = document.getElementById('sim-end-container');
         if (endContainer) {
@@ -468,7 +468,7 @@ function selectMat(matId) {
     playSound('click');
     activeMat = matId;
     localStorage.setItem('at_active_mat', matId);
-    
+
     simState.obstacles = [];
     simState.targetRow = null;
     simState.targetCol = null;
@@ -477,7 +477,7 @@ function selectMat(matId) {
         exploreState.targetRow = null;
         exploreState.targetCol = null;
     }
-    
+
     const endContainer = document.getElementById('sim-end-container');
     if (endContainer) {
         endContainer.classList.remove('manually-toggled');
