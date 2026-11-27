@@ -867,4 +867,18 @@ De : Alexandre Perrin <alexandre.perrin@ecole-test.ch>`;
         assert.ok(!res2.cleanText.includes('Thomas Dubois'), 'Thomas Dubois must be masked');
         assert.ok(!res2.cleanText.includes('Alexandre Perrin'), 'Alexandre Perrin must be masked');
     });
+
+    await t.test('Lot Final - Ephemeral RAM roster, Unicode trailing accents, lowercase IBAN & CCP, dotted initials', () => {
+        engine.state.mode = 'labels';
+        engine.state.roster = ['Zoé Martin', 'Léa'];
+        const text = "Zoé a rendu son devoir avec Léa.\nDossier CCP 19-123456-7 et compte ch93 0076 2011 6238 5295 7.\nContact: J.-P. Dupont et Dupont L.";
+        const res = engine.runAnonymization(text);
+
+        assert.ok(!res.cleanText.includes('Zoé'), 'Trailing accented roster name Zoé must be masked');
+        assert.ok(!res.cleanText.includes('Léa'), 'Trailing accented roster name Léa must be masked');
+        assert.ok(!res.cleanText.includes('19-123456-7'), 'Swiss CCP must be masked');
+        assert.ok(!res.cleanText.includes('ch93 0076 2011 6238 5295 7'), 'Lowercase IBAN must be masked');
+        assert.ok(!res.cleanText.includes('J.-P. Dupont'), 'Dotted initials must be masked');
+        assert.strictEqual(window.localStorage.getItem('anonymiser_roster'), null, 'Roster must NEVER be written to localStorage');
+    });
 });

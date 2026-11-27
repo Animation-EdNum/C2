@@ -32,6 +32,10 @@
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/components.css">
     <link rel="stylesheet" href="../../assets/css/utilities.css">
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/audio.js"></script>
+    <script src="../../assets/js/fa-subset.js"></script>
     <style>
         body > header,
         body > .container {
@@ -92,11 +96,58 @@
             --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
             --accent: #38bdf8;
-            --accent-dark: #0284c7;
+            --accent-dark: #0369a1;
             --badge-bg: rgba(56, 189, 248, 0.15);
             --badge-color: #38bdf8;
             --card-shadow: rgba(0, 0, 0, 0.4);
             --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark .btn-launch,
+        body.dark .step-btn.primary,
+        body.dark .sim-btn.primary,
+        body.dark .sim-speed-btn.active,
+        body.dark .step-number-badge {
+            background: #0369a1;
+            border-color: #38bdf8;
+            color: #ffffff;
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #ffffff;
+            --bg-gradient-end: #ffffff;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --card-border: #000000;
+            --text-main: #000000;
+            --text-secondary: #000000;
+            --text-muted: #1e293b;
+            --accent: #000000;
+            --accent-dark: #000000;
+            --badge-bg: #e2e8f0;
+            --badge-color: #000000;
+            --success: #000000;
+            --warning: #000000;
+            --error: #000000;
+        }
+
+        body.high-contrast .btn-launch,
+        body.high-contrast .step-btn.primary,
+        body.high-contrast .sim-btn.primary,
+        body.high-contrast .sim-speed-btn.active,
+        body.high-contrast .step-number-badge {
+            background: #000000 !important;
+            border: 2px solid #000000 !important;
+            color: #ffffff !important;
+        }
+
+        body.high-contrast .station-card,
+        body.high-contrast .sim-btn,
+        body.high-contrast .sim-speed-btn,
+        body.high-contrast .quick-site-chip {
+            border: 2px solid #000000 !important;
+            color: #000000 !important;
+            background: #ffffff !important;
         }
 
         .app-shell {
@@ -173,9 +224,36 @@
         }
 
         .sim-speed-btn.active {
-            background: var(--accent);
+            background: var(--accent-dark);
             color: #fff;
+            border-color: var(--accent-dark);
+        }
+
+        .quick-sites {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .quick-site-chip {
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 999px;
+            padding: 3px 12px;
+            font-size: 0.80rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .quick-site-chip:hover {
             border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
         }
 
         /* --- CHALLENGE BANNER --- */
@@ -236,16 +314,18 @@
         .dot-green { background: #10b981; }
 
         .url-bar-container {
-            flex: 1;
-            min-width: 260px;
+            flex: 1 1 200px;
+            min-width: 0;
             display: flex;
             align-items: center;
             background: rgba(100, 116, 139, 0.08);
             border: 1.5px solid var(--card-border);
             border-radius: 999px;
             padding: 5px 14px;
-            gap: 10px;
+            gap: 8px;
             transition: all 0.2s;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .url-bar-container:focus-within {
@@ -261,50 +341,26 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            flex-shrink: 0;
         }
 
         .url-input {
-            flex: 1;
+            flex: 1 1 0;
+            min-width: 0;
+            width: 100%;
             border: none;
             background: transparent;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.98rem;
+            font-size: 1rem;
             color: var(--text-main);
             outline: none;
             padding: 4px 0;
             font-weight: 600;
         }
 
-        .quick-sites {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-        }
-
-        .quick-site-chip {
-            border: 1px solid var(--card-border);
-            background: var(--card-bg);
-            color: var(--text-secondary);
-            border-radius: 999px;
-            padding: 3px 12px;
-            font-size: 0.80rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .quick-site-chip:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-1px);
-        }
-
         .btn-launch {
             border: none;
-            background: var(--accent);
+            background: var(--accent-dark);
             color: #fff;
             padding: 9px 22px;
             border-radius: 999px;
@@ -316,6 +372,7 @@
             gap: 8px;
             transition: all 0.2s;
             box-shadow: 0 3px 10px rgba(2, 132, 199, 0.35);
+            flex-shrink: 0;
         }
 
         .btn-launch:hover:not(:disabled) {
@@ -604,8 +661,8 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            flex: 1;
-            min-width: 280px;
+            flex: 1 1 240px;
+            min-width: 0;
         }
 
         .step-number-badge {
@@ -613,7 +670,7 @@
             height: 40px;
             min-width: 40px;
             border-radius: 50%;
-            background: var(--accent);
+            background: var(--accent-dark);
             color: #fff;
             display: flex;
             align-items: center;
@@ -630,13 +687,16 @@
             line-height: 1.4;
         }
 
-        .step-controls {
+        .step-controls,
+        .step-action-controls {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
         }
 
-        .step-btn {
+        .step-btn,
+        .sim-btn {
             border: 1px solid var(--card-border);
             background: var(--card-bg);
             color: var(--text-main);
@@ -648,29 +708,34 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            min-height: 40px;
             transition: all 0.15s;
         }
 
-        .step-btn:hover:not(:disabled) {
+        .step-btn:hover:not(:disabled),
+        .sim-btn:hover:not(:disabled) {
             background: var(--badge-bg);
             border-color: var(--accent);
             color: var(--accent);
         }
 
-        .step-btn:disabled {
+        .step-btn:disabled,
+        .sim-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
         }
 
-        .step-btn.primary {
-            background: var(--accent);
+        .step-btn.primary,
+        .sim-btn.primary {
+            background: var(--accent-dark);
             color: #fff;
-            border-color: var(--accent);
+            border-color: var(--accent-dark);
             box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
         }
 
-        .step-btn.primary:hover:not(:disabled) {
-            background: var(--accent-dark);
+        .step-btn.primary:hover:not(:disabled),
+        .sim-btn.primary:hover:not(:disabled) {
+            background: var(--accent);
             color: #fff;
         }
 
@@ -715,26 +780,6 @@
             justify-content: space-between;
         }
 
-        .sim-btn {
-            border: 1px solid var(--card-border);
-            background: var(--card-bg);
-            color: var(--text-main);
-            border-radius: var(--radius-md);
-            padding: 6px 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.15s;
-        }
-
-        .sim-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
         .sim-modal-title {
             font-size: 1.15rem;
             font-weight: 800;
@@ -772,19 +817,31 @@
             text-transform: uppercase;
         }
 
-        .browser-preview-frame {
+        .browser-preview-frame,
+        .preview-content {
             border: 1px solid var(--card-border);
             border-radius: var(--radius-lg);
             padding: 20px;
             background: #fff;
             color: #0f172a;
-            min-height: 160px;
+            min-height: 150px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             gap: 10px;
+        }
+
+        body.dark .browser-preview-frame,
+        body.dark .preview-content {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .preview-site-logo {
+            font-size: 2.4rem;
+            line-height: 1;
         }
 
         @keyframes fadeIn {
@@ -795,7 +852,7 @@
         @media (max-width: 992px) {
             .stations-layer {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
+                gap: 1.75rem;
             }
             .stage-zones {
                 grid-template-columns: 1fr;
@@ -806,22 +863,45 @@
                 border-bottom: 2px dashed rgba(37, 99, 235, 0.2);
             }
             .network-stage {
-                min-height: 580px;
+                min-height: 540px;
+                padding-top: 72px;
+            }
+            .port-indicator {
+                display: none;
             }
         }
 
         @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 16px 14px;
+            }
+            .badge-level {
+                display: none;
+            }
             .stations-layer {
                 grid-template-columns: 1fr;
+                gap: 1.25rem;
             }
             .network-stage {
                 min-height: auto;
+                padding: 72px 14px 20px;
+            }
+            .browser-dots {
+                display: none;
+            }
+            .btn-launch {
+                width: 100%;
+                justify-content: center;
             }
         }
 </style>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
     <div class="container">
         
         <header class="app-header">
@@ -836,8 +916,8 @@
                 <div>
                     <h1>
                         <span data-i18n="simulateur_reseau_dns.title">Simulateur Réseau &amp; DNS</span>
-                        <span class="badge-level alpha" data-i18n="common.badge_alpha">Alpha</span>
                         <span class="badge-level" data-i18n="simulateur_reseau_dns.badge_level">7-8H</span>
+                        <span class="badge-level alpha" data-i18n="common.badge_alpha">Alpha</span>
                     </h1>
                 </div>
             </div>
@@ -860,7 +940,7 @@
                             <span id="themeToggleText">Sombre</span>
                         </button>
                         <div class="dropdown-divider"></div>
-                        <button class="menu-item-btn" id="reset-sim-btn" aria-label="Réinitialiser le simulateur">
+                        <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser le simulateur">
                             <i data-fa="rotate-left"></i>
                             <span data-i18n="simulateur_reseau_dns.btn_reset">Réinitialiser</span>
                         </button>
@@ -870,17 +950,15 @@
         </header>
 
 
-        <div class="app-shell">
+        <main id="main-content" class="app-shell">
             <!-- TOP BAR: MODE & CONTROLS -->
             <div class="top-bar-controls">
                 <div class="segmented-mode" role="tablist">
-                    <button type="button" class="mode-btn active" id="tabModeFree" role="tab" aria-selected="true"
-                        data-i18n="simulateur_reseau_dns.mode_free">
-                        <i data-fa="play"></i> <span>Simulation Libre</span>
+                    <button type="button" class="mode-btn active" id="tabModeFree" role="tab" aria-selected="true">
+                        <i data-fa="play"></i> <span data-i18n="simulateur_reseau_dns.mode_free">Simulation Libre</span>
                     </button>
-                    <button type="button" class="mode-btn" id="tabModeMissions" role="tab" aria-selected="false"
-                        data-i18n="simulateur_reseau_dns.mode_missions">
-                        <i data-fa="trophy-star"></i> <span>Missions &amp; Défis</span>
+                    <button type="button" class="mode-btn" id="tabModeMissions" role="tab" aria-selected="false">
+                        <i data-fa="trophy-star"></i> <span data-i18n="simulateur_reseau_dns.mode_missions">Missions &amp; Défis</span>
                     </button>
                 </div>
 
@@ -895,9 +973,9 @@
             <!-- CHALLENGE BANNER (ACTIVE IN MISSIONS MODE) -->
             <div class="challenge-banner" id="challengeBanner">
                 <div>
-                    <strong id="missionTitle">Mission 1 : Trouver la bonne adresse IP</strong>
+                    <strong id="missionTitle">Mission 1 : Résolution de nom DNS</strong>
                     <div id="missionDesc" style="font-size:0.85rem; font-weight:normal; margin-top:2px;">
-                        Visite le site officiel de l'école valaisanne (ecole-vs.ch) pour récupérer son adresse IP.
+                        Tape ou choisis "hepvs.ch" et envoie la requête pour observer comment le DNS convertit le nom en IP.
                     </div>
                 </div>
                 <div style="font-size:1.1rem; font-weight:800; white-space:nowrap;" id="missionScore">⭐ 0 / 4</div>
@@ -913,14 +991,14 @@
                     </div>
 
                     <div class="url-bar-container">
-                        <span class="url-protocol"><i data-fa="lock"></i> https://</span>
+                        <span class="url-protocol" id="urlProtocol"><i data-fa="lock" id="urlProtocolIcon"></i> <span id="urlProtocolScheme">https://</span></span>
                         <input type="text" id="urlInput" class="url-input" value="hepvs.ch"
                             placeholder="ex: wikipedia.org, hepvs.ch, rts.ch" spellcheck="false" autocomplete="off"
                             aria-label="Adresse Web ou IP">
                     </div>
 
                     <button type="button" class="btn-launch" id="btnLaunchReq">
-                        <i data-fa="paper-plane"></i> <span data-i18n="simulateur_reseau_dns.btn_send">Envoyer</span>
+                        <i data-fa="arrow-right"></i> <span data-i18n="simulateur_reseau_dns.btn_send">Envoyer</span>
                     </button>
                 </div>
 
@@ -976,11 +1054,11 @@
 
                     <!-- 2. Box Router -->
                     <div class="station-card station-router" id="nodeRouter">
-                        <div class="port-indicator port-left" title="Port LAN"></div>
-                        <div class="port-indicator port-right" title="Port WAN"></div>
+                        <div class="port-indicator port-left" data-tooltip="Port LAN (réseau local)"></div>
+                        <div class="port-indicator port-right" data-tooltip="Port WAN (vers Internet)"></div>
                         <div class="station-icon"><i data-fa="wifi"></i></div>
                         <div class="station-name" data-i18n="simulateur_reseau_dns.node_router">Box Wi-Fi / Routeur</div>
-                        <div class="station-role" data-i18n="simulateur_reseau_dns.role_router">Passerelle Internet (NAT)</div>
+                        <div class="station-role" data-i18n="simulateur_reseau_dns.role_router" data-tooltip="LAN = réseau de la classe/maison ; WAN = Internet mondial ; NAT = traduit l'adresse locale en adresse publique">Passerelle Internet (NAT)</div>
                         <span class="ip-badge">LAN: 192.168.1.1</span>
                         <span class="ip-badge" style="border-color:var(--web-green);">WAN: 85.218.42.10</span>
                     </div>
@@ -1031,7 +1109,7 @@
                     </button>
                 </div>
             </div>
-        </div>
+        </main>
 
         <!-- SITE PREVIEW MODAL -->
         <div class="site-preview-modal" id="sitePreviewModal" role="dialog" aria-modal="true">
@@ -1114,34 +1192,32 @@
                 </div>
             </div>
         </div>
-
-        <footer class="app-footer no-print">
-            <p>
-                <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
-                    href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                    rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
-                    href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
-                    style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
-                    data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
-                <br>
-                <span style="font-size: 0.9em; opacity: 0.85;">
-                    <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
-                            data-i18n="common.footer.free_code">Code 100% libre</span></a>
-                    (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
-                    · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
-                    · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
-                    · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
-                    · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
-                </span>
-            </p>
-        </footer>
     </div>
 
+    <footer class="no-print">
+        <p>
+            <span data-i18n="common.footer.app_designed_by">Application conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" style="text-decoration: none; color: #ef4444;" title="Remerciements"
+                data-i18n-attr="title:common.footer.merci_title"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <br>
+            <span style="font-size: 0.9em; opacity: 0.85;">
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"
+                    data-i18n="common.footer.free_code">Code 100% libre</a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
+                · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
+                · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
+                · <a href="../../merci.html" data-i18n="common.footer.credits">Remerciements</a>
+            </span>
+        </p>
+    </footer>
+    <canvas id="confetti-canvas"></canvas>
+
     <!-- SCRIPTS -->
-    <script src="../../assets/js/fa-subset.js"></script>
     <script src="../../assets/js/confetti.js"></script>
-    <script src="../../assets/js/audio.js"></script>
-    <script src="../../assets/js/i18n.js"></script>
     <script>
         (function () {
             'use strict';
@@ -1162,9 +1238,12 @@
             let currentMode = 'free'; // 'free' or 'missions'
             let simSpeed = 1000; // ms per stage (normal)
             let isSimRunning = false;
+            let isAutoPlayActive = false;
+            let simRunToken = 0;
             let currentStepIdx = 0;
             let activeSteps = [];
             let autoPlayTimer = null;
+            let missionAdvanceTimer = null;
 
             // Missions progression
             let currentMission = 0;
@@ -1173,6 +1252,7 @@
                     title: 'Mission 1 : Résolution de nom DNS',
                     desc: 'Tape ou choisis "hepvs.ch" et envoie la requête pour observer comment le DNS convertit le nom en IP.',
                     targetSite: 'hepvs.ch',
+                    prepare: () => { localDnsCache = {}; updateCacheUI(); setDnsFail(false); },
                     check: (result) => result.success && result.domain === 'hepvs.ch' && result.resolvedViaDns
                 },
                 {
@@ -1190,10 +1270,9 @@
                 },
                 {
                     title: 'Mission 4 : Visite sécurisée de Wikipédia',
-                    desc: 'Rétablis le DNS (panne OFF) et charge "wikipedia.org" pour obtenir les 4 étoiles de maîtrise du réseau !',
+                    desc: 'Clique sur le bouton rouge pour rétablir le serveur DNS (panne OFF), puis charge "wikipedia.org" !',
                     targetSite: 'wikipedia.org',
-                    prepare: () => { setDnsFail(false); },
-                    check: (result) => result.success && result.domain === 'wikipedia.org'
+                    check: (result) => result.success && result.domain === 'wikipedia.org' && !isDnsFailed
                 }
             ];
 
@@ -1216,6 +1295,10 @@
             const nodeWeb = document.getElementById('nodeWeb');
             const webServerName = document.getElementById('webServerName');
             const webServerIp = document.getElementById('webServerIp');
+            const webServerStatus = document.getElementById('webServerStatus');
+            const urlProtocol = document.getElementById('urlProtocol');
+            const urlProtocolIcon = document.getElementById('urlProtocolIcon');
+            const urlProtocolScheme = document.getElementById('urlProtocolScheme');
 
             const wireClientRouter = document.getElementById('wireClientRouter');
             const wireRouterDns = document.getElementById('wireRouterDns');
@@ -1263,7 +1346,16 @@
                 const stageEl = document.getElementById('networkStage');
                 if (!stageEl) return;
                 const stageRect = stageEl.getBoundingClientRect();
+                if (!stageRect.width || !stageRect.height) return;
 
+                const isCompact = window.innerWidth <= 992;
+                const getCenter = (el) => {
+                    const r = el.getBoundingClientRect();
+                    return {
+                        x: r.left + r.width / 2 - stageRect.left,
+                        y: r.top + r.height / 2 - stageRect.top
+                    };
+                };
                 const getPort = (el, side) => {
                     const r = el.getBoundingClientRect();
                     return {
@@ -1272,27 +1364,36 @@
                     };
                 };
 
-                const pClientOut = getPort(nodeClient, 'right');
-                const pRouterIn = getPort(nodeRouter, 'left');
-                const pRouterOut = getPort(nodeRouter, 'right');
-                const pDnsIn = getPort(nodeDns, 'left');
-                const pWebIn = getPort(nodeWeb, 'left');
+                let dLan, dDns, dWeb;
+                if (isCompact) {
+                    const cClient = getCenter(nodeClient);
+                    const cRouter = getCenter(nodeRouter);
+                    const cDns = getCenter(nodeDns);
+                    const cWeb = getCenter(nodeWeb);
+                    dLan = `M ${cClient.x} ${cClient.y} L ${cRouter.x} ${cRouter.y}`;
+                    dDns = `M ${cRouter.x} ${cRouter.y} L ${cDns.x} ${cDns.y}`;
+                    dWeb = `M ${cRouter.x} ${cRouter.y} Q ${(cRouter.x + cWeb.x) / 2} ${Math.max(cRouter.y, cWeb.y) + 28}, ${cWeb.x} ${cWeb.y}`;
+                } else {
+                    const pClientOut = getPort(nodeClient, 'right');
+                    const pRouterIn = getPort(nodeRouter, 'left');
+                    const pRouterOut = getPort(nodeRouter, 'right');
+                    const pDnsIn = getPort(nodeDns, 'left');
+                    const pWebIn = getPort(nodeWeb, 'left');
 
-                // 1. LAN Cable: Client -> Router (Straight)
-                const dLan = `M ${pClientOut.x} ${pClientOut.y} L ${pRouterIn.x} ${pRouterIn.y}`;
+                    dLan = `M ${pClientOut.x} ${pClientOut.y} L ${pRouterIn.x} ${pRouterIn.y}`;
+                    dDns = `M ${pRouterOut.x} ${pRouterOut.y} L ${pDnsIn.x} ${pDnsIn.y}`;
+                    const underY = Math.max(pRouterOut.y, pWebIn.y) + 85;
+                    dWeb = `M ${pRouterOut.x} ${pRouterOut.y} C ${pRouterOut.x + 60} ${underY}, ${pWebIn.x - 60} ${underY}, ${pWebIn.x} ${pWebIn.y}`;
+                }
+
                 const bgLan = document.getElementById('bgWireClientRouter');
                 if (bgLan) bgLan.setAttribute('d', dLan);
                 wireClientRouter.setAttribute('d', dLan);
 
-                // 2. DNS Cable: Router -> DNS Server
-                const dDns = `M ${pRouterOut.x} ${pRouterOut.y} L ${pDnsIn.x} ${pDnsIn.y}`;
                 const bgDns = document.getElementById('bgWireRouterDns');
                 if (bgDns) bgDns.setAttribute('d', dDns);
                 wireRouterDns.setAttribute('d', dDns);
 
-                // 3. Web Cable: Router -> Web Server (Curving smoothly under DNS Server)
-                const underY = Math.max(pRouterOut.y, pWebIn.y) + 85;
-                const dWeb = `M ${pRouterOut.x} ${pRouterOut.y} C ${pRouterOut.x + 60} ${underY}, ${pWebIn.x - 60} ${underY}, ${pWebIn.x} ${pWebIn.y}`;
                 const bgWeb = document.getElementById('bgWireRouterWeb');
                 if (bgWeb) bgWeb.setAttribute('d', dWeb);
                 wireRouterWeb.setAttribute('d', dWeb);
@@ -1300,17 +1401,6 @@
 
             window.addEventListener('resize', updateWires);
             window.addEventListener('load', () => setTimeout(updateWires, 100));
-
-            // Options menu click toggle
-            const optBtn = document.getElementById('options-menu-btn');
-            const optMenu = document.getElementById('options-menu');
-            if (optBtn && optMenu) {
-                optBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    optMenu.classList.toggle('show');
-                });
-                document.addEventListener('click', () => optMenu.classList.remove('show'));
-            }
 
             // --- POSITION & ANIMATE PACKET ALONG SVG WIRE ---
             function placePacketAtNode(nodeEl, packetType) {
@@ -1325,18 +1415,31 @@
             }
 
             function animatePacket(fromNode, toNode, packetType, duration, onComplete) {
+                const tokenAtStart = simRunToken;
                 updateWires();
                 const activeWire = (fromNode === nodeClient || toNode === nodeClient) ? wireClientRouter :
                     (fromNode === nodeDns || toNode === nodeDns) ? wireRouterDns : wireRouterWeb;
 
+                const prefersReduced = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const totalLength = typeof activeWire.getTotalLength === 'function' ? activeWire.getTotalLength() : 0;
+
+                if (prefersReduced || totalLength <= 0) {
+                    placePacketAtNode(toNode, packetType);
+                    if (onComplete) onComplete();
+                    return;
+                }
+
                 const isReverse = (toNode === nodeClient || (toNode === nodeRouter && fromNode !== nodeClient));
-                const totalLength = activeWire.getTotalLength();
 
                 packetToken.className = `packet-token visible ${packetType}`;
                 activeWire.classList.add('active');
 
                 const startTime = performance.now();
                 function step(now) {
+                    if (simRunToken !== tokenAtStart) {
+                        activeWire.classList.remove('active');
+                        return;
+                    }
                     const elapsed = now - startTime;
                     const progress = Math.min(elapsed / duration, 1);
                     const t = isReverse ? (1 - progress) : progress;
@@ -1349,10 +1452,25 @@
                         requestAnimationFrame(step);
                     } else {
                         activeWire.classList.remove('active');
-                        if (onComplete) onComplete();
+                        if (onComplete && simRunToken === tokenAtStart) onComplete();
                     }
                 }
                 requestAnimationFrame(step);
+            }
+
+            function updateConnectionProtocolUI(isDirectIp) {
+                if (urlProtocol && urlProtocolScheme) {
+                    urlProtocolScheme.textContent = isDirectIp ? 'http://' : 'https://';
+                    urlProtocol.style.color = isDirectIp ? 'var(--warning)' : 'var(--success)';
+                    if (urlProtocolIcon) {
+                        urlProtocolIcon.setAttribute('data-fa', isDirectIp ? 'unlock' : 'lock');
+                        window.fa?.createIcons?.(urlProtocol);
+                    }
+                }
+                if (webServerStatus) {
+                    webServerStatus.textContent = isDirectIp ? 'Port 80 (HTTP)' : 'Port 443 (HTTPS)';
+                    webServerStatus.style.color = isDirectIp ? 'var(--warning)' : 'var(--success)';
+                }
             }
 
             // --- DNS FAIL TOGGLE ---
@@ -1412,6 +1530,7 @@
                         badge: '1',
                         msg: `Connexion directe par IP (${targetIp}) : Pas besoin du serveur DNS ! L'ordinateur contacte directement la Box.`,
                         action: (cb) => {
+                            updateConnectionProtocolUI(true);
                             setActiveNode(nodeClient);
                             animatePacket(nodeClient, nodeRouter, 'web-req', simSpeed, cb);
                         }
@@ -1421,6 +1540,8 @@
                         msg: `La Box achemine la requête HTTP vers le serveur Web public (${targetIp})...`,
                         action: (cb) => {
                             setActiveNode(nodeRouter);
+                            webServerName.textContent = targetSite.name;
+                            webServerIp.textContent = `IP: ${targetIp}`;
                             animatePacket(nodeRouter, nodeWeb, 'web-req', simSpeed, cb);
                         }
                     });
@@ -1438,7 +1559,7 @@
                         action: (cb) => {
                             setActiveNode(nodeClient);
                             animatePacket(nodeRouter, nodeClient, 'web-res', simSpeed, () => {
-                                showSiteModal(targetSite);
+                                showSiteModal(targetSite, true);
                                 cb();
                             });
                         },
@@ -1543,6 +1664,7 @@
                     badge: inCache ? '1' : '3',
                     msg: `Étape Web (Requête HTTP) : Muni de l'adresse IP (${targetIp}), l'ordinateur demande la page au Serveur Web...`,
                     action: (cb) => {
+                        updateConnectionProtocolUI(false);
                         setActiveNode(nodeRouter);
                         webServerName.textContent = targetSite.name;
                         webServerIp.textContent = `IP: ${targetIp}`;
@@ -1559,7 +1681,7 @@
                         setActiveNode(nodeWeb);
                         animatePacket(nodeWeb, nodeRouter, 'web-res', simSpeed / 2, () => {
                             animatePacket(nodeRouter, nodeClient, 'web-res', simSpeed / 2, () => {
-                                showSiteModal(targetSite);
+                                showSiteModal(targetSite, false);
                                 cb();
                             });
                         });
@@ -1575,18 +1697,33 @@
                 if (nodeEl) nodeEl.classList.add('active-node');
             }
 
+            function fireSimulationConfetti(opts) {
+                if (window.confetti && typeof window.confetti.fire === 'function') {
+                    window.confetti.fire(opts);
+                } else if (typeof window.launchConfetti === 'function') {
+                    window.launchConfetti();
+                }
+            }
+
             // --- SITE PREVIEW MODAL ---
-            function showSiteModal(site) {
+            function showSiteModal(site, isDirectIp) {
                 modalSiteTitle.textContent = `Connexion établie : ${site.name}`;
                 modalSiteLogo.textContent = site.logo || '🌐';
                 modalSiteHeadline.textContent = site.headline || site.name;
-                modalSiteDesc.innerHTML = `${site.desc}<br><br><span style="font-family:monospace; color:var(--success); font-weight:700;">➔ IP de connexion : ${site.ip}</span>`;
+                modalSiteDesc.replaceChildren();
+                modalSiteDesc.appendChild(document.createTextNode(site.desc));
+                modalSiteDesc.appendChild(document.createElement('br'));
+                modalSiteDesc.appendChild(document.createElement('br'));
+                const ipSpan = document.createElement('span');
+                ipSpan.style.fontFamily = 'monospace';
+                ipSpan.style.color = isDirectIp ? 'var(--warning)' : 'var(--success)';
+                ipSpan.style.fontWeight = '700';
+                ipSpan.textContent = `➔ IP de connexion : ${site.ip} (${isDirectIp ? 'HTTP direct par IP' : 'HTTPS'})`;
+                modalSiteDesc.appendChild(ipSpan);
                 sitePreviewModal.classList.add('visible');
                 playBeep('success');
 
-                if (window.confetti && typeof window.confetti.fire === 'function') {
-                    window.confetti.fire({ particleCount: 35, spread: 60 });
-                }
+                fireSimulationConfetti({ particleCount: 35, spread: 60 });
             }
 
             btnClosePreview.addEventListener('click', () => { sitePreviewModal.classList.remove('visible'); });
@@ -1596,14 +1733,30 @@
             function updateCacheUI() {
                 const count = Object.keys(localDnsCache).length;
                 cacheCountText.textContent = `Cache DNS (${count})`;
-                cacheTableBody.innerHTML = '';
+                cacheTableBody.replaceChildren();
                 if (count === 0) {
-                    cacheTableBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">Cache vide</td></tr>';
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 2;
+                    td.style.textAlign = 'center';
+                    td.style.color = 'var(--text-muted)';
+                    td.textContent = 'Cache vide';
+                    tr.appendChild(td);
+                    cacheTableBody.appendChild(tr);
                     return;
                 }
                 for (const [dom, ip] of Object.entries(localDnsCache)) {
                     const row = document.createElement('tr');
-                    row.innerHTML = `<td><strong>${dom}</strong></td><td><code>${ip}</code></td>`;
+                    const tdDom = document.createElement('td');
+                    const strong = document.createElement('strong');
+                    strong.textContent = dom;
+                    tdDom.appendChild(strong);
+                    const tdIp = document.createElement('td');
+                    const code = document.createElement('code');
+                    code.textContent = ip;
+                    tdIp.appendChild(code);
+                    row.appendChild(tdDom);
+                    row.appendChild(tdIp);
                     cacheTableBody.appendChild(row);
                 }
             }
@@ -1632,20 +1785,40 @@
             });
 
             // --- SIMULATION EXECUTION ---
+            function stopAutoPlayUI() {
+                isAutoPlayActive = false;
+                clearTimeout(autoPlayTimer);
+                autoPlayTimer = null;
+                playIcon.setAttribute('data-fa', 'play');
+                playText.textContent = window.I18N?.t?.('simulateur_reseau_dns.btn_auto', 'Auto') || 'Auto';
+                window.fa?.createIcons?.(btnAutoPlay);
+            }
+
             function startSimulation() {
                 if (isSimRunning) return;
-                const { steps } = buildSimulationSteps(urlInput.value);
+                const raw = urlInput.value.trim();
+                if (!raw) {
+                    urlInput.focus();
+                    return;
+                }
+                simRunToken++;
+                clearTimeout(autoPlayTimer);
+                autoPlayTimer = null;
+                const { steps } = buildSimulationSteps(raw);
                 activeSteps = steps;
                 currentStepIdx = 0;
                 btnLaunchReq.disabled = true;
                 btnPrevStep.disabled = true;
-                btnNextStep.disabled = false;
+                btnNextStep.disabled = steps.length <= 1;
                 runStep(0);
             }
 
             btnLaunchReq.addEventListener('click', startSimulation);
             urlInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') startSimulation();
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    startSimulation();
+                }
             });
 
             function runStep(idx) {
@@ -1654,38 +1827,45 @@
                     return;
                 }
 
+                const stepToken = simRunToken;
                 currentStepIdx = idx;
                 const step = activeSteps[idx];
                 stepBadge.textContent = step.badge;
-                stepMessage.innerHTML = step.msg;
+                stepMessage.textContent = step.msg;
                 btnPrevStep.disabled = idx === 0;
                 btnNextStep.disabled = idx === activeSteps.length - 1;
 
                 isSimRunning = true;
                 step.action(() => {
+                    if (simRunToken !== stepToken) return;
                     isSimRunning = false;
                     if (step.result) {
                         checkMissionResult(step.result);
                     }
-                    if (autoPlayTimer) {
-                        autoPlayTimer = setTimeout(() => {
-                            if (currentStepIdx < activeSteps.length - 1) {
-                                runStep(currentStepIdx + 1);
-                            } else {
-                                finishSimulation();
-                            }
-                        }, 500);
+                    const isLastStep = currentStepIdx >= activeSteps.length - 1;
+                    if (isAutoPlayActive) {
+                        if (!isLastStep) {
+                            autoPlayTimer = setTimeout(() => {
+                                if (simRunToken === stepToken && isAutoPlayActive && currentStepIdx < activeSteps.length - 1) {
+                                    runStep(currentStepIdx + 1);
+                                }
+                            }, 500);
+                        } else {
+                            finishSimulation();
+                        }
+                    } else if (isLastStep) {
+                        // Unlock Launch button once final step completes in step-by-step mode while keeping Prev navigation usable
+                        btnLaunchReq.disabled = false;
+                        btnNextStep.disabled = true;
+                        setActiveNode(null);
                     }
                 });
             }
 
             function finishSimulation() {
+                simRunToken++;
                 isSimRunning = false;
-                clearTimeout(autoPlayTimer);
-                autoPlayTimer = null;
-                playIcon.setAttribute('data-fa', 'play');
-                playText.textContent = 'Auto';
-                window.fa?.createIcons?.();
+                stopAutoPlayUI();
                 btnLaunchReq.disabled = false;
                 btnNextStep.disabled = true;
                 setActiveNode(null);
@@ -1704,24 +1884,22 @@
             });
 
             btnAutoPlay.addEventListener('click', () => {
-                if (autoPlayTimer) {
-                    clearTimeout(autoPlayTimer);
-                    autoPlayTimer = null;
-                    playIcon.setAttribute('data-fa', 'play');
-                    playText.textContent = 'Auto';
-                    window.fa?.createIcons?.();
+                if (isAutoPlayActive) {
+                    stopAutoPlayUI();
                 } else {
+                    isAutoPlayActive = true;
                     playIcon.setAttribute('data-fa', 'pause');
                     playText.textContent = 'Pause';
-                    window.fa?.createIcons?.();
-                    if (!activeSteps.length || currentStepIdx >= activeSteps.length - 1) {
+                    window.fa?.createIcons?.(btnAutoPlay);
+                    if (!isSimRunning && (!activeSteps.length || currentStepIdx >= activeSteps.length - 1)) {
                         startSimulation();
+                    } else if (!isSimRunning && currentStepIdx < activeSteps.length - 1) {
+                        autoPlayTimer = setTimeout(() => {
+                            if (isAutoPlayActive && !isSimRunning && currentStepIdx < activeSteps.length - 1) {
+                                runStep(currentStepIdx + 1);
+                            }
+                        }, Math.min(simSpeed, 400));
                     }
-                    autoPlayTimer = setTimeout(() => {
-                        if (currentStepIdx < activeSteps.length - 1) {
-                            runStep(currentStepIdx + 1);
-                        }
-                    }, simSpeed);
                 }
             });
 
@@ -1737,13 +1915,15 @@
 
             // --- MISSIONS & CHALLENGES ---
             function loadMission(idx) {
+                clearTimeout(missionAdvanceTimer);
+                missionAdvanceTimer = null;
                 currentMission = idx;
                 const m = MISSIONS[idx];
                 missionTitle.textContent = m.title;
                 missionDesc.textContent = m.desc;
                 missionScore.textContent = `⭐ ${idx} / ${MISSIONS.length}`;
                 if (m.prepare) m.prepare();
-                if (m.targetSite) urlInput.value = m.targetSite;
+                urlInput.value = '';
             }
 
             function checkMissionResult(result) {
@@ -1751,46 +1931,62 @@
                 const m = MISSIONS[currentMission];
                 if (m && m.check(result)) {
                     playBeep('success');
+                    clearTimeout(missionAdvanceTimer);
                     if (currentMission < MISSIONS.length - 1) {
-                        setTimeout(() => {
-                            loadMission(currentMission + 1);
+                        const targetNext = currentMission + 1;
+                        missionAdvanceTimer = setTimeout(() => {
+                            if (currentMode === 'missions') {
+                                loadMission(targetNext);
+                            }
                         }, 1200);
                     } else {
                         missionScore.textContent = `⭐ 4 / 4 ! Félicitations !`;
-                        if (window.confetti && typeof window.confetti.fire === 'function') {
-                            window.confetti.fire({ particleCount: 80, spread: 80 });
-                        }
+                        fireSimulationConfetti({ particleCount: 80, spread: 80 });
                     }
                 }
             }
 
             tabModeFree.addEventListener('click', () => {
+                clearTimeout(missionAdvanceTimer);
                 currentMode = 'free';
                 tabModeFree.classList.add('active');
                 tabModeMissions.classList.remove('active');
                 challengeBanner.classList.remove('visible');
+                finishSimulation();
             });
 
             tabModeMissions.addEventListener('click', () => {
+                clearTimeout(missionAdvanceTimer);
                 currentMode = 'missions';
                 tabModeMissions.classList.add('active');
                 tabModeFree.classList.remove('active');
                 challengeBanner.classList.add('visible');
+                finishSimulation();
                 loadMission(0);
             });
 
-            // Reset simulator
-            document.getElementById('reset-sim-btn').addEventListener('click', () => {
+            function resetSimulator() {
+                clearTimeout(missionAdvanceTimer);
+                missionAdvanceTimer = null;
                 localDnsCache = {};
                 setDnsFail(false);
+                updateConnectionProtocolUI(false);
                 updateCacheUI();
-                urlInput.value = 'hepvs.ch';
+                urlInput.value = currentMode === 'missions' ? '' : 'hepvs.ch';
                 packetToken.className = 'packet-token';
                 setActiveNode(null);
                 finishSimulation();
+                activeSteps = [];
+                currentStepIdx = 0;
+                btnPrevStep.disabled = true;
                 stepBadge.textContent = '1';
                 stepMessage.textContent = 'Simulateur réinitialisé. Prêt pour un nouveau voyage !';
-            });
+                if (currentMode === 'missions') {
+                    loadMission(0);
+                }
+            }
+
+            window.__onResetApp = resetSimulator;
 
             // Initialize wires
             setTimeout(updateWires, 100);

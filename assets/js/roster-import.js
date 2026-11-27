@@ -126,6 +126,87 @@
         return names;
     }
 
+    function normalizeGenderMarker(rawVal) {
+        const v = String(rawVal || '').trim().toLowerCase();
+        if (!v) return 'U';
+        if (/^(?:f|fille|féminin|feminin|femme|w|weiblich|female|girl)$/.test(v)) return 'F';
+        if (/^(?:m|g|garçon|garcon|masculin|homme|boy|junge|male)$/.test(v)) return 'M';
+        return 'U';
+    }
+
+    function extractStudentsFromTableRows(rows) {
+        if (!rows || !rows.length) return [];
+
+        const HEADER_NAME_FULL_REGEX = /^(?:nom\s*(?:et|\/|&)?\s*pr[eé]nom|pr[eé]nom\s*(?:et|\/|&)?\s*nom|nom\s+complet|identit[eé]|élève|eleve|student|pupil)$/i;
+        const HEADER_LAST_NAME_REGEX = /^(?:nom|nom\s+de\s+famille|last\s*name|surname)$/i;
+        const HEADER_FIRST_NAME_REGEX = /^(?:pr[eé]nom|first\s*name|given\s*name|call\s*name)$/i;
+        const HEADER_GENDER_REGEX = /^(?:sexe|genre|gender|sex|geschlecht|f\/g|f\/m|m\/f)$/i;
+
+        let headerRowIdx = -1;
+        let colFullName = -1;
+        let colLastName = -1;
+        let colFirstName = -1;
+        let colGender = -1;
+
+        for (let r = 0; r < Math.min(rows.length, 30); r++) {
+            const row = rows[r];
+            if (!row || !row.length) continue;
+
+            let foundFullName = -1;
+            let foundLastName = -1;
+            let foundFirstName = -1;
+            let foundGender = -1;
+
+            for (let c = 0; c < row.length; c++) {
+                const val = String(row[c] || '').trim();
+                if (HEADER_NAME_FULL_REGEX.test(val)) foundFullName = c;
+                else if (HEADER_LAST_NAME_REGEX.test(val)) foundLastName = c;
+                else if (HEADER_FIRST_NAME_REGEX.test(val)) foundFirstName = c;
+                else if (HEADER_GENDER_REGEX.test(val)) foundGender = c;
+            }
+
+            if (foundFullName !== -1 || (foundLastName !== -1 && foundFirstName !== -1)) {
+                headerRowIdx = r;
+                colFullName = foundFullName;
+                colLastName = foundLastName;
+                colFirstName = foundFirstName;
+                colGender = foundGender;
+                break;
+            }
+        }
+
+        if (headerRowIdx === -1) return [];
+
+        const students = [];
+        const seen = new Set();
+
+        for (let r = headerRowIdx + 1; r < rows.length; r++) {
+            const row = rows[r];
+            if (!row || !row.length) continue;
+
+            let extracted = '';
+            if (colFullName !== -1) {
+                extracted = formatTitleCase(String(row[colFullName] || '').trim());
+            } else if (colLastName !== -1 && colFirstName !== -1) {
+                const ln = formatCapitalize(String(row[colLastName] || '').trim());
+                const fn = formatCapitalize(String(row[colFirstName] || '').trim());
+                extracted = (fn && ln) ? `${fn} ${ln}` : (fn || ln);
+            }
+
+            extracted = extracted.replace(/^["']|["']$/g, '').replace(/^[0-9\.\-\_\s]+/, '').trim();
+            if (extracted && extracted.length >= 2 && !/^(?:total|effectif|garçons|filles|moyenne|classe|école|degre|degré|mur\s+fd)/i.test(extracted)) {
+                const key = extracted.toLowerCase();
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    const gender = (colGender !== -1) ? normalizeGenderMarker(row[colGender]) : 'U';
+                    students.push({ name: extracted, gender });
+                }
+            }
+        }
+
+        return students;
+    }
+
     function parseRosterContent(input) {
         if (!input) return [];
 
@@ -235,9 +316,89 @@
             .filter(Boolean);
     }
 
+    function parseRosterWithGender(input) {
+        if (!input) return [];
+
+        const xlsxLib = getXLSX();
+
+        if (Array.isArray(input)) {
+            if (input.length > 0 && Array.isArray(input[0])) {
+                const res = extractStudentsFromTableRows(input);
+                if (res.length > 0) return res;
+            }
+            return parseRosterContent(input).map(name => ({ name, gender: 'U' }));
+        }
+
+        const isBinary = input instanceof ArrayBuffer ||
+            (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView && ArrayBuffer.isView(input)) ||
+            (typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(input)) ||
+            (input && typeof input === 'object' && input.byteLength !== undefined && (input.buffer !== undefined || input.BYTES_PER_ELEMENT !== undefined));
+
+        if (isBinary) {
+            if (xlsxLib) {
+                try {
+                    const isNodeBuf = typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(input);
+                    const readData = (input instanceof ArrayBuffer) ? new Uint8Array(input) : input;
+                    const wb = xlsxLib.read(readData, { type: isNodeBuf ? 'buffer' : 'array' });
+                    const rows = xlsxLib.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
+                    const res = extractStudentsFromTableRows(rows);
+                    if (res.length > 0) return res;
+                } catch (err) { }
+            }
+            if (typeof TextDecoder !== 'undefined') {
+                try { input = new TextDecoder('utf-8').decode(input); } catch (e) { input = String(input); }
+            } else {
+                input = String(input);
+            }
+        }
+
+        if (typeof input !== 'string') return [];
+
+        if (/<table[\s>]/i.test(input) && xlsxLib) {
+            try {
+                const wb = xlsxLib.read(input, { type: 'string' });
+                const rows = xlsxLib.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
+                const res = extractStudentsFromTableRows(rows);
+                if (res.length > 0) return res;
+            } catch (e) { }
+        }
+
+        const lines = input.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (!lines.length) return [];
+
+        const tableRows = lines.map(line => {
+            let delimiter = ';';
+            const semiCount = (line.match(/;/g) || []).length;
+            const commaCount = (line.match(/,/g) || []).length;
+            const tabCount = (line.match(/\t/g) || []).length;
+            if (tabCount > semiCount && tabCount > commaCount) delimiter = '\t';
+            else if (commaCount > semiCount) delimiter = ',';
+            return line.split(delimiter).map(c => c.replace(/^["']|["']$/g, '').trim());
+        });
+
+        const structuredStudents = extractStudentsFromTableRows(tableRows);
+        if (structuredStudents.length > 0) return structuredStudents;
+
+        // If lines are "Name, G" / "Name; F" without a formal header, preserve full lines for row-level parsing
+        const hasGenderRows = lines.some(l => /^[^,;\t]+[,\;\t]\s*(?:[FfMmGg]|Fille|Gar[çc]on)\s*$/i.test(l));
+        if (hasGenderRows) {
+            return lines.map(line => {
+                const parts = line.split(/[,\;\t]+/).map(s => s.trim()).filter(Boolean);
+                if (parts.length === 2 && normalizeGenderMarker(parts[1]) !== 'U') {
+                    return { name: parts[0], gender: normalizeGenderMarker(parts[1]) };
+                }
+                return { name: line, gender: 'U' };
+            });
+        }
+
+        return parseRosterContent(input).map(name => ({ name, gender: 'U' }));
+    }
+
     return {
         parseRosterContent,
+        parseRosterWithGender,
         extractNamesFromTableRows,
+        extractStudentsFromTableRows,
         parseNamesList,
         formatTitleCase,
         formatCapitalize

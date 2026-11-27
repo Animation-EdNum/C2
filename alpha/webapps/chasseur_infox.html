@@ -53,7 +53,7 @@
             --accent: #2563eb;
             --accent-dark: #1d4ed8;
             --accent-light: #dbeafe;
-            --success: #16a34a;
+            --success: #047857;
             --success-light: #dcfce7;
             --warning: #d97706;
             --warning-light: #fef3c7;
@@ -311,9 +311,17 @@
             border-radius: 50%;
         }
 
-        .win-red { background: #ef4444; }
-        .win-yellow { background: #f59e0b; }
-        .win-green { background: #10b981; }
+        .win-red {
+            background: #ef4444;
+        }
+
+        .win-yellow {
+            background: #f59e0b;
+        }
+
+        .win-green {
+            background: #10b981;
+        }
 
         .browser-nav-btns {
             display: flex;
@@ -341,13 +349,15 @@
 
         .url-bar {
             flex: 1;
-            min-width: 250px;
+            min-width: 0;
+            width: 100%;
             background: var(--card-bg);
             border: 1.5px solid var(--card-border);
             border-radius: var(--radius-pill);
-            padding: 5px 12px;
+            padding: 6px 12px;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
@@ -367,15 +377,24 @@
             font-size: 0.85rem;
         }
 
-        .url-sec-icon.secure { color: var(--success); }
-        .url-sec-icon.warning { color: var(--warning); }
-        .url-sec-icon.danger { color: var(--danger); }
+        .url-sec-icon.secure {
+            color: var(--success);
+        }
+
+        .url-sec-icon.warning {
+            color: var(--warning);
+        }
+
+        .url-sec-icon.danger {
+            color: var(--danger);
+        }
 
         .url-display {
             flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            white-space: normal;
         }
 
         .url-host {
@@ -420,19 +439,13 @@
             cursor: crosshair;
         }
 
-        /* Interactive Clue Zones */
+        /* Interactive Clue Zones (no hover spoiler!) */
         .clue-target {
             position: relative;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: var(--radius-md);
             outline: 2px dashed transparent;
             outline-offset: 4px;
-        }
-
-        body.detective-mode-on .clue-target:hover {
-            outline: 2px dashed var(--clue-highlight);
-            background: rgba(245, 158, 11, 0.08);
-            transform: scale(1.006);
         }
 
         /* Solved Clue */
@@ -464,9 +477,17 @@
         }
 
         @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+            }
         }
 
         /* --- STYLES FOR FAKE WEBSITES --- */
@@ -698,7 +719,9 @@
         }
 
         @media (max-width: 768px) {
-            .shop-grid { grid-template-columns: 1fr; }
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .product-image-box {
@@ -884,8 +907,13 @@
             gap: 6px;
         }
 
-        .clue-box-section:not(.reflex) .clue-box-label { color: var(--danger); }
-        .clue-box-section.reflex .clue-box-label { color: var(--success); }
+        .clue-box-section:not(.reflex) .clue-box-label {
+            color: var(--danger);
+        }
+
+        .clue-box-section.reflex .clue-box-label {
+            color: var(--success);
+        }
 
         .clue-box-text {
             font-size: 0.95rem;
@@ -964,44 +992,103 @@
             .container {
                 padding: 16px;
             }
+
             .dashboard-row {
                 flex-direction: column;
                 align-items: stretch;
             }
+
             .cases-nav {
                 overflow-x: auto;
                 padding-bottom: 4px;
             }
+
+            .brief-info {
+                min-width: 0;
+            }
+
             .brief-gauge-wrapper {
                 align-items: stretch;
                 width: 100%;
             }
+
+            .browser-bar {
+                gap: 8px;
+            }
+
+            .browser-tab {
+                max-width: 100%;
+            }
+
             .web-viewport {
                 padding: 14px;
             }
+
             .testimonials-grid {
                 grid-template-columns: 1fr;
             }
+
+            .diploma-student-name {
+                min-width: 0;
+                max-width: 100%;
+            }
+        }
+
+        .testimonial-card.interactive-review {
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .testimonial-card.interactive-review:hover {
+            border-color: var(--accent);
+        }
+
+        body.dark .case-tab-btn.active,
+        body.dark .btn-primary,
+        body.dark .tool-btn.active {
+            color: #0f172a;
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #000;
+            --bg-gradient-end: #000;
+            --container-bg: #000;
+            --card-bg: #000;
+            --card-border: #fff;
+            --text-main: #fff;
+            --text-secondary: #facc15;
+            --text-muted: #fff;
+            --accent: #facc15;
+            --accent-dark: #fde047;
+            --browser-bar-bg: #111;
+            --browser-body-bg: #000;
+        }
+
+        body.high-contrast .case-tab-btn.active,
+        body.high-contrast .btn-primary,
+        body.high-contrast .tool-btn.active {
+            color: #000;
         }
     </style>
 </head>
 
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-    <canvas id="confetti-canvas"></canvas>
 
     <div class="container" id="main-content">
         <!-- Application Header -->
         <header class="app-header">
             <div class="header-title-wrapper">
-                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
                     <i data-fa="magnifying-glass"></i>
                 </div>
                 <div>
-                    <h1>Chasseur d'Infox <span class="badge-level">6H-10CO</span> <span class="badge-alpha">Alpha</span></h1>
+                    <h1>Chasseur d'Infox <span class="badge-level">6H-10CO</span> <span class="badge-alpha">Alpha</span>
+                    </h1>
                 </div>
             </div>
             <div class="action-buttons">
@@ -1036,7 +1123,8 @@
                 <div class="dashboard-row">
                     <!-- Cases Navigation -->
                     <div class="cases-nav" role="tablist" aria-label="Sélection de l'enquête">
-                        <button class="case-tab-btn active" id="tab-case-0" data-case="0" role="tab" aria-selected="true">
+                        <button class="case-tab-btn active" id="tab-case-0" data-case="0" role="tab"
+                            aria-selected="true">
                             <span>🍝 Enquête 1</span>
                             <span class="case-status-badge" id="status-case-0">0/5</span>
                         </button>
@@ -1056,7 +1144,8 @@
 
                     <!-- Detective Tools -->
                     <div class="dashboard-tools">
-                        <button class="tool-btn active" id="toggle-detective-btn" title="Activer/Désactiver le curseur loupe">
+                        <button class="tool-btn active" id="toggle-detective-btn"
+                            title="Activer/Désactiver le curseur loupe">
                             <i data-fa="magnifying-glass"></i>
                             <span id="detectiveBtnText">Mode Loupe : ON</span>
                         </button>
@@ -1068,6 +1157,11 @@
                             <i data-fa="compass"></i>
                             <span>Boussole 5 Réflexes</span>
                         </button>
+                        <button class="tool-btn" id="open-authentic-site-btn"
+                            title="Comparer avec un site officiel fiable">
+                            <i data-fa="shield-check"></i>
+                            <span>Site témoin fiable</span>
+                        </button>
                     </div>
                 </div>
 
@@ -1078,7 +1172,9 @@
                             <i data-fa="bullseye"></i> <span id="brief-category">Canular &amp; Humour</span>
                         </div>
                         <h2 class="brief-title" id="brief-title">L'Arbre à Spaghettis récolté en Valais</h2>
-                        <p class="brief-desc" id="brief-desc">Un article sensationnel affirme qu'on récolte des spaghettis en pleine forêt valaisanne ! Trouve les 5 anomalies qui prouvent que c'est une farce.</p>
+                        <p class="brief-desc" id="brief-desc">Un article sensationnel affirme qu'on récolte des
+                            spaghettis en pleine forêt valaisanne ! Trouve les 5 anomalies qui prouvent que c'est une
+                            farce.</p>
                     </div>
                     <div class="brief-gauge-wrapper">
                         <div class="gauge-header">
@@ -1101,18 +1197,23 @@
                         <div class="win-dot win-green"></div>
                     </div>
                     <div class="browser-nav-btns">
-                        <button class="b-btn" title="Précédent" aria-label="Page précédente"><i data-fa="arrow-left"></i></button>
-                        <button class="b-btn" title="Suivant" aria-label="Page suivante"><i data-fa="arrow-right"></i></button>
-                        <button class="b-btn" id="browser-reload-btn" title="Actualiser" aria-label="Actualiser la fausse page"><i data-fa="arrows-rotate"></i></button>
+                        <button class="b-btn" id="browser-prev-btn" title="Précédent" aria-label="Page précédente"><i
+                                data-fa="arrow-left"></i></button>
+                        <button class="b-btn" id="browser-next-btn" title="Suivant" aria-label="Page suivante"><i
+                                data-fa="arrow-right"></i></button>
+                        <button class="b-btn" id="browser-reload-btn" title="Actualiser"
+                            aria-label="Actualiser la fausse page"><i data-fa="arrows-rotate"></i></button>
                     </div>
                     <div class="browser-tab" id="browser-tab-title">
                         <i data-fa="globe"></i> <span id="tab-name">Valais Info Express</span>
                     </div>
                     <!-- URL Address Bar (Interactive clue zone) -->
-                    <div class="url-bar clue-target" id="clue-url-bar" data-clue-id="url" tabindex="0" role="button" aria-label="Inspecter l'adresse URL">
+                    <div class="url-bar clue-target" id="clue-url-bar" data-clue-id="url" tabindex="0" role="button"
+                        aria-label="Inspecter l'adresse URL">
                         <div class="url-sec-icon warning" id="url-security-icon"><i data-fa="unlock"></i></div>
                         <div class="url-display">
-                            <span class="url-host" id="url-text-host">www.nouvelles-incroyables-valais.ch.vu</span><span class="url-path" id="url-text-path">/spaghetti-tree</span>
+                            <span class="url-host" id="url-text-host">www.nouvelles-incroyables-valais.ch.vu</span><span
+                                class="url-path" id="url-text-path">/spaghetti-tree</span>
                         </div>
                         <div class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> PIÈGE DÉTECTÉ</div>
                     </div>
@@ -1137,7 +1238,8 @@
                         <span style="font-size: 0.8rem; opacity: 0.8;" id="modal-clue-type">Type de manipulation</span>
                     </div>
                 </div>
-                <button class="clue-modal-close-btn" id="modal-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+                <button class="clue-modal-close-btn" id="modal-close-btn" aria-label="Fermer"><i
+                        data-fa="xmark"></i></button>
             </div>
             <div class="clue-modal-body">
                 <div class="clue-box-section">
@@ -1145,7 +1247,8 @@
                     <p class="clue-box-text" id="modal-clue-why">Explication détaillée de la tromperie...</p>
                 </div>
                 <div class="clue-box-section reflex">
-                    <div class="clue-box-label"><i data-fa="circle-check"></i> Le Bon Réflexe (Éducation Numérique)</div>
+                    <div class="clue-box-label"><i data-fa="circle-check"></i> Le Bon Réflexe (Éducation Numérique)
+                    </div>
                     <p class="clue-box-text" id="modal-clue-reflex">Que faire face à ce piège dans la vie réelle...</p>
                 </div>
             </div>
@@ -1156,7 +1259,8 @@
     </div>
 
     <!-- Detective Notebook Modal (Clues hints) -->
-    <div class="clue-modal-overlay" id="notebook-modal" role="dialog" aria-modal="true" aria-labelledby="notebook-title">
+    <div class="clue-modal-overlay" id="notebook-modal" role="dialog" aria-modal="true"
+        aria-labelledby="notebook-title">
         <div class="clue-modal-card">
             <div class="clue-modal-header">
                 <div class="clue-modal-title-wrap">
@@ -1166,7 +1270,8 @@
                         <span style="font-size: 0.8rem; opacity: 0.8;">Pistes de recherche pour cette enquête</span>
                     </div>
                 </div>
-                <button class="clue-modal-close-btn" id="notebook-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+                <button class="clue-modal-close-btn" id="notebook-close-btn" aria-label="Fermer"><i
+                        data-fa="xmark"></i></button>
             </div>
             <div class="clue-modal-body" id="notebook-clues-list">
                 <!-- Dynamically generated clues list -->
@@ -1185,31 +1290,48 @@
                     <div class="clue-modal-icon" style="background:#2563eb;"><i data-fa="compass"></i></div>
                     <div>
                         <h3 id="compass-title">La Boussole Anti-Infox</h3>
-                        <span style="font-size: 0.8rem; opacity: 0.8;">Les 5 réflexes indispensables du Plan d'Étude Romand</span>
+                        <span style="font-size: 0.8rem; opacity: 0.8;">Les 5 réflexes indispensables du Plan d'Étude
+                            Romand</span>
                     </div>
                 </div>
-                <button class="clue-modal-close-btn" id="compass-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+                <button class="clue-modal-close-btn" id="compass-close-btn" aria-label="Fermer"><i
+                        data-fa="xmark"></i></button>
             </div>
             <div class="clue-modal-body">
-                <div class="clue-box-section reflex" style="border-left-color: #2563eb; background: rgba(37, 99, 235, 0.05);">
-                    <div class="clue-box-label" style="color: #2563eb;"><i data-fa="globe"></i> 1. Vérifie l'adresse URL &amp; l'auteur</div>
-                    <p class="clue-box-text">Regarde bien l'extension (.ch, .org vs .biz, .xyz, .vu). Qui a rédigé l'article ? Y a-t-il un responsable légal identifiable ?</p>
+                <div class="clue-box-section reflex"
+                    style="border-left-color: #2563eb; background: rgba(37, 99, 235, 0.05);">
+                    <div class="clue-box-label" style="color: #2563eb;"><i data-fa="globe"></i> 1. Vérifie l'adresse URL
+                        &amp; l'auteur</div>
+                    <p class="clue-box-text">Regarde bien l'extension (.ch, .org vs .biz, .xyz, .vu). Qui a rédigé
+                        l'article ? Y a-t-il un responsable légal identifiable ?</p>
                 </div>
-                <div class="clue-box-section reflex" style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.05);">
-                    <div class="clue-box-label" style="color: #10b981;"><i data-fa="circle-info"></i> 2. Scrute la date et le contexte</div>
-                    <p class="clue-box-text">Est-ce un poisson d'avril (1er avril) ? S'agit-il d'un vieil événement recyclé pour créer une fausse polémique ?</p>
+                <div class="clue-box-section reflex"
+                    style="border-left-color: #10b981; background: rgba(16, 185, 129, 0.05);">
+                    <div class="clue-box-label" style="color: #10b981;"><i data-fa="circle-info"></i> 2. Scrute la date
+                        et le contexte</div>
+                    <p class="clue-box-text">Est-ce un poisson d'avril (1er avril) ? S'agit-il d'un vieil événement
+                        recyclé pour créer une fausse polémique ?</p>
                 </div>
-                <div class="clue-box-section reflex" style="border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.05);">
-                    <div class="clue-box-label" style="color: #d97706;"><i data-fa="eye"></i> 3. Inspecte les images et l'IA</div>
-                    <p class="clue-box-text">Recherche les défauts physiques : membres bizarres, ombres contradictoires, flous suspects. Fais une recherche inversée d'image si possible !</p>
+                <div class="clue-box-section reflex"
+                    style="border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.05);">
+                    <div class="clue-box-label" style="color: #d97706;"><i data-fa="eye"></i> 3. Inspecte les images et
+                        l'IA</div>
+                    <p class="clue-box-text">Recherche les défauts physiques : membres bizarres, ombres contradictoires,
+                        flous suspects. Fais une recherche inversée d'image si possible !</p>
                 </div>
-                <div class="clue-box-section reflex" style="border-left-color: #ec4899; background: rgba(236, 72, 153, 0.05);">
-                    <div class="clue-box-label" style="color: #ec4899;"><i data-fa="triangle-exclamation"></i> 4. Méfie-toi des émotions fortes et de l'urgence</div>
-                    <p class="clue-box-text">Les escroqueries et les infox utilisent la panique ("Votre compte sera supprimé dans 1 heure !") ou la stupéfaction pour t'empêcher de réfléchir.</p>
+                <div class="clue-box-section reflex"
+                    style="border-left-color: #ec4899; background: rgba(236, 72, 153, 0.05);">
+                    <div class="clue-box-label" style="color: #ec4899;"><i data-fa="triangle-exclamation"></i> 4.
+                        Méfie-toi des émotions fortes et de l'urgence</div>
+                    <p class="clue-box-text">Les escroqueries et les infox utilisent la panique ("Votre compte sera
+                        supprimé dans 1 heure !") ou la stupéfaction pour t'empêcher de réfléchir.</p>
                 </div>
-                <div class="clue-box-section reflex" style="border-left-color: #8b5cf6; background: rgba(139, 92, 246, 0.05);">
-                    <div class="clue-box-label" style="color: #7c3aed;"><i data-fa="shield-check"></i> 5. Croise les sources avec des médias fiables</div>
-                    <p class="clue-box-text">Si une information extraordinaire est vraie, elle est reprise par des rédactions professionnelles reconnues (RTS, Le Nouvelliste, Le Temps, etc.).</p>
+                <div class="clue-box-section reflex"
+                    style="border-left-color: #8b5cf6; background: rgba(139, 92, 246, 0.05);">
+                    <div class="clue-box-label" style="color: #7c3aed;"><i data-fa="shield-check"></i> 5. Croise les
+                        sources avec des médias fiables</div>
+                    <p class="clue-box-text">Si une information extraordinaire est vraie, elle est reprise par des
+                        rédactions professionnelles reconnues (RTS, Le Nouvelliste, Le Temps, etc.).</p>
                 </div>
             </div>
             <div class="clue-modal-footer">
@@ -1219,7 +1341,8 @@
     </div>
 
     <!-- Final Diploma Modal -->
-    <div class="clue-modal-overlay" id="diploma-modal" role="dialog" aria-modal="true" aria-labelledby="diploma-main-title">
+    <div class="clue-modal-overlay" id="diploma-modal" role="dialog" aria-modal="true"
+        aria-labelledby="diploma-main-title">
         <div class="clue-modal-card" style="max-width: 720px;">
             <div class="clue-modal-header" style="background: rgba(245, 158, 11, 0.15);">
                 <div class="clue-modal-title-wrap">
@@ -1229,18 +1352,23 @@
                         <span style="font-size: 0.8rem; opacity: 0.8;">Tu as résolu les 4 enquêtes avec succès !</span>
                     </div>
                 </div>
-                <button class="clue-modal-close-btn" id="diploma-close-btn" aria-label="Fermer"><i data-fa="xmark"></i></button>
+                <button class="clue-modal-close-btn" id="diploma-close-btn" aria-label="Fermer"><i
+                        data-fa="xmark"></i></button>
             </div>
             <div class="clue-modal-body">
                 <div class="diploma-card" id="printable-diploma">
                     <div class="diploma-seal"><i data-fa="graduation-cap"></i></div>
                     <h2 class="diploma-title">Certificat de Détective du Web</h2>
-                    <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">Ce diplôme d'esprit critique et d'éducation aux médias est décerné à :</p>
-                    <div class="diploma-student-name" id="diploma-student-display" contenteditable="true" title="Clique pour modifier ton nom">Élève Détective</div>
+                    <p style="margin: 0; font-size: 0.95rem; font-weight: 600;">Ce diplôme d'esprit critique et
+                        d'éducation aux médias est décerné à :</p>
+                    <div class="diploma-student-name" id="diploma-student-display" contenteditable="true"
+                        title="Clique pour modifier ton nom">Élève Détective</div>
                     <p style="font-size: 0.9rem; line-height: 1.5; margin: 10px 0 16px;">
-                        Pour avoir démasqué avec brio les pièges du Web : canulars humoristiques, attaques de phishing, images trompeuses générées par IA et arnaques commerciales.
+                        Pour avoir démasqué avec brio les pièges du Web : canulars humoristiques, attaques de phishing,
+                        images trompeuses générées par IA et arnaques commerciales.
                     </p>
-                    <div style="display: flex; justify-content: space-around; font-size: 0.8rem; font-weight: 700; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                    <div
+                        style="display: flex; justify-content: space-around; font-size: 0.8rem; font-weight: 700; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 12px;">
                         <span>📅 Date : <span id="diploma-date-label">Aujourd'hui</span></span>
                         <span>⭐ Niveau : 6H-10CO</span>
                         <span>🛡️ AP EdNum · HEP-VS</span>
@@ -1248,23 +1376,81 @@
                 </div>
             </div>
             <div class="clue-modal-footer" style="justify-content: space-between;">
-                <button class="btn btn-outline" id="diploma-print-btn"><i data-fa="arrows-rotate"></i> Imprimer le Diplôme</button>
+                <button class="btn btn-outline" id="diploma-print-btn"><i data-fa="print"></i> Imprimer le
+                    Diplôme</button>
                 <button class="btn btn-primary" id="diploma-ok-btn">Génial !</button>
             </div>
         </div>
     </div>
+
+    <!-- Authentic Site Comparison Modal -->
+    <div class="clue-modal-overlay" id="authentic-site-modal" role="dialog" aria-modal="true"
+        aria-labelledby="authentic-site-title">
+        <div class="clue-modal-card" style="max-width: 720px;">
+            <div class="clue-modal-header success-state">
+                <div class="clue-modal-title-wrap">
+                    <div class="clue-modal-icon" style="background: var(--success);"><i data-fa="shield-check"></i>
+                    </div>
+                    <div>
+                        <h3 id="authentic-site-title">Site Témoin Fiable (À comparer !)</h3>
+                        <span style="font-size: 0.8rem; opacity: 0.85;">Voici à quoi ressemble une page institutionnelle
+                            ou média vérifiable</span>
+                    </div>
+                </div>
+                <button class="clue-modal-close-btn" id="authentic-close-btn" aria-label="Fermer"><i
+                        data-fa="xmark"></i></button>
+            </div>
+            <div class="clue-modal-body">
+                <div class="browser-mockup">
+                    <div class="browser-bar">
+                        <div class="url-bar" style="cursor: default;">
+                            <div class="url-sec-icon secure"><i data-fa="lock"></i></div>
+                            <div class="url-display">
+                                <span class="url-host">https://www.vs.ch</span><span
+                                    class="url-path">/web/dfs/education-numerique</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="web-viewport" style="min-height: auto; padding: 18px;">
+                        <p style="font-size: 0.82rem; color: var(--success); font-weight: 700; margin: 0 0 8px;">✅ 1.
+                            Domaine officiel de l'État (.vs.ch) + protocole HTTPS</p>
+                        <h4 style="margin: 0 0 8px; font-size: 1.15rem;">Canton du Valais · Prévention &amp; Éducation
+                            numérique</h4>
+                        <p style="font-size: 0.9rem; line-height: 1.5; margin: 0 0 12px;">
+                            Publié par le <strong>Service de l'enseignement</strong> · Mise à jour vérifiée le
+                            <strong>15 octobre 2026</strong> · Aucune demande de mot de passe par message urgent.
+                        </p>
+                        <div
+                            style="border-top: 1px solid var(--card-border); padding-top: 10px; font-size: 0.8rem; color: var(--text-secondary);">
+                            Mentions légales · Impressum : Département de la formation, Place de la Planta 1, 1950 Sion
+                            · Contact officiel en <code>@admin.vs.ch</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clue-modal-footer">
+                <button class="btn btn-primary" id="authentic-ok-btn">Compris, retour à l'enquête</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
 
     <!-- Standard AP EdNum Footer -->
     <footer class="no-print">
         <p>
             <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
                 href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
-                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
-                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
             <br>
             <span style="font-size: 0.9em; opacity: 0.85;">
-                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
-                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                        data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
                 · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
                 · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
                 · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
@@ -1275,7 +1461,7 @@
 
     <!-- App Logic -->
     <script>
-        (function() {
+        (function () {
             // ==========================================
             // CASES DATABASE (4 Immersive Investigations)
             // ==========================================
@@ -1331,7 +1517,7 @@
                             hint: "Regarde le style d'écriture du gros titre : n'en fait-il pas beaucoup trop ?"
                         }
                     },
-                    renderHTML: function() {
+                    renderHTML: function () {
                         return `
                         <div class="fake-news-container">
                             <div class="news-header">
@@ -1408,9 +1594,9 @@
                     category: "Tentative d'hameçonnage / Escroquerie",
                     desc: "Un courriel suspect t'envoie sur cette page demandant ton mot de passe d'urgence pour 'sauver ton compte'. Repère les 5 pièges de sécurité !",
                     tabTitle: "Portail Numérique Écolier",
-                    urlHost: "www.ecoles-valais-login.biz",
+                    urlHost: "https://www.ecoles-valais-login.biz",
                     urlPath: "/recup-compte",
-                    urlSecStatus: "danger",
+                    urlSecStatus: "secure",
                     clues: {
                         url: {
                             id: "url",
@@ -1453,7 +1639,7 @@
                             hint: "Regarde le bas de la page : qui contacter ? L'adresse e-mail est-elle officielle ?"
                         }
                     },
-                    renderHTML: function() {
+                    renderHTML: function () {
                         return `
                         <div class="fake-login-container">
                             <div class="login-brand">
@@ -1462,7 +1648,7 @@
                                 </div>
                                 <div>
                                     <h3 style="margin:0; font-size:1.05rem;">Portail Numérique Écolier</h3>
-                                    <span style="font-size:0.75rem; color:var(--text-muted);">Direction Informatique Scolaire Non-Officielle</span>
+                                    <span style="font-size:0.75rem; color:var(--text-muted);">Direction Informatique Scolaire · Support Valais</span>
                                 </div>
                             </div>
 
@@ -1480,7 +1666,7 @@
                                 <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
                             </p>
 
-                            <form onsubmit="return false;">
+                            <form class="fake-login-form">
                                 <div class="form-group">
                                     <label class="form-label">Nom d'utilisateur scolaire :</label>
                                     <input type="text" class="form-input-mock" value="eleve.martigny@edu" readonly>
@@ -1493,12 +1679,12 @@
                                     <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
                                 </div>
 
-                                <button type="button" class="login-submit-btn">Sauvegarder et Valider mon Compte</button>
+                                <button type="submit" class="login-submit-btn">Sauvegarder et Valider mon Compte</button>
                             </form>
 
                             <div class="login-footer-notes clue-target" id="clue-sender" data-clue-id="sender" tabindex="0" role="button" aria-label="Inspecter le contact d'assistance">
                                 Assistance technique d'urgence : <strong>support-ecoles-urgent@gmail.com</strong><br>
-                                © 2026 Service Informatique Bricolé - Valais
+                                © 2026 Portail Éducatif - Service d'assistance externe
                                 <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
                             </div>
                         </div>`;
@@ -1548,14 +1734,14 @@
                         },
                         legal: {
                             id: "legal",
-                            title: "Absence de Mentions Légales & Auteur Bot",
+                            title: "Absence de Journaliste & d'Impressum",
                             type: "Site fantôme irresponsable",
-                            why: "L'article est signé 'Généré par BotNews-3000' et le bas de page indique 'Aucune mention légale'. La loi suisse oblige les sites d'information à indiquer qui est responsable.",
+                            why: "L'article est signé d'un nom générique ('Rédaction Éclair') sans aucun journaliste nommé, et il n'y a ni adresse ni mentions légales vérifiables. La loi suisse oblige les médias d'information à publier un Impressum clair.",
                             reflex: "Cherche toujours qui a écrit l'article. S'il n'y a pas de journaliste nommé, pas d'adresse ni de mentions légales, l'info ne vaut rien.",
-                            hint: "Regarde en bas qui a écrit l'article et où sont les mentions légales."
+                            hint: "Regarde tout en bas qui a écrit l'article et si des mentions légales existent."
                         }
                     },
-                    renderHTML: function() {
+                    renderHTML: function () {
                         return `
                         <div class="fake-buzz-container">
                             <div class="buzz-header-bar">
@@ -1613,7 +1799,7 @@
                                 </div>
 
                                 <div class="login-footer-notes clue-target" id="clue-legal" data-clue-id="legal" tabindex="0" role="button" aria-label="Inspecter les mentions légales">
-                                    Rédacteur : <strong>Générateur de Buzz BotNews-3000</strong> · Mentions légales : <strong>Aucune</strong> (Site hébergé sur une île inconnue).
+                                    Publié par : <strong>Rédaction Éclair International</strong> · Informations légales : <strong>À propos du réseau</strong>.
                                     <span class="clue-badge-flag"><i data-fa="triangle-exclamation"></i> INDICE</span>
                                 </div>
                             </div>
@@ -1671,7 +1857,7 @@
                             hint: "Examine les minuscules lignes de texte gris tout en bas de la page."
                         }
                     },
-                    renderHTML: function() {
+                    renderHTML: function () {
                         return `
                         <div class="fake-shop-container">
                             <div class="shop-banner">
@@ -1715,14 +1901,14 @@
                                         Seulement 4.90 CHF <span style="font-size:0.9rem; color:#64748b; text-decoration:line-through;">99.00 CHF</span>
                                     </div>
 
-                                    <button class="order-btn-mock">Commander mon Pack Génie Immédiat</button>
+                                    <button type="button" class="order-btn-mock" data-mock-action="order">Commander mon Pack Génie Immédiat</button>
 
                                     <div class="testimonials-grid">
-                                        <div class="testimonial-card">
+                                        <div class="testimonial-card interactive-review" data-mock-action="fake-review" role="button" tabindex="0" aria-label="Examiner l'avis client suspect">
                                             ⭐⭐⭐⭐⭐<br>
                                             <strong>Léo, 11 ans :</strong> « J'avais 2 en maths, j'ai mâché 1 chewing-gum et j'ai eu 6 le lendemain ! »
                                         </div>
-                                        <div class="testimonial-card">
+                                        <div class="testimonial-card interactive-review" data-mock-action="fake-review" role="button" tabindex="0" aria-label="Examiner l'avis client suspect">
                                             ⭐⭐⭐⭐⭐<br>
                                             <strong>Camille, 13 ans :</strong> « Mes profs pensent que je suis devenu un génie ! »
                                         </div>
@@ -1782,13 +1968,30 @@
                 }
             }
 
+            let shopTimerInterval = null;
+            let diplomaTimer = null;
+            let pendingCompletionReward = null;
+
             // Expose reset to global theme resetCache button
-            window.__onResetApp = function() {
+            window.__onResetApp = function () {
+                if (shopTimerInterval) {
+                    clearInterval(shopTimerInterval);
+                    shopTimerInterval = null;
+                }
+                if (diplomaTimer) {
+                    clearTimeout(diplomaTimer);
+                    diplomaTimer = null;
+                }
+                pendingCompletionReward = null;
                 try {
                     localStorage.removeItem(STORAGE_KEY);
-                } catch (e) {}
+                } catch (e) { }
                 state.solvedClues = { 0: [], 1: [], 2: [], 3: [] };
                 state.currentCaseIdx = 0;
+                state.detectiveMode = true;
+                document.body.classList.add('detective-mode-on');
+                toggleDetectiveBtn.classList.add('active');
+                detectiveBtnText.textContent = "Mode Loupe : ON";
                 updateCaseUI();
                 if (typeof showToast === 'function') {
                     showToast("Application réinitialisée avec succès !", "info");
@@ -1824,6 +2027,7 @@
 
             const compassModal = document.getElementById('compass-modal');
             const diplomaModal = document.getElementById('diploma-modal');
+            const authenticSiteModal = document.getElementById('authentic-site-modal');
             const diplomaStudentDisplay = document.getElementById('diploma-student-display');
             const diplomaDateLabel = document.getElementById('diploma-date-label');
 
@@ -1852,8 +2056,9 @@
                 secI.setAttribute('data-fa', currentCase.urlSecStatus === 'secure' ? 'lock' : 'unlock');
                 urlSecurityIcon.appendChild(secI);
 
-                // Render Content
-                webViewport.innerHTML = currentCase.renderHTML();
+                // Safely parse & render Content (no raw innerHTML assignment)
+                const parsed = new DOMParser().parseFromString(currentCase.renderHTML(), 'text/html');
+                webViewport.replaceChildren(...parsed.body.childNodes);
 
                 // Re-bind icon SVGs
                 if (window.fa && typeof window.fa.createIcons === 'function') {
@@ -1862,9 +2067,6 @@
 
                 // Apply Solved States to Elements in Viewport & URL bar
                 applySolvedStates();
-
-                // Bind Click Handlers to Clue Targets
-                bindClueClickHandlers();
 
                 // Update Tabs Status Badges
                 for (let i = 0; i < CASES.length; i++) {
@@ -1880,9 +2082,12 @@
                     }
                 }
 
-                // Start fake shop timer if on case 3
+                // Start or clear fake shop timer depending on case
                 if (state.currentCaseIdx === 3) {
                     initShopTimer();
+                } else if (shopTimerInterval) {
+                    clearInterval(shopTimerInterval);
+                    shopTimerInterval = null;
                 }
             }
 
@@ -1905,34 +2110,66 @@
                 });
             }
 
-            function bindClueClickHandlers() {
-                const currentCase = CASES[state.currentCaseIdx];
-                const targets = document.querySelectorAll('.clue-target');
-
-                targets.forEach(target => {
-                    target.addEventListener('click', (e) => {
+            function setupDelegatedViewportListeners() {
+                const urlClueBar = document.getElementById('clue-url-bar');
+                if (urlClueBar) {
+                    urlClueBar.addEventListener('click', (e) => {
                         e.stopPropagation();
+                        handleClueFound('url');
+                    });
+                    urlClueBar.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            urlClueBar.click();
+                        }
+                    });
+                }
+
+                webViewport.addEventListener('click', (e) => {
+                    const target = e.target.closest('.clue-target');
+                    if (target) {
+                        e.stopPropagation();
+                        const currentCase = CASES[state.currentCaseIdx];
                         const clueId = target.getAttribute('data-clue-id');
                         if (clueId && currentCase.clues[clueId]) {
                             handleClueFound(clueId);
                         }
-                    });
+                        return;
+                    }
 
-                    // Keyboard access (Enter / Space)
-                    target.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            target.click();
+                    const mockActionEl = e.target.closest('[data-mock-action]');
+                    if (mockActionEl) {
+                        const action = mockActionEl.getAttribute('data-mock-action');
+                        if (action === 'fake-review' && typeof showToast === 'function') {
+                            showToast("💬 Avis très suspect : prénoms vagues et promesse irréaliste (2 → 6 en 1 nuit). Toujours garder un esprit critique face aux avis !", "warning", 4500);
+                        } else if (action === 'order' && typeof showToast === 'function') {
+                            showToast("🛑 Stop ! Ne commande jamais sans vérifier l'URL (.shop) et les petites lignes tout en bas (89 CHF/mois cachés !).", "error", 4500);
                         }
-                    });
+                        return;
+                    }
+
+                    if (e.target.closest('.login-submit-btn')) {
+                        if (typeof showToast === 'function') {
+                            showToast("🛑 Piège ! Ne saisis jamais ton vrai mot de passe sur un lien reçu en urgence.", "error", 4000);
+                        }
+                        return;
+                    }
+
+                    if (typeof playSound === 'function') playSound('tick');
                 });
 
-                // Neutral clicks outside clues
-                webViewport.addEventListener('click', (e) => {
-                    if (!e.target.closest('.clue-target')) {
-                        if (typeof playSound === 'function') playSound('tick');
+                webViewport.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Enter' && e.key !== ' ') return;
+                    const target = e.target.closest('.clue-target, [data-mock-action]');
+                    if (target) {
+                        e.preventDefault();
+                        target.click();
                     }
-                }, { once: false });
+                });
+
+                webViewport.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                });
             }
 
             function handleClueFound(clueId) {
@@ -1955,18 +2192,25 @@
                     if (typeof playSound === 'function') playSound('ding');
                 }
 
+                // Queue completion reward until student finishes reading the 5th clue modal
+                const totalClues = Object.keys(currentCase.clues).length;
+                if (foundList.length === totalClues && isNew) {
+                    pendingCompletionReward = state.currentCaseIdx;
+                }
+
                 // Show Clue Detail Modal
                 openClueModal(clue, isNew);
 
                 // Update UI badges & progress
                 updateCaseUI();
+            }
 
-                // Check if all clues in this case are solved
-                const totalClues = Object.keys(currentCase.clues).length;
-                if (foundList.length === totalClues && isNew) {
-                    setTimeout(() => {
-                        handleCaseCompleted();
-                    }, 1200);
+            function closeClueModal() {
+                clueModal.classList.remove('active');
+                if (pendingCompletionReward !== null) {
+                    const completedIdx = pendingCompletionReward;
+                    pendingCompletionReward = null;
+                    handleCaseCompleted(completedIdx);
                 }
             }
 
@@ -1982,7 +2226,7 @@
                 }
             }
 
-            function handleCaseCompleted() {
+            function handleCaseCompleted(completedIdx = state.currentCaseIdx) {
                 if (typeof playSound === 'function') playSound('win');
                 if (typeof launchConfetti === 'function') {
                     launchConfetti();
@@ -1990,15 +2234,16 @@
                 }
 
                 if (typeof showToast === 'function') {
-                    showToast(`🏆 Enquête ${state.currentCaseIdx + 1} résolue ! Tous les indices démasqués !`, 'success', 4000);
+                    showToast(`🏆 Enquête ${completedIdx + 1} résolue ! Tous les indices démasqués !`, 'success', 4000);
                 }
 
                 // Check if all 4 cases are completed
                 const allDone = CASES.every(c => (state.solvedClues[c.id] || []).length === Object.keys(c.clues).length);
                 if (allDone) {
-                    setTimeout(() => {
+                    clearTimeout(diplomaTimer);
+                    diplomaTimer = setTimeout(() => {
                         openDiplomaModal();
-                    }, 1500);
+                    }, 450);
                 }
             }
 
@@ -2017,7 +2262,7 @@
                 const currentCase = CASES[state.currentCaseIdx];
                 const found = state.solvedClues[state.currentCaseIdx] || [];
 
-                notebookCluesList.innerHTML = '';
+                notebookCluesList.replaceChildren();
 
                 Object.keys(currentCase.clues).forEach((clueId, idx) => {
                     const clue = currentCase.clues[clueId];
@@ -2051,7 +2296,6 @@
             }
 
             // Fake countdown timer for case 3 (shop)
-            let shopTimerInterval = null;
             function initShopTimer() {
                 if (shopTimerInterval) clearInterval(shopTimerInterval);
                 let seconds = 205; // 03:25

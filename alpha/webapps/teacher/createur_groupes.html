@@ -1099,6 +1099,125 @@
             color: var(--primary);
         }
 
+        /* PROJECTION MODE (TBI) */
+        #icon-proj-compress {
+            display: none !important;
+        }
+
+        body.projection #icon-proj-expand {
+            display: none !important;
+        }
+
+        body.projection #icon-proj-compress {
+            display: inline-block !important;
+        }
+
+        body.projection {
+            padding: 0;
+        }
+
+        body.projection .container {
+            max-width: 100%;
+            border-radius: 0;
+            border: none;
+            min-height: 100vh;
+        }
+
+        body.projection .team-title {
+            font-size: 1.3rem;
+        }
+
+        body.projection .team-member-item {
+            font-size: 1.1rem;
+            padding: 0.6rem 0.85rem;
+        }
+
+        /* RESPONSIVE TABLETTE & MOBILE */
+        @media (min-width: 601px) and (max-width: 960px) {
+            body {
+                padding: 12px;
+            }
+
+            .app-main {
+                padding: 1.1rem;
+            }
+
+            .teams-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .app-header {
+                padding: 0.85rem 1rem;
+                flex-wrap: wrap;
+                gap: 0.6rem;
+            }
+
+            .header-title-wrapper {
+                flex-shrink: 1;
+                min-width: 0;
+            }
+
+            .app-main {
+                padding: 0.9rem;
+            }
+
+            .results-toolbar-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        /* HIGH CONTRAST OVERRIDES */
+        body.high-contrast {
+            --bg-gradient-start: #000000;
+            --bg-gradient-end: #000000;
+            --glass-bg: #000000;
+            --glass-border: #ffffff;
+            --text-main: #ffffff;
+            --text-secondary: #f8fafc;
+            --text-muted: #e2e8f0;
+            --border: #ffffff;
+            --primary: #22d3ee;
+            --primary-hover: #67e8f9;
+            --primary-light: #000000;
+            --gender-f-bg: #000000;
+            --gender-f-text: #ff99cc;
+            --gender-f-border: #ff99cc;
+            --gender-m-bg: #000000;
+            --gender-m-text: #67e8f9;
+            --gender-m-border: #67e8f9;
+        }
+
+        body.high-contrast .container,
+        body.high-contrast .panel-card,
+        body.high-contrast .team-card,
+        body.high-contrast .tool-banner,
+        body.high-contrast .results-toolbar,
+        body.high-contrast .modal-card,
+        body.high-contrast .settings-dropdown-content {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
+
+        body.high-contrast .btn-primary,
+        body.high-contrast .segmented-btn.active {
+            background: #22d3ee !important;
+            color: #000000 !important;
+            border-color: #22d3ee !important;
+        }
+
+        body.high-contrast .badge-alpha {
+            background: #facc15;
+            color: #000000;
+        }
+
         /* PRINT STYLING - A4 SHEET & TABLE TENTS */
         @media print {
             body {
@@ -1231,11 +1350,12 @@
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
     <div class="container" id="main-content">
         <!-- HEADER ENSEIGNANT STRICT -->
         <header class="app-header">
             <div class="header-title-wrapper">
-                <a href="../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
+                <a href="../../../index.html#teachers" class="header-back-btn" title="Retour à l'espace enseignant·e·s"
                     aria-label="Retour à l'espace enseignant·e·s"><i data-fa="arrow-left"></i></a>
                 <div class="header-icon" aria-hidden="true"><i data-fa="users"></i></div>
                 <div>
@@ -1244,6 +1364,11 @@
                 </div>
             </div>
             <div class="action-buttons">
+                <button class="icon-action-btn" id="projection-toggle-btn" title="Mode TNI / Projection"
+                    aria-label="Mode TNI / Projection">
+                    <i data-fa="expand" id="icon-proj-expand"></i>
+                    <i data-fa="compress" id="icon-proj-compress" style="display:none;"></i>
+                </button>
                 <div class="settings-dropdown">
                     <button class="icon-action-btn" aria-label="Options" id="options-menu-btn"><i
                             data-fa="gear"></i></button>
@@ -1381,7 +1506,8 @@
                             <span class="switch-title">Équilibrer filles / garçons</span>
                             <span class="switch-desc">Répartition homogène de la mixité par équipe</span>
                         </div>
-                        <input type="checkbox" id="balanceGenderToggle" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary);">
+                        <input type="checkbox" id="balanceGenderToggle" checked
+                            style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary);">
                     </div>
 
                     <!-- SÉLECTION THÈME DES NOMS D'ÉQUIPES -->
@@ -1458,16 +1584,20 @@
                         <span id="resultsTitleText">Équipes constituées (4)</span>
                     </div>
                     <div class="results-toolbar-actions">
-                        <button class="btn btn-secondary btn-small" id="shuffleAgainBtn" title="Relancer le tirage avec les mêmes règles">
+                        <button class="btn btn-secondary btn-small" id="shuffleAgainBtn"
+                            title="Relancer le tirage avec les mêmes règles">
                             <i data-fa="arrows-rotate"></i> <span>Mélanger à nouveau</span>
                         </button>
-                        <button class="btn btn-secondary btn-small" id="copyClipboardBtn" title="Copier la liste texte des équipes">
+                        <button class="btn btn-secondary btn-small" id="copyClipboardBtn"
+                            title="Copier la liste texte des équipes">
                             <i data-fa="copy"></i> <span>Copier texte</span>
                         </button>
-                        <button class="btn btn-secondary btn-small" id="printCardsBtn" title="Imprimer les étiquettes de table (format A4)">
+                        <button class="btn btn-secondary btn-small" id="printCardsBtn"
+                            title="Imprimer les étiquettes de table (format A4)">
                             <i data-fa="print"></i> <span>Imprimer / Étiquettes</span>
                         </button>
-                        <button class="btn btn-secondary btn-small" id="exportCsvBtn" title="Télécharger un tableau CSV">
+                        <button class="btn btn-secondary btn-small" id="exportCsvBtn"
+                            title="Télécharger un tableau CSV">
                             <i data-fa="download"></i> <span>Exporter CSV</span>
                         </button>
                     </div>
@@ -1528,6 +1658,7 @@
     <!-- SCRIPTS EN BAS DE BODY -->
     <script src="../../../assets/js/toast.js"></script>
     <script src="../../../assets/js/theme.js"></script>
+    <script src="../../../assets/js/pwa.js"></script>
     <script src="../../../assets/js/confetti.js"></script>
 
     <!-- LOGIQUE MÉTIER CRÉATEUR DE GROUPES -->
@@ -1661,7 +1792,9 @@
             function createStudent(name, gender = 'U') {
                 const cleanedName = String(name || '').trim();
                 const id = 's_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7);
-                let g = (gender || '').toUpperCase();
+                let g = (gender || '').trim().toUpperCase();
+                if (g === 'G' || g === 'GARÇON' || g === 'GARCON' || g === 'MALE' || g === 'BOY') g = 'M';
+                else if (g === 'FILLE' || g === 'FEMALE' || g === 'GIRL') g = 'F';
                 if (g !== 'F' && g !== 'M') g = 'U';
                 return { id, name: cleanedName, gender: g };
             }
@@ -1670,12 +1803,12 @@
                 let name = String(rawString || '').trim();
                 let gender = 'U';
 
-                // Détecte les suffixes de genre (F), (M), , F, , M, [F], [M]
-                const genderRegex = /[\(\[\,\;\s]+([FfMm])[\)\]\s]*$/;
+                // Détecte les suffixes de genre (F), (G), (M), (Fille), (Garçon), , F, , G, , M, [F], [G], [M]
+                const genderRegex = /[\(\[\,\;\s]+(Fille|Gar[çc]on|[FfMmGg])[\)\]\s]*$/i;
                 const match = name.match(genderRegex);
                 if (match) {
-                    const letter = match[1].toUpperCase();
-                    gender = (letter === 'F') ? 'F' : 'M';
+                    const token = match[1].toUpperCase();
+                    gender = (token === 'F' || token === 'FILLE') ? 'F' : 'M';
                     name = name.replace(genderRegex, '').trim();
                 }
                 return { name, gender };
@@ -1787,7 +1920,10 @@
                     const delBtn = document.createElement('button');
                     delBtn.className = 'chip-delete-btn';
                     delBtn.setAttribute('aria-label', 'Supprimer ' + student.name);
-                    delBtn.innerHTML = '<i data-fa="xmark" style="width:12px;height:12px;"></i>';
+                    const delIcon = document.createElement('i');
+                    delIcon.setAttribute('data-fa', 'xmark');
+                    delIcon.style.cssText = 'width:12px;height:12px;';
+                    delBtn.appendChild(delIcon);
                     delBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         removeStudent(student.id);
@@ -1856,12 +1992,14 @@
                     reader.onload = function (e) {
                         try {
                             const buffer = e.target.result;
-                            let extractedNames = [];
-                            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
-                                extractedNames = RosterImport.parseRosterContent(buffer);
+                            let extractedStudents = [];
+                            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterWithGender) {
+                                extractedStudents = RosterImport.parseRosterWithGender(buffer);
+                            } else if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
+                                extractedStudents = RosterImport.parseRosterContent(buffer);
                             }
-                            if (extractedNames.length > 0) {
-                                const added = addStudentsToList(extractedNames);
+                            if (extractedStudents.length > 0) {
+                                const added = addStudentsToList(extractedStudents);
                                 if (typeof showToast === 'function') {
                                     showToast(`${added} élève(s) importé(s) depuis le tableur`, 'success');
                                 }
@@ -1880,14 +2018,16 @@
                     reader.onload = function (e) {
                         try {
                             const text = e.target.result;
-                            let extractedNames = [];
-                            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
-                                extractedNames = RosterImport.parseRosterContent(text);
+                            let extractedStudents = [];
+                            if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterWithGender) {
+                                extractedStudents = RosterImport.parseRosterWithGender(text);
+                            } else if (typeof RosterImport !== 'undefined' && RosterImport.parseRosterContent) {
+                                extractedStudents = RosterImport.parseRosterContent(text);
                             } else {
-                                extractedNames = text.split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean);
+                                extractedStudents = text.split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean);
                             }
-                            if (extractedNames.length > 0) {
-                                const added = addStudentsToList(extractedNames);
+                            if (extractedStudents.length > 0) {
+                                const added = addStudentsToList(extractedStudents);
                                 if (typeof showToast === 'function') {
                                     showToast(`${added} élève(s) importé(s)`, 'success');
                                 }
@@ -1952,7 +2092,7 @@
                 let list = [];
                 lines.forEach(line => {
                     if (/[,\;]/.test(line)) {
-                        if (/^[^\,\;]+[,\;]\s*[FfMm]$/.test(line)) {
+                        if (/^[^\,\;]+[,\;]\s*(?:[FfMmGg]|Fille|Gar[çc]on)$/i.test(line)) {
                             list.push(line);
                         } else {
                             const parts = line.split(/[,\;]+/).map(s => s.trim()).filter(Boolean);
@@ -2007,15 +2147,18 @@
 
             function updateStepperSummary() {
                 const total = state.students.length;
-                const val = parseInt(stepperInput.value, 10) || 1;
+                const val = Math.max(1, parseInt(stepperInput.value, 10) || 1);
 
                 if (state.mode === 'teamsCount') {
                     stepperLabel.textContent = "Nombre d'équipes souhaité";
                     if (total === 0) {
                         stepperSummaryText.textContent = `Soit ${val} équipes prévues`;
                     } else {
-                        const approx = Math.max(1, Math.round(total / val));
-                        stepperSummaryText.textContent = `Soit ~${approx} élèves par équipe`;
+                        const effectiveK = Math.min(total, val);
+                        const approx = Math.max(1, Math.round(total / effectiveK));
+                        stepperSummaryText.textContent = (val > total)
+                            ? `${effectiveK} équipes possibles (~${approx} élève/équipe)`
+                            : `Soit ~${approx} élèves par équipe`;
                     }
                 } else {
                     stepperLabel.textContent = "Taille des équipes (élèves par groupe)";
@@ -2034,7 +2177,8 @@
                 modeByCountBtn.setAttribute('aria-selected', 'true');
                 modeBySizeBtn.classList.remove('active');
                 modeBySizeBtn.setAttribute('aria-selected', 'false');
-                if (stepperInput.value > 15) stepperInput.value = 4;
+                if (parseInt(stepperInput.value, 10) > 15) stepperInput.value = 4;
+                state.targetCount = parseInt(stepperInput.value, 10) || 4;
                 updateStepperSummary();
                 saveState();
                 if (typeof window.playSound === 'function') window.playSound('click');
@@ -2047,6 +2191,7 @@
                 modeByCountBtn.classList.remove('active');
                 modeByCountBtn.setAttribute('aria-selected', 'false');
                 stepperInput.value = 4;
+                state.targetCount = 4;
                 updateStepperSummary();
                 saveState();
                 if (typeof window.playSound === 'function') window.playSound('click');
@@ -2192,7 +2337,10 @@
                     const delBtn = document.createElement('button');
                     delBtn.className = 'chip-delete-btn';
                     delBtn.setAttribute('aria-label', 'Supprimer cette règle');
-                    delBtn.innerHTML = '<i data-fa="xmark" style="width:11px;height:11px;"></i>';
+                    const delIcon = document.createElement('i');
+                    delIcon.setAttribute('data-fa', 'xmark');
+                    delIcon.style.cssText = 'width:11px;height:11px;';
+                    delBtn.appendChild(delIcon);
                     delBtn.addEventListener('click', () => removeRule(rule.id));
 
                     chip.appendChild(icon);
@@ -2292,9 +2440,13 @@
                     }
                 }
 
-                // 4. Calcul des capacités idéales
+                // 4. Calcul des capacités & proportions de genre idéales de la classe
                 const baseCapacity = Math.floor(totalStudents / k);
                 const extraStudents = totalStudents % k; // Les 'extraStudents' premières équipes ont baseCapacity + 1
+                const totalGirls = state.students.filter(s => s.gender === 'F').length;
+                const totalBoys = state.students.filter(s => s.gender === 'M').length;
+                const targetGirlsPerTeam = totalGirls / k;
+                const targetBoysPerTeam = totalBoys / k;
 
                 // 5. Recherche heuristique avec plusieurs permutations aléatoires
                 const NUM_ATTEMPTS = 120;
@@ -2305,7 +2457,7 @@
                     const currentTeams = Array.from({ length: k }, () => []);
                     let shuffledClusters = shuffleArray(clusters);
 
-                    // Si la parité de genre est requise, trier en priorité les clusters mixtes/filles/garçons
+                    // Si la parité de genre est requise, placer d'abord les plus gros clusters
                     if (state.balanceGender) {
                         shuffledClusters.sort((a, b) => b.length - a.length);
                     }
@@ -2329,20 +2481,16 @@
                             for (const member of cluster) {
                                 for (const existing of team) {
                                     if (separationMatrix.has(`${member.id}|${existing.id}`)) {
-                                        penalty += 5000; // Forte pénalité
+                                        penalty += 5000;
                                     }
                                 }
                             }
 
-                            // Pénalité d'équilibre de genre
+                            // Pénalité d'équilibre de genre proportionnel à l'effectif réel F/G de la classe
                             if (state.balanceGender) {
-                                const girlsInCluster = cluster.filter(c => c.gender === 'F').length;
-                                const boysInCluster = cluster.filter(c => c.gender === 'M').length;
-
-                                const currentGirls = team.filter(m => m.gender === 'F').length;
-                                const currentBoys = team.filter(m => m.gender === 'M').length;
-
-                                penalty += Math.abs((currentGirls + girlsInCluster) - (currentBoys + boysInCluster)) * 12;
+                                const newGirls = team.filter(m => m.gender === 'F').length + cluster.filter(c => c.gender === 'F').length;
+                                const newBoys = team.filter(m => m.gender === 'M').length + cluster.filter(c => c.gender === 'M').length;
+                                penalty += (Math.abs(newGirls - targetGirlsPerTeam) + Math.abs(newBoys - targetBoysPerTeam)) * 12;
                             }
 
                             if (penalty < bestTeamPenalty) {
@@ -2359,7 +2507,6 @@
                     let totalScore = 0;
                     for (let t = 0; t < k; t++) {
                         const team = currentTeams[t];
-                        // Séparations violées
                         for (let i = 0; i < team.length; i++) {
                             for (let j = i + 1; j < team.length; j++) {
                                 if (separationMatrix.has(`${team[i].id}|${team[j].id}`)) {
@@ -2367,38 +2514,45 @@
                                 }
                             }
                         }
-                        // Écart de taille
                         const idealSize = (t < extraStudents) ? baseCapacity + 1 : baseCapacity;
                         totalScore += Math.abs(team.length - idealSize) * 200;
 
-                        // Écart de parité
                         if (state.balanceGender) {
                             const gCount = team.filter(m => m.gender === 'F').length;
                             const bCount = team.filter(m => m.gender === 'M').length;
-                            totalScore += Math.abs(gCount - bCount) * 15;
+                            totalScore += (Math.abs(gCount - targetGirlsPerTeam) + Math.abs(bCount - targetBoysPerTeam)) * 15;
                         }
                     }
 
                     if (totalScore < bestScore) {
                         bestScore = totalScore;
                         bestAssignment = currentTeams;
-                        if (bestScore === 0) break; // Solution parfaite trouvée
+                        if (bestScore < 0.01) break; // Solution optimale trouvée
                     }
                 }
 
-                // 6. Attribution des noms d'équipes et couleurs
+                // 6. Attribution des noms d'équipes uniques et couleurs
                 const themeNames = TEAM_THEMES[state.namingTheme] || TEAM_THEMES.valais_fauna;
                 const newTeams = [];
 
                 for (let i = 0; i < k; i++) {
-                    const fallbackName = `Équipe ${i + 1}`;
-                    const themeName = themeNames[i % themeNames.length] || fallbackName;
+                    let teamName;
+                    if (state.namingTheme === 'numbers') {
+                        teamName = `Groupe ${i + 1}`;
+                    } else if (state.namingTheme === 'islands') {
+                        teamName = `Îlot ${i + 1}`;
+                    } else if (i < themeNames.length) {
+                        teamName = themeNames[i];
+                    } else {
+                        const base = themeNames[i % themeNames.length] || `Équipe`;
+                        teamName = `${base} #${Math.floor(i / themeNames.length) + 1}`;
+                    }
                     const color = ACCENT_COLORS[i % ACCENT_COLORS.length];
                     const members = bestAssignment[i] || [];
 
                     newTeams.push({
                         id: 'team_' + (i + 1),
-                        name: themeName,
+                        name: teamName,
                         color,
                         members
                     });
@@ -2408,16 +2562,27 @@
                 renderTeams();
                 saveState();
 
-                // Sons et célébration
-                if (typeof window.playSound === 'function') window.playSound('success');
-                if (typeof launchConfetti === 'function') {
-                    launchConfetti();
-                } else if (typeof window.confetti === 'function') {
-                    window.confetti();
-                }
+                const hasSeparationConflict = internalConflict || bestScore >= 10000;
+                const hasEmptyTeam = newTeams.some(t => t.members.length === 0);
 
-                if (typeof showToast === 'function') {
-                    showToast(`${k} équipes générées avec succès !`, 'success');
+                if (hasSeparationConflict || hasEmptyTeam) {
+                    if (typeof window.playSound === 'function') window.playSound('error');
+                    if (typeof showToast === 'function') {
+                        const msg = hasSeparationConflict
+                            ? "Attention : impossible de satisfaire toutes les règles de séparation avec ce nombre d'équipes."
+                            : "Attention : certaines équipes sont vides en raison d'associations trop larges.";
+                        showToast(msg, 'warn');
+                    }
+                } else {
+                    if (typeof window.playSound === 'function') window.playSound('success');
+                    if (typeof launchConfetti === 'function') {
+                        launchConfetti();
+                    } else if (typeof window.confetti === 'function') {
+                        window.confetti();
+                    }
+                    if (typeof showToast === 'function') {
+                        showToast(`${k} équipes générées avec succès !`, 'success');
+                    }
                 }
                 return true;
             }
@@ -2542,7 +2707,9 @@
 
                             const handle = document.createElement('span');
                             handle.className = 'member-drag-handle';
-                            handle.innerHTML = '<i data-fa="arrows-up-down-left-right"></i>';
+                            const handleIcon = document.createElement('i');
+                            handleIcon.setAttribute('data-fa', 'arrows-up-down-left-right');
+                            handle.appendChild(handleIcon);
 
                             const avatar = document.createElement('div');
                             avatar.className = 'avatar-circle';
@@ -2573,7 +2740,9 @@
                             transBtn.className = 'transfer-btn';
                             transBtn.setAttribute('aria-label', `Déplacer ${member.name}`);
                             transBtn.title = "Déplacer vers une autre équipe";
-                            transBtn.innerHTML = '<i data-fa="arrow-right-arrow-left"></i>';
+                            const transIcon = document.createElement('i');
+                            transIcon.setAttribute('data-fa', 'arrow-right-arrow-left');
+                            transBtn.appendChild(transIcon);
                             transBtn.addEventListener('click', (e) => {
                                 e.stopPropagation();
                                 openTransferModal(member.id, member.name);
@@ -2589,15 +2758,17 @@
                     // ZONE D'ÉTIQUETTES DE RÔLES À L'IMPRESSION
                     const printBox = document.createElement('div');
                     printBox.className = 'print-roles-box';
-                    printBox.innerHTML = `
-                        <strong>Rôles dans l'îlot :</strong>
-                        <div class="print-roles-grid">
-                            <span>[ ] Porte-parole</span>
-                            <span>[ ] Gardien du temps</span>
-                            <span>[ ] Secrétaire</span>
-                            <span>[ ] Matériel</span>
-                        </div>
-                    `;
+                    const rolesTitle = document.createElement('strong');
+                    rolesTitle.textContent = "Rôles dans l'îlot :";
+                    const rolesGrid = document.createElement('div');
+                    rolesGrid.className = 'print-roles-grid';
+                    ['[ ] Porte-parole', '[ ] Gardien du temps', '[ ] Secrétaire', '[ ] Matériel'].forEach(label => {
+                        const s = document.createElement('span');
+                        s.textContent = label;
+                        rolesGrid.appendChild(s);
+                    });
+                    printBox.appendChild(rolesTitle);
+                    printBox.appendChild(rolesGrid);
                     body.appendChild(printBox);
 
                     card.appendChild(header);
@@ -2650,13 +2821,18 @@
                     const isCurrent = team.members.some(m => m.id === studentId);
                     const btn = document.createElement('button');
                     btn.className = 'modal-team-btn';
-                    btn.innerHTML = `
-                        <span style="display:flex;align-items:center;gap:8px;">
-                            <span style="width:10px;height:10px;border-radius:50%;background:${team.color};display:inline-block;"></span>
-                            ${team.name}
-                        </span>
-                        <span style="font-size:0.75rem;color:var(--text-muted);">${team.members.length} élève${team.members.length > 1 ? 's' : ''} ${isCurrent ? '(Actuelle)' : ''}</span>
-                    `;
+                    const leftSpan = document.createElement('span');
+                    leftSpan.style.cssText = 'display:flex;align-items:center;gap:8px;';
+                    const colorDot = document.createElement('span');
+                    colorDot.style.cssText = 'width:10px;height:10px;border-radius:50%;display:inline-block;';
+                    colorDot.style.background = team.color;
+                    leftSpan.appendChild(colorDot);
+                    leftSpan.appendChild(document.createTextNode(team.name));
+                    const countSpan = document.createElement('span');
+                    countSpan.style.cssText = 'font-size:0.75rem;color:var(--text-muted);';
+                    countSpan.textContent = `${team.members.length} élève${team.members.length > 1 ? 's' : ''}${isCurrent ? ' (Actuelle)' : ''}`;
+                    btn.appendChild(leftSpan);
+                    btn.appendChild(countSpan);
                     if (isCurrent) {
                         btn.style.opacity = '0.5';
                         btn.disabled = true;
@@ -2830,6 +3006,42 @@
                 }
                 if (typeof window.playSound === 'function') window.playSound('click');
             };
+
+            // Mode TNI / Projection
+            const projToggleBtn = document.getElementById('projection-toggle-btn');
+            function setProjectionMode(active) {
+                const isProj = document.body.classList.toggle('projection', active);
+                if (projToggleBtn) {
+                    projToggleBtn.setAttribute('title', isProj ? 'Quitter le mode TNI (Échap)' : 'Mode TNI / Projection');
+                    projToggleBtn.setAttribute('aria-label', isProj ? 'Quitter le mode TNI' : 'Mode TNI / Projection');
+                }
+                const iconExpand = document.getElementById('icon-proj-expand');
+                const iconCompress = document.getElementById('icon-proj-compress');
+                if (iconExpand && iconCompress) {
+                    iconExpand.style.display = isProj ? 'none' : 'inline-block';
+                    iconCompress.style.display = isProj ? 'inline-block' : 'none';
+                }
+                if (isProj && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen?.().catch(() => { });
+                } else if (!isProj && document.fullscreenElement) {
+                    document.exitFullscreen?.().catch(() => { });
+                }
+            }
+            if (projToggleBtn) {
+                projToggleBtn.addEventListener('click', () => {
+                    setProjectionMode(!document.body.classList.contains('projection'));
+                });
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.body.classList.contains('projection')) {
+                    setProjectionMode(false);
+                }
+            });
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement && document.body.classList.contains('projection')) {
+                    setProjectionMode(false);
+                }
+            });
 
             // Initialiser au chargement
             loadState();

@@ -473,6 +473,9 @@ const ScoreManager = {
         }
 
         this.addSwipeToClose();
+        if (typeof window.fa?.createIcons === 'function') {
+            window.fa.createIcons();
+        }
     },
 
     addSwipeToClose() {

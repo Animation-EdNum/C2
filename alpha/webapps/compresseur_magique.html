@@ -36,12 +36,14 @@
     <link rel="stylesheet" href="../../assets/css/compresseur_magique.css">
     
     <!-- External scripts -->
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <script src="../../assets/js/scores.js"></script>
+    <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-    <canvas id="confetti-canvas"></canvas>
 
     <div class="container" id="main-content">
         <header class="app-header">
@@ -109,13 +111,13 @@
                 <div style="margin-top: 10px; line-height: 1.5;">
                     Le codage RLE permet de compresser des images en évitant de répéter la même couleur plusieurs fois.<br><br>
                     <strong>📝 Règle d'écriture :</strong> On indique le nombre de pixels suivi de la lettre de la couleur.<br>
-                    - <span class="legend-box col-x">X</span> <strong>X = Blanc</strong> (Cross / Blank)<br>
+                    - <span class="legend-box col-x">X</span> <strong>X = Blanc (Case vide)</strong><br>
                     - <span class="legend-box col-n">N</span> <strong>N = Noir</strong><br>
                     - <span class="legend-box col-b">B</span> <strong>B = Bleu</strong><br>
                     - <span class="legend-box col-r">R</span> <strong>R = Rouge</strong><br>
                     - <span class="legend-box col-v">V</span> <strong>V = Vert</strong><br>
                     - <span class="legend-box col-j">J</span> <strong>J = Jaune</strong><br><br>
-                    <em>Exemple :</em> <code>3X 2N</code> signifie 3 pixels blancs suivis de 2 pixels noirs. Chaque ligne de la grille est séparée par une nouvelle ligne dans le code.
+                    <em>Exemple :</em> <code>3X 2N</code> signifie 3 pixels blancs suivis de 2 pixels noirs. Chaque ligne de la grille est séparée par une nouvelle ligne dans le code, et <strong>regroupe toujours les pixels identiques consécutifs</strong> (écris <code>3X</code>, pas <code>1X 1X 1X</code>).
                 </div>
             </details>
 
@@ -125,6 +127,7 @@
                     <div class="card-title">Lis le code RLE ci-dessous et dessine l'image correspondante en cliquant sur la grille !</div>
                     
                     <div class="code-card" id="decode-target-code">Code RLE cible</div>
+                    <div class="rle-ratio-pill" id="decode-ratio-pill"></div>
 
                     <!-- Colors Palette selector for drawing (displayed in hard mode) -->
                     <div class="palette-selector" id="decode-palette" style="display: none;"></div>
@@ -262,6 +265,8 @@
         </main>
     </div>
 
+    <canvas id="confetti-canvas"></canvas>
+
     <!-- Centralized Footers conforms with AGPL-3.0 -->
     <footer class="no-print">
         <p>
@@ -281,7 +286,6 @@
 
     <!-- App JavaScript logic -->
     <script src="../../assets/js/toast.js"></script>
-    <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/pwa.js"></script>
     <script src="../../assets/js/confetti.js"></script>
@@ -451,8 +455,8 @@
         let encodeNextTimer = null; // 'easy' (5x5 B/N), 'medium' (8x8 B/N), 'hard' (8x8 Color)
 
         // Scores and Streaks
-        let decodeCorrect = 0, decodeStreak = 0;
-        let encodeCorrect = 0, encodeStreak = 0;
+        let decodeCorrect = 0, decodeStreak = 0, decodeMistakes = 0;
+        let encodeCorrect = 0, encodeStreak = 0, encodeMistakes = 0;
 
         // Current active challenge data
         let currentChallenge = null;
@@ -504,19 +508,6 @@
                 if (activeTab === 'decode') loadDecodeChallenge();
                 else if (activeTab === 'encode') loadEncodeChallenge();
             });
-
-            // Global settings dropdown toggling
-            const optionsMenuBtn = document.getElementById('options-menu-btn');
-            const dropdownContent = document.querySelector('.settings-dropdown-content');
-            if (optionsMenuBtn && dropdownContent) {
-                optionsMenuBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    dropdownContent.classList.toggle('show');
-                });
-                document.addEventListener('click', () => {
-                    dropdownContent.classList.remove('show');
-                });
-            }
 
             // Global drawing mouse listeners
             window.addEventListener('mouseup', () => { isDrawing = false; });
@@ -644,8 +635,7 @@
         function loadDecodeChallenge() {
             clearTimeout(decodeNextTimer);
             decodeNextTimer = null;
-            clearTimeout(decodeNextTimer);
-            decodeNextTimer = null;
+            decodeMistakes = 0;
             const list = PATTERNS[difficulty];
             // Get a random pattern
             currentChallenge = list[Math.floor(Math.random() * list.length)];
@@ -653,14 +643,18 @@
             // Encode reference RLE code
             let rleCode = encodeGridToRLE(currentChallenge.grid);
             document.getElementById('decode-target-code').textContent = rleCode;
+            const size = getGridSize();
+            const rawPx = size * size;
+            const rleChars = rleCode.replace(/\s+/g, '').length;
+            const savedPct = Math.round(((rawPx - rleChars) / rawPx) * 100);
+            document.getElementById('decode-ratio-pill').textContent = `📊 ${rawPx} pixels → ${rleChars} car. (${savedPct >= 0 ? `${savedPct}% économisés` : `${Math.abs(savedPct)}% plus long`})`;
 
             // Reset user grid
-            const size = getGridSize();
             decodeUserGrid = Array(size * size).fill('X');
 
             // Draw palette selector (only for color mode hard)
             const paletteEl = document.getElementById('decode-palette');
-            paletteEl.innerHTML = '';
+            paletteEl.replaceChildren();
             if (difficulty === 'hard') {
                 paletteEl.style.display = 'flex';
                 activePaintColor = 'N'; // Reset to Noir
@@ -687,7 +681,7 @@
 
         function buildDecodeGrid(size) {
             const gridEl = document.getElementById('decode-grid');
-            gridEl.innerHTML = '';
+            gridEl.replaceChildren();
             gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
             for (let i = 0; i < size * size; i++) {
@@ -712,29 +706,33 @@
                 cell.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     isDrawing = true;
+                    gridEl._lastTouchedIndex = String(i);
                     paintDecodeCell(cell, i);
                 }, { passive: false });
 
                 gridEl.appendChild(cell);
             }
 
-            // Swipe support on tablets/phones
-            gridEl.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const target = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (target && target.classList.contains('pixel-cell') && target.parentElement === gridEl) {
-                    const idx = target.dataset.index;
-                    if (gridEl._lastTouchedIndex !== idx) {
-                        paintDecodeCell(target, idx);
-                        gridEl._lastTouchedIndex = idx;
+            // Swipe support on tablets/phones (bound once per grid container)
+            if (!gridEl._touchListenersBound) {
+                gridEl._touchListenersBound = true;
+                gridEl.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (target && target.classList.contains('pixel-cell') && target.parentElement === gridEl) {
+                        const idx = target.dataset.index;
+                        if (gridEl._lastTouchedIndex !== idx) {
+                            paintDecodeCell(target, idx);
+                            gridEl._lastTouchedIndex = idx;
+                        }
                     }
-                }
-            }, { passive: false });
+                }, { passive: false });
 
-            gridEl.addEventListener('touchend', () => {
-                gridEl._lastTouchedIndex = null;
-            });
+                gridEl.addEventListener('touchend', () => {
+                    gridEl._lastTouchedIndex = null;
+                });
+            }
         }
 
         function paintDecodeCell(cell, index) {
@@ -785,7 +783,7 @@
                 
                 decodeCorrect++;
                 decodeStreak++;
-                const adaptiveShown = ScoreManager.addSuccess('decode', difficulty, 0);
+                const adaptiveShown = ScoreManager.addSuccess('decode', difficulty, decodeMistakes);
 
                 // Célébration
                 window.handleStreakCelebration?.(decodeStreak, difficulty === 'hard', decodeStreak % 3 === 0);
@@ -799,6 +797,7 @@
                     decodeNextTimer = setTimeout(loadDecodeChallenge, 2000);
                 }
             } else {
+                decodeMistakes++;
                 playSound('error');
                 showToast("❌ Oups ! Il y a des erreurs dans la grille.", 'error');
                 decodeStreak = 0;
@@ -820,8 +819,7 @@
         function loadEncodeChallenge() {
             clearTimeout(encodeNextTimer);
             encodeNextTimer = null;
-            clearTimeout(encodeNextTimer);
-            encodeNextTimer = null;
+            encodeMistakes = 0;
             const list = PATTERNS[difficulty];
             currentChallenge = list[Math.floor(Math.random() * list.length)];
 
@@ -833,7 +831,7 @@
 
             // Draw target Reference grid
             const refGrid = document.getElementById('encode-reference-grid');
-            refGrid.innerHTML = '';
+            refGrid.replaceChildren();
             refGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
             
             for (let r = 0; r < size; r++) {
@@ -857,7 +855,7 @@
 
         function buildEncodePreviewGrid(size) {
             const previewGrid = document.getElementById('encode-preview-grid');
-            previewGrid.innerHTML = '';
+            previewGrid.replaceChildren();
             previewGrid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
             for (let i = 0; i < size * size; i++) {
@@ -890,6 +888,26 @@
             }
         }
 
+        function hasUncompressedRuns(rleText, size) {
+            const rows = rleText.trim().split('\n');
+            if (rows.length !== size || rleText.trim().length === 0) return { incompleteRow: true };
+            for (let r = 0; r < Math.min(rows.length, size); r++) {
+                const tokens = rows[r].trim().split(/\s+/).filter(Boolean);
+                let prevColor = null;
+                let rowLen = 0;
+                for (const tok of tokens) {
+                    const match = tok.toUpperCase().match(/^(\d+)([XNBRVJ])$/);
+                    if (!match || parseInt(match[1], 10) <= 0) return { invalidSyntax: true };
+                    const color = match[2];
+                    if (prevColor === color) return { uncompressedRun: true };
+                    prevColor = color;
+                    rowLen += parseInt(match[1], 10);
+                }
+                if (rowLen !== size) return { incompleteRow: true };
+            }
+            return null;
+        }
+
         function verifyEncodeChallenge() {
             const size = getGridSize();
             const textInput = document.getElementById('encode-rle-input').value;
@@ -907,13 +925,24 @@
                 }
             }
 
-            if (isCorrect) {
+            const inputArea = document.getElementById('encode-rle-input');
+            const rleIssue = textInput.trim() ? hasUncompressedRuns(textInput, size) : { invalidSyntax: true };
+
+            if (isCorrect && rleIssue && rleIssue.uncompressedRun) {
+                playSound('error');
+                showToast("⚠️ Image juste, mais regroupe les pixels identiques qui se suivent (ex: 3X au lieu de 1X 1X 1X) !", 'error');
+                inputArea.classList.add('cell-error');
+                setTimeout(() => inputArea.classList.remove('cell-error'), 500);
+                return;
+            }
+
+            if (isCorrect && (!rleIssue || (!rleIssue.invalidSyntax && !rleIssue.incompleteRow))) {
                 playSound('success');
                 showToast(`🎉 Super ! Code RLE correct pour : "${currentChallenge.name}" !`, 'success');
 
                 encodeCorrect++;
                 encodeStreak++;
-                const adaptiveShown = ScoreManager.addSuccess('encode', difficulty, 0);
+                const adaptiveShown = ScoreManager.addSuccess('encode', difficulty, encodeMistakes);
 
                 window.handleStreakCelebration?.(encodeStreak, difficulty === 'hard', encodeStreak % 3 === 0);
 
@@ -925,15 +954,15 @@
                     encodeNextTimer = setTimeout(loadEncodeChallenge, 2000);
                 }
             } else {
+                encodeMistakes++;
                 playSound('error');
-                showToast("❌ Code erroné ! L'aperçu ne correspond pas à l'image cible.", 'error');
+                showToast("❌ Code erroné ! Vérifie chaque ligne du motif cible.", 'error');
                 
                 encodeStreak = 0;
                 ScoreManager.addMistake('encode', difficulty);
                 document.getElementById('encode-streak').textContent = '0';
 
                 // Shake textarea on error
-                const inputArea = document.getElementById('encode-rle-input');
                 inputArea.classList.add('cell-error');
                 setTimeout(() => inputArea.classList.remove('cell-error'), 500);
             }
@@ -951,7 +980,7 @@
 
             // Draw color palette selector
             const paletteEl = document.getElementById('editor-palette');
-            paletteEl.innerHTML = '';
+            paletteEl.replaceChildren();
             activePaintColor = 'N'; // Start with Noir
 
             Object.keys(COLORS).forEach(colorChar => {
@@ -973,7 +1002,7 @@
 
         function buildEditorGrid(size) {
             const gridEl = document.getElementById('editor-grid');
-            gridEl.innerHTML = '';
+            gridEl.replaceChildren();
             gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
             for (let i = 0; i < size * size; i++) {
@@ -997,29 +1026,33 @@
                 cell.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     isDrawing = true;
+                    gridEl._lastTouchedIndex = String(i);
                     paintEditorCell(cell, i);
                 }, { passive: false });
 
                 gridEl.appendChild(cell);
             }
 
-            // Swipe painting
-            gridEl.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const target = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (target && target.classList.contains('pixel-cell') && target.parentElement === gridEl) {
-                    const idx = target.dataset.index;
-                    if (gridEl._lastTouchedIndex !== idx) {
-                        paintEditorCell(target, idx);
-                        gridEl._lastTouchedIndex = idx;
+            // Swipe painting (bound once per grid container)
+            if (!gridEl._touchListenersBound) {
+                gridEl._touchListenersBound = true;
+                gridEl.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (target && target.classList.contains('pixel-cell') && target.parentElement === gridEl) {
+                        const idx = target.dataset.index;
+                        if (gridEl._lastTouchedIndex !== idx) {
+                            paintEditorCell(target, idx);
+                            gridEl._lastTouchedIndex = idx;
+                        }
                     }
-                }
-            }, { passive: false });
+                }, { passive: false });
 
-            gridEl.addEventListener('touchend', () => {
-                gridEl._lastTouchedIndex = null;
-            });
+                gridEl.addEventListener('touchend', () => {
+                    gridEl._lastTouchedIndex = null;
+                });
+            }
         }
 
         function paintEditorCell(cell, index) {
@@ -1070,13 +1103,7 @@
             const compressedSizeInChars = compressedCodeClean.length;
 
             // Ratio of compression: saved space
-            let percentSaved = Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100);
-
-            // If empty, percent saved should look neutral (0)
-            const isEmptyGrid = editorUserGrid.every(c => c === 'X');
-            if (isEmptyGrid) {
-                percentSaved = 0;
-            }
+            const percentSaved = Math.round(((rawSizeInBytes - compressedSizeInChars) / rawSizeInBytes) * 100);
 
             // Update text elements
             document.getElementById('editor-stat-raw').textContent = `${rawSizeInBytes} pixels (octets)`;
@@ -1098,6 +1125,25 @@
             const bar = document.getElementById('editor-gauge-bar');
             bar.style.width = `${Math.max(0, percentSaved)}%`;
         }
+
+        window.__onResetApp = function () {
+            clearTimeout(decodeNextTimer);
+            clearTimeout(encodeNextTimer);
+            decodeNextTimer = null;
+            encodeNextTimer = null;
+            decodeCorrect = 0;
+            decodeStreak = 0;
+            decodeMistakes = 0;
+            encodeCorrect = 0;
+            encodeStreak = 0;
+            encodeMistakes = 0;
+            document.getElementById('decode-correct').textContent = '0';
+            document.getElementById('decode-streak').textContent = '0';
+            document.getElementById('encode-correct').textContent = '0';
+            document.getElementById('encode-streak').textContent = '0';
+            changeDifficulty('medium');
+            switchTab('decode');
+        };
 
     </script>
 </body>

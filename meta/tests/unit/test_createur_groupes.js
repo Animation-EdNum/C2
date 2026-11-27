@@ -53,7 +53,7 @@ test('createur_groupes.html - structure, algorithms and UI features', async (t) 
     await t.test('1. Header structure & teacher return link', () => {
         const backBtn = window.document.querySelector('.header-back-btn');
         assert.ok(backBtn, 'Back button must exist in header');
-        assert.strictEqual(backBtn.getAttribute('href'), '../../index.html#teachers');
+        assert.strictEqual(backBtn.getAttribute('href'), '../../../index.html#teachers');
 
         const title = window.document.querySelector('h1');
         assert.ok(title.textContent.includes('Créateur de Groupes'));
@@ -225,5 +225,28 @@ test('createur_groupes.html - structure, algorithms and UI features', async (t) 
         assert.strictEqual(engine.state.rules.length, 0);
         assert.strictEqual(engine.state.teams.length, 0);
         assert.strictEqual(window.document.getElementById('badgeTotalStudents').textContent, '0 élève');
+    });
+
+    await t.test('11. Supports French G/Garcon/Fille markers, RosterImport gender col & unique team names >12', () => {
+        const added = engine.addStudentsToList([
+            'Lucas (G)', 'Noah Garçon', 'Emma, Fille', 'Chloe ; F',
+            'S5 (G)', 'S6 (F)', 'S7 (G)', 'S8 (F)', 'S9 (G)', 'S10 (F)', 'S11 (G)', 'S12 (F)',
+            'S13 (G)', 'S14 (F)'
+        ]);
+        assert.strictEqual(added, 14);
+        assert.strictEqual(engine.state.students[0].gender, 'M');
+        assert.strictEqual(engine.state.students[1].gender, 'M');
+        assert.strictEqual(engine.state.students[2].gender, 'F');
+
+        const parsed = window.RosterImport.parseRosterWithGender('Nom;Prénom;Sexe\nRey;Bastien;G\nDupont;Léa;Fille');
+        assert.strictEqual(parsed.length, 2);
+        assert.strictEqual(parsed[0].gender, 'M');
+        assert.strictEqual(parsed[1].gender, 'F');
+
+        window.document.getElementById('stepperInput').value = '14';
+        engine.state.targetCount = 14;
+        engine.generateTeamsAlgorithm();
+        const names = engine.state.teams.map(t => t.name);
+        assert.strictEqual(new Set(names).size, 14, 'All 14 team names must be unique');
     });
 });

@@ -24,7 +24,8 @@
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <title>🧠 Dresseur de neurones</title>
     <meta property="og:title" content="Dresseur de neurones">
-    <meta property="og:description" content="Entraîne ton IA pour lui apprendre à trier des fruits et déjoue les pièges du biais algorithmique !">
+    <meta property="og:description"
+        content="Entraîne ton IA pour lui apprendre à trier des fruits et déjoue les pièges du biais algorithmique !">
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../assets/css/tokens.css">
@@ -32,7 +33,11 @@
     <link rel="stylesheet" href="../../assets/css/components.css">
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             touch-action: manipulation;
@@ -43,8 +48,8 @@
             color: var(--text-main);
         }
 
-        body > header,
-        body > .container {
+        body>header,
+        body>.container {
             animation: fadeInCascade 0.6s var(--spring-easing) forwards;
         }
 
@@ -117,6 +122,61 @@
             border-color: rgba(255, 255, 255, 0.1);
         }
 
+        body.dark .feed-custom-btn,
+        body.dark .btn-new {
+            background: #7e22ce;
+            color: #ffffff;
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #000000;
+            --bg-gradient-end: #000000;
+            --card-bg: #000000;
+            --card-border: #ffffff;
+            --container-bg: #000000;
+            --text-main: #ffffff;
+            --text-secondary: #facc15;
+            --text-muted: #ffffff;
+            --accent: #facc15;
+            --accent-dark: #fde047;
+            --badge-bg: #1f2937;
+            --badge-color: #facc15;
+            --input-border: #ffffff;
+            --instructions-bg: #111827;
+            --success: #4ade80;
+            --error: #f87171;
+        }
+
+        body.high-contrast .feed-custom-btn,
+        body.high-contrast .btn-new,
+        body.high-contrast .btn-secondary {
+            background: #facc15;
+            color: #000000;
+            border-color: #facc15;
+        }
+
+        .btn-secondary {
+            background: var(--badge-bg);
+            color: var(--badge-color);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        body.dark .btn-secondary {
+            background: rgba(168, 85, 247, 0.2);
+            color: #f3e8ff;
+            border-color: var(--accent-light);
+        }
+
+        body.dark .btn-secondary:hover:not(:disabled) {
+            background: #7e22ce;
+            color: #ffffff;
+        }
+
         .container {
             max-width: var(--container-max-width, 1400px);
             margin: 0 auto;
@@ -129,21 +189,40 @@
             border: var(--glass-border);
         }
 
-        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; font-size: 28px; }
-        .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+        h1 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
 
         /* ========== PANELS & VIEWS ========== */
         .game-panel {
             display: none;
             animation: fadeSlideIn 0.5s var(--spring-easing) forwards;
         }
+
         .game-panel.active {
             display: block;
         }
 
         @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ========== PHASE 1: TRAINING LAB ========== */
@@ -411,14 +490,26 @@
         }
 
         .tiny-fruit {
-            width: 32px;
-            height: 32px;
+            min-width: 44px;
+            min-height: 44px;
+            width: 44px;
+            height: 44px;
+            padding: 6px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            background: transparent;
             position: relative;
             cursor: pointer;
-            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, border-color 0.2s;
         }
-        .tiny-fruit:hover {
-            transform: scale(1.2);
+
+        .tiny-fruit:hover,
+        .tiny-fruit:focus-visible {
+            transform: scale(1.12);
+            border-color: var(--accent);
         }
 
         /* ========== PHASE 2: FACTORY FLOOR ========== */
@@ -438,27 +529,23 @@
             overflow: hidden;
             border-radius: var(--radius-xl);
             border: 4px solid var(--card-border);
-            background: repeating-linear-gradient(
-                -45deg,
-                #e2e8f0,
-                #e2e8f0 20px,
-                #cbd5e1 20px,
-                #cbd5e1 40px
-            );
+            background: repeating-linear-gradient(-45deg,
+                    #e2e8f0,
+                    #e2e8f0 20px,
+                    #cbd5e1 20px,
+                    #cbd5e1 40px);
             background-size: 56px 56px;
             animation: moveConveyorBelt 2s linear infinite;
             animation-play-state: paused;
-            box-shadow: inset 0 8px 16px rgba(0,0,0,0.1), 0 8px 24px var(--card-shadow);
+            box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.1), 0 8px 24px var(--card-shadow);
         }
 
         body.dark .conveyor-belt {
-            background: repeating-linear-gradient(
-                -45deg,
-                #334155,
-                #334155 20px,
-                #1e293b 20px,
-                #1e293b 40px
-            );
+            background: repeating-linear-gradient(-45deg,
+                    #334155,
+                    #334155 20px,
+                    #1e293b 20px,
+                    #1e293b 40px);
             border-color: #1e293b;
         }
 
@@ -467,8 +554,13 @@
         }
 
         @keyframes moveConveyorBelt {
-            0% { background-position: 0 0; }
-            100% { background-position: 56px 0; }
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 56px 0;
+            }
         }
 
         /* Laser scan zone */
@@ -494,8 +586,15 @@
         }
 
         @keyframes laserSweep {
-            0% { opacity: 0.3; filter: brightness(0.8); }
-            100% { opacity: 1; filter: brightness(1.3); }
+            0% {
+                opacity: 0.3;
+                filter: brightness(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                filter: brightness(1.3);
+            }
         }
 
         /* Conveyor items */
@@ -563,7 +662,7 @@
 
         .thoughts-log {
             font-family: monospace;
-            background: rgba(0,0,0,0.04);
+            background: rgba(0, 0, 0, 0.04);
             border-radius: var(--radius-md);
             padding: 12px;
             font-size: 11px;
@@ -574,8 +673,9 @@
             line-height: 1.4;
             border: 1px solid var(--card-border);
         }
+
         body.dark .thoughts-log {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         /* Confidence Bars */
@@ -601,13 +701,14 @@
         .conf-bar-container {
             width: 100%;
             height: 16px;
-            background: rgba(0,0,0,0.05);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: var(--radius-pill);
             overflow: hidden;
             border: 1px solid var(--card-border);
         }
+
         body.dark .conf-bar-container {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .conf-bar-fill {
@@ -676,7 +777,10 @@
         /* ========== ALERTS & OVERLAYS ========== */
         .bias-alert-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(30, 27, 75, 0.6);
             backdrop-filter: blur(8px);
             z-index: 1000;
@@ -688,8 +792,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .bias-alert-card {
@@ -699,15 +808,20 @@
             max-width: 600px;
             width: 100%;
             padding: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             text-align: center;
             animation: scaleUp 0.4s var(--spring-easing) forwards;
             color: var(--text-main);
         }
 
         @keyframes scaleUp {
-            from { transform: scale(0.9) translateY(20px); }
-            to { transform: scale(1) translateY(0); }
+            from {
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+            }
         }
 
         .bias-icon {
@@ -718,8 +832,15 @@
         }
 
         @keyframes pulseError {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         .bias-alert-card h2 {
@@ -758,8 +879,15 @@
         }
 
         @keyframes scaleBig {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         /* ========== GENERAL CONTROLS ========== */
@@ -774,7 +902,10 @@
         /* Confetti */
         #confetti-canvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
             z-index: 9999;
         }
@@ -787,12 +918,12 @@
         }
 
         .svg-fruit-shadow {
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
             transition: all 0.3s;
         }
 
         .svg-fruit-element:hover .svg-fruit-shadow {
-            filter: drop-shadow(0 8px 12px rgba(99,102,241,0.25));
+            filter: drop-shadow(0 8px 12px rgba(99, 102, 241, 0.25));
         }
 
         /* UI/UX Tweak */
@@ -815,7 +946,7 @@
             color: var(--text-main);
             margin-bottom: 15px;
             width: 100%;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
         @media (max-width: 600px) {
@@ -851,7 +982,7 @@
                 min-width: 0;
             }
 
-            .training-grid > *,
+            .training-grid>*,
             .lab-card {
                 min-width: 0 !important;
                 max-width: 100% !important;
@@ -929,12 +1060,20 @@
                 box-sizing: border-box;
             }
 
-            .factory-bins-wrapper {
+            .factory-bins {
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
             }
+
+            .factory-bin,
+            .baskets-display,
+            .basket-card {
+                min-width: 0;
+            }
         }
     </style>
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
@@ -942,12 +1081,12 @@
 
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-    <canvas id="confetti-canvas"></canvas>
 
     <div class="container" id="main-content">
         <header class="app-header">
             <div class="header-title-wrapper">
-                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil" aria-label="Retour à l'accueil">
+                <a href="../../index.html" class="header-back-btn" title="Retour à l'accueil"
+                    aria-label="Retour à l'accueil">
                     <i data-fa="arrow-left"></i>
                 </a>
                 <div class="header-icon" aria-hidden="true">
@@ -978,7 +1117,7 @@
                             <i data-fa="moon" id="icon-moon"></i>
                             <span id="themeToggleText">Sombre</span>
                         </button>
-                    
+
                         <div class="dropdown-divider"></div>
                         <button class="menu-item-btn" id="reset-cache-btn" aria-label="Réinitialiser l'application">
                             <i data-fa="arrows-rotate"></i>
@@ -993,25 +1132,29 @@
             <!-- TABS -->
             <div class="tabs">
                 <button class="tab-btn active" id="tab-training">
-                    <i data-fa="dt-brain"></i> 🧺 1. Entraînement
+                    <i data-fa="dt-brain"></i> 1. Entraînement
                 </button>
                 <button class="tab-btn" id="tab-factory" disabled>
-                    <i data-fa="dt-conveyor-belt-boxes"></i> 🏭 2. Tapis de tri
+                    <i data-fa="dt-conveyor-belt-boxes"></i> 2. Tapis de tri
                 </button>
             </div>
 
             <!-- VIEW 1: LAB / TRAINING -->
             <div id="panel-training" class="game-panel active">
                 <div class="info-pill">
-                    🤖 <span><strong>Comment dresser le robot ?</strong> Donne-lui des fruits d'exemples à manger pour remplir ses bacs de mémoire. L'IA a besoin d'au moins <strong>2 exemples</strong> par bac pour pouvoir s'activer !</span>
+                    🤖 <span><strong>Comment dresser le robot ?</strong> Donne-lui des fruits d'exemples à manger pour
+                        remplir ses bacs de mémoire. L'IA a besoin d'au moins <strong>2 exemples</strong> par bac pour
+                        pouvoir s'activer !</span>
                 </div>
 
                 <div class="training-grid">
                     <!-- Left: reserve of organic fruits -->
                     <div class="lab-card">
                         <h2><i data-fa="dt-basket-shopping"></i> La Réserve de Fruits</h2>
-                        <p class="reserve-instruction" style="font-size: 13px; margin-top: -10px; color: var(--text-muted);">Clique sur un fruit type pour le placer dans le chargeur :</p>
-                        
+                        <p class="reserve-instruction"
+                            style="font-size: 13px; margin-top: -10px; color: var(--text-muted);">Clique sur un fruit
+                            type pour le placer dans le chargeur :</p>
+
                         <div class="reserve-grid">
                             <button class="reserve-btn" id="res-pomme-rouge">
                                 <span style="width: 32px; height: 32px;" id="svg-res-pr"></span>
@@ -1031,14 +1174,14 @@
                                 <span style="width: 32px; height: 32px;" id="svg-res-pg"></span>
                                 <div class="btn-text-wrapper">
                                     <span class="btn-title">Pomme Verte</span>
-                                    <span class="btn-desc">Verte, Ronde ⚠️</span>
+                                    <span class="btn-desc">Verte, Ronde</span>
                                 </div>
                             </button>
                             <button class="reserve-btn" id="res-poire-rouge">
                                 <span style="width: 32px; height: 32px;" id="svg-res-prg"></span>
                                 <div class="btn-text-wrapper">
                                     <span class="btn-title">Poire Rouge</span>
-                                    <span class="btn-desc">Rouge, Allongée ⚠️</span>
+                                    <span class="btn-desc">Rouge, Allongée</span>
                                 </div>
                             </button>
                         </div>
@@ -1102,7 +1245,8 @@
                 </div>
 
                 <div class="controls-row">
-                    <button class="btn btn-new" id="btn-start-sorting" disabled style="padding: 16px 36px; font-size: 18px; font-weight: 800;">
+                    <button class="btn btn-new" id="btn-start-sorting" disabled
+                        style="padding: 16px 36px; font-size: 18px; font-weight: 800;">
                         🚀 Lancer le tri en usine !
                     </button>
                 </div>
@@ -1111,7 +1255,8 @@
             <!-- VIEW 2: FACTORY FLOOR -->
             <div id="panel-factory" class="game-panel">
                 <div class="info-pill" id="factory-tip-banner">
-                    ⚙️ <span><strong>L'Usine est en marche !</strong> Observe comment le robot analyse les fruits qui passent devant son laser. Fera-t-il des erreurs ?</span>
+                    ⚙️ <span><strong>L'Usine est en marche !</strong> Observe comment le robot analyse les fruits qui
+                        passent devant son laser. Fera-t-il des erreurs ?</span>
                 </div>
 
                 <div class="factory-layout">
@@ -1124,14 +1269,15 @@
                     <div class="factory-center">
                         <div class="robot-monitor">
                             <div style="width: 140px; height: 140px;" id="robot-factory-svg"></div>
-                            <div class="basket-count" id="monitor-status" style="margin-top: 10px; font-size: 11px;">En veille...</div>
+                            <div class="basket-count" id="monitor-status" style="margin-top: 10px; font-size: 11px;">En
+                                veille...</div>
                         </div>
 
                         <!-- IA thoughts / logs -->
                         <div class="brain-monitor">
                             <h2><i data-fa="dt-microchip"></i> Les pensées de l'IA (Similarité)</h2>
                             <div class="thoughts-log" id="ai-thoughts-log"></div>
-                            
+
                             <div class="confidence-bars">
                                 <div class="conf-bar-wrapper">
                                     <div class="conf-bar-header">
@@ -1175,6 +1321,11 @@
 
             <!-- SCORE AND ATTRIBUTION CARD -->
             <div class="card-footer" style="margin-top: 25px;">
+                <button class="icon-action-btn" aria-label="Voir mes statistiques" data-tooltip="Voir mes statistiques"
+                    data-action="show-stats">
+                    <i data-fa="dt-chart-pie"
+                        style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                </button>
                 <div class="score-bar">
                     <div class="score-item">
                         <div class="score-label">Niveaux Réussis</div>
@@ -1196,13 +1347,22 @@
         </div>
     </div>
 
+    <canvas id="confetti-canvas"></canvas>
+
     <footer class="no-print">
         <p>
-            <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank" rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title" style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
+            <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
+                href="https://www.hepvs.ch/fr/prestations-de-services/animation-pedagogique-12811/" target="_blank"
+                rel="noopener noreferrer">AP EdNum, HEP-VS</a> <span data-i18n="common.footer.with">avec</span> <a
+                href="../../merci.html" title="Remerciements" data-i18n-attr="title:common.footer.merci_title"
+                style="text-decoration: none; color: #ef4444;"><i data-fa="heart"></i></a> <span
+                data-i18n="common.footer.and_neurons">et quelques neurones artificiels</span>
             <br>
             <span style="font-size: 0.9em; opacity: 0.85;">
-                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span data-i18n="common.footer.free_code">Code 100% libre</span></a>
-                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0</a>)
+                <a href="https://github.com/Animation-EdNum/C2" target="_blank" rel="noopener noreferrer"><span
+                        data-i18n="common.footer.free_code">Code 100% libre</span></a>
+                (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank"
+                    rel="noopener noreferrer">AGPL-3.0</a>)
                 · <a href="../../mentions-legales.html" data-i18n="common.footer.legal">Mentions légales</a>
                 · <a href="../../confidentialite.html" data-i18n="common.footer.privacy">Confidentialité</a>
                 · <a href="../../cgu.html" data-i18n="common.footer.terms">CGU</a>
@@ -1226,10 +1386,13 @@
         };
         let activeFruit = null; // The loaded fruit in the active training slot
         let testQueue = [];
-        let sortedFruits = [];
+        let failedTestFruits = [];
+        let runMistakes = 0;
         let isTestingMode = false;
         let testStep = 0;
         let testAnimationId = null;
+        let feedTimers = [];
+        let factoryTimers = [];
         let successCount = 0;
 
         // Customizer state
@@ -1264,146 +1427,175 @@
         let statsLevelsSolved = 0;
         let statsTotalSorted = 0;
 
-        // Visual gradients generators for premium diversity
-        function getOrganicColorGradient(color, uniqueId) {
-            let colorStops = [];
-            if (color === 'red') {
-                const stops = [
-                    ['#ef4444', '#b91c1c'], // Red to deep red
-                    ['#f87171', '#dc2626'], // Pinkish to crimson
-                    ['#f87171', '#991b1b'], // Coral to mahogany
-                    ['#f43f5e', '#be123c'], // Rose red
-                ];
-                colorStops = stops[Math.floor(Math.random() * stops.length)];
-            } else {
-                const stops = [
-                    ['#4ade80', '#15803d'], // Bright green to dark green
-                    ['#a3e635', '#166534'], // Lime green to forest green
-                    ['#86efac', '#15803d'], // Pastel green to dark forest
-                    ['#a3e635', '#15803d'], // Yellowish green
-                ];
-                colorStops = stops[Math.floor(Math.random() * stops.length)];
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        function createSvgEl(tag, attrs = {}) {
+            const el = document.createElementNS(SVG_NS, tag);
+            for (const [k, v] of Object.entries(attrs)) {
+                el.setAttribute(k, String(v));
             }
-            return `
-                <defs>
-                    <linearGradient id="grad-${uniqueId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:${colorStops[0]};stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:${colorStops[1]};stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-            `;
+            return el;
         }
 
-        // SVG Fruit generator
+        function createEl(tag, attrs = {}, children = []) {
+            const el = document.createElement(tag);
+            for (const [k, v] of Object.entries(attrs)) {
+                if (k === 'className') el.className = v;
+                else if (k === 'style') el.setAttribute('style', v);
+                else if (k === 'text') el.textContent = v;
+                else el.setAttribute(k, String(v));
+            }
+            for (const child of children) {
+                el.appendChild(typeof child === 'string' ? document.createTextNode(child) : child);
+            }
+            return el;
+        }
+
+        function getOrganicColorStops(color) {
+            if (color === 'red') {
+                const stops = [
+                    ['#ef4444', '#b91c1c'],
+                    ['#f87171', '#dc2626'],
+                    ['#f87171', '#991b1b'],
+                    ['#f43f5e', '#be123c'],
+                ];
+                return stops[Math.floor(Math.random() * stops.length)];
+            }
+            const stops = [
+                ['#4ade80', '#15803d'],
+                ['#a3e635', '#166534'],
+                ['#86efac', '#15803d'],
+                ['#a3e635', '#15803d'],
+            ];
+            return stops[Math.floor(Math.random() * stops.length)];
+        }
+
+        // Safe DOM SVG Fruit generator
         function generateFruitSVG(shape, color, uniqueId, opt = {}) {
             const scale = opt.scale || (0.85 + Math.random() * 0.3);
             const scaleX = opt.scaleX || (0.9 + Math.random() * 0.2);
             const scaleY = opt.scaleY || (0.9 + Math.random() * 0.2);
-            const defs = getOrganicColorGradient(color, uniqueId);
+            const colorStops = getOrganicColorStops(color);
 
-            // Shape path
-            let path = "";
-            let width = 60, height = 60;
-            if (shape === 'round') {
-                // Round shape path with subtle dimples (apple style)
-                path = `M30,15 C44,14 51,23 50,37 C48,51 38,55 30,53 C22,55 12,51 10,37 C9,23 16,14 30,15 Z`;
-            } else {
-                // Pear shape path (narrow top, wide base)
-                path = `M30,10 C37,10 38,22 43,32 C48,42 47,54 30,54 C13,54 12,42 17,32 C22,22 23,10 30,10 Z`;
-            }
+            const svg = createSvgEl('svg', {
+                class: 'svg-fruit-element',
+                viewBox: '0 0 60 60',
+                style: `transform: scale(${scale}) scaleX(${scaleX}) scaleY(${scaleY});`
+            });
 
-            return `
-                <svg class="svg-fruit-element" viewBox="0 0 60 60" style="transform: scale(${scale}) scaleX(${scaleX}) scaleY(${scaleY});">
-                    ${defs}
-                    <g class="svg-fruit-shadow">
-                        <!-- Stem (Tige marron) -->
-                        <path d="M30,14 C30,7 34,4 35,4" fill="none" stroke="#78350f" stroke-width="2.5" stroke-linecap="round" />
-                        <!-- Leaf (Petite feuille verte) -->
-                        <path d="M30,11 C26,7 20,8 20,8 C20,8 24,12 28,12 Z" fill="#22c55e" stroke="#15803d" stroke-width="0.5" />
-                        <!-- Fruit Body -->
-                        <path d="${path}" fill="url(#grad-${uniqueId})" stroke="${color === 'red' ? '#991b1b' : '#166534'}" stroke-width="1.5" />
-                        <!-- Highlight Shine -->
-                        <ellipse cx="23" cy="23" rx="4" ry="7" transform="rotate(-30 23 23)" fill="#ffffff" opacity="0.35" />
-                    </g>
-                </svg>
-            `;
+            const defs = createSvgEl('defs');
+            const gradId = `grad-${uniqueId}`;
+            const grad = createSvgEl('linearGradient', { id: gradId, x1: '0%', y1: '0%', x2: '100%', y2: '100%' });
+            grad.append(
+                createSvgEl('stop', { offset: '0%', 'stop-color': colorStops[0], 'stop-opacity': '1' }),
+                createSvgEl('stop', { offset: '100%', 'stop-color': colorStops[1], 'stop-opacity': '1' })
+            );
+            defs.appendChild(grad);
+            svg.appendChild(defs);
+
+            const pathData = shape === 'round'
+                ? 'M30,15 C44,14 51,23 50,37 C48,51 38,55 30,53 C22,55 12,51 10,37 C9,23 16,14 30,15 Z'
+                : 'M30,10 C37,10 38,22 43,32 C48,42 47,54 30,54 C13,54 12,42 17,32 C22,22 23,10 30,10 Z';
+
+            const group = createSvgEl('g', { class: 'svg-fruit-shadow' });
+            group.append(
+                createSvgEl('path', { d: 'M30,14 C30,7 34,4 35,4', fill: 'none', stroke: '#78350f', 'stroke-width': '2.5', 'stroke-linecap': 'round' }),
+                createSvgEl('path', { d: 'M30,11 C26,7 20,8 20,8 C20,8 24,12 28,12 Z', fill: '#22c55e', stroke: '#15803d', 'stroke-width': '0.5' }),
+                createSvgEl('path', { d: pathData, fill: `url(#${gradId})`, stroke: color === 'red' ? '#991b1b' : '#166534', 'stroke-width': '1.5' }),
+                createSvgEl('ellipse', { cx: '23', cy: '23', rx: '4', ry: '7', transform: 'rotate(-30 23 23)', fill: '#ffffff', opacity: '0.35' })
+            );
+            svg.appendChild(group);
+            return svg;
         }
 
-        // SVG Robot generator
-        function getRobotSVG(expression = 'neutral') {
-            let eyes = '';
-            let mouth = '';
+        // Safe DOM SVG Robot generator (with proper SVG <linearGradient> defs!)
+        function createRobotSVG(expression = 'neutral', instanceId = 'main') {
+            const svg = createSvgEl('svg', { viewBox: '0 0 140 140', style: 'width: 100%; height: 100%;' });
+            const defs = createSvgEl('defs');
+            const headGradId = `robot-head-grad-${instanceId}`;
+            const headGrad = createSvgEl('linearGradient', { id: headGradId, x1: '0%', y1: '0%', x2: '100%', y2: '100%' });
+            headGrad.append(
+                createSvgEl('stop', { offset: '0%', 'stop-color': '#6366f1' }),
+                createSvgEl('stop', { offset: '100%', 'stop-color': '#3730a3' })
+            );
+            defs.appendChild(headGrad);
+            svg.appendChild(defs);
+
             let antennaColor = 'var(--accent-light)';
+            if (expression === 'confused') antennaColor = '#fbbf24';
+            if (expression === 'sad') antennaColor = '#f87171';
+
+            svg.append(
+                createSvgEl('line', { x1: '70', y1: '30', x2: '70', y2: '10', stroke: '#64748b', 'stroke-width': '5' }),
+                createSvgEl('circle', { cx: '70', cy: '8', r: '8', fill: antennaColor }),
+                createSvgEl('rect', { x: '20', y: '20', width: '100', height: '95', rx: '20', fill: `url(#${headGradId})`, stroke: '#1e1b4b', 'stroke-width': '4' }),
+                createSvgEl('rect', { x: '28', y: '28', width: '84', height: '66', rx: '12', fill: '#1e1b4b' }),
+                createSvgEl('rect', { x: '10', y: '50', width: '10', height: '25', rx: '3', fill: '#64748b' }),
+                createSvgEl('rect', { x: '120', y: '50', width: '10', height: '25', rx: '3', fill: '#64748b' })
+            );
 
             if (expression === 'neutral') {
-                eyes = `
-                    <circle cx="50" cy="50" r="10" fill="#fff" />
-                    <circle cx="50" cy="50" r="4" fill="#000" />
-                    <circle cx="90" cy="50" r="10" fill="#fff" />
-                    <circle cx="90" cy="50" r="4" fill="#000" />
-                `;
-                mouth = `<rect x="55" y="75" width="30" height="6" rx="3" fill="#312e81" />`;
+                svg.append(
+                    createSvgEl('circle', { cx: '50', cy: '50', r: '10', fill: '#fff' }),
+                    createSvgEl('circle', { cx: '50', cy: '50', r: '4', fill: '#000' }),
+                    createSvgEl('circle', { cx: '90', cy: '50', r: '10', fill: '#fff' }),
+                    createSvgEl('circle', { cx: '90', cy: '50', r: '4', fill: '#000' }),
+                    createSvgEl('rect', { x: '55', y: '75', width: '30', height: '6', rx: '3', fill: '#6366f1' })
+                );
             } else if (expression === 'happy') {
-                eyes = `
-                    <path d="M40,55 C40,45 60,45 60,55" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" />
-                    <path d="M80,55 C80,45 100,45 100,55" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" />
-                `;
-                mouth = `<path d="M50,75 Q70,95 90,75" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" />`;
+                svg.append(
+                    createSvgEl('path', { d: 'M40,55 C40,45 60,45 60,55', fill: 'none', stroke: '#fff', 'stroke-width': '6', 'stroke-linecap': 'round' }),
+                    createSvgEl('path', { d: 'M80,55 C80,45 100,45 100,55', fill: 'none', stroke: '#fff', 'stroke-width': '6', 'stroke-linecap': 'round' }),
+                    createSvgEl('path', { d: 'M50,75 Q70,95 90,75', fill: 'none', stroke: '#fff', 'stroke-width': '6', 'stroke-linecap': 'round' })
+                );
             } else if (expression === 'eating') {
-                eyes = `
-                    <circle cx="50" cy="50" r="10" fill="#fff" />
-                    <circle cx="52" cy="50" r="5" fill="#4f46e5" />
-                    <circle cx="90" cy="50" r="10" fill="#fff" />
-                    <circle cx="88" cy="50" r="5" fill="#4f46e5" />
-                `;
-                mouth = `<circle cx="70" cy="85" r="14" fill="#312e81" />`;
+                svg.append(
+                    createSvgEl('circle', { cx: '50', cy: '50', r: '10', fill: '#fff' }),
+                    createSvgEl('circle', { cx: '52', cy: '50', r: '5', fill: '#4f46e5' }),
+                    createSvgEl('circle', { cx: '90', cy: '50', r: '10', fill: '#fff' }),
+                    createSvgEl('circle', { cx: '88', cy: '50', r: '5', fill: '#4f46e5' }),
+                    createSvgEl('circle', { cx: '70', cy: '85', r: '14', fill: '#6366f1' })
+                );
             } else if (expression === 'confused') {
-                eyes = `
-                    <path d="M40,45 L60,55 M40,55 L60,45" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" />
-                    <path d="M80,45 L100,55 M80,55 L100,45" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" />
-                `;
-                mouth = `<path d="M55,80 Q70,70 85,80" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" />`;
-                antennaColor = '#fbbf24';
+                svg.append(
+                    createSvgEl('path', { d: 'M40,45 L60,55 M40,55 L60,45', fill: 'none', stroke: '#fff', 'stroke-width': '5', 'stroke-linecap': 'round' }),
+                    createSvgEl('path', { d: 'M80,45 L100,55 M80,55 L100,45', fill: 'none', stroke: '#fff', 'stroke-width': '5', 'stroke-linecap': 'round' }),
+                    createSvgEl('path', { d: 'M55,80 Q70,70 85,80', fill: 'none', stroke: '#fff', 'stroke-width': '4', 'stroke-linecap': 'round' })
+                );
             } else if (expression === 'sad') {
-                eyes = `
-                    <path d="M40,55 L60,48" fill="none" stroke="#f87171" stroke-width="5" stroke-linecap="round" />
-                    <path d="M80,48 L100,55" fill="none" stroke="#f87171" stroke-width="5" stroke-linecap="round" />
-                    <circle cx="50" cy="62" r="2" fill="#60a5fa" /> <!-- Tear -->
-                `;
-                mouth = `<path d="M55,82 Q70,72 85,82" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" />`;
-                antennaColor = '#f87171';
+                svg.append(
+                    createSvgEl('path', { d: 'M40,55 L60,48', fill: 'none', stroke: '#f87171', 'stroke-width': '5', 'stroke-linecap': 'round' }),
+                    createSvgEl('path', { d: 'M80,48 L100,55', fill: 'none', stroke: '#f87171', 'stroke-width': '5', 'stroke-linecap': 'round' }),
+                    createSvgEl('circle', { cx: '50', cy: '62', r: '2', fill: '#60a5fa' }),
+                    createSvgEl('path', { d: 'M55,82 Q70,72 85,82', fill: 'none', stroke: '#fff', 'stroke-width': '5', 'stroke-linecap': 'round' })
+                );
             }
-
-            return `
-                <svg viewBox="0 0 140 140" style="width: 100%; height: 100%;">
-                    <!-- Antenna -->
-                    <line x1="70" y1="30" x2="70" y2="10" stroke="#64748b" stroke-width="5" />
-                    <circle cx="70" cy="8" r="8" fill="${antennaColor}" />
-                    
-                    <!-- Head Box -->
-                    <rect x="20" y="20" width="100" height="95" rx="20" fill="linear-gradient(135deg, #4f46e5, #3730a3)" stroke="#1e1b4b" stroke-width="4" />
-                    
-                    <!-- Screen Area -->
-                    <rect x="28" y="28" width="84" height="66" rx="12" fill="#1e1b4b" />
-                    
-                    <!-- Ears -->
-                    <rect x="10" y="50" width="10" height="25" rx="3" fill="#64748b" />
-                    <rect x="120" y="50" width="10" height="25" rx="3" fill="#64748b" />
-                    
-                    <!-- Expression Nodes -->
-                    ${eyes}
-                    ${mouth}
-                </svg>
-            `;
+            return svg;
         }
 
         // --- INTERACTIVE STATE UPDATE ---
         function setRobotFace(expression) {
             const wrapperInteractive = document.getElementById('robot-interactive-svg');
             const wrapperFactory = document.getElementById('robot-factory-svg');
-            const svgContent = getRobotSVG(expression);
-            if (wrapperInteractive) wrapperInteractive.innerHTML = svgContent;
-            if (wrapperFactory) wrapperFactory.innerHTML = svgContent;
+            if (wrapperInteractive) wrapperInteractive.replaceChildren(createRobotSVG(expression, 'lab'));
+            if (wrapperFactory) wrapperFactory.replaceChildren(createRobotSVG(expression, 'factory'));
+        }
+
+        function clearTimerList(list) {
+            while (list.length > 0) {
+                clearTimeout(list.pop());
+            }
+        }
+
+        function stopFactoryRun() {
+            isTestingMode = false;
+            if (testAnimationId) {
+                cancelAnimationFrame(testAnimationId);
+                testAnimationId = null;
+            }
+            clearTimerList(factoryTimers);
+            conveyorBelt.classList.remove('running');
+            scannerBeam.classList.remove('scanning');
+            conveyorBelt.querySelectorAll('.conveyor-item').forEach(el => el.remove());
         }
 
         function createFullFruitObject(shape, color) {
@@ -1412,7 +1604,6 @@
                 id: uid,
                 shape: shape,
                 color: color,
-                // Organic variation factors
                 scale: 0.85 + Math.random() * 0.3,
                 scaleX: 0.9 + Math.random() * 0.2,
                 scaleY: 0.9 + Math.random() * 0.2
@@ -1421,8 +1612,7 @@
 
         function setTab(mode) {
             if (mode === 'training') {
-                isTestingMode = false;
-                if (testAnimationId) cancelAnimationFrame(testAnimationId);
+                stopFactoryRun();
                 tabTraining.classList.add('active');
                 tabFactory.classList.remove('active');
                 panelTraining.classList.add('active');
@@ -1433,6 +1623,7 @@
                     showToast("Entraîne d'abord ton IA avec 2 exemples par bac !", "warn");
                     return;
                 }
+                stopFactoryRun();
                 isTestingMode = true;
                 tabTraining.classList.remove('active');
                 tabFactory.classList.add('active');
@@ -1445,14 +1636,14 @@
         function handleFruitSelection(shape, color) {
             activeFruit = createFullFruitObject(shape, color);
             renderActiveFruit();
-            playSound('tap');
+            playSound('click');
         }
 
         function renderActiveFruit() {
-            activeFoodSlot.innerHTML = '';
+            activeFoodSlot.replaceChildren();
             if (activeFruit) {
                 activeFoodSlot.classList.add('active');
-                activeFoodSlot.innerHTML = generateFruitSVG(activeFruit.shape, activeFruit.color, activeFruit.id, activeFruit);
+                activeFoodSlot.appendChild(generateFruitSVG(activeFruit.shape, activeFruit.color, activeFruit.id, activeFruit));
                 feedToPommeBtn.disabled = false;
                 feedToPoireBtn.disabled = false;
             } else {
@@ -1464,6 +1655,10 @@
 
         function feedRobot(targetClass) {
             if (!activeFruit) return;
+            if (trainingSet[targetClass].length >= 10) {
+                showToast(`Ce bac mémoire est plein (maximum 10 exemples). Retire un fruit ou lance l'usine !`, 'warn');
+                return;
+            }
 
             // Trigger animation
             const flyingFruit = activeFoodSlot.querySelector('.svg-fruit-element');
@@ -1478,55 +1673,63 @@
 
             const fruitData = { ...activeFruit };
             activeFruit = null;
+            feedToPommeBtn.disabled = true;
+            feedToPoireBtn.disabled = true;
 
-            setTimeout(() => {
+            const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+            const t1 = setTimeout(() => {
                 trainingSet[targetClass].push(fruitData);
                 renderActiveFruit();
                 updateBasketsUI();
                 setRobotFace('happy');
-                
-                // Let the robot return to neutral face after a short time
-                setTimeout(() => {
-                    if (!activeFruit) setRobotFace('neutral');
-                }, 1000);
 
-                // Enable/disable sorting button
+                const t2 = setTimeout(() => {
+                    if (!activeFruit) setRobotFace('neutral');
+                }, reduced ? 200 : 1000);
+                feedTimers.push(t2);
+
                 const okToStart = trainingSet.pomme.length >= 2 && trainingSet.poire.length >= 2;
                 btnStartSorting.disabled = !okToStart;
                 tabFactory.disabled = !okToStart;
-
-            }, 450);
+            }, reduced ? 60 : 450);
+            feedTimers.push(t1);
         }
 
         function updateBasketsUI() {
-            // Pommes
+            const labelFruit = (item) => `${item.shape === 'round' ? 'Pomme' : 'Poire'} ${item.color === 'red' ? 'rouge' : 'verte'}`;
+
             countPomme.textContent = `${trainingSet.pomme.length} / 10`;
-            basketPommeItems.innerHTML = '';
+            basketPommeItems.replaceChildren();
             trainingSet.pomme.forEach((item, idx) => {
-                const el = document.createElement('div');
-                el.className = 'tiny-fruit';
-                el.innerHTML = generateFruitSVG(item.shape, item.color, item.id + '-tiny', { scale: 0.6, scaleX: 1, scaleY: 1 });
-                el.addEventListener('click', () => removeTrainedFruit('pomme', idx));
-                basketPommeItems.appendChild(el);
+                const btn = createEl('button', {
+                    type: 'button',
+                    className: 'tiny-fruit',
+                    title: `Retirer ${labelFruit(item)}`,
+                    'aria-label': `Retirer ${labelFruit(item)} du bac Pommes`
+                }, [generateFruitSVG(item.shape, item.color, `${item.id}-tiny-${idx}`, { scale: 0.72, scaleX: 1, scaleY: 1 })]);
+                btn.addEventListener('click', () => removeTrainedFruit('pomme', idx));
+                basketPommeItems.appendChild(btn);
             });
 
-            // Poires
             countPoire.textContent = `${trainingSet.poire.length} / 10`;
-            basketPoireItems.innerHTML = '';
+            basketPoireItems.replaceChildren();
             trainingSet.poire.forEach((item, idx) => {
-                const el = document.createElement('div');
-                el.className = 'tiny-fruit';
-                el.innerHTML = generateFruitSVG(item.shape, item.color, item.id + '-tiny', { scale: 0.6, scaleX: 1, scaleY: 1 });
-                el.addEventListener('click', () => removeTrainedFruit('poire', idx));
-                basketPoireItems.appendChild(el);
+                const btn = createEl('button', {
+                    type: 'button',
+                    className: 'tiny-fruit',
+                    title: `Retirer ${labelFruit(item)}`,
+                    'aria-label': `Retirer ${labelFruit(item)} du bac Poires`
+                }, [generateFruitSVG(item.shape, item.color, `${item.id}-tiny-${idx}`, { scale: 0.72, scaleX: 1, scaleY: 1 })]);
+                btn.addEventListener('click', () => removeTrainedFruit('poire', idx));
+                basketPoireItems.appendChild(btn);
             });
         }
 
         function removeTrainedFruit(targetClass, index) {
             trainingSet[targetClass].splice(index, 1);
-            playSound('tap');
+            playSound('click');
             updateBasketsUI();
-            
+
             const okToStart = trainingSet.pomme.length >= 2 && trainingSet.poire.length >= 2;
             btnStartSorting.disabled = !okToStart;
             tabFactory.disabled = !okToStart;
@@ -1573,19 +1776,27 @@
             document.getElementById('res-pomme-verte').addEventListener('click', () => handleFruitSelection('round', 'green'));
             document.getElementById('res-poire-rouge').addEventListener('click', () => handleFruitSelection('long', 'red'));
 
-            // Set background SVGs for the presets buttons
-            document.getElementById('svg-res-pr').innerHTML = generateFruitSVG('round', 'red', 'preset-pr', { scale: 0.65, scaleX: 1, scaleY: 1 });
-            document.getElementById('svg-res-pv').innerHTML = generateFruitSVG('long', 'green', 'preset-pv', { scale: 0.65, scaleX: 1, scaleY: 1 });
-            document.getElementById('svg-res-pg').innerHTML = generateFruitSVG('round', 'green', 'preset-pg', { scale: 0.65, scaleX: 1, scaleY: 1 });
-            document.getElementById('svg-res-prg').innerHTML = generateFruitSVG('long', 'red', 'preset-prg', { scale: 0.65, scaleX: 1, scaleY: 1 });
+            document.getElementById('svg-res-pr').replaceChildren(generateFruitSVG('round', 'red', 'preset-pr', { scale: 0.72, scaleX: 1, scaleY: 1 }));
+            document.getElementById('svg-res-pv').replaceChildren(generateFruitSVG('long', 'green', 'preset-pv', { scale: 0.72, scaleX: 1, scaleY: 1 }));
+            document.getElementById('svg-res-pg').replaceChildren(generateFruitSVG('round', 'green', 'preset-pg', { scale: 0.72, scaleX: 1, scaleY: 1 }));
+            document.getElementById('svg-res-prg').replaceChildren(generateFruitSVG('long', 'red', 'preset-prg', { scale: 0.72, scaleX: 1, scaleY: 1 }));
         }
 
         // ==============================================================
         //  CLASSIFICATION ENGINE & TEST PHASE
         // ==============================================================
 
+        function setThoughtsLog(lines) {
+            const frag = document.createDocumentFragment();
+            lines.forEach((line, idx) => {
+                if (idx > 0) frag.appendChild(document.createElement('br'));
+                frag.appendChild(document.createTextNode(line));
+            });
+            thoughtsLog.replaceChildren(frag);
+            thoughtsLog.scrollTop = 0;
+        }
+
         function computeClassificationConfidence(fruit) {
-            // Count examples in each basket
             const numPomme = trainingSet.pomme.length;
             const numPoire = trainingSet.poire.length;
 
@@ -1593,121 +1804,110 @@
                 return { pomme: 50, poire: 50, pommeScore: 0.5, poireScore: 0.5, logs: ["Pas de données d'entraînement !"] };
             }
 
-            // Traits matches
-            // 1. Pomme class
-            let matchesColorPomme = trainingSet.pomme.filter(item => item.color === fruit.color).length;
-            let matchesShapePomme = trainingSet.pomme.filter(item => item.shape === fruit.shape).length;
+            // Compute neuron-like feature matching weights (color vs shape)
+            const matchesColorPomme = trainingSet.pomme.filter(item => item.color === fruit.color).length;
+            const matchesShapePomme = trainingSet.pomme.filter(item => item.shape === fruit.shape).length;
+            const rateColorPomme = numPomme > 0 ? (matchesColorPomme / numPomme) : 0;
+            const rateShapePomme = numPomme > 0 ? (matchesShapePomme / numPomme) : 0;
 
-            let rateColorPomme = numPomme > 0 ? (matchesColorPomme / numPomme) : 0.5;
-            let rateShapePomme = numPomme > 0 ? (matchesShapePomme / numPomme) : 0.5;
+            const matchesColorPoire = trainingSet.poire.filter(item => item.color === fruit.color).length;
+            const matchesShapePoire = trainingSet.poire.filter(item => item.shape === fruit.shape).length;
+            const rateColorPoire = numPoire > 0 ? (matchesColorPoire / numPoire) : 0;
+            const rateShapePoire = numPoire > 0 ? (matchesShapePoire / numPoire) : 0;
 
-            // 2. Poire class
-            let matchesColorPoire = trainingSet.poire.filter(item => item.color === fruit.color).length;
-            let matchesShapePoire = trainingSet.poire.filter(item => item.shape === fruit.shape).length;
-
-            let rateColorPoire = numPoire > 0 ? (matchesColorPoire / numPoire) : 0.5;
-            let rateShapePoire = numPoire > 0 ? (matchesShapePoire / numPoire) : 0.5;
-
-            // Average score
+            // Combined neuron score across both attributes (color + shape)
             let scorePomme = (rateColorPomme + rateShapePomme) / 2;
             let scorePoire = (rateColorPoire + rateShapePoire) / 2;
 
-            // In case of total division by zero or equal 0
             if (scorePomme === 0 && scorePoire === 0) {
                 scorePomme = 0.5;
                 scorePoire = 0.5;
             }
 
-            // Relative confidence %
-            let confPomme = Math.round((scorePomme / (scorePomme + scorePoire)) * 100);
-            let confPoire = 100 - confPomme;
+            const confPomme = Math.round((scorePomme / (scorePomme + scorePoire)) * 100);
+            const confPoire = 100 - confPomme;
 
-            // Logs
-            let logs = [];
-            logs.push(`SCANNÉ : Couleur: ${fruit.color === 'red' ? 'Rouge' : 'Verte'}, Forme: ${fruit.shape === 'round' ? 'Ronde' : 'Allongée'}`);
-            logs.push(`----------------------------------`);
-            logs.push(`Mémoire POMMES (total ${numPomme}) :`);
-            logs.push(` - Couleur ${fruit.color === 'red' ? 'rouge' : 'verte'} : ${matchesColorPomme}/${numPomme} (${Math.round(rateColorPomme*100)}%)`);
-            logs.push(` - Forme ${fruit.shape === 'round' ? 'ronde' : 'allongée'} : ${matchesShapePomme}/${numPomme} (${Math.round(rateShapePomme*100)}%)`);
-            logs.push(`Mémoire POIRES (total ${numPoire}) :`);
-            logs.push(` - Couleur ${fruit.color === 'red' ? 'rouge' : 'verte'} : ${matchesColorPoire}/${numPoire} (${Math.round(rateColorPoire*100)}%)`);
-            logs.push(` - Forme ${fruit.shape === 'round' ? 'ronde' : 'allongée'} : ${matchesShapePoire}/${numPoire} (${Math.round(rateShapePoire*100)}%)`);
+            const logs = [
+                `SCANNÉ : ${fruit.name} (Couleur : ${fruit.color === 'red' ? 'Rouge' : 'Verte'}, Forme : ${fruit.shape === 'round' ? 'Ronde' : 'Allongée'})`,
+                `----------------------------------`,
+                `Mémoire POMMES (${numPomme}) → Couleur ${matchesColorPomme}/${numPomme} (${Math.round(rateColorPomme * 100)}%) · Forme ${matchesShapePomme}/${numPomme} (${Math.round(rateShapePomme * 100)}%)`,
+                `Mémoire POIRES (${numPoire}) → Couleur ${matchesColorPoire}/${numPoire} (${Math.round(rateColorPoire * 100)}%) · Forme ${matchesShapePoire}/${numPoire} (${Math.round(rateShapePoire * 100)}%)`
+            ];
 
-            return {
-                pomme: confPomme,
-                poire: confPoire,
-                pommeScore: scorePomme,
-                poireScore: scorePoire,
-                logs: logs
-            };
+            return { pomme: confPomme, poire: confPoire, pommeScore: scorePomme, poireScore: scorePoire, logs };
         }
 
         function startTestRun() {
-            // Build the cargo of test fruits
-            // This set is crafted to specifically test bias and balance!
-            testQueue = [
+            // Balanced 6-fruit test batch to expose bias without aborting on first error
+            const batch = [
                 { shape: 'round', color: 'red', realClass: 'pomme', name: 'Pomme Rouge' },
                 { shape: 'long', color: 'green', realClass: 'poire', name: 'Poire Verte' },
-                { shape: 'round', color: 'green', realClass: 'pomme', name: 'Pomme Verte' }, // The ultimate bias test!
-                { shape: 'long', color: 'red', realClass: 'poire', name: 'Poire Rouge' } // Bias test 2
+                { shape: 'round', color: 'green', realClass: 'pomme', name: 'Pomme Verte' },
+                { shape: 'long', color: 'red', realClass: 'poire', name: 'Poire Rouge' },
+                { shape: 'round', color: 'green', realClass: 'pomme', name: 'Pomme Verte' },
+                { shape: 'long', color: 'red', realClass: 'poire', name: 'Poire Rouge' }
             ];
+            testQueue = batch.sort(() => 0.5 - Math.random());
 
-            // Shuffle test cargo to look natural
-            testQueue = testQueue.sort(() => 0.5 - Math.random());
-
-            sortedFruits = [];
+            failedTestFruits = [];
             testStep = 0;
             successCount = 0;
 
             // Reset bins UI
-            binPommeContents.innerHTML = '';
-            binPoireContents.innerHTML = '';
+            binPommeContents.replaceChildren();
+            binPoireContents.replaceChildren();
             document.getElementById('monitor-status').textContent = 'Initialisation...';
-            thoughtsLog.innerHTML = 'En attente du premier scan...';
+            setThoughtsLog(['En attente du premier scan...']);
             barPomme.style.width = '0%';
             barPoire.style.width = '0%';
             scoreValPomme.textContent = '0%';
             scoreValPoire.textContent = '0%';
 
-            setTimeout(() => {
+            const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+            const startDelay = reduced ? 100 : 500;
+            factoryTimers.push(setTimeout(() => {
+                if (!isTestingMode) return;
                 conveyorBelt.classList.add('running');
-                document.getElementById('monitor-status').textContent = 'Tapis en marche';
+                document.getElementById('monitor-status').textContent = `Lot 1/${testQueue.length} en marche`;
                 spawnNextTestFruit();
-            }, 600);
+            }, startDelay));
         }
 
         function spawnNextTestFruit() {
+            if (!isTestingMode) return;
             if (testStep >= testQueue.length) {
-                // Done sorting all fruits without critical failure!
                 conveyorBelt.classList.remove('running');
-                showSuccessRun();
+                if (failedTestFruits.length > 0) {
+                    runMistakes++;
+                    ScoreManager.addMistake('dresseur_neurones', 'hard');
+                    showBiasAlert(failedTestFruits, successCount, testQueue.length);
+                } else {
+                    showSuccessRun(testQueue.length);
+                }
                 return;
             }
 
             const fruitData = testQueue[testStep];
-            const uid = 'test-' + testStep;
-            const fruitEl = document.createElement('div');
-            fruitEl.className = 'conveyor-item';
-            fruitEl.id = uid;
-            
-            // Build organic fruit SVG
-            fruitEl.innerHTML = generateFruitSVG(fruitData.shape, fruitData.color, uid, { scale: 0.9, scaleX: 1, scaleY: 1 });
+            const uid = `test-${testStep}-${Date.now()}`;
+            const fruitEl = createEl('div', { className: 'conveyor-item', id: uid }, [
+                generateFruitSVG(fruitData.shape, fruitData.color, uid, { scale: 0.9, scaleX: 1, scaleY: 1 })
+            ]);
             conveyorBelt.appendChild(fruitEl);
 
-            // Move the fruit across the belt to the center (scanner)
             let pos = -70;
-            const beltWidth = conveyorBelt.getBoundingClientRect().width;
+            const beltWidth = conveyorBelt.getBoundingClientRect().width || 320;
             const stopPos = beltWidth / 2;
+            const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+            const stepPx = reduced ? 60 : 4;
 
             function animateItem() {
                 if (!isTestingMode) return;
 
                 if (pos < stopPos) {
-                    pos += 3;
-                    fruitEl.style.left = pos + 'px';
+                    pos += stepPx;
+                    fruitEl.style.left = `${pos}px`;
                     testAnimationId = requestAnimationFrame(animateItem);
                 } else {
-                    // Item has reached the scanner! Stop belt and scan
                     conveyorBelt.classList.remove('running');
                     runScannerSequence(fruitEl, fruitData);
                 }
@@ -1717,67 +1917,52 @@
         }
 
         function runScannerSequence(fruitEl, fruitData) {
-            document.getElementById('monitor-status').textContent = 'Analyse en cours...';
+            if (!isTestingMode) return;
+            document.getElementById('monitor-status').textContent = `Analyse ${testStep + 1}/${testQueue.length}...`;
             scannerBeam.classList.add('scanning');
             setRobotFace('neutral');
-            playSound('tap');
+            playSound('click');
 
-            // Compute classification
             const res = computeClassificationConfidence(fruitData);
+            const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-            setTimeout(() => {
-                // Render explicability bars
-                barPomme.style.width = res.pomme + '%';
-                barPoire.style.width = res.poire + '%';
-                scoreValPomme.textContent = res.pomme + '%';
-                scoreValPoire.textContent = res.poire + '%';
+            factoryTimers.push(setTimeout(() => {
+                if (!isTestingMode) return;
+                barPomme.style.width = `${res.pomme}%`;
+                barPoire.style.width = `${res.poire}%`;
+                scoreValPomme.textContent = `${res.pomme}%`;
+                scoreValPoire.textContent = `${res.poire}%`;
+                setThoughtsLog(res.logs);
 
-                // Display logs
-                thoughtsLog.innerHTML = res.logs.join('<br>');
-                thoughtsLog.scrollTop = 0;
-
-                // Decision
                 let decision = 'pomme';
                 if (res.poire > res.pomme) {
                     decision = 'poire';
                 } else if (res.pomme === res.poire) {
-                    // In case of exact tie, robot uses dominant trained color bias
-                    // e.g. does it have more green things as poires?
-                    const greenInPoire = trainingSet.poire.filter(i => i.color === 'green').length;
-                    const greenInPomme = trainingSet.pomme.filter(i => i.color === 'green').length;
-                    
-                    if (fruitData.color === 'green') {
-                        decision = greenInPoire >= greenInPomme ? 'poire' : 'pomme';
-                    } else {
-                        const redInPomme = trainingSet.pomme.filter(i => i.color === 'red').length;
-                        const redInPoire = trainingSet.poire.filter(i => i.color === 'red').length;
-                        decision = redInPomme >= redInPoire ? 'pomme' : 'poire';
-                    }
+                    const sameColorInPoire = trainingSet.poire.filter(i => i.color === fruitData.color).length;
+                    const sameColorInPomme = trainingSet.pomme.filter(i => i.color === fruitData.color).length;
+                    decision = sameColorInPoire > sameColorInPomme ? 'poire' : 'pomme';
                 }
 
-                // Verify correctness
                 const isCorrect = (decision === fruitData.realClass);
 
-                setTimeout(() => {
+                factoryTimers.push(setTimeout(() => {
+                    if (!isTestingMode) return;
                     scannerBeam.classList.remove('scanning');
                     executeSortingAction(fruitEl, fruitData, decision, isCorrect);
-                }, 1000);
-
-            }, 1200);
+                }, reduced ? 120 : 750));
+            }, reduced ? 120 : 850));
         }
 
         function executeSortingAction(fruitEl, fruitData, decision, isCorrect) {
+            if (!isTestingMode) return;
             const targetBin = document.getElementById('bin-' + decision);
             targetBin.classList.add('highlight');
 
-            // Slide fruit down to the bin
-            fruitEl.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-            
+            fruitEl.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
             const beltRect = conveyorBelt.getBoundingClientRect();
             const binRect = targetBin.getBoundingClientRect();
-
-            const yDiff = binRect.top - beltRect.top + 20;
-            const xDiff = (decision === 'pomme') ? -120 : 120;
+            const yDiff = (binRect.top - beltRect.top) + 20 || 120;
+            const xDiff = (decision === 'pomme') ? -110 : 110;
 
             fruitEl.style.transform = `translate(${xDiff}px, ${yDiff}px) scale(0.6)`;
             fruitEl.style.opacity = '0';
@@ -1785,113 +1970,105 @@
             if (isCorrect) {
                 playSound('success');
                 setRobotFace('happy');
-                document.getElementById('monitor-status').textContent = 'Tri validé !';
+                document.getElementById('monitor-status').textContent = `Tri validé (${testStep + 1}/${testQueue.length})`;
                 successCount++;
                 statsTotalSorted++;
                 document.getElementById('global-streak').textContent = statsTotalSorted;
             } else {
                 playSound('error');
                 setRobotFace('confused');
-                document.getElementById('monitor-status').textContent = 'ERREUR !';
+                document.getElementById('monitor-status').textContent = `Erreur sur ${fruitData.name} !`;
+                failedTestFruits.push({ fruit: fruitData, decision });
             }
 
-            setTimeout(() => {
+            const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+            factoryTimers.push(setTimeout(() => {
                 targetBin.classList.remove('highlight');
-                
-                // Add miniature fruit in the bin
-                const mini = document.createElement('div');
-                mini.className = 'tiny-fruit';
-                mini.innerHTML = generateFruitSVG(fruitData.shape, fruitData.color, fruitData.id + '-bin', { scale: 0.6, scaleX: 1, scaleY: 1 });
-                mini.title = `${fruitData.name} (Trie comme ${decision === 'pomme' ? 'Pomme' : 'Poire'})`;
-                document.getElementById(`bin-${decision}-contents`).appendChild(mini);
-
-                fruitEl.remove();
-
-                if (!isCorrect) {
-                    // BIAIS ALGORITHMIQUE DETECTE !
-                    // Freeze conveyor belt and trigger alerte card!
-                    conveyorBelt.classList.remove('running');
-                    showBiasAlert(fruitData, decision);
-                } else {
-                    // Next step
-                    testStep++;
-                    conveyorBelt.classList.add('running');
-                    document.getElementById('monitor-status').textContent = 'Tapis en marche';
-                    spawnNextTestFruit();
+                if (!isTestingMode) {
+                    fruitEl.remove();
+                    return;
                 }
 
-            }, 650);
+                const mini = createEl('div', {
+                    className: 'tiny-fruit',
+                    title: `${fruitData.name} (trié comme ${decision === 'pomme' ? 'Pomme' : 'Poire'})`
+                }, [generateFruitSVG(fruitData.shape, fruitData.color, `${fruitData.shape}-${fruitData.color}-bin-${testStep}`, { scale: 0.72, scaleX: 1, scaleY: 1 })]);
+                if (!isCorrect) {
+                    mini.style.borderColor = 'var(--error)';
+                    mini.style.background = 'var(--error-light)';
+                }
+                document.getElementById(`bin-${decision}-contents`).appendChild(mini);
+                fruitEl.remove();
+
+                testStep++;
+                conveyorBelt.classList.add('running');
+                spawnNextTestFruit();
+            }, reduced ? 120 : 520));
         }
 
         // ==============================================================
-        //  ALERTS & CELEBRATIONS
+        //  ALERTS & CELEBRATIONS (Safe DOM Builders, ZERO innerHTML)
         // ==============================================================
 
-        function showBiasAlert(failedFruit, incorrectDecision) {
+        function showBiasAlert(failures, score, total) {
             setRobotFace('sad');
-            
-            // Build explanatory bias card
+            const firstFailure = failures[0];
             const inner = document.getElementById('bias-alert-card-inner');
             inner.className = "bias-alert-card";
-            inner.innerHTML = `
-                <div class="bias-icon">⚠️</div>
-                <h2>Biais Algorithmique Détecté !</h2>
-                <p>
-                    Oh non ! Le robot a confondu une <strong>${failedFruit.name}</strong> (${failedFruit.color === 'red' ? 'Rouge' : 'Verte'}, ${failedFruit.shape === 'round' ? 'Ronde' : 'Allongée'}) en la triant comme une <strong>${incorrectDecision.toUpperCase()}</strong>.
-                </p>
-                <p style="background:var(--instructions-bg); padding:12px; border-radius:var(--radius-lg); border-left:4px solid var(--error);">
-                    💡 <strong>Pourquoi cette erreur ?</strong><br>
-                    Le robot n'est pas intelligent par magie. Il cherche des ressemblances avec les exemples que vous lui avez donnés.<br><br>
-                    Si vous ne lui avez montré que des pommes rouges et des poires vertes, le robot en a conclu que <strong>"tout ce qui est vert est forcément une poire"</strong>. Face à une pomme verte, il s'est trompé !
-                </p>
-                <p>
-                    <strong>La solution :</strong> Cliquez sur le bouton ci-dessous pour retourner au laboratoire d'entraînement. Ajoutez des <strong>Pommes Vertes</strong> (ou des <strong>Poires Rouges</strong>) dans vos bacs de mémoire pour lui apprendre la diversité des couleurs !
-                </p>
-                <button class="btn btn-new" id="btn-alert-close">🧺 Corriger l'entraînement</button>
-            `;
 
-            biasAlertOverlay.style.display = 'flex';
+            const uniqueNames = [...new Set(failures.map(f => `${f.fruit.name} (classée ${f.decision.toUpperCase()})`))];
+            const explainBox = createEl('p', {
+                style: 'background:var(--instructions-bg); padding:12px; border-radius:var(--radius-lg); border-left:4px solid var(--error);'
+            }, [
+                createEl('strong', { text: '💡 Pourquoi ces erreurs ?' }),
+                document.createElement('br'),
+                `Le robot n'est pas intelligent par magie : il compare couleur ET forme dans ta mémoire. Si tu ne lui as donné que des pommes rouges et des poires vertes, il croit que la couleur suffit et confond ${firstFailure.fruit.name} !`
+            ]);
 
-            document.getElementById('btn-alert-close').addEventListener('click', () => {
+            const retryBtn = createEl('button', { type: 'button', className: 'btn btn-new', id: 'btn-alert-close', text: "🧺 Corriger l'entraînement" });
+            retryBtn.addEventListener('click', () => {
                 biasAlertOverlay.style.display = 'none';
                 setTab('training');
             });
+
+            inner.replaceChildren(
+                createEl('div', { className: 'bias-icon', text: '⚠️' }),
+                createEl('h2', { text: `Biais Algorithmique Détecté ! (Score : ${score} / ${total})` }),
+                createEl('p', { text: `Erreurs repérées : ${uniqueNames.join(', ')}.` }),
+                explainBox,
+                createEl('p', {}, [
+                    createEl('strong', { text: 'La solution : ' }),
+                    "Ajoute des Pommes Vertes ET des Poires Rouges dans tes bacs de mémoire pour que l'IA apprenne à distinguer la forme plutôt que la couleur !"
+                ]),
+                retryBtn
+            );
+
+            biasAlertOverlay.style.display = 'flex';
         }
 
-        function showSuccessRun() {
+        function showSuccessRun(total) {
             setRobotFace('happy');
             statsLevelsSolved++;
             document.getElementById('global-correct').textContent = statsLevelsSolved;
-            ScoreManager.addSuccess('dresseur_neurones', 'hard', 0);
-            
-            // Celebration
+            ScoreManager.addSuccess('dresseur_neurones', 'hard', runMistakes);
+            runMistakes = 0;
+
             handleStreakCelebration(statsLevelsSolved, true, true);
 
             const inner = document.getElementById('bias-alert-card-inner');
             inner.className = "bias-alert-card success-overlay-card";
-            inner.innerHTML = `
-                <div class="success-icon">🎓🏆</div>
-                <h2>Félicitations, Dresseur de Neurones !</h2>
-                <p>
-                    Incroyable ! Vous avez entraîné une IA parfaitement équilibrée et robuste.
-                </p>
-                <p style="background:var(--success-light); color:var(--success); padding:12px; border-radius:var(--radius-lg); border-left:4px solid var(--success);">
-                    🌱 <strong>Victoire contre le biais !</strong><br>
-                    En lui montrant des fruits variés de toutes les couleurs (pommes vertes, pommes rouges, poires vertes et poires rouges), vous avez appris au robot à ignorer la couleur pour se concentrer sur la forme géométrique !
-                </p>
-                <p>
-                    Vous avez brillamment démontré comment les données influencent l'intelligence des algorithmes modernes !
-                </p>
-                <div class="controls-row">
-                    <button class="btn btn-new" id="btn-success-reset">🔄 Réentraîner un nouveau modèle</button>
-                </div>
-            `;
 
-            biasAlertOverlay.style.display = 'flex';
+            const greenBox = createEl('p', {
+                style: 'background:var(--success-light); color:var(--success); padding:12px; border-radius:var(--radius-lg); border-left:4px solid var(--success);'
+            }, [
+                createEl('strong', { text: '🌱 Victoire contre le biais !' }),
+                document.createElement('br'),
+                `Score parfait de ${total} / ${total} ! En lui montrant des pommes vertes/rouges et des poires vertes/rouges, l'IA a appris à utiliser la forme géométrique.`
+            ]);
 
-            document.getElementById('btn-success-reset').addEventListener('click', () => {
+            const resetBtn = createEl('button', { type: 'button', className: 'btn btn-new', id: 'btn-success-reset', text: '🔄 Réentraîner un nouveau modèle' });
+            resetBtn.addEventListener('click', () => {
                 biasAlertOverlay.style.display = 'none';
-                // Clear all baskets
                 trainingSet = { pomme: [], poire: [] };
                 activeFruit = null;
                 updateBasketsUI();
@@ -1900,6 +2077,16 @@
                 tabFactory.disabled = true;
                 setTab('training');
             });
+
+            inner.replaceChildren(
+                createEl('div', { className: 'success-icon', text: '🎓🏆' }),
+                createEl('h2', { text: 'Félicitations, Dresseur de Neurones !' }),
+                createEl('p', { text: 'Ton IA est parfaitement équilibrée et ne se fait plus piéger par la couleur.' }),
+                greenBox,
+                createEl('div', { className: 'controls-row' }, [resetBtn])
+            );
+
+            biasAlertOverlay.style.display = 'flex';
         }
 
         // ==============================================================
@@ -1911,25 +2098,40 @@
             setupPresets();
             setRobotFace('neutral');
 
-            // Tab togglers
             tabTraining.addEventListener('click', () => setTab('training'));
             tabFactory.addEventListener('click', () => setTab('factory'));
 
-            // Feed actions
             feedToPommeBtn.addEventListener('click', () => feedRobot('pomme'));
             feedToPoireBtn.addEventListener('click', () => feedRobot('poire'));
 
-            // Start sorting action
             btnStartSorting.addEventListener('click', () => setTab('factory'));
             document.getElementById('btn-back-to-lab').addEventListener('click', () => setTab('training'));
 
-            // Custom slot triggers loading if empty
             activeFoodSlot.addEventListener('click', () => {
                 if (!activeFruit) {
                     handleFruitSelection('round', 'red');
                 }
             });
         }
+
+        window.__onResetApp = function () {
+            clearTimerList(feedTimers);
+            stopFactoryRun();
+            biasAlertOverlay.style.display = 'none';
+            trainingSet = { pomme: [], poire: [] };
+            activeFruit = null;
+            failedTestFruits = [];
+            runMistakes = 0;
+            statsLevelsSolved = 0;
+            statsTotalSorted = 0;
+            document.getElementById('global-correct').textContent = '0';
+            document.getElementById('global-streak').textContent = '0';
+            updateBasketsUI();
+            renderActiveFruit();
+            btnStartSorting.disabled = true;
+            tabFactory.disabled = true;
+            setTab('training');
+        };
 
         window.addEventListener('load', () => {
             initApp();

@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <script src="../../assets/js/i18n.js"></script>
     <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
     <style>
@@ -48,7 +49,7 @@
             --text-muted: #64748b;
             --accent: #0284c7;
             --accent-glow: rgba(2, 132, 199, 0.35);
-            --wire-off: #94a3b8;
+            --wire-off: #64748b;
             --wire-on: #10b981;
             --wire-on-glow: rgba(16, 185, 129, 0.6);
             --led-off: #64748b;
@@ -73,7 +74,7 @@
             --text-muted: #94a3b8;
             --accent: #38bdf8;
             --accent-glow: rgba(56, 189, 248, 0.4);
-            --wire-off: #334155;
+            --wire-off: #64748b;
             --wire-on: #34d399;
             --wire-on-glow: rgba(52, 211, 153, 0.7);
             --led-off: #334155;
@@ -806,17 +807,118 @@
             border-right: 1px solid var(--table-active-border);
         }
 
-        .truth-table .check-dot {
+        .truth-table tr.tested td:first-child {
+            box-shadow: inset 4px 0 0 #10b981;
+        }
+
+        .iec-negation-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .iec-negation-bubble {
             display: inline-block;
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            margin-left: 4px;
-            background: transparent;
+            border: 2px solid currentColor;
+            background: var(--gate-bg);
+            flex-shrink: 0;
         }
 
-        .truth-table .tested .check-dot {
-            background: #10b981;
+        .quiz-toggle-btn {
+            border: 1.5px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            border-radius: var(--radius-md);
+            padding: 4px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .quiz-toggle-btn.active {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .truth-quiz-choice {
+            min-width: 38px;
+            min-height: 32px;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .truth-quiz-choice.val-1 {
+            border-color: var(--wire-on);
+            color: #047857;
+            background: rgba(16, 185, 129, 0.14);
+        }
+
+        .custom-builder-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px 14px;
+            background: var(--table-active-bg);
+            border: 1px solid var(--table-active-border);
+            border-radius: var(--radius-lg);
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .custom-builder-bar select {
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        body.dark .gate-choice-btn.active,
+        body.dark .quiz-toggle-btn.active,
+        body.dark .tab-btn.active {
+            color: #0f172a;
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #000;
+            --bg-gradient-end: #000;
+            --container-bg: #000;
+            --card-bg: #000;
+            --card-border: #fff;
+            --text-main: #fff;
+            --text-secondary: #facc15;
+            --text-muted: #fff;
+            --accent: #facc15;
+            --wire-off: #94a3b8;
+            --gate-bg: #000;
+            --gate-border: #fff;
+            --gate-text: #fff;
+            --circuit-bg: #000;
+        }
+
+        body.high-contrast .gate-choice-btn.active,
+        body.high-contrast .quiz-toggle-btn.active,
+        body.high-contrast .tab-btn.active {
+            color: #000;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 10px 10px 92px; }
+            .circuit-board { padding: 14px 10px; }
+            .circuit-header,
+            .truth-table-header-row,
+            .mission-selector-bar,
+            .sandbox-controls-row {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
         }
 
         /* --- EXPLANATION & COLLAPSIBLE ACCORDION --- */
@@ -965,7 +1067,7 @@
             <div class="mode-nav-bar">
                 <div class="segmented-group" role="tablist">
                     <button class="tab-btn active" id="tab-missions" role="tab" aria-selected="true">
-                        <i data-fa="award"></i> Missions Guidées
+                        <i data-fa="trophy-star"></i> Missions Guidées
                     </button>
                     <button class="tab-btn" id="tab-sandbox" role="tab" aria-selected="false">
                         <i data-fa="brain-circuit"></i> Laboratoire Libre
@@ -1022,6 +1124,29 @@
                 <button class="gate-choice-btn" data-gate-type="HALF_ADDER">Demi-Additionneur</button>
                 <button class="gate-choice-btn" data-gate-type="COMBI_AND_OR">(A ET B) OU C</button>
                 <button class="gate-choice-btn" data-gate-type="COMBI_OR_AND">A ET (B OU C)</button>
+                <button class="gate-choice-btn" data-gate-type="CUSTOM_2GATE">Circuit libre</button>
+                <button type="button" class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats" style="margin-left:auto;">
+                    <i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i>
+                </button>
+            </div>
+            <div class="custom-builder-bar" id="custom-builder-bar">
+                <span>Montage : ( A</span>
+                <select id="custom-gate1-select" aria-label="Première porte logique">
+                    <option value="AND">ET (&amp;)</option>
+                    <option value="OR">OU (≥1)</option>
+                    <option value="XOR">XOR (=1)</option>
+                    <option value="NAND">NAND</option>
+                    <option value="NOR">NOR</option>
+                </select>
+                <span>B )</span>
+                <select id="custom-gate2-select" aria-label="Deuxième porte logique">
+                    <option value="OR" selected>OU (≥1)</option>
+                    <option value="AND">ET (&amp;)</option>
+                    <option value="XOR">XOR (=1)</option>
+                    <option value="NAND">NAND</option>
+                    <option value="NOR">NOR</option>
+                </select>
+                <span>C → Q</span>
             </div>
 
             <!-- WORKBENCH LAYOUT -->
@@ -1086,8 +1211,9 @@
                     <!-- Truth Table Card -->
                     <div class="truth-table-card">
                         <div class="truth-table-header-row">
-                            <span class="truth-table-title"><i data-fa="table"></i> Table de vérité</span>
-                            <span class="truth-table-hint">Clique sur une ligne pour l'activer</span>
+                            <span class="truth-table-title"><i data-fa="border-all"></i> Table de vérité</span>
+                            <button type="button" class="quiz-toggle-btn" id="btn-truth-quiz-mode" title="Deviner les sorties Q de la table de vérité">🧠 Prédire Q</button>
+                            <span class="truth-table-hint" id="truth-table-hint">Clique sur une ligne pour l'activer</span>
                         </div>
 
                         <div style="overflow-x: auto;">
@@ -1099,6 +1225,10 @@
                                     <!-- Dynamic rows injected via JS -->
                                 </tbody>
                             </table>
+                        </div>
+                        <div id="truth-quiz-footer" style="display:none; justify-content:space-between; align-items:center; margin-top:10px; gap:8px;">
+                            <span id="truth-quiz-status" style="font-size:0.82rem; font-weight:700; color:var(--text-secondary);">Complète la colonne de sortie</span>
+                            <button type="button" class="quiz-toggle-btn active" id="btn-verify-truth-quiz">Vérifier</button>
                         </div>
                     </div>
 
@@ -1117,8 +1247,12 @@
                                 s'associent pour former ces portes logiques.</p>
                             <p><strong>Le Demi-Additionneur :</strong> En combinant une porte <code>XOR</code> (pour
                                 calculer la somme) et une porte <code>ET</code> (pour détecter la retenue), un
-                                ordinateur est capable de calculer mécaniquement l'addition $1 + 1 = 2$ ($10_2$) ! C'est
+                                ordinateur est capable de calculer mécaniquement l'addition <code>1 + 1 = 2</code> (<code>10<sub>2</sub></code>) ! C'est
                                 la base absolue de toutes les calculatrices et consoles de jeu.</p>
+                            <p><strong>Notation IEC &amp; Quiz :</strong> La petite bulle ronde à la sortie d'une porte
+                                (<code>NON</code>, <code>NAND</code>, <code>NOR</code>) indique une inversion logique. Utilise
+                                le mode <em>Quiz : compléter</em> dans la table de vérité pour prédire les sorties avant
+                                de vérifier, ou le constructeur à 2 étages pour explorer des circuits combinés.</p>
                         </div>
                     </div>
                 </div>
@@ -1153,7 +1287,9 @@
 
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/pwa.js"></script>
     <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
 
     <!-- LOGIC GATES ENGINE SCRIPT -->
     <script>
@@ -1214,11 +1350,26 @@
                 }
             ];
 
+            function evalBinaryGate(type, a, b) {
+                if (type === 'AND') return (a === 1 && b === 1) ? 1 : 0;
+                if (type === 'OR') return (a === 1 || b === 1) ? 1 : 0;
+                if (type === 'XOR') return (a !== b) ? 1 : 0;
+                if (type === 'NAND') return (a === 1 && b === 1) ? 0 : 1;
+                if (type === 'NOR') return (a === 1 || b === 1) ? 0 : 1;
+                return 0;
+            }
+
+            let customGate1 = 'AND';
+            let customGate2 = 'OR';
+            let isTruthQuizMode = false;
+            let quizPredictions = {};
+
             // --- GATE LOGIC METADATA ---
             const GATE_METADATA = {
                 'NOT': {
                     name: 'NON / NOT',
                     symbolIec: '1',
+                    hasNegation: true,
                     formula: 'Q = NON A',
                     inputs: ['A'],
                     outputs: ['Q'],
@@ -1255,6 +1406,7 @@
                 'NAND': {
                     name: 'NAND / NON-ET',
                     symbolIec: '&',
+                    hasNegation: true,
                     formula: 'Q = NON (A ET B)',
                     inputs: ['A', 'B'],
                     outputs: ['Q'],
@@ -1264,6 +1416,7 @@
                 'NOR': {
                     name: 'NOR / NON-OU',
                     symbolIec: '≥1',
+                    hasNegation: true,
                     formula: 'Q = NON (A OU B)',
                     inputs: ['A', 'B'],
                     outputs: ['Q'],
@@ -1283,7 +1436,7 @@
                 },
                 'COMBI_AND_OR': {
                     name: '(A ET B) OU C',
-                    symbolIec: '& / ≥1',
+                    symbolIec: '& → ≥1',
                     formula: 'Q = (A ET B) OU C',
                     inputs: ['A', 'B', 'C'],
                     outputs: ['Q'],
@@ -1291,11 +1444,27 @@
                 },
                 'COMBI_OR_AND': {
                     name: 'A ET (B OU C)',
-                    symbolIec: '≥1 / &',
+                    symbolIec: '≥1 → &',
                     formula: 'Q = A ET (B OU C)',
                     inputs: ['A', 'B', 'C'],
                     outputs: ['Q'],
                     eval: (inp) => ({ Q: (inp.A === 1 && (inp.B === 1 || inp.C === 1)) ? 1 : 0 })
+                },
+                'CUSTOM_2GATE': {
+                    name: 'Circuit libre',
+                    get symbolIec() {
+                        const map = { AND: '&', OR: '≥1', XOR: '=1', NAND: '&◯', NOR: '≥1◯' };
+                        return `${map[customGate1] || customGate1} → ${map[customGate2] || customGate2}`;
+                    },
+                    get formula() {
+                        return `Q = (A ${customGate1} B) ${customGate2} C`;
+                    },
+                    inputs: ['A', 'B', 'C'],
+                    outputs: ['Q'],
+                    eval: (inp) => {
+                        const s1 = evalBinaryGate(customGate1, inp.A, inp.B);
+                        return { Q: evalBinaryGate(customGate2, s1, inp.C) };
+                    }
                 }
             };
 
@@ -1478,6 +1647,33 @@
                 });
             }
 
+            function createMultiStageSVG(stage1Label, stage2Label, s1True, qTrue) {
+                const NS = 'http://www.w3.org/2000/svg';
+                const mk = (tag, attrs) => {
+                    const el = document.createElementNS(NS, tag);
+                    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+                    return el;
+                };
+                const svg = mk('svg', { class: 'gate-svg-icon', viewBox: '0 0 148 44', style: 'width:118px;height:36px;' });
+                const s1Color = s1True ? '#10b981' : 'var(--text-secondary)';
+                const qColor = qTrue ? '#10b981' : 'var(--text-secondary)';
+                // Stage 1 box
+                svg.appendChild(mk('rect', { x: 4, y: 6, width: 46, height: 30, rx: 6, fill: 'none', stroke: s1Color, 'stroke-width': 2.2 }));
+                const t1 = mk('text', { x: 27, y: 25, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 800, fill: s1Color });
+                t1.textContent = stage1Label;
+                svg.appendChild(t1);
+                // Connecting intermediate wire
+                svg.appendChild(mk('line', { x1: 50, y1: 21, x2: 88, y2: 21, stroke: s1Color, 'stroke-width': 2.5 }));
+                svg.appendChild(mk('circle', { cx: 69, cy: 21, r: 3.5, fill: s1Color }));
+                // Stage 2 box
+                svg.appendChild(mk('rect', { x: 88, y: 6, width: 46, height: 30, rx: 6, fill: 'none', stroke: qColor, 'stroke-width': 2.2 }));
+                const t2 = mk('text', { x: 111, y: 25, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 800, fill: qColor });
+                t2.textContent = stage2Label;
+                svg.appendChild(t2);
+                svg.appendChild(mk('line', { x1: 134, y1: 21, x2: 146, y2: 21, stroke: qColor, 'stroke-width': 2.5 }));
+                return svg;
+            }
+
             // --- RENDER GATES IN DOM ---
             function renderGates(meta, outputs) {
                 gatesColumnEl.replaceChildren();
@@ -1490,18 +1686,29 @@
                     chipAnd.id = 'gate-chip-and';
                     gatesColumnEl.appendChild(chipXor);
                     gatesColumnEl.appendChild(chipAnd);
-                } else if (currentGateType.startsWith('COMBI_')) {
-                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1);
+                } else if (currentGateType === 'COMBI_AND_OR') {
+                    const s1 = (switchStates.A === 1 && switchStates.B === 1);
+                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1, null, false, { g1: 'A & B', g2: 'S₁ ≥1 C', s1True: s1 });
+                    chip.id = 'gate-chip-single';
+                    gatesColumnEl.appendChild(chip);
+                } else if (currentGateType === 'COMBI_OR_AND') {
+                    const s1 = (switchStates.B === 1 || switchStates.C === 1);
+                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1, null, false, { g1: 'B ≥1 C', g2: 'A & S₁', s1True: s1 });
+                    chip.id = 'gate-chip-single';
+                    gatesColumnEl.appendChild(chip);
+                } else if (currentGateType === 'CUSTOM_2GATE') {
+                    const s1 = evalBinaryGate(customGate1, switchStates.A, switchStates.B) === 1;
+                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1, null, false, { g1: customGate1, g2: customGate2, s1True: s1 });
                     chip.id = 'gate-chip-single';
                     gatesColumnEl.appendChild(chip);
                 } else {
-                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1, meta.svgPath);
+                    const chip = createGateChipDOM(meta.name, meta.symbolIec, meta.formula, outputs.Q === 1, meta.svgPath, Boolean(meta.hasNegation));
                     chip.id = 'gate-chip-single';
                     gatesColumnEl.appendChild(chip);
                 }
             }
 
-            function createGateChipDOM(name, iec, formula, isTrue, svgPath) {
+            function createGateChipDOM(name, iec, formula, isTrue, svgPath, hasNegation = false, multiStage = null) {
                 const chip = document.createElement('div');
                 chip.className = 'gate-chip' + (isTrue ? ' eval-true' : '');
 
@@ -1512,10 +1719,24 @@
 
                 const iecBadge = document.createElement('span');
                 iecBadge.className = 'gate-symbol-iec';
-                iecBadge.textContent = iec;
+                if (hasNegation) {
+                    const wrap = document.createElement('span');
+                    wrap.className = 'iec-negation-wrap';
+                    const txt = document.createElement('span');
+                    txt.textContent = iec;
+                    const bubble = document.createElement('span');
+                    bubble.className = 'iec-negation-bubble';
+                    bubble.setAttribute('aria-label', 'Inversion (NON)');
+                    wrap.append(txt, bubble);
+                    iecBadge.appendChild(wrap);
+                } else {
+                    iecBadge.textContent = iec;
+                }
                 chip.appendChild(iecBadge);
 
-                if (svgPath) {
+                if (multiStage) {
+                    chip.appendChild(createMultiStageSVG(multiStage.g1, multiStage.g2, multiStage.s1True, isTrue));
+                } else if (svgPath) {
                     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                     svg.setAttribute('class', 'gate-svg-icon');
                     svg.setAttribute('viewBox', '0 0 60 44');
@@ -1668,6 +1889,14 @@
                 return list;
             }
 
+            const btnTruthQuizMode = document.getElementById('btn-truth-quiz-mode');
+            const truthQuizFooter = document.getElementById('truth-quiz-footer');
+            const truthQuizStatus = document.getElementById('truth-quiz-status');
+            const btnVerifyTruthQuiz = document.getElementById('btn-verify-truth-quiz');
+            const customBuilderBar = document.getElementById('custom-builder-bar');
+            const customGate1Select = document.getElementById('custom-gate1-select');
+            const customGate2Select = document.getElementById('custom-gate2-select');
+
             function updateTruthTable(meta, currentOutputs) {
                 // Header
                 truthTableHeadEl.replaceChildren();
@@ -1691,6 +1920,9 @@
                 // Body rows
                 truthTableBodyEl.replaceChildren();
                 const combinations = generateTruthTableCombinations(meta.inputs);
+                if (truthQuizFooter) {
+                    truthQuizFooter.style.display = isTruthQuizMode ? 'flex' : 'none';
+                }
 
                 combinations.forEach((combo) => {
                     const tr = document.createElement('tr');
@@ -1716,12 +1948,29 @@
                         tr.appendChild(td);
                     });
 
-                    // Output cells
+                    // Output cells (Quiz interactive prediction OR revealed truth value)
                     meta.outputs.forEach(out => {
                         const td = document.createElement('td');
-                        td.textContent = String(outVals[out]);
-                        if (outVals[out] === 1) {
-                            td.style.color = '#10b981';
+                        if (isTruthQuizMode) {
+                            const predKey = `${rowKey}|${out}`;
+                            const val = quizPredictions[predKey];
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'truth-quiz-choice' + (val === 1 ? ' val-1' : '');
+                            btn.textContent = val === undefined ? '?' : String(val);
+                            btn.setAttribute('aria-label', `Prédire ${out} pour ${rowKey}`);
+                            btn.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                quizPredictions[predKey] = val === undefined ? 0 : (val === 0 ? 1 : 0);
+                                play('click');
+                                updateTruthTable(meta, currentOutputs);
+                            });
+                            td.appendChild(btn);
+                        } else {
+                            td.textContent = String(outVals[out]);
+                            if (outVals[out] === 1) {
+                                td.style.color = '#10b981';
+                            }
                         }
                         tr.appendChild(td);
                     });
@@ -1756,6 +2005,9 @@
                 if (isConditionMet && allRowsTested && !missionsCompleted[currentMissionIndex]) {
                     missionsCompleted[currentMissionIndex] = true;
                     play('win');
+                    if (typeof window.ScoreManager !== 'undefined') {
+                        window.ScoreManager.addSuccess('portes_logiques', mission.gateType, 0);
+                    }
 
                     if (typeof window.launchConfetti === 'function') {
                         window.launchConfetti();
@@ -1776,6 +2028,81 @@
             }
 
             // --- EVENT LISTENERS & NAVIGATION ---
+            if (btnTruthQuizMode) {
+                btnTruthQuizMode.addEventListener('click', () => {
+                    isTruthQuizMode = !isTruthQuizMode;
+                    quizPredictions = {};
+                    btnTruthQuizMode.classList.toggle('active', isTruthQuizMode);
+                    if (truthQuizStatus) {
+                        truthQuizStatus.textContent = 'Complète la colonne de sortie';
+                        truthQuizStatus.style.color = 'var(--text-secondary)';
+                    }
+                    play('click');
+                    updateCircuit();
+                });
+            }
+
+            if (btnVerifyTruthQuiz) {
+                btnVerifyTruthQuiz.addEventListener('click', () => {
+                    const { meta } = evaluateCircuit();
+                    const combinations = generateTruthTableCombinations(meta.inputs);
+                    let totalCells = 0;
+                    let wrongCells = 0;
+                    let missingCells = 0;
+                    combinations.forEach((combo) => {
+                        const rowKey = meta.inputs.map(k => combo[k]).join('-');
+                        const expected = meta.eval(combo);
+                        meta.outputs.forEach(out => {
+                            totalCells++;
+                            const pred = quizPredictions[`${rowKey}|${out}`];
+                            if (pred === undefined) missingCells++;
+                            else if (pred !== expected[out]) wrongCells++;
+                        });
+                    });
+                    if (missingCells > 0) {
+                        if (truthQuizStatus) {
+                            truthQuizStatus.textContent = `Complète d'abord toutes les cases (${missingCells} restante${missingCells > 1 ? 's' : ''}).`;
+                            truthQuizStatus.style.color = '#d97706';
+                        }
+                        play('error');
+                        return;
+                    }
+                    if (wrongCells === 0) {
+                        if (truthQuizStatus) {
+                            truthQuizStatus.textContent = `✅ Bravo ! ${totalCells}/${totalCells} justes !`;
+                            truthQuizStatus.style.color = '#10b981';
+                        }
+                        play('win');
+                        if (typeof window.ScoreManager !== 'undefined') {
+                            window.ScoreManager.addSuccess('portes_logiques', currentGateType, 0);
+                        }
+                        if (typeof window.launchConfetti === 'function') window.launchConfetti();
+                    } else {
+                        if (truthQuizStatus) {
+                            truthQuizStatus.textContent = `❌ ${wrongCells} erreur${wrongCells > 1 ? 's' : ''} sur ${totalCells}.`;
+                            truthQuizStatus.style.color = '#ef4444';
+                        }
+                        if (typeof window.ScoreManager !== 'undefined') {
+                            window.ScoreManager.addMistake('portes_logiques', currentGateType);
+                        }
+                        play('error');
+                    }
+                });
+            }
+
+            if (customGate1Select && customGate2Select) {
+                const onCustomChange = () => {
+                    customGate1 = customGate1Select.value;
+                    customGate2 = customGate2Select.value;
+                    quizPredictions = {};
+                    testedRows.clear();
+                    play('click');
+                    updateCircuit();
+                };
+                customGate1Select.addEventListener('change', onCustomChange);
+                customGate2Select.addEventListener('change', onCustomChange);
+            }
+
             tabMissions.addEventListener('click', () => {
                 currentMode = 'missions';
                 tabMissions.classList.add('active');
@@ -1783,6 +2110,7 @@
                 missionSelectorBar.style.display = 'flex';
                 missionBriefCard.style.display = 'flex';
                 sandboxControlsRow.style.display = 'none';
+                if (customBuilderBar) customBuilderBar.style.display = 'none';
                 modeSummaryLabel.textContent = '5 missions interactives pour maîtriser les circuits logiques';
                 loadMission(currentMissionIndex);
             });
@@ -1794,6 +2122,7 @@
                 missionSelectorBar.style.display = 'none';
                 missionBriefCard.style.display = 'none';
                 sandboxControlsRow.style.display = 'flex';
+                if (customBuilderBar) customBuilderBar.style.display = currentGateType === 'CUSTOM_2GATE' ? 'flex' : 'none';
                 modeSummaryLabel.textContent = 'Compose et teste librement tes propres portes et circuits';
                 updateCircuit();
             });
@@ -1825,8 +2154,10 @@
                     document.querySelectorAll('.gate-choice-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentGateType = btn.getAttribute('data-gate-type');
+                    if (customBuilderBar) customBuilderBar.style.display = currentGateType === 'CUSTOM_2GATE' ? 'flex' : 'none';
                     switchStates = { A: 0, B: 0, C: 0 };
                     testedRows.clear();
+                    quizPredictions = {};
                     updateCircuit();
                 });
             });
@@ -1863,6 +2194,9 @@
             window.__onResetApp = function () {
                 switchStates = { A: 0, B: 0, C: 0 };
                 testedRows.clear();
+                quizPredictions = {};
+                isTruthQuizMode = false;
+                if (btnTruthQuizMode) btnTruthQuizMode.classList.remove('active');
                 missionsCompleted = [false, false, false, false, false];
                 document.querySelectorAll('.mission-chip').forEach(c => c.classList.remove('completed'));
                 if (currentMode === 'missions') {
@@ -1876,6 +2210,10 @@
             };
 
             // Initialize app
+            if (typeof window.ScoreManager !== 'undefined') {
+                window.ScoreManager.init('portes_logiques');
+                window.ScoreManager.checkAdaptiveDifficulty = () => {};
+            }
             loadMission(0);
             window.fa?.createIcons?.();
 

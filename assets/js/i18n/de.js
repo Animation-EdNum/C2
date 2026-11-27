@@ -495,7 +495,7 @@
         'reseau_villages.btn_reset_algo': 'Neu starten',
         'reseau_villages.edu_title': 'Minimalen Spannbaum & Kruskal-Algorithmus verstehen',
         'reseau_villages.edu_card1_title': 'Was ist ein Baum?',
-        'reseau_villages.edu_card1_text': 'In der Informatik und Graphentheorie ist ein <strong>Baum</strong> ein Netzwerk, in dem alle Knoten verbunden sind, <strong>ohne eine geschlossene Schleife (Zyklus) zu bilden</strong>. Um $V$ Dörfer zu verbinden, benötigt ein Baum immer genau <strong>$V - 1$ Kanten</strong>.',
+        'reseau_villages.edu_card1_text': 'In der Informatik und Graphentheorie ist ein <strong>Baum</strong> ein Netzwerk, in dem alle Knoten verbunden sind, <strong>ohne eine geschlossene Schleife (Zyklus) zu bilden</strong>. Um <var>V</var> Dörfer zu verbinden, benötigt ein Baum immer genau <strong><var>V</var> − 1 Kanten</strong>.',
         'reseau_villages.edu_card2_title': 'Warum Schleifen vermeiden?',
         'reseau_villages.edu_card2_text': 'Wenn zwei Dörfer bereits über einen Weg verbunden sind, bildet ein zusätzliches Kabel eine unnötige Schleife. Dieses Kabel kostet Geld und schliesst kein zusätzliches Dorf an!',
         'reseau_villages.edu_card3_title': 'Die Kruskal-Greedy-Methode',

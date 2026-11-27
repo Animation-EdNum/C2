@@ -85,14 +85,14 @@
             --bg-gradient-start: #1e1b4b;
             --bg-gradient-end: #0f172a;
             --accent: #f97316;
-            --accent-dark: #ea580c;
+            --accent-dark: #c2410c;
             --accent-light: #fdba74;
             --card-bg: rgba(30, 41, 59, 0.85);
             --card-border: #334155;
             --container-bg: rgba(15, 23, 42, 0.9);
             --text-main: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
             --badge-bg: #431407;
             --badge-color: #fdba74;
             --input-border: #475569;
@@ -114,6 +114,46 @@
             --block-loop-bg: rgba(76, 29, 149, 0.35);
             --block-loop-text: #ddd6fe;
             --block-loop-badge: #8b5cf6;
+        }
+
+        body:not(.dark):not(.high-contrast) footer.no-print,
+        body:not(.dark):not(.high-contrast) footer.no-print p {
+            color: #1e293b !important;
+        }
+
+        body:not(.dark):not(.high-contrast) footer.no-print a:not([href*="merci.html"]) {
+            color: #9a3412 !important;
+            font-weight: 700;
+        }
+
+        body.dark .btn-primary,
+        body.dark .mode-tab-btn.active,
+        body.dark .level-chip.active,
+        body.dark .speed-btn.active {
+            background: #c2410c;
+            color: #ffffff;
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #ffffff;
+            --bg-gradient-end: #ffffff;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --card-border: #000000;
+            --text-main: #000000;
+            --text-secondary: #000000;
+            --text-muted: #1e293b;
+            --accent: #000000;
+            --accent-dark: #000000;
+        }
+
+        body.high-contrast .btn-primary,
+        body.high-contrast .btn-run-recipe,
+        body.high-contrast .mode-tab-btn.active,
+        body.high-contrast .level-chip.active {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border-color: #000000 !important;
         }
 
         /* ========== LAYOUT ========== */
@@ -355,12 +395,12 @@
         /* ========== 3-COLUMN MAIN WORKSPACE ========== */
         .kitchen-workspace {
             display: grid;
-            grid-template-columns: 290px minmax(320px, 1fr) 350px;
-            gap: 18px;
+            grid-template-columns: minmax(255px, 290px) minmax(275px, 1fr) minmax(305px, 345px);
+            gap: 16px;
             align-items: start;
         }
 
-        @media (max-width: 1080px) {
+        @media (max-width: 980px) {
             .kitchen-workspace {
                 grid-template-columns: 1fr 1fr;
             }
@@ -703,8 +743,11 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            min-height: 30px;
+            padding: 0;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -712,6 +755,7 @@
             cursor: pointer;
             font-size: 0.85rem;
             transition: all 0.15s ease;
+            flex-shrink: 0;
         }
 
         .step-btn-control:hover:not(:disabled) {
@@ -1102,9 +1146,9 @@
                         <button class="menu-item-btn" id="theme-toggle-btn"><i data-fa="moon" id="icon-moon"></i><i
                                 data-fa="sun-bright" id="icon-sun" style="display:none;"></i><span
                                 id="themeToggleText">Sombre</span></button>
-                        <button class="menu-item-btn" id="audio-toggle-btn"><i data-fa="volume-high"
-                                id="icon-vol-on" style="display:none;"></i><i data-fa="volume-xmark"
-                                id="icon-vol-off"></i><span id="audioToggleText">Activer son</span></button>
+                        <button class="menu-item-btn" id="audio-toggle-btn"><i data-fa="volume-high" id="icon-vol-on"
+                                style="display:none;"></i><i data-fa="volume-xmark" id="icon-vol-off"></i><span
+                                id="audioToggleText">Activer son</span></button>
                         <div class="dropdown-divider"></div>
                         <button class="menu-item-btn" id="reset-cache-btn"><i data-fa="arrows-rotate"></i><span
                                 id="resetCacheText">Réinitialiser</span></button>
@@ -1279,8 +1323,8 @@
                                 <span class="block-text">RÉPÉTER 3x : Olive</span>
                                 <i data-fa="plus" class="block-add-icon"></i>
                             </button>
-                            <button class="code-block-btn block-loop" data-block-type="loop"
-                                data-loop-item="mushrooms" data-loop-times="3">
+                            <button class="code-block-btn block-loop" data-block-type="loop" data-loop-item="mushrooms"
+                                data-loop-times="3">
                                 <span class="block-icon">🔁</span>
                                 <span class="block-text">RÉPÉTER 3x : Champignon</span>
                                 <i data-fa="plus" class="block-add-icon"></i>
@@ -1305,6 +1349,11 @@
                     </button>
                     <button class="btn-step-recipe" id="btn-step-recipe" title="Exécuter une seule étape">
                         <i data-fa="forward-step"></i> Pas-à-pas
+                    </button>
+                    <button class="btn-outline-error" id="btn-stop-recipe"
+                        style="display:none; padding: 9px 14px; border-radius: 12px; font-weight: 700; font-size: 0.88rem;"
+                        title="Arrêter l'exécution">
+                        <i data-fa="stop"></i> Stop
                     </button>
                     <button class="btn-clear-recipe" id="btn-clear-recipe" title="Vider tout le ruban">
                         <i data-fa="trash"></i> Vider
@@ -1370,7 +1419,8 @@
                         </svg>
                     </div>
                     <div class="bot-bubble-dialogue" id="bot-dialogue-text">
-                        « Bonjour petit chef ! Compose la recette sur le ruban puis clique sur <strong>Lancer</strong> ! »
+                        « Bonjour petit chef ! Compose la recette sur le ruban puis clique sur <strong>Lancer</strong> !
+                        »
                     </div>
                 </div>
 
@@ -1415,7 +1465,8 @@
                             <!-- Basil leaves -->
                             <g id="layer-basil" style="display: none;">
                                 <ellipse cx="85" cy="90" rx="9" ry="5" fill="#16a34a" transform="rotate(-25 85 90)" />
-                                <ellipse cx="115" cy="105" rx="9" ry="5" fill="#15803d" transform="rotate(35 115 105)" />
+                                <ellipse cx="115" cy="105" rx="9" ry="5" fill="#15803d"
+                                    transform="rotate(35 115 105)" />
                                 <ellipse cx="100" cy="72" rx="9" ry="5" fill="#16a34a" transform="rotate(10 100 72)" />
                             </g>
 
@@ -1456,7 +1507,7 @@
                         <button class="btn btn-primary" id="btn-next-level" style="display: none; width: 100%;">
                             <i data-fa="circle-check"></i> Niveau suivant !
                         </button>
-                        <button class="btn btn-secondary" id="btn-retry-recipe" style="display: none; width: 100%;">
+                        <button class="btn btn-outline" id="btn-retry-recipe" style="display: none; width: 100%;">
                             <i data-fa="rotate-right"></i> Ajuster la recette
                         </button>
                     </div>
@@ -1479,7 +1530,7 @@
                 <button class="btn btn-primary" id="btn-modal-free-mode">
                     <i data-fa="shapes"></i> Essayer le Mode Libre
                 </button>
-                <button class="btn btn-secondary" id="btn-modal-close">
+                <button class="btn btn-outline" id="btn-modal-close">
                     Fermer
                 </button>
             </div>
@@ -1513,9 +1564,12 @@
     <canvas id="confetti-canvas"></canvas>
 
     <!-- SCRIPTS EN BAS DU BODY DANS L'ORDRE STRICT -->
+    <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
     <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/pwa.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
 
     <!-- APPLICATION LOGIC -->
     <script>
@@ -1525,6 +1579,15 @@
             // ==========================================
             // CONFIGURATION & DÉFINITION DES NIVEAUX
             // ==========================================
+            const hasBaseInOrder = (actions) => {
+                const iDough = actions.indexOf('dough');
+                const iSauce = actions.indexOf('sauce');
+                const iCheese = actions.indexOf('cheese');
+                if (iDough !== 0 || iSauce !== 1 || iCheese !== 2) return false;
+                return !actions.slice(3).some(a => a === 'dough' || a === 'sauce' || a === 'cheese');
+            };
+            const hasOnlyAllowedSteps = (actions, allowedSet) => actions.every(a => allowedSet.has(a));
+
             const CHALLENGES = [
                 {
                     id: 1,
@@ -1538,35 +1601,12 @@
                         const checks = [];
                         const actions = recipeState.executedSteps;
 
-                        // Vérif 1: A étalé la pâte
-                        const doughIdx = actions.indexOf('dough');
-                        checks.push({
-                            label: 'Étaler la pâte en premier',
-                            ok: doughIdx === 0
-                        });
+                        checks.push({ label: 'Étaler la pâte en premier', ok: actions[0] === 'dough' });
+                        checks.push({ label: 'Ajouter la sauce tomate ensuite', ok: actions[1] === 'sauce' });
+                        checks.push({ label: 'Ajouter la mozzarella en 3e', ok: actions[2] === 'cheese' });
+                        checks.push({ label: 'Aucun ingrédient en trop (3 étapes exactement)', ok: actions.length === 3 });
 
-                        // Vérif 2: Sauce tomate après la pâte
-                        const sauceIdx = actions.indexOf('sauce');
-                        checks.push({
-                            label: 'Ajouter la sauce tomate',
-                            ok: sauceIdx === 1
-                        });
-
-                        // Vérif 3: Mozzarella en 3e
-                        const cheeseIdx = actions.indexOf('cheese');
-                        checks.push({
-                            label: 'Ajouter la mozzarella',
-                            ok: cheeseIdx === 2
-                        });
-
-                        // Vérif 4: Pas d'étape superflue
-                        checks.push({
-                            label: 'Exactement ces 3 étapes',
-                            ok: actions.length === 3
-                        });
-
-                        const allOk = checks.every(c => c.ok);
-                        return { ok: allOk, checks: checks };
+                        return { ok: checks.every(c => c.ok), checks };
                     }
                 },
                 {
@@ -1580,24 +1620,14 @@
                     validate: function (recipeState) {
                         const checks = [];
                         const actions = recipeState.executedSteps;
+                        const bakeIdx = actions.indexOf('bake');
 
-                        checks.push({
-                            label: 'Pâte, sauce et mozzarella dans l’ordre',
-                            ok: actions[0] === 'dough' && actions[1] === 'sauce' && actions[2] === 'cheese'
-                        });
+                        checks.push({ label: 'Pâte, sauce et mozzarella en premier dans l’ordre', ok: hasBaseInOrder(actions) });
+                        checks.push({ label: 'Feuilles de basilic avant cuisson', ok: actions.includes('basil') && bakeIdx > actions.indexOf('basil') });
+                        checks.push({ label: 'Aucun ingrédient en trop ni doublon', ok: actions.length === 5 && hasOnlyAllowedSteps(actions, new Set(['dough', 'sauce', 'cheese', 'basil', 'bake'])) });
+                        checks.push({ label: 'Cuire au four à la toute fin', ok: actions[actions.length - 1] === 'bake' });
 
-                        checks.push({
-                            label: 'Feuilles de basilic ajoutées',
-                            ok: actions.includes('basil')
-                        });
-
-                        checks.push({
-                            label: 'Cuire au four à la toute fin',
-                            ok: actions.length >= 5 && actions[actions.length - 1] === 'bake'
-                        });
-
-                        const allOk = checks.every(c => c.ok);
-                        return { ok: allOk, checks: checks };
+                        return { ok: checks.every(c => c.ok), checks };
                     }
                 },
                 {
@@ -1606,34 +1636,18 @@
                     badge: 'Condition : Végétarien',
                     customer: 'Lili la Biche',
                     avatar: '🦌',
-                    prompt: '« Bonjour ! Je mange 100% végétarien ! Prépare ma pizza Margherita et utilise la condition SI client végétarien ALORS ajouter des poivrons, puis cuis au four ! »',
+                    prompt: '« Bonjour ! Je mange 100% végétarien ! Prépare ma pizza Margherita (pâte, sauce, mozzarella, basilic) avec la condition SI végétarien ALORS poivrons, puis cuis au four ! »',
                     customerTraits: { vegetarian: true, spicy: false, wantsMushrooms: false },
                     validate: function (recipeState) {
                         const checks = [];
                         const actions = recipeState.executedSteps;
 
-                        checks.push({
-                            label: 'Base pizza (pâte, sauce, mozzarella)',
-                            ok: recipeState.hasDough && recipeState.hasSauce && recipeState.hasCheese
-                        });
+                        checks.push({ label: 'Margherita de base dans l’ordre (pâte, sauce, mozzarella, basilic)', ok: hasBaseInOrder(actions) && actions.includes('basil') });
+                        checks.push({ label: 'Condition SI végétarien utilisée (et poivrons sans triche)', ok: recipeState.usedConditions.includes('veg') && actions.includes('peppers') && !recipeState.directToppings.includes('peppers') });
+                        checks.push({ label: 'Aucun ingrédient non demandé', ok: hasOnlyAllowedSteps(actions, new Set(['dough', 'sauce', 'cheese', 'basil', 'peppers', 'bake'])) });
+                        checks.push({ label: 'Cuisson finale au four', ok: recipeState.isBaked && actions[actions.length - 1] === 'bake' });
 
-                        checks.push({
-                            label: 'Condition SI végétarien utilisée',
-                            ok: recipeState.usedConditions.includes('veg')
-                        });
-
-                        checks.push({
-                            label: 'Poivrons ajoutés grâce à la condition',
-                            ok: actions.includes('peppers')
-                        });
-
-                        checks.push({
-                            label: 'Cuisson finale au four',
-                            ok: recipeState.isBaked && actions[actions.length - 1] === 'bake'
-                        });
-
-                        const allOk = checks.every(c => c.ok);
-                        return { ok: allOk, checks: checks };
+                        return { ok: checks.every(c => c.ok), checks };
                     }
                 },
                 {
@@ -1642,34 +1656,18 @@
                     badge: 'Boucle : 3 Olives',
                     customer: 'Milo le Panda',
                     avatar: '🐼',
-                    prompt: '« Coucou Chef Bot ! J’adore les olives ! Sur ma pizza, utilise une boucle RÉPÉTER 3 FOIS pour ajouter mes 3 olives, puis cuis-la au four ! »',
+                    prompt: '« Coucou Chef Bot ! Prépare ma base pizza (pâte, sauce, mozzarella), utilise une boucle RÉPÉTER 3 FOIS pour ajouter mes 3 olives, puis cuis-la au four ! »',
                     customerTraits: { vegetarian: false, spicy: false, wantsMushrooms: false },
                     validate: function (recipeState) {
                         const checks = [];
                         const actions = recipeState.executedSteps;
 
-                        checks.push({
-                            label: 'Base pizza prête',
-                            ok: recipeState.hasDough && recipeState.hasSauce && recipeState.hasCheese
-                        });
+                        checks.push({ label: 'Base pizza dans l’ordre (pâte, sauce, mozzarella)', ok: hasBaseInOrder(actions) });
+                        checks.push({ label: 'Boucle RÉPÉTER 3 FOIS utilisée', ok: recipeState.usedLoops.includes('repeat_3_olive') });
+                        checks.push({ label: 'Exactement 3 olives ajoutées (et rien d’autre)', ok: recipeState.olivesCount === 3 && hasOnlyAllowedSteps(actions, new Set(['dough', 'sauce', 'cheese', 'olive', 'bake'])) });
+                        checks.push({ label: 'Cuite au four à la fin', ok: recipeState.isBaked && actions[actions.length - 1] === 'bake' });
 
-                        checks.push({
-                            label: 'Boucle RÉPÉTER 3 FOIS utilisée',
-                            ok: recipeState.usedLoops.includes('repeat_3_olive')
-                        });
-
-                        checks.push({
-                            label: 'Exactement 3 olives ajoutées',
-                            ok: recipeState.olivesCount === 3
-                        });
-
-                        checks.push({
-                            label: 'Cuite au four',
-                            ok: recipeState.isBaked && actions[actions.length - 1] === 'bake'
-                        });
-
-                        const allOk = checks.every(c => c.ok);
-                        return { ok: allOk, checks: checks };
+                        return { ok: checks.every(c => c.ok), checks };
                     }
                 },
                 {
@@ -1678,34 +1676,18 @@
                     badge: 'Condition : Piquant !',
                     customer: 'Sam le Dragon',
                     avatar: '🐲',
-                    prompt: '« Roaaar ! J’ai envie d’une pizza piquante qui brûle ! Prépare ma pizza et utilise la condition SI piquante ALORS ajouter du piment fort, puis cuis-la ! »',
-                    customerTraits: { vegetarian: false, spicy: true, wantsMushrooms: false },
+                    prompt: '« Roaaar ! Prépare ma base pizza (pâte, sauce, mozzarella) avec la condition SI piquante ALORS ajouter du piment fort, et répète mes champignons avec RÉPÉTER 3x : Champignon avant la cuisson ! »',
+                    customerTraits: { vegetarian: false, spicy: true, wantsMushrooms: true },
                     validate: function (recipeState) {
                         const checks = [];
                         const actions = recipeState.executedSteps;
 
-                        checks.push({
-                            label: 'Base pizza assemblée',
-                            ok: recipeState.hasDough && recipeState.hasSauce && recipeState.hasCheese
-                        });
+                        checks.push({ label: 'Base pizza dans l’ordre (pâte, sauce, mozzarella)', ok: hasBaseInOrder(actions) });
+                        checks.push({ label: 'Condition SI piquante utilisée (piment sans ajout direct)', ok: recipeState.usedConditions.includes('spicy') && actions.includes('chili') && !recipeState.directToppings.includes('chili') });
+                        checks.push({ label: 'Boucle RÉPÉTER 3x Champignon exécutée', ok: recipeState.usedLoops.includes('repeat_3_mushrooms') && recipeState.mushroomsCount === 6 });
+                        checks.push({ label: 'Aucun ingrédient parasite et cuisson finale', ok: hasOnlyAllowedSteps(actions, new Set(['dough', 'sauce', 'cheese', 'chili', 'mushrooms', 'bake'])) && actions[actions.length - 1] === 'bake' });
 
-                        checks.push({
-                            label: 'Condition SI piquante utilisée',
-                            ok: recipeState.usedConditions.includes('spicy')
-                        });
-
-                        checks.push({
-                            label: 'Piment fort ajouté sur la pizza',
-                            ok: actions.includes('chili')
-                        });
-
-                        checks.push({
-                            label: 'Cuisson au four',
-                            ok: recipeState.isBaked && actions[actions.length - 1] === 'bake'
-                        });
-
-                        const allOk = checks.every(c => c.ok);
-                        return { ok: allOk, checks: checks };
+                        return { ok: checks.every(c => c.ok), checks };
                     }
                 },
                 {
@@ -1714,34 +1696,19 @@
                     badge: 'Le Grand Défi du Chef',
                     customer: 'Chef Hibou',
                     avatar: '🦉',
-                    prompt: '« Défi Suprême : Prépare ma pizza spéciale ! Je suis végétarien et j’exige 3 olives ! Utilise la condition végétarienne ET la boucle de 3 olives, puis cuis au four ! »',
-                    customerTraits: { vegetarian: true, spicy: false, wantsMushrooms: false },
+                    prompt: '« Défi Suprême : Prépare ma base pizza (pâte, sauce, mozzarella) ! Je suis végétarien et j’exige 3 olives plus 2 olives bonus (ou 5 olives) — utilise SI végétarien, la condition champignons si besoin et la boucle RÉPÉTER 3x : Olive avant la cuisson ! »',
+                    customerTraits: { vegetarian: true, spicy: false, wantsMushrooms: true },
                     validate: function (recipeState) {
                         const checks = [];
                         const actions = recipeState.executedSteps;
 
-                        checks.push({
-                            label: 'Base pizza (pâte, sauce, fromage)',
-                            ok: recipeState.hasDough && recipeState.hasSauce && recipeState.hasCheese
-                        });
+                        checks.push({ label: 'Base pizza dans l’ordre (pâte, sauce, mozzarella)', ok: hasBaseInOrder(actions) });
+                        checks.push({ label: 'Condition SI végétarien respectée (poivrons)', ok: recipeState.usedConditions.includes('veg') && actions.includes('peppers') && !recipeState.directToppings.includes('peppers') });
+                        checks.push({ label: 'Condition SI champignons respectée', ok: recipeState.usedConditions.includes('mushroom') && actions.includes('mushrooms') && !recipeState.directToppings.includes('mushrooms') });
+                        checks.push({ label: 'Boucle 3 olives appliquée (3 ou 5 olives max, sans piment)', ok: recipeState.usedLoops.includes('repeat_3_olive') && recipeState.olivesCount >= 3 && recipeState.olivesCount <= 5 && hasOnlyAllowedSteps(actions, new Set(['dough', 'sauce', 'cheese', 'peppers', 'mushrooms', 'olive', 'bake'])) });
+                        checks.push({ label: 'Pizza cuite au four à la fin', ok: recipeState.isBaked && actions[actions.length - 1] === 'bake' });
 
-                        checks.push({
-                            label: 'Condition végétarienne respectée (poivrons)',
-                            ok: recipeState.usedConditions.includes('veg') && actions.includes('peppers')
-                        });
-
-                        checks.push({
-                            label: 'Boucle 3 olives appliquée',
-                            ok: recipeState.usedLoops.includes('repeat_3_olive') && recipeState.olivesCount === 3
-                        });
-
-                        checks.push({
-                            label: 'Pizza cuite au four',
-                            ok: recipeState.isBaked && actions[actions.length - 1] === 'bake'
-                        });
-
-                        const allOk = checks.every(c => c.ok);
-                        return { ok: allOk, checks: checks };
+                        return { ok: checks.every(c => c.ok), checks };
                     }
                 }
             ];
@@ -1755,6 +1722,7 @@
             let currentStreak = 0;
             let executionSpeed = 'normal'; // 'slow' (1200ms) | 'normal' (700ms) | 'fast' (350ms)
             let isRunning = false;
+            let runAbortToken = 0;
             let currentStepIndex = 0;
 
             // Ruban de la recette : liste ordonnée d'objets étapes
@@ -1773,6 +1741,7 @@
                 mushroomsCount: 0,
                 isBaked: false,
                 executedSteps: [],
+                directToppings: [],
                 usedConditions: [],
                 usedLoops: []
             };
@@ -1814,15 +1783,19 @@
             // ==========================================
             // GESTION DU BOT (DIALOGUE & YEUX)
             // ==========================================
+            function setSafeHtmlContent(el, htmlStr) {
+                if (!el) return;
+                const parsed = new DOMParser().parseFromString(htmlStr, 'text/html');
+                el.replaceChildren(...Array.from(parsed.body.childNodes));
+            }
+
             function setBotDialogue(htmlContent, mood) {
                 const dialogueEl = document.getElementById('bot-dialogue-text');
                 const eyeLeft = document.getElementById('bot-eye-left');
                 const eyeRight = document.getElementById('bot-eye-right');
                 const mouth = document.getElementById('bot-mouth');
 
-                if (dialogueEl) {
-                    dialogueEl.innerHTML = htmlContent;
-                }
+                setSafeHtmlContent(dialogueEl, htmlContent);
 
                 if (mood === 'happy') {
                     if (eyeLeft) eyeLeft.setAttribute('fill', '#4ade80');
@@ -1847,6 +1820,8 @@
             // PLAN DE TRAVAIL & RENDU SVG DE LA PIZZA
             // ==========================================
             function resetKitchen() {
+                currentStepIndex = 0;
+                unhighlightAllStepNodes();
                 kitchenState = {
                     hasDough: false,
                     hasSauce: false,
@@ -1859,6 +1834,7 @@
                     mushroomsCount: 0,
                     isBaked: false,
                     executedSteps: [],
+                    directToppings: [],
                     usedConditions: [],
                     usedLoops: []
                 };
@@ -1881,10 +1857,10 @@
                 if (layerCheese) layerCheese.style.display = 'none';
                 if (layerBasil) layerBasil.style.display = 'none';
                 if (layerBaked) layerBaked.style.display = 'none';
-                if (layerOlives) layerOlives.innerHTML = '';
-                if (layerMushrooms) layerMushrooms.innerHTML = '';
-                if (layerPeppers) layerPeppers.innerHTML = '';
-                if (layerChili) layerChili.innerHTML = '';
+                if (layerOlives) layerOlives.replaceChildren();
+                if (layerMushrooms) layerMushrooms.replaceChildren();
+                if (layerPeppers) layerPeppers.replaceChildren();
+                if (layerChili) layerChili.replaceChildren();
 
                 if (doughCrust) {
                     doughCrust.setAttribute('fill', '#fde68a');
@@ -1927,7 +1903,7 @@
                 } else if (actionType === 'mushrooms') {
                     kitchenState.hasMushrooms = true;
                     kitchenState.mushroomsCount += 2;
-                    addMushroomsSvg();
+                    addMushroomsSvg(kitchenState.mushroomsCount);
                 } else if (actionType === 'chili') {
                     kitchenState.hasChili = true;
                     addChiliSvg();
@@ -1935,6 +1911,14 @@
                     kitchenState.isBaked = true;
                     bakePizzaSvg();
                 }
+            }
+
+            function createSvgEl(tag, attrs) {
+                const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+                for (const [k, v] of Object.entries(attrs)) {
+                    el.setAttribute(k, String(v));
+                }
+                return el;
             }
 
             function addOliveSvg(count) {
@@ -1951,46 +1935,47 @@
                 ];
 
                 const pos = positions[(count - 1) % positions.length];
-                const oliveEl = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                oliveEl.innerHTML = `
-                    <circle cx="${pos.x}" cy="${pos.y}" r="6" fill="#1e1b4b" stroke="#0f172a" stroke-width="1.5" />
-                    <circle cx="${pos.x}" cy="${pos.y}" r="2.5" fill="#fde68a" />
-                `;
+                const oliveEl = createSvgEl('g', {});
+                oliveEl.appendChild(createSvgEl('circle', { cx: pos.x, cy: pos.y, r: 6, fill: '#1e1b4b', stroke: '#0f172a', 'stroke-width': 1.5 }));
+                oliveEl.appendChild(createSvgEl('circle', { cx: pos.x, cy: pos.y, r: 2.5, fill: '#fde68a' }));
                 group.appendChild(oliveEl);
             }
 
             function addPeppersSvg() {
                 const group = document.getElementById('layer-peppers');
                 if (!group) return;
-                group.innerHTML = `
-                    <path d="M70 95 Q85 85 90 98" stroke="#16a34a" stroke-width="5" stroke-linecap="round" fill="none" />
-                    <path d="M110 75 Q125 78 120 95" stroke="#eab308" stroke-width="5" stroke-linecap="round" fill="none" />
-                    <path d="M105 115 Q120 125 115 135" stroke="#16a34a" stroke-width="5" stroke-linecap="round" fill="none" />
-                `;
+                group.replaceChildren(
+                    createSvgEl('path', { d: 'M70 95 Q85 85 90 98', stroke: '#16a34a', 'stroke-width': 5, 'stroke-linecap': 'round', fill: 'none' }),
+                    createSvgEl('path', { d: 'M110 75 Q125 78 120 95', stroke: '#eab308', 'stroke-width': 5, 'stroke-linecap': 'round', fill: 'none' }),
+                    createSvgEl('path', { d: 'M105 115 Q120 125 115 135', stroke: '#16a34a', 'stroke-width': 5, 'stroke-linecap': 'round', fill: 'none' })
+                );
             }
 
-            function addMushroomsSvg() {
+            function addMushroomsSvg(totalCount) {
                 const group = document.getElementById('layer-mushrooms');
                 if (!group) return;
-                group.innerHTML = `
-                    <g transform="translate(80, 110)">
-                        <path d="M-6 0 C-6 -8 6 -8 6 0 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-                        <rect x="-2" y="0" width="4" height="5" fill="#cbd5e1" />
-                    </g>
-                    <g transform="translate(115, 75)">
-                        <path d="M-6 0 C-6 -8 6 -8 6 0 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-                        <rect x="-2" y="0" width="4" height="5" fill="#cbd5e1" />
-                    </g>
-                `;
+                const pairs = [
+                    [{ x: 76, y: 108 }, { x: 116, y: 76 }],
+                    [{ x: 96, y: 128 }, { x: 126, y: 104 }],
+                    [{ x: 72, y: 82 }, { x: 100, y: 72 }],
+                    [{ x: 86, y: 95 }, { x: 112, y: 124 }]
+                ];
+                const pairIdx = Math.max(0, Math.floor(((totalCount || 2) - 1) / 2)) % pairs.length;
+                pairs[pairIdx].forEach(p => {
+                    const g = createSvgEl('g', { transform: `translate(${p.x}, ${p.y})` });
+                    g.appendChild(createSvgEl('path', { d: 'M-6 0 C-6 -8 6 -8 6 0 Z', fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': 1 }));
+                    g.appendChild(createSvgEl('rect', { x: -2, y: 0, width: 4, height: 5, fill: '#cbd5e1' }));
+                    group.appendChild(g);
+                });
             }
 
             function addChiliSvg() {
                 const group = document.getElementById('layer-chili');
                 if (!group) return;
-                group.innerHTML = `
-                    <path d="M88 78 Q98 75 102 88" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round" fill="none" />
-                    <path d="M108 108 Q120 102 118 116" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round" fill="none" />
-                `;
+                group.replaceChildren(
+                    createSvgEl('path', { d: 'M88 78 Q98 75 102 88', stroke: '#ef4444', 'stroke-width': 4.5, 'stroke-linecap': 'round', fill: 'none' }),
+                    createSvgEl('path', { d: 'M108 108 Q120 102 118 116', stroke: '#ef4444', 'stroke-width': 4.5, 'stroke-linecap': 'round', fill: 'none' })
+                );
             }
 
             function bakePizzaSvg() {
@@ -2019,6 +2004,7 @@
             // GESTION DU RUBAN DE LA RECETTE (PROGRAMME)
             // ==========================================
             function renderRecipeTape() {
+                currentStepIndex = 0;
                 const track = document.getElementById('recipe-track');
                 const counter = document.getElementById('recipe-counter-badge');
                 if (!track) return;
@@ -2028,21 +2014,30 @@
                     counter.textContent = `${count} étape${count > 1 ? 's' : ''}`;
                 }
 
+                track.replaceChildren();
+
                 if (recipeTape.length === 0) {
-                    track.innerHTML = `
-                        <div class="recipe-empty-state" id="recipe-empty-state">
-                            <div class="recipe-empty-icon"><i data-fa="robot"></i></div>
-                            <div style="font-weight: 800; font-size: 1.05rem;">Le ruban est vide !</div>
-                            <div style="font-size: 0.9rem; max-width: 220px;">
-                                Clique sur les blocs à gauche pour programmer ta recette étape par étape.
-                            </div>
-                        </div>
-                    `;
-                    window.fa?.createIcons?.();
+                    const empty = document.createElement('div');
+                    empty.className = 'recipe-empty-state';
+                    empty.id = 'recipe-empty-state';
+                    const iconDiv = document.createElement('div');
+                    iconDiv.className = 'recipe-empty-icon';
+                    const iBot = document.createElement('i');
+                    iBot.setAttribute('data-fa', 'robot');
+                    iconDiv.appendChild(iBot);
+                    const titleDiv = document.createElement('div');
+                    titleDiv.style.fontWeight = '800';
+                    titleDiv.style.fontSize = '1.05rem';
+                    titleDiv.textContent = 'Le ruban est vide !';
+                    const subDiv = document.createElement('div');
+                    subDiv.style.fontSize = '0.9rem';
+                    subDiv.style.maxWidth = '220px';
+                    subDiv.textContent = 'Clique sur les blocs à gauche pour programmer ta recette étape par étape.';
+                    empty.append(iconDiv, titleDiv, subDiv);
+                    track.appendChild(empty);
+                    window.fa?.createIcons?.(track);
                     return;
                 }
-
-                track.innerHTML = '';
 
                 recipeTape.forEach((step, idx) => {
                     const stepItem = document.createElement('div');
@@ -2050,34 +2045,53 @@
                     stepItem.dataset.index = idx;
                     stepItem.id = `step-node-${idx}`;
 
-                    stepItem.innerHTML = `
-                        <div class="step-index-pill">${idx + 1}</div>
-                        <div class="step-info">
-                            <span class="step-icon">${step.icon}</span>
-                            <span class="step-title">${step.label}</span>
-                        </div>
-                        <div class="step-actions">
-                            <button class="step-btn-control btn-move-up" data-action="up" data-idx="${idx}" title="Monter" ${idx === 0 ? 'disabled' : ''}>
-                                <i data-fa="chevron-up"></i>
-                            </button>
-                            <button class="step-btn-control btn-move-down" data-action="down" data-idx="${idx}" title="Descendre" ${idx === recipeTape.length - 1 ? 'disabled' : ''}>
-                                <i data-fa="chevron-down"></i>
-                            </button>
-                            <button class="step-btn-control del btn-remove-step" data-action="remove" data-idx="${idx}" title="Supprimer">
-                                <i data-fa="trash"></i>
-                            </button>
-                        </div>
-                    `;
+                    const pill = document.createElement('div');
+                    pill.className = 'step-index-pill';
+                    pill.textContent = String(idx + 1);
 
+                    const info = document.createElement('div');
+                    info.className = 'step-info';
+                    const sIcon = document.createElement('span');
+                    sIcon.className = 'step-icon';
+                    sIcon.textContent = step.icon;
+                    const sTitle = document.createElement('span');
+                    sTitle.className = 'step-title';
+                    sTitle.textContent = step.label;
+                    info.append(sIcon, sTitle);
+
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'step-actions';
+
+                    const makeCtrlBtn = (cls, action, title, faName, disabled) => {
+                        const b = document.createElement('button');
+                        b.type = 'button';
+                        b.className = `step-btn-control ${cls}`;
+                        b.dataset.action = action;
+                        b.dataset.idx = String(idx);
+                        b.title = title;
+                        if (disabled) b.disabled = true;
+                        const ic = document.createElement('i');
+                        ic.setAttribute('data-fa', faName);
+                        b.appendChild(ic);
+                        return b;
+                    };
+
+                    actionsDiv.append(
+                        makeCtrlBtn('btn-move-up', 'up', 'Monter', 'chevron-up', idx === 0),
+                        makeCtrlBtn('btn-move-down', 'down', 'Descendre', 'chevron-down', idx === recipeTape.length - 1),
+                        makeCtrlBtn('del btn-remove-step', 'remove', 'Supprimer', 'trash', false)
+                    );
+
+                    stepItem.append(pill, info, actionsDiv);
                     track.appendChild(stepItem);
                 });
 
-                window.fa?.createIcons?.();
+                window.fa?.createIcons?.(track);
 
-                // Lier les boutons de déplacement et suppression
                 track.querySelectorAll('.step-btn-control').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
+                        if (isRunning) return;
                         const action = btn.dataset.action;
                         const idx = parseInt(btn.dataset.idx, 10);
                         if (isNaN(idx)) return;
@@ -2109,11 +2123,26 @@
                 recipeTape.push(blockData);
                 renderRecipeTape();
 
-                // Scroller vers le bas du ruban
                 const track = document.getElementById('recipe-track');
                 if (track) {
                     track.scrollTop = track.scrollHeight;
                 }
+            }
+
+            function setExecutionUILock(locked) {
+                isRunning = locked;
+                const runBtn = document.getElementById('btn-run-recipe');
+                const stepBtn = document.getElementById('btn-step-recipe');
+                const clearBtn = document.getElementById('btn-clear-recipe');
+                const stopBtn = document.getElementById('btn-stop-recipe');
+                if (runBtn) runBtn.disabled = locked;
+                if (stepBtn) stepBtn.disabled = locked;
+                if (clearBtn) clearBtn.disabled = locked;
+                if (stopBtn) stopBtn.style.display = locked ? 'inline-flex' : 'none';
+                document.querySelectorAll('.code-block-btn, .level-chip:not(.locked), .mode-tab-btn, .step-btn-control').forEach(el => {
+                    if (locked) el.setAttribute('data-run-locked', '1');
+                    el.disabled = locked || el.classList.contains('locked');
+                });
             }
 
             // ==========================================
@@ -2150,42 +2179,48 @@
                     return;
                 }
 
-                isRunning = true;
-                const runBtn = document.getElementById('btn-run-recipe');
-                const stepBtn = document.getElementById('btn-step-recipe');
-                const clearBtn = document.getElementById('btn-clear-recipe');
-
-                if (runBtn) runBtn.disabled = true;
-                if (stepBtn) stepBtn.disabled = true;
-                if (clearBtn) clearBtn.disabled = true;
+                const myToken = ++runAbortToken;
+                setExecutionUILock(true);
 
                 resetKitchen();
                 setBotDialogue('« C’est parti ! Chef Bot commence la préparation... »', 'happy');
                 window.playSound?.('click');
 
                 const customerTraits = getCustomerTraits();
+                let aborted = false;
 
                 for (let i = 0; i < recipeTape.length; i++) {
+                    if (runAbortToken !== myToken) {
+                        aborted = true;
+                        break;
+                    }
                     currentStepIndex = i;
                     highlightStepNode(i);
-                    await executeSingleStep(recipeTape[i], customerTraits);
+                    await executeSingleStep(recipeTape[i], customerTraits, myToken);
+                    if (runAbortToken !== myToken) {
+                        aborted = true;
+                        break;
+                    }
                     await sleep(getDelayMs());
                 }
 
                 unhighlightAllStepNodes();
-                finishRecipeEvaluation();
+                if (!aborted && runAbortToken === myToken) {
+                    finishRecipeEvaluation();
+                }
 
-                isRunning = false;
-                if (runBtn) runBtn.disabled = false;
-                if (stepBtn) stepBtn.disabled = false;
-                if (clearBtn) clearBtn.disabled = false;
+                setExecutionUILock(false);
+                renderRecipeTape();
             }
 
-            async function executeSingleStep(step, customerTraits) {
+            async function executeSingleStep(step, customerTraits, token) {
                 window.playSound?.('tick');
 
                 if (step.type === 'action') {
                     kitchenState.executedSteps.push(step.action);
+                    if (['peppers', 'mushrooms', 'chili', 'olive', 'basil'].includes(step.action)) {
+                        kitchenState.directToppings.push(step.action);
+                    }
                     applyActionToPizza(step.action);
 
                     if (step.action === 'dough') {
@@ -2242,6 +2277,7 @@
                     kitchenState.usedLoops.push(`repeat_${times}_${item}`);
 
                     for (let r = 1; r <= times; r++) {
+                        if (token !== undefined && token !== runAbortToken) break;
                         setBotDialogue(`« <strong>Boucle</strong> : Répétition ${r} sur ${times} pour ${item === 'olive' ? 'les olives' : 'les champignons'} ! »`, 'happy');
                         if (item === 'olive') {
                             kitchenState.executedSteps.push('olive');
@@ -2289,7 +2325,7 @@
                 if (!evalCard || !checklistEl) return;
 
                 evalCard.style.display = 'flex';
-                checklistEl.innerHTML = '';
+                checklistEl.replaceChildren();
 
                 if (currentMode === 'defis') {
                     const currentDefi = CHALLENGES[currentLevel - 1];
@@ -2298,12 +2334,14 @@
                     result.checks.forEach(check => {
                         const row = document.createElement('div');
                         row.className = 'eval-check-item';
-                        row.innerHTML = `
-                            <i data-fa="${check.ok ? 'circle-check' : 'circle-xmark'}" style="color: ${check.ok ? 'var(--success)' : 'var(--error)'};"></i>
-                            <span style="color: ${check.ok ? 'var(--text-main)' : 'var(--error)'}; font-weight: ${check.ok ? '600' : '700'};">
-                                ${check.label}
-                            </span>
-                        `;
+                        const ic = document.createElement('i');
+                        ic.setAttribute('data-fa', check.ok ? 'circle-check' : 'circle-xmark');
+                        ic.style.color = check.ok ? 'var(--success)' : 'var(--error)';
+                        const sp = document.createElement('span');
+                        sp.style.color = check.ok ? 'var(--text-main)' : 'var(--error)';
+                        sp.style.fontWeight = check.ok ? '600' : '700';
+                        sp.textContent = check.label;
+                        row.append(ic, sp);
                         checklistEl.appendChild(row);
                     });
 
@@ -2312,6 +2350,7 @@
                         evalTitleText.textContent = 'Bravo ! Commande parfaitement réussie !';
                         setBotDialogue(`« Miam ! C’est exactement ce que ${currentDefi.customer} demandait ! Félicitations ! »`, 'happy');
                         window.playSound?.('win');
+                        window.ScoreManager?.addSuccess?.('fabrique_recette', String(currentLevel), 0);
 
                         currentStreak++;
                         if (!completedLevels.includes(currentLevel)) {
@@ -2343,6 +2382,7 @@
                         evalTitleText.textContent = 'Oups, l’algorithme contient une erreur !';
                         setBotDialogue('« Regarde les points rouges sur la fiche : ton algorithme a besoin d’un petit ajustement ! »', 'error');
                         window.playSound?.('error');
+                        window.ScoreManager?.addMistake?.('fabrique_recette', String(currentLevel));
 
                         currentStreak = 0;
                         saveProgress();
@@ -2373,12 +2413,18 @@
                     if (kitchenState.hasChili) summary.push('Piment');
                     if (kitchenState.isBaked) summary.push('Cuite au four');
 
-                    checklistEl.innerHTML = `
-                        <div class="eval-check-item">
-                            <i data-fa="circle-check" style="color: var(--success);"></i>
-                            <span>Ingrédients : <strong>${summary.join(', ') || 'Aucun'}</strong></span>
-                        </div>
-                    `;
+                    const row = document.createElement('div');
+                    row.className = 'eval-check-item';
+                    const ic = document.createElement('i');
+                    ic.setAttribute('data-fa', 'circle-check');
+                    ic.style.color = 'var(--success)';
+                    const sp = document.createElement('span');
+                    sp.appendChild(document.createTextNode('Ingrédients : '));
+                    const st = document.createElement('strong');
+                    st.textContent = summary.join(', ') || 'Aucun';
+                    sp.appendChild(st);
+                    row.append(ic, sp);
+                    checklistEl.appendChild(row);
 
                     setBotDialogue('« Quelle magnifique recette originale ! Chef Bot s’est régalé à exécuter ton algorithme ! »', 'happy');
                     window.playSound?.('success');
@@ -2386,7 +2432,10 @@
                     if (btnNext) btnNext.style.display = 'none';
                     if (btnRetry) {
                         btnRetry.style.display = 'inline-flex';
-                        btnRetry.innerHTML = '<i data-fa="plus"></i> Créer une autre recette';
+                        btnRetry.replaceChildren();
+                        const icPlus = document.createElement('i');
+                        icPlus.setAttribute('data-fa', 'plus');
+                        btnRetry.append(icPlus, document.createTextNode(' Créer une autre recette'));
                         btnRetry.onclick = () => {
                             evalCard.style.display = 'none';
                             resetKitchen();
@@ -2403,26 +2452,30 @@
             function renderLevelsBar() {
                 const bar = document.getElementById('levels-selector-bar');
                 if (!bar) return;
-                bar.innerHTML = '';
+                bar.replaceChildren();
 
                 CHALLENGES.forEach(defi => {
                     const isCompleted = completedLevels.includes(defi.id);
                     const isActive = defi.id === currentLevel;
-                    // Débloqué si précédent réussi ou si niveau 1
                     const isUnlocked = defi.id === 1 || completedLevels.includes(defi.id - 1);
 
                     const chip = document.createElement('button');
+                    chip.type = 'button';
                     chip.className = `level-chip ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''} ${!isUnlocked ? 'locked' : ''}`;
                     chip.dataset.level = defi.id;
+                    if (!isUnlocked) chip.disabled = true;
 
                     let iconName = 'circle';
                     if (isCompleted) iconName = 'circle-check';
                     else if (!isUnlocked) iconName = 'lock';
 
-                    chip.innerHTML = `<i data-fa="${iconName}"></i> Niveau ${defi.id}`;
+                    const ic = document.createElement('i');
+                    ic.setAttribute('data-fa', iconName);
+                    chip.append(ic, document.createTextNode(` Niveau ${defi.id}`));
 
                     if (isUnlocked) {
                         chip.addEventListener('click', () => {
+                            if (isRunning) return;
                             goToLevel(defi.id);
                         });
                     }
@@ -2430,7 +2483,7 @@
                     bar.appendChild(chip);
                 });
 
-                window.fa?.createIcons?.();
+                window.fa?.createIcons?.(bar);
             }
 
             function goToLevel(lvl) {
@@ -2503,6 +2556,7 @@
             // INITIALISATION ÉVÉNEMENTS
             // ==========================================
             function initApp() {
+                window.ScoreManager?.init?.('fabrique_recette');
                 loadProgress();
                 updateStatsUI();
                 renderLevelsBar();
@@ -2585,24 +2639,41 @@
                 if (btnStep) {
                     btnStep.addEventListener('click', async () => {
                         if (isRunning || recipeTape.length === 0) return;
-                        if (currentStepIndex >= recipeTape.length) {
-                            currentStepIndex = 0;
+                        const myToken = ++runAbortToken;
+                        setExecutionUILock(true);
+                        if (currentStepIndex >= recipeTape.length || currentStepIndex === 0) {
                             resetKitchen();
                         }
                         highlightStepNode(currentStepIndex);
                         const customerTraits = getCustomerTraits();
-                        await executeSingleStep(recipeTape[currentStepIndex], customerTraits);
-                        currentStepIndex++;
-                        if (currentStepIndex >= recipeTape.length) {
-                            unhighlightAllStepNodes();
-                            finishRecipeEvaluation();
+                        await executeSingleStep(recipeTape[currentStepIndex], customerTraits, myToken);
+                        if (runAbortToken === myToken) {
+                            currentStepIndex++;
+                            if (currentStepIndex >= recipeTape.length) {
+                                unhighlightAllStepNodes();
+                                finishRecipeEvaluation();
+                            }
                         }
+                        setExecutionUILock(false);
+                    });
+                }
+
+                const btnStop = document.getElementById('btn-stop-recipe');
+                if (btnStop) {
+                    btnStop.addEventListener('click', () => {
+                        runAbortToken++;
+                        setExecutionUILock(false);
+                        unhighlightAllStepNodes();
+                        resetKitchen();
+                        renderRecipeTape();
+                        setBotDialogue('« Exécution arrêtée. Modifie tes blocs quand tu veux ! »', 'thinking');
                     });
                 }
 
                 const btnClear = document.getElementById('btn-clear-recipe');
                 if (btnClear) {
                     btnClear.addEventListener('click', () => {
+                        if (isRunning) return;
                         window.playSound?.('click');
                         recipeTape = [];
                         renderRecipeTape();

@@ -45,15 +45,15 @@
             --container-bg: rgba(255, 255, 255, 0.9);
             --text-main: #164e63;
             --text-secondary: #0e7490;
-            --text-muted: #06b6d4;
+            --text-muted: #475569;
             --accent: #0891b2;
             --accent-dark: #0e7490;
             --badge-bg: #cffafe;
             --badge-color: #155e75;
             --input-border: #22d3ee;
             --instructions-bg: #ecfeff;
-            --success: #10b981;
-            --error: #ef4444;
+            --success: #047857;
+            --error: #dc2626;
             --shadow-color: rgba(8, 145, 178, 0.15);
             --code-bg: #1e1e3f;
             --code-text: #f8fafc;
@@ -77,6 +77,11 @@
             --success: #34d399;
             --error: #f87171;
             --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark .btn-primary,
+        body.dark .tab-btn.active {
+            color: #0f172a;
         }
 
         * {
@@ -120,9 +125,9 @@
             font-size: 14px;
         }
 
-        /* ========== DIFFICULTÉ (Masqué par défaut, affiché dans les modes qui en ont besoin) ========== */
+        /* ========== DIFFICULTÉ ========== */
         .difficulty-bar {
-            display: none;
+            display: flex;
             justify-content: center;
             gap: 12px;
             margin-bottom: 25px;
@@ -174,8 +179,31 @@
         
         body.dark .diff-btn.active {
             background: var(--accent);
-            color: white;
+            color: #0f172a;
             border-color: var(--accent);
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #000000;
+            --bg-gradient-end: #000000;
+            --card-bg: #000000;
+            --card-border: #ffffff;
+            --container-bg: #000000;
+            --text-main: #ffffff;
+            --text-secondary: #facc15;
+            --text-muted: #ffffff;
+            --accent: #facc15;
+            --accent-dark: #fde047;
+            --badge-bg: #1f2937;
+            --badge-color: #facc15;
+            --instructions-bg: #111827;
+            --success: #4ade80;
+            --error: #f87171;
+        }
+
+        body.high-contrast .diff-btn.active,
+        body.high-contrast .btn-success {
+            color: #000000;
         }
         
         /* Correct SVG scale and prevent distortions */
@@ -851,6 +879,10 @@
         }
 
         @media (max-width: 600px) {
+            html body,
+            html body:has(.tabs) {
+                padding: 12px 12px calc(140px + env(safe-area-inset-bottom, 0px)) !important;
+            }
             .btn-group {
                 flex-direction: column;
                 width: 100%;
@@ -877,6 +909,8 @@
             }
         }
     </style>
+    <script src="../../assets/js/i18n.js"></script>
+    <script src="../../assets/js/i18n/de.js"></script>
     <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
@@ -884,8 +918,6 @@
 
 <body>
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-
-    <canvas id="confetti-canvas"></canvas>
 
     <div class="container" id="main-content">
         <header class="app-header">
@@ -1044,6 +1076,8 @@
         </main>
     </div>
 
+    <canvas id="confetti-canvas"></canvas>
+
     <footer class="no-print">
         <p>
             <span data-i18n="common.footer.app_designed_by">Webapp conçue par Vivian Epiney de l'</span><a
@@ -1072,12 +1106,29 @@
         ScoreManager.MODE_LABELS['pseudo_bug'] = '5. Débogage';
 
         // Chapter state variables
-        let currentMode = 'pseudo_var'; // 'pseudo_var', 'pseudo_cond', 'pseudo_loop', 'pseudo_while'
+        let currentMode = 'pseudo_var'; // 'pseudo_var', 'pseudo_cond', 'pseudo_loop', 'pseudo_while', 'pseudo_bug'
         let activeDropdownIdx = null;
+        let originalLines = [];
         let removedLine = null;
         let removedLineIdx = -1;
         let choices = [];
         let isWaitingForInput = false;
+        let autoAdvanceTimer = null;
+        let condBranchTaken = false;
+
+        function setSafeHtml(el, html) {
+            if (!el) return;
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            el.replaceChildren(...doc.body.childNodes);
+        }
+
+        function setIconLabel(el, iconName, text, iconColor) {
+            if (!el) return;
+            const icon = document.createElement('i');
+            icon.setAttribute('data-fa', iconName);
+            if (iconColor) icon.style.color = iconColor;
+            el.replaceChildren(icon, document.createTextNode(' ' + text));
+        }
 
         let hardwareState = {
             screen_text: "CHOISIR TRAJET",
@@ -1405,50 +1456,36 @@
 
         // Initialize Level
         function initLevel() {
-            // Dynamically show/hide difficulty buttons and adjust titles for pseudo_bug
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            // Dynamically configure difficulty buttons and adjust titles for pseudo_bug
             const diffBar = document.querySelector('.difficulty-bar');
             const diffMedium = document.getElementById('diff-medium');
             const diffEasy = document.getElementById('diff-easy');
             const diffHard = document.getElementById('diff-hard');
 
+            if (diffBar) {
+                diffBar.style.display = 'flex';
+            }
+
             if (currentMode === 'pseudo_bug') {
-                if (diffBar) {
-                    diffBar.style.display = 'flex';
-                }
-                if (diffMedium) {
-                    diffMedium.style.display = 'none';
-                }
-                if (diffEasy) {
-                    diffEasy.innerHTML = '<i data-fa="ticket"></i> Distributeur de billets';
-                }
-                if (diffHard) {
-                    diffHard.innerHTML = '<i data-fa="volume-high"></i> Haut-parleur connecté';
-                }
-                
-                // If it was medium, reset to easy
+                if (diffMedium) diffMedium.style.display = 'none';
+                setIconLabel(diffEasy, 'ticket', 'Distributeur de billets');
+                setIconLabel(diffHard, 'volume-high', 'Haut-parleur connecté');
                 if (currentDifficulty === 'medium') {
                     currentDifficulty = 'easy';
-                    document.querySelectorAll('.diff-btn').forEach(b => {
-                        b.classList.remove('active');
-                    });
-                    if (diffEasy) {
-                        diffEasy.classList.add('active');
-                    }
                 }
             } else {
-                if (diffBar) {
-                    diffBar.style.display = 'none';
-                }
-                if (diffMedium) {
-                    diffMedium.style.display = '';
-                }
-                if (diffEasy) {
-                    diffEasy.innerHTML = '<i data-fa="circle" style="color: #2ecc71;"></i> Facile';
-                }
-                if (diffHard) {
-                    diffHard.innerHTML = '<i data-fa="circle" style="color: #e74c3c;"></i> Difficile';
-                }
+                if (diffMedium) diffMedium.style.display = '';
+                setIconLabel(diffEasy, 'circle', 'Facile', '#2ecc71');
+                setIconLabel(diffHard, 'circle', 'Difficile', '#e74c3c');
             }
+
+            document.querySelectorAll('.diff-btn').forEach(b => {
+                b.classList.toggle('active', b.id === `diff-${currentDifficulty}`);
+            });
 
             // Update panel titles and console visibility based on mode
             const editorTitle = document.getElementById('editor-title');
@@ -1456,12 +1493,12 @@
             const consoleWrapper = document.getElementById('console-wrapper');
 
             if (currentMode === 'pseudo_bug') {
-                editorTitle.innerHTML = '<i data-fa="code"></i> Code du logiciel (software)';
-                renderTitle.innerHTML = '<i data-fa="microchip"></i> Appareil (hardware)';
+                setIconLabel(editorTitle, 'code', 'Code du logiciel (software)');
+                setIconLabel(renderTitle, 'microchip', 'Appareil (hardware)');
                 if (consoleWrapper) consoleWrapper.style.display = 'none';
             } else {
-                editorTitle.innerHTML = '<i data-fa="clipboard"></i> Algorithme';
-                renderTitle.innerHTML = '<i data-fa="desktop"></i> Résultat';
+                setIconLabel(editorTitle, 'clipboard', 'Algorithme');
+                setIconLabel(renderTitle, 'desktop', 'Résultat');
                 if (consoleWrapper) consoleWrapper.style.display = '';
             }
             window.fa?.createIcons?.();
@@ -1493,16 +1530,15 @@
                 removedLine = lines.splice(removedLineIdx, 1)[0];
 
                 // Récupère les autres textes de lignes uniques pour créer les fausses options
-                const uniqueTexts = [...new Set(originalLines.map(l => { return l.val; }).filter(val => { return val && val !== removedLine.val; }))];
+                const uniqueTexts = [...new Set(originalLines.map(l => l.val).filter(val => val && val !== removedLine.val))];
                 let option2 = uniqueTexts[Math.floor(Math.random() * uniqueTexts.length)] || "terminer le processus";
-                let remainingTexts = uniqueTexts.filter(t => { return t !== option2; });
-                let option3 = remainingTexts[Math.floor(Math.random() * remainingTexts.length)] || "afficher \"Erreur\"";
+                let remainingTexts = uniqueTexts.filter(t => t !== option2);
+                let option3 = remainingTexts[Math.floor(Math.random() * remainingTexts.length)] || 'afficher "Erreur"';
 
                 choices = [removedLine.val, option2, option3];
-                choices.sort(() => { return Math.random() - 0.5; });
+                choices.sort(() => Math.random() - 0.5);
 
-                let diffBadge = ''; // Pas de niveaux/difficultés ici, ce sont deux hardwares différents
-                document.getElementById('level-target').innerHTML = diffBadge + mission.targetText;
+                setSafeHtml(document.getElementById('level-target'), mission.targetText);
 
                 renderPseudocode();
                 renderVisualizer();
@@ -1519,13 +1555,13 @@
             // Render difficulty badge
             let diffBadge = '';
             if (currentDifficulty === 'easy') {
-                diffBadge = '<span class="badge" style="background: #2ecc71; color: white; margin-bottom: 8px; display: inline-block;">Niveau Facile</span><br>';
+                diffBadge = '<span class="badge" style="background: #15803d; color: white; margin-bottom: 8px; display: inline-block;">Niveau Facile</span><br>';
             } else if (currentDifficulty === 'medium') {
-                diffBadge = '<span class="badge" style="background: #f1c40f; color: white; margin-bottom: 8px; display: inline-block;">Niveau Moyen</span><br>';
+                diffBadge = '<span class="badge" style="background: #b45309; color: white; margin-bottom: 8px; display: inline-block;">Niveau Moyen</span><br>';
             } else if (currentDifficulty === 'hard') {
-                diffBadge = '<span class="badge" style="background: #e74c3c; color: white; margin-bottom: 8px; display: inline-block;">Niveau Difficile</span><br>';
+                diffBadge = '<span class="badge" style="background: #b91c1c; color: white; margin-bottom: 8px; display: inline-block;">Niveau Difficile</span><br>';
             }
-            document.getElementById('level-target').innerHTML = diffBadge + mission.targetText;
+            setSafeHtml(document.getElementById('level-target'), diffBadge + mission.targetText);
 
             // Correction : Render DOM wrappers FIRST, then call resetExecution() to copy values and synchronize DOM
             renderPseudocode();
@@ -1573,7 +1609,9 @@
                     if (line.isUserAdded) {
                         const delBtn = document.createElement('span');
                         delBtn.className = 'del-btn';
-                        delBtn.innerHTML = '<i data-fa="trash"></i>';
+                        const trashIcon = document.createElement('i');
+                        trashIcon.setAttribute('data-fa', 'trash');
+                        delBtn.appendChild(trashIcon);
                         delBtn.addEventListener('click', (e) => {
                             e.stopPropagation();
                             lines.splice(idx, 1);
@@ -1595,7 +1633,9 @@
                     const interlineBtn = document.createElement('button');
                     interlineBtn.className = 'interline-btn';
                     interlineBtn.setAttribute('title', 'Insérer une instruction');
-                    interlineBtn.innerHTML = '<i data-fa="plus"></i>';
+                    const plusIcon = document.createElement('i');
+                    plusIcon.setAttribute('data-fa', 'plus');
+                    interlineBtn.appendChild(plusIcon);
                     interline.appendChild(interlineBtn);
 
                     interline.addEventListener('click', (e) => {
@@ -1933,7 +1973,7 @@
                     // Distributeur de billets
                     const machine = document.createElement('div');
                     machine.className = 'distributeur-svg';
-                    machine.innerHTML = `
+                    setSafeHtml(machine, `
                         <div class="dist-screen">
                             <div id="hw-screen">CHOISIR TRAJET</div>
                             <div id="hw-subtext" class="dist-screen-sub"></div>
@@ -1946,7 +1986,7 @@
                             <div class="ticket-slot" id="hw-ticket-slot"><i data-fa="ticket"></i> Billet</div>
                             <div class="coin-slot" id="btn-coin"><i data-fa="coins"></i> Cash (+2.00)</div>
                         </div>
-                    `;
+                    `);
                     area.appendChild(machine);
 
                     document.getElementById('btn-adulte').addEventListener('click', () => triggerHardwareEvent('adulte'));
@@ -1956,7 +1996,7 @@
                     // Haut-parleur sans fil
                     const speaker = document.createElement('div');
                     speaker.className = 'distributeur-svg';
-                    speaker.innerHTML = `
+                    setSafeHtml(speaker, `
                         <div style="display: flex; align-items: center; justify-content: center; padding: 15px;">
                             <svg viewBox="0 0 120 120" width="120" height="120" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));">
                                 <!-- Cabinet box -->
@@ -1983,7 +2023,7 @@
                             <button class="dist-btn" id="btn-play-hw"><i data-fa="play"></i> Play</button>
                             <button class="dist-btn" id="btn-pause-hw"><i data-fa="pause"></i> Pause</button>
                         </div>
-                    `;
+                    `);
                     area.appendChild(speaker);
 
                     document.getElementById('btn-power').addEventListener('click', () => triggerHardwareEvent('power'));
@@ -2129,23 +2169,28 @@
                 const degrees = robotDirection * 90;
                 robDiv.style.transform = `rotate(${degrees}deg)`;
 
-                // Symmetrical high-tech abstract drone SVG (fully neutral, no front/back face)
-                robDiv.innerHTML = `
-                    <svg viewBox="0 0 100 100" fill="currentColor">
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="8"/>
-                        <circle cx="50" cy="50" r="28" fill="currentColor" opacity="0.3"/>
-                        <circle cx="50" cy="50" r="16" fill="currentColor"/>
-                        <line x1="50" y1="8" x2="50" y2="92" stroke="currentColor" stroke-width="4" opacity="0.5"/>
-                        <line x1="8" y1="50" x2="92" y2="50" stroke="currentColor" stroke-width="4" opacity="0.5"/>
-                    </svg>
-                `;
+                // Symmetrical high-tech abstract drone SVG built safely with createElementNS
+                const droneSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                droneSvg.setAttribute('viewBox', '0 0 100 100');
+                droneSvg.setAttribute('fill', 'currentColor');
+                const addSvg = (tag, attrs) => {
+                    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+                    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+                    droneSvg.appendChild(el);
+                };
+                addSvg('circle', { cx: '50', cy: '50', r: '42', fill: 'none', stroke: 'currentColor', 'stroke-width': '8' });
+                addSvg('circle', { cx: '50', cy: '50', r: '28', fill: 'currentColor', opacity: '0.3' });
+                addSvg('circle', { cx: '50', cy: '50', r: '16', fill: 'currentColor' });
+                addSvg('line', { x1: '50', y1: '8', x2: '50', y2: '92', stroke: 'currentColor', 'stroke-width': '4', opacity: '0.5' });
+                addSvg('line', { x1: '8', y1: '50', x2: '92', y2: '50', stroke: 'currentColor', 'stroke-width': '4', opacity: '0.5' });
+                robDiv.replaceChildren(droneSvg);
                 robotCell.appendChild(robDiv);
             }
         }
 
         // Print to LED screen
         function printToConsole(text) {
-            outputs.push(text);
+            outputs.push(String(text));
             const consoleDiv = document.getElementById('console-body');
             const placeholder = consoleDiv.querySelector('div');
             if (placeholder && placeholder.style.fontStyle === 'italic') {
@@ -2187,6 +2232,9 @@
                 if (executionState === 'running') {
                     pauseExecution();
                 } else {
+                    if (executionState === 'finished') {
+                        resetExecution();
+                    }
                     startExecution();
                 }
             });
@@ -2194,7 +2242,9 @@
             document.getElementById('btn-step').addEventListener('click', () => {
                 if (executionState === 'idle' || executionState === 'paused') {
                     executionState = 'paused';
-                    document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Reprendre';
+                    const playBtn = document.getElementById('btn-play');
+                    setIconLabel(playBtn, 'play', 'Reprendre');
+                    window.fa?.createIcons?.(playBtn);
                     runStep();
                 }
             });
@@ -2214,6 +2264,11 @@
 
         // Reset Execution variables and restore initial states
         function resetExecution() {
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            condBranchTaken = false;
             if (currentMode === 'pseudo_bug') {
                 if (executionInterval) {
                     clearInterval(executionInterval);
@@ -2243,12 +2298,10 @@
                 renderVisualizer();
 
                 document.getElementById('execution-msg').textContent = 'Prêt';
-                document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Lancer';
-                document.getElementById('btn-play').className = 'btn btn-success';
-                
-                if (window.fa && window.fa.createIcons) {
-                    window.fa.createIcons();
-                }
+                const btnPlay = document.getElementById('btn-play');
+                setIconLabel(btnPlay, 'play', 'Lancer');
+                btnPlay.className = 'btn btn-success';
+                window.fa?.createIcons?.(btnPlay);
                 return;
             }
 
@@ -2283,8 +2336,9 @@
 
             // Reset execution status message
             document.getElementById('execution-msg').textContent = 'Prêt à l\'exécution';
-            document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Lancer';
-            document.getElementById('btn-play').className = 'btn btn-success';
+            const btnPlay = document.getElementById('btn-play');
+            setIconLabel(btnPlay, 'play', 'Lancer');
+            btnPlay.className = 'btn btn-success';
 
             window.fa?.createIcons?.();
         }
@@ -2292,8 +2346,9 @@
         // Execution Controller loops
         function startExecution() {
             executionState = 'running';
-            document.getElementById('btn-play').innerHTML = '<i data-fa="pause"></i> Pause';
-            document.getElementById('btn-play').className = 'btn btn-clear';
+            const btnPlay = document.getElementById('btn-play');
+            setIconLabel(btnPlay, 'pause', 'Pause');
+            btnPlay.className = 'btn btn-clear';
             document.getElementById('execution-msg').textContent = 'Exécution en cours…';
             window.fa?.createIcons?.();
 
@@ -2313,8 +2368,9 @@
 
         function pauseExecution() {
             executionState = 'paused';
-            document.getElementById('btn-play').innerHTML = '<i data-fa="play"></i> Reprendre';
-            document.getElementById('btn-play').className = 'btn btn-success';
+            const btnPlay = document.getElementById('btn-play');
+            setIconLabel(btnPlay, 'play', 'Reprendre');
+            btnPlay.className = 'btn btn-success';
             document.getElementById('execution-msg').textContent = 'Exécution en pause';
             window.fa?.createIcons?.();
             if (executionInterval) clearInterval(executionInterval);
@@ -2485,7 +2541,7 @@
                         if (line.event === 'bluetooth_conn' && hardwareState.phone_connected) {
                             isWaitingForInput = false;
                         }
-                        if (line.event === 'speaker_cmd' && (!hardwareState.power_on || hardwareState.music_playing || !hardwareState.music_playing)) {
+                        if (line.event === 'speaker_cmd') {
                             isWaitingForInput = true;
                         }
                     } else if (line.type === 'cmd') {
@@ -2559,6 +2615,7 @@
                     }
                 } else if (currentLine.val === 'FinSi') {
                     // End condition block
+                    condBranchTaken = false;
                 } else if (currentLine.val === 'FinRépéter') {
                     // Loop repeater
                     loopCounter++;
@@ -2598,8 +2655,22 @@
                 const result = rightVal + opVal;
                 setVariable(currentLine.var.toLowerCase(), result);
             } else if (currentLine.type === 'text') {
-                // Automated execution lines
-                if (currentLine.val === 'colonne ← 0') {
+                // Automated execution lines (including TEMP ← A, A ← 3, B ← 8, etc.)
+                if (currentLine.val === 'A ← 3') {
+                    setVariable('a', 3);
+                } else if (currentLine.val === 'B ← 8') {
+                    setVariable('b', 8);
+                } else if (currentLine.val === 'B ← 7') {
+                    setVariable('b', 7);
+                } else if (currentLine.val === 'TEMP ← A') {
+                    setVariable('temp', variables.a);
+                } else if (currentLine.val === 'âge ← 20') {
+                    setVariable('âge', 20);
+                } else if (currentLine.val === 'temp ← 32') {
+                    setVariable('temp', 32);
+                } else if (currentLine.val === 'note ← 5') {
+                    setVariable('note', 5);
+                } else if (currentLine.val === 'colonne ← 0') {
                     setVariable('colonne', 0);
                 } else if (currentLine.val === 'colonne ← colonne + 1') {
                     setVariable('colonne', variables.colonne + 1);
@@ -2621,7 +2692,16 @@
                     setVariable('resolution', result);
                 }
             } else if (currentLine.type === 'cond_select') {
-                // If condition
+                // If / Sinon Si condition (respecting mutually exclusive branches)
+                const isElseIf = Boolean(currentLine.label && currentLine.label.startsWith('Sinon Si'));
+                if (isElseIf && condBranchTaken) {
+                    const finSiIdx = lines.findIndex((l, i) => i > currentLineIdx && l.val === 'FinSi');
+                    if (finSiIdx !== -1) {
+                        currentLineIdx = finSiIdx - 1;
+                    }
+                    return;
+                }
+
                 const val = variables[currentLine.var ? currentLine.var.toLowerCase() : 'âge'];
                 let isConditionMet = false;
                 if (currentLine.operator === 'op') {
@@ -2629,15 +2709,16 @@
                     else isConditionMet = val <= 18;
                 } else if (currentLine.operator === '>') {
                     isConditionMet = val > currentLine.selected;
-                } else if (currentLine.label && currentLine.label.includes('Si note')) {
+                } else if (currentLine.label && currentLine.label.includes('note')) {
                     isConditionMet = val >= currentLine.selected;
                 }
 
-                if (!isConditionMet) {
-                    // Condition failed, skip to Sinon
-                    let sinonIdx = lines.findIndex((l, i) => i > currentLineIdx && (l.val === 'Sinon' || l.label === 'Sinon Si note ≥' || l.val === 'FinSi'));
+                if (isConditionMet) {
+                    condBranchTaken = true;
+                } else {
+                    const sinonIdx = lines.findIndex((l, i) => i > currentLineIdx && (l.val === 'Sinon' || (l.label && l.label.startsWith('Sinon Si')) || l.val === 'FinSi'));
                     if (sinonIdx !== -1) {
-                        currentLineIdx = sinonIdx - 1; // subtract 1 since index increments next step
+                        currentLineIdx = sinonIdx - 1;
                     }
                 }
             } else if (currentLine.type === 'loop_select') {
@@ -2761,16 +2842,19 @@
 
             // Verification
             const verifySuccess = MISSIONS[currentMode][currentDifficulty].verify();
+            const btnPlay = document.getElementById('btn-play');
+            setIconLabel(btnPlay, 'play', 'Rejouer');
 
             if (verifySuccess) {
                 document.getElementById('execution-msg').textContent = 'Succès ! Mission accomplie 🎉';
-                document.getElementById('btn-play').className = 'btn btn-outline';
+                btnPlay.className = 'btn btn-outline';
+                window.fa?.createIcons?.(btnPlay);
                 playSound('success');
                 updateScore(true);
 
                 // Auto-advance linear progression (Easy -> Medium -> Hard) on victory
-                if (currentDifficulty === 'easy') {
-                    setTimeout(() => {
+                if (currentDifficulty === 'easy' && currentMode !== 'pseudo_bug') {
+                    autoAdvanceTimer = setTimeout(() => {
                         if (executionState === 'finished') {
                             currentDifficulty = 'medium';
                             initLevel();
@@ -2778,7 +2862,7 @@
                         }
                     }, 2500);
                 } else if (currentDifficulty === 'medium') {
-                    setTimeout(() => {
+                    autoAdvanceTimer = setTimeout(() => {
                         if (executionState === 'finished') {
                             currentDifficulty = 'hard';
                             initLevel();
@@ -2791,7 +2875,8 @@
                 }
             } else {
                 document.getElementById('execution-msg').textContent = 'Erreur… L\'algorithme n\'a pas rempli la cible.';
-                document.getElementById('btn-play').className = 'btn btn-outline-error';
+                btnPlay.className = 'btn btn-outline-error';
+                window.fa?.createIcons?.(btnPlay);
                 playSound('error');
                 updateScore(false);
 
@@ -2933,6 +3018,30 @@
             setupEventListeners();
             initLevel();
         }
+
+        window.__onResetApp = function () {
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            if (executionInterval) {
+                clearInterval(executionInterval);
+                executionInterval = null;
+            }
+            globalCorrect = 0;
+            globalStreak = 0;
+            mistakesInCurrentLevel = 0;
+            document.getElementById('global-correct').textContent = '0';
+            document.getElementById('global-streak').textContent = '0';
+            currentMode = 'pseudo_var';
+            currentDifficulty = 'easy';
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-pseudo_var')?.classList.add('active');
+            initLevel();
+            if (typeof showToast === 'function') {
+                showToast('Application réinitialisée !', 'info');
+            }
+        };
 
         window.addEventListener('load', init);
     </script>

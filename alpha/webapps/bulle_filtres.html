@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="../../assets/css/utilities.css">
     <script src="../../assets/js/i18n.js"></script>
     <script src="../../assets/js/i18n/de.js"></script>
+    <script src="../../assets/js/scores.js"></script>
     <script src="../../assets/js/audio.js"></script>
     <script src="../../assets/js/fa-subset.js"></script>
     <style>
@@ -580,6 +581,63 @@
 
         .feed-btn-pass {
             background: linear-gradient(135deg, #475569, #64748b);
+        }
+
+        .feed-btn-diversify {
+            grid-column: 1 / -1;
+            min-height: 44px;
+            flex-direction: row;
+            gap: 6px;
+            background: linear-gradient(135deg, #047857, #059669);
+        }
+
+        .algo-draw-toggle-btn {
+            border: 1px solid var(--card-border);
+            background: var(--instructions-bg);
+            color: var(--text-main);
+            border-radius: var(--radius-pill, 30px);
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .algo-draw-toggle-btn:hover {
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 440px) {
+            .smartphone-frame {
+                max-width: 100%;
+                border-radius: 24px;
+                padding: 8px;
+            }
+            .smartphone-inner {
+                border-radius: 18px;
+                min-height: 500px;
+            }
+            .post-action-buttons {
+                gap: 6px;
+            }
+            .feed-btn {
+                font-size: 0.7rem;
+                min-height: 46px;
+            }
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #000;
+            --bg-gradient-end: #000;
+            --container-bg: #000;
+            --card-bg: #000;
+            --card-border: #fff;
+            --text-main: #fff;
+            --text-secondary: #facc15;
+            --text-muted: #fff;
+            --accent: #facc15;
+            --badge-bg: #1f2937;
+            --badge-color: #facc15;
+            --instructions-bg: #111827;
         }
 
         .smartphone-hint {
@@ -1326,17 +1384,21 @@
                                     </div>
 
                                     <div class="post-action-buttons">
-                                        <button class="feed-btn feed-btn-like" id="btn-like" title="Aimer (+3 affinité)">
+                                        <button class="feed-btn feed-btn-like" id="btn-like" title="Aimer le sujet">
                                             <i data-fa="heart"></i>
-                                            <span>J'aime (+3)</span>
+                                            <span id="btn-like-label">J'aime (+3)</span>
                                         </button>
-                                        <button class="feed-btn feed-btn-watch" id="btn-watch" title="Regarder (+2 affinité)">
+                                        <button class="feed-btn feed-btn-watch" id="btn-watch" title="Regarder la vidéo">
                                             <i data-fa="eye"></i>
-                                            <span>Regarder (+2)</span>
+                                            <span id="btn-watch-label">Regarder (+2)</span>
                                         </button>
-                                        <button class="feed-btn feed-btn-pass" id="btn-pass" title="Passer (-1 affinité)">
+                                        <button class="feed-btn feed-btn-pass" id="btn-pass" title="Passer ce contenu">
                                             <i data-fa="forward"></i>
-                                            <span>Passer (-1)</span>
+                                            <span id="btn-pass-label">Passer (-1)</span>
+                                        </button>
+                                        <button class="feed-btn feed-btn-diversify" id="btn-diversify" title="Rechercher activement un autre sujet">
+                                            <i data-fa="magnifying-glass"></i>
+                                            <span id="btn-diversify-label">Autre sujet (+3)</span>
                                         </button>
                                     </div>
                                 </div>
@@ -1353,7 +1415,11 @@
                     <section class="algo-card" aria-label="Coulisses de l'algorithme">
                         <div class="algo-card-header">
                             <h2><i data-fa="gear"></i> Les Coulisses de l'Algorithme</h2>
-                            <span class="algo-live-tag">Calcul en direct</span>
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <button type="button" class="algo-draw-toggle-btn" id="btn-draw-mode" title="Basculer entre tirage probabiliste et déterministe">🎲 Tirage pondéré</button>
+                                <button type="button" class="icon-action-btn" aria-label="Voir mes statistiques" title="Voir mes statistiques" data-action="show-stats"><i data-fa="dt-chart-pie" style="--fa-secondary: #22c55e; --fa-secondary-opacity: 1; --fa-primary: #ef4444; --fa-primary-opacity: 1;"></i></button>
+                                <span class="algo-live-tag">Calcul en direct</span>
+                            </div>
                         </div>
 
                         <!-- Ligne 1 : Jauge de Diversité + Bulle Visuelle -->
@@ -1579,7 +1645,9 @@
 
     <script src="../../assets/js/toast.js"></script>
     <script src="../../assets/js/theme.js"></script>
+    <script src="../../assets/js/pwa.js"></script>
     <script src="../../assets/js/confetti.js"></script>
+    <script src="../../assets/js/url-params.js"></script>
     <script>
         /* SPDX-License-Identifier: AGPL-3.0-only
          * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
@@ -1936,6 +2004,19 @@
         const CHALLENGE_TARGET_DIVERSITY = 70;
         let challengeActionsLeft = CHALLENGE_MAX_ACTIONS;
         let challengeInitialTheme = 'conspiracy';
+        let drawMode = 'weighted'; // 'weighted' | 'deterministic'
+
+        function updateActionButtonLabels() {
+            const isChal = currentMode === 'challenge';
+            const likeLbl = document.getElementById('btn-like-label');
+            const watchLbl = document.getElementById('btn-watch-label');
+            const passLbl = document.getElementById('btn-pass-label');
+            const divLbl = document.getElementById('btn-diversify-label');
+            if (likeLbl) likeLbl.textContent = isChal ? "J'aime (+5)" : "J'aime (+3)";
+            if (watchLbl) watchLbl.textContent = isChal ? 'Regarder (+3)' : 'Regarder (+2)';
+            if (passLbl) passLbl.textContent = isChal ? 'Passer (-5)' : 'Passer (-1)';
+            if (divLbl) divLbl.textContent = isChal ? 'Autre sujet (+5)' : 'Autre sujet (+3)';
+        }
 
         // --- Fonctions Mathématiques : Diversité et Probabilités ---
         function calculateDiversity(aff) {
@@ -1982,6 +2063,17 @@
 
         function pickWeightedTheme(aff) {
             const keys = Object.keys(aff);
+            if (drawMode === 'deterministic') {
+                let bestKey = keys[0];
+                let bestVal = aff[bestKey] || 0;
+                for (let i = 1; i < keys.length; i++) {
+                    if ((aff[keys[i]] || 0) > bestVal) {
+                        bestVal = aff[keys[i]] || 0;
+                        bestKey = keys[i];
+                    }
+                }
+                return bestKey;
+            }
             let total = 0;
             for (let i = 0; i < keys.length; i++) {
                 total += aff[keys[i]];
@@ -2004,7 +2096,7 @@
         function startChallengeMode() {
             currentMode = 'challenge';
             challengeActionsLeft = CHALLENGE_MAX_ACTIONS;
-            // Choisir un thème dominant extrême (soit complot/buzz soit jeux vidéo)
+            // Choisir un thème dominant fort mais surmontable en <= 10 actions (< 35% de diversité initiale)
             challengeInitialTheme = Math.random() > 0.5 ? 'conspiracy' : 'gaming';
 
             affinities = {
@@ -2015,9 +2107,10 @@
                 fashion: 1,
                 conspiracy: 1
             };
-            affinities[challengeInitialTheme] = 65; // ~93% de présence
+            affinities[challengeInitialTheme] = 32; // ~34% de diversité Shannon (<35%, résoluble en <= 10 actions)
 
             updateChallengeBanner();
+            updateActionButtonLabels();
             document.getElementById('challenge-banner').style.display = 'flex';
             document.getElementById('arena-grid').style.display = 'grid';
             document.getElementById('pedagogy-panel').style.display = 'none';
@@ -2062,6 +2155,7 @@
                 conspiracy: 5
             };
             postCounter = 1;
+            updateActionButtonLabels();
             loadNewPost();
             updateAlgorithmUI();
 
@@ -2083,8 +2177,8 @@
         }
 
         // --- Chargement d'une Publication ---
-        function loadNewPost() {
-            const chosenTheme = pickWeightedTheme(affinities);
+        function loadNewPost(forcedTheme = null) {
+            const chosenTheme = forcedTheme || pickWeightedTheme(affinities);
             const candidatePosts = POSTS_DATABASE.filter(p => p.theme === chosenTheme);
             const post = candidatePosts[Math.floor(Math.random() * candidatePosts.length)];
             activePost = post;
@@ -2156,49 +2250,37 @@
                 return;
             }
 
-            const theme = activePost.theme;
+            let targetTheme = activePost.theme;
             let scoreDelta = 0;
             let toastMsg = '';
+            const isChal = currentMode === 'challenge';
 
-            if (type === 'like') {
-                scoreDelta = 3;
-                toastMsg = '❤️ J\'aime (+3 affinité ' + THEMES[theme].name + ')';
-                if (typeof window.playSound === 'function') {
-                    window.playSound('click');
-                }
+            if (type === 'diversify') {
+                const otherKeys = Object.keys(THEMES).filter(k => k !== activePost.theme);
+                targetTheme = otherKeys.reduce((minK, k) => (affinities[k] < affinities[minK] ? k : minK), otherKeys[0]);
+                scoreDelta = isChal ? 5 : 3;
+                toastMsg = `🔍 Recherche active (+${scoreDelta} affinité ${THEMES[targetTheme].name})`;
+                if (typeof window.playSound === 'function') window.playSound('click');
+            } else if (type === 'like') {
+                scoreDelta = isChal ? 5 : 3;
+                toastMsg = `❤️ J'aime (+${scoreDelta} affinité ${THEMES[targetTheme].name})`;
+                if (typeof window.playSound === 'function') window.playSound('click');
             } else if (type === 'watch') {
-                scoreDelta = 2;
-                toastMsg = '⏱️ Attention soutenue (+2 affinité ' + THEMES[theme].name + ')';
-                if (typeof window.playSound === 'function') {
-                    window.playSound('tick');
-                }
+                scoreDelta = isChal ? 3 : 2;
+                toastMsg = `⏱️ Attention soutenue (+${scoreDelta} affinité ${THEMES[targetTheme].name})`;
+                if (typeof window.playSound === 'function') window.playSound('tick');
             } else if (type === 'pass') {
-                scoreDelta = -1;
-                toastMsg = '⏩ Contenu passé (-1 affinité ' + THEMES[theme].name + ')';
-                if (typeof window.playSound === 'function') {
-                    window.playSound('tick');
-                }
-            }
-
-            // En mode Défi, amplifier l'impact pour rendre la tactique pédagogique percutante
-            if (currentMode === 'challenge') {
-                if (type === 'pass') {
-                    // Si on passe le thème dominant de la bulle, on réduit plus vite
-                    scoreDelta = -4;
-                } else if (type === 'like') {
-                    // Si on like un thème alternatif, on le propulse
-                    scoreDelta = 5;
-                } else if (type === 'watch') {
-                    scoreDelta = 3;
-                }
+                scoreDelta = isChal ? -5 : -1;
+                toastMsg = `⏩ Contenu passé (${scoreDelta} affinité ${THEMES[targetTheme].name})`;
+                if (typeof window.playSound === 'function') window.playSound('tick');
             }
 
             // Mise à jour de l'affinité
-            affinities[theme] = Math.max(0, affinities[theme] + scoreDelta);
+            affinities[targetTheme] = Math.max(0, affinities[targetTheme] + scoreDelta);
 
             // Toast feedback
             if (typeof window.showToast === 'function') {
-                window.showToast(toastMsg, type === 'like' ? 'success' : (type === 'watch' ? 'info' : 'warn'));
+                window.showToast(toastMsg, (type === 'like' || type === 'diversify') ? 'success' : (type === 'watch' ? 'info' : 'warn'));
             }
 
             postCounter++;
@@ -2220,8 +2302,8 @@
                 }
             }
 
-            // Prochaine publication
-            loadNewPost();
+            // Prochaine publication (si recherche active, ouvrir un sujet peu vu !)
+            loadNewPost(type === 'diversify' ? targetTheme : null);
             updateAlgorithmUI();
         }
 
@@ -2450,6 +2532,9 @@
                     elMsg.textContent = 'Bravo ! En refusant de consommer passivement le contenu dominant et en stimulant ta curiosité vers d\'autres thèmes, tu as forcé l\'algorithme à rééquilibrer ton fil à plus de 70% de diversité.';
                 }
 
+                if (typeof window.ScoreManager !== 'undefined') {
+                    window.ScoreManager.addSuccess('bulle_filtres', 'challenge', 0);
+                }
                 if (typeof window.playSound === 'function') {
                     window.playSound('win');
                 }
@@ -2460,9 +2545,12 @@
                 if (elIcon) elIcon.textContent = '🔒';
                 if (elTitle) elTitle.textContent = 'Échec : La Bulle t\'a Retenu·e !';
                 if (elMsg) {
-                    elMsg.textContent = 'Dommage ! Après 10 actions, la diversité n\'a pas dépassé les 70%. Pour t\'évader, pense à systématiquement "Passer" le thème qui t\'enferme et à "Aimer" ou "Regarder" au moins 3 ou 4 autres thèmes variés !';
+                    elMsg.textContent = 'Dommage ! Après 10 actions, la diversité n\'a pas dépassé les 70%. Pour t\'évader, pense à systématiquement "Passer" le thème qui t\'enferme et à utiliser "Autre sujet" ou "J\'aime" sur les thèmes variés !';
                 }
 
+                if (typeof window.ScoreManager !== 'undefined') {
+                    window.ScoreManager.addMistake('bulle_filtres', 'challenge');
+                }
                 if (typeof window.playSound === 'function') {
                     window.playSound('error');
                 }
@@ -2494,10 +2582,17 @@
 
         // --- Initialisation au Chargement du DOM ---
         document.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.ScoreManager !== 'undefined') {
+                window.ScoreManager.init('bulle_filtres');
+                window.ScoreManager.checkAdaptiveDifficulty = () => {};
+            }
+
             // Boutons d'interaction du Smartphone
             const btnLike = document.getElementById('btn-like');
             const btnWatch = document.getElementById('btn-watch');
             const btnPass = document.getElementById('btn-pass');
+            const btnDiversify = document.getElementById('btn-diversify');
+            const btnDrawMode = document.getElementById('btn-draw-mode');
 
             if (btnLike) {
                 btnLike.addEventListener('click', () => handleUserAction('like'));
@@ -2507,6 +2602,16 @@
             }
             if (btnPass) {
                 btnPass.addEventListener('click', () => handleUserAction('pass'));
+            }
+            if (btnDiversify) {
+                btnDiversify.addEventListener('click', () => handleUserAction('diversify'));
+            }
+            if (btnDrawMode) {
+                btnDrawMode.addEventListener('click', () => {
+                    drawMode = drawMode === 'weighted' ? 'deterministic' : 'weighted';
+                    btnDrawMode.textContent = drawMode === 'weighted' ? '🎲 Tirage pondéré' : '🎯 Plus probable en premier';
+                    if (typeof window.playSound === 'function') window.playSound('click');
+                });
             }
 
             // Onglets de Navigation

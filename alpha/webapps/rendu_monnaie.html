@@ -58,6 +58,9 @@
             --badge-color: #0f766e;
             --input-border: #cbd5e1;
             --instructions-bg: #f8fafc;
+            --success: #047857;
+            --error: #dc2626;
+            --warn: #d97706;
             --shadow-color: rgba(0, 0, 0, 0.2);
             --card-shadow: rgba(13, 148, 136, 0.12);
 
@@ -92,6 +95,9 @@
             --badge-color: #5eead4;
             --input-border: #334155;
             --instructions-bg: #1e293b;
+            --success: #047857;
+            --error: #f87171;
+            --warn: #fbbf24;
             --shadow-color: rgba(0, 0, 0, 0.6);
             --card-shadow: rgba(0, 0, 0, 0.4);
 
@@ -101,6 +107,79 @@
             --tray-border: #065f46;
             --receipt-bg: #1e293b;
             --receipt-border: #334155;
+        }
+
+        body.dark .tab-btn.active,
+        body.dark .btn-primary {
+            background: #0f766e;
+            color: #ffffff;
+        }
+
+        body.high-contrast {
+            --bg-gradient-start: #ffffff;
+            --bg-gradient-end: #ffffff;
+            --container-bg: #ffffff;
+            --card-bg: #ffffff;
+            --card-border: #000000;
+            --text-main: #000000;
+            --text-secondary: #000000;
+            --text-muted: #1e293b;
+            --accent: #000000;
+            --accent-dark: #000000;
+            --success: #000000;
+        }
+
+        body.high-contrast .btn-primary,
+        body.high-contrast .btn-check,
+        body.high-contrast .tab-btn.active,
+        body.high-contrast .amount-chip.active {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border-color: #000000 !important;
+        }
+
+        body.high-contrast .diff-chip,
+        body.high-contrast .amount-chip,
+        body.high-contrast .btn-outline,
+        body.high-contrast .receipt-card,
+        body.high-contrast .cash-drawer-card,
+        body.high-contrast .tray-card {
+            border: 2px solid #000000 !important;
+        }
+
+        @media (hover: none), (pointer: coarse) {
+            .tray-coin-wrapper .remove-indicator {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            html body,
+            html body:has(.tabs) {
+                padding: 12px 12px calc(108px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+            .container {
+                padding: 16px 12px;
+            }
+            .stats-badge-group {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                width: 100%;
+            }
+            .stats-badge-group .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .tabs .tab-btn {
+                font-size: 11px !important;
+                line-height: 1.2;
+                white-space: normal !important;
+                padding: 6px 4px !important;
+            }
+            .receipt-item.target-highlight .receipt-value {
+                font-size: 22px;
+            }
         }
 
         /* ========== LAYOUT ========== */
@@ -1017,8 +1096,6 @@
             </div>
         </header>
 
-        <p class="subtitle">Comprendre l'Algorithme Glouton (Système suisse CHF & Contre-exemples)</p>
-
         <main>
             <!-- Navigation Tabs -->
             <div class="tabs" role="tablist" aria-label="Modes de jeu">
@@ -1041,6 +1118,9 @@
                         <button class="diff-chip active" id="diff-easy" data-level="1">Facile (5-6H)</button>
                         <button class="diff-chip" id="diff-medium" data-level="2">Moyen (7H)</button>
                         <button class="diff-chip" id="diff-hard" data-level="3">Expert (8H)</button>
+                        <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;margin-left:8px;cursor:pointer;color:var(--text-secondary);">
+                            <input type="checkbox" id="chk-calc-assist" style="width:16px;height:16px;accent-color:var(--accent);"> Aide au calcul
+                        </label>
                     </div>
                     <div class="stats-badge-group">
                         <span class="stat-pill" title="Rendus réussis avec le nombre minimal de pièces">🏆 Optimaux :
@@ -1108,7 +1188,6 @@
                                 <button class="coin-btn coin-silver coin-50" data-value="50"
                                     aria-label="Ajouter 50 centimes">
                                     <span>½ Fr.</span>
-                                    <span class="coin-subtext">50 ct</span>
                                 </button>
                                 <span class="slot-label">50 ct</span>
                             </div>
@@ -1223,21 +1302,24 @@
                         </div>
                     </div>
 
-                    <!-- Column 2: Solution Optimale (ou essai élève) -->
-                    <div class="comparison-col optimal-col">
+                    <!-- Column 2: Solution Optimale (masquée avant essai) -->
+                    <div class="comparison-col optimal-col" id="fantasy-optimal-col">
                         <div class="col-header">
                             <span class="col-title"><i data-fa="star" style="color: #10b981;"></i> Solution Optimale</span>
-                            <span class="badge-level" id="disp-fantasy-optimal-count">2 pièces</span>
+                            <span class="badge-level" id="disp-fantasy-optimal-count">? pièce(s)</span>
                         </div>
-                        <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">
-                            Regarde l'ensemble des possibilités pour trouver le nombre absolu minimal de pièces.
+                        <p id="fantasy-optimal-locked-hint" style="font-size: 13px; color: var(--text-secondary); margin: 0;">
+                            Fais d'abord un essai ci-dessous pour découvrir si tu peux battre le robot glouton !
                         </p>
-                        <div class="coin-display-row" id="fantasy-optimal-coins">
+                        <div class="coin-display-row" id="fantasy-optimal-coins" style="display:none;">
                             <!-- Injected by JS -->
                         </div>
-                        <div id="fantasy-optimal-steps" style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);">
+                        <div id="fantasy-optimal-steps" style="font-size: 13px; line-height: 1.5; color: var(--text-secondary); display:none;">
                             <!-- Steps narrative -->
                         </div>
+                        <button type="button" class="btn btn-outline btn-small" id="btn-reveal-fantasy" style="align-self:flex-start;">
+                            <i data-fa="eye"></i> Révéler l'explication
+                        </button>
                     </div>
                 </div>
 
@@ -1378,10 +1460,22 @@
                 trayCoins: [],
                 statsOptimal: 0,
                 statsStreak: 0,
+                calcAssist: true,
+                calcAssistCustomized: false,
+                transactionValidated: false,
+                usedAutoSolve: false,
                 // Fantasy state
                 fantasyTarget: 6,
-                fantasyUserCoins: []
+                fantasyUserCoins: [],
+                fantasyRevealed: false
             };
+
+            let autoSolveTimers = [];
+
+            function clearAutoSolveTimers() {
+                autoSolveTimers.forEach(t => clearTimeout(t));
+                autoSolveTimers = [];
+            }
 
             // ========================================================
             // DOM ELEMENT REFERENCES
@@ -1423,10 +1517,13 @@
             const greedyStepsContainer = document.getElementById('greedy-steps-container');
 
             // Fantasy Elements
+            const chkCalcAssist = document.getElementById('chk-calc-assist');
             const fantasyGreedyCoins = document.getElementById('fantasy-greedy-coins');
             const fantasyGreedySteps = document.getElementById('fantasy-greedy-steps');
             const fantasyOptimalCoins = document.getElementById('fantasy-optimal-coins');
             const fantasyOptimalSteps = document.getElementById('fantasy-optimal-steps');
+            const fantasyOptimalLockedHint = document.getElementById('fantasy-optimal-locked-hint');
+            const btnRevealFantasy = document.getElementById('btn-reveal-fantasy');
             const dispFantasyGreedyCount = document.getElementById('disp-fantasy-greedy-count');
             const dispFantasyOptimalCount = document.getElementById('disp-fantasy-optimal-count');
             const fantasyVerdict = document.getElementById('fantasy-verdict');
@@ -1519,55 +1616,44 @@
             // MODE 1: TRANSACTION GENERATION
             // ========================================================
             function generateTransaction(level) {
+                clearAutoSolveTimers();
+                state.transactionValidated = false;
+                state.usedAutoSolve = false;
+
+                if (!state.calcAssistCustomized) {
+                    state.calcAssist = (level === 1);
+                    if (chkCalcAssist) chkCalcAssist.checked = state.calcAssist;
+                }
+
                 let purchaseCents = 0;
                 let paidCents = 1000;
 
-                if (level === 1) {
-                    // Level 1: Multiples of 50 ct or whole francs (5-6H)
-                    const purchaseOptions = [
-                        { p: 350, r: 500 },
-                        { p: 400, r: 1000 },
-                        { p: 650, r: 1000 },
-                        { p: 700, r: 1000 },
-                        { p: 1250, r: 2000 },
-                        { p: 1500, r: 2000 },
-                        { p: 150, r: 500 },
-                        { p: 250, r: 500 }
-                    ];
-                    const chosen = purchaseOptions[Math.floor(Math.random() * purchaseOptions.length)];
-                    purchaseCents = chosen.p;
-                    paidCents = chosen.r;
-                } else if (level === 2) {
-                    // Level 2: Multiples of 10 ct or 20 ct (7H)
-                    const purchaseOptions = [
-                        { p: 340, r: 500 },
-                        { p: 280, r: 500 },
-                        { p: 620, r: 1000 },
-                        { p: 730, r: 1000 },
-                        { p: 460, r: 1000 },
-                        { p: 1370, r: 2000 },
-                        { p: 1640, r: 2000 },
-                        { p: 180, r: 500 }
-                    ];
-                    const chosen = purchaseOptions[Math.floor(Math.random() * purchaseOptions.length)];
-                    purchaseCents = chosen.p;
-                    paidCents = chosen.r;
-                } else {
-                    // Level 3: Multiples of 5 ct (8H)
-                    const purchaseOptions = [
-                        { p: 365, r: 1000 },
-                        { p: 245, r: 500 },
-                        { p: 685, r: 1000 },
-                        { p: 715, r: 1000 },
-                        { p: 495, r: 1000 },
-                        { p: 1285, r: 2000 },
-                        { p: 1435, r: 2000 },
-                        { p: 1765, r: 2000 }
-                    ];
-                    const chosen = purchaseOptions[Math.floor(Math.random() * purchaseOptions.length)];
-                    purchaseCents = chosen.p;
-                    paidCents = chosen.r;
-                }
+                const pickPaid = (p) => {
+                    const bills = [500, 1000, 2000, 5000].filter(b => b > p + 45 && b - p <= 3500);
+                    if (bills.length > 0) return bills[Math.floor(Math.random() * bills.length)];
+                    return p <= 500 ? 500 : p <= 1000 ? 1000 : p <= 2000 ? 2000 : 5000;
+                };
+
+                let guard = 0;
+                do {
+                    if (level === 1) {
+                        // Level 1: Multiples of 50 ct (5-6H)
+                        const units = Math.floor(Math.random() * 28) + 2; // 1.00 .. 14.50 CHF
+                        purchaseCents = units * 50;
+                    } else if (level === 2) {
+                        // Level 2: Multiples of 10 ct (7H)
+                        const units = Math.floor(Math.random() * 170) + 11; // 1.10 .. 18.00 CHF
+                        purchaseCents = units * 10;
+                        if (purchaseCents % 50 === 0) purchaseCents += 10;
+                    } else {
+                        // Level 3: Multiples of 5 ct (8H)
+                        const units = Math.floor(Math.random() * 340) + 21; // 1.05 .. 18.00 CHF
+                        purchaseCents = units * 5;
+                        if (purchaseCents % 10 === 0) purchaseCents += 5;
+                    }
+                    paidCents = pickPaid(purchaseCents);
+                    guard++;
+                } while ((paidCents === state.paidAmount && purchaseCents === state.purchaseAmount) && guard < 10);
 
                 state.purchaseAmount = purchaseCents;
                 state.paidAmount = paidCents;
@@ -1582,7 +1668,7 @@
             function renderReceipt() {
                 dispPurchase.textContent = formatChf(state.purchaseAmount);
                 dispPaid.textContent = formatChf(state.paidAmount);
-                dispTarget.textContent = formatChf(state.targetAmount);
+                dispTarget.textContent = (state.calcAssist || state.transactionValidated) ? formatChf(state.targetAmount) : '? CHF';
             }
 
             // ========================================================
@@ -1620,13 +1706,6 @@
                         spanMain.textContent = getCoinLabel(val);
                         coinBtn.appendChild(spanMain);
 
-                        if (val === 50) {
-                            const spanSub = document.createElement('span');
-                            spanSub.className = 'coin-subtext';
-                            spanSub.textContent = '50 ct';
-                            coinBtn.appendChild(spanSub);
-                        }
-
                         const removeBadge = document.createElement('div');
                         removeBadge.className = 'remove-indicator';
                         removeBadge.textContent = '×';
@@ -1653,7 +1732,11 @@
 
                 trayProgressBar.classList.remove('exact', 'overflow');
 
-                if (currentSum === target) {
+                if (!state.calcAssist && !state.transactionValidated) {
+                    dispTrayStatus.textContent = `${count} pièce(s) sur le plateau`;
+                    dispTrayStatus.style.color = 'var(--text-secondary)';
+                    trayProgressBar.style.width = count > 0 ? '50%' : '0%';
+                } else if (currentSum === target) {
                     dispTrayStatus.textContent = '✨ Montant exact ! Clique sur Valider.';
                     dispTrayStatus.style.color = '#10b981';
                     trayProgressBar.style.width = '100%';
@@ -1674,6 +1757,7 @@
             }
 
             function addCoinToTray(coinVal) {
+                clearAutoSolveTimers();
                 state.trayCoins.push(coinVal);
                 safePlaySound('click');
                 renderTray();
@@ -1681,6 +1765,7 @@
             }
 
             function removeCoinFromTray(index) {
+                clearAutoSolveTimers();
                 if (index >= 0 && index < state.trayCoins.length) {
                     state.trayCoins.splice(index, 1);
                     safePlaySound('click');
@@ -1689,6 +1774,7 @@
             }
 
             function clearTray() {
+                clearAutoSolveTimers();
                 if (state.trayCoins.length > 0) {
                     state.trayCoins = [];
                     safePlaySound('click');
@@ -1714,9 +1800,23 @@
                 const optimalCount = optimalCoins.length;
                 const studentCount = state.trayCoins.length;
 
+                if (state.transactionValidated) {
+                    safeShowToast('Client déjà servi ! Clique sur « Nouveau client » pour continuer.', 'info');
+                    return;
+                }
+
                 if (currentSum === target) {
+                    if (state.usedAutoSolve) {
+                        state.transactionValidated = true;
+                        renderReceipt();
+                        renderTray();
+                        safeShowToast('Démonstration gloutonne validée ! Essaie maintenant sans résolution auto pour marquer des points.', 'info', 4000);
+                        return;
+                    }
                     if (studentCount === optimalCount) {
                         // Perfect match! Minimal coins used!
+                        state.transactionValidated = true;
+                        renderReceipt();
                         safeLaunchConfetti();
                         safePlaySound('win');
                         state.statsOptimal++;
@@ -1724,28 +1824,42 @@
                         statOptimalEl.textContent = String(state.statsOptimal);
                         statStreakEl.textContent = String(state.statsStreak);
 
-                        safeShowToast(`🎉 Parfait ! Rendu exact avec le nombre minimal de pièces (${studentCount} pièces) !`, 'success', 4000);
+                        safeShowToast(`🎉 Parfait ! Rendu exact (${formatChf(target)}) avec le nombre minimal de pièces (${studentCount} pièces) !`, 'success', 4000);
                     } else {
-                        // Correct sum, but used more coins than optimal
+                        // Correct sum, but used more coins than optimal: breaks optimal streak
+                        state.statsStreak = 0;
+                        statStreakEl.textContent = '0';
                         safePlaySound('ding');
                         safeShowToast(`👍 Montant exact (${formatChf(target)}), mais on peut réussir en seulement ${optimalCount} pièces avec l'algorithme glouton !`, 'warn', 4500);
                     }
                 } else if (currentSum < target) {
+                    state.statsStreak = 0;
+                    statStreakEl.textContent = '0';
                     safePlaySound('error');
                     traySurface.classList.add('shake');
                     setTimeout(() => {
                         traySurface.classList.remove('shake');
                     }, 400);
-                    const missing = target - currentSum;
-                    safeShowToast(`❌ Il manque encore ${formatChf(missing)} pour atteindre ${formatChf(target)}.`, 'error', 3000);
+                    if (state.calcAssist) {
+                        const missing = target - currentSum;
+                        safeShowToast(`❌ Il manque encore ${formatChf(missing)} pour atteindre ${formatChf(target)}.`, 'error', 3000);
+                    } else {
+                        safeShowToast(`❌ Le montant sur le plateau (${formatChf(currentSum)}) est trop petit !`, 'error', 3000);
+                    }
                 } else {
+                    state.statsStreak = 0;
+                    statStreakEl.textContent = '0';
                     safePlaySound('error');
                     traySurface.classList.add('shake');
                     setTimeout(() => {
                         traySurface.classList.remove('shake');
                     }, 400);
-                    const over = currentSum - target;
-                    safeShowToast(`⚠️ Tu rends trop d'argent (${formatChf(over)} en trop). Retire quelques pièces !`, 'error', 3000);
+                    if (state.calcAssist) {
+                        const over = currentSum - target;
+                        safeShowToast(`⚠️ Tu rends trop d'argent (${formatChf(over)} en trop). Retire quelques pièces !`, 'error', 3000);
+                    } else {
+                        safeShowToast(`⚠️ Tu rends trop d'argent (${formatChf(currentSum)} sur le plateau) ! Retire quelques pièces.`, 'error', 3000);
+                    }
                 }
             }
 
@@ -1781,6 +1895,8 @@
             }
 
             function autoSolveGreedy() {
+                clearAutoSolveTimers();
+                state.usedAutoSolve = true;
                 const target = state.targetAmount;
                 const steps = [];
                 let rem = target;
@@ -1824,7 +1940,7 @@
                 renderTray();
 
                 steps.forEach((s, idx) => {
-                    setTimeout(() => {
+                    const tid = setTimeout(() => {
                         state.trayCoins.push(s.coin);
                         safePlaySound('click');
                         renderTray();
@@ -1833,6 +1949,7 @@
                             safeShowToast(`Résolution terminée en ${steps.length} pièces !`, 'success');
                         }
                     }, (idx + 1) * 350);
+                    autoSolveTimers.push(tid);
                 });
             }
 
@@ -1876,8 +1993,20 @@
                 });
                 fantasyGreedySteps.textContent = narrativeParts.join(' · ');
 
-                // Render Optimal Column
-                dispFantasyOptimalCount.textContent = `${optimalCoins.length} pièce(s)`;
+                // Render Optimal Column (hidden until attempt or reveal)
+                if (state.fantasyRevealed) {
+                    if (fantasyOptimalLockedHint) fantasyOptimalLockedHint.style.display = 'none';
+                    if (btnRevealFantasy) btnRevealFantasy.style.display = 'none';
+                    fantasyOptimalCoins.style.display = 'flex';
+                    fantasyOptimalSteps.style.display = 'block';
+                    dispFantasyOptimalCount.textContent = `${optimalCoins.length} pièce(s)`;
+                } else {
+                    if (fantasyOptimalLockedHint) fantasyOptimalLockedHint.style.display = 'block';
+                    if (btnRevealFantasy) btnRevealFantasy.style.display = 'inline-flex';
+                    fantasyOptimalCoins.style.display = 'none';
+                    fantasyOptimalSteps.style.display = 'none';
+                    dispFantasyOptimalCount.textContent = `? pièce(s)`;
+                }
                 fantasyOptimalCoins.replaceChildren();
                 optimalCoins.forEach(c => {
                     const coinEl = document.createElement('div');
@@ -1895,8 +2024,8 @@
                 // Optimal Narrative
                 fantasyOptimalSteps.textContent = `Combinaison optimale minimale : ${optimalCoins.join(' + ')} = ${target} sous en ${optimalCoins.length} pièces seulement.`;
 
-                // Render Verdict
-                fantasyVerdict.classList.remove('trap-detected', 'optimal-win');
+                // Render Verdict (only when revealed)
+                fantasyVerdict.classList.remove('trap-detected', 'optimal-win', 'active');
                 fantasyVerdict.replaceChildren();
 
                 const verdictHeading = document.createElement('h3');
@@ -1909,18 +2038,20 @@
                 verdictText.style.lineHeight = '1.5';
                 verdictText.style.margin = '0';
 
-                if (greedyCoins.length > optimalCoins.length) {
-                    fantasyVerdict.classList.add('trap-detected');
-                    verdictHeading.textContent = `💥 PIÈGE DÉTECTÉ POUR ${target} SOUS !`;
-                    verdictText.textContent = `L'algorithme glouton a utilisé ${greedyCoins.length} pièces (${greedyCoins.join(' + ')}), alors que la solution optimale n'utilise que ${optimalCoins.length} pièces (${optimalCoins.join(' + ')}) ! Le choix immédiat de la pièce de 4 a forcé le robot à prendre des petites pièces.`;
-                } else {
-                    fantasyVerdict.classList.add('optimal-win');
-                    verdictHeading.textContent = `✅ Le Glouton trouve l'optimal pour ${target} sous !`;
-                    verdictText.textContent = `Pour ce montant particulier, l'algorithme glouton et la solution optimale utilisent tous les deux ${optimalCoins.length} pièces (${optimalCoins.join(' + ')}).`;
+                if (state.fantasyRevealed) {
+                    fantasyVerdict.classList.add('active');
+                    if (greedyCoins.length > optimalCoins.length) {
+                        fantasyVerdict.classList.add('trap-detected');
+                        verdictHeading.textContent = `💥 PIÈGE DÉTECTÉ POUR ${target} SOUS !`;
+                        verdictText.textContent = `L'algorithme glouton a utilisé ${greedyCoins.length} pièces (${greedyCoins.join(' + ')}), alors que la solution optimale n'utilise que ${optimalCoins.length} pièces (${optimalCoins.join(' + ')}) ! Le choix immédiat de la pièce de 4 a forcé le robot à prendre des petites pièces.`;
+                    } else {
+                        fantasyVerdict.classList.add('optimal-win');
+                        verdictHeading.textContent = `✅ Le Glouton trouve l'optimal pour ${target} sous !`;
+                        verdictText.textContent = `Pour ce montant particulier, l'algorithme glouton et la solution optimale utilisent tous les deux ${optimalCoins.length} pièces (${optimalCoins.join(' + ')}).`;
+                    }
+                    fantasyVerdict.appendChild(verdictHeading);
+                    fantasyVerdict.appendChild(verdictText);
                 }
-
-                fantasyVerdict.appendChild(verdictHeading);
-                fantasyVerdict.appendChild(verdictText);
 
                 // Render user's fantasy sandbox
                 renderFantasyUserTray();
@@ -1986,6 +2117,8 @@
                 const greedyCoins = getGreedyChange(target, FANTASY_COINS);
 
                 if (sum === target) {
+                    state.fantasyRevealed = true;
+                    renderFantasyMode();
                     if (state.fantasyUserCoins.length === optimalCoins.length) {
                         safeLaunchConfetti();
                         safePlaySound('win');
@@ -2057,12 +2190,32 @@
                 safePlaySound('click');
             });
 
+            // Assistance toggle
+            if (chkCalcAssist) {
+                chkCalcAssist.checked = state.calcAssist;
+                chkCalcAssist.addEventListener('change', () => {
+                    state.calcAssistCustomized = true;
+                    state.calcAssist = chkCalcAssist.checked;
+                    renderReceipt();
+                    renderTray();
+                });
+            }
+
+            if (btnRevealFantasy) {
+                btnRevealFantasy.addEventListener('click', () => {
+                    state.fantasyRevealed = true;
+                    safePlaySound('click');
+                    renderFantasyMode();
+                });
+            }
+
             // Difficulty Chips
             document.querySelectorAll('.diff-chip').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.diff-chip').forEach(c => c.classList.remove('active'));
                     btn.classList.add('active');
                     state.currentLevel = parseInt(btn.getAttribute('data-level'), 10) || 1;
+                    state.calcAssistCustomized = false;
                     safePlaySound('click');
                     generateTransaction(state.currentLevel);
                 });
@@ -2097,6 +2250,7 @@
                     if (!isNaN(amt)) {
                         state.fantasyTarget = amt;
                         state.fantasyUserCoins = [];
+                        state.fantasyRevealed = false;
                         safePlaySound('click');
                         renderFantasyMode();
                     }
@@ -2129,13 +2283,19 @@
 
             // Central Universal App Reset Lifecycle
             window.__onResetApp = function () {
+                clearAutoSolveTimers();
                 state.statsOptimal = 0;
                 state.statsStreak = 0;
+                state.calcAssistCustomized = false;
+                state.currentLevel = 1;
+                document.querySelectorAll('.diff-chip').forEach(c => c.classList.toggle('active', c.getAttribute('data-level') === '1'));
                 statOptimalEl.textContent = '0';
                 statStreakEl.textContent = '0';
-                generateTransaction(state.currentLevel);
+                generateTransaction(1);
                 state.fantasyTarget = 6;
                 state.fantasyUserCoins = [];
+                state.fantasyRevealed = false;
+                document.querySelectorAll('.amount-chip').forEach(c => c.classList.toggle('active', c.getAttribute('data-amount') === '6'));
                 renderFantasyMode();
                 safeShowToast('Application réinitialisée !', 'info');
             };
