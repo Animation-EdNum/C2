@@ -200,12 +200,12 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.strictEqual(sizeLabel1.textContent.trim(), '0 Ko');
         assert.strictEqual(timeLabel1.textContent.trim(), '0,0 s');
 
-        // Vérifier le formatage adaptatif des unités
+        // Vérifier le formatage adaptatif des unités avec équivalence en Ko
         assert.strictEqual(engine.formatCanalSize(0), '0 Ko');
-        assert.strictEqual(engine.formatCanalSize(500 * 1024), '500 Ko');
-        assert.strictEqual(engine.formatCanalSize(1.8 * 1024 * 1024), '1,8 Mo');
-        assert.strictEqual(engine.formatCanalSize(700 * 1024 * 1024), '700 Mo');
-        assert.strictEqual(engine.formatCanalSize(1.5 * 1024 * 1024 * 1024), '1,50 Go');
+        assert.strictEqual(engine.formatCanalSize(500), '500 Ko');
+        assert.strictEqual(engine.formatCanalSize(1800), "1,8 Mo (= 1'800 Ko)");
+        assert.strictEqual(engine.formatCanalSize(700000), "700 Mo (= 700'000 Ko)");
+        assert.strictEqual(engine.formatCanalSize(1500000), "1,50 Go (= 1'500'000 Ko)");
 
         // Après hypothèse, le total et le pourcentage sont révélés dans l unité du média
         const card1 = doc.getElementById('canalCard-1');
@@ -213,12 +213,13 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.match(sizeLabel1.textContent, /^0 Ko \/ (?:500 Ko|1,8 Mo|4 Mo|700 Mo)$/);
         assert.match(timeLabel1.textContent, /^0,0 s \(0%\)$/);
 
-        // À la fin d un canal vidéo/audio/image, l affichage reste dans son unité adaptée
+        // À la fin d un canal vidéo, l affichage conserve l équivalence en Ko jusqu à la fin
         const videoCanal = engine.state.canals.find(c => c.mediaKey === 'video');
         assert.ok(videoCanal, 'Un canal vidéo doit exister');
-        engine.revealCanal(videoCanal.id);
         engine.finishCanal(videoCanal);
-        assert.strictEqual(doc.getElementById(`sizeLabel-${videoCanal.id}`).textContent.trim(), '700 Mo / 700 Mo');
+        assert.strictEqual(doc.getElementById(`sizeLabel-${videoCanal.id}`).textContent.trim(), "700 Mo (= 700'000 Ko)");
+        engine.revealCanal(videoCanal.id);
+        assert.strictEqual(doc.getElementById(`sizeLabel-${videoCanal.id}`).textContent.trim(), "700 Mo (= 700'000 Ko) / 700 Mo");
     });
 
     await t.test('formatDuration gère sans "60 s" les arrondis à la borne (119.8 s -> 2 min)', () => {

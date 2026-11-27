@@ -542,6 +542,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
             font-size: 0.82rem;
             font-weight: 700;
             color: var(--text-light);
@@ -1849,15 +1851,23 @@
             ];
         }
 
-        // Formatage lisible des Ko avec séparateur de milliers
+        // Formatage lisible des Ko avec séparateur de milliers suisse
         function formatKo(ko) {
-            return Math.round(ko).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ' + st('simulateur_telechargement.unit_ko', 'Ko');
+            return Math.round(ko).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'") + ' ' + st('simulateur_telechargement.unit_ko', 'Ko');
         }
 
-        // Formatage adaptatif en unités pertinentes (octets, Ko, Mo, Go) comme dans le laboratoire
-        function formatCanalSize(bytes) {
-            if (!bytes || bytes <= 0) return '0 ' + st('simulateur_telechargement.unit_ko', 'Ko');
-            return formatBytes(bytes);
+        // Formatage adaptatif (Ko, Mo, Go) avec équivalence en Ko pour le Défi
+        function formatCanalSize(ko) {
+            const safeKo = ko || 0;
+            if (safeKo <= 0) return '0 ' + st('simulateur_telechargement.unit_ko', 'Ko');
+            if (safeKo < 1000) return formatKo(safeKo);
+            let mainLabel;
+            if (safeKo < 1000 * 1000) {
+                mainLabel = (safeKo / 1000).toFixed(1).replace('.0', '').replace('.', ',') + ' ' + st('simulateur_telechargement.unit_mo', 'Mo');
+            } else {
+                mainLabel = (safeKo / (1000 * 1000)).toFixed(2).replace('.', ',') + ' ' + st('simulateur_telechargement.unit_go', 'Go');
+            }
+            return `${mainLabel} (= ${formatKo(safeKo)})`;
         }
 
         // Formatage lisible du temps
@@ -2052,8 +2062,8 @@
                     : elapsedStr;
             }
             if (sizeLabel && mediaRaw) {
-                const currentBytes = (canal.progress / 100) * mediaRaw.sizeBytes;
-                const currentDisplay = formatCanalSize(currentBytes);
+                const currentKo = (canal.progress / 100) * mediaRaw.sizeKo;
+                const currentDisplay = formatCanalSize(currentKo);
                 sizeLabel.textContent = canal.isRevealed
                     ? `${currentDisplay} / ${media.totalDisplay}`
                     : currentDisplay;
