@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: AGPL-3.0-only
  * Copyright (C) 2026 Vivian Epiney (AP-EdNum, HEP-VS) */
-const CACHE_NAME = 'ednum-041e713a';
+const CACHE_NAME = 'ednum-dc89ed91';
 const ASSETS = [
     './',
     './index.html',
@@ -51,6 +51,11 @@ const ASSETS = [
     './assets/fonts/outfit.woff2',
     './assets/icon-192.png',
     './assets/icon-512.png',
+    './assets/img/crediter/bouquetin.jpg',
+    './assets/img/crediter/bresis.jpg',
+    './assets/img/crediter/cervin.jpg',
+    './assets/img/crediter/marmotte.jpg',
+    './assets/img/crediter/salamandre.png',
     './assets/img/mats/city.webp',
     './assets/img/mats/valais.webp',
     './assets/js/audio.js',
