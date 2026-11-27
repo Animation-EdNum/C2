@@ -108,7 +108,7 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
         const simTab = window.document.querySelector('.tab-btn[data-tab="simulation"]');
         assert.ok(simTab.textContent.includes('Simulateur'), 'L\'onglet doit s\'appeler "Simulateur"');
 
-        const compSubtitle = window.document.querySelector('#sectionAccommodations p').textContent;
+        const compSubtitle = window.document.querySelector('#sectionAccommodations p').textContent.replace(/\s+/g, ' ').trim();
         assert.ok(compSubtitle.includes('Il n’existe pas de réglage universel : testez les aides avec l’élève et conservez celles qui lui sont réellement utiles.'), 'Le sous-titre des aménagements doit correspondre exactement');
 
         const btnGoAdapter = window.document.getElementById('btnEmptyGoAdapter');
@@ -141,7 +141,7 @@ test('sim_dyslexie.html - Adaptateur & Simulateur DYS (Valdois, fluence, pastel,
     await t.test('Profil visuo-attentionnelle sélectionne la police OpenDyslexic selon les travaux de S. Valdois', () => {
         const visuoBtn = window.document.querySelector('.profile-btn[data-profile="visuo"]');
         assert.ok(visuoBtn, 'Le bouton profil visuo doit exister');
-        assert.ok(visuoBtn.textContent.includes('Dyslexie visuo-attentionnelle'), 'Le libellé doit être "Dyslexie visuo-attentionnelle"');
+        assert.ok(visuoBtn.textContent.replace(/\s+/g, ' ').trim().includes('Dyslexie visuo-attentionnelle'), 'Le libellé doit être "Dyslexie visuo-attentionnelle"');
         visuoBtn.click();
 
         const fontSelect = window.document.getElementById('compFontSelect');
