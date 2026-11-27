@@ -1361,7 +1361,7 @@
                                 Démarrer le téléchargement »</strong> à gauche pour chaque canal (1 à 4) ou sur
                             <strong>« Tout lancer »</strong>.
                         </p>
-                        <p data-i18n="simulateur_telechargement.step2">2. Observe les Ko déjà téléchargés et le temps
+                        <p data-i18n="simulateur_telechargement.step2">2. Observe la taille déjà téléchargée et le temps
                             écoulé sur chaque jauge pour deviner de quel média il s'agit.</p>
                         <p data-i18n-html="simulateur_telechargement.step3_html">3. <strong>Émets ton hypothèse
                                 :</strong> clique directement sur <strong>📄 Texte</strong>, <strong>🖼️ Image</strong>,
@@ -1669,7 +1669,7 @@
                 subtitle: 'Image de la taille d\'un écran HD',
                 sizeDisplay: '~1.8 Mo',
                 sizeKo: 1800,
-                totalDisplay: '1 800 Ko (1.8 Mo)',
+                totalDisplay: '1,8 Mo',
                 sizeBytes: 1.8 * 1024 * 1024,
                 duration: 4.5, // secondes
                 description: "Une image numérique est composée de millions de petits carrés de couleur appelés pixels. Chaque pixel a besoin d'informations de couleur (Rouge, Vert, Bleu). C'est pourquoi une photo pèse bien plus qu'un livre entier de texte !",
@@ -1685,7 +1685,7 @@
                 subtitle: 'Morceau de musique de 4 minutes',
                 sizeDisplay: '~4 Mo',
                 sizeKo: 4000,
-                totalDisplay: '4 000 Ko (4 Mo)',
+                totalDisplay: '4 Mo',
                 sizeBytes: 4 * 1024 * 1024,
                 duration: 8.5, // secondes (environ 2x l'image)
                 description: "Pour enregistrer une chanson, l'ordinateur capture les vibrations du son des dizaines de milliers de fois chaque seconde pour reproduire la voix et tous les instruments de musique. C'est pour cela qu'un morceau pèse bien plus lourd qu'un roman !",
@@ -1701,7 +1701,7 @@
                 subtitle: 'Film de 2h, qualité standard',
                 sizeDisplay: '~700 Mo',
                 sizeKo: 700000,
-                totalDisplay: '700 000 Ko (700 Mo)',
+                totalDisplay: '700 Mo',
                 sizeBytes: 700 * 1024 * 1024,
                 duration: 19.0, // secondes
                 description: "Une vidéo fait défiler 24 à 60 images complètes chaque seconde, avec en plus toute la bande-son. C'est le média le plus lourd : même compressé, un film complet nécessite des centaines de millions d'octets !",
@@ -1854,6 +1854,12 @@
             return Math.round(ko).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ' + st('simulateur_telechargement.unit_ko', 'Ko');
         }
 
+        // Formatage adaptatif en unités pertinentes (octets, Ko, Mo, Go) comme dans le laboratoire
+        function formatCanalSize(bytes) {
+            if (!bytes || bytes <= 0) return '0 ' + st('simulateur_telechargement.unit_ko', 'Ko');
+            return formatBytes(bytes);
+        }
+
         // Formatage lisible du temps
         function formatDuration(seconds) {
             if (seconds < 0.05) return st('simulateur_telechargement.dur_lt_01', '< 0.1 s');
@@ -1899,7 +1905,7 @@
                     </button>
                     <div class="progress-block">
                         <div class="progress-info">
-                            <span id="sizeLabel-${c.id}">${formatKo(0)}</span>
+                            <span id="sizeLabel-${c.id}">${formatCanalSize(0)}</span>
                             <span id="timeLabel-${c.id}">0,0 ${st('simulateur_telechargement.unit_s', 's')}</span>
                         </div>
                         <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressTrack-${c.id}">
@@ -2046,10 +2052,11 @@
                     : elapsedStr;
             }
             if (sizeLabel && mediaRaw) {
-                const currentKo = (canal.progress / 100) * mediaRaw.sizeKo;
+                const currentBytes = (canal.progress / 100) * mediaRaw.sizeBytes;
+                const currentDisplay = formatCanalSize(currentBytes);
                 sizeLabel.textContent = canal.isRevealed
-                    ? `${formatKo(currentKo)} / ${media.totalDisplay}`
-                    : formatKo(currentKo);
+                    ? `${currentDisplay} / ${media.totalDisplay}`
+                    : currentDisplay;
             }
         }
 
@@ -2668,6 +2675,8 @@
         window.SimTelechargementEngine = {
             formatDuration,
             formatKo,
+            formatBytes,
+            formatCanalSize,
             finishCanal,
             revealCanal,
             state

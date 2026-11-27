@@ -190,8 +190,9 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.ok(pill && pill.style.display !== 'none', 'La pastille de verdict doit être visible');
     });
 
-    await t.test('Le label de progression n affiche que les Ko téléchargés et le temps écoulé avant validation, puis révèle le total après', () => {
+    await t.test('Le label de progression affiche les tailles dans des unités adaptées (Ko, Mo, Go) puis révèle le total après', () => {
         const doc = window.document;
+        const engine = window.SimTelechargementEngine;
         const sizeLabel1 = doc.getElementById('sizeLabel-1');
         const timeLabel1 = doc.getElementById('timeLabel-1');
         assert.ok(sizeLabel1, 'sizeLabel-1 doit exister');
@@ -199,11 +200,25 @@ test('Simulateur de téléchargement - Logique DOM & Métier (JSDOM)', async (t)
         assert.strictEqual(sizeLabel1.textContent.trim(), '0 Ko');
         assert.strictEqual(timeLabel1.textContent.trim(), '0,0 s');
 
-        // Après hypothèse, le total et le pourcentage sont révélés
+        // Vérifier le formatage adaptatif des unités
+        assert.strictEqual(engine.formatCanalSize(0), '0 Ko');
+        assert.strictEqual(engine.formatCanalSize(500 * 1024), '500 Ko');
+        assert.strictEqual(engine.formatCanalSize(1.8 * 1024 * 1024), '1,8 Mo');
+        assert.strictEqual(engine.formatCanalSize(700 * 1024 * 1024), '700 Mo');
+        assert.strictEqual(engine.formatCanalSize(1.5 * 1024 * 1024 * 1024), '1,50 Go');
+
+        // Après hypothèse, le total et le pourcentage sont révélés dans l unité du média
         const card1 = doc.getElementById('canalCard-1');
         card1.querySelector('[data-guess="texte"]').click();
-        assert.match(sizeLabel1.textContent, /^0 Ko \/ .* Ko/);
+        assert.match(sizeLabel1.textContent, /^0 Ko \/ (?:500 Ko|1,8 Mo|4 Mo|700 Mo)$/);
         assert.match(timeLabel1.textContent, /^0,0 s \(0%\)$/);
+
+        // À la fin d un canal vidéo/audio/image, l affichage reste dans son unité adaptée
+        const videoCanal = engine.state.canals.find(c => c.mediaKey === 'video');
+        assert.ok(videoCanal, 'Un canal vidéo doit exister');
+        engine.revealCanal(videoCanal.id);
+        engine.finishCanal(videoCanal);
+        assert.strictEqual(doc.getElementById(`sizeLabel-${videoCanal.id}`).textContent.trim(), '700 Mo / 700 Mo');
     });
 
     await t.test('formatDuration gère sans "60 s" les arrondis à la borne (119.8 s -> 2 min)', () => {
