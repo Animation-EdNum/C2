@@ -10,12 +10,12 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 
 | Outil | En bref | Guide |
 |---|---|---|
-| ⏱️ **Minuteur visuel** | Minuteur visuel circulaire 0-60 min, décompte sans stress, thème arc-en-ciel avec mascotte, minuteur de compensation (tiers-temps/MCD) et mode TBI | [Ouvrir le guide](MODE_EMPLOI_TIME_TIMER.md) |
-| 📊 **Générateur de Barèmes** | Table de conversion points → notes (échelle suisse 1 à 6), seuil du 4.0 ajustable, -fautes, export image PNG, copie et impression | [Ouvrir le guide](MODE_EMPLOI_BAREME.md) |
+| ⏱️ **Minuteur visuel** | Minuteur visuel circulaire 0-60 min, thème arc-en-ciel avec mascotte, sonnerie MP3/WAV, minuteur de compensation (tiers-temps/MCD non bloquant) et mode TBI | [Ouvrir le guide](MODE_EMPLOI_TIME_TIMER.md) |
+| 📊 **Générateur de Barèmes** | Table de conversion points → notes (échelle suisse 1 à 6), seuil du 4.0 ajustable, -fautes, export PNG/copie/impression, partage par lien et mode TBI | [Ouvrir le guide](MODE_EMPLOI_BAREME.md) |
 | 🎲 **Tirage au Sort** | Désignation aléatoire équitable, modes Nombres et Noms, import ENT (XLS/CSV), export .txt, TBI et partage par lien web | [Ouvrir le guide](MODE_EMPLOI_TIRAGE_AU_SORT.md) |
-| 🎡 **Roue de la chance** | Roue interactive personnalisable, métiers, privilèges, tirage 1 à N et mode TBI | [Ouvrir le guide](MODE_EMPLOI_ROUE_DE_LA_CHANCE.md) |
+| 🎡 **Roue de la chance** | Roue interactive personnalisable, métiers, privilèges, import ENT (XLS/CSV), tirage sans remise, générateur 1 à N et mode TBI | [Ouvrir le guide](MODE_EMPLOI_ROUE_DE_LA_CHANCE.md) |
 | 📱 **Créateur de QR Codes** | Générateur rapide de QR codes (liens, textes, Wi-Fi, planches imprimables, TBI) | [Ouvrir le guide](MODE_EMPLOI_QRCODE.md) |
-| 👓 **Adaptateur & Simulateur DYS** | Aménagements de texte (Zorzi, CERAS, sons, lettres muettes grisées), édition directe, profils élèves, export Word (.docx) et sensibilisation sans neuromythe | [Ouvrir le guide](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
+| 👓 **Adaptateur & Simulateur DYS** | Aménagements de texte (Zorzi, CERAS, sons, lettres muettes grisées, polices locales), édition directe, profils élèves, export Word (.docx) et sensibilisation | [Ouvrir le guide](MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md) |
 
 ---
 
@@ -26,7 +26,7 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 - Courbe linéaire standard ou bi-linéaire avec seuil du 4.0 ajustable (en % ou en points).
 - Choix de l'arrondi : au dixième, au quart de note, au demi-point ou à l'unité.
 - Option « Afficher les points perdus (-fautes) » pour une correction rapide.
-- Exports multiples : copie tabulaire vers Excel/Sheets, image PNG nette et impression / PDF sur une page A4.
+- Exports et partage : copie tabulaire vers Excel/Sheets, image PNG nette, impression / PDF A4, lien web/QR de partage et mode projection TBI (`F`).
 - 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_BAREME.md)
 
 ---
@@ -60,8 +60,8 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 *Tirages au sort dynamiques et ludiques pour la vie de classe.*
 
 - Présélections prêtes à l'emploi : métiers et responsabilités de classe, privilèges scolaires, questions d'éducation numérique.
-- Générateur automatique de nombres de 1 à N selon l'effectif d'élèves.
-- Liste personnalisée sauvegardée automatiquement en local (`localStorage`).
+- Générateur automatique de nombres de 1 à N selon l'effectif d'élèves et tirage sans remise.
+- Importation de listes de classe (`XLS`, `XLSX`, `CSV`, `TXT`) et sauvegarde locale automatique (`localStorage`).
 - Mode plein écran adapté au tableau blanc interactif (TBI).
 - 👉 [Lire le mode d'emploi complet](MODE_EMPLOI_ROUE_DE_LA_CHANCE.md)
 
@@ -71,7 +71,7 @@ Tous ces outils fonctionnent **100% hors-ligne**, sans publicité, sans inscript
 
 *Adaptez facilement les textes pour vos élèves et sensibilisez à la dyslexie.*
 
-- Boîte à outils complète d'adaptation de texte : espacement Zorzi, coloration des graphèmes CERAS, découpage syllabique bicolore, sons & lettres muettes grisés, choix de polices (Outfit, Century Gothic, OpenDyslexic, Verdana).
+- Boîte à outils complète d'adaptation de texte : espacement Zorzi, coloration des graphèmes CERAS, découpage syllabique bicolore, sons & lettres muettes grisés, choix de polices auto-hébergées 100% hors-ligne (Outfit, Didact Gothic / Century Gothic, OpenDyslexic, Verdana).
 - Édition directe du texte sur la fiche (*in situ*), profils en 1 clic et enregistrement de profils personnalisés par élève.
 - Export direct au format Word (.docx) modifiable et impression propre au format A4.
 - Simulateur d'effort de décodage et scénario de sensibilisation sans neuromythe pour parents et élèves.

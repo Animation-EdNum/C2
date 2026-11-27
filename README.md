@@ -25,7 +25,7 @@ Ces outils sont conçus pour fonctionner de la manière la plus simple possible,
 
 ### 📦 Installation via npm (pour les responsables informatiques)
 
-Si Node.js (≥ 18) is installé sur votre machine, vous pouvez lancer la suite directement avec une seule commande — sans téléchargement manuel ni serveur à configurer :
+Si Node.js (≥ 18) est installé sur votre machine, vous pouvez lancer la suite directement avec une seule commande — sans téléchargement manuel ni serveur à configurer :
 
 ```bash
 npx @ednum/suite-ednum
@@ -83,10 +83,10 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 #### 5. Tape-Texte (`webapps/dactylo.html` - 5H-11CO)
 ![Tape-Texte](meta/screenshots/dactylo.png)
-- **À quoi sert l'outil :** Entraînement progressif à la frappe rapide et fluide sur clavier physique avec disposition suisse romande et suisse allemande (QWERTZ). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_DACTYLO.md).
+- **À quoi sert l'outil :** Entraînement progressif à la frappe rapide et précise au clavier physique avec disposition suisse romande et suisse allemande (QWERTZ). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_DACTYLO.md).
 - **Lien PER & Lehrplan 21 :** Cycle 2 & Cycle 3 (dès 5H jusqu'au secondaire I / 11CO).
-- **Fonctionnalités :** 10 niveaux pédagogiques progressifs adaptés à la Suisse (phrases types, cédilles et accents, caractères spéciaux `LEVELS_DE` en allemand), clavier virtuel d'aide visuelle en cas d'erreur, analyse en temps réel (précision %, vitesse MPM/WPM, touches à travailler) et bilan élève exportable en PNG.
-- **Valeur pédagogique :** Développe les automatismes moteurs de saisie sans regarder le clavier, renforce l'autonomie sur ordinateur de classe et prépare aux exigences des cycles 2 et 3.
+- **Fonctionnalités :** 10 niveaux pédagogiques progressifs adaptés à la Suisse (mots simples, accents romands `é/è/à/ç`, majuscules, ponctuation, symboles suisses `CHF`, textes bilingues FR / `de-CH` sans `ß`), clavier visuel d'aide en cas d'erreur, analyse en temps réel (précision %, vitesse MPM/WPM, touches à travailler) et bilan élève exportable en PNG.
+- **Valeur pédagogique :** Développe l'aisance et la précision lors de la saisie sur clavier physique, renforce l'autonomie sur ordinateur de classe et prépare aux exigences des cycles 2 et 3.
 
 #### 6. Générateur de mots de passe (`webapps/generateur_mot_de_passe.html` - 5H-11CO)
 ![Générateur de mots de passe](meta/screenshots/generateur_mot_de_passe.png)
@@ -134,7 +134,7 @@ Toutes nos applications intègrent une interface unifiée (design "Glassmorphism
 
 #### 13. Simulateur de téléchargement (`webapps/simulateur_telechargement.html` - 7-8H)
 ![Simulateur de téléchargement](meta/screenshots/simulateur_telechargement.png)
-- **À quoi sert l'outil :** Simulation visuelle interactive pour appréhender concrètement la taille des fichiers numériques et le débit des réseaux à travers deux modes : *Défi des 4 médias* (estimer et ordonner la vitesse de téléchargement d'un texte, d'une image, d'un fichier audio et d'une vidéo sans voir leur débit) et *Laboratoire* (manipulation libre de 9 objets numériques concrets sur 4 technologies de connexion : Modem 56k, 3G, 4G et Fibre optique). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_TELECHARGEMENT.md).
+- **À quoi sert l'outil :** Simulation visuelle interactive pour appréhender concrètement la taille des fichiers numériques et le débit des réseaux à travers deux modes : *Défi des 4 médias* (observer les Ko déjà téléchargés et le temps écoulé sans voir la taille totale ni le débit pour identifier Texte, Image, Audio et Vidéo) et *Laboratoire de débits* (téléchargement strictement en temps réel ×1 de 9 fichiers concrets sur Modem 56k, ADSL/3G, 4G/VDSL et Fibre optique). [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_TELECHARGEMENT.md).
 - **Lien DÉ>CODAGE :** [7-8e](https://decodage.edu-vd.ch/7-8/) · **Activité 3 — La taille des fichiers** (Demi-cycle 7-8H).
 - **Valeur pédagogique :** Fait ressentir physiquement le « poids » des données numériques, ancre la compréhension des unités de mesure (octet, Ko, Mo, Go) et sensibilise aux réalités physiques de l'infrastructure réseau.
 
@@ -159,7 +159,7 @@ Outil visuel pour désigner un·e élève au hasard. Gère l'importation de list
 
 #### Roue de la chance (`webapps/teacher/roue_de_la_chance.html`)
 ![Roue de la chance](meta/screenshots/roue_de_la_chance.png)
-Roue interactive personnalisable pour le tirage au sort en classe, l'attribution des rôles, les privilèges ou les questions d'éducation numérique. Gestion des listes personnelles (`localStorage`), présélections intégrées, générateur 1 à N et mode plein écran adapté aux TBI/TNI. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_ROUE_DE_LA_CHANCE.md).
+Roue interactive personnalisable pour le tirage au sort en classe, l'attribution des rôles, les privilèges ou les questions d'éducation numérique. Import de listes de classe (XLS/XLSX, CSV, TXT), listes personnelles sauvegardées (`localStorage`), présélections intégrées, mode sans remise, générateur 1 à N et projection TBI/TNI. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_ROUE_DE_LA_CHANCE.md).
 
 #### Créateur de QR codes (`webapps/teacher/qrcode.html`)
 ![Créateur de QR codes](meta/screenshots/qrcode.png)
@@ -167,28 +167,29 @@ Générateur sobre et rapide de QR codes pour la classe (liens, textes, Wi-Fi, f
 
 #### Minuteur visuel (Time-Timer) (`webapps/teacher/time_timer.html`)
 ![Minuteur visuel (Time-Timer)](meta/screenshots/time_timer.png)
-Compte à rebours visuel de 60 minutes avec disque coloré paramétrable, réglage fluide au glisser-déposer, raccourcis d'activités prédéfinis, carillons sonores (Web Audio API sans ressource externe) et modes plein écran / projection TBI pour structurer le temps en classe. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIME_TIMER.md).
+Compte à rebours visuel jusqu'à 60 minutes avec disque coloré paramétrable (dont thème arc-en-ciel), réglage au glisser-déposer, raccourcis d'activités prédéfinis, mesure de compensation (tiers-temps / MCD avec notification non bloquante pendant le temps adapté), carillons Web Audio ou sonnerie personnalisée (MP3/WAV) et projection TBI/TNI. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_TIME_TIMER.md).
 
 #### Adaptateur & Simulateur DYS (`webapps/teacher/sim_dyslexie.html`)
 ![Adaptateur & Simulateur DYS](meta/screenshots/sim_dyslexie.png)
-Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration CERAS, syllabes bicolores, lettres muettes grisées, polices adaptées comme OpenDyslexic ou Century Gothic, profils enregistrables, export Word .docx et impression A4) et simulateur de sensibilisation cognitive aux difficultés de lecture. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md).
+Boîte à outils d'adaptation de textes scolaires (espacement Zorzi, coloration CERAS, syllabes bicolores, lettres muettes grisées, polices auto-hébergées dont OpenDyslexic et Didact Gothic / Century Gothic, profils enregistrables, export Word `.docx` et impression A4) et simulateur de sensibilisation cognitive aux difficultés de lecture. [Mode d'emploi détaillé](meta/tuto/MODE_EMPLOI_SIMULATEUR_DYSLEXIE.md).
 
 ### 🧪 Applications en avant-première (Dossier `alpha/`)
-- 🔒 **Coffre-fort numérique** (`alpha/webapps/coffre_fort.html`, 3-6H)
-- 🍕 **La Fabrique de Recettes** (`alpha/webapps/fabrique_recette.html`, 3-5H)
-- 🔀 **Réseau de tri** (`alpha/webapps/reseau_de_tri.html`, 5-6H)
-- 🪙 **Le Rendu de Monnaie** (`alpha/webapps/rendu_monnaie.html`, 5-8H)
-- 🔍 **Chasseur d'Infox** (`alpha/webapps/chasseur_infox.html`, 6H-10CO)
-- ⚡ **Compresseur magique (RLE)** (`alpha/webapps/compresseur_magique.html`, 7-8H)
-- 🧠 **Dresseur de neurones** (`alpha/webapps/dresseur_neurones.html`, 7-8H)
-- 🌐 **Simulateur Réseau & DNS** (`alpha/webapps/simulateur_reseau_dns.html`, 7-8H)
-- ⚖️ **Créditer une image (TASL)** (`alpha/webapps/crediter_image.html`, 7-8H)
-- 🏔️ **Le Réseau des Villages** (`alpha/webapps/reseau_villages.html`, 7-8H, 9-10CO)
-- 🫧 **La Bulle de Filtres** (`alpha/webapps/bulle_filtres.html`, 8H-10CO)
-- 💻 **Pseudo-code** (`alpha/webapps/apprendre_pseudocode.html`, 9CO)
-- ⚙️ **L'Atelier des Portes Logiques** (`alpha/webapps/portes_logiques.html`, 9-10CO)
-- 🛡️ **Anonymiseur de textes** (`alpha/webapps/teacher/anonymiseur.html`, Enseignant)
-- 👥 **Créateur de Groupes & Équipes** (`alpha/webapps/teacher/createur_groupes.html`, Enseignant)
+Toutes les applications expérimentales ci-dessous fonctionnent 100% hors-ligne, en thèmes clair / sombre / contraste élevé :
+- 🔒 [**Coffre-fort numérique**](alpha/webapps/coffre_fort.html) (`3-6H`) — Triage données privées / publiques et mises en situation de cybersécurité.
+- 🍕 [**La Fabrique de Recettes**](alpha/webapps/fabrique_recette.html) (`3-5H`) — Programmation visuelle de séquences, conditions et boucles avec Chef Bot.
+- 🔀 [**Réseau de tri**](alpha/webapps/reseau_de_tri.html) (`5-6H`) — Exécution pas à pas de réseaux de comparateurs et course comparée contre le tri séquentiel.
+- 🪙 [**Le Rendu de Monnaie**](alpha/webapps/rendu_monnaie.html) (`5-8H`) — Comparaison entre algorithme glouton (CHF) et cas pièges optimaux (système fantastique).
+- 🔍 [**Chasseur d'Infox**](alpha/webapps/chasseur_infox.html) (`6H-10CO`) — Enquête critique dans 4 médias simulés (dont un site témoin fiable) et grille d'indices.
+- ⚡ [**Compresseur magique (RLE)**](alpha/webapps/compresseur_magique.html) (`7-8H`) — Décodage, encodage strict (regroupement RLE) et éditeur matriciel avec taux de compression.
+- 🧠 [**Dresseur de neurones**](alpha/webapps/dresseur_neurones.html) (`7-8H`) — Entraînement d'un modèle visuel sur exemples et mise en évidence des biais de données sur un lot équilibré.
+- 🌐 [**Simulateur Réseau & DNS**](alpha/webapps/simulateur_reseau_dns.html) (`7-8H`) — Traçage pas à pas de requêtes DNS, résolution d'IP et routage réseau.
+- ⚖️ [**Créditer une image (TASL)**](alpha/webapps/crediter_image.html) (`7-8H`) — Atelier guidé d'attribution libre (Titre, Auteur, Source, Licence Creative Commons).
+- 🏔️ [**Le Réseau des Villages**](alpha/webapps/reseau_villages.html) (`7-8H, 9CO`) — Problème de l'arbre couvrant minimal (algorithme de Kruskal) pour relier des villages alpins.
+- 🫧 [**La Bulle de Filtres**](alpha/webapps/bulle_filtres.html) (`8H-10CO`) — Simulation d'algorithme de recommandation, défi de diversification (*Autre sujet*, mode probabiliste ou déterministe).
+- 💻 [**Pseudo-code**](alpha/webapps/apprendre_pseudocode.html) (`9CO`) — Exécution pas à pas (variables, échange avec `TEMP`, conditions `Si / Sinon Si`, boucles et débogage matériel).
+- ⚙️ [**L'Atelier des Portes Logiques**](alpha/webapps/portes_logiques.html) (`9-10CO`) — Portes booléennes IEC (bulles d'inversion), schémas à 2 étages, constructeur personnalisé et quiz table de vérité.
+- 🛡️ [**Anonymiseur de textes**](alpha/webapps/teacher/anonymiseur.html) *(Outil enseignant)* — Anonymisation et pseudonymisation 100% locale avant usage d'IA (liste d'élèves en mémoire vive uniquement, détection d'accents Unicode, initiales pointées, AVS/IBAN/CCP et réinjection inverse).
+- 👥 [**Créateur de Groupes & Équipes**](alpha/webapps/teacher/createur_groupes.html) *(Outil enseignant)* — Constitution d'îlots avec import Excel/CSV (`Sexe`/`Genre`, marqueurs `F`/`G`), parité proportionnelle, règles d'association/séparation et mode projection TBI.
 
 
 ---
@@ -201,14 +202,16 @@ We have made the radical choice of **100% Vanilla**. No React, no Tailwind, no n
 ### 🏗️ Technical Architecture
 *   **Stack:** HTML / CSS (Native Variables) / JS (ES6).
 *   **Offline-First & PWA:** A robust Service Worker (`sw.js`) pre-caches all assets and HTML files using a Stale-While-Revalidate strategy. The cache manifest and a SHA-256 cache-busting hash are auto-generated by `node meta/scripts/generate-sw-manifest.js`. An update notification prompts users to reload when a new version is available.
-*   **Shared Design System:** All Glassmorphism, Dark Mode, and UI components (`.btn`, `.tabs`, `.card`) are split across four CSS files loaded in parallel: `assets/css/tokens.css` (design tokens & variables), `assets/css/base.css` (resets & typography), `assets/css/components.css` (reusable components), and `assets/css/utilities.css` (helper classes).
+*   **Shared Design System:** All Glassmorphism, Dark Mode, High-Contrast, and UI components (`.btn`, `.tabs`, `.card`) are split across CSS layers loaded in parallel: `assets/css/tokens.css`, `assets/css/base.css`, `assets/css/components.css`, `assets/css/utilities.css`, plus `assets/css/teacher.css` for teacher tools and dedicated per-app stylesheets.
 *   **Global Managers:**
-    *   Scores and Gamification: `assets/js/scores.js` (ScoreManager).
-    *   Sounds (Web Audio API): `assets/js/audio.js` (no external .mp3 files).
-    *   Toasts & Particles: `assets/js/toast.js` and `assets/js/confetti.js`.
+    *   Theme, Reset Lifecycle & Accessibility: `assets/js/theme.js` (triggers `window.__onResetApp`).
+    *   PWA Service Worker & Update Toast: `assets/js/pwa.js`.
+    *   Scores and Gamification: `assets/js/scores.js` (`ScoreManager`).
+    *   Sounds (Web Audio API): `assets/js/audio.js` (no external `.mp3` files).
+    *   Toasts, Particles & Export: `assets/js/toast.js`, `assets/js/confetti.js`, `assets/js/modal-export.js`, `assets/js/url-params.js`.
     *   Internationalization (`FR` / `de-CH`): `assets/js/i18n.js` and `assets/js/i18n/de.js`.
-    *   Class Roster Importer: `assets/js/roster-import.js` (Swiss ENT/ISM, Excel, CSV, TSV).
-*   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, a Node.js script (`meta/scripts/generate_fa_subset.js`) parses the HTML and dynamically generates `assets/js/fa-subset.js` (under 20kb!).
+    *   Class Roster Importer: `assets/js/roster-import.js` (Swiss ENT/ISM, Excel, CSV, TSV, including optional gender/sexe markers).
+*   **Vector Icons (FontAwesome):** We use **FontAwesome 7 Pro (Solid & Duotone)**. Instead of loading a huge font file, `meta/scripts/generate_fa_subset.js` compiles the used icon subset into `assets/js/fa-subset.js`.
 
 ### 🤝 How to contribute?
 Contributions (new apps, bug fixes, or UI optimizations) are highly appreciated!
@@ -221,14 +224,17 @@ Check out the **[Contributing Guide](CONTRIBUTING.md)** to learn more.
 5.  Open a **Pull Request** to `main`.
 
 ### 🧪 Testing
-Our CI pipeline checks every PR. We use Node.js for unit tests and Playwright (Python) for E2E tests.
+Our test pipeline includes Node.js (`node:test` + JSDOM) unit suites covering shared modules, production webapps, and all audited `alpha/` webapps, alongside Playwright E2E suites.
 
 To run tests locally:
 ```bash
 # 1. Unit Tests (Node.js)
 npm run test:unit
 
-# 2. E2E Tests (Playwright/Python)
+# 2. Verify PWA Service Worker Manifest
+npm run check:sw
+
+# 3. E2E Tests (Playwright/Python)
 python3 -m pip install -r meta/tests/e2e/requirements.txt && playwright install
 python3 -m http.server 8000 > server.log 2>&1 &
 sleep 5

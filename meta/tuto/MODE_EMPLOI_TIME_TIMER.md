@@ -41,10 +41,10 @@ Ouvrez le panneau **Options** pour adapter l'affichage à vos préférences :
 | **Style du cadran** | Disque plein ou Anneau moderne | Le disque plein reproduit le style circulaire classique. |
 | **Sens du décompte** | Anti-horaire (authentique) ou Sens des aiguilles | Le sens anti-horaire est la norme pédagogique recommandée (le disque diminue vers midi). |
 | **Temps numérique** | Affiché ou Masqué | Masquez les chiffres pour les plus jeunes ou pour éviter toute fixation sur les secondes. |
-| **Minuteur de compensation (Tiers-temps / MCD)** | Désactivé, Ratio (+25%, +33%) ou Durée fixe (+2 min, +5 min) | Aménagement pour élèves à besoins particuliers (dyslexie, TDAH, lenteur cognitive). Un arc secondaire discret prend le relais à la fin du temps normal. |
-| **Sonnerie de fin** | Carillon zen, Cloche d'école, Ding-dong, Bips, Muet | Sons doux et mélodieux synthétisés par le navigateur, agréables pour l'ambiance de classe. |
-| **Avertissement à 1 min** | Activé / Désactivé | Deux notes douces préviennent les élèves de finaliser leur travail. |
-| **Tic-tac sonore** | Activé / Désactivé | Désactivé par défaut pour préserver le silence. |
+| **Minuteur de compensation (Tiers-temps / MCD)** | Désactivé, Ratio (`+25%`, `+33.3%`, `+50%`, `+66.7%`, `+100%`) ou Durée fixe (`+1` à `+60 min`) | Aménagement pour élèves à besoins particuliers (dyslexie, TDAH, lenteur cognitive). Un bandeau dédié prolonge le décompte après le temps normal. |
+| **Sonnerie de fin** | Carillon zen, Cloche d'école, Ding-dong, Petits bips, **Sonnerie personnalisée (MP3 / WAV)**, Muet | Sons doux synthétisés par le navigateur ou fichier audio importé localement. |
+| **Signal sonore avant la fin** | Désactivé ou `30 s` / `1` / `2` / `3` / `5 min` avant l'échéance (Discret ou Bien audible) | Prévient en douceur les élèves de finaliser leur travail. |
+| **Son discret au démarrage** | Activé / Désactivé | Signal acoustique léger lors du lancement du décompte. |
 
 ---
 
@@ -52,8 +52,9 @@ Ouvrez le panneau **Options** pour adapter l'affichage à vos préférences :
 
 Cliquez sur l'icône **Tableau d'école** (mode TBI) dans la barre supérieure droite pour agrandir le cadran au maximum de l'écran : le minuteur devient alors parfaitement lisible depuis le fond de n'importe quelle salle de classe.
 
-> 💡 **Célébration & Sécurité :**
-> - Lorsque le décompte arrive à 00:00, une fenêtre festive s'affiche et se referme automatiquement après 60 secondes pour ne pas bloquer l'écran.
+> 💡 **Célébration, MCD & Sécurité :**
+> - Lorsque le temps principal atteint `00:00` **sans tiers-temps actif**, une fenêtre festive s'affiche et se referme automatiquement après 60 secondes pour ne pas bloquer l'écran.
+> - Lorsque la **mesure de compensation (tiers-temps / MCD)** est activée, la fin du temps principal déclenche **une notification non bloquante** (*« Temps principal écoulé — Mesure de compensation en cours »*) sans recouvrir l'écran ; la célébration finale n'apparaît qu'à la toute fin du temps compensé.
 > - Les raccourcis système de navigation (`Ctrl+R` pour recharger la page, `Ctrl+F` pour rechercher) sont préservés et ne déclenchent pas d'action intempestive du minuteur.
 > - Les boutons d'ajustement rapide (`+1 min`, `+5 min`) prolongent la séance sans altérer la durée de base mémorisée par le bouton **Réinitialiser (`R`)**.
 

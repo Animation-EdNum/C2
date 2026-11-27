@@ -8,10 +8,10 @@
 
 ## 🎯 Intérêt pédagogique & Liens PER
 
-- **PER EN 23 (Usages — Saisie d'un texte) :** Développer une frappe fluide et précise au clavier d'ordinateur pour écrire rapidement et sans erreur, en libérant l'attention cognitive de l'élève au profit de la réflexion, de l'orthographe et de la rédaction de textes.
-- **Disposition QWERTZ suisse romande :** Intègre les touches et spécificités helvétiques : touches directes d'accentuation (`é`, `è`, `à`), inversion `Z`/`Y`, cédille `ç`, chiffres accessibles avec la touche Majuscule (`Shift`), et symboles suisses (`CHF`).
-- **Guidage visuel adaptatif :** Le clavier visuel reste masqué pendant la frappe normale pour encourager l'élève à garder les yeux sur le texte. En cas d'erreur de frappe au clavier physique, le clavier visuel apparaît pour aider l'élève à repérer où se trouve la touche recherchée.
-- **Usage recommandé sur ordinateur ou clavier physique (alerte tactile) :** Sur iPad ou tablette sans clavier physique, le clavier virtuel tactile à l'écran gêne la frappe directe et recouvre la zone de texte. L'application détecte automatiquement les appareils tactiles et affiche un bandeau bienveillant recommandant l'usage d'un ordinateur ou d'un clavier externe physique (Bluetooth ou dock).
+- **PER EN 23 (Usages — Saisie d'un texte) :** Développer une frappe rapide et précise au clavier physique d'ordinateur pour libérer l'attention cognitive de l'élève au profit de la réflexion, de l'orthographe et de la rédaction de textes.
+- **Dispositions suisse romande (`FR`) et suisse allemande (`de-CH`) :** Intègre les touches directes d'accentuation (`é`, `è`, `à`), l'inversion `Z`/`Y`, la cédille `ç`, les chiffres avec Majuscule (`Shift`), les symboles suisses (`CHF`) ainsi que des textes bilingues conformes au `de-CH` (`ss`).
+- **Guidage visuel adaptatif (sans guide des mains) :** Le clavier visuel reste masqué pendant la frappe normale. En cas d'erreur de frappe au clavier physique, le clavier visuel apparaît pour indiquer où se trouve la touche recherchée.
+- **Alerte tablette / tactile :** Sur iPad ou tablette sans clavier physique, le clavier virtuel tactile à l'écran gêne la frappe rapide. L'application détecte les écrans tactiles et affiche un bandeau recommandant l'usage d'un ordinateur ou d'un clavier externe physique (Bluetooth ou dock).
 
 ---
 

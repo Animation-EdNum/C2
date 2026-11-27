@@ -67,5 +67,5 @@ Cet onglet transforme l'élève en détective cryptographique :
 
 ## 6. Actions rapides & Copie
 
-- **Copier le texte :** Boutons dédiés pour copier instantanément le message chiffré dans le presse-papiers (`#btn-copy-cipher`) afin de le transmettre à un camarade.
+- **Copier le texte :** Boutons dédiés pour copier instantanément le message chiffré dans le presse-papiers afin de le transmettre à un camarade.
 - **Effacer :** Boutons corbeille pour vider les zones de texte.

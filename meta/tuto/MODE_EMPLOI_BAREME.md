@@ -50,17 +50,19 @@ Le tableau central présente chaque score possible avec sa note correspondante :
 
 ---
 
-## 4. Exportation et partage
+## 4. Exportation, partage et projection
 
-La barre d'outils supérieure propose 3 modes d'exportation complémentaires :
+La barre d'outils supérieure propose 4 modes d'exploitation complémentaires :
 
-1. 🖼️ **Image (`#exportImageBtn`) :** Génère et télécharge une image PNG nette du barème, prête à être insérée dans un traitement de texte ou un diaporama.
-2. 📋 **Copier (`#copyTableBtn`) :** Copie l'intégralité du tableau au format texte/tabulations dans votre presse-papiers, prêt à être collé directement dans Excel, Google Sheets ou LibreOffice Calc (`Ctrl+V`).
-3. 🖨️ **Imprimer (`#printBtn`) :** Ouvre la boîte de dialogue d'impression avec une mise en page épurée (sans arrière-plan sombre, sans boutons), compactée sur une seule feuille A4 ou convertible en PDF.
+1. 🖼️ **Image :** Génère et télécharge une image PNG nette du barème, prête à être insérée dans un traitement de texte ou un diaporama.
+2. 📋 **Copier :** Copie l'intégralité du tableau au format texte/tabulations dans votre presse-papiers, prêt à être collé directement dans Excel, Google Sheets ou LibreOffice Calc (`Ctrl+V`).
+3. 🔗 **Partager :** Crée un lien web ou un QR code reprenant les paramètres actuels du barème (points maximum, seuil du 4.0, pas, arrondi) pour les réouvrir sur un autre appareil.
+4. 🖨️ **Imprimer :** Ouvre la boîte de dialogue d'impression avec une mise en page épurée (sans arrière-plan sombre, sans boutons), compactée sur une seule feuille A4 ou convertible en PDF.
 
 ---
 
-## 5. Thèmes et accessibilité
+## 5. Thèmes, projection TBI et accessibilité
 
-- Bouton **Thème clair / sombre 🌙** dans la barre supérieure droite.
-- Bouton **Réinitialiser 🔄** pour remettre les réglages par défaut en un clic.
+- **Mode Projection TBI (`F`) :** Affiche le barème en grand format optimisé pour les écrans de classe.
+- **Thème clair / sombre / contraste élevé 🌙** dans la barre supérieure droite.
+- **Réinitialiser 🔄** pour remettre les réglages par défaut en un clic.

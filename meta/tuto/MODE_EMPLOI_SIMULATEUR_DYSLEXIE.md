@@ -30,8 +30,8 @@ L'onglet **« Adaptateur DYS »** est l'écran principal de travail.
 - **Espacement Zorzi :** Augmente l'espacement entre les lettres (+0.25em), entre les mots (+0.4em) et l'interligne (2.2), réduisant l'encombrement visuel (*crowding*).
 - **Police de caractères :**
   - *Outfit* : Police moderne par défaut, sans empattement.
-  - *Century Gothic* : Police ronde, aérée et très lisible, recommandée pour le Cycle 1 et l'entrée dans l'écrit.
-  - *OpenDyslexic* : Police à base épaissie, adaptée aux élèves présentant des difficultés visuo-attentionnelles.
+  - *Century Gothic* : Police ronde, aérée et très lisible, recommandée pour le Cycle 1 et l'entrée dans l'écrit (avec repli automatique hors-ligne sur *Didact Gothic* auto-hébergée si la police système manque).
+  - *OpenDyslexic* : Police auto-hébergée (100% locale et hors-ligne) à base épaissie, adaptée aux élèves présentant des difficultés visuo-attentionnelles.
   - *Verdana* : Police standard à espacement large naturel.
 - **Fond ivoire / pastel :** Atténue le contraste violent du blanc pur (selon la sensibilité personnelle de l'élève).
 - **Coloration des graphèmes (sons) :** Identifie et colore les graphèmes complexes selon le référentiel sons-couleurs **CERAS** (o, an, in, è, é, ou, oi, on, eu, un). Une légende dynamique s'ajoute automatiquement au haut de la fiche.

@@ -22,7 +22,7 @@ La **Roue de la chance** est un outil interactif et visuel permettant de réalis
    - **Privilèges :** Petits privilèges scolaires (choix de sa place, premier au rang, écouter de la musique au casque, etc.).
    - **Questions Éducation Numérique :** Questions et défis de réflexion sur les usages numériques, le code et la cybersécurité.
    - **Générateur 1 à N :** Tirage rapide d'un nombre (ex. de 1 à 24 pour interroger un élève selon son numéro de classe).
-   - **Liste personnalisée :** Saisie libre d'options personnalisées (une par ligne).
+   - **Liste personnalisée :** Saisie libre d'options personnalisées (une par ligne) ou importation directe d'un fichier de classe (**XLS, XLSX, CSV, TXT** via *Importer*).
 2. **Lancer la roue :** Cliquez sur le bouton central **« Tourner »** ou appuyez sur la barre d'espace.
 3. **Résultat :** La roue ralentit progressivement avec un tic-tac réaliste et célèbre le segment gagnant avec un encadré festif.
 
@@ -31,6 +31,7 @@ La **Roue de la chance** est un outil interactif et visuel permettant de réalis
 ## ⚙️ 2. Fonctionnalités avancées
 
 - **Retirer le gagnant (Tirage sans remise) :** Une option permet d'exclure temporairement le choix tiré pour qu'un même élève ou métier ne sorte pas deux fois au cours d'une même session.
+- **Importation ENT / Excel / CSV (`Importer (XLS/CSV)`) :** Chargez directement la liste de votre classe depuis un tableur scolaire (`.xlsx`, `.xls`, `.csv`, `.txt`).
 - **Sauvegarde locale automatique :** Votre liste personnalisée est enregistrée localement dans votre navigateur (`localStorage`), sans aucun compte ni connexion requise.
 - **Générateur de numéros :** Indiquez le nombre d'élèves de votre classe (ex. 22) et la roue génère instantanément 22 segments équitables et colorés.
 - **Contrôle sonore :** Effets sonores de cliquetis et fanfare de victoire synthétisés nativement via la Web Audio API (désactivables en 1 clic).
